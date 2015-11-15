@@ -1,7 +1,19 @@
 html, body, .wrapper, #map {
     width: 100%;
-    height: 100%;
+    height: 500px;
     margin: 0;
+}
+
+.btn {
+    padding: .7em 1em;
+    background-color: #333;
+    border-radius: 5px;
+    display: inline-block;
+    color: #fff;
+}
+
+.btn:hover {
+    cursor: pointer;
 }
 
 .marker-icon, .marker-icon:focus {

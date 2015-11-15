@@ -66,5 +66,5 @@ editButton.addEventListener('click', function() {
 
 var coordButton = document.getElementById('getCoords');
 coordButton.addEventListener('click', function() {
-    console.log(polygonLayer.toGeoJSON());
+    console.log(geoJsonLayer.toGeoJSON());
 });
