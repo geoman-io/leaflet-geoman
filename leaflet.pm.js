@@ -6,10 +6,6 @@ L.PM.Poly = L.Handler.extend({
 
         this._poly = poly;
 
-        this._markerGroup = new L.LayerGroup();
-
-
-
     },
 
     toggleEdit: function() {
@@ -28,10 +24,17 @@ L.PM.Poly = L.Handler.extend({
 
             this._enabled = true;
 
-            // init dragable markers
-            this._initMarkers();
+            if(!this._markerGroup) {
+
+                this._markerGroup = new L.LayerGroup();
+
+                // init dragable markers
+                this._initMarkers();
+            }
 
             this._poly._map.addLayer(this._markerGroup);
+
+
 
         }
 
@@ -108,6 +111,7 @@ L.PM.Poly = L.Handler.extend({
     },
 
     _onMarkerDrag: function(e) {
+
 		var marker = e.target;
         var nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
         var prevMarkerIndex = marker._index - 1 < 0 ? this._markers.length - 1 : marker._index - 1;
@@ -120,7 +124,6 @@ L.PM.Poly = L.Handler.extend({
 
         var middleMarkerLeftLatLng = this._calcMiddleLatLng(marker, this._markers[prevMarkerIndex]);
         marker._middleMarkerLeft.setLatLng(middleMarkerLeftLatLng);
-
 
 	},
 
