@@ -4,6 +4,8 @@ A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 beta (v2) I created this plugin myself due to a lack of alternatives.
 
+#### [Demo](leaflet.pm.kaumgeschlafen.com/demo)
+
 ### Getting Started
 Include `leaflet.pm.js` in your project. Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/releases).
 Then, you can simply start editing on your layers.
