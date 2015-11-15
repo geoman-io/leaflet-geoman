@@ -111,14 +111,19 @@ L.PM.Poly = L.Handler.extend({
     },
 
     _onMarkerDrag: function(e) {
-
+        // dragged marker
 		var marker = e.target;
+
+        // the dragged markers neighbors
         var nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
         var prevMarkerIndex = marker._index - 1 < 0 ? this._markers.length - 1 : marker._index - 1;
 
+        // update marker coordinates which will update polygon coordinates
 		L.extend(marker._origLatLng, marker._latlng);
 		this._poly.redraw();
 
+        // update middle markers on the left and right
+        // be aware that "left" and "right" might be interchanged, depending on the geojson array
         var middleMarkerRightLatLng = this._calcMiddleLatLng(marker, this._markers[nextMarkerIndex]);
         marker._middleMarkerRight.setLatLng(middleMarkerRightLatLng);
 
