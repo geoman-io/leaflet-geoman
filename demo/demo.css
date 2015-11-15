@@ -3,3 +3,13 @@ html, body, .wrapper, #map {
     height: 100%;
     margin: 0;
 }
+
+.marker-icon, .marker-icon:focus {
+    background-color: #ffffff;
+    border: 1px solid #3388FF;
+    border-radius: 50%;
+    margin: -7px 0 0 -7px !important;
+    width: 14px !important;
+    height: 14px !important;
+    outline: 0;
+}

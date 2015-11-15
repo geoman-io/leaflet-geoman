@@ -51,3 +51,13 @@ var testPolygon = {
 
 var polygonLayer = L.geoJson(testPolygon).addTo(map);
 map.fitBounds(polygonLayer.getBounds());
+
+var editButton = document.getElementById('toggleEdit');
+editButton.addEventListener('click', function() {
+    polygonLayer.pm.toggleEdit();
+})
+
+var coordButton = document.getElementById('getCoords');
+coordButton.addEventListener('click', function() {
+    console.log(polygonLayer.toGeoJSON());
+});
