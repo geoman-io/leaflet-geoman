@@ -4,7 +4,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-var testPolygon = {
+var geoJsonData = {
     "type": "FeatureCollection",
     "features": [
     {
@@ -49,12 +49,19 @@ var testPolygon = {
     ]
 }
 
-var polygonLayer = L.geoJson(testPolygon).addTo(map);
-map.fitBounds(polygonLayer.getBounds());
+var geoJsonLayer = L.geoJson(geoJsonData).addTo(map);
+var featureGroupLayer = L.polygon([
+    [51.509, -0.08],
+    [51.503, -0.06],
+    [51.51, -0.047]
+]).addTo(map);
+
+map.fitBounds(geoJsonLayer.getBounds());
 
 var editButton = document.getElementById('toggleEdit');
 editButton.addEventListener('click', function() {
-    polygonLayer.pm.toggleEdit();
+    geoJsonLayer.pm.toggleEdit();
+    featureGroupLayer.pm.toggleEdit();
 })
 
 var coordButton = document.getElementById('getCoords');

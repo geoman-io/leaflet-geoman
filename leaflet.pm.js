@@ -10,9 +10,7 @@ L.PM = L.PM || {};
 L.PM.Poly = L.Handler.extend({
 
     initialize: function(poly) {
-
         this._poly = poly;
-
     },
 
     toggleEdit: function() {
@@ -25,14 +23,10 @@ L.PM.Poly = L.Handler.extend({
 
     enable: function() {
 
-        console.log(this);
-
         if(!this.enabled()) {
-
             this._enabled = true;
 
             if(!this._markerGroup) {
-
                 this._markerGroup = new L.LayerGroup();
 
                 // init dragable markers
@@ -40,11 +34,7 @@ L.PM.Poly = L.Handler.extend({
             }
 
             this._poly._map.addLayer(this._markerGroup);
-
-
-
         }
-
 
     },
 
@@ -53,11 +43,8 @@ L.PM.Poly = L.Handler.extend({
     },
 
     disable: function() {
-
         this._enabled = false;
-
         this._poly._map.removeLayer(this._markerGroup);
-
     },
 
     _initMarkers: function() {
@@ -81,8 +68,6 @@ L.PM.Poly = L.Handler.extend({
         }
 
     },
-
-
 
     _createMarker: function(latlng, index) {
 
@@ -159,8 +144,6 @@ L.PM.Poly = L.Handler.extend({
     _removeMarker: function(e) {
         var marker = e.target;
 
-        console.log(marker._index);
-
         // only continue if this is NOT a middle marker (those can't be deleted)
         if(marker._index !== undefined) {
 
@@ -194,13 +177,7 @@ L.PM.Poly = L.Handler.extend({
                 this._markers[i]._index = i;
             }
 
-
-
-
         }
-
-
-
 
 
     },
@@ -252,11 +229,7 @@ var initHook = function() {
 
     this.on('add', function() {
 
-
-
 	});
-
-
 
 }
 
