@@ -233,8 +233,12 @@ L.PM.Poly = L.Handler.extend({
 var initPolygon = function() {
     this.pm = new L.PM.Poly(this);
 }
-
 L.Polygon.addInitHook(initPolygon);
+
+
+
+
+
 
 
 L.PM.LayerGroup = L.Handler.extend({
@@ -259,6 +263,4 @@ L.PM.LayerGroup = L.Handler.extend({
 var initLayerGroup = function() {
     this.pm = new L.PM.LayerGroup(this);
 }
-
-
 L.LayerGroup.addInitHook(initLayerGroup);

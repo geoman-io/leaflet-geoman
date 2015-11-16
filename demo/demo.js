@@ -65,7 +65,7 @@ editButton.addEventListener('click', function() {
 });
 
 geoJsonLayer.on('edit', function() {
-    console.log('edited');
+    console.log('layergroup edited');
 });
 
 var coordButton = document.getElementById('getCoords');
