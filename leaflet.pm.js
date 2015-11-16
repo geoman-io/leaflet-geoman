@@ -239,10 +239,17 @@ L.Polygon.addInitHook(initPolygon);
 
 L.PM.LayerGroup = L.Handler.extend({
     initialize: function(layerGroup) {
-
+        var self = this;
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
+        for( i=0; i<this._layers.length; i++) {
+            this._layers[i].on('edit', function() {
+                self._layerGroup.fireEvent('edit');
+            });
+        }
+    },
+    toggleEdit: function() {
         for( i=0; i<this._layers.length; i++) {
             this._layers[i].pm.toggleEdit();
         }
