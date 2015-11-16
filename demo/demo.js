@@ -62,7 +62,11 @@ var editButton = document.getElementById('toggleEdit');
 editButton.addEventListener('click', function() {
     geoJsonLayer.pm.toggleEdit();
     featureGroupLayer.pm.toggleEdit();
-})
+});
+
+geoJsonLayer.on('edit', function() {
+    console.log('edited');
+});
 
 var coordButton = document.getElementById('getCoords');
 coordButton.addEventListener('click', function() {

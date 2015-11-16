@@ -209,7 +209,14 @@ L.PM.Poly = L.Handler.extend({
 
         var marker = e.target;
 
+        this._fireEdit();
+
     },
+
+    _fireEdit: function () {
+		this._poly.edited = true;
+		this._poly.fireEvent('edit');
+	},
 
     _calcMiddleLatLng: function(leftM, rightM) {
         var map = this._poly._map,
@@ -223,33 +230,28 @@ L.PM.Poly = L.Handler.extend({
 
 });
 
-var initHook = function() {
-
+var initPolygon = function() {
     this.pm = new L.PM.Poly(this);
-
-    this.on('add', function() {
-
-	});
-
 }
 
-L.Polygon.addInitHook(initHook);
-L.LayerGroup.addInitHook(function() {
+L.Polygon.addInitHook(initPolygon);
 
-    var layerGroup = this;
 
-    this.pm = {
-        toggleEdit: function() {
+L.PM.LayerGroup = L.Handler.extend({
+    initialize: function(layerGroup) {
 
-            var layers = layerGroup.getLayers();
+        this._layerGroup = layerGroup;
+        this._layers = layerGroup.getLayers();
 
-            for( i=0; i<layers.length; i++) {
-
-                layers[i].pm.toggleEdit();
-
-            }
-
+        for( i=0; i<this._layers.length; i++) {
+            this._layers[i].pm.toggleEdit();
         }
-    };
-
+    }
 });
+
+var initLayerGroup = function() {
+    this.pm = new L.PM.LayerGroup(this);
+}
+
+
+L.LayerGroup.addInitHook(initLayerGroup);
