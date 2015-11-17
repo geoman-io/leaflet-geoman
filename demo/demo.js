@@ -50,18 +50,12 @@ var geoJsonData = {
 }
 
 var geoJsonLayer = L.geoJson(geoJsonData).addTo(map);
-var featureGroupLayer = L.polygon([
-    [51.509, -0.08],
-    [51.503, -0.06],
-    [51.51, -0.047]
-]).addTo(map);
 
 map.fitBounds(geoJsonLayer.getBounds());
 
 var editButton = document.getElementById('toggleEdit');
 editButton.addEventListener('click', function() {
     geoJsonLayer.pm.toggleEdit();
-    featureGroupLayer.pm.toggleEdit();
 });
 
 geoJsonLayer.on('edit', function() {
@@ -71,4 +65,9 @@ geoJsonLayer.on('edit', function() {
 var coordButton = document.getElementById('getCoords');
 coordButton.addEventListener('click', function() {
     console.log(geoJsonLayer.toGeoJSON());
+});
+
+var enabledButton = document.getElementById('enabled');
+enabledButton.addEventListener('click', function() {
+    alert(geoJsonLayer.pm.enabled());
 });

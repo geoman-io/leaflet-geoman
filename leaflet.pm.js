@@ -11,6 +11,7 @@ L.PM.Poly = L.Handler.extend({
 
     initialize: function(poly) {
         this._poly = poly;
+        this._enabled = false;
     },
 
     toggleEdit: function() {
@@ -257,6 +258,29 @@ L.PM.LayerGroup = L.Handler.extend({
         for( i=0; i<this._layers.length; i++) {
             this._layers[i].pm.toggleEdit();
         }
+    },
+    enable: function() {
+        for( i=0; i<this._layers.length; i++) {
+            this._layers[i].pm.enable();
+        }
+    },
+    disable: function() {
+        for( i=0; i<this._layers.length; i++) {
+            this._layers[i].pm.disable();
+        }
+    },
+    enabled: function() {
+
+        var enabled = false;
+
+        for( i=0; i<this._layers.length; i++) {
+            enabled = this._layers[i].pm.enabled();
+            if(enabled) {
+                break;
+            }
+        }
+
+        return enabled;
     }
 });
 
