@@ -178,6 +178,9 @@ L.PM.Poly = L.Handler.extend({
                 this._markers[i]._index = i;
             }
 
+
+            this._fireEdit();
+
         }
 
 
