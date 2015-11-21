@@ -15,6 +15,7 @@ L.PM.Poly = L.Handler.extend({
     },
 
     toggleEdit: function() {
+        console.log(this.enabled());
         if(!this.enabled()) {
             this.enable();
         } else {
@@ -54,17 +55,17 @@ L.PM.Poly = L.Handler.extend({
 
         var coords = this._poly._latlngs[0];
 
-        for(i = 0; i < coords.length; i++) {
+        for(var i = 0; i < coords.length; i++) {
             var marker = this._createMarker(coords[i], i);
             this._markers.push(marker);
         }
 
-        for(i = 0; i < coords.length; i++) {
+        for(var k = 0; k < coords.length; k++) {
 
-            var nextIndex = i+1 >= coords.length ? 0 : i+1;
+            var nextIndex = k+1 >= coords.length ? 0 : k+1;
 
             this._createMiddleMarker(
-                this._markers[i], this._markers[nextIndex]
+                this._markers[k], this._markers[nextIndex]
             );
         }
 
@@ -131,7 +132,7 @@ L.PM.Poly = L.Handler.extend({
 
         // push into marker array update the indexes for every marker
         this._markers.splice(index, 0, newM);
-        for(i=0;i<this._markers.length;i++) {
+        for(var i=0;i<this._markers.length;i++) {
             this._markers[i]._index = i;
         }
 
@@ -174,7 +175,7 @@ L.PM.Poly = L.Handler.extend({
             this._markers.splice(index, 1);
 
             // update the remaining markers indexes
-            for(i=0;i<this._markers.length;i++) {
+            for(var i=0;i<this._markers.length;i++) {
                 this._markers[i]._index = i;
             }
 
@@ -251,24 +252,25 @@ L.PM.LayerGroup = L.Handler.extend({
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
-        for( i=0; i<this._layers.length; i++) {
+        for(var i=0; i<this._layers.length; i++) {
             this._layers[i].on('edit', function() {
                 self._layerGroup.fireEvent('edit');
             });
         }
     },
     toggleEdit: function() {
-        for( i=0; i<this._layers.length; i++) {
+
+        for(var i=0; i<this._layers.length; i++) {
             this._layers[i].pm.toggleEdit();
         }
     },
     enable: function() {
-        for( i=0; i<this._layers.length; i++) {
+        for(var i=0; i<this._layers.length; i++) {
             this._layers[i].pm.enable();
         }
     },
     disable: function() {
-        for( i=0; i<this._layers.length; i++) {
+        for(var i=0; i<this._layers.length; i++) {
             this._layers[i].pm.disable();
         }
     },
@@ -276,7 +278,7 @@ L.PM.LayerGroup = L.Handler.extend({
 
         var enabled = false;
 
-        for( i=0; i<this._layers.length; i++) {
+        for(var i=0; i<this._layers.length; i++) {
             enabled = this._layers[i].pm.enabled();
             if(enabled) {
                 break;
