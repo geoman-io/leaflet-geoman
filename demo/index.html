@@ -10,18 +10,38 @@
     <body>
 
         <div class="wrapper">
-            <div id="map"></div>
-            <div class="controls">
-                <div class="btn" id="toggleEdit">
-                    Toggle Edit
-                </div>
-                <div class="btn" id="getCoords">
-                    Print Coords to Console
-                </div>
-                <div class="btn" id="enabled">
-                    Editing Enabled?
-                </div>
+            <aside>
+                <h1>Leaflet.PM</h1>
+                <h3>Polygon Management</h3>
+
+                <ul>
+                    <li id="test-polygon">
+                        Polygon
+                    </li>
+                    <li id="test-layergroup">
+                        LayerGroup
+                    </li>
+                    <li id="test-geojson">
+                        geoJson
+                    </li>
+                </ul>
+
+                <h3>How to:</h3>
+                <p>
+                    The buttons on top toggle edit-mode for each Leaflet class
+                    and will highlight when the edit-event is triggered.
+                </p>
+                <p>
+                    Use <strong>right click</strong> to remove a coordinate handler.
+                </p>
+                <p>
+
+                </p>
+            </aside>
+            <div class="content">
+                <div id="map"></div>
             </div>
+
         </div>
 
         <script src="demo.js"></script>

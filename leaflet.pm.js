@@ -15,7 +15,6 @@ L.PM.Poly = L.Handler.extend({
     },
 
     toggleEdit: function() {
-        console.log(this.enabled());
         if(!this.enabled()) {
             this.enable();
         } else {
