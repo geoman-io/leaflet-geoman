@@ -132,3 +132,24 @@ layerGroupButton.addEventListener('click', function() {
 layerGroup.on('edit', function() {
     highlight(layerGroupButton);
 });
+
+
+
+var pointA = new L.LatLng(51.54, -0.04);
+var pointB = new L.LatLng(51.52, -0.045);
+var polyLine = L.polyline([pointA, pointB]).addTo(map);
+
+
+
+var polylineButton = document.getElementById('test-polyline');
+polylineButton.addEventListener('click', function() {
+
+    var bounds = polyLine.getBounds();
+    map.fitBounds(bounds);
+
+    polyLine.pm.toggleEdit();
+
+});
+polyLine.on('edit', function() {
+    highlight(polygonButton);
+});

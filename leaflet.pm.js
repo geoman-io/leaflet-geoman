@@ -239,6 +239,9 @@ var initPolygon = function() {
 }
 L.Polygon.addInitHook(initPolygon);
 
+// FIXME doesn't work for polylines yet
+// L.Polyline.addInitHook(initPolygon);
+
 
 
 
