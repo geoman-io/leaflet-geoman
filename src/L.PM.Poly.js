@@ -1,13 +1,4 @@
-/**
-*
-* A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
-* by Sumit Kumar (@TweetsOfSumit)
-* Github Repo: https://github.com/codeofsumit/leaflet.pm
-*/
-
-L.PM = L.PM || {};
-
-L.PM.Poly = L.Handler.extend({
+L.PM.Poly = L.Class.extend({
 
     initialize: function(poly) {
         this._poly = poly;
@@ -187,6 +178,7 @@ L.PM.Poly = L.Handler.extend({
     },
 
     _onMarkerDrag: function(e) {
+        
         // dragged marker
 		var marker = e.target;
 
@@ -238,53 +230,3 @@ var initPolygon = function() {
     this.pm = new L.PM.Poly(this);
 }
 L.Polygon.addInitHook(initPolygon);
-
-
-
-L.PM.LayerGroup = L.Handler.extend({
-    initialize: function(layerGroup) {
-        var self = this;
-        this._layerGroup = layerGroup;
-        this._layers = layerGroup.getLayers();
-
-        for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].on('edit', function() {
-                self._layerGroup.fireEvent('edit');
-            });
-        }
-    },
-    toggleEdit: function() {
-
-        for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.toggleEdit();
-        }
-    },
-    enable: function() {
-        for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.enable();
-        }
-    },
-    disable: function() {
-        for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.disable();
-        }
-    },
-    enabled: function() {
-
-        var enabled = false;
-
-        for(var i=0; i<this._layers.length; i++) {
-            enabled = this._layers[i].pm.enabled();
-            if(enabled) {
-                break;
-            }
-        }
-
-        return enabled;
-    }
-});
-
-var initLayerGroup = function() {
-    this.pm = new L.PM.LayerGroup(this);
-}
-L.LayerGroup.addInitHook(initLayerGroup);
