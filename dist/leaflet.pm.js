@@ -5,7 +5,36 @@
 * Github Repo: https://github.com/codeofsumit/leaflet.pm
 */
 
-L.PM = L.PM || {};
+L.PM = L.PM || {
+    initialize: function(map) {
+
+        var initLayerGroup = function() {
+            this.pm = new L.PM.LayerGroup(this);
+        };
+        L.LayerGroup.addInitHook(initLayerGroup);
+
+
+        var initPolygon = function() {
+            this.pm = new L.PM.Poly(this);
+        };
+        L.Polygon.addInitHook(initPolygon);
+
+
+        var myButtonOptions = {
+              'text': '',  // string
+              'iconUrl': 'images/myButton.png',  // string
+              'onClick': function() {
+
+              },  // callback function
+              'hideText': true,  // bool
+              'maxWidth': 30,  // number
+              'doToggle': true,  // bool
+              'toggleStatus': false  // bool
+        };
+
+        var myButton = new L.Control.PMButton(myButtonOptions).addTo(map);
+    }
+};
 
 L.Control.PMButton = L.Control.extend({
     options: {
@@ -123,54 +152,6 @@ L.Control.PMButton = L.Control.extend({
 
 });
 
-
-L.PM.LayerGroup = L.Class.extend({
-    initialize: function(layerGroup) {
-        var self = this;
-        this._layerGroup = layerGroup;
-        this._layers = layerGroup.getLayers();
-
-        for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].on('edit', function() {
-                self._layerGroup.fireEvent('edit');
-            });
-        }
-    },
-    toggleEdit: function() {
-
-        for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.toggleEdit();
-        }
-    },
-    enable: function() {
-        for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.enable();
-        }
-    },
-    disable: function() {
-        for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.disable();
-        }
-    },
-    enabled: function() {
-
-        var enabled = false;
-
-        for(var i=0; i<this._layers.length; i++) {
-            enabled = this._layers[i].pm.enabled();
-            if(enabled) {
-                break;
-            }
-        }
-
-        return enabled;
-    }
-});
-
-var initLayerGroup = function() {
-    this.pm = new L.PM.LayerGroup(this);
-}
-L.LayerGroup.addInitHook(initLayerGroup);
 
 L.PM.Poly = L.Class.extend({
 
@@ -400,7 +381,46 @@ L.PM.Poly = L.Class.extend({
 
 });
 
-var initPolygon = function() {
-    this.pm = new L.PM.Poly(this);
-}
-L.Polygon.addInitHook(initPolygon);
+
+L.PM.LayerGroup = L.Class.extend({
+    initialize: function(layerGroup) {
+        var self = this;
+        this._layerGroup = layerGroup;
+        this._layers = layerGroup.getLayers();
+
+        for(var i=0; i<this._layers.length; i++) {
+            this._layers[i].on('edit', function() {
+                self._layerGroup.fireEvent('edit');
+            });
+        }
+    },
+    toggleEdit: function() {
+
+        for(var i=0; i<this._layers.length; i++) {
+            this._layers[i].pm.toggleEdit();
+        }
+    },
+    enable: function() {
+        for(var i=0; i<this._layers.length; i++) {
+            this._layers[i].pm.enable();
+        }
+    },
+    disable: function() {
+        for(var i=0; i<this._layers.length; i++) {
+            this._layers[i].pm.disable();
+        }
+    },
+    enabled: function() {
+
+        var enabled = false;
+
+        for(var i=0; i<this._layers.length; i++) {
+            enabled = this._layers[i].pm.enabled();
+            if(enabled) {
+                break;
+            }
+        }
+
+        return enabled;
+    }
+});

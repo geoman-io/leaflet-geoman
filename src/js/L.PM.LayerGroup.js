@@ -41,8 +41,3 @@ L.PM.LayerGroup = L.Class.extend({
         return enabled;
     }
 });
-
-var initLayerGroup = function() {
-    this.pm = new L.PM.LayerGroup(this);
-}
-L.LayerGroup.addInitHook(initLayerGroup);

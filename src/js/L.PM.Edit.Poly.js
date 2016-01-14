@@ -225,8 +225,3 @@ L.PM.Poly = L.Class.extend({
     }
 
 });
-
-var initPolygon = function() {
-    this.pm = new L.PM.Poly(this);
-}
-L.Polygon.addInitHook(initPolygon);
