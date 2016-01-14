@@ -4,6 +4,20 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+var myButtonOptions = {
+      'text': '',  // string
+      'iconUrl': 'images/myButton.png',  // string
+      'onClick': function() {
+          
+      },  // callback function
+      'hideText': true,  // bool
+      'maxWidth': 30,  // number
+      'doToggle': true,  // bool
+      'toggleStatus': false  // bool
+};
+
+var myButton = new L.Control.PMButton(myButtonOptions).addTo(map);
+
 
 var t;
 var highlight = function(el) {
@@ -15,7 +29,7 @@ var highlight = function(el) {
     t = window.setTimeout(function () {
         el.classList.remove('highlight');
     }, 70);
-}
+};
 
 
 // GEOSJON EXAMPLE

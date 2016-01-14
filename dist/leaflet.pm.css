@@ -1,0 +1,37 @@
+.leaflet-buttons-control-button {
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: black;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+}
+
+.leaflet-buttons-control-button span {
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+}
+
+.leaflet-buttons-control-button:hover {
+  cursor: pointer;
+  background-color: #f4f4f4;
+}
+
+.leaflet-buttons-control-button.active {
+  background-color: #f4f4f4;
+}
+
+.leaflet-buttons-control-button.active span {
+  opacity: .8;
+}
+
+.leaflet-buttons-control-text-hide {
+  display: none;
+}
+

@@ -2,10 +2,12 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
+var concatCss = require('gulp-concat-css');
 
-gulp.task('default', function() {
+
+gulp.task('scripts', function() {
     return gulp.src([
-        'src/L.PM.js',
+        'src/js/L.PM.js',
         'src/**/*.js'
     ])
 
@@ -25,6 +27,17 @@ gulp.task('default', function() {
     .pipe(gulp.dest('dist/'));
 });
 
-gulp.task('watch', function() {
-    gulp.watch('src/**/*.js', ['default']);
+gulp.task('styles', function() {
+    return gulp.src([
+        'src/css/**/*.css'
+    ])
+    .pipe(concatCss('leaflet.pm.css'))
+    .pipe(gulp.dest('dist/'));
 });
+
+gulp.task('watch', function() {
+    gulp.watch('src/**/*', ['default']);
+});
+
+gulp.task('build', ['scripts', 'styles']);
+gulp.task('default', ['build']);
