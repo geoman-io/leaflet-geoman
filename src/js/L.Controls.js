@@ -14,7 +14,7 @@ L.Control.PMButton = L.Control.extend({
 
         this._container = container;
 
-        this._update();
+        this._makeButton(this._button);
         return this._container;
     },
 
@@ -26,6 +26,7 @@ L.Control.PMButton = L.Control.extend({
             'text': options.text,
             'iconUrl': options.iconUrl,
             'onClick': options.onClick,
+            'afterClick': options.afterClick,
             'hideText': !!options.hideText,
             'maxWidth': options.maxWidth || 70,
             'doToggle': options.doToggle,
@@ -33,7 +34,6 @@ L.Control.PMButton = L.Control.extend({
         };
 
         this._button = button;
-        this._update();
     },
 
     getText: function () {
@@ -56,19 +56,10 @@ L.Control.PMButton = L.Control.extend({
         else{
             this._button.toggleStatus = !this._button.toggleStatus;
         }
-        this._update();
     },
-
-    _update: function () {
-        if (!this._map) {
-            return;
-        }
-
-        this._container.innerHTML = '';
-        this._makeButton(this._button);
-
+    toggled: function () {
+        return this._button.toggleStatus;
     },
-
     _makeButton: function (button) {
 
         var newButton = L.DomUtil.create('div', 'leaflet-buttons-control-button', this._container);
@@ -90,8 +81,10 @@ L.Control.PMButton = L.Control.extend({
 
         L.DomEvent
             .addListener(newButton, 'click', L.DomEvent.stop)
-            .addListener(newButton, 'click', button.onClick,this)
-            .addListener(newButton, 'click', this._clicked,this);
+            .addListener(newButton, 'click', button.onClick, this)
+            .addListener(newButton, 'click', this._clicked, this)
+            .addListener(newButton, 'click', button.afterClick, this);
+
         L.DomEvent.disableClickPropagation(newButton);
         return newButton;
 

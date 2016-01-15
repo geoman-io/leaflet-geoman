@@ -9,29 +9,39 @@ L.PM = L.PM || {
     initialize: function(map) {
 
         var initLayerGroup = function() {
-            this.pm = new L.PM.LayerGroup(this);
+            this.pm = new L.PM.Edit.LayerGroup(this);
         };
         L.LayerGroup.addInitHook(initLayerGroup);
 
 
         var initPolygon = function() {
-            this.pm = new L.PM.Poly(this);
+            this.pm = new L.PM.Edit.Poly(this);
         };
         L.Polygon.addInitHook(initPolygon);
 
-
-        var myButtonOptions = {
-              'text': '',  // string
-              'iconUrl': 'images/myButton.png',  // string
+        var newPoly
+        var drawPolyButton = {
+              'text': '',
+              'iconUrl': 'images/myButton.png',
               'onClick': function() {
 
-              },  // callback function
-              'hideText': true,  // bool
-              'maxWidth': 30,  // number
-              'doToggle': true,  // bool
-              'toggleStatus': false  // bool
+              },
+              'afterClick': function(e) {
+                  if(this.toggled()) {
+                      newPoly = new L.PM.Draw.Poly(map);
+                      newPoly.enable();
+                  } else {
+                      newPoly.disable();
+                  }
+              },
+              'hideText': true,
+              'maxWidth': 30,
+              'doToggle': true,
+              'toggleStatus': false
         };
 
-        var myButton = new L.Control.PMButton(myButtonOptions).addTo(map);
-    }
+        var myButton = new L.Control.PMButton(drawPolyButton).addTo(map);
+    },
+    Edit: {},
+    Draw: {}
 };

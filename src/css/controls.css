@@ -27,7 +27,7 @@
 }
 
 .leaflet-buttons-control-button.active span {
-    opacity: .8;
+    opacity: .5;
 }
 
 .leaflet-buttons-control-text-hide {

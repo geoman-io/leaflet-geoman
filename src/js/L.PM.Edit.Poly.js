@@ -1,4 +1,4 @@
-L.PM.Poly = L.Class.extend({
+L.PM.Edit.Poly = L.Class.extend({
 
     initialize: function(poly) {
         this._poly = poly;

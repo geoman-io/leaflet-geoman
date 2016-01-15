@@ -1,5 +1,5 @@
 
-L.PM.LayerGroup = L.Class.extend({
+L.PM.Edit.LayerGroup = L.Class.extend({
     initialize: function(layerGroup) {
         var self = this;
         this._layerGroup = layerGroup;

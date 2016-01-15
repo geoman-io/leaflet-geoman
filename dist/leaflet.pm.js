@@ -9,31 +9,41 @@ L.PM = L.PM || {
     initialize: function(map) {
 
         var initLayerGroup = function() {
-            this.pm = new L.PM.LayerGroup(this);
+            this.pm = new L.PM.Edit.LayerGroup(this);
         };
         L.LayerGroup.addInitHook(initLayerGroup);
 
 
         var initPolygon = function() {
-            this.pm = new L.PM.Poly(this);
+            this.pm = new L.PM.Edit.Poly(this);
         };
         L.Polygon.addInitHook(initPolygon);
 
-
-        var myButtonOptions = {
-              'text': '',  // string
-              'iconUrl': 'images/myButton.png',  // string
+        var newPoly
+        var drawPolyButton = {
+              'text': '',
+              'iconUrl': 'images/myButton.png',
               'onClick': function() {
 
-              },  // callback function
-              'hideText': true,  // bool
-              'maxWidth': 30,  // number
-              'doToggle': true,  // bool
-              'toggleStatus': false  // bool
+              },
+              'afterClick': function(e) {
+                  if(this.toggled()) {
+                      newPoly = new L.PM.Draw.Poly(map);
+                      newPoly.enable();
+                  } else {
+                      newPoly.disable();
+                  }
+              },
+              'hideText': true,
+              'maxWidth': 30,
+              'doToggle': true,
+              'toggleStatus': false
         };
 
-        var myButton = new L.Control.PMButton(myButtonOptions).addTo(map);
-    }
+        var myButton = new L.Control.PMButton(drawPolyButton).addTo(map);
+    },
+    Edit: {},
+    Draw: {}
 };
 
 L.Control.PMButton = L.Control.extend({
@@ -52,7 +62,7 @@ L.Control.PMButton = L.Control.extend({
 
         this._container = container;
 
-        this._update();
+        this._makeButton(this._button);
         return this._container;
     },
 
@@ -64,6 +74,7 @@ L.Control.PMButton = L.Control.extend({
             'text': options.text,
             'iconUrl': options.iconUrl,
             'onClick': options.onClick,
+            'afterClick': options.afterClick,
             'hideText': !!options.hideText,
             'maxWidth': options.maxWidth || 70,
             'doToggle': options.doToggle,
@@ -71,7 +82,6 @@ L.Control.PMButton = L.Control.extend({
         };
 
         this._button = button;
-        this._update();
     },
 
     getText: function () {
@@ -94,19 +104,10 @@ L.Control.PMButton = L.Control.extend({
         else{
             this._button.toggleStatus = !this._button.toggleStatus;
         }
-        this._update();
     },
-
-    _update: function () {
-        if (!this._map) {
-            return;
-        }
-
-        this._container.innerHTML = '';
-        this._makeButton(this._button);
-
+    toggled: function () {
+        return this._button.toggleStatus;
     },
-
     _makeButton: function (button) {
 
         var newButton = L.DomUtil.create('div', 'leaflet-buttons-control-button', this._container);
@@ -128,8 +129,10 @@ L.Control.PMButton = L.Control.extend({
 
         L.DomEvent
             .addListener(newButton, 'click', L.DomEvent.stop)
-            .addListener(newButton, 'click', button.onClick,this)
-            .addListener(newButton, 'click', this._clicked,this);
+            .addListener(newButton, 'click', button.onClick, this)
+            .addListener(newButton, 'click', this._clicked, this)
+            .addListener(newButton, 'click', button.afterClick, this);
+
         L.DomEvent.disableClickPropagation(newButton);
         return newButton;
 
@@ -152,8 +155,41 @@ L.Control.PMButton = L.Control.extend({
 
 });
 
+L.PM.Draw.Poly = L.Class.extend({
 
-L.PM.Poly = L.Class.extend({
+    initialize: function(map) {
+        this._map = map;
+    },
+
+    enable: function() {
+
+        this._map._container.style.cursor = 'crosshair';
+
+        this._map.on('click', this._createPolygonPoint, this);
+    },
+    disable: function() {
+
+        this._map._container.style.cursor = 'default';
+
+        this._map.off('click', this._createPolygonPoint);
+    },
+    _createPolygonPoint: function(e) {
+        console.log(e.latlng);
+        this._createMarker(e.latlng);
+    },
+    _createMarker: function(latlng, index) {
+
+        var marker = new L.Marker(latlng, {
+            draggable: false,
+            icon: L.divIcon({className: 'marker-icon'})
+        });
+
+        return marker;
+
+    },
+});
+
+L.PM.Edit.Poly = L.Class.extend({
 
     initialize: function(poly) {
         this._poly = poly;
@@ -382,7 +418,7 @@ L.PM.Poly = L.Class.extend({
 });
 
 
-L.PM.LayerGroup = L.Class.extend({
+L.PM.Edit.LayerGroup = L.Class.extend({
     initialize: function(layerGroup) {
         var self = this;
         this._layerGroup = layerGroup;
