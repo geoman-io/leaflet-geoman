@@ -19,7 +19,6 @@ L.PM = L.PM || {
         };
         L.Polygon.addInitHook(initPolygon);
 
-        var newPoly
         var drawPolyButton = {
               'text': '',
               'iconUrl': 'images/myButton.png',
@@ -41,6 +40,12 @@ L.PM = L.PM || {
         };
 
         var myButton = new L.Control.PMButton(drawPolyButton).addTo(map);
+
+        map.on('pm:create', function() {
+            // fire button click to toggle / disable
+            myButton._clicked();
+        });
+
     },
     Edit: {},
     Draw: {}

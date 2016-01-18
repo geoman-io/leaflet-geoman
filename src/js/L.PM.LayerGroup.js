@@ -6,8 +6,8 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         this._layers = layerGroup.getLayers();
 
         for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].on('edit', function() {
-                self._layerGroup.fireEvent('edit');
+            this._layers[i].on('pm:edit', function() {
+                self._layerGroup.fireEvent('pm:edit');
             });
         }
     },

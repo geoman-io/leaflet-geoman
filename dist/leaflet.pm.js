@@ -19,7 +19,6 @@ L.PM = L.PM || {
         };
         L.Polygon.addInitHook(initPolygon);
 
-        var newPoly
         var drawPolyButton = {
               'text': '',
               'iconUrl': 'images/myButton.png',
@@ -41,6 +40,12 @@ L.PM = L.PM || {
         };
 
         var myButton = new L.Control.PMButton(drawPolyButton).addTo(map);
+
+        map.on('pm:create', function() {
+            // fire button click to toggle / disable
+            myButton._clicked();
+        });
+
     },
     Edit: {},
     Draw: {}
@@ -108,6 +113,9 @@ L.Control.PMButton = L.Control.extend({
     toggled: function () {
         return this._button.toggleStatus;
     },
+    onCreate: function() {
+        this.toggle(false);
+    },
     _makeButton: function (button) {
 
         var newButton = L.DomUtil.create('div', 'leaflet-buttons-control-button', this._container);
@@ -159,30 +167,64 @@ L.PM.Draw.Poly = L.Class.extend({
 
     initialize: function(map) {
         this._map = map;
+
+
     },
 
     enable: function() {
 
+        this._layerGroup = new L.LayerGroup();
+        this._layerGroup.addTo(map);
+
+        this._polyline = L.polyline([], {color: 'red'});
+        this._layerGroup.addLayer(this._polyline);
+
         this._map._container.style.cursor = 'crosshair';
 
         this._map.on('click', this._createPolygonPoint, this);
+
     },
     disable: function() {
 
         this._map._container.style.cursor = 'default';
 
         this._map.off('click', this._createPolygonPoint);
+
+        this._map.removeLayer(this._layerGroup);
+
     },
     _createPolygonPoint: function(e) {
-        console.log(e.latlng);
-        this._createMarker(e.latlng);
+
+        // is this the first point?
+        var first = this._polyline.getLatLngs().length === 0 ? true : false;
+
+        this._polyline.addLatLng(e.latlng);
+        this._createMarker(e.latlng, first);
+
     },
-    _createMarker: function(latlng, index) {
+    _finishPolygon: function() {
+
+        var coords = this._polyline.getLatLngs();
+        var polygonLayer = L.polygon(coords).addTo(map);
+
+        polygonLayer.pm.toggleEdit();
+
+        this.disable();
+
+        this._map.fireEvent('pm:create', polygonLayer);
+    },
+    _createMarker: function(latlng, first) {
 
         var marker = new L.Marker(latlng, {
             draggable: false,
             icon: L.divIcon({className: 'marker-icon'})
         });
+
+        this._layerGroup.addLayer(marker);
+
+        if(first) {
+            marker.on('click', this._finishPolygon, this);
+        }
 
         return marker;
 
@@ -402,7 +444,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _fireEdit: function () {
         this._poly.edited = true;
-        this._poly.fireEvent('edit');
+        this._poly.fireEvent('pm:edit');
     },
 
     _calcMiddleLatLng: function(leftM, rightM) {
@@ -425,8 +467,8 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         this._layers = layerGroup.getLayers();
 
         for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].on('edit', function() {
-                self._layerGroup.fireEvent('edit');
+            this._layers[i].on('pm:edit', function() {
+                self._layerGroup.fireEvent('pm:edit');
             });
         }
     },

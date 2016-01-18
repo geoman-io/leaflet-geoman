@@ -6,6 +6,10 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 L.PM.initialize(map);
 
+map.on('pm:create', function(layer) {
+    console.log('new layer created');
+    console.log(layer);
+});
 
 var t;
 var highlight = function(el) {
@@ -68,7 +72,7 @@ var geoJsonData = {
 };
 var geoJsonButton = document.getElementById('test-geojson');
 var geoJsonLayer = L.geoJson(geoJsonData).addTo(map);
-geoJsonLayer.on('edit', function() {
+geoJsonLayer.on('pm:edit', function() {
     highlight(geoJsonButton);
 });
 geoJsonButton.addEventListener('click', function() {
@@ -98,7 +102,7 @@ polygonButton.addEventListener('click', function() {
     polygonLayer.pm.toggleEdit();
 
 });
-polygonLayer.on('edit', function() {
+polygonLayer.on('pm:edit', function() {
     highlight(polygonButton);
 });
 
@@ -131,6 +135,6 @@ layerGroupButton.addEventListener('click', function() {
     layerGroup.pm.toggleEdit();
 
 });
-layerGroup.on('edit', function() {
+layerGroup.on('pm:edit', function() {
     highlight(layerGroupButton);
 });
