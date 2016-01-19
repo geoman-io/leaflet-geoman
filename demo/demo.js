@@ -1,28 +1,23 @@
-var map = L.map('map').setView([51.505, -0.09], 13);
+var map2 = L.map('example2').setView([51.505, -0.09], 13);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+}).addTo(map2);
 
-L.PM.initialize(map);
+var map3 = L.map('example3').setView([51.505, -0.09], 13);
 
-map.on('pm:create', function(layer) {
-    console.log('new layer created');
-    console.log(layer);
-});
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map3);
 
-var t;
-var highlight = function(el) {
+var map4 = L.map('example4').setView([51.505, -0.09], 13);
 
-    window.clearTimeout(t);
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map4);
 
-    el.classList.add('highlight');
-
-    t = window.setTimeout(function () {
-        el.classList.remove('highlight');
-    }, 70);
-};
-
+L.PM.initialize();
+L.PM.addControls(map2);
 
 // GEOSJON EXAMPLE
 
@@ -71,17 +66,12 @@ var geoJsonData = {
     ]
 };
 var geoJsonButton = document.getElementById('test-geojson');
-var geoJsonLayer = L.geoJson(geoJsonData).addTo(map);
-geoJsonLayer.on('pm:edit', function() {
-    highlight(geoJsonButton);
-});
-geoJsonButton.addEventListener('click', function() {
-
-    var bounds = geoJsonLayer.getBounds();
-    map.fitBounds(bounds);
-
+var geoJsonLayer = L.geoJson(geoJsonData).addTo(map3);
+geoJsonLayer.pm.toggleEdit();
+var bounds = geoJsonLayer.getBounds();
+map3.fitBounds(bounds);
+geoJsonLayer.addEventListener('click', function() {
     geoJsonLayer.pm.toggleEdit();
-
 });
 
 
@@ -91,20 +81,8 @@ var polygonLayer = L.polygon([
     [51.509, -0.08],
     [51.503, -0.06],
     [51.51, -0.047]
-]).addTo(map);
-
-var polygonButton = document.getElementById('test-polygon');
-polygonButton.addEventListener('click', function() {
-
-    var bounds = polygonLayer.getBounds();
-    map.fitBounds(bounds);
-
-    polygonLayer.pm.toggleEdit();
-
-});
-polygonLayer.on('pm:edit', function() {
-    highlight(polygonButton);
-});
+]).addTo(map3);
+polygonLayer.pm.toggleEdit();
 
 
 // Layer Group Example
@@ -120,21 +98,5 @@ var layerGroupItem2 = L.polygon([
     [51.52, -0.05]
 ]);
 
-var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2]).addTo(map);
-var layerGroupButton = document.getElementById('test-layergroup');
-layerGroupButton.addEventListener('click', function() {
-
-    var bounds = [];
-    var layers = layerGroup.getLayers();
-
-    for(var i=0; i<layers.length; i++) {
-        bounds.push(layers[i].getBounds());
-    }
-    map.fitBounds(bounds);
-
-    layerGroup.pm.toggleEdit();
-
-});
-layerGroup.on('pm:edit', function() {
-    highlight(layerGroupButton);
-});
+var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
+layerGroup.pm.toggleEdit();

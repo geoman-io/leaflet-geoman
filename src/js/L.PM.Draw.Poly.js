@@ -9,7 +9,7 @@ L.PM.Draw.Poly = L.Class.extend({
     enable: function() {
 
         this._layerGroup = new L.LayerGroup();
-        this._layerGroup.addTo(map);
+        this._layerGroup.addTo(this._map);
 
         this._polyline = L.polyline([], {color: 'red'});
         this._layerGroup.addLayer(this._polyline);
@@ -40,7 +40,7 @@ L.PM.Draw.Poly = L.Class.extend({
     _finishPolygon: function() {
 
         var coords = this._polyline.getLatLngs();
-        var polygonLayer = L.polygon(coords).addTo(map);
+        var polygonLayer = L.polygon(coords).addTo(this._map);
 
         polygonLayer.pm.toggleEdit();
 

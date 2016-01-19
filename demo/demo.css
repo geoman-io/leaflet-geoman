@@ -1,5 +1,7 @@
 html, body {
     font-family: Arial, Verdana;
+    background-color: #EEF1EF;
+    font-size: 16px;
 }
 
 html, body {
@@ -12,79 +14,29 @@ h1, h2, h3, h4, h5 {
     font-weight: normal;
 }
 
+h1 {
+    margin-top: 2em;
+    font-size: 2em;
+    border-bottom: 1px solid #ccc;
+}
+
+h2 {
+    margin-top: 1.5em;
+    font-size: 1.8em;
+    border-bottom: 1px solid #ccc;
+}
+h3 {
+    font-size: 1.5em;
+}
+
 .wrapper {
     box-sizing: border-box;
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
+    padding: 30px;
+    max-width: 1000px;
+    margin: auto;
 }
 
-aside {
-    flex-grow: 1;
-    width: 350px;
-    flex-grow: 0;
-    background-color: #37393A;
-    color: #E8EEF2;
-    border-right: 2px solid rgba(255, 255, 255, .5);
-    box-sizing: border-box;
-    padding: 20px;
-
-}
-
-ul {
-    list-style: none;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-ul li {
-    padding: 15px;
-    border-bottom: 1px solid #ccc;
-    transition: all ease .3s;
-}
-
-.highlight {
-    transition: all ease .1s;
-    background-color: #DBFEB8 !important;
-}
-
-ul li:last-child {
-    border-bottom: 0px;
-}
-
-ul li:hover {
-    background-color: #555;
-    cursor: pointer;
-}
-
-.content {
-    flex-grow: 1;
-}
-
-#map {
-    height: 100%;
-}
-
-.btn {
-    padding: .7em 1em;
-    background-color: #333;
-    border-radius: 5px;
-    display: inline-block;
-    color: #fff;
-}
-
-.btn:hover {
-    cursor: pointer;
-}
-
-.marker-icon, .marker-icon:focus {
-    background-color: #ffffff;
-    border: 1px solid #3388FF;
-    border-radius: 50%;
-    margin: -7px 0 0 -7px !important;
-    width: 14px !important;
-    height: 14px !important;
-    outline: 0;
+.map {
+    height: 400px;
 }

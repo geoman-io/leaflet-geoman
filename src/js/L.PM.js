@@ -6,7 +6,7 @@
 */
 
 L.PM = L.PM || {
-    initialize: function(map) {
+    initialize: function() {
 
         var initLayerGroup = function() {
             this.pm = new L.PM.Edit.LayerGroup(this);
@@ -18,6 +18,11 @@ L.PM = L.PM || {
             this.pm = new L.PM.Edit.Poly(this);
         };
         L.Polygon.addInitHook(initPolygon);
+
+
+
+    },
+    addControls: function(map) {
 
         var drawPolyButton = {
               'iconUrl': 'assets/icons/polygon.png',
