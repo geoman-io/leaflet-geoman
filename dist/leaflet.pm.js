@@ -20,8 +20,7 @@ L.PM = L.PM || {
         L.Polygon.addInitHook(initPolygon);
 
         var drawPolyButton = {
-              'text': '',
-              'iconUrl': 'images/myButton.png',
+              'iconUrl': 'assets/icons/polygon.png',
               'onClick': function() {
 
               },
@@ -33,8 +32,6 @@ L.PM = L.PM || {
                       newPoly.disable();
                   }
               },
-              'hideText': true,
-              'maxWidth': 30,
               'doToggle': true,
               'toggleStatus': false
         };
@@ -76,12 +73,9 @@ L.Control.PMButton = L.Control.extend({
 
     setButton: function (options) {
         var button = {
-            'text': options.text,
             'iconUrl': options.iconUrl,
             'onClick': options.onClick,
             'afterClick': options.afterClick,
-            'hideText': !!options.hideText,
-            'maxWidth': options.maxWidth || 70,
             'doToggle': options.doToggle,
             'toggleStatus': false
         };
@@ -122,18 +116,8 @@ L.Control.PMButton = L.Control.extend({
         if(button.toggleStatus)
             L.DomUtil.addClass(newButton,'active');
 
-        var image = L.DomUtil.create('span', 'fa fa-stop', newButton);
-
-        if(button.text !== ''){
-
-            L.DomUtil.create('br','',newButton);    //there must be a better way
-
-            var span = L.DomUtil.create('span', 'leaflet-buttons-control-text', newButton);
-            var text = document.createTextNode(button.text);    //is there an L.DomUtil for this?
-            span.appendChild(text);
-            if(button.hideText)
-                L.DomUtil.addClass(span,'leaflet-buttons-control-text-hide');
-        }
+        var image = L.DomUtil.create('img', 'control-icon', newButton);
+        console.log(image.setAttribute('src', button.iconUrl));
 
         L.DomEvent
             .addListener(newButton, 'click', L.DomEvent.stop)

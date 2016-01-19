@@ -35,9 +35,15 @@ gulp.task('styles', function() {
     .pipe(gulp.dest('dist/'));
 });
 
+gulp.task('assets', function() {
+    return gulp.src(['src/assets/**/*'])
+    .pipe(gulp.dest('dist/assets/'))
+    .pipe(gulp.dest('demo/assets/'));
+});
+
 gulp.task('watch', function() {
     gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('build', ['scripts', 'styles']);
+gulp.task('build', ['scripts', 'styles', 'assets']);
 gulp.task('default', ['build']);

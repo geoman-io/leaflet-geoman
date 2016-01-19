@@ -10,12 +10,12 @@
   color: black;
   border-radius: 4px;
   box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+  padding: 3px;
+  box-sizing: border-box;
 }
 
-.leaflet-buttons-control-button span {
-  width: 26px;
-  height: 26px;
-  line-height: 26px;
+.leaflet-buttons-control-button img {
+  width: 100%;
 }
 
 .leaflet-buttons-control-button:hover {
@@ -27,7 +27,7 @@
   background-color: #f4f4f4;
 }
 
-.leaflet-buttons-control-button.active span {
+.leaflet-buttons-control-button.active img {
   opacity: .5;
 }
 

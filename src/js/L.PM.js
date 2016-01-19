@@ -20,8 +20,7 @@ L.PM = L.PM || {
         L.Polygon.addInitHook(initPolygon);
 
         var drawPolyButton = {
-              'text': '',
-              'iconUrl': 'images/myButton.png',
+              'iconUrl': 'assets/icons/polygon.png',
               'onClick': function() {
 
               },
@@ -33,8 +32,6 @@ L.PM = L.PM || {
                       newPoly.disable();
                   }
               },
-              'hideText': true,
-              'maxWidth': 30,
               'doToggle': true,
               'toggleStatus': false
         };
