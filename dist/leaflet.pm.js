@@ -5,9 +5,222 @@
 * Github Repo: https://github.com/codeofsumit/leaflet.pm
 */
 
-L.PM = L.PM || {};
+L.PM = L.PM || {
+    initialize: function() {
 
-L.PM.Poly = L.Handler.extend({
+        var initLayerGroup = function() {
+            this.pm = new L.PM.Edit.LayerGroup(this);
+        };
+        L.LayerGroup.addInitHook(initLayerGroup);
+
+
+        var initPolygon = function() {
+            this.pm = new L.PM.Edit.Poly(this);
+        };
+        L.Polygon.addInitHook(initPolygon);
+
+
+
+    },
+    addControls: function(map) {
+
+        var drawPolyButton = {
+              'iconUrl': 'assets/icons/polygon.png',
+              'onClick': function() {
+
+              },
+              'afterClick': function(e) {
+                  if(this.toggled()) {
+                      newPoly = new L.PM.Draw.Poly(map);
+                      newPoly.enable();
+                  } else {
+                      newPoly.disable();
+                  }
+              },
+              'doToggle': true,
+              'toggleStatus': false
+        };
+
+        var myButton = new L.Control.PMButton(drawPolyButton).addTo(map);
+
+        map.on('pm:create', function() {
+            // fire button click to toggle / disable
+            myButton._clicked();
+        });
+
+    },
+    Edit: {},
+    Draw: {}
+};
+
+L.Control.PMButton = L.Control.extend({
+    options: {
+        position: 'topleft'
+    },
+    initialize: function (options) {
+        this._button = {};
+        this.setButton(options);
+    },
+
+    onAdd: function (map) {
+
+        this._map = map;
+        var container = L.DomUtil.create('div', 'leaflet-control-button');
+
+        this._container = container;
+
+        this._makeButton(this._button);
+        return this._container;
+    },
+
+    onRemove: function (map) {
+    },
+
+    setButton: function (options) {
+        var button = {
+            'iconUrl': options.iconUrl,
+            'onClick': options.onClick,
+            'afterClick': options.afterClick,
+            'doToggle': options.doToggle,
+            'toggleStatus': false
+        };
+
+        this._button = button;
+    },
+
+    getText: function () {
+        return this._button.text;
+    },
+
+    getIconUrl: function () {
+        return this._button.iconUrl;
+    },
+
+    destroy: function () {
+        this._button = {};
+        this._update();
+    },
+
+    toggle: function (e) {
+        if(typeof e === 'boolean'){
+            this._button.toggleStatus = e;
+        }
+        else{
+            this._button.toggleStatus = !this._button.toggleStatus;
+        }
+    },
+    toggled: function () {
+        return this._button.toggleStatus;
+    },
+    onCreate: function() {
+        this.toggle(false);
+    },
+    _makeButton: function (button) {
+
+        var newButton = L.DomUtil.create('div', 'leaflet-buttons-control-button', this._container);
+        if(button.toggleStatus)
+            L.DomUtil.addClass(newButton,'active');
+
+        var image = L.DomUtil.create('img', 'control-icon', newButton);
+        console.log(image.setAttribute('src', button.iconUrl));
+
+        L.DomEvent
+            .addListener(newButton, 'click', L.DomEvent.stop)
+            .addListener(newButton, 'click', button.onClick, this)
+            .addListener(newButton, 'click', this._clicked, this)
+            .addListener(newButton, 'click', button.afterClick, this);
+
+        L.DomEvent.disableClickPropagation(newButton);
+        return newButton;
+
+    },
+
+    _clicked: function () {
+
+        if(this._button.doToggle){
+
+            if(this._button.toggleStatus) {
+                L.DomUtil.removeClass(this._container.childNodes[0],'active');
+            }
+            else {
+                L.DomUtil.addClass(this._container.childNodes[0],'active');
+            }
+            this.toggle();
+        }
+        return;
+    }
+
+});
+
+L.PM.Draw.Poly = L.Class.extend({
+
+    initialize: function(map) {
+        this._map = map;
+
+
+    },
+
+    enable: function() {
+
+        this._layerGroup = new L.LayerGroup();
+        this._layerGroup.addTo(this._map);
+
+        this._polyline = L.polyline([], {color: 'red'});
+        this._layerGroup.addLayer(this._polyline);
+
+        this._map._container.style.cursor = 'crosshair';
+
+        this._map.on('click', this._createPolygonPoint, this);
+
+    },
+    disable: function() {
+
+        this._map._container.style.cursor = 'default';
+
+        this._map.off('click', this._createPolygonPoint);
+
+        this._map.removeLayer(this._layerGroup);
+
+    },
+    _createPolygonPoint: function(e) {
+
+        // is this the first point?
+        var first = this._polyline.getLatLngs().length === 0 ? true : false;
+
+        this._polyline.addLatLng(e.latlng);
+        this._createMarker(e.latlng, first);
+
+    },
+    _finishPolygon: function() {
+
+        var coords = this._polyline.getLatLngs();
+        var polygonLayer = L.polygon(coords).addTo(this._map);
+
+        polygonLayer.pm.toggleEdit();
+
+        this.disable();
+
+        this._map.fireEvent('pm:create', polygonLayer);
+    },
+    _createMarker: function(latlng, first) {
+
+        var marker = new L.Marker(latlng, {
+            draggable: false,
+            icon: L.divIcon({className: 'marker-icon'})
+        });
+
+        this._layerGroup.addLayer(marker);
+
+        if(first) {
+            marker.on('click', this._finishPolygon, this);
+        }
+
+        return marker;
+
+    },
+});
+
+L.PM.Edit.Poly = L.Class.extend({
 
     initialize: function(poly) {
         this._poly = poly;
@@ -187,16 +400,17 @@ L.PM.Poly = L.Handler.extend({
     },
 
     _onMarkerDrag: function(e) {
+
         // dragged marker
-		var marker = e.target;
+        var marker = e.target;
 
         // the dragged markers neighbors
         var nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
         var prevMarkerIndex = marker._index - 1 < 0 ? this._markers.length - 1 : marker._index - 1;
 
         // update marker coordinates which will update polygon coordinates
-		L.extend(marker._origLatLng, marker._latlng);
-		this._poly.redraw();
+        L.extend(marker._origLatLng, marker._latlng);
+        this._poly.redraw();
 
         // update middle markers on the left and right
         // be aware that "left" and "right" might be interchanged, depending on the geojson array
@@ -207,7 +421,7 @@ L.PM.Poly = L.Handler.extend({
         var middleMarkerLeftLatLng = this._calcMiddleLatLng(marker, this._markers[prevMarkerIndex]);
         marker._middleMarkerLeft.setLatLng(middleMarkerLeftLatLng);
 
-	},
+    },
 
     _onMarkerDragEnd: function(e) {
 
@@ -218,40 +432,35 @@ L.PM.Poly = L.Handler.extend({
     },
 
     _fireEdit: function () {
-		this._poly.edited = true;
-		this._poly.fireEvent('edit');
-	},
+        this._poly.edited = true;
+        this._poly.fireEvent('pm:edit');
+    },
 
     _calcMiddleLatLng: function(leftM, rightM) {
         var map = this._poly._map,
-		    p1 = map.project(leftM.getLatLng()),
-		    p2 = map.project(rightM.getLatLng());
+            p1 = map.project(leftM.getLatLng()),
+            p2 = map.project(rightM.getLatLng());
 
-		var latlng = map.unproject(p1._add(p2)._divideBy(2));
+        var latlng = map.unproject(p1._add(p2)._divideBy(2));
 
         return latlng;
     }
 
 });
 
-var initPolygon = function() {
-    this.pm = new L.PM.Poly(this);
-}
-L.Polygon.addInitHook(initPolygon);
 
-
-
-L.PM.LayerGroup = L.Handler.extend({
+L.PM.Edit.LayerGroup = L.Class.extend({
     initialize: function(layerGroup) {
         var self = this;
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
         for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].on('edit', function() {
-                self._layerGroup.fireEvent('edit');
-            });
+            this._layers[i].on('pm:edit', this._fireEdit, this);
         }
+    },
+    _fireEdit: function() {
+        this._layerGroup.fireEvent('pm:edit');
     },
     toggleEdit: function() {
 
@@ -283,8 +492,3 @@ L.PM.LayerGroup = L.Handler.extend({
         return enabled;
     }
 });
-
-var initLayerGroup = function() {
-    this.pm = new L.PM.LayerGroup(this);
-}
-L.LayerGroup.addInitHook(initLayerGroup);
