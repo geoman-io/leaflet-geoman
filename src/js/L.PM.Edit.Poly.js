@@ -86,7 +86,8 @@ L.PM.Edit.Poly = L.Class.extend({
         var latlng = this._calcMiddleLatLng(leftM, rightM);
 
         var middleMarker = this._createMarker(latlng);
-        middleMarker.setOpacity(0.7);
+        var icon = L.divIcon({className: 'marker-icon marker-icon-middle'})
+        middleMarker.setIcon(icon);
 
         // save middle markers to the other markers
         leftM._middleMarkerRight = middleMarker;
@@ -106,7 +107,8 @@ L.PM.Edit.Poly = L.Class.extend({
     _addMarker: function(newM, leftM, rightM) {
 
         // first, make this middlemarker a regular marker
-        newM.setOpacity(1);
+        var icon = L.divIcon({className: 'marker-icon'})
+        newM.setIcon(icon);
         newM.off('dragstart');
         newM.off('click');
 

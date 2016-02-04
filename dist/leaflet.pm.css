@@ -34,15 +34,21 @@
 .leaflet-buttons-control-text-hide {
   display: none;
 }
-
-
 .marker-icon,
 .marker-icon:focus {
   background-color: #ffffff;
   border: 1px solid #3388FF;
   border-radius: 50%;
-  margin: -7px 0 0 -7px !important;
+  margin: -8px 0 0 -8px !important;
   width: 14px !important;
   height: 14px !important;
   outline: 0;
+  transition: opacity ease .3s;
+}
+
+.marker-icon-middle {
+  opacity: .7;
+  margin: -6px 0 0 -6px !important;
+  width: 10px !important;
+  height: 10px !important;
 }
