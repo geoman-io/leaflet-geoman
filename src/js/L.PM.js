@@ -16,7 +16,6 @@ L.PM = L.PM || {
 
         var initPolygon = function() {
             this.pm = new L.PM.Edit.Poly(this);
-            console.log(this);
         };
         L.Polygon.addInitHook(initPolygon);
 
