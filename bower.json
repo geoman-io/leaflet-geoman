@@ -1,7 +1,10 @@
 {
   "name": "leaflet.pm",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
-  "main": "dist/leaflet.pm.min.js",
+  "main": [
+    "dist/leaflet.pm.min.js",
+    "dist/leaflet.pm.min.css"
+  ],
   "authors": [
     "Sumit Kumar <sk@outlook.com>"
   ],
