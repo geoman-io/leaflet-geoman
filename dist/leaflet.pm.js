@@ -48,6 +48,8 @@ L.PM = L.PM || {
             myButton._clicked();
         });
 
+        return [myButton];
+
     },
     Edit: {},
     Draw: {}
