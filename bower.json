@@ -1,0 +1,24 @@
+{
+  "name": "leaflet.pm",
+  "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
+  "main": "dist/leaflet.pm.min.js",
+  "authors": [
+    "Sumit Kumar <sk@outlook.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "leaflet",
+    "geometry",
+    "layers",
+    "maps"
+  ],
+  "homepage": "http://codeofsumit.github.io/leaflet.pm/",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
