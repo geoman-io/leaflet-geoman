@@ -30,6 +30,9 @@ L.PM = L.PM || {
 
               },
               'afterClick': function(e) {
+
+                  var newPoly;
+                  
                   if(this.toggled()) {
                       newPoly = new L.PM.Draw.Poly(map);
                       newPoly.enable();
