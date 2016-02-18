@@ -1,12 +1,10 @@
-L.PM.Draw.Poly = L.Class.extend({
+L.PM.Draw.Poly = {
 
-    initialize: function(map) {
+    enable: function(map) {
+
+        var self = this;
+
         this._map = map;
-
-
-    },
-
-    enable: function() {
 
         this._layerGroup = new L.LayerGroup();
         this._layerGroup.addTo(this._map);
@@ -17,6 +15,10 @@ L.PM.Draw.Poly = L.Class.extend({
         this._map._container.style.cursor = 'crosshair';
 
         this._map.on('click', this._createPolygonPoint, this);
+
+        this._map.disableDraw = function() {
+            self.disable();
+        };
 
     },
     disable: function() {
@@ -64,4 +66,4 @@ L.PM.Draw.Poly = L.Class.extend({
         return marker;
 
     },
-});
+};

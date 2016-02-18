@@ -22,6 +22,11 @@ L.PM = L.PM || {
 
 
     },
+    enableDraw: function(options) {
+
+        L.PM.Draw.Poly.enable(options.map);
+
+    },
     addControls: function(map) {
 
         var drawPolyButton = {
@@ -31,13 +36,12 @@ L.PM = L.PM || {
               },
               'afterClick': function(e) {
 
-                  var newPoly;
-                  
                   if(this.toggled()) {
-                      newPoly = new L.PM.Draw.Poly(map);
-                      newPoly.enable();
+                      L.PM.enableDraw({
+                          map: map
+                      });
                   } else {
-                      newPoly.disable();
+                     map.disableDraw();
                   }
               },
               'doToggle': true,
@@ -156,15 +160,13 @@ L.Control.PMButton = L.Control.extend({
 
 });
 
-L.PM.Draw.Poly = L.Class.extend({
+L.PM.Draw.Poly = {
 
-    initialize: function(map) {
+    enable: function(map) {
+
+        var self = this;
+
         this._map = map;
-
-
-    },
-
-    enable: function() {
 
         this._layerGroup = new L.LayerGroup();
         this._layerGroup.addTo(this._map);
@@ -175,6 +177,10 @@ L.PM.Draw.Poly = L.Class.extend({
         this._map._container.style.cursor = 'crosshair';
 
         this._map.on('click', this._createPolygonPoint, this);
+
+        this._map.disableDraw = function() {
+            self.disable();
+        };
 
     },
     disable: function() {
@@ -222,7 +228,7 @@ L.PM.Draw.Poly = L.Class.extend({
         return marker;
 
     },
-});
+};
 
 L.PM.Edit.Poly = L.Class.extend({
 
