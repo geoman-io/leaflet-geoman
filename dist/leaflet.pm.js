@@ -131,13 +131,14 @@ L.Control.PMButton = L.Control.extend({
     onCreate: function() {
         this.toggle(false);
     },
-    _makeButton: function (button) {
+    _makeButton: function(button) {
 
         var newButton = L.DomUtil.create('div', 'leaflet-buttons-control-button', this._container);
         if(button.toggleStatus)
             L.DomUtil.addClass(newButton,'active');
 
         var image = L.DomUtil.create('img', 'control-icon', newButton);
+        image.setAttribute('src', button.iconUrl);
 
         L.DomEvent
             .addListener(newButton, 'click', L.DomEvent.stop)
