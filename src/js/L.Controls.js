@@ -27,7 +27,7 @@ L.Control.PMButton = L.Control.extend({
             'onClick': options.onClick,
             'afterClick': options.afterClick,
             'doToggle': options.doToggle,
-            'toggleStatus': false
+            'toggleStatus': options.toggleStatus
         };
 
         this._button = button;
