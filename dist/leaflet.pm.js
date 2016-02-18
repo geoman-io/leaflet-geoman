@@ -27,6 +27,13 @@ L.PM = L.PM || {
         L.PM.Draw.Poly.enable(options.map);
 
     },
+    disableDraw: function(map) {
+
+        if(map.disableDraw) {
+            map.disableDraw();
+        }
+
+    },
     addControls: function(map) {
 
         var drawPolyButton = {
@@ -41,7 +48,7 @@ L.PM = L.PM || {
                           map: map
                       });
                   } else {
-                     map.disableDraw();
+                      L.PM.disableDraw(map);
                   }
               },
               'doToggle': true,
