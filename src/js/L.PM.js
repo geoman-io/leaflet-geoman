@@ -22,6 +22,11 @@ L.PM = L.PM || {
 
 
     },
+    enableDraw: function(options) {
+
+        L.PM.Draw.Poly.enable(options.map);
+
+    },
     addControls: function(map) {
 
         var drawPolyButton = {
@@ -31,13 +36,12 @@ L.PM = L.PM || {
               },
               'afterClick': function(e) {
 
-                  var newPoly;
-                  
                   if(this.toggled()) {
-                      newPoly = new L.PM.Draw.Poly(map);
-                      newPoly.enable();
+                      L.PM.enableDraw({
+                          map: map
+                      });
                   } else {
-                      newPoly.disable();
+                     map.disableDraw();
                   }
               },
               'doToggle': true,
