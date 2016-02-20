@@ -70,7 +70,6 @@ L.Control.PMButton = L.Control.extend({
         image.setAttribute('src', button.iconUrl);
 
         L.DomEvent
-            .addListener(newButton, 'click', L.DomEvent.stop)
             .addListener(newButton, 'click', button.onClick, this)
             .addListener(newButton, 'click', this._clicked, this)
             .addListener(newButton, 'click', button.afterClick, this);
