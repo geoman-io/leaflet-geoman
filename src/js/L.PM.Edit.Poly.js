@@ -15,6 +15,8 @@ L.PM.Edit.Poly = L.Class.extend({
 
     enable: function() {
 
+        var self = this;
+
         if(!this.enabled()) {
             this._enabled = true;
 
@@ -26,6 +28,10 @@ L.PM.Edit.Poly = L.Class.extend({
             }
 
             this._poly._map.addLayer(this._markerGroup);
+
+            this._poly.on('remove', function() {
+                self.disable();
+            });
         }
 
     },
