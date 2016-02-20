@@ -20,6 +20,8 @@ L.PM.Draw.Poly = {
             self.disable();
         };
 
+        this._map.fireEvent('pm:drawstart');
+
     },
     disable: function() {
 
@@ -28,6 +30,8 @@ L.PM.Draw.Poly = {
         this._map.off('click', this._createPolygonPoint);
 
         this._map.removeLayer(this._layerGroup);
+
+        this._map.fireEvent('pm:drawend');
 
     },
     _createPolygonPoint: function(e) {
