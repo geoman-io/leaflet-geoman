@@ -1,5 +1,5 @@
 # Leaflet Polygon Management
-A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
+A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 beta (v2) I created this plugin myself due to a lack of alternatives.
@@ -8,23 +8,77 @@ As we are always using the latest leaflet version in a big production app, I wil
 #### [Demo](http://codeofsumit.github.io/leaflet.pm/)
 
 ### Getting Started
-Include `leaflet.pm.min.js` in your project. Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/releases).
-Then, you can simply start editing on your layers.
+
+#### Install via Bower
+`bower install leaflet.pm --save`
+
+#### Install Manually
+Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/releases). Include `leaflet.pm.min.js` and `leaflet.pm.css` in your project.
+
+
+#### Init Leaflet.PM
+
+Use `L.PM.initialize();` to start up the library.
+
+
+##### Edit Mode
+Use Edit Mode for a layer like this:
+
 ```
 var polygonLayer = L.geoJson(data).addTo(map);
+
+// enable edit mode
+polygonLayer.pm.enable();
+
+// disable edit mode
+polygonLayer.pm.disable();
+
+// toggle edit mode
 polygonLayer.pm.toggleEdit();
+
+// check if edit mode is enabled
+polygonLayer.pm.enabled(); // returns true/false
+
+// listen to changes
+polygonLayer.on('pm:edit', function() {//...});
+
 ```
 
-##### Listen To Changes
-`polygonLayer.on('pm:edit', function() {//...});`
+##### Drawing Mode
+Use Drawing Mode on a map like this
 
-##### Listen To New Drawings
-`map.on('pm:create', function() {//...});`
 
-For more advanced usage, examples and detailed code snippets, check out the [Demo Page](http://codeofsumit.github.io/leaflet.pm/)
+```
+// enable drawing mode
+var options = {
+    map: map
+};
+
+L.PM.enableDraw(options);
+
+// listen to when drawing mode gets enabled
+map.on('pm:drawstart', function() {//...});
+
+
+// disable drawing mode
+L.PM.disableDraw(map);
+
+// listen to when drawing mode gets disabled
+map.on('pm:drawend', function() {//...});
+
+
+// add a control button to the map which can toggle drawing mode
+L.PM.addControls(map);
+
+// listen to when a new layer is created
+map.on('pm:create', function(layer) {//...});
+
+```
+
 
 ### Credit
 As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be suprised to see some familiar code.
+
 
 ### License
 Released under the MIT license.
