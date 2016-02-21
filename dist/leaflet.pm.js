@@ -57,9 +57,16 @@ L.PM = L.PM || {
 
         var myButton = new L.Control.PMButton(drawPolyButton).addTo(map);
 
-        map.on('pm:create', function() {
-            // fire button click to toggle / disable
-            myButton._clicked();
+        map.on('pm:drawstart', function() {
+            if(!myButton.toggled()) {
+                myButton._clicked();
+            }
+        });
+
+        map.on('pm:drawend', function() {
+            if(myButton.toggled()) {
+                myButton._clicked();
+            }
         });
 
         return [myButton];
@@ -141,7 +148,6 @@ L.Control.PMButton = L.Control.extend({
         image.setAttribute('src', button.iconUrl);
 
         L.DomEvent
-            .addListener(newButton, 'click', L.DomEvent.stop)
             .addListener(newButton, 'click', button.onClick, this)
             .addListener(newButton, 'click', this._clicked, this)
             .addListener(newButton, 'click', button.afterClick, this);
@@ -190,6 +196,8 @@ L.PM.Draw.Poly = {
             self.disable();
         };
 
+        this._map.fireEvent('pm:drawstart');
+
     },
     disable: function() {
 
@@ -198,6 +206,8 @@ L.PM.Draw.Poly = {
         this._map.off('click', this._createPolygonPoint);
 
         this._map.removeLayer(this._layerGroup);
+
+        this._map.fireEvent('pm:drawend');
 
     },
     _createPolygonPoint: function(e) {
@@ -255,6 +265,8 @@ L.PM.Edit.Poly = L.Class.extend({
 
     enable: function() {
 
+        var self = this;
+
         if(!this.enabled()) {
             this._enabled = true;
 
@@ -266,6 +278,10 @@ L.PM.Edit.Poly = L.Class.extend({
             }
 
             this._poly._map.addLayer(this._markerGroup);
+
+            this._poly.on('remove', function() {
+                self.disable();
+            });
         }
 
     },

@@ -1,5 +1,9 @@
 var map2 = L.map('example2').setView([51.505, -0.09], 13);
 
+map2.on('pm:create', function(newPoly) {
+    alert('pm:create event fired');    
+});
+
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map2);
