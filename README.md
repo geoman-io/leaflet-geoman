@@ -13,7 +13,7 @@ As we are always using the latest leaflet version in a big production app, I wil
 `bower install leaflet.pm --save`
 
 #### Install Manually
-Include `leaflet.pm.min.js` and `leaflet.pm.css` in your project. Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/releases).
+Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/releases). Include `leaflet.pm.min.js` and `leaflet.pm.css` in your project.
 
 
 #### Init Leaflet.PM
@@ -71,7 +71,7 @@ map.on('pm:drawend', function() {//...});
 L.PM.addControls(map);
 
 // listen to when a new layer is created
-map.on('pm:create', function() {//...});
+map.on('pm:create', function(layer) {//...});
 
 ```
 
