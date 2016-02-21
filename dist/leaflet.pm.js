@@ -182,20 +182,36 @@ L.PM.Draw.Poly = {
 
         this._map = map;
 
+        // create a new layergroup
         this._layerGroup = new L.LayerGroup();
         this._layerGroup.addTo(this._map);
 
+        // this is the polyLine that'll make up the polygon
         this._polyline = L.polyline([], {color: 'red'});
         this._layerGroup.addLayer(this._polyline);
 
+        // this is the hintline from the mouse cursor to the last marker
+        this._hintline = L.polyline([], {
+            color: 'red',
+            dashArray: [5, 5]
+        });
+        this._layerGroup.addLayer(this._hintline);
+
+        // change map cursor
         this._map._container.style.cursor = 'crosshair';
 
+        // create a polygon-point on click
         this._map.on('click', this._createPolygonPoint, this);
 
+        // sync the hintline on mousemove
+        this._map.on('mousemove', this._syncHintLine, this);
+
+        // give the map the function to disable draw mode
         this._map.disableDraw = function() {
             self.disable();
         };
 
+        // fire drawstart event
         this._map.fireEvent('pm:drawstart');
 
     },
@@ -210,6 +226,18 @@ L.PM.Draw.Poly = {
         this._map.fireEvent('pm:drawend');
 
     },
+    _syncHintLine: function(e) {
+
+        var polyPoints = this._polyline.getLatLngs();
+
+        if(polyPoints.length > 0) {
+            var lastPolygonPoint = polyPoints[polyPoints.length - 1];
+            this._hintline.setLatLngs([lastPolygonPoint, e.latlng]);
+        }
+
+
+
+    },
     _createPolygonPoint: function(e) {
 
         // is this the first point?
@@ -217,6 +245,9 @@ L.PM.Draw.Poly = {
 
         this._polyline.addLatLng(e.latlng);
         this._createMarker(e.latlng, first);
+
+
+        this._hintline.setLatLngs([e.latlng, e.latlng]);
 
     },
     _finishPolygon: function() {
