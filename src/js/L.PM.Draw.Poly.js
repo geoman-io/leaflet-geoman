@@ -1,10 +1,10 @@
-L.PM.Draw.Poly = L.Class.extend({
+L.PM.Draw.Poly = L.PM.Draw.extend({
 
-    initialize: function(options) {
-        this._map = options.map;
+    initialize: function(map) {
+        this._map = map;
     },
 
-    enable: function() {
+    enable: function(options) {
         // enable draw mode
 
         // create a new layergroup
@@ -48,6 +48,44 @@ L.PM.Draw.Poly = L.Class.extend({
         this._map.removeLayer(this._layerGroup);
 
         this._map.fireEvent('pm:drawend');
+
+    },
+    addButton: function(map) {
+
+        var self = this;
+
+        var drawPolyButton = {
+              'iconUrl': 'assets/icons/polygon.png',
+              'onClick': function() {
+
+              },
+              'afterClick': function(e) {
+
+                  if(this.toggled()) {
+                      self.enable();
+                  } else {
+                      self.disable();
+                  }
+              },
+              'doToggle': true,
+              'toggleStatus': false
+        };
+
+        this._drawButton = new L.Control.PMButton(drawPolyButton).addTo(this._map);
+
+        this._map.on('pm:drawstart', function() {
+            if(!self._drawButton.toggled()) {
+                self._drawButton._clicked();
+            }
+        });
+
+        this._map.on('pm:drawend', function() {
+            if(self._drawButton.toggled()) {
+                self._drawButton._clicked();
+            }
+        });
+
+        return this._drawButton;
 
     },
     _syncHintLine: function(e) {

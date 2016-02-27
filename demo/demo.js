@@ -20,9 +20,8 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map4);
 
-L.PM.initialize();
-L.PM.addControls(map2);
-L.PM.addControls(map3);
+map2.pm.addControls();
+map3.pm.addControls();
 
 // GEOSJON EXAMPLE
 

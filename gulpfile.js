@@ -8,6 +8,7 @@ var concatCss = require('gulp-concat-css');
 gulp.task('scripts', function() {
     return gulp.src([
         'src/js/L.PM.js',
+        'src/js/L.PM.Draw.js',
         'src/**/*.js'
     ])
 
