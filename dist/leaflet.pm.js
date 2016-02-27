@@ -22,8 +22,6 @@ L.PM = L.PM || {
 
         var initMap = function() {
             this.pm = new L.PM.Draw(this);
-
-            console.log(this);
         };
         L.Map.addInitHook(initMap);
 
@@ -38,41 +36,48 @@ L.PM.Draw = L.Class.extend({
 
     initialize: function(map) {
 
-        var self = this;
-
+        // save the map
         this._map = map;
 
+        // define all possible shapes that can be drawn
         this.shapes = ['Poly'];
 
+        // initiate drawing class for our shapes
         for(var i=0; i<this.shapes.length; i++) {
-
-            var shape = self.shapes[i];
-            self[shape] = new L.PM.Draw[shape](self._map);
-
+            var shape = this.shapes[i];
+            this[shape] = new L.PM.Draw[shape](this._map);
         }
 
     },
+    getShapes: function() {
+        // if somebody wants to know what shapes are available
+        return this.shapes;
+    },
     enableDraw: function(shape) {
 
-        this[shape].enable();
+        if(!shape) {
+            throw 'Error: Please pass a shape as a parameter. Possible shapes are: ' + this.getShapes().join(',');
+        }
 
+        // enable draw for a shape
+        this[shape].enable();
     },
     disableDraw: function(shape) {
 
+        if(!shape) {
+            throw 'Error: Please pass a shape as a parameter. Possible shapes are: ' + this.getShapes().join(',');
+        }
+
+        // disable draw for a shape
         this[shape].disable();
 
     },
     addControls: function() {
-
-        var self = this;
-
+        // add control buttons for our shapes
         for(var i=0; i<this.shapes.length; i++) {
-
-            var shape = self.shapes[i];
-            self[shape].addButton();
-
+            var shape = this.shapes[i];
+            this[shape].addButton();
         }
-
     }
 });
 

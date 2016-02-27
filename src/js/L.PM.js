@@ -22,8 +22,6 @@ L.PM = L.PM || {
 
         var initMap = function() {
             this.pm = new L.PM.Draw(this);
-
-            console.log(this);
         };
         L.Map.addInitHook(initMap);
 
