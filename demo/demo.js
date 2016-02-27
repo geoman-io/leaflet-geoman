@@ -1,7 +1,7 @@
 var map2 = L.map('example2').setView([51.505, -0.09], 13);
 
 map2.on('pm:create', function(newPoly) {
-    alert('pm:create event fired');    
+    alert('pm:create event fired');
 });
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -22,6 +22,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 L.PM.initialize();
 L.PM.addControls(map2);
+L.PM.addControls(map3);
 
 // GEOSJON EXAMPLE
 

@@ -1,10 +1,11 @@
-L.PM.Draw.Poly = {
+L.PM.Draw.Poly = L.Class.extend({
 
-    enable: function(map) {
+    initialize: function(options) {
+        this._map = options.map;
+    },
 
-        var self = this;
-
-        this._map = map;
+    enable: function() {
+        // enable draw mode
 
         // create a new layergroup
         this._layerGroup = new L.LayerGroup();
@@ -21,6 +22,7 @@ L.PM.Draw.Poly = {
         });
         this._layerGroup.addLayer(this._hintline);
 
+
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
 
@@ -30,20 +32,18 @@ L.PM.Draw.Poly = {
         // sync the hintline on mousemove
         this._map.on('mousemove', this._syncHintLine, this);
 
-        // give the map the function to disable draw mode
-        this._map.disableDraw = function() {
-            self.disable();
-        };
-
         // fire drawstart event
         this._map.fireEvent('pm:drawstart');
 
     },
     disable: function() {
+        // disable draw mode
 
         this._map._container.style.cursor = 'default';
 
         this._map.off('click', this._createPolygonPoint);
+
+        this._map.off('mousemove', this._syncHintLine);
 
         this._map.removeLayer(this._layerGroup);
 
@@ -101,4 +101,4 @@ L.PM.Draw.Poly = {
         return marker;
 
     },
-};
+});

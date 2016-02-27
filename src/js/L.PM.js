@@ -19,20 +19,19 @@ L.PM = L.PM || {
         };
         L.Polygon.addInitHook(initPolygon);
 
-
-
     },
     enableDraw: function(options) {
+        var map = options.map;
 
-        L.PM.Draw.Poly.enable(options.map);
+        if(!map.pm) {
+            map.pm = new L.PM.Draw.Poly(options);
+        }
+
+        map.pm.enable();
 
     },
     disableDraw: function(map) {
-
-        if(map.disableDraw) {
-            map.disableDraw();
-        }
-
+        map.pm.disable();
     },
     addControls: function(map) {
 
