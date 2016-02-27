@@ -185,9 +185,10 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         this._map = map;
         this._shape = 'Poly';
     },
-
     enable: function(options) {
         // enable draw mode
+
+        this._enabled = true;
 
         // create a new layergroup
         this._layerGroup = new L.LayerGroup();
@@ -221,6 +222,8 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
     disable: function() {
         // disable draw mode
 
+        this._enabled = false;
+
         this._map._container.style.cursor = 'default';
 
         this._map.off('click', this._createPolygonPoint);
@@ -230,6 +233,18 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         this._map.removeLayer(this._layerGroup);
 
         this._map.fire('pm:drawend', {shape: this._shape});
+
+    },
+    enabled: function() {
+        return this._enabled;
+    },
+    toggle: function() {
+
+        if(this.enabled()) {
+            this.disable();
+        } else {
+            this.enable();
+        }
 
     },
     addButton: function(map) {
@@ -242,12 +257,7 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
 
               },
               'afterClick': function(e) {
-
-                  if(this.toggled()) {
-                      self.enable();
-                  } else {
-                      self.disable();
-                  }
+                  self.toggle();
               },
               'doToggle': true,
               'toggleStatus': false
