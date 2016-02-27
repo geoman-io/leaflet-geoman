@@ -256,14 +256,12 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         this._drawButton = new L.Control.PMButton(drawPolyButton).addTo(this._map);
 
         this._map.on('pm:drawstart', function(e) {
-            console.log(e);
             if(e.shape === self._shape && !self._drawButton.toggled()) {
                 self._drawButton._clicked();
             }
         });
 
         this._map.on('pm:drawend', function(e) {
-            console.log(e);
             if(e.shape === self._shape && self._drawButton.toggled()) {
                 self._drawButton._clicked();
             }
@@ -549,7 +547,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _fireEdit: function () {
         this._poly.edited = true;
-        this._poly.fireEvent('pm:edit');
+        this._poly.fire('pm:edit');
     },
 
     _calcMiddleLatLng: function(leftM, rightM) {
