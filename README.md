@@ -17,8 +17,39 @@ Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/rel
 
 
 #### Init Leaflet.PM
+Just include `leaflet.pm.min.js` right after Leaflet.
 
-Use `L.PM.initialize();` to start up the library.
+
+##### Drawing Mode
+Use Drawing Mode on a map like this
+
+
+```
+
+// enable drawing mode for shape - e.g. Poly
+map.pm.enableDraw('Poly');
+
+// get array of all available shapes (currently only Poly)
+map.pm.getShapes();
+
+// listen to when drawing mode gets enabled
+map.on('pm:drawstart', function(e) {//...});
+
+
+// disable drawing mode
+map.pm.disableDraw('Poly');
+
+// listen to when drawing mode gets disabled
+map.on('pm:drawend', function(e) {//...});
+
+
+// add a control button to the map which can toggle drawing mode for shapes
+map.pm.addControls();
+
+// listen to when a new layer is created
+map.on('pm:create', function(e) {//...});
+
+```
 
 
 ##### Edit Mode
@@ -40,38 +71,7 @@ polygonLayer.pm.toggleEdit();
 polygonLayer.pm.enabled(); // returns true/false
 
 // listen to changes
-polygonLayer.on('pm:edit', function() {//...});
-
-```
-
-##### Drawing Mode
-Use Drawing Mode on a map like this
-
-
-```
-// enable drawing mode
-var options = {
-    map: map
-};
-
-L.PM.enableDraw(options);
-
-// listen to when drawing mode gets enabled
-map.on('pm:drawstart', function() {//...});
-
-
-// disable drawing mode
-L.PM.disableDraw(map);
-
-// listen to when drawing mode gets disabled
-map.on('pm:drawend', function() {//...});
-
-
-// add a control button to the map which can toggle drawing mode
-L.PM.addControls(map);
-
-// listen to when a new layer is created
-map.on('pm:create', function(layer) {//...});
+polygonLayer.on('pm:edit', function(e) {//...});
 
 ```
 
