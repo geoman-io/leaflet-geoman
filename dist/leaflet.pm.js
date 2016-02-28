@@ -20,61 +20,71 @@ L.PM = L.PM || {
         L.Polygon.addInitHook(initPolygon);
 
 
+        var initMap = function() {
+            this.pm = new L.PM.Draw(this);
+        };
+        L.Map.addInitHook(initMap);
 
     },
-    enableDraw: function(options) {
+    Edit: {}
+};
 
-        L.PM.Draw.Poly.enable(options.map);
+// initialize leaflet.pm
+L.PM.initialize();
 
-    },
-    disableDraw: function(map) {
+L.PM.Draw = L.Class.extend({
 
-        if(map.disableDraw) {
-            map.disableDraw();
+    initialize: function(map) {
+
+        // save the map
+        this._map = map;
+
+        // define all possible shapes that can be drawn
+        this.shapes = ['Poly'];
+
+        // initiate drawing class for our shapes
+        for(var i=0; i<this.shapes.length; i++) {
+            var shape = this.shapes[i];
+            this[shape] = new L.PM.Draw[shape](this._map);
         }
 
     },
-    addControls: function(map) {
+    getShapes: function() {
+        // if somebody wants to know what shapes are available
+        return this.shapes;
+    },
+    enableDraw: function(shape) {
 
-        var drawPolyButton = {
-              'iconUrl': 'assets/icons/polygon.png',
-              'onClick': function() {
+        if(!shape) {
+            throw 'Error: Please pass a shape as a parameter. Possible shapes are: ' + this.getShapes().join(',');
+        }
 
-              },
-              'afterClick': function(e) {
+        // disable drawing for all shapes
+        this.disableDraw();
 
-                  if(this.toggled()) {
-                      L.PM.enableDraw({
-                          map: map
-                      });
-                  } else {
-                      L.PM.disableDraw(map);
-                  }
-              },
-              'doToggle': true,
-              'toggleStatus': false
-        };
-
-        var myButton = new L.Control.PMButton(drawPolyButton).addTo(map);
-
-        map.on('pm:drawstart', function() {
-            if(!myButton.toggled()) {
-                myButton._clicked();
-            }
-        });
-
-        map.on('pm:drawend', function() {
-            if(myButton.toggled()) {
-                myButton._clicked();
-            }
-        });
-
-        return [myButton];
+        // enable draw for a shape
+        this[shape].enable();
 
     },
-    Edit: {},
-    Draw: {}
-};
+    disableDraw: function() {
+
+        // there can only be one drawing mode active at a time on a map
+        // so it doesn't matter which one should be disabled.
+        // just disable all of them
+        for(var i=0; i<this.shapes.length; i++) {
+            var shape = this.shapes[i];
+            this[shape].disable();
+        }
+
+    },
+    addControls: function() {
+        // add control buttons for our shapes
+        for(var i=0; i<this.shapes.length; i++) {
+            var shape = this.shapes[i];
+            this[shape].addButton();
+        }
+    }
+});
 
 L.Control.PMButton = L.Control.extend({
     options: {
@@ -174,13 +184,16 @@ L.Control.PMButton = L.Control.extend({
 
 });
 
-L.PM.Draw.Poly = {
+L.PM.Draw.Poly = L.PM.Draw.extend({
 
-    enable: function(map) {
-
-        var self = this;
-
+    initialize: function(map) {
         this._map = map;
+        this._shape = 'Poly';
+    },
+    enable: function(options) {
+        // enable draw mode
+
+        this._enabled = true;
 
         // create a new layergroup
         this._layerGroup = new L.LayerGroup();
@@ -197,6 +210,7 @@ L.PM.Draw.Poly = {
         });
         this._layerGroup.addLayer(this._hintline);
 
+
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
 
@@ -206,24 +220,77 @@ L.PM.Draw.Poly = {
         // sync the hintline on mousemove
         this._map.on('mousemove', this._syncHintLine, this);
 
-        // give the map the function to disable draw mode
-        this._map.disableDraw = function() {
-            self.disable();
-        };
-
         // fire drawstart event
-        this._map.fireEvent('pm:drawstart');
+        this._map.fire('pm:drawstart', {shape: this._shape});
 
     },
     disable: function() {
+        // disable draw mode
 
+        // cancel, if drawing mode isn't even enabled
+        if(!this._enabled) {
+            return;
+        }
+
+        this._enabled = false;
+
+        // reset cursor
         this._map._container.style.cursor = 'default';
 
+        // unbind listeners
         this._map.off('click', this._createPolygonPoint);
+        this._map.off('mousemove', this._syncHintLine);
 
+        // remove layer
         this._map.removeLayer(this._layerGroup);
 
-        this._map.fireEvent('pm:drawend');
+        // fire drawend event
+        this._map.fire('pm:drawend', {shape: this._shape});
+
+    },
+    enabled: function() {
+        return this._enabled;
+    },
+    toggle: function() {
+
+        if(this.enabled()) {
+            this.disable();
+        } else {
+            this.enable();
+        }
+
+    },
+    addButton: function(map) {
+
+        var self = this;
+
+        var drawPolyButton = {
+              'iconUrl': 'assets/icons/polygon.png',
+              'onClick': function() {
+
+              },
+              'afterClick': function(e) {
+                  self.toggle();
+              },
+              'doToggle': true,
+              'toggleStatus': false
+        };
+
+        this._drawButton = new L.Control.PMButton(drawPolyButton).addTo(this._map);
+
+        this._map.on('pm:drawstart', function(e) {
+            if(e.shape === self._shape && !self._drawButton.toggled()) {
+                self._drawButton._clicked();
+            }
+        });
+
+        this._map.on('pm:drawend', function(e) {
+            if(e.shape === self._shape && self._drawButton.toggled()) {
+                self._drawButton._clicked();
+            }
+        });
+
+        return this._drawButton;
 
     },
     _syncHintLine: function(e) {
@@ -259,7 +326,10 @@ L.PM.Draw.Poly = {
 
         this.disable();
 
-        this._map.fireEvent('pm:create', polygonLayer);
+        this._map.fire('pm:create', {
+            shape: this._shape,
+            layer: polygonLayer
+        });
     },
     _createMarker: function(latlng, first) {
 
@@ -277,7 +347,7 @@ L.PM.Draw.Poly = {
         return marker;
 
     },
-};
+});
 
 L.PM.Edit.Poly = L.Class.extend({
 
@@ -500,7 +570,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _fireEdit: function () {
         this._poly.edited = true;
-        this._poly.fireEvent('pm:edit');
+        this._poly.fire('pm:edit');
     },
 
     _calcMiddleLatLng: function(leftM, rightM) {

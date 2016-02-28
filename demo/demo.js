@@ -1,7 +1,8 @@
 var map2 = L.map('example2').setView([51.505, -0.09], 13);
 
-map2.on('pm:create', function(newPoly) {
-    alert('pm:create event fired');    
+map2.on('pm:create', function(e) {
+    alert('pm:create event fired. See console for details');
+    console.log(e);
 });
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -20,8 +21,8 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map4);
 
-L.PM.initialize();
-L.PM.addControls(map2);
+map2.pm.addControls();
+map2.pm.enableDraw('Poly');
 
 // GEOSJON EXAMPLE
 

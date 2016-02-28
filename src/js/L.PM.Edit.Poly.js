@@ -219,7 +219,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _fireEdit: function () {
         this._poly.edited = true;
-        this._poly.fireEvent('pm:edit');
+        this._poly.fire('pm:edit');
     },
 
     _calcMiddleLatLng: function(leftM, rightM) {

@@ -18,52 +18,22 @@
                 <h3>An Open Source Leaflet Plugin for editing polygons, specifically made for Leaflet 1.0</h3>
             </article>
             <article>
-                <h2>Getting Started</h2>
-                <p>
-                    Lorem Ipsum
-                </p>
-            </article>
-            <article>
                 <h2>Creating A Polygon</h2>
-                <p>
-                    Click the Icon on the top left to start drawing mode. Then just click around on
-                    the map to create a polygon. Click on the first marker to finish drawing.<br/>
-                    The 'pm:create' event will be fired after finishing the polygon.
-                </p>
+
                 <div class="map" id="example2"></div>
-                <h3>How it works</h3>
-                <p>
-                    To enable drawing of polygons, simply add the controls to the map with <br/>
-                    L.PM.addControls(map2);
-                </p>
+
             </article>
             <article>
                 <h2>Editing A Polygon</h2>
-                <p>
-                    Click on the polygon to toggle edit mode.<br/>
-                    You can add new markers by clicking/dragging the transparent markers between the
-                    current ones.<br/>
-                    Remove a marker with right click.
-                </p>
+
                 <div class="map" id="example3"></div>
-                <h3>How it works</h3>
-                <p>
-                    With polygon.pm.toggleEdit() you can toggle the edit mode for any polygon on the map.<br/>
-                    Put it whereever you want. For example inside a click handler on a button or the polygon itself.<br/>
-                </p>
+
             </article>
             <article>
                 <h2>Editing A Layer Group</h2>
-                <p>
-                    Same as above. The LayerGroup consists of Polygons and will just foward all events.<br/>
-                    So when you toggle edit mode for a layerGroup, you're actually toggling edit mode for every<br/>
-                    layer inside the group.
-                </p>
+
                 <div class="map" id="example4"></div>
-                <h3>How it works</h3>
-                <p>
-                    With layerGroup.pm.toggleEdit() you can toggle the edit mode for any layerGroup on the map.
-                </p>
+                
             </article>
         </div>
 

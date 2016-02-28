@@ -20,58 +20,14 @@ L.PM = L.PM || {
         L.Polygon.addInitHook(initPolygon);
 
 
-
-    },
-    enableDraw: function(options) {
-
-        L.PM.Draw.Poly.enable(options.map);
-
-    },
-    disableDraw: function(map) {
-
-        if(map.disableDraw) {
-            map.disableDraw();
-        }
-
-    },
-    addControls: function(map) {
-
-        var drawPolyButton = {
-              'iconUrl': 'assets/icons/polygon.png',
-              'onClick': function() {
-
-              },
-              'afterClick': function(e) {
-
-                  if(this.toggled()) {
-                      L.PM.enableDraw({
-                          map: map
-                      });
-                  } else {
-                      L.PM.disableDraw(map);
-                  }
-              },
-              'doToggle': true,
-              'toggleStatus': false
+        var initMap = function() {
+            this.pm = new L.PM.Draw(this);
         };
-
-        var myButton = new L.Control.PMButton(drawPolyButton).addTo(map);
-
-        map.on('pm:drawstart', function() {
-            if(!myButton.toggled()) {
-                myButton._clicked();
-            }
-        });
-
-        map.on('pm:drawend', function() {
-            if(myButton.toggled()) {
-                myButton._clicked();
-            }
-        });
-
-        return [myButton];
+        L.Map.addInitHook(initMap);
 
     },
-    Edit: {},
-    Draw: {}
+    Edit: {}
 };
+
+// initialize leaflet.pm
+L.PM.initialize();
