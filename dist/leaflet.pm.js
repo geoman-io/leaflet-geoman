@@ -59,16 +59,16 @@ L.PM.Draw = L.Class.extend({
             throw 'Error: Please pass a shape as a parameter. Possible shapes are: ' + this.getShapes().join(',');
         }
 
-        // disable drawing for all other shapes
+        // disable drawing for all shapes
         this.disableDraw();
 
         // enable draw for a shape
         this[shape].enable();
-        
+
     },
     disableDraw: function() {
 
-        // there can only be one drawing mode on a map
+        // there can only be one drawing mode active at a time on a map
         // so it doesn't matter which one should be disabled.
         // just disable all of them
         for(var i=0; i<this.shapes.length; i++) {
@@ -234,14 +234,17 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
 
         this._enabled = false;
 
+        // reset cursor
         this._map._container.style.cursor = 'default';
 
+        // unbind listeners
         this._map.off('click', this._createPolygonPoint);
-
         this._map.off('mousemove', this._syncHintLine);
 
+        // remove layer
         this._map.removeLayer(this._layerGroup);
 
+        // fire drawend event
         this._map.fire('pm:drawend', {shape: this._shape});
 
     },

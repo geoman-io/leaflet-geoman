@@ -48,14 +48,17 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
 
         this._enabled = false;
 
+        // reset cursor
         this._map._container.style.cursor = 'default';
 
+        // unbind listeners
         this._map.off('click', this._createPolygonPoint);
-
         this._map.off('mousemove', this._syncHintLine);
 
+        // remove layer
         this._map.removeLayer(this._layerGroup);
 
+        // fire drawend event
         this._map.fire('pm:drawend', {shape: this._shape});
 
     },
