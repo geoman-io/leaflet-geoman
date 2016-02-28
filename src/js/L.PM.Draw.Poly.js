@@ -41,6 +41,11 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
     disable: function() {
         // disable draw mode
 
+        // cancel, if drawing mode isn't even enabled
+        if(!this._enabled) {
+            return;
+        }
+
         this._enabled = false;
 
         this._map._container.style.cursor = 'default';
