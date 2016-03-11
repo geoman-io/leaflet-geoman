@@ -79,6 +79,10 @@ geoJsonLayer.addEventListener('click', function() {
     geoJsonLayer.pm.toggleEdit();
 });
 
+geoJsonLayer.on('pm:edit', function(e) {
+    console.log(e);
+});
+
 
 // Polygon Example
 
