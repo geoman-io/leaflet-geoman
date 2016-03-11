@@ -67,6 +67,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     },
 
+    // creates initial markers for coordinates
     _createMarker: function(latlng, index) {
 
         var marker = new L.Marker(latlng, {
@@ -110,6 +111,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     },
 
+    // adds a new marker from a middlemarker
     _addMarker: function(newM, leftM, rightM) {
 
         // first, make this middlemarker a regular marker
@@ -137,6 +139,9 @@ L.PM.Edit.Poly = L.Class.extend({
         // create the new middlemarkers
         this._createMiddleMarker(leftM, newM);
         this._createMiddleMarker(newM, rightM);
+
+        // fire edit event
+        this._fireEdit();
 
 
     },
@@ -177,7 +182,7 @@ L.PM.Edit.Poly = L.Class.extend({
                 this._markers[i]._index = i;
             }
 
-
+            // fire edit event
             this._fireEdit();
 
         }
