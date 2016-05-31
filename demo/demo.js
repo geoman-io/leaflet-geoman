@@ -71,7 +71,8 @@ var geoJsonData = {
     ]
 };
 var geoJsonButton = document.getElementById('test-geojson');
-var geoJsonLayer = L.geoJson(geoJsonData).addTo(map3);
+var geoJsonLayer = L.geoJson().addTo(map3);
+geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.pm.toggleEdit();
 var bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);

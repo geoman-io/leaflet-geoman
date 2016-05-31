@@ -5,9 +5,21 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
+        // listen to the edit event of the layers in this group
         for(var i=0; i<this._layers.length; i++) {
             this._layers[i].on('pm:edit', this._fireEdit, this);
         }
+
+        // if a new layer is added to the group, reinitialize
+        this._layerGroup.on('layeradd', function(e) {
+            self.initialize(layerGroup);
+
+            // if editing was already enabled for this group, enable it again
+            // so the new layers are enabled
+            if(e.target.pm.enabled()) {
+                self.enable();
+            }
+        });
     },
     _fireEdit: function() {
         this._layerGroup.fireEvent('pm:edit');
