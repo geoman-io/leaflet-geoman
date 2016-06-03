@@ -3,7 +3,13 @@ L.PM.Edit.LayerGroup = L.Class.extend({
     initialize: function(layerGroup) {
         var self = this;
         this._layerGroup = layerGroup;
-        this._layers = layerGroup.getLayers();
+        this._layers = [];
+        
+        var layers = layerGroup.getLayers();
+        for(var i=0; i<layers.length; i++) {
+          if (layers[i].pm)
+            this._layers.push(layers[i]);
+        }
 
         // listen to the edit event of the layers in this group
         for(var i=0; i<this._layers.length; i++) {
