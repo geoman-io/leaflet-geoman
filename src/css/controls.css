@@ -1,4 +1,5 @@
-.leaflet-buttons-control-button {
+.leaflet-buttons-control-button,
+.leaflet-buttons-control-button:after {
     background-color: #fff;
     border-bottom: 1px solid #ccc;
     width: 26px;
@@ -22,6 +23,43 @@
     cursor: pointer;
     background-color: #f4f4f4;
 }
+
+.leaflet-buttons-control-button:after {
+    position: absolute;
+    left: 125%;
+    top: 0;
+    width: auto;
+    padding: 3px 5px;
+    white-space: nowrap;
+    line-height: 1.75;
+    font-size: 12px;
+    background-color: #333;
+    color: #f1f1f1;
+}
+
+.leaflet-buttons-control-button:before {
+    content: '';
+    position: absolute;
+    left: 110%;
+    top: 7px;
+    opacity: 0;
+    border: 6px solid transparent;
+    border-right-color: #333;
+    border-left-width: 0;
+}
+
+.leaflet-buttons-control-button:hover:before {
+    opacity: 1;
+}
+
+.leaflet-buttons-control-button:hover:after {
+    content: attr(tooltip-disabled);
+}
+
+.leaflet-buttons-control-button.active:hover:after {
+    content: attr(tooltip-enabled);
+}
+
 .leaflet-buttons-control-button.active {
     background-color: #f4f4f4;
 }
