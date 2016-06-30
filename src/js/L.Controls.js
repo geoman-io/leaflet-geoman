@@ -27,7 +27,8 @@ L.Control.PMButton = L.Control.extend({
             'onClick': options.onClick,
             'afterClick': options.afterClick,
             'doToggle': options.doToggle,
-            'toggleStatus': options.toggleStatus
+            'toggleStatus': options.toggleStatus,
+            'tooltip': options.tooltip
         };
 
         this._button = button;
@@ -65,6 +66,9 @@ L.Control.PMButton = L.Control.extend({
         var newButton = L.DomUtil.create('div', 'leaflet-buttons-control-button', this._container);
         if(button.toggleStatus)
             L.DomUtil.addClass(newButton,'active');
+
+        newButton.setAttribute('tooltip-enabled', this._button.tooltip.enabled);
+        newButton.setAttribute('tooltip-disabled', this._button.tooltip.disabled);
 
         var image = L.DomUtil.create('img', 'control-icon', newButton);
         image.setAttribute('src', button.iconUrl);
