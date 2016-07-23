@@ -79,15 +79,19 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         var self = this;
 
         var drawPolyButton = {
-              'iconUrl': 'assets/icons/polygon.png',
-              'onClick': function() {
+            'iconUrl': 'assets/icons/polygon.png',
+            'onClick': function() {
 
-              },
-              'afterClick': function(e) {
-                  self.toggle();
-              },
-              'doToggle': true,
-              'toggleStatus': false
+            },
+            'afterClick': function(e) {
+                self.toggle();
+            },
+            'doToggle': true,
+            'toggleStatus': false,
+            'tooltip': {
+                'enabled': 'Cancel Draw',
+                'disabled': 'Draw Polygon'
+            }
         };
 
         this._drawButton = new L.Control.PMButton(drawPolyButton).addTo(this._map);
