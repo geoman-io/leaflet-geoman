@@ -79,7 +79,7 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         var self = this;
 
         var drawPolyButton = {
-              'iconUrl': 'assets/icons/polygon.png',
+              'className': 'icon-polygon',
               'onClick': function() {
 
               },
