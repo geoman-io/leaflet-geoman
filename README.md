@@ -9,6 +9,9 @@ As we are always using the latest leaflet version in a big production app, I wil
 
 ### Getting Started
 
+#### Install via npm
+`npm install leaflet.pm --save`
+
 #### Install via Bower
 `bower install leaflet.pm --save`
 
