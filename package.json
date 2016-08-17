@@ -1,11 +1,9 @@
 {
   "name": "leaflet.pm",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "main": "dist/leaflet.pm.js",
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
