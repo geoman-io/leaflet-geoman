@@ -102,9 +102,26 @@ L.PM.Edit.Poly = L.Class.extend({
         rightM._middleMarkerLeft = middleMarker;
 
         middleMarker.on('click', function() {
+
+            // TODO: move the next two lines inside _addMarker() as soon as
+            // https://github.com/Leaflet/Leaflet/issues/4484
+            // is fixed
+            var icon = L.divIcon({className: 'marker-icon'});
+            middleMarker.setIcon(icon);
+
             self._addMarker(middleMarker, leftM, rightM);
         });
         middleMarker.on('movestart', function() {
+
+            // TODO: This is a workaround. Remove the moveend listener and callback as soon as this is fixed:
+            // https://github.com/Leaflet/Leaflet/issues/4484
+            middleMarker.on('moveend', function() {
+                var icon = L.divIcon({className: 'marker-icon'});
+                middleMarker.setIcon(icon);
+
+                middleMarker.off('moveend');
+            });
+
             self._addMarker(middleMarker, leftM, rightM);
         });
 
@@ -117,13 +134,6 @@ L.PM.Edit.Poly = L.Class.extend({
         // first, make this middlemarker a regular marker
         newM.off('movestart');
         newM.off('click');
-
-        // TODO: This is a workaround. Remove this event do the callback right here when when this issue is fixed:
-        // https://github.com/Leaflet/Leaflet/issues/4484
-        newM.on('moveend', function() {
-            var icon = L.divIcon({className: 'marker-icon'})
-            newM.setIcon(icon);
-        });
 
         // now, create the polygon coordinate point for that marker
         var latlng = newM.getLatLng();
