@@ -18,6 +18,10 @@
   width: 100%;
 }
 
+.leaflet-buttons-control-button img.icon-polygon {
+  content: url("assets/icons/polygon.png");
+}
+
 .leaflet-buttons-control-button:hover {
   cursor: pointer;
   background-color: #f4f4f4;

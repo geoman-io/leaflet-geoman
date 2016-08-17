@@ -111,6 +111,7 @@ L.Control.PMButton = L.Control.extend({
 
     setButton: function (options) {
         var button = {
+            'className': options.className,
             'iconUrl': options.iconUrl,
             'onClick': options.onClick,
             'afterClick': options.afterClick,
@@ -155,7 +156,12 @@ L.Control.PMButton = L.Control.extend({
             L.DomUtil.addClass(newButton,'active');
 
         var image = L.DomUtil.create('img', 'control-icon', newButton);
-        image.setAttribute('src', button.iconUrl);
+        if (button.iconUrl) {
+            image.setAttribute('src', button.iconUrl);
+        }
+        if (button.className) {
+            L.DomUtil.addClass(image, button.className);
+        }
 
         L.DomEvent
             .addListener(newButton, 'click', button.onClick, this)
@@ -265,7 +271,7 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         var self = this;
 
         var drawPolyButton = {
-              'iconUrl': 'assets/icons/polygon.png',
+              'className': 'icon-polygon',
               'onClick': function() {
 
               },
