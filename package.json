@@ -1,15 +1,16 @@
 {
   "name": "leaflet.pm",
-  "version": "1.0.0",
+  "version": "0.6.4",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "main": "leaflet.pm.js",
   "dependencies": {
+
+  },
+  "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.5.1"
-  },
-  "devDependencies": {
+    "gulp-uglify": "^1.5.1",
     "gulp-concat-css": "^2.2.0"
   },
   "scripts": {
@@ -24,5 +25,5 @@
   "bugs": {
     "url": "https://github.com/codeofsumit/leaflet.pm/issues"
   },
-  "homepage": "https://github.com/codeofsumit/leaflet.pm#readme"
+  "homepage": "http://codeofsumit.github.io/leaflet.pm/"
 }
