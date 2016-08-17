@@ -88,6 +88,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     },
 
+    // creates the middle markes between coordinates
     _createMiddleMarker: function(leftM, rightM) {
         var self = this;
         var latlng = this._calcMiddleLatLng(leftM, rightM);
@@ -100,11 +101,10 @@ L.PM.Edit.Poly = L.Class.extend({
         leftM._middleMarkerRight = middleMarker;
         rightM._middleMarkerLeft = middleMarker;
 
-
-        middleMarker.on('dragstart', function() {
+        middleMarker.on('click', function() {
             self._addMarker(middleMarker, leftM, rightM);
         });
-        middleMarker.on('click', function() {
+        middleMarker.on('movestart', function() {
             self._addMarker(middleMarker, leftM, rightM);
         });
 
@@ -115,10 +115,15 @@ L.PM.Edit.Poly = L.Class.extend({
     _addMarker: function(newM, leftM, rightM) {
 
         // first, make this middlemarker a regular marker
-        var icon = L.divIcon({className: 'marker-icon'})
-        newM.setIcon(icon);
-        newM.off('dragstart');
+        newM.off('movestart');
         newM.off('click');
+
+        // TODO: This is a workaround. Remove this event do the callback right here when when this issue is fixed:
+        // https://github.com/Leaflet/Leaflet/issues/4484
+        newM.on('moveend', function() {
+            var icon = L.divIcon({className: 'marker-icon'})
+            newM.setIcon(icon);
+        });
 
         // now, create the polygon coordinate point for that marker
         var latlng = newM.getLatLng();
