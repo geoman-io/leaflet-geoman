@@ -2,6 +2,7 @@
   "name": "leaflet.pm",
   "version": "0.6.7",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
+  "keywords": ["leaflet", "polygon management", "geometry editing", "map data", "map overlay", "polygon", "geojson", "leaflet-draw", "data-field-geojson", "ui-leaflet-draw"],
   "main": "dist/leaflet.pm.js",
   "dependencies": {},
   "devDependencies": {
