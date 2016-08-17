@@ -462,7 +462,6 @@ L.PM.Edit.Poly = L.Class.extend({
             self._addMarker(middleMarker, leftM, rightM);
         });
         middleMarker.on('movestart', function() {
-            console.log('drag start');
             self._addMarker(middleMarker, leftM, rightM);
         });
 
@@ -471,8 +470,6 @@ L.PM.Edit.Poly = L.Class.extend({
 
     // adds a new marker from a middlemarker
     _addMarker: function(newM, leftM, rightM) {
-
-        console.log('add marker');
 
         // first, make this middlemarker a regular marker
         newM.off('movestart');
@@ -557,8 +554,6 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _onMarkerDrag: function(e) {
 
-        console.log('dragging');
-
         // dragged marker
         var marker = e.target;
 
@@ -582,8 +577,6 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     _onMarkerDragEnd: function(e) {
-
-        console.log('stopped dragging');
 
         var marker = e.target;
 
