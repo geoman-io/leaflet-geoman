@@ -411,7 +411,8 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     disable: function() {
-        if(this.dragging) {
+        // prevent disabling if polygon is being dragged
+        if(this.dragging()) {
             return false;
         }
         this._enabled = false;
@@ -419,7 +420,7 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     dragging: function() {
-        return this_.dragging;
+        return this._poly._dragging;
     },
 
     _initDraggableLayer: function() {
@@ -459,8 +460,13 @@ L.PM.Edit.Poly = L.Class.extend({
             // fire edit
             that._fireEdit();
 
-            // set state
-            that._poly._dragging = false;
+            // timeout to prevent click event after drag :-/
+            // TODO: do it better as soon as leaflet has a way to do it better :-)
+            window.setTimeout(function() {
+                // set state
+                that._poly._dragging = false;
+            }, 10)
+
 
         });
 
