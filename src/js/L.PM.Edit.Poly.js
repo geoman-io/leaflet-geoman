@@ -81,7 +81,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
             that._tempDragCoord = event.latlng;
 
-            that._poly.on('mousemove', function(e) {
+            that._poly._map.on('mousemove', function(e) {
 
                 // set state
                 that._poly._dragging = true;
@@ -102,7 +102,7 @@ L.PM.Edit.Poly = L.Class.extend({
             that._poly._map.dragging.enable();
 
             // clear up mousemove event
-            that._poly.off('mousemove');
+            that._poly._map.off('mousemove');
 
             // fire edit
             that._fireEdit();

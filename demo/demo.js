@@ -111,4 +111,6 @@ var layerGroupItem2 = L.polygon([
 ]);
 
 var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
-layerGroup.pm.toggleEdit();
+layerGroup.pm.toggleEdit({
+    draggable: true
+});
