@@ -60,6 +60,10 @@ L.PM.Edit.Poly = L.Class.extend({
         }
         this._enabled = false;
         this._poly._map.removeLayer(this._markerGroup);
+
+        // clean up draggable
+        this._poly.off('mousedown');
+        this._poly.off('mouseup');
     },
 
     dragging: function() {
