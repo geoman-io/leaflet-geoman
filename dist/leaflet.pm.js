@@ -438,6 +438,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
             that._tempDragCoord = event.latlng;
 
+            // listen to mouse move on map, otherwise fast mouse movements stop the drag
             that._poly._map.on('mousemove', function(e) {
 
                 // set state
