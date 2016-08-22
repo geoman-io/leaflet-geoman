@@ -24,15 +24,15 @@ L.PM.Edit.LayerGroup = L.Class.extend({
     _fireEdit: function() {
         this._layerGroup.fireEvent('pm:edit');
     },
-    toggleEdit: function() {
+    toggleEdit: function(options) {
 
         for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.toggleEdit();
+            this._layers[i].pm.toggleEdit(options);
         }
     },
-    enable: function() {
+    enable: function(options) {
         for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.enable();
+            this._layers[i].pm.enable(options);
         }
     },
     disable: function() {

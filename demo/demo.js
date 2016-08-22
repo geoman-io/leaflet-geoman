@@ -73,7 +73,9 @@ var geoJsonData = {
 var geoJsonButton = document.getElementById('test-geojson');
 var geoJsonLayer = L.geoJson().addTo(map3);
 geoJsonLayer.addData(geoJsonData);
-geoJsonLayer.pm.toggleEdit();
+geoJsonLayer.pm.toggleEdit({
+    draggable: true
+});
 var bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);
 geoJsonLayer.addEventListener('click', function() {
@@ -109,4 +111,6 @@ var layerGroupItem2 = L.polygon([
 ]);
 
 var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
-layerGroup.pm.toggleEdit();
+layerGroup.pm.toggleEdit({
+    draggable: true
+});

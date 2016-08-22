@@ -257,12 +257,12 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
     enabled: function() {
         return this._enabled;
     },
-    toggle: function() {
+    toggle: function(options) {
 
         if(this.enabled()) {
             this.disable();
         } else {
-            this.enable();
+            this.enable(options);
         }
 
     },
@@ -362,21 +362,23 @@ L.PM.Edit.Poly = L.Class.extend({
         this._enabled = false;
     },
 
-    toggleEdit: function() {
+    toggleEdit: function(options) {
         if(!this.enabled()) {
-            this.enable();
+            this.enable(options);
         } else {
             this.disable();
         }
     },
 
-    enable: function() {
+    enable: function(options) {
 
         var self = this;
 
         if(!this.enabled()) {
+            // change state
             this._enabled = true;
 
+            // create markers
             if(!this._markerGroup) {
                 this._markerGroup = new L.LayerGroup();
 
@@ -384,11 +386,22 @@ L.PM.Edit.Poly = L.Class.extend({
                 this._initMarkers();
             }
 
+            // add markerGroup to map
             this._poly._map.addLayer(this._markerGroup);
 
+            // if polygon gets removed from map, disable edit mode
             this._poly.on('remove', function() {
                 self.disable();
             });
+
+            // apply options
+            if(!options) {
+                return;
+            }
+
+            if(options.draggable) {
+                this._initDraggableLayer();
+            }
         }
 
     },
@@ -398,8 +411,119 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     disable: function() {
+        // prevent disabling if polygon is being dragged
+        if(this.dragging()) {
+            return false;
+        }
         this._enabled = false;
         this._poly._map.removeLayer(this._markerGroup);
+
+        // clean up draggable
+        this._poly.off('mousedown');
+        this._poly.off('mouseup');
+
+        // remove draggable class
+        var el = this._poly._path;
+        L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    },
+
+    dragging: function() {
+        return this._poly._dragging;
+    },
+
+    _initDraggableLayer: function() {
+
+        var that = this;
+
+        // temporary coord variable for delta calculation
+        this._tempDragCoord;
+
+        // add CSS class
+        var el = this._poly._path;
+        L.DomUtil.addClass(el, 'leaflet-pm-draggable');
+
+        this._poly.on('mousedown', function(event) {
+
+            that._tempDragCoord = event.latlng;
+
+            // listen to mousemove on map (instead of polygon), otherwise fast mouse movements stop the drag
+            that._poly._map.on('mousemove', function(e) {
+
+                // set state
+                that._poly._dragging = true;
+
+                // disbale map drag
+                that._poly._map.dragging.disable();
+
+                var latlng = e.latlng;
+
+                that._onLayerDrag(e);
+            });
+
+        });
+
+        this._poly.on('mouseup', function(e) {
+
+            // re-enable map drag
+            that._poly._map.dragging.enable();
+
+            // clear up mousemove event
+            that._poly._map.off('mousemove');
+
+            // fire edit
+            that._fireEdit();
+
+            // timeout to prevent click event after drag :-/
+            // TODO: do it better as soon as leaflet has a way to do it better :-)
+            window.setTimeout(function() {
+                // set state
+                that._poly._dragging = false;
+            }, 10)
+
+
+        });
+
+    },
+
+    _onLayerDrag: function(e) {
+
+        var that = this;
+
+        // latLng of mouse event
+        var latlng = e.latlng;
+
+        // delta coords (how far was dragged)
+        var deltaLatLng = {
+            lat: latlng.lat - that._tempDragCoord.lat,
+            lng: latlng.lng - that._tempDragCoord.lng
+        };
+
+        for(var i = 0; i < this._markers.length; i++) {
+
+            // a marker reference
+            var marker = this._markers[i];
+
+            // current coords
+            var currentLatLng = marker.getLatLng();
+
+            // new coords
+            var newLatLng = {
+                lat: currentLatLng.lat + deltaLatLng.lat,
+                lng: currentLatLng.lng + deltaLatLng.lng
+            }
+
+            // set latLng of marker
+            marker.setLatLng(newLatLng);
+
+            // act like the marker was dragged (this will move the polygon etc)
+            this._onMarkerDrag({target: marker});
+
+        }
+
+        // save current latlng for next delta calculation
+        this._tempDragCoord = latlng;
+
+
     },
 
     _initMarkers: function() {
@@ -637,15 +761,15 @@ L.PM.Edit.LayerGroup = L.Class.extend({
     _fireEdit: function() {
         this._layerGroup.fireEvent('pm:edit');
     },
-    toggleEdit: function() {
+    toggleEdit: function(options) {
 
         for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.toggleEdit();
+            this._layers[i].pm.toggleEdit(options);
         }
     },
-    enable: function() {
+    enable: function(options) {
         for(var i=0; i<this._layers.length; i++) {
-            this._layers[i].pm.enable();
+            this._layers[i].pm.enable(options);
         }
     },
     disable: function() {
