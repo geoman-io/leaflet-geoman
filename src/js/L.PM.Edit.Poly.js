@@ -54,8 +54,15 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     disable: function() {
+        if(this.dragging) {
+            return false;
+        }
         this._enabled = false;
         this._poly._map.removeLayer(this._markerGroup);
+    },
+
+    dragging: function() {
+        return this_.dragging;
     },
 
     _initDraggableLayer: function() {
@@ -65,11 +72,14 @@ L.PM.Edit.Poly = L.Class.extend({
         // temporary coord variable for delta calculation
         this._tempDragCoord;
 
-        this._poly.on('mousedown', function(a) {
+        this._poly.on('mousedown', function(event) {
 
-            that._tempDragCoord = a.latlng;
+            that._tempDragCoord = event.latlng;
 
             that._poly.on('mousemove', function(e) {
+
+                // set state
+                that._poly._dragging = true;
 
                 // disbale map drag
                 that._poly._map.dragging.disable();
@@ -78,6 +88,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
                 that._onLayerDrag(e);
             });
+
         });
 
         this._poly.on('mouseup', function(e) {
@@ -91,6 +102,8 @@ L.PM.Edit.Poly = L.Class.extend({
             // fire edit
             that._fireEdit();
 
+            // set state
+            that._poly._dragging = false;
 
         });
 
