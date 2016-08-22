@@ -64,6 +64,10 @@ L.PM.Edit.Poly = L.Class.extend({
         // clean up draggable
         this._poly.off('mousedown');
         this._poly.off('mouseup');
+
+        // remove draggable class
+        var el = this._poly._path;
+        L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
     },
 
     dragging: function() {
@@ -77,11 +81,15 @@ L.PM.Edit.Poly = L.Class.extend({
         // temporary coord variable for delta calculation
         this._tempDragCoord;
 
+        // add CSS class
+        var el = this._poly._path;
+        L.DomUtil.addClass(el, 'leaflet-pm-draggable');
+
         this._poly.on('mousedown', function(event) {
 
             that._tempDragCoord = event.latlng;
 
-            // listen to mouse move on map, otherwise fast mouse movements stop the drag
+            // listen to mousemove on map (instead of polygon), otherwise fast mouse movements stop the drag
             that._poly._map.on('mousemove', function(e) {
 
                 // set state
