@@ -686,6 +686,48 @@ L.PM.Edit.Poly = L.Class.extend({
 
     },
 
+    _replacePolyCoords: function(geoJson) {
+
+        // this is going to be tough so let's go through it point by point
+
+        // first, remove all markers, they need to be created again
+        this._markerGroup.clearLayers();
+
+
+        var latlngs = L.geoJson(geoJson).getLayers()[0].getLatLngs();
+
+        console.log(latlngs);
+
+        // var geoJsonLayer = L.geoJson(geoJson).setStyle({
+        //     fillColor: '#DD1122'
+        // }).addTo(this._poly._map);
+
+        // then, redraw the polygon
+        this._poly.setLatLngs(latlngs);
+
+        // console.log(this._poly);
+    },
+
+    _checkOverlap: function() {
+
+        var layers = this._layerGroup.getLayers();
+
+        for(i=0; i<layers.length; i++) {
+            var layer = layers[i];
+
+            if(layer !== this._poly) {
+                if(turf.intersect(this._poly.toGeoJSON(), layer.toGeoJSON())) {
+                    console.log('INTERSECT');
+                    diff = turf.difference(this._poly.toGeoJSON(), layer.toGeoJSON());
+                    this._replacePolyCoords(diff);
+                }
+
+
+            }
+        }
+
+    },
+
     _onMarkerDrag: function(e) {
 
         // dragged marker
@@ -707,6 +749,9 @@ L.PM.Edit.Poly = L.Class.extend({
 
         var middleMarkerLeftLatLng = this._calcMiddleLatLng(marker, this._markers[prevMarkerIndex]);
         marker._middleMarkerLeft.setLatLng(middleMarkerLeftLatLng);
+
+
+        this._checkOverlap();
 
     },
 
@@ -742,9 +787,12 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
-        // listen to the edit event of the layers in this group
         for(var i=0; i<this._layers.length; i++) {
+            // listen to the edit event of the layers in this group
             this._layers[i].on('pm:edit', this._fireEdit, this);
+
+            // add reference for the group to each layer inside said group
+            this._layers[i].pm._layerGroup = this._layerGroup;
         }
 
         // if a new layer is added to the group, reinitialize
@@ -769,6 +817,7 @@ L.PM.Edit.LayerGroup = L.Class.extend({
     },
     enable: function(options) {
         for(var i=0; i<this._layers.length; i++) {
+            // enable edit for each layer of the group
             this._layers[i].pm.enable(options);
         }
     },

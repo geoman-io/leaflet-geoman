@@ -4,7 +4,9 @@
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": ["leaflet", "polygon management", "geometry editing", "map data", "map overlay", "polygon", "geojson", "leaflet-draw", "data-field-geojson", "ui-leaflet-draw"],
   "main": "dist/leaflet.pm.js",
-  "dependencies": {},
+  "dependencies": {
+      "turf": "^3.1.1"
+  },
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",

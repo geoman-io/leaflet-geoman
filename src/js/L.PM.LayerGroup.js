@@ -5,9 +5,12 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
-        // listen to the edit event of the layers in this group
         for(var i=0; i<this._layers.length; i++) {
+            // listen to the edit event of the layers in this group
             this._layers[i].on('pm:edit', this._fireEdit, this);
+
+            // add reference for the group to each layer inside said group
+            this._layers[i].pm._layerGroup = this._layerGroup;
         }
 
         // if a new layer is added to the group, reinitialize
@@ -32,6 +35,7 @@ L.PM.Edit.LayerGroup = L.Class.extend({
     },
     enable: function(options) {
         for(var i=0; i<this._layers.length; i++) {
+            // enable edit for each layer of the group
             this._layers[i].pm.enable(options);
         }
     },
