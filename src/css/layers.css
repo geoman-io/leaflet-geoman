@@ -19,3 +19,7 @@
 .leaflet-pm-draggable {
     cursor: move !important;
 }
+
+.leaflet-pm-dragging {
+
+}

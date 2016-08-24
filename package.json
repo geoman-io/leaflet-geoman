@@ -5,7 +5,7 @@
   "keywords": ["leaflet", "polygon management", "geometry editing", "map data", "map overlay", "polygon", "geojson", "leaflet-draw", "data-field-geojson", "ui-leaflet-draw"],
   "main": "dist/leaflet.pm.js",
   "dependencies": {
-      "turf": "^3.1.1"
+      "@turf/turf": "^3.5.2"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

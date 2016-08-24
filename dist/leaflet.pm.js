@@ -451,11 +451,18 @@ L.PM.Edit.Poly = L.Class.extend({
 
                 // set state
                 that._poly._dragging = true;
+                L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+
+                // bring it to front to prevent drag interception
+                that._poly.bringToFront();
 
                 // disbale map drag
                 that._poly._map.dragging.disable();
 
-                var latlng = e.latlng;
+                // hide markers
+                that._markerGroup.eachLayer(function(marker) {
+                    marker.setOpacity(0);
+                });
 
                 that._onLayerDrag(e);
             });
@@ -470,6 +477,14 @@ L.PM.Edit.Poly = L.Class.extend({
             // clear up mousemove event
             that._poly._map.off('mousemove');
 
+            // show markers again
+            that._markerGroup.eachLayer(function(marker) {
+                marker.setOpacity(1);
+            });
+
+            // set new coordinates, more details inside the function
+            that._applyPossibleCoordsChanges();
+
             // fire edit
             that._fireEdit();
 
@@ -478,6 +493,7 @@ L.PM.Edit.Poly = L.Class.extend({
             window.setTimeout(function() {
                 // set state
                 that._poly._dragging = false;
+                L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
             }, 10)
 
 
@@ -686,28 +702,25 @@ L.PM.Edit.Poly = L.Class.extend({
 
     },
 
-    _replacePolyCoords: function(geoJson) {
+    _applyPossibleCoordsChanges: function() {
 
-        // this is going to be tough so let's go through it point by point
+        if(this._tempPolygon) {
+            this._markerGroup.clearLayers();
+            var latlngs = this._tempPolygon.getLayers()[0].getLatLngs();
+            this._poly.setLatLngs(latlngs).redraw();
+            this._initMarkers();
+        }
 
-        // first, remove all markers, they need to be created again
-        this._markerGroup.clearLayers();
-
-
-        var latlngs = L.geoJson(geoJson).getLayers()[0].getLatLngs();
-
-        console.log(latlngs);
-
-        // var geoJsonLayer = L.geoJson(geoJson).setStyle({
-        //     fillColor: '#DD1122'
-        // }).addTo(this._poly._map);
-
-        // then, redraw the polygon
-        this._poly.setLatLngs(latlngs);
-
-        // console.log(this._poly);
     },
 
+    _drawTemporaryPolygon: function(geoJson) {
+
+
+        this._poly.setStyle({opacity: 0, fillOpacity: 0});
+        this._tempPolygon = L.geoJson(geoJson).addTo(this._poly._map).bringToBack();
+
+
+    },
     _checkOverlap: function() {
 
         var layers = this._layerGroup.getLayers();
@@ -716,10 +729,19 @@ L.PM.Edit.Poly = L.Class.extend({
             var layer = layers[i];
 
             if(layer !== this._poly) {
+
+                var theRealLayer = layer;
+
+                if(this._tempPolygon) {
+                    this._tempPolygon.remove();
+                    delete this._tempPolygon;
+                }
+
                 if(turf.intersect(this._poly.toGeoJSON(), layer.toGeoJSON())) {
-                    console.log('INTERSECT');
-                    diff = turf.difference(this._poly.toGeoJSON(), layer.toGeoJSON());
-                    this._replacePolyCoords(diff);
+                    var diff = turf.difference(this._poly.toGeoJSON(), theRealLayer.toGeoJSON());
+                    this._drawTemporaryPolygon(diff);
+                } else {
+                    this._poly.setStyle({opacity: 1, fillOpacity: 0.2});
                 }
 
 
@@ -758,6 +780,8 @@ L.PM.Edit.Poly = L.Class.extend({
     _onMarkerDragEnd: function(e) {
 
         var marker = e.target;
+
+        this._applyPossibleCoordsChanges();
 
         this._fireEdit();
 
