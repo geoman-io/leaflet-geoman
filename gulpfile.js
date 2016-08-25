@@ -25,9 +25,6 @@ gulp.task('scripts', function() {
     // Compine all js files into one file
     .pipe(concat('leaflet.pm.js'))
 
-    // Output the non-minified version
-    .pipe(gulp.dest('dist/'))
-
     // minify
     .pipe(uglify())
 
