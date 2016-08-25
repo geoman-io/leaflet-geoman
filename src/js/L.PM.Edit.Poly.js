@@ -414,7 +414,6 @@ L.PM.Edit.Poly = L.Class.extend({
         }
 
         if(changed) {
-            console.log('draw');
             this._drawTemporaryPolygon(resultingGeoJson);
         } else {
             this._poly.setStyle({opacity: 1, fillOpacity: 0.2});
@@ -438,8 +437,7 @@ L.PM.Edit.Poly = L.Class.extend({
         this._poly.redraw();
 
         // update middle markers on the left and right
-        // be aware that "left" and "right" might be interchanged, depending on the geojson array
-        // TODO rename "left" and "right" to "prev" and "next"
+        // be aware that "next" and "prev" might be interchanged, depending on the geojson array
         var markerLatLng = marker.getLatLng();
         var prevMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
         var nextMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
@@ -475,7 +473,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _calcMiddleLatLng: function(latlng1, latlng2) {
         // calculate the middle coordinates between two markers
-        // TODO: put this into a utils.js
+        // TODO: put this into a utils.js or something
 
         var map = this._poly._map,
             p1 = map.project(latlng1),
