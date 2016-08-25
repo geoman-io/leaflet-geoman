@@ -737,7 +737,17 @@ L.PM.Edit.Poly = L.Class.extend({
                     delete this._tempPolygon;
                 }
 
-                if(turf.intersect(this._poly.toGeoJSON(), layer.toGeoJSON())) {
+                var intersect;
+
+                // this needs to be in a try catch block because turf isn't reliable
+                // it throws self-intersection errors even if there are none
+                try {
+                    intersect = turf.intersect(this._poly.toGeoJSON(), layer.toGeoJSON())
+                } catch(e) {
+                    console.warn('Turf Error :-/')
+                }
+
+                if(intersect) {
                     var diff = turf.difference(this._poly.toGeoJSON(), theRealLayer.toGeoJSON());
                     this._drawTemporaryPolygon(diff);
                 } else {
