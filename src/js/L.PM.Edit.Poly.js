@@ -122,7 +122,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
             // show markers again
             that._markerGroup.eachLayer(function(marker) {
-                marker.setOpacity(1);
+                marker.setOpacity(null);
             });
 
             // set new coordinates, more details inside the function
