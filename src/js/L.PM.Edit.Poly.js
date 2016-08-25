@@ -231,15 +231,15 @@ L.PM.Edit.Poly = L.Class.extend({
     // creates the middle markes between coordinates
     _createMiddleMarker: function(leftM, rightM) {
         var self = this;
-        var latlng = this._calcMiddleLatLng(leftM, rightM);
+        var latlng = this._calcMiddleLatLng(leftM.getLatLng(), rightM.getLatLng());
 
         var middleMarker = this._createMarker(latlng);
         var icon = L.divIcon({className: 'marker-icon marker-icon-middle'})
         middleMarker.setIcon(icon);
 
         // save middle markers to the other markers
-        leftM._middleMarkerRight = middleMarker;
-        rightM._middleMarkerLeft = middleMarker;
+        leftM._middleMarkerNext = middleMarker;
+        rightM._middleMarkerPrev = middleMarker;
 
         middleMarker.on('click', function() {
 
@@ -315,8 +315,8 @@ L.PM.Edit.Poly = L.Class.extend({
             this._poly.redraw();
 
             // remove the marker and the middlemarkers next to it from the map
-            this._markerGroup.removeLayer(marker._middleMarkerLeft);
-            this._markerGroup.removeLayer(marker._middleMarkerRight);
+            this._markerGroup.removeLayer(marker._middleMarkerPrev);
+            this._markerGroup.removeLayer(marker._middleMarkerNext);
             this._markerGroup.removeLayer(marker);
 
 
@@ -440,11 +440,15 @@ L.PM.Edit.Poly = L.Class.extend({
         // update middle markers on the left and right
         // be aware that "left" and "right" might be interchanged, depending on the geojson array
         // TODO rename "left" and "right" to "prev" and "next"
-        var middleMarkerRightLatLng = this._calcMiddleLatLng(marker, this._markers[nextMarkerIndex]);
-        marker._middleMarkerRight.setLatLng(middleMarkerRightLatLng);
+        var markerLatLng = marker.getLatLng();
+        var prevMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
+        var nextMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
 
-        var middleMarkerLeftLatLng = this._calcMiddleLatLng(marker, this._markers[prevMarkerIndex]);
-        marker._middleMarkerLeft.setLatLng(middleMarkerLeftLatLng);
+        var middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
+        marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
+
+        var middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
+        marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
 
 
         this._checkOverlap();
@@ -469,15 +473,13 @@ L.PM.Edit.Poly = L.Class.extend({
         this._poly.fire('pm:edit');
     },
 
-    _calcMiddleLatLng: function(leftM, rightM) {
+    _calcMiddleLatLng: function(latlng1, latlng2) {
         // calculate the middle coordinates between two markers
-        // TODO: rewrite so it only accepts latlngs instead of markers
         // TODO: put this into a utils.js
 
-
         var map = this._poly._map,
-            p1 = map.project(leftM.getLatLng()),
-            p2 = map.project(rightM.getLatLng());
+            p1 = map.project(latlng1),
+            p2 = map.project(latlng2);
 
         var latlng = map.unproject(p1._add(p2)._divideBy(2));
 
