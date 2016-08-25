@@ -367,39 +367,48 @@ L.PM.Edit.Poly = L.Class.extend({
     _checkOverlap: function() {
 
         var layers = this._layerGroup.getLayers();
+        var changed = false;
+        var resultingGeoJson = this._poly.toGeoJSON();
 
         for(i=0; i<layers.length; i++) {
             var layer = layers[i];
 
             if(layer !== this._poly) {
 
-                var theRealLayer = layer;
-
-                if(this._tempPolygon) {
-                    this._tempPolygon.remove();
-                    delete this._tempPolygon;
-                }
-
                 var intersect;
 
                 // this needs to be in a try catch block because turf isn't reliable
                 // it throws self-intersection errors even if there are none
                 try {
-                    intersect = turf.intersect(this._poly.toGeoJSON(), layer.toGeoJSON())
+                    intersect = turf.intersect(resultingGeoJson, layer.toGeoJSON());
                 } catch(e) {
-                    console.warn('Turf Error :-/')
+                    console.warn('Turf Error :-/');
                 }
 
                 if(intersect) {
-                    var diff = turf.difference(this._poly.toGeoJSON(), theRealLayer.toGeoJSON());
-                    this._drawTemporaryPolygon(diff);
+                    changed = true;
+                    resultingGeoJson = turf.difference(resultingGeoJson, layer.toGeoJSON());
                 } else {
-                    this._poly.setStyle({opacity: 1, fillOpacity: 0.2});
+
                 }
 
 
             }
         }
+
+        if(this._tempPolygon) {
+            this._tempPolygon.remove();
+            delete this._tempPolygon;
+        }
+
+        if(changed) {
+            console.log('draw');
+            this._drawTemporaryPolygon(resultingGeoJson);
+        } else {
+            this._poly.setStyle({opacity: 1, fillOpacity: 0.2});
+        }
+
+
 
     },
 
