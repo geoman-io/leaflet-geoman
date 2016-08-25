@@ -190,6 +190,7 @@ L.Control.PMButton = L.Control.extend({
 
 });
 
+
 L.PM.Draw.Poly = L.PM.Draw.extend({
 
     initialize: function(map) {
@@ -704,10 +705,22 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _applyPossibleCoordsChanges: function() {
 
+        // after the polygon was dragged and changed it's shape because of unallowed intersecting
+        // with another polygon, this function takes the temporarily drawn polygon and applies
+        // it's coordinates to our main polygon
+
         if(this._tempPolygon) {
+
+            // remove all current markers
             this._markerGroup.clearLayers();
+
+            // get the new coordinates
             var latlngs = this._tempPolygon.getLayers()[0].getLatLngs();
+
+            // reshape our main polygon
             this._poly.setLatLngs(latlngs).redraw();
+
+            // initialize the markers again
             this._initMarkers();
         }
 
@@ -715,10 +728,11 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _drawTemporaryPolygon: function(geoJson) {
 
-
+        // hide our polygon
         this._poly.setStyle({opacity: 0, fillOpacity: 0});
-        this._tempPolygon = L.geoJson(geoJson).addTo(this._poly._map).bringToBack();
 
+        // draw a temporary polygon (happens during drag)
+        this._tempPolygon = L.geoJson(geoJson).addTo(this._poly._map).bringToBack();
 
     },
     _checkOverlap: function() {
@@ -748,7 +762,6 @@ L.PM.Edit.Poly = L.Class.extend({
                 } else {
 
                 }
-
 
             }
         }
@@ -800,18 +813,26 @@ L.PM.Edit.Poly = L.Class.extend({
 
         var marker = e.target;
 
+
         this._applyPossibleCoordsChanges();
 
+        // fire edit event
         this._fireEdit();
 
     },
 
     _fireEdit: function () {
+        // fire edit event
         this._poly.edited = true;
         this._poly.fire('pm:edit');
     },
 
     _calcMiddleLatLng: function(leftM, rightM) {
+        // calculate the middle coordinates between two markers
+        // TODO: rewrite so it only accepts latlngs instead of markers
+        // TODO: put this into a utils.js
+
+
         var map = this._poly._map,
             p1 = map.project(leftM.getLatLng()),
             p2 = map.project(rightM.getLatLng());

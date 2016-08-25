@@ -110,7 +110,7 @@ var layerGroupItem2 = L.polygon([
     [51.52, -0.05]
 ]);
 
-var geoJsonLayer = L.polygon([
+var layerGroupItem3 = L.polygon([
   [
     51.51549835365031,
     -0.06450164634969281
@@ -129,7 +129,7 @@ var geoJsonLayer = L.polygon([
   ]
 ]);
 
-var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2, geoJsonLayer]).addTo(map4);
+var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2, layerGroupItem3]).addTo(map4);
 layerGroup.pm.toggleEdit({
     draggable: true
 });
