@@ -741,7 +741,7 @@ L.PM.Edit.Poly = L.Class.extend({
         var changed = false;
         var resultingGeoJson = this._poly.toGeoJSON();
 
-        for(i=0; i<layers.length; i++) {
+        for(var i=0; i<layers.length; i++) {
             var layer = layers[i];
 
             if(layer !== this._poly) {
