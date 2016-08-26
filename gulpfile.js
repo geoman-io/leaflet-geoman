@@ -3,7 +3,8 @@ var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var concatCss = require('gulp-concat-css');
-
+var babel = require('gulp-babel');
+var sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('scripts', function() {
     return gulp.src([
@@ -12,17 +13,26 @@ gulp.task('scripts', function() {
         'src/**/*.js'
     ])
 
+    // init sourcemaps
+    .pipe(sourcemaps.init())
+
+
+    // parse es6
+    .pipe(babel({
+        presets: ['es2015']
+    }))
+
     // Compine all js files into one file
     .pipe(concat('leaflet.pm.js'))
-
-    // Output the non-minified version
-    .pipe(gulp.dest('dist/'))
 
     // minify
     .pipe(uglify())
 
     // rename
     .pipe(rename({ extname: '.min.js' }))
+
+    // write sourcemaps
+    .pipe(sourcemaps.write('maps'))
 
     // output the minified file
     .pipe(gulp.dest('dist/'));
