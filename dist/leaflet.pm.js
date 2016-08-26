@@ -757,10 +757,11 @@ L.PM.Edit.Poly = L.Class.extend({
                 }
 
                 if(intersect) {
-                    changed = true;
                     resultingGeoJson = turf.difference(resultingGeoJson, layer.toGeoJSON());
-                } else {
 
+                    if(resultingGeoJson.geometry.type !== 'MultiPolygon') {
+                        changed = true;
+                    }
                 }
 
             }
