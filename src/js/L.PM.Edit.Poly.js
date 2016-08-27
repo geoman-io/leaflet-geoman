@@ -23,16 +23,8 @@ L.PM.Edit.Poly = L.Class.extend({
             // change state
             this._enabled = true;
 
-            // create markers
-            if(!this._markerGroup) {
-                this._markerGroup = new L.LayerGroup();
 
-                // init dragable markers
-                this._initMarkers();
-            }
-
-            // add markerGroup to map
-            this._poly._map.addLayer(this._markerGroup);
+            this._initMarkers();
 
             // if polygon gets removed from map, disable edit mode
             this._poly.on('remove', function() {
@@ -87,34 +79,8 @@ L.PM.Edit.Poly = L.Class.extend({
         var el = this._poly._path;
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
-        this._poly.on('mousedown', function(event) {
 
-            that._tempDragCoord = event.latlng;
-
-            // listen to mousemove on map (instead of polygon), otherwise fast mouse movements stop the drag
-            that._poly._map.on('mousemove', function(e) {
-
-                // set state
-                that._poly._dragging = true;
-                L.DomUtil.addClass(el, 'leaflet-pm-dragging');
-
-                // bring it to front to prevent drag interception
-                that._poly.bringToFront();
-
-                // disbale map drag
-                that._poly._map.dragging.disable();
-
-                // hide markers
-                that._markerGroup.eachLayer(function(marker) {
-                    marker.setOpacity(0);
-                });
-
-                that._onLayerDrag(e);
-            });
-
-        });
-
-        this._poly.on('mouseup', function(e) {
+        var onMouseUp = function(e) {
 
             // re-enable map drag
             that._poly._map.dragging.enable();
@@ -122,10 +88,11 @@ L.PM.Edit.Poly = L.Class.extend({
             // clear up mousemove event
             that._poly._map.off('mousemove');
 
+            // clear up mouseup event
+            that._poly.off('mouseup');
+
             // show markers again
-            that._markerGroup.eachLayer(function(marker) {
-                marker.setOpacity(null);
-            });
+            that._initMarkers();
 
             // set new coordinates, more details inside the function
             that._applyPossibleCoordsChanges();
@@ -139,10 +106,43 @@ L.PM.Edit.Poly = L.Class.extend({
                 // set state
                 that._poly._dragging = false;
                 L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
-            }, 10)
+            }, 10);
 
+        }
+
+        this._poly.on('mousedown', function(event) {
+
+            that._tempDragCoord = event.latlng;
+
+            that._poly.on('mouseup', onMouseUp);
+
+
+            // listen to mousemove on map (instead of polygon), otherwise fast mouse movements stop the drag
+            that._poly._map.on('mousemove', function(e) {
+
+                // FIXME: most of this stuff is only necessary ONCE on drag start,
+                // not repeatedly during drag - fix it.
+
+
+                // set state
+                that._poly._dragging = true;
+                L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+
+                // bring it to front to prevent drag interception
+                that._poly.bringToFront();
+
+                // disbale map drag
+                that._poly._map.dragging.disable();
+
+                // hide markers
+                that._markerGroup.clearLayers();
+
+                that._onLayerDrag(e);
+            });
 
         });
+
+
 
     },
 
@@ -159,13 +159,12 @@ L.PM.Edit.Poly = L.Class.extend({
             lng: latlng.lng - that._tempDragCoord.lng
         };
 
-        for(var i = 0; i < this._markers.length; i++) {
+        var newLatLngs = [];
 
-            // a marker reference
-            var marker = this._markers[i];
+        for(var i = 0; i < this._poly._latlngs[0].length; i++) {
 
             // current coords
-            var currentLatLng = marker.getLatLng();
+            var currentLatLng = this._poly._latlngs[0][i];
 
             // new coords
             var newLatLng = {
@@ -173,23 +172,38 @@ L.PM.Edit.Poly = L.Class.extend({
                 lng: currentLatLng.lng + deltaLatLng.lng
             }
 
-            // set latLng of marker
-            marker.setLatLng(newLatLng);
-
-            // act like the marker was dragged (this will move the polygon etc)
-            this._onMarkerDrag({target: marker});
+            newLatLngs.push(newLatLng);
 
         }
 
+        this._poly.setLatLngs(newLatLngs).redraw();
+
         // save current latlng for next delta calculation
         this._tempDragCoord = latlng;
+
+        // if the dragged polygon should be cutted when overlapping another polygon, go ahead
+        if(this.options.preventOverlap) {
+            this._handleOverlap();
+        }
 
 
     },
 
     _initMarkers: function() {
 
+        var map = this._poly._map;
+
+        // cleanup old ones first
+        if(this._markerGroup) {
+            this._markerGroup.clearLayers();
+        }
         this._markers = [];
+
+
+        // add markerGroup to map
+        this._markerGroup = new L.LayerGroup();
+        map.addLayer(this._markerGroup);
+
 
         var coords = this._poly._latlngs[0];
 
@@ -359,9 +373,6 @@ L.PM.Edit.Poly = L.Class.extend({
         // it's coordinates to our main polygon
 
         if(this._tempPolygon) {
-
-            // remove all current markers
-            this._markerGroup.clearLayers();
 
             // get the new coordinates
             var latlngs = this._tempPolygon.getLayers()[0].getLatLngs();
