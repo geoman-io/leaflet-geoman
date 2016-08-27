@@ -120,23 +120,22 @@ L.PM.Edit.Poly = L.Class.extend({
             // listen to mousemove on map (instead of polygon), otherwise fast mouse movements stop the drag
             that._poly._map.on('mousemove', function(e) {
 
-                // FIXME: most of this stuff is only necessary ONCE on drag start,
-                // not repeatedly during drag - fix it.
+                if(!that._poly._dragging) {
 
+                    // set state
+                    that._poly._dragging = true;
+                    L.DomUtil.addClass(el, 'leaflet-pm-dragging');
 
-                // set state
-                that._poly._dragging = true;
-                L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+                    // bring it to front to prevent drag interception
+                    that._poly.bringToFront();
 
-                // bring it to front to prevent drag interception
-                that._poly.bringToFront();
+                    // disbale map drag
+                    that._poly._map.dragging.disable();
 
-                // disbale map drag
-                that._poly._map.dragging.disable();
-
-                // hide markers
-                that._markerGroup.clearLayers();
-
+                    // hide markers
+                    that._markerGroup.clearLayers();
+                }
+                
                 that._onLayerDrag(e);
             });
 
