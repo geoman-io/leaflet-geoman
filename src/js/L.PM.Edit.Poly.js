@@ -339,6 +339,11 @@ L.PM.Edit.Poly = L.Class.extend({
                 this._markers[i]._index = i;
             }
 
+            // if the polygon should be cutted when overlapping another polygon, do it now
+            if(this.options.preventOverlap) {
+                this._handleOverlap();
+            }
+
             // fire edit event
             this._fireEdit();
 
@@ -379,7 +384,7 @@ L.PM.Edit.Poly = L.Class.extend({
         this._tempPolygon = L.geoJson(geoJson).addTo(this._poly._map).bringToBack();
 
     },
-    _checkOverlap: function() {
+    _handleOverlap: function() {
 
         var layers = this._layerGroup.getLayers();
         var changed = false;
@@ -454,7 +459,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
         // if the dragged polygon should be cutted when overlapping another polygon, go ahead
         if(this.options.preventOverlap) {
-            this._checkOverlap();
+            this._handleOverlap();
         }
 
     },

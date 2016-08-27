@@ -131,5 +131,6 @@ var layerGroupItem3 = L.polygon([
 
 var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2, layerGroupItem3]).addTo(map4);
 layerGroup.pm.toggleEdit({
-    draggable: true
+    draggable: true,
+    preventOverlap: true
 });
