@@ -17,6 +17,8 @@ L.PM.Edit.Poly = L.Class.extend({
 
         var self = this;
 
+        this.options = options;
+
         if(!this.enabled()) {
             // change state
             this._enabled = true;
@@ -42,7 +44,7 @@ L.PM.Edit.Poly = L.Class.extend({
                 return;
             }
 
-            if(options.draggable) {
+            if(this.options.draggable) {
                 this._initDraggableLayer();
             }
         }
@@ -450,14 +452,16 @@ L.PM.Edit.Poly = L.Class.extend({
         marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
 
 
-        this._checkOverlap();
+        // if the dragged polygon should be cutted when overlapping another polygon, go ahead
+        if(this.options.preventOverlap) {
+            this._checkOverlap();
+        }
 
     },
 
     _onMarkerDragEnd: function(e) {
 
         var marker = e.target;
-
 
         this._applyPossibleCoordsChanges();
 
