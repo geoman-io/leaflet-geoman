@@ -197,14 +197,15 @@ L.PM.Edit.Poly = L.Class.extend({
         if(this._markerGroup) {
             this._markerGroup.clearLayers();
         }
+
+        // the marker array, it includes only the markers that're associated with the coordinates
         this._markers = [];
 
-
-        // add markerGroup to map
+        // add markerGroup to map, markerGroup includes regular and middle markers
         this._markerGroup = new L.LayerGroup();
         map.addLayer(this._markerGroup);
 
-
+        // create marker for each coordinate
         var coords = this._poly._latlngs[0];
 
         for(var i = 0; i < coords.length; i++) {
@@ -212,10 +213,10 @@ L.PM.Edit.Poly = L.Class.extend({
             this._markers.push(marker);
         }
 
+        // create small markers in the middle of the regular markers
         for(var k = 0; k < coords.length; k++) {
 
             var nextIndex = k+1 >= coords.length ? 0 : k+1;
-
             this._createMiddleMarker(
                 this._markers[k], this._markers[nextIndex]
             );
