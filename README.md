@@ -1,5 +1,6 @@
 # Leaflet Polygon Management
-A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0
+A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.
+Draw, Edit, Drag, Cut, Adapt, and soon: Snap Features.
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 beta (v2) I created this plugin myself due to a lack of alternatives.
@@ -61,26 +62,41 @@ Use Edit Mode for a layer like this:
 ```
 var polygonLayer = L.geoJson(data).addTo(map);
 
+// optional options
+var options = {
+
+    // makes the polygon draggable
+    draggable: true,
+
+    // EXPERIMENTAL: if a draggable polygon gets dragged over another polygon of the same layergroup,
+    // the dragged polygon will get cut - this feature still may have some bugs and will be further developed
+    preventOverlap: true
+
+};
+
 // enable edit mode
-polygonLayer.pm.enable();
+polygonLayer.pm.enable(options);
 
 // disable edit mode
 polygonLayer.pm.disable();
 
 // toggle edit mode
-polygonLayer.pm.toggleEdit();
+polygonLayer.pm.toggleEdit(options);
 
 // check if edit mode is enabled
 polygonLayer.pm.enabled(); // returns true/false
 
 // listen to changes
 polygonLayer.on('pm:edit', function(e) {//...});
+polygonLayer.on('pm:dragstart', function(e) {//...});
+polygonLayer.on('pm:drag', function(e) {//...});
+polygonLayer.on('pm:dragend', function(e) {//...});
 
 ```
 
 
 ### Credit
-As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be suprised to see some familiar code.
+As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be surprised to see some familiar code.
 
 
 ### License
