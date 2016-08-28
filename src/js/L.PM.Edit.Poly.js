@@ -162,34 +162,25 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _onLayerDrag: function(e) {
 
-        var that = this;
-
         // latLng of mouse event
-        var latlng = e.latlng;
+        let latlng = e.latlng;
 
         // delta coords (how far was dragged)
-        var deltaLatLng = {
-            lat: latlng.lat - that._tempDragCoord.lat,
-            lng: latlng.lng - that._tempDragCoord.lng
+        let deltaLatLng = {
+            lat: latlng.lat - this._tempDragCoord.lat,
+            lng: latlng.lng - this._tempDragCoord.lng
         };
 
-        var newLatLngs = [];
-
-        for(var i = 0; i < this._poly._latlngs[0].length; i++) {
-
-            // current coords
-            var currentLatLng = this._poly._latlngs[0][i];
-
-            // new coords
-            var newLatLng = {
+        // create the new coordinates array
+        let coords = this._poly._latlngs[0];
+        let newLatLngs = coords.map((currentLatLng) => {
+            return {
                 lat: currentLatLng.lat + deltaLatLng.lat,
                 lng: currentLatLng.lng + deltaLatLng.lng
             }
+        });
 
-            newLatLngs.push(newLatLng);
-
-        }
-
+        // set new coordinates and redraw
         this._poly.setLatLngs(newLatLngs).redraw();
 
         // save current latlng for next delta calculation
