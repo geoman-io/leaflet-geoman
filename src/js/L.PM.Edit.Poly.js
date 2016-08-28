@@ -23,13 +23,11 @@ L.PM.Edit.Poly = L.Class.extend({
             // change state
             this._enabled = true;
 
-
+            // init markers
             this._initMarkers();
 
             // if polygon gets removed from map, disable edit mode
-            this._poly.on('remove', function() {
-                self.disable();
-            });
+            this._poly.on('remove', self.disable);
 
             // apply options
             if(!options) {
