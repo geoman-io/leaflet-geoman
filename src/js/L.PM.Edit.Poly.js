@@ -200,7 +200,6 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     _initMarkers: function() {
-        var that = this;
 
         var map = this._poly._map;
 
