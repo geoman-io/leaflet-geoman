@@ -68,8 +68,6 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _initDraggableLayer: function() {
 
-        var that = this;
-
         // temporary coord variable for delta calculation
         this._tempDragCoord;
 
@@ -78,72 +76,77 @@ L.PM.Edit.Poly = L.Class.extend({
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
 
-        var onMouseUp = function(e) {
+        var onMouseUp = (e) => {
 
             // re-enable map drag
-            that._poly._map.dragging.enable();
+            this._poly._map.dragging.enable();
 
             // clear up mousemove event
-            that._poly._map.off('mousemove');
+            this._poly._map.off('mousemove');
 
             // clear up mouseup event
-            that._poly.off('mouseup');
+            this._poly.off('mouseup');
 
             // show markers again
-            that._initMarkers();
+            this._initMarkers();
 
             // set new coordinates, more details inside the function
-            that._applyPossibleCoordsChanges();
+            this._applyPossibleCoordsChanges();
 
             // timeout to prevent click event after drag :-/
             // TODO: do it better as soon as leaflet has a way to do it better :-)
-            window.setTimeout(function() {
+            window.setTimeout(() => {
                 // set state
-                that._poly._dragging = false;
+                this._poly._dragging = false;
                 L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
                 // fire pm:dragend event
-                that._poly.fire('pm:dragend');
+                this._poly.fire('pm:dragend');
 
                 // fire edit
-                that._fireEdit();
+                this._fireEdit();
             }, 10);
 
         }
 
-        this._poly.on('mousedown', function(event) {
 
-            that._tempDragCoord = event.latlng;
+        var onMouseMove = (e) => {
 
-            that._poly.on('mouseup', onMouseUp);
+            if(!this._poly._dragging) {
 
+                // set state
+                this._poly._dragging = true;
+                L.DomUtil.addClass(el, 'leaflet-pm-dragging');
 
-            // listen to mousemove on map (instead of polygon), otherwise fast mouse movements stop the drag
-            that._poly._map.on('mousemove', function(e) {
+                // bring it to front to prevent drag interception
+                this._poly.bringToFront();
 
-                if(!that._poly._dragging) {
+                // disbale map drag
+                this._poly._map.dragging.disable();
 
-                    // set state
-                    that._poly._dragging = true;
-                    L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+                // hide markers
+                this._markerGroup.clearLayers();
 
-                    // bring it to front to prevent drag interception
-                    that._poly.bringToFront();
-
-                    // disbale map drag
-                    that._poly._map.dragging.disable();
-
-                    // hide markers
-                    that._markerGroup.clearLayers();
-
-                    // fire pm:dragstart event
-                    that._poly.fire('pm:dragstart');
+                // fire pm:dragstart event
+                this._poly.fire('pm:dragstart');
 
 
-                }
+            }
 
-                that._onLayerDrag(e);
-            });
+            this._onLayerDrag(e);
+
+        }
+
+        this._poly.on('mousedown', (e) => {
+
+            // save for delta calculation
+            this._tempDragCoord = e.latlng;
+
+            this._poly.on('mouseup', onMouseUp);
+
+            // listen to mousemove on map (instead of polygon),
+            // otherwise fast mouse movements stop the drag
+            this._poly._map.on('mousemove', onMouseMove);
 
         });
 
@@ -197,6 +200,7 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     _initMarkers: function() {
+        var that = this;
 
         var map = this._poly._map;
 
@@ -205,9 +209,6 @@ L.PM.Edit.Poly = L.Class.extend({
             this._markerGroup.clearLayers();
         }
 
-        // the marker array, it includes only the markers that're associated with the coordinates
-        this._markers = [];
-
         // add markerGroup to map, markerGroup includes regular and middle markers
         this._markerGroup = new L.LayerGroup();
         map.addLayer(this._markerGroup);
@@ -215,10 +216,8 @@ L.PM.Edit.Poly = L.Class.extend({
         // create marker for each coordinate
         var coords = this._poly._latlngs[0];
 
-        for(var i = 0; i < coords.length; i++) {
-            var marker = this._createMarker(coords[i], i);
-            this._markers.push(marker);
-        }
+        // the marker array, it includes only the markers that're associated with the coordinates
+        this._markers = coords.map((latlng, i) => this._createMarker(latlng, i));
 
         // create small markers in the middle of the regular markers
         for(var k = 0; k < coords.length; k++) {
@@ -254,7 +253,7 @@ L.PM.Edit.Poly = L.Class.extend({
 
     // creates the middle markes between coordinates
     _createMiddleMarker: function(leftM, rightM) {
-        var self = this;
+
         var latlng = this._calcMiddleLatLng(leftM.getLatLng(), rightM.getLatLng());
 
         var middleMarker = this._createMarker(latlng);
@@ -265,7 +264,7 @@ L.PM.Edit.Poly = L.Class.extend({
         leftM._middleMarkerNext = middleMarker;
         rightM._middleMarkerPrev = middleMarker;
 
-        middleMarker.on('click', function() {
+        middleMarker.on('click', () => {
 
             // TODO: move the next two lines inside _addMarker() as soon as
             // https://github.com/Leaflet/Leaflet/issues/4484
@@ -273,9 +272,9 @@ L.PM.Edit.Poly = L.Class.extend({
             var icon = L.divIcon({className: 'marker-icon'});
             middleMarker.setIcon(icon);
 
-            self._addMarker(middleMarker, leftM, rightM);
+            this._addMarker(middleMarker, leftM, rightM);
         });
-        middleMarker.on('movestart', function() {
+        middleMarker.on('movestart', () => {
 
             // TODO: This is a workaround. Remove the moveend listener and callback as soon as this is fixed:
             // https://github.com/Leaflet/Leaflet/issues/4484
@@ -286,7 +285,7 @@ L.PM.Edit.Poly = L.Class.extend({
                 middleMarker.off('moveend');
             });
 
-            self._addMarker(middleMarker, leftM, rightM);
+            this._addMarker(middleMarker, leftM, rightM);
         });
 
 
@@ -377,7 +376,7 @@ L.PM.Edit.Poly = L.Class.extend({
     _applyPossibleCoordsChanges: function() {
 
         // after the polygon was dragged and changed it's shape because of unallowed intersecting
-        // with another polygon, this function takes the temporarily drawn polygon and applies
+        // with another polygon, this function takes the temporarily drawn polygon (during drag) and applies
         // it's coordinates to our main polygon
 
         if(this._tempPolygon) {

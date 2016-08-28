@@ -90,7 +90,7 @@ geoJsonLayer.on('pm:dragstart', function(e) {
     console.log(e);
 });
 geoJsonLayer.on('pm:drag', function(e) {
-    console.log(e);
+    // console.log(e);
 });
 geoJsonLayer.on('pm:dragend', function(e) {
     console.log(e);
