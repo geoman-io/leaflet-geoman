@@ -195,7 +195,6 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     _initMarkers: function() {
-
         let map = this._poly._map;
 
         // cleanup old ones first
@@ -211,7 +210,7 @@ L.PM.Edit.Poly = L.Class.extend({
         let coords = this._poly._latlngs[0];
 
         // the marker array, it includes only the markers that're associated with the coordinates
-        this._markers = coords.map((latlng, i) => this._createMarker(latlng, i));
+        this._markers = coords.map(this._createMarker, this);
 
         // create small markers in the middle of the regular markers
         for(var k = 0; k < coords.length; k++) {
