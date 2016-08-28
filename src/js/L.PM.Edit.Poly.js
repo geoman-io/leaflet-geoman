@@ -97,15 +97,18 @@ L.PM.Edit.Poly = L.Class.extend({
             // set new coordinates, more details inside the function
             that._applyPossibleCoordsChanges();
 
-            // fire edit
-            that._fireEdit();
-
             // timeout to prevent click event after drag :-/
             // TODO: do it better as soon as leaflet has a way to do it better :-)
             window.setTimeout(function() {
                 // set state
                 that._poly._dragging = false;
                 L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+
+                // fire pm:dragend event
+                that._poly.fire('pm:dragend');
+
+                // fire edit
+                that._fireEdit();
             }, 10);
 
         }
@@ -134,8 +137,13 @@ L.PM.Edit.Poly = L.Class.extend({
 
                     // hide markers
                     that._markerGroup.clearLayers();
+
+                    // fire pm:dragstart event
+                    that._poly.fire('pm:dragstart');
+
+
                 }
-                
+
                 that._onLayerDrag(e);
             });
 
@@ -185,6 +193,8 @@ L.PM.Edit.Poly = L.Class.extend({
             this._handleOverlap();
         }
 
+        // fire pm:dragstart event
+        this._poly.fire('pm:drag');
 
     },
 

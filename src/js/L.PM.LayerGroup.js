@@ -6,8 +6,12 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         this._layers = layerGroup.getLayers();
 
         for(var i=0; i<this._layers.length; i++) {
-            // listen to the edit event of the layers in this group
+            // FIXME: listen and fire these events a little more... generically.
+            // listen to the events of the layers in this group
             this._layers[i].on('pm:edit', this._fireEdit, this);
+            this._layers[i].on('pm:dragstart', this._fireDragstart, this);
+            this._layers[i].on('pm:drag', this._fireDrag, this);
+            this._layers[i].on('pm:dragend', this._fireDragend, this);
 
             // add reference for the group to each layer inside said group
             this._layers[i].pm._layerGroup = this._layerGroup;
@@ -26,6 +30,15 @@ L.PM.Edit.LayerGroup = L.Class.extend({
     },
     _fireEdit: function() {
         this._layerGroup.fireEvent('pm:edit');
+    },
+    _fireDragstart: function() {
+        this._layerGroup.fireEvent('pm:dragstart');
+    },
+    _fireDrag: function() {
+        this._layerGroup.fireEvent('pm:drag');
+    },
+    _fireDragend: function() {
+        this._layerGroup.fireEvent('pm:dragend');
     },
     toggleEdit: function(options) {
 

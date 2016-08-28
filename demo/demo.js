@@ -86,6 +86,16 @@ geoJsonLayer.on('pm:edit', function(e) {
     console.log(e);
 });
 
+geoJsonLayer.on('pm:dragstart', function(e) {
+    console.log(e);
+});
+geoJsonLayer.on('pm:drag', function(e) {
+    console.log(e);
+});
+geoJsonLayer.on('pm:dragend', function(e) {
+    console.log(e);
+});
+
 
 // Polygon Example
 
@@ -133,4 +143,14 @@ var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2, layerGroupItem3
 layerGroup.pm.toggleEdit({
     draggable: true,
     preventOverlap: true
+});
+
+layerGroup.on('pm:dragstart', function(e) {
+    console.log(e);
+});
+layerGroup.on('pm:drag', function(e) {
+    console.log(e);
+});
+layerGroup.on('pm:dragend', function(e) {
+    console.log(e);
 });
