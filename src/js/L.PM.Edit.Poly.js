@@ -15,8 +15,6 @@ L.PM.Edit.Poly = L.Class.extend({
 
     enable: function(options = {}) {
 
-        var self = this;
-
         this.options = options;
 
         if(!this.enabled()) {
@@ -27,12 +25,11 @@ L.PM.Edit.Poly = L.Class.extend({
             this._initMarkers();
 
             // if polygon gets removed from map, disable edit mode
-            this._poly.on('remove', self.disable);
+            this._poly.on('remove', (e) => {
+                this.disable(e.target);
+            });
 
-            // apply options
-            if(!options) {
-                return;
-            }
+            console.log(this._poly);
 
             // preventOverlap needs the turf library. If it's not included, deactivate it again
             if(window.turf === undefined && this.options.preventOverlap) {
@@ -51,25 +48,26 @@ L.PM.Edit.Poly = L.Class.extend({
         return this._enabled;
     },
 
-    disable: function() {
+    disable: function(poly = this._poly) {
+
         // prevent disabling if polygon is being dragged
-        if(this.dragging()) {
+        if(poly.pm._dragging) {
             return false;
         }
-        this._enabled = false;
-        this._poly._map.removeLayer(this._markerGroup);
+        poly.pm._enabled = false;
+        poly.pm._markerGroup.clearLayers();
 
         // clean up draggable
-        this._poly.off('mousedown');
-        this._poly.off('mouseup');
+        poly.off('mousedown');
+        poly.off('mouseup');
 
         // remove draggable class
-        var el = this._poly._path;
+        var el = poly._path;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
     },
 
     dragging: function() {
-        return this._poly._dragging;
+        return this._dragging;
     },
 
     _initDraggableLayer: function() {
@@ -103,7 +101,7 @@ L.PM.Edit.Poly = L.Class.extend({
             // TODO: do it better as soon as leaflet has a way to do it better :-)
             window.setTimeout(() => {
                 // set state
-                this._poly._dragging = false;
+                this._dragging = false;
                 L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
                 // fire pm:dragend event
@@ -118,10 +116,10 @@ L.PM.Edit.Poly = L.Class.extend({
 
         var onMouseMove = (e) => {
 
-            if(!this._poly._dragging) {
+            if(!this._dragging) {
 
                 // set state
-                this._poly._dragging = true;
+                this._dragging = true;
                 L.DomUtil.addClass(el, 'leaflet-pm-dragging');
 
                 // bring it to front to prevent drag interception

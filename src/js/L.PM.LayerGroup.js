@@ -69,5 +69,18 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         }
 
         return enabled;
+    },
+    dragging: function() {
+
+        var dragging = false;
+
+        for(var i=0; i<this._layers.length; i++) {
+            dragging = this._layers[i].pm.dragging();
+            if(dragging) {
+                break;
+            }
+        }
+
+        return dragging;
     }
 });
