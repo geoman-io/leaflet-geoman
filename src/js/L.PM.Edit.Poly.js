@@ -13,7 +13,7 @@ L.PM.Edit.Poly = L.Class.extend({
         }
     },
 
-    enable: function(options) {
+    enable: function(options = {}) {
 
         var self = this;
 
@@ -32,6 +32,12 @@ L.PM.Edit.Poly = L.Class.extend({
             // apply options
             if(!options) {
                 return;
+            }
+
+            // preventOverlap needs the turf library. If it's not included, deactivate it again
+            if(window.turf === undefined && this.options.preventOverlap) {
+                console.warn('TurfJS not found, preventOverlap is deactivated');
+                this.options.preventOverlap = false;
             }
 
             if(this.options.draggable) {
@@ -362,6 +368,7 @@ L.PM.Edit.Poly = L.Class.extend({
             // if the polygon should be cutted when overlapping another polygon, do it now
             if(this.options.preventOverlap) {
                 this._handleOverlap();
+                this._applyPossibleCoordsChanges();
             }
 
             // fire edit event
