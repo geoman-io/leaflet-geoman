@@ -68,8 +68,8 @@ var options = {
     // makes the polygon draggable
     draggable: true,
 
-    // EXPERIMENTAL: if a draggable polygon gets dragged over another polygon of the same layergroup,
-    // the dragged polygon will get cut - this feature still may have some bugs and will be further developed.
+    // EXPERIMENTAL: if a polygon gets dragged over another polygon of the same layergroup,
+    // the polygon will get cut - this feature still may have some bugs and will be further developed.
     // This feature needs the turfJS dependency
     preventOverlap: true
 
