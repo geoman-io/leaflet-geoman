@@ -86,6 +86,16 @@ geoJsonLayer.on('pm:edit', function(e) {
     console.log(e);
 });
 
+geoJsonLayer.on('pm:dragstart', function(e) {
+    console.log(e);
+});
+geoJsonLayer.on('pm:drag', function(e) {
+    // console.log(e);
+});
+geoJsonLayer.on('pm:dragend', function(e) {
+    console.log(e);
+});
+
 
 // Polygon Example
 
@@ -110,7 +120,37 @@ var layerGroupItem2 = L.polygon([
     [51.52, -0.05]
 ]);
 
-var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
+var layerGroupItem3 = L.polygon([
+  [
+    51.51549835365031,
+    -0.06450164634969281
+  ],
+  [
+    51.51944818307178,
+    -0.08425079345703125
+  ],
+  [
+    51.51868369995795,
+    -0.06131630004205801
+  ],
+  [
+    51.51549835365031,
+    -0.06450164634969281
+  ]
+]);
+
+var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2, layerGroupItem3]).addTo(map4);
 layerGroup.pm.toggleEdit({
-    draggable: true
+    draggable: true,
+    preventOverlap: true
+});
+
+layerGroup.on('pm:dragstart', function(e) {
+    console.log(e);
+});
+layerGroup.on('pm:drag', function(e) {
+    console.log(e);
+});
+layerGroup.on('pm:dragend', function(e) {
+    console.log(e);
 });

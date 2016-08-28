@@ -15,7 +15,9 @@
     "ui-leaflet-draw"
   ],
   "main": "dist/leaflet.pm.js",
-  "dependencies": {},
+  "dependencies": {
+      "@turf/turf": "^3.5.2"
+  },
   "devDependencies": {
     "babel-preset-es2015": "^6.14.0",
     "gulp": "^3.9.0",
