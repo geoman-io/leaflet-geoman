@@ -25,8 +25,7 @@ L.PM = L.PM || {
         };
         L.Map.addInitHook(initMap);
 
-    },
-    Edit: {}
+    }
 };
 
 // initialize leaflet.pm
