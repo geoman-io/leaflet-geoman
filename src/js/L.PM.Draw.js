@@ -9,10 +9,9 @@ L.PM.Draw = L.Class.extend({
         this.shapes = ['Poly'];
 
         // initiate drawing class for our shapes
-        for(var i=0; i<this.shapes.length; i++) {
-            var shape = this.shapes[i];
+        this.shapes.forEach((shape) => {
             this[shape] = new L.PM.Draw[shape](this._map);
-        }
+        });
 
     },
     getShapes: function() {
@@ -37,17 +36,15 @@ L.PM.Draw = L.Class.extend({
         // there can only be one drawing mode active at a time on a map
         // so it doesn't matter which one should be disabled.
         // just disable all of them
-        for(var i=0; i<this.shapes.length; i++) {
-            var shape = this.shapes[i];
+        this.shapes.forEach((shape) => {
             this[shape].disable();
-        }
+        });
 
     },
     addControls: function() {
         // add control buttons for our shapes
-        for(var i=0; i<this.shapes.length; i++) {
-            var shape = this.shapes[i];
+        this.shapes.forEach((shape) => {
             this[shape].addButton();
-        }
+        });
     }
 });
