@@ -29,8 +29,6 @@ L.PM.Edit.Poly = L.Class.extend({
                 this.disable(e.target);
             });
 
-            console.log(this._poly);
-
             // preventOverlap needs the turf library. If it's not included, deactivate it again
             if(window.turf === undefined && this.options.preventOverlap) {
                 console.warn('TurfJS not found, preventOverlap is deactivated');
@@ -397,7 +395,9 @@ L.PM.Edit.Poly = L.Class.extend({
         let changed = false;
         let resultingGeoJson = this._poly.toGeoJSON();
 
-        layers.filter(layer => !Object.is(layer, mainPoly)).map((layer) => {
+        layers
+        .filter(layer => !Object.is(layer, mainPoly))
+        .map((layer) => {
 
             let intersect;
 
