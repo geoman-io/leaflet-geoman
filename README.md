@@ -1,9 +1,9 @@
 # Leaflet Polygon Management
-A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.
+A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
 Draw, Edit, Drag, Cut, Adapt, and soon: Snap Features.
 
 ### Why *another* geometry editing plugin?
-As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 beta (v2) I created this plugin myself due to a lack of alternatives.
+As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
 As we are always using the latest leaflet version in a big production app, I will (have to) keep this plugin constantly developed.
 
 #### [Demo](http://codeofsumit.github.io/leaflet.pm/)

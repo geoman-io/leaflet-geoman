@@ -1,4 +1,4 @@
-L.PM.Edit.Poly = L.Class.extend({
+L.PM.Edit.Poly = L.PM.Edit.extend({
 
     initialize: function(poly) {
         this._poly = poly;
@@ -15,8 +15,6 @@ L.PM.Edit.Poly = L.Class.extend({
 
     enable: function(options = {}) {
 
-        var self = this;
-
         this.options = options;
 
         if(!this.enabled()) {
@@ -27,12 +25,9 @@ L.PM.Edit.Poly = L.Class.extend({
             this._initMarkers();
 
             // if polygon gets removed from map, disable edit mode
-            this._poly.on('remove', self.disable);
-
-            // apply options
-            if(!options) {
-                return;
-            }
+            this._poly.on('remove', (e) => {
+                this.disable(e.target);
+            });
 
             // preventOverlap needs the turf library. If it's not included, deactivate it again
             if(window.turf === undefined && this.options.preventOverlap) {
@@ -51,25 +46,26 @@ L.PM.Edit.Poly = L.Class.extend({
         return this._enabled;
     },
 
-    disable: function() {
+    disable: function(poly = this._poly) {
+
         // prevent disabling if polygon is being dragged
-        if(this.dragging()) {
+        if(poly.pm._dragging) {
             return false;
         }
-        this._enabled = false;
-        this._poly._map.removeLayer(this._markerGroup);
+        poly.pm._enabled = false;
+        poly.pm._markerGroup.clearLayers();
 
         // clean up draggable
-        this._poly.off('mousedown');
-        this._poly.off('mouseup');
+        poly.off('mousedown');
+        poly.off('mouseup');
 
         // remove draggable class
-        var el = this._poly._path;
+        var el = poly._path;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
     },
 
     dragging: function() {
-        return this._poly._dragging;
+        return this._dragging;
     },
 
     _initDraggableLayer: function() {
@@ -103,7 +99,7 @@ L.PM.Edit.Poly = L.Class.extend({
             // TODO: do it better as soon as leaflet has a way to do it better :-)
             window.setTimeout(() => {
                 // set state
-                this._poly._dragging = false;
+                this._dragging = false;
                 L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
                 // fire pm:dragend event
@@ -118,10 +114,10 @@ L.PM.Edit.Poly = L.Class.extend({
 
         var onMouseMove = (e) => {
 
-            if(!this._poly._dragging) {
+            if(!this._dragging) {
 
                 // set state
-                this._poly._dragging = true;
+                this._dragging = true;
                 L.DomUtil.addClass(el, 'leaflet-pm-dragging');
 
                 // bring it to front to prevent drag interception
@@ -162,34 +158,25 @@ L.PM.Edit.Poly = L.Class.extend({
 
     _onLayerDrag: function(e) {
 
-        var that = this;
-
         // latLng of mouse event
-        var latlng = e.latlng;
+        let latlng = e.latlng;
 
         // delta coords (how far was dragged)
-        var deltaLatLng = {
-            lat: latlng.lat - that._tempDragCoord.lat,
-            lng: latlng.lng - that._tempDragCoord.lng
+        let deltaLatLng = {
+            lat: latlng.lat - this._tempDragCoord.lat,
+            lng: latlng.lng - this._tempDragCoord.lng
         };
 
-        var newLatLngs = [];
-
-        for(var i = 0; i < this._poly._latlngs[0].length; i++) {
-
-            // current coords
-            var currentLatLng = this._poly._latlngs[0][i];
-
-            // new coords
-            var newLatLng = {
+        // create the new coordinates array
+        let coords = this._poly._latlngs[0];
+        let newLatLngs = coords.map((currentLatLng) => {
+            return {
                 lat: currentLatLng.lat + deltaLatLng.lat,
                 lng: currentLatLng.lng + deltaLatLng.lng
             }
+        });
 
-            newLatLngs.push(newLatLng);
-
-        }
-
+        // set new coordinates and redraw
         this._poly.setLatLngs(newLatLngs).redraw();
 
         // save current latlng for next delta calculation
@@ -206,8 +193,7 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     _initMarkers: function() {
-
-        var map = this._poly._map;
+        let map = this._poly._map;
 
         // cleanup old ones first
         if(this._markerGroup) {
@@ -219,10 +205,10 @@ L.PM.Edit.Poly = L.Class.extend({
         map.addLayer(this._markerGroup);
 
         // create marker for each coordinate
-        var coords = this._poly._latlngs[0];
+        let coords = this._poly._latlngs[0];
 
         // the marker array, it includes only the markers that're associated with the coordinates
-        this._markers = coords.map((latlng, i) => this._createMarker(latlng, i));
+        this._markers = coords.map(this._createMarker, this);
 
         // create small markers in the middle of the regular markers
         for(var k = 0; k < coords.length; k++) {
@@ -238,7 +224,7 @@ L.PM.Edit.Poly = L.Class.extend({
     // creates initial markers for coordinates
     _createMarker: function(latlng, index) {
 
-        var marker = new L.Marker(latlng, {
+        let marker = new L.Marker(latlng, {
             draggable: true,
             icon: L.divIcon({className: 'marker-icon'})
         });
@@ -259,13 +245,13 @@ L.PM.Edit.Poly = L.Class.extend({
     // creates the middle markes between coordinates
     _createMiddleMarker: function(leftM, rightM) {
 
-        var latlng = this._calcMiddleLatLng(leftM.getLatLng(), rightM.getLatLng());
+        let latlng = this._calcMiddleLatLng(leftM.getLatLng(), rightM.getLatLng());
 
-        var middleMarker = this._createMarker(latlng);
-        var icon = L.divIcon({className: 'marker-icon marker-icon-middle'})
+        let middleMarker = this._createMarker(latlng);
+        let icon = L.divIcon({className: 'marker-icon marker-icon-middle'})
         middleMarker.setIcon(icon);
 
-        // save middle markers to the other markers
+        // save reference to this middle markers on the neighboor regular markers
         leftM._middleMarkerNext = middleMarker;
         rightM._middleMarkerPrev = middleMarker;
 
@@ -304,20 +290,18 @@ L.PM.Edit.Poly = L.Class.extend({
         newM.off('click');
 
         // now, create the polygon coordinate point for that marker
-        var latlng = newM.getLatLng();
-        var coords = this._poly._latlngs[0];
-        var index = leftM._index + 1;
+        let latlng = newM.getLatLng();
+        let coords = this._poly._latlngs[0];
+        let index = leftM._index + 1;
 
         coords.splice(index, 0, latlng);
 
         // associate polygon coordinate with marker coordinate
         newM._origLatLng = coords[index];
 
-        // push into marker array update the indexes for every marker
+        // push into marker array & update the indexes for every marker
         this._markers.splice(index, 0, newM);
-        for(var i=0;i<this._markers.length;i++) {
-            this._markers[i]._index = i;
-        }
+        this._markers.map((marker, i) => marker._index = i);
 
         // create the new middlemarkers
         this._createMiddleMarker(leftM, newM);
@@ -330,51 +314,47 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     _removeMarker: function(e) {
-        var marker = e.target;
+        let marker = e.target;
 
         // only continue if this is NOT a middle marker (those can't be deleted)
-        if(marker._index !== undefined) {
-
-            // remove polygon coordinate from this marker
-            var coords = this._poly._latlngs[0];
-            var index = marker._index;
-
-            coords.splice(index, 1);
-            this._poly.redraw();
-
-            // remove the marker and the middlemarkers next to it from the map
-            this._markerGroup.removeLayer(marker._middleMarkerPrev);
-            this._markerGroup.removeLayer(marker._middleMarkerNext);
-            this._markerGroup.removeLayer(marker);
-
-
-            // create the new middlemarker
-            var leftMarkerIndex = index - 1 < 0 ? this._markers.length - 1 : index - 1;
-            var rightMarkerIndex = index + 1 >= this._markers.length ? 0 : index + 1;
-
-            var leftM = this._markers[leftMarkerIndex];
-            var rightM = this._markers[rightMarkerIndex];
-            this._createMiddleMarker(leftM, rightM);
-
-
-            // remove the marker from the markers array
-            this._markers.splice(index, 1);
-
-            // update the remaining markers indexes
-            for(var i=0;i<this._markers.length;i++) {
-                this._markers[i]._index = i;
-            }
-
-            // if the polygon should be cutted when overlapping another polygon, do it now
-            if(this.options.preventOverlap) {
-                this._handleOverlap();
-                this._applyPossibleCoordsChanges();
-            }
-
-            // fire edit event
-            this._fireEdit();
-
+        if(marker._index === undefined) {
+            return;
         }
+
+        // remove polygon coordinate from this marker
+        let coords = this._poly._latlngs[0];
+        let index = marker._index;
+
+        coords.splice(index, 1);
+        this._poly.redraw();
+
+        // remove the marker and the middlemarkers next to it from the map
+        this._markerGroup.removeLayer(marker._middleMarkerPrev);
+        this._markerGroup.removeLayer(marker._middleMarkerNext);
+        this._markerGroup.removeLayer(marker);
+
+
+        // create the new middlemarker
+        let leftMarkerIndex = index - 1 < 0 ? this._markers.length - 1 : index - 1;
+        let rightMarkerIndex = index + 1 >= this._markers.length ? 0 : index + 1;
+
+        let leftM = this._markers[leftMarkerIndex];
+        let rightM = this._markers[rightMarkerIndex];
+        this._createMiddleMarker(leftM, rightM);
+
+
+        // remove the marker from the markers array & update indexes
+        this._markers.splice(index, 1);
+        this._markers.map((marker, i) => marker._index = i);
+
+        // if the polygon should be cutted when overlapping another polygon, do it now
+        if(this.options.preventOverlap) {
+            this._handleOverlap();
+            this._applyPossibleCoordsChanges();
+        }
+
+        // fire edit event
+        this._fireEdit();
 
 
     },
@@ -410,35 +390,35 @@ L.PM.Edit.Poly = L.Class.extend({
     },
     _handleOverlap: function() {
 
-        var layers = this._layerGroup.getLayers();
-        var changed = false;
-        var resultingGeoJson = this._poly.toGeoJSON();
+        let mainPoly = this._poly;
+        let layers = this._layerGroup.getLayers();
+        let changed = false;
+        let resultingGeoJson = this._poly.toGeoJSON();
 
-        for(var i=0; i<layers.length; i++) {
-            var layer = layers[i];
+        layers
+        .filter(layer => !Object.is(layer, mainPoly))
+        .map((layer) => {
 
-            if(layer !== this._poly) {
+            let intersect;
 
-                var intersect;
-
-                // this needs to be in a try catch block because turf isn't reliable
-                // it throws self-intersection errors even if there are none
-                try {
-                    intersect = turf.intersect(resultingGeoJson, layer.toGeoJSON());
-                } catch(e) {
-                    console.warn('Turf Error :-/');
-                }
-
-                if(intersect) {
-                    resultingGeoJson = turf.difference(resultingGeoJson, layer.toGeoJSON());
-
-                    if(resultingGeoJson.geometry.type !== 'MultiPolygon') {
-                        changed = true;
-                    }
-                }
-
+            // this needs to be in a try catch block because turf isn't reliable
+            // it throws self-intersection errors even if there are none
+            try {
+                intersect = turf.intersect(resultingGeoJson, layer.toGeoJSON());
+            } catch(e) {
+                console.warn('Turf Error.');
             }
-        }
+
+            if(intersect) {
+                resultingGeoJson = turf.difference(resultingGeoJson, layer.toGeoJSON());
+
+                // if the resulting polygon is a MultiPolygon, don't handle it.
+                if(resultingGeoJson.geometry.type !== 'MultiPolygon') {
+                    changed = true;
+                }
+            }
+
+        });
 
         if(this._tempPolygon) {
             this._tempPolygon.remove();
@@ -458,11 +438,11 @@ L.PM.Edit.Poly = L.Class.extend({
     _onMarkerDrag: function(e) {
 
         // dragged marker
-        var marker = e.target;
+        let marker = e.target;
 
         // the dragged markers neighbors
-        var nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
-        var prevMarkerIndex = marker._index - 1 < 0 ? this._markers.length - 1 : marker._index - 1;
+        let nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
+        let prevMarkerIndex = marker._index - 1 < 0 ? this._markers.length - 1 : marker._index - 1;
 
         // update marker coordinates which will update polygon coordinates
         L.extend(marker._origLatLng, marker._latlng);
@@ -470,14 +450,14 @@ L.PM.Edit.Poly = L.Class.extend({
 
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array
-        var markerLatLng = marker.getLatLng();
-        var prevMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
-        var nextMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
+        let markerLatLng = marker.getLatLng();
+        let prevMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
+        let nextMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
 
-        var middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
+        let middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
         marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
 
-        var middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
+        let middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
         marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
 
 
@@ -489,8 +469,6 @@ L.PM.Edit.Poly = L.Class.extend({
     },
 
     _onMarkerDragEnd: function(e) {
-
-        var marker = e.target;
 
         this._applyPossibleCoordsChanges();
 

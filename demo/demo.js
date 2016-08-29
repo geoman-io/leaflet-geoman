@@ -139,11 +139,13 @@ var layerGroupItem3 = L.polygon([
   ]
 ]);
 
-var layerGroup = L.layerGroup([layerGroupItem1, layerGroupItem2, layerGroupItem3]).addTo(map4);
+var layerGroup = L.featureGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
 layerGroup.pm.toggleEdit({
     draggable: true,
     preventOverlap: true
 });
+
+layerGroup.addLayer(layerGroupItem3);
 
 layerGroup.on('pm:dragstart', function(e) {
     console.log(e);
