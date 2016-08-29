@@ -1,5 +1,7 @@
-
-L.PM.Edit.LayerGroup = L.PM.Edit.extend({
+// LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Poly
+// (which inherits from L.PM.Edit) for each layer,
+// so it's not really a parent class
+L.PM.Edit.LayerGroup = L.Class.extend({
     initialize: function(layerGroup) {
 
         this._layerGroup = layerGroup;
