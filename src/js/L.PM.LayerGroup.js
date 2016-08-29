@@ -23,7 +23,7 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         // This only works for FeatureGroups, not LayerGroups
         // https://github.com/Leaflet/Leaflet/issues/4861
         this._layerGroup.on('layeradd', (e) => {
-            
+
             this.initialize(layerGroup);
 
             // if editing was already enabled for this group, enable it again
@@ -54,30 +54,12 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         });
     },
     enabled: function() {
-
-        var enabled = false;
-
-        for(var i=0; i<this._layers.length; i++) {
-            enabled = this._layers[i].pm.enabled();
-            if(enabled) {
-                break;
-            }
-        }
-
-        return enabled;
+        let enabled = this._layers.find((layer) => layer.pm.enabled());
+        return !!enabled;
     },
     dragging: function() {
-
-        var dragging = false;
-
-        for(var i=0; i<this._layers.length; i++) {
-            dragging = this._layers[i].pm.dragging();
-            if(dragging) {
-                break;
-            }
-        }
-
-        return dragging;
+        let dragging = this._layers.find((layer) => layer.pm.dragging());
+        return !!dragging;
     },
     getOptions: function() {
         return this._options;
