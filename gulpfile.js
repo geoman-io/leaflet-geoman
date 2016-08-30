@@ -9,6 +9,7 @@ var sourcemaps = require('gulp-sourcemaps');
 gulp.task('scripts', function() {
     return gulp.src([
         'src/js/L.PM.js',
+        'src/js/L.PM.Map.js',
         'src/js/Draw/L.PM.Draw.js',
         'src/js/Edit/L.PM.Edit.js',
         'src/js/**/*.js'

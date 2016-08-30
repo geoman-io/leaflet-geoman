@@ -1,8 +1,10 @@
 L.PM.Edit.Poly = L.PM.Edit.extend({
-
+    includes: Draggable,
     initialize: function(poly) {
         this._poly = poly;
         this._enabled = false;
+
+        this.zzJUSTATEST();
     },
 
     toggleEdit: function(options) {
@@ -14,6 +16,8 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
     },
 
     enable: function(options = {}) {
+
+        console.log(this);
 
         this.options = options;
 
