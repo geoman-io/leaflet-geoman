@@ -1,5 +1,5 @@
 var Draggable = {
     zzJUSTATEST: function() {
-        console.log(this);
+        console.log('Mixin');
     }
 }

@@ -3,8 +3,6 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
     initialize: function(poly) {
         this._poly = poly;
         this._enabled = false;
-
-        this.zzJUSTATEST();
     },
 
     toggleEdit: function(options) {
