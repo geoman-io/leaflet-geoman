@@ -18,20 +18,20 @@ L.PM.Draw = L.Class.extend({
         // if somebody wants to know what shapes are available
         return this.shapes;
     },
-    enableDraw: function(shape) {
+    enable: function(shape) {
 
         if(!shape) {
             throw 'Error: Please pass a shape as a parameter. Possible shapes are: ' + this.getShapes().join(',');
         }
 
         // disable drawing for all shapes
-        this.disableDraw();
+        this.disable();
 
         // enable draw for a shape
         this[shape].enable();
 
     },
-    disableDraw: function() {
+    disable: function() {
 
         // there can only be one drawing mode active at a time on a map
         // so it doesn't matter which one should be disabled.
