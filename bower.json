@@ -17,6 +17,9 @@
   ],
   "homepage": "http://codeofsumit.github.io/leaflet.pm/",
   "moduleType": [],
+  "dependencies": {
+      "turf": "~3.1.1"
+  },
   "ignore": [
     "**/.*",
     "node_modules",

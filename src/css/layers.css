@@ -15,3 +15,11 @@
     width: 10px !important;
     height: 10px !important;
 }
+
+.leaflet-pm-draggable {
+    cursor: move !important;
+}
+
+.leaflet-pm-dragging {
+
+}

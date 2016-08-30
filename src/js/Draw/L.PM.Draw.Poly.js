@@ -65,12 +65,12 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
     enabled: function() {
         return this._enabled;
     },
-    toggle: function() {
+    toggle: function(options) {
 
         if(this.enabled()) {
             this.disable();
         } else {
-            this.enable();
+            this.enable(options);
         }
 
     },
