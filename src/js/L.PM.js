@@ -21,7 +21,7 @@ L.PM = L.PM || {
 
 
         var initMap = function() {
-            this.pm = new L.PM.Draw(this);
+            this.pm = new L.PM.Map(this);
         };
         L.Map.addInitHook(initMap);
 
