@@ -76,8 +76,6 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
     },
     addButton: function(map) {
 
-        var self = this;
-
         var drawPolyButton = {
               'className': 'icon-polygon',
               'onClick': function() {
@@ -90,21 +88,36 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
               'toggleStatus': false
         };
 
-        this._drawButton = new L.Control.PMButton(drawPolyButton).addTo(this._map);
+        this._drawButton = this._map.pm.Toolbar.addButton(drawPolyButton);
 
-        this._map.on('pm:drawstart', function(e) {
-            if(e.shape === self._shape && !self._drawButton.toggled()) {
-                self._drawButton._clicked();
+        this._map.on('pm:drawstart', (e) => {
+            if(e.shape === this._shape && !this._drawButton.toggled()) {
+                this._drawButton._clicked();
             }
         });
 
-        this._map.on('pm:drawend', function(e) {
-            if(e.shape === self._shape && self._drawButton.toggled()) {
-                self._drawButton._clicked();
+        this._map.on('pm:drawend', (e) => {
+            if(e.shape === this._shape && this._drawButton.toggled()) {
+                this._drawButton._clicked();
             }
         });
 
-        return this._drawButton;
+        // delete button for later use - icons still missing
+        var deleteButton = {
+              'className': 'icon-delete',
+              'onClick': function() {
+
+              },
+              'afterClick': function(e) {
+                  console.log('REMOVE POLY')
+              },
+              'doToggle': true,
+              'toggleStatus': false
+        };
+
+        // this._drawButton = this._map.pm.Toolbar.addButton(deleteButton);
+
+
 
     },
     _syncHintLine: function(e) {
