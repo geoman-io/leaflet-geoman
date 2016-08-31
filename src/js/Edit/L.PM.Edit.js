@@ -1,3 +1,6 @@
 L.PM.Edit = L.Class.extend({
-    includes: [DragMixin, OverlapMixin]
+    includes: [DragMixin, OverlapMixin],
+    removeLayer: function(layer) {
+        layer.remove();
+    }
 });

@@ -87,7 +87,7 @@ L.Control.PMButton = L.Control.extend({
 
     _clicked: function () {
 
-        if(this._button.doToggle){
+        if(this._button.doToggle && this._container){
 
             if(this._button.toggleStatus) {
                 L.DomUtil.removeClass(this._container.childNodes[0],'active');

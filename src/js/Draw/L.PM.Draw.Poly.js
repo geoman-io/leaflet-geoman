@@ -102,21 +102,6 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
             }
         });
 
-        // delete button for later use - icons still missing
-        var deleteButton = {
-              'className': 'icon-delete',
-              'onClick': function() {
-
-              },
-              'afterClick': function(e) {
-                  console.log('REMOVE POLY')
-              },
-              'doToggle': true,
-              'toggleStatus': false
-        };
-
-        // this._drawButton = this._map.pm.Toolbar.addButton(deleteButton);
-
 
 
     },
