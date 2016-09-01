@@ -28,6 +28,7 @@ map2.pm.addControls({
     dragLayer: false
 });
 map2.pm.enableDraw('Poly');
+// map2.pm.disableDraw('Poly');
 
 
 // GEOSJON EXAMPLE

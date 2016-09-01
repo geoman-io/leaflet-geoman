@@ -25,9 +25,13 @@ L.PM.Toolbar = L.Class.extend({
 
         return this.buttons[name];
     },
+    toggleButton: function(name, status) {
+        console.log(this.buttons[name]);
+        this.buttons[name].toggle(status);
+    },
     _defineButtons: function() {
 
-        // find some generic way to do this
+        var self = this;
 
         // some buttons are still in their respective classes, like L.PM.Draw.Poly
         var deleteButton = {
@@ -50,7 +54,7 @@ L.PM.Toolbar = L.Class.extend({
 
              },
              'afterClick': function(e) {
-                //  self._map.Draw.Poly.toggle();
+                 self.map.pm.Draw.Poly.toggle();
              },
              'doToggle': true,
              'toggleStatus': false

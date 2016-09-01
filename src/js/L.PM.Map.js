@@ -8,5 +8,8 @@ L.PM.Map = L.Class.extend({
     },
     enableDraw: function(shape = 'Poly') {
         this.Draw.enable(shape);
+    },
+    disableDraw: function(shape = 'Poly') {
+        this.Draw.disable(shape);
     }
 });
