@@ -54,6 +54,7 @@ L.Control.PMButton = L.Control.extend({
         else{
             this._button.toggleStatus = !this._button.toggleStatus;
         }
+        this._applyStyleClasses();
     },
     toggled: function () {
         return this._button.toggleStatus;
@@ -85,16 +86,22 @@ L.Control.PMButton = L.Control.extend({
 
     },
 
+    _applyStyleClasses: function() {
+
+        if(!this._container) {
+            return;
+        }
+
+        if(!this._button.toggleStatus) {
+            L.DomUtil.removeClass(this._container.childNodes[0],'active');
+        } else {
+            L.DomUtil.addClass(this._container.childNodes[0],'active');
+        }
+    },
+
     _clicked: function () {
 
         if(this._button.doToggle){
-
-            if(this._button.toggleStatus) {
-                L.DomUtil.removeClass(this._container.childNodes[0],'active');
-            }
-            else {
-                L.DomUtil.addClass(this._container.childNodes[0],'active');
-            }
             this.toggle();
         }
         return;

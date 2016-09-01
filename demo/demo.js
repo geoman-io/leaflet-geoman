@@ -23,6 +23,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 map2.pm.addControls();
 map2.pm.enableDraw('Poly');
+// map2.pm.disableDraw('Poly');
 
 // GEOSJON EXAMPLE
 
