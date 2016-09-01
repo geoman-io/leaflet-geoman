@@ -71,8 +71,8 @@ L.PM.Toolbar = L.Class.extend({
         };
 
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
-        this._addButton('deleteLayer', new L.Control.PMButton(editButton));
-        this._addButton('editPolygon', new L.Control.PMButton(deleteButton));
+        this._addButton('editPolygon', new L.Control.PMButton(editButton));
+        this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
 
     },
     _showHideButtons: function() {
