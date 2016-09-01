@@ -64,7 +64,7 @@ L.Control.PMButton = L.Control.extend({
     },
     _makeButton: function(button) {
 
-        var newButton = L.DomUtil.create('div', 'leaflet-buttons-control-button', this._container);
+        var newButton = L.DomUtil.create('a', 'leaflet-buttons-control-button', this._container);
         if(button.toggleStatus)
             L.DomUtil.addClass(newButton,'active');
 

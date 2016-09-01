@@ -39,8 +39,6 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         // fire drawstart event
         this._map.fire('pm:drawstart', {shape: this._shape});
 
-        console.log(this._map);
-
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 

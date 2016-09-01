@@ -1,6 +1,7 @@
 L.PM.Toolbar = L.Class.extend({
     options: {
         drawPolygon: true,
+        editPolygon: true,
         deleteLayer: true
     },
     initialize(map) {
@@ -38,7 +39,6 @@ L.PM.Toolbar = L.Class.extend({
         var deleteButton = {
             'className': 'icon-delete',
             'onClick': (e) => {
-                console.log('remove');
             },
             'afterClick': (e) => {
                 this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
@@ -47,12 +47,9 @@ L.PM.Toolbar = L.Class.extend({
             'toggleStatus': false
         };
 
-        this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
-
         var drawPolyButton = {
              'className': 'icon-polygon',
              'onClick': (e) => {
-                 console.log('draw');
              },
              'afterClick': (e) => {
                  // toggle drawing mode
@@ -62,8 +59,20 @@ L.PM.Toolbar = L.Class.extend({
              'toggleStatus': false
         };
 
-        this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        var editButton = {
+             'className': 'icon-edit',
+             'onClick': (e) => {
+             },
+             'afterClick': (e) => {
 
+             },
+             'doToggle': true,
+             'toggleStatus': false
+        };
+
+        this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        this._addButton('deleteLayer', new L.Control.PMButton(editButton));
+        this._addButton('editPolygon', new L.Control.PMButton(deleteButton));
 
     },
     _showHideButtons: function() {

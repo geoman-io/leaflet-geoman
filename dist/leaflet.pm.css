@@ -1,25 +1,18 @@
 .leaflet-buttons-control-button {
-  background-color: #fff;
-  border-bottom: 1px solid #ccc;
-  width: 26px;
-  height: 26px;
-  line-height: 26px;
-  display: block;
-  text-align: center;
-  text-decoration: none;
-  color: black;
-  border-radius: 4px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.65);
   padding: 3px;
   box-sizing: border-box;
 }
 
 .leaflet-buttons-control-button img {
+  box-sizing: border-box;
   max-width: 100%;
   max-height: 100%;
+  opacity: .8;
+  padding: 2px;
 }
 
 .leaflet-buttons-control-button img.icon-polygon {
+  padding: 1px;
   content: url("assets/icons/draw.png");
 }
 
@@ -28,6 +21,8 @@
 }
 
 .leaflet-buttons-control-button img.icon-edit {
+  transform: translate(2px, 0);
+  /* fix for looking a bit off center */
   content: url("assets/icons/edit.png");
 }
 
