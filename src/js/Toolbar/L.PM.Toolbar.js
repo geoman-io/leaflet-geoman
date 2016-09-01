@@ -1,11 +1,10 @@
 L.PM.Toolbar = L.Class.extend({
     options: {
-
+        drawPolygon: true
     },
     initialize(map) {
         this.map = map;
 
-        // console.log(this.options);
         this.buttons = {};
         this._defineButtons();
     },
@@ -13,77 +12,70 @@ L.PM.Toolbar = L.Class.extend({
         return this.buttons;
     },
 
-    addControls: function(options) {
-        // L.Util.setOptions(this, options);
-    },
-    addButton: function(name, button) {
-        // console.log('add ' + name);
-        this.buttons[name] = button;
-        this.options[name] = true;
+    addControls: function(options = this.options) {
+        // adds all buttons to the map specified inside options
 
-        this._show();
+        // first set the options
+        L.Util.setOptions(this, options)
+
+        // now show the specified buttons
+        this._showHideButtons();
+    },
+    _addButton: function(name, button) {
+        this.buttons[name] = button;
+        this.options[name] = this.options[name] || false;
 
         return this.buttons[name];
     },
     toggleButton: function(name, status) {
-        console.log(this.buttons[name]);
         this.buttons[name].toggle(status);
     },
     _defineButtons: function() {
 
-        var self = this;
-
         // some buttons are still in their respective classes, like L.PM.Draw.Poly
         var deleteButton = {
             'className': 'icon-delete',
-            'onClick': function() {
+            'onClick': (e) => {
 
             },
-            'afterClick': function(e) {
+            'afterClick': (e) => {
                 console.log('after click');
             },
             'doToggle': true,
             'toggleStatus': false
         };
 
-        this.addButton('deleteLayer', new L.Control.PMButton(deleteButton));
+        this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
 
         var drawPolyButton = {
              'className': 'icon-polygon',
-             'onClick': function() {
+             'onClick': (e) => {
 
              },
-             'afterClick': function(e) {
-                 self.map.pm.Draw.Poly.toggle();
+             'afterClick': (e) => {
+                 // toggle drawing mode
+                 this.map.pm.Draw.Poly.toggle();
              },
              'doToggle': true,
              'toggleStatus': false
         };
 
-        this.addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
 
 
     },
-    _hide: function(button) {
-        if(button) {
-            button.remove();
-        } else {
-            for (var btn in this.buttons) {
-                this.buttons[btn].remove();
+    _showHideButtons: function() {
+        // loop through all buttons
+        var buttons = this.getButtons();
+
+        for (var btn in buttons) {
+            if(this.options[btn]) {
+                // if options say the button should be visible, add it to the map
+                buttons[btn].addTo(this.map);
+            } else {
+                // if not, remove it
+                buttons[btn].remove();
             }
         }
-    },
-    _show: function(button) {
-
-        if(button) {
-            button.addTo(this.map);
-        } else {
-            for (var btn in this.buttons) {
-                this.buttons[btn].addTo(this.map);
-            }
-        }
-
-
-
     }
 });
