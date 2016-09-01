@@ -2,12 +2,11 @@ L.PM.Toolbar = L.Class.extend({
     options: {
 
     },
-    buttons: {},
     initialize(map) {
         this.map = map;
 
         // console.log(this.options);
-
+        this.buttons = {};
         this._defineButtons();
     },
     getButtons: function() {
@@ -43,10 +42,9 @@ L.PM.Toolbar = L.Class.extend({
             'toggleStatus': false
         };
 
-         this.addButton('deleteLayer', new L.Control.PMButton(deleteButton));
+        this.addButton('deleteLayer', new L.Control.PMButton(deleteButton));
 
-
-         var drawPolyButton = {
+        var drawPolyButton = {
              'className': 'icon-polygon',
              'onClick': function() {
 
@@ -56,10 +54,9 @@ L.PM.Toolbar = L.Class.extend({
              },
              'doToggle': true,
              'toggleStatus': false
-         };
+        };
 
-         this.addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
-
+        this.addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
 
 
     },
