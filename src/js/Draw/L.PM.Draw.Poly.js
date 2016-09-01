@@ -3,6 +3,8 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
     initialize: function(map) {
         this._map = map;
         this._shape = 'Poly';
+        this.registerButton();
+        this.toolbarButtonName = 'drawPolygon';
     },
     enable: function(options) {
         // enable draw mode
@@ -37,6 +39,9 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         // fire drawstart event
         this._map.fire('pm:drawstart', {shape: this._shape});
 
+        // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
+        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+
     },
     disable: function() {
         // disable draw mode
@@ -61,6 +66,9 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         // fire drawend event
         this._map.fire('pm:drawend', {shape: this._shape});
 
+        // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
+        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+
     },
     enabled: function() {
         return this._enabled;
@@ -74,37 +82,36 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         }
 
     },
-    addButton: function(map) {
-
-        var self = this;
+    registerButton: function(map) {
 
         var drawPolyButton = {
-              'className': 'icon-polygon',
-              'onClick': function() {
+            'className': 'icon-polygon',
+            'onClick': function() {
 
-              },
-              'afterClick': function(e) {
-                  self.toggle();
-              },
-              'doToggle': true,
-              'toggleStatus': false
+            },
+            'afterClick': function(e) {
+                self.toggle();
+            },
+            'doToggle': true,
+            'toggleStatus': false
         };
 
-        this._drawButton = new L.Control.PMButton(drawPolyButton).addTo(this._map);
 
-        this._map.on('pm:drawstart', function(e) {
-            if(e.shape === self._shape && !self._drawButton.toggled()) {
-                self._drawButton._clicked();
-            }
-        });
+        // this._drawButton = L.PM.Toolbar.addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        //
+        // this._map.on('pm:drawstart', (e) => {
+        //     if(e.shape === this._shape && !this._drawButton.toggled()) {
+        //         this._drawButton._clicked();
+        //     }
+        // });
+        //
+        // this._map.on('pm:drawend', (e) => {
+        //     if(e.shape === this._shape && this._drawButton.toggled()) {
+        //         this._drawButton._clicked();
+        //     }
+        // });
 
-        this._map.on('pm:drawend', function(e) {
-            if(e.shape === self._shape && self._drawButton.toggled()) {
-                self._drawButton._clicked();
-            }
-        });
 
-        return this._drawButton;
 
     },
     _syncHintLine: function(e) {
