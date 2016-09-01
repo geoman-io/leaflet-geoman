@@ -1,6 +1,7 @@
 L.PM.Toolbar = L.Class.extend({
     options: {
-        drawPolygon: true
+        drawPolygon: true,
+        deleteLayer: true
     },
     initialize(map) {
         this.map = map;
@@ -39,7 +40,7 @@ L.PM.Toolbar = L.Class.extend({
 
             },
             'afterClick': (e) => {
-                console.log('after click');
+                this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
             },
             'doToggle': true,
             'toggleStatus': false
