@@ -10,11 +10,11 @@ L.Control.PMButton = L.Control.extend({
     onAdd: function (map) {
 
         this._map = map;
-        var container = L.DomUtil.create('div', 'leaflet-control-button');
 
-        this._container = container;
+        this._container = this._map.pm.Toolbar.container;
+        this.buttonsDomNode = this._makeButton(this._button);
+        this._container.appendChild(this.buttonsDomNode)
 
-        this._makeButton(this._button);
         return this._container;
     },
 
@@ -93,9 +93,9 @@ L.Control.PMButton = L.Control.extend({
         }
 
         if(!this._button.toggleStatus) {
-            L.DomUtil.removeClass(this._container.childNodes[0],'active');
+            L.DomUtil.removeClass(this.buttonsDomNode,'active');
         } else {
-            L.DomUtil.addClass(this._container.childNodes[0],'active');
+            L.DomUtil.addClass(this.buttonsDomNode,'active');
         }
     },
 

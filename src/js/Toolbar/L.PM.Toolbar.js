@@ -1,12 +1,13 @@
 L.PM.Toolbar = L.Class.extend({
     options: {
         drawPolygon: true,
-        deleteLayer: false
+        deleteLayer: true
     },
     initialize(map) {
         this.map = map;
 
         this.buttons = {};
+        this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
         this._defineButtons();
     },
     getButtons: function() {
@@ -37,7 +38,7 @@ L.PM.Toolbar = L.Class.extend({
         var deleteButton = {
             'className': 'icon-delete',
             'onClick': (e) => {
-
+                console.log('remove');
             },
             'afterClick': (e) => {
                 this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
@@ -51,7 +52,7 @@ L.PM.Toolbar = L.Class.extend({
         var drawPolyButton = {
              'className': 'icon-polygon',
              'onClick': (e) => {
-
+                 console.log('draw');
              },
              'afterClick': (e) => {
                  // toggle drawing mode

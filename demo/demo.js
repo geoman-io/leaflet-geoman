@@ -146,6 +146,8 @@ layerGroup.pm.toggleEdit({
     preventOverlap: true
 });
 
+map4.pm.addControls();
+
 layerGroup.addLayer(layerGroupItem3);
 
 layerGroup.on('pm:dragstart', function(e) {
