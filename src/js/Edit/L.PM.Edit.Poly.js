@@ -195,33 +195,40 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
 
     _removeMarker: function(e) {
         let marker = e.target;
+        let coords = this._poly._latlngs[0];
+        let index = marker._index;
 
         // only continue if this is NOT a middle marker (those can't be deleted)
-        if(marker._index === undefined) {
+        if(index === undefined) {
             return;
         }
 
         // remove polygon coordinate from this marker
-        let coords = this._poly._latlngs[0];
-        let index = marker._index;
-
         coords.splice(index, 1);
-        this._poly.redraw();
+
+        // if the poly has no coordinates left, remove the layer
+        // else, redraw it
+        if(coords.length < 1) {
+            this._poly.remove();
+        } else {
+            this._poly.redraw();
+        }
 
         // remove the marker and the middlemarkers next to it from the map
         this._markerGroup.removeLayer(marker._middleMarkerPrev);
         this._markerGroup.removeLayer(marker._middleMarkerNext);
         this._markerGroup.removeLayer(marker);
 
-
-        // create the new middlemarker
+        // find neighbor marker-indexes
         let leftMarkerIndex = index - 1 < 0 ? this._markers.length - 1 : index - 1;
         let rightMarkerIndex = index + 1 >= this._markers.length ? 0 : index + 1;
 
-        let leftM = this._markers[leftMarkerIndex];
-        let rightM = this._markers[rightMarkerIndex];
-        this._createMiddleMarker(leftM, rightM);
-
+        // don't create middlemarkers if there is only one marker left
+        if(rightMarkerIndex !== leftMarkerIndex) {
+            let leftM = this._markers[leftMarkerIndex];
+            let rightM = this._markers[rightMarkerIndex];
+            this._createMiddleMarker(leftM, rightM);
+        }
 
         // remove the marker from the markers array & update indexes
         this._markers.splice(index, 1);
