@@ -2,6 +2,7 @@ L.PM.Toolbar = L.Class.extend({
     options: {
         drawPolygon: true,
         editPolygon: true,
+        dragPolygon: true,
         deleteLayer: true
     },
     initialize(map) {
@@ -30,8 +31,30 @@ L.PM.Toolbar = L.Class.extend({
 
         return this.buttons[name];
     },
+    triggerClickOnToggledButtons: function(exceptThisButton) {
+        // this function is used when - e.g. drawing mode is enabled and a possible
+        // other active mode (like removal tool) is already active.
+        // we can't have two active modes because of possible event conflicts
+        // so, we trigger a click on all currently active (toggled) buttons
+        for (var name in this.buttons) {
+            if(this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
+                this.buttons[name]._triggerClick();
+            }
+        }
+    },
     toggleButton: function(name, status) {
-        this.buttons[name].toggle(status);
+        // does not fire the events/functionality of the button
+        // this just changes the state and is used if a functionality (like Draw)
+        // is enabled manually via script
+
+        // as some mode got enabled, we still have to trigger the click on the other buttons
+        // to disable their mode
+        this.triggerClickOnToggledButtons(this.buttons[name]);
+
+        // now toggle the state of the button
+        return this.buttons[name].toggle(status);
+
+
     },
     _defineButtons: function() {
 
@@ -39,24 +62,28 @@ L.PM.Toolbar = L.Class.extend({
         var deleteButton = {
             'className': 'icon-delete',
             'onClick': (e) => {
+
             },
             'afterClick': (e) => {
                 this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
             },
             'doToggle': true,
-            'toggleStatus': false
+            'toggleStatus': false,
+            'disableOtherButtons': true
         };
 
         var drawPolyButton = {
              'className': 'icon-polygon',
              'onClick': (e) => {
+
              },
              'afterClick': (e) => {
                  // toggle drawing mode
                  this.map.pm.Draw.Poly.toggle();
              },
              'doToggle': true,
-             'toggleStatus': false
+             'toggleStatus': false,
+             'disableOtherButtons': true
         };
 
         var editButton = {
@@ -67,11 +94,25 @@ L.PM.Toolbar = L.Class.extend({
 
              },
              'doToggle': true,
-             'toggleStatus': false
+             'toggleStatus': false,
+             'disableOtherButtons': true
+        };
+
+        var dragButton = {
+             'className': 'icon-drag',
+             'onClick': (e) => {
+             },
+             'afterClick': (e) => {
+
+             },
+             'doToggle': true,
+             'toggleStatus': false,
+             'disableOtherButtons': true
         };
 
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('editPolygon', new L.Control.PMButton(editButton));
+        this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
         this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
 
     },

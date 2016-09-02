@@ -16,6 +16,11 @@
   content: url("assets/icons/draw.png");
 }
 
+.leaflet-buttons-control-button img.icon-drag {
+  padding: 1px;
+  content: url("assets/icons/drag.png");
+}
+
 .leaflet-buttons-control-button img.icon-delete {
   content: url("assets/icons/remove.png");
 }
