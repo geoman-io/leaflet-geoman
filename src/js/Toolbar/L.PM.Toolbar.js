@@ -1,3 +1,7 @@
+/**
+* The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
+*/
+
 L.PM.Toolbar = L.Class.extend({
     options: {
         drawPolygon: true,

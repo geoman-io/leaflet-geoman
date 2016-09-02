@@ -99,6 +99,8 @@ polygonLayer.on('pm:dragend', function(e) {//...});
 ### Credit
 As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be surprised to see some familiar code.
 
+The icons used for the toolbar are CC-BY [Glyphicons](http://glyphicons.com/).
+
 
 ### License
 Released under the MIT license.
