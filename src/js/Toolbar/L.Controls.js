@@ -2,19 +2,20 @@ L.Control.PMButton = L.Control.extend({
     options: {
         position: 'topleft'
     },
+    // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
     initialize: function (options) {
         this._button = {};
-        this.setButton(options);
+        this._button = this.setButton(options);
     },
 
     onAdd: function (map) {
 
         this._map = map;
-        var container = L.DomUtil.create('div', 'leaflet-control-button');
 
-        this._container = container;
+        this._container = this._map.pm.Toolbar.container;
+        this.buttonsDomNode = this._makeButton(this._button);
+        this._container.appendChild(this.buttonsDomNode)
 
-        this._makeButton(this._button);
         return this._container;
     },
 
@@ -28,10 +29,11 @@ L.Control.PMButton = L.Control.extend({
             'onClick': options.onClick,
             'afterClick': options.afterClick,
             'doToggle': options.doToggle,
-            'toggleStatus': options.toggleStatus
+            'toggleStatus': options.toggleStatus,
+            'disableOtherButtons': options.disableOtherButtons
         };
 
-        this._button = button;
+        return button;
     },
 
     getText: function () {
@@ -55,6 +57,8 @@ L.Control.PMButton = L.Control.extend({
             this._button.toggleStatus = !this._button.toggleStatus;
         }
         this._applyStyleClasses();
+
+        return this._button.toggleStatus;
     },
     toggled: function () {
         return this._button.toggleStatus;
@@ -62,11 +66,17 @@ L.Control.PMButton = L.Control.extend({
     onCreate: function() {
         this.toggle(false);
     },
+    _triggerClick: function(e) {
+        this._button.onClick(e);
+        this._clicked(e);
+        this._button.afterClick(e);
+    },
     _makeButton: function(button) {
 
-        var newButton = L.DomUtil.create('div', 'leaflet-buttons-control-button', this._container);
-        if(button.toggleStatus)
+        var newButton = L.DomUtil.create('a', 'leaflet-buttons-control-button', this._container);
+        if(button.toggleStatus) {
             L.DomUtil.addClass(newButton,'active');
+        }
 
         var image = L.DomUtil.create('img', 'control-icon', newButton);
         if (button.iconUrl) {
@@ -75,11 +85,14 @@ L.Control.PMButton = L.Control.extend({
         if (button.className) {
             L.DomUtil.addClass(image, button.className);
         }
-
-        L.DomEvent
-            .addListener(newButton, 'click', button.onClick, this)
-            .addListener(newButton, 'click', this._clicked, this)
-            .addListener(newButton, 'click', button.afterClick, this);
+        // before the actual click, trigger a click on currently toggled buttons to
+        // untoggle them and their functionality
+        L.DomEvent.addListener(newButton, 'click', (e) => {
+            if(this._button.disableOtherButtons) {
+                this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
+            }
+        });
+        L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
 
         L.DomEvent.disableClickPropagation(newButton);
         return newButton;
@@ -93,9 +106,9 @@ L.Control.PMButton = L.Control.extend({
         }
 
         if(!this._button.toggleStatus) {
-            L.DomUtil.removeClass(this._container.childNodes[0],'active');
+            L.DomUtil.removeClass(this.buttonsDomNode,'active');
         } else {
-            L.DomUtil.addClass(this._container.childNodes[0],'active');
+            L.DomUtil.addClass(this.buttonsDomNode,'active');
         }
     },
 
