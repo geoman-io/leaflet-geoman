@@ -1,8 +1,8 @@
 L.PM.Toolbar = L.Class.extend({
     options: {
         drawPolygon: true,
-        editPolygon: true,
-        dragPolygon: true,
+        editPolygon: false,
+        dragPolygon: false,
         deleteLayer: true
     },
     initialize(map) {
