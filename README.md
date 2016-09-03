@@ -1,6 +1,6 @@
 # Leaflet Polygon Management
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
-Draw, Edit, Drag, Cut, Adapt, and soon: Snap Features.
+Draw, Edit, Drag, and soon: Snap Features.
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
@@ -66,12 +66,7 @@ var polygonLayer = L.geoJson(data).addTo(map);
 var options = {
 
     // makes the polygon draggable
-    draggable: true,
-
-    // EXPERIMENTAL: if a polygon gets dragged over another polygon of the same layergroup,
-    // the polygon will get cut - this feature still may have some bugs and will be further developed.
-    // This feature needs the turfJS dependency
-    preventOverlap: true
+    draggable: true
 
 };
 
