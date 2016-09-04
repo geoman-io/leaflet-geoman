@@ -1,6 +1,6 @@
 # Leaflet Polygon Management
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
-Draw, Edit, Drag, Cut, Adapt, and soon: Snap Features.
+Draw, Edit, Drag, and soon: Snap Features.
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
@@ -22,6 +22,22 @@ Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/rel
 
 #### Init Leaflet.PM
 Just include `leaflet.pm.min.js` right after Leaflet.
+
+
+##### Leaflet.PM Toolbar
+This plugin comes with an optional toolbar to give you buttons to use the various features.
+
+```
+// define toolbar options
+var options = {
+    drawPolygon: true,
+    deleteLayer: true
+};
+
+// add leaflet.pm controls to the map
+map.pm.addControls(options);
+```
+If no options are passed, all buttons will be shown.
 
 
 ##### Drawing Mode
@@ -46,10 +62,6 @@ map.pm.disableDraw('Poly');
 // listen to when drawing mode gets disabled
 map.on('pm:drawend', function(e) {//...});
 
-
-// add a control button to the map which can toggle drawing mode for shapes
-map.pm.addControls();
-
 // listen to when a new layer is created
 map.on('pm:create', function(e) {//...});
 
@@ -66,12 +78,7 @@ var polygonLayer = L.geoJson(data).addTo(map);
 var options = {
 
     // makes the polygon draggable
-    draggable: true,
-
-    // EXPERIMENTAL: if a polygon gets dragged over another polygon of the same layergroup,
-    // the polygon will get cut - this feature still may have some bugs and will be further developed.
-    // This feature needs the turfJS dependency
-    preventOverlap: true
+    draggable: true
 
 };
 
@@ -98,6 +105,8 @@ polygonLayer.on('pm:dragend', function(e) {//...});
 
 ### Credit
 As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be surprised to see some familiar code.
+
+The icons used for the toolbar are CC-BY [Glyphicons](http://glyphicons.com/).
 
 
 ### License

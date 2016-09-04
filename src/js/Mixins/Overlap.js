@@ -1,3 +1,8 @@
+// this isn't included anymore but if you want to re-enable it:
+// 1. include this mixing inside L.PM.Edit.js
+// 2. include the turf.js dependency in your project before leaflet.pm
+// 3. uncomment all code inside L.PM.Edit.Poly that has an if-check on options.preventOverlap
+// 4. pass the option preventOverlap to the enable() function on your layer
 var OverlapMixin = {
 
     _applyPossibleCoordsChanges: function() {

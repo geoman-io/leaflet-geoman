@@ -21,7 +21,10 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map4);
 
-map2.pm.addControls();
+map2.pm.addControls({
+    drawPolygon: true,
+    deleteLayer: true
+});
 map2.pm.enableDraw('Poly');
 // map2.pm.disableDraw('Poly');
 
@@ -142,9 +145,10 @@ var layerGroupItem3 = L.polygon([
 
 var layerGroup = L.featureGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
 layerGroup.pm.toggleEdit({
-    draggable: true,
-    preventOverlap: true
+    draggable: true
 });
+
+map4.pm.addControls();
 
 layerGroup.addLayer(layerGroupItem3);
 
