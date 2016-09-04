@@ -24,6 +24,22 @@ Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/rel
 Just include `leaflet.pm.min.js` right after Leaflet.
 
 
+##### Leaflet.PM Toolbar
+This plugin comes with an optional toolbar to give you buttons to use the various features.
+
+```
+// define toolbar options
+var options = {
+    drawPolygon: true,
+    deleteLayer: true
+};
+
+// add leaflet.pm controls to the map
+map.pm.addControls(options);
+```
+If no options are passed, all buttons will be shown.
+
+
 ##### Drawing Mode
 Use Drawing Mode on a map like this
 
@@ -45,10 +61,6 @@ map.pm.disableDraw('Poly');
 
 // listen to when drawing mode gets disabled
 map.on('pm:drawend', function(e) {//...});
-
-
-// add a control button to the map which can toggle drawing mode for shapes
-map.pm.addControls();
 
 // listen to when a new layer is created
 map.on('pm:create', function(e) {//...});
