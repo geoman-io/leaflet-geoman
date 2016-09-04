@@ -14,8 +14,9 @@ L.PM.Map = L.Class.extend({
         this.Draw.disable(shape);
     },
     removeLayer: function(e) {
+
         var layer = e.target;
-        if(!layer._layers) {
+        if(!layer._layers && !layer.pm.dragging()) {
             e.target.remove();
         }
     },

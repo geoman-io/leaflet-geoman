@@ -283,7 +283,9 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
 
     _onMarkerDragEnd: function(e) {
 
-        this._applyPossibleCoordsChanges();
+        // if(this.options.preventOverlap) {
+        //     this._applyPossibleCoordsChanges();
+        // }
 
         // fire edit event
         this._fireEdit();
