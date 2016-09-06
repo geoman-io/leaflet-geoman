@@ -38,10 +38,6 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
                 this._initDraggableLayer();
             }
 
-            if(this.options.snap) {
-                this._initSnappableMarkers();
-            }
-
             // if(this.options.preventOverlap) {
             //
             //     // if the dragged polygon should be cutted when overlapping another polygon, go ahead
@@ -101,6 +97,10 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
             this._createMiddleMarker(
                 this._markers[k], this._markers[nextIndex]
             );
+        }
+
+        if(this.options.snap) {
+            this._initSnappableMarkers();
         }
 
     },

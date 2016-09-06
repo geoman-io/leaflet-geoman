@@ -1,7 +1,7 @@
 var SnapMixin = {
     _initSnappableMarkers: function() {
 
-
+        console.log('init');
 
         this._markers.forEach((marker) => {
             marker.on('movestart', this._createSnapList, this);
@@ -71,7 +71,7 @@ var SnapMixin = {
             let A = map.latLngToLayerPoint(point);
             let B = map.latLngToLayerPoint(coords[nextIndex]);
 
-            // calc the distance between A and B
+            // calc the distance between P and AB-segment
             let distance = L.LineUtil.pointToSegmentDistance(P, A, B);
 
             // was shortestDistance set? if no, set it now
@@ -84,16 +84,15 @@ var SnapMixin = {
             if(distance < shortestDistance) {
                 shortestDistance = distance;
                 closestSegment = [A, B];
+
             }
 
         });
 
-        // console.log(closestSegment);
+        // now, take the closest segment (closestSegment) and calc the closest point to P on it.
+        let closestPoint = L.LineUtil.closestPointOnSegment(P, closestSegment[0], closestSegment[1]);
 
-        // L.polyline([map.layerPointToLatLng(closestSegment[0]), map.layerPointToLatLng(closestSegment[1])], {color: 'red'}).addTo(map)
-
-        let closestPoint = L.LineUtil.closestPointOnSegment(latlng, closestSegment[0], closestSegment[1]);
-
+        // return the latlng of that sucker
         return map.layerPointToLatLng(closestPoint);
 
     }
