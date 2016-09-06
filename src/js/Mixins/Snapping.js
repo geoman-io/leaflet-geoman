@@ -15,11 +15,16 @@ var SnapMixin = {
     _handleSnapping: function(e) {
 
         let marker = e.target;
+
+        // get the closest layer, it's closest latlng and the distance
         let {layer, closestLatLng, distance} = this._calcClosestLayer(marker.getLatLng(), this._snapList);
 
         // minimal distance before marker snaps (in pixels)
         let minDistance = 30;
+
         if(distance < minDistance) {
+
+            // snap the marker
             marker.setLatLng(closestLatLng);
             this._onMarkerDrag(e);
         }
@@ -49,22 +54,34 @@ var SnapMixin = {
     _calcClosestLayer: function(latlng, layers) {
         let map = this._poly._map;
 
+        // the closest polygon to our dragged marker latlng
         let closestPolygon;
+
+        // the closest latlng of that polygon
         let closestLatLng;
+
+        // the distance to that latlng
         let closestDistance;
 
-
-
+        // loop through the layers
         layers.forEach((layer, index) => {
+
+            // find the closest latlng of this layer to the dragged marker latlng
             let closestLatLngOfPoly = this._getClosestLayerLatlng(latlng, layer);
 
+            // show indicator lines, it's for debugging
             this.debugIndicatorLines[index].setLatLngs([latlng, closestLatLngOfPoly]);
 
+            // the point of the marker latlng
             let P = map.latLngToLayerPoint(latlng);
+
+            // the closest point of the polygon to P
             let C = map.latLngToLayerPoint(closestLatLngOfPoly);
 
+            // the distance between P and C
             let distance = P.distanceTo(C);
 
+            // save the info if it doesn't exist or if the distance is smaller than the previous one
             if(closestDistance === undefined || distance < closestDistance) {
                 closestDistance = distance;
                 closestLatLng = closestLatLngOfPoly;
@@ -73,6 +90,7 @@ var SnapMixin = {
 
         });
 
+        // return the closest polygon, it's closest latlng and the distance
         return {
             layer: closestPolygon,
             closestLatLng,
