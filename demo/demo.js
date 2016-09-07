@@ -146,7 +146,8 @@ var layerGroupItem3 = L.polygon([
 var layerGroup = L.featureGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
 layerGroup.pm.toggleEdit({
     draggable: true,
-    snap: true
+    snap: true,
+    snapDistance: 30
 });
 
 map4.pm.addControls();
