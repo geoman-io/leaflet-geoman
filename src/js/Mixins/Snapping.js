@@ -12,6 +12,14 @@ var SnapMixin = {
             marker.on('dragend', this._cleanupSnapping, this);
         });
 
+
+        this._poly.off('pm:dragstart', this._unsnap, this);
+        this._poly.on('pm:dragstart', this._unsnap, this);
+
+    },
+    _unsnap: function(e) {
+        // delete the last snap
+        delete this._snapLatLng;
     },
     _cleanupSnapping: function(e) {
 
@@ -73,9 +81,11 @@ var SnapMixin = {
             // if it was previously snapped...
             if(this._snapLatLng) {
 
-                // ... fire the pm:unsnap event and delete the last snap
-                delete this._snapLatLng;
-                marker.fire('pm:unsnap', eventInfo);
+                // ...unsnap
+                this._unsnap(eventInfo);
+
+                // and fire unsnap event
+                eventInfo.marker.fire('pm:unsnap', eventInfo);
                 this._poly.fire('pm:unsnap', eventInfo);
             }
         }
