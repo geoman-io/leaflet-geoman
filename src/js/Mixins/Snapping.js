@@ -34,8 +34,10 @@ var SnapMixin = {
 
         let marker = e.target;
 
-        // get the closest layer, it's closest latlng and the distance
+        // get the closest layer, it's closest latlng, segment and the distance
         let closestLayer = this._calcClosestLayer(marker.getLatLng(), this._snapList);
+
+        let snapLatlng = this._checkPrioritiySnapping(closestLayer);
 
         // minimal distance before marker snaps (in pixels)
         let minDistance = this.options.snapDistance;
@@ -43,9 +45,55 @@ var SnapMixin = {
         if(closestLayer.distance < minDistance) {
 
             // snap the marker
-            marker.setLatLng(closestLayer.latlng);
+            marker.setLatLng(snapLatlng);
             this._onMarkerDrag(e);
         }
+
+    },
+
+    // We got the point we want to snap to (C), but we need to check if a coord of the polygon
+    // receives priority over C as the snapping point. Let's check this here
+    _checkPrioritiySnapping: function(closestLayer) {
+
+        let map = this._poly._map;
+
+        // the latlng we ultemately want to snap to
+        let snapLatlng;
+
+        // closest point of A and B to C
+        let closestPoint;
+
+        // distance between closestPoint and C
+        let shortestDistance;
+
+        // A and B are the points of the closest segment to P (the marker position we want to snap)
+        let A = closestLayer.segment[0];
+        let B = closestLayer.segment[1];
+
+        // C is the point we would snap to on the segment.
+        // The closest point on the closest segment of the closest polygon to P. That's right.
+        let C = map.latLngToLayerPoint(closestLayer.latlng);
+
+        // distances from A to C and B to C to check which one is closer to C
+        let distanceAC = A.distanceTo(C);
+        let distanceBC = B.distanceTo(C);
+
+        closestPoint = distanceAC < distanceBC ? A : B;
+        shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
+
+        let priorityDistance = this.options.snapDistance;
+
+        // if C is closer to the closestPoint (A or B) than the snapDistance,
+        // the closestPoint (a vertex/coord of the layer/polygon),
+        // the closesPoint has priority over the current C-latlng as the snapping point.
+        if(shortestDistance < priorityDistance) {
+            snapLatlng = map.layerPointToLatLng(closestPoint);
+        } else {
+            snapLatlng = closestLayer.latlng;
+        }
+
+        // return the latlng of the snapping point
+        return snapLatlng;
 
     },
     _createSnapList: function() {
