@@ -78,7 +78,14 @@ var polygonLayer = L.geoJson(data).addTo(map);
 var options = {
 
     // makes the polygon draggable
-    draggable: true
+    draggable: true,
+
+    // makes the vertices snappable to other layers
+    snap: true,
+
+    // distance in pixels that needs to be undercut to trigger snapping
+    // default: 30
+    snapDistance: 30
 
 };
 
@@ -99,6 +106,12 @@ polygonLayer.on('pm:edit', function(e) {//...});
 polygonLayer.on('pm:dragstart', function(e) {//...});
 polygonLayer.on('pm:drag', function(e) {//...});
 polygonLayer.on('pm:dragend', function(e) {//...});
+
+// listen to when snapping occurs
+// pm:snap and pm:unsnap are, in addition to the layer, also fired on the markers of the polygon
+// if you'd need it for some advanced behaviour
+polygonLayer.on('pm:snap', function(e) {//...});
+polygonLayer.on('pm:unsnap', function(e) {//...});
 
 ```
 

@@ -38,18 +38,47 @@ var SnapMixin = {
         let closestLayer = this._calcClosestLayer(marker.getLatLng(), this._snapList);
 
         // find the final latlng that we want to snap to
-        let snapLatlng = this._checkPrioritiySnapping(closestLayer);
+        let snapLatLng = this._checkPrioritiySnapping(closestLayer);
 
         // minimal distance before marker snaps (in pixels)
         let minDistance = this.options.snapDistance;
 
+        // event info for pm:snap and pm:unsnap
+        let eventInfo = {
+            marker,
+            snapLatLng,
+            segment: closestLayer.segment,
+            layer: this._poly,
+            layerInteractedWith: closestLayer.layer // for lack of a better property name
+        };
+
         if(closestLayer.distance < minDistance) {
 
             // snap the marker
-            marker.setLatLng(snapLatlng);
+            marker.setLatLng(snapLatLng);
             this._onMarkerDrag(e);
-        }
 
+            // check if the snapping position differs from the last snap
+            if(this._snapLatLng !== snapLatLng) {
+
+                // if yes, save it and fire the pm:snap event
+                this._snapLatLng = snapLatLng;
+                marker.fire('pm:snap', eventInfo);
+                this._poly.fire('pm:snap', eventInfo);
+            }
+
+        } else {
+            // no more snapping
+
+            // if it was previously snapped...
+            if(this._snapLatLng) {
+
+                // ... fire the pm:unsnap event and delete the last snap
+                delete this._snapLatLng;
+                marker.fire('pm:unsnap', eventInfo);
+                this._poly.fire('pm:unsnap', eventInfo);
+            }
+        }
     },
 
     // we got the point we want to snap to (C), but we need to check if a coord of the polygon

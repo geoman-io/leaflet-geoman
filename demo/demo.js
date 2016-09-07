@@ -150,6 +150,15 @@ layerGroup.pm.toggleEdit({
     snapDistance: 30
 });
 
+layerGroup.on('pm:snap', function(e) {
+    console.log('snap');
+    console.log(e);
+});
+layerGroup.on('pm:unsnap', function(e) {
+    console.log('unsnap');
+    console.log(e);
+});
+
 map4.pm.addControls();
 
 layerGroup.addLayer(layerGroupItem3);
