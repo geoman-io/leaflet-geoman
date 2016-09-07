@@ -194,6 +194,9 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         // fire edit event
         this._fireEdit();
 
+        if(this.options.snap) {
+            this._initSnappableMarkers();
+        }
 
     },
 

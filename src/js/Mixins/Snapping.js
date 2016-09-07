@@ -2,17 +2,31 @@ var SnapMixin = {
     _initSnappableMarkers: function() {
 
         this._markers.forEach((marker) => {
-            marker.on('movestart', this._createSnapList, this);
+
+            marker.off('drag', this._handleSnapping, this);
             marker.on('drag', this._handleSnapping, this);
-            marker.on('moveend', () => {
-                this.debugIndicatorLines.forEach((line) => {
-                    line.remove();
-                });
-            });
+
+            marker.off('dragend', this._cleanupSnapping, this);
+            marker.on('dragend', this._cleanupSnapping, this);
         });
 
     },
+    _cleanupSnapping: function(e) {
+        console.log('drag end');
+
+        delete this._snapList;
+
+        this.debugIndicatorLines.forEach((line) => {
+            line.remove();
+        });
+    },
     _handleSnapping: function(e) {
+
+        if(this._snapList === undefined) {
+            this._createSnapList(e);
+        }
+
+
 
         let marker = e.target;
 
