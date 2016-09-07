@@ -105,7 +105,12 @@ var SnapMixin = {
         this._poly._map.eachLayer((layer) => {
             if(layer instanceof L.Polyline) {
                 layers.push(layer);
-                debugIndicatorLines.push(L.polyline([], {color: 'red'}).addTo(this._poly._map));
+
+                // this is for debugging
+                let debugLine = L.polyline([], {color: 'red'});
+                debugIndicatorLines.push(debugLine);
+                // comment 👇 this in to show them
+                // debugLine.addTo(this._poly._map));
             }
         });
 
