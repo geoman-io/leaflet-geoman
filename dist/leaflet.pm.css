@@ -1,34 +1,34 @@
-.leaflet-buttons-control-button {
+
+
+.leaflet-pm-toolbar .leaflet-buttons-control-button {
   padding: 3px;
   box-sizing: border-box;
 }
 
-.leaflet-buttons-control-button img {
+.leaflet-pm-toolbar .control-icon {
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
-  max-width: 100%;
-  max-height: 100%;
   opacity: .8;
-  padding: 2px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
-.leaflet-buttons-control-button img.icon-polygon {
-  padding: 1px;
-  content: url("assets/icons/draw.png");
+.leaflet-pm-toolbar .icon-polygon {
+  background-image: url("assets/icons/draw.png");
 }
 
-.leaflet-buttons-control-button img.icon-drag {
-  padding: 1px;
-  content: url("assets/icons/drag.png");
+.leaflet-pm-toolbar .icon-drag {
+  background-image: url("assets/icons/drag.png");
 }
 
-.leaflet-buttons-control-button img.icon-delete {
-  content: url("assets/icons/remove.png");
+.leaflet-pm-toolbar .icon-delete {
+  background-image: url("assets/icons/remove.png");
 }
 
-.leaflet-buttons-control-button img.icon-edit {
-  transform: translate(2px, 0);
-  /* fix for looking a bit off center */
-  content: url("assets/icons/edit.png");
+.leaflet-pm-toolbar .icon-edit {
+  background-image: url("assets/icons/edit.png");
 }
 
 .leaflet-buttons-control-button:hover {
@@ -40,7 +40,7 @@
   background-color: #f4f4f4;
 }
 
-.leaflet-buttons-control-button.active img {
+.leaflet-buttons-control-button.active > .control-icon {
   opacity: .5;
 }
 
@@ -69,4 +69,3 @@
 .leaflet-pm-draggable {
   cursor: move !important;
 }
-
