@@ -167,7 +167,7 @@ var SnapMixin = {
         let map = this._poly._map;
 
         // the closest polygon to our dragged marker latlng
-        let closestLayer;
+        let closestLayer = {};
 
         // loop through the layers
         layers.forEach((layer, index) => {
