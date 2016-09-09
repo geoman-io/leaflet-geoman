@@ -1,6 +1,6 @@
 {
   "name": "leaflet.pm",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
