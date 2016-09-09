@@ -1,6 +1,6 @@
 # Leaflet Polygon Management
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
-Draw, Edit, Drag, and soon: Snap Features.
+Draw, Edit, Drag, and Snap Features.
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
@@ -30,8 +30,8 @@ This plugin comes with an optional toolbar to give you buttons to use the variou
 ```
 // define toolbar options
 var options = {
-    drawPolygon: true,
-    deleteLayer: true
+    drawPolygon: true, // adds button to draw a polygon
+    deleteLayer: true // adds a button to delete layers
 };
 
 // add leaflet.pm controls to the map
