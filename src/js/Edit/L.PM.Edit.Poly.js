@@ -17,61 +17,64 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         this.options = options;
 
         if(!this.enabled()) {
-            // change state
-            this._enabled = true;
-
-            // init markers
-            this._initMarkers();
-
-            // if polygon gets removed from map, disable edit mode
-            this._poly.on('remove', (e) => {
-                this.disable(e.target);
-            });
-
-
-            // if multiple markers are on top of each other (e.g. through snapping)
-            // we want to raise the markers of the polygon that was last hovered.
-            this._poly.on('mouseover', (e) => {
-                this._poly._map.fire('pm:raiseMarkers', this._poly);
-            });
-
-
-            this._poly._map.on('pm:raiseMarkers', (layer) => {
-
-                if(this._poly._leaflet_id === layer._leaflet_id) {
-                    // if this poly was hoveresd, raise its markers
-                    this._markers.forEach((m) => {
-                        m.setZIndexOffset(100);
-                    });
-                } else {
-                    // lower the markers of this layer if another layer was hovered
-                    this._markers.forEach((m) => {
-                        m.setZIndexOffset(50);
-                    });
-                }
-
-            });
-
-            // preventOverlap needs the turf library. If it's not included, deactivate it again
-            // if(window.turf === undefined && this.options.preventOverlap) {
-            //     console.warn('TurfJS not found, preventOverlap is deactivated');
-            //     this.options.preventOverlap = false;
-            // }
-
-            if(this.options.draggable) {
-                this._initDraggableLayer();
-            }
-
-            // if(this.options.preventOverlap) {
-            //
-            //     // if the dragged polygon should be cutted when overlapping another polygon, go ahead
-            //     this._poly.on('pm:drag', this._handleOverlap, this);
-            //
-            //     // set new coordinates, more details inside the function
-            //     this._poly.on('pm:dragend', this._applyPossibleCoordsChanges, this);
-            // }
+            // if it was already enabled, disable first
+            // we don't block enabling again because new options might be passed
+            this.disable();
         }
 
+        // change state
+        this._enabled = true;
+
+        // init markers
+        this._initMarkers();
+
+        // if polygon gets removed from map, disable edit mode
+        this._poly.on('remove', (e) => {
+            this.disable(e.target);
+        });
+
+
+        // if multiple markers are on top of each other (e.g. through snapping)
+        // we want to raise the markers of the polygon that was last hovered.
+        this._poly.on('mouseover', (e) => {
+            this._poly._map.fire('pm:raiseMarkers', this._poly);
+        });
+
+
+        this._poly._map.on('pm:raiseMarkers', (layer) => {
+
+            if(this._poly._leaflet_id === layer._leaflet_id) {
+                // if this poly was hoveresd, raise its markers
+                this._markers.forEach((m) => {
+                    m.setZIndexOffset(100);
+                });
+            } else {
+                // lower the markers of this layer if another layer was hovered
+                this._markers.forEach((m) => {
+                    m.setZIndexOffset(50);
+                });
+            }
+
+        });
+
+        // preventOverlap needs the turf library. If it's not included, deactivate it again
+        // if(window.turf === undefined && this.options.preventOverlap) {
+        //     console.warn('TurfJS not found, preventOverlap is deactivated');
+        //     this.options.preventOverlap = false;
+        // }
+
+        if(this.options.draggable) {
+            this._initDraggableLayer();
+        }
+
+        // if(this.options.preventOverlap) {
+        //
+        //     // if the dragged polygon should be cutted when overlapping another polygon, go ahead
+        //     this._poly.on('pm:drag', this._handleOverlap, this);
+        //
+        //     // set new coordinates, more details inside the function
+        //     this._poly.on('pm:dragend', this._applyPossibleCoordsChanges, this);
+        // }
     },
 
     enabled: function() {
@@ -79,6 +82,11 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
     },
 
     disable: function(poly = this._poly) {
+
+        // if it's not enabled, it doesn't need to be disabled
+        if(!this.enabled()) {
+            return false;
+        }
 
         // prevent disabling if polygon is being dragged
         if(poly.pm._dragging) {
@@ -123,7 +131,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
             );
         }
 
-        if(this.options.snap) {
+        if(this.options.snappable) {
             this._initSnappableMarkers();
         }
 
@@ -218,7 +226,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         // fire edit event
         this._fireEdit();
 
-        if(this.options.snap) {
+        if(this.options.snappable) {
             this._initSnappableMarkers();
         }
 

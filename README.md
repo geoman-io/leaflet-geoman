@@ -30,8 +30,9 @@ This plugin comes with an optional toolbar to give you buttons to use the variou
 ```
 // define toolbar options
 var options = {
-    drawPolygon: true, // adds button to draw a polygon
-    deleteLayer: true // adds a button to delete layers
+    drawPolygon: true,  // adds button to draw a polygon
+    editPolygon: true,  // adds button to toggle global edit mode
+    deleteLayer: true   // adds a button to delete layers
 };
 
 // add leaflet.pm controls to the map
@@ -81,7 +82,7 @@ var options = {
     draggable: true,
 
     // makes the vertices snappable to other layers
-    snap: true,
+    snappable: true,
 
     // distance in pixels that needs to be undercut to trigger snapping
     // default: 30

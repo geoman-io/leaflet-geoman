@@ -25,10 +25,13 @@
 
 .leaflet-pm-toolbar .icon-delete {
   background-image: url("assets/icons/remove.png");
+  background-size: 70%;
 }
 
 .leaflet-pm-toolbar .icon-edit {
   background-image: url("assets/icons/edit.png");
+  background-size: 80%;
+  background-position: 4px center;
 }
 
 .leaflet-buttons-control-button:hover {

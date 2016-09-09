@@ -79,7 +79,7 @@ var geoJsonLayer = L.geoJson().addTo(map3);
 geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.pm.toggleEdit({
     draggable: true,
-    snap: true
+    snappable: true
 });
 var bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);
@@ -147,7 +147,7 @@ var layerGroupItem3 = L.polygon([
 var layerGroup = L.featureGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
 layerGroup.pm.toggleEdit({
     draggable: true,
-    snap: true,
+    snappable: true,
     snapDistance: 30
 });
 
