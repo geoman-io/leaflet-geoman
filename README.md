@@ -1,6 +1,6 @@
 # Leaflet Polygon Management
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
-Draw, Edit, Drag, and soon: Snap Features.
+Draw, Edit, Drag, and Snap Features.
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
@@ -30,8 +30,8 @@ This plugin comes with an optional toolbar to give you buttons to use the variou
 ```
 // define toolbar options
 var options = {
-    drawPolygon: true,
-    deleteLayer: true
+    drawPolygon: true, // adds button to draw a polygon
+    deleteLayer: true // adds a button to delete layers
 };
 
 // add leaflet.pm controls to the map
@@ -78,7 +78,14 @@ var polygonLayer = L.geoJson(data).addTo(map);
 var options = {
 
     // makes the polygon draggable
-    draggable: true
+    draggable: true,
+
+    // makes the vertices snappable to other layers
+    snap: true,
+
+    // distance in pixels that needs to be undercut to trigger snapping
+    // default: 30
+    snapDistance: 30
 
 };
 
@@ -100,6 +107,12 @@ polygonLayer.on('pm:dragstart', function(e) {//...});
 polygonLayer.on('pm:drag', function(e) {//...});
 polygonLayer.on('pm:dragend', function(e) {//...});
 
+// listen to when snapping occurs
+// pm:snap and pm:unsnap are, in addition to the layer, also fired on the markers of the polygon
+// if you'd need it for some advanced behaviour
+polygonLayer.on('pm:snap', function(e) {//...});
+polygonLayer.on('pm:unsnap', function(e) {//...});
+
 ```
 
 
@@ -107,6 +120,8 @@ polygonLayer.on('pm:dragend', function(e) {//...});
 As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be surprised to see some familiar code.
 
 The icons used for the toolbar are CC-BY [Glyphicons](http://glyphicons.com/).
+
+I also took a hard look at the great [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some of my helper functions.
 
 
 ### License

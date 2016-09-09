@@ -78,7 +78,7 @@ L.Control.PMButton = L.Control.extend({
             L.DomUtil.addClass(newButton,'active');
         }
 
-        var image = L.DomUtil.create('img', 'control-icon', newButton);
+        var image = L.DomUtil.create('div', 'control-icon', newButton);
         if (button.iconUrl) {
             image.setAttribute('src', button.iconUrl);
         }

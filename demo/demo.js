@@ -78,7 +78,8 @@ var geoJsonButton = document.getElementById('test-geojson');
 var geoJsonLayer = L.geoJson().addTo(map3);
 geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.pm.toggleEdit({
-    draggable: true
+    draggable: true,
+    snap: true
 });
 var bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);
@@ -145,7 +146,18 @@ var layerGroupItem3 = L.polygon([
 
 var layerGroup = L.featureGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
 layerGroup.pm.toggleEdit({
-    draggable: true
+    draggable: true,
+    snap: true,
+    snapDistance: 30
+});
+
+layerGroup.on('pm:snap', function(e) {
+    console.log('snap');
+    console.log(e);
+});
+layerGroup.on('pm:unsnap', function(e) {
+    console.log('unsnap');
+    console.log(e);
 });
 
 map4.pm.addControls();
