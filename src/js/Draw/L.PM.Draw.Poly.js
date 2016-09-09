@@ -143,8 +143,6 @@ L.PM.Draw.Poly = L.PM.Draw.extend({
         var coords = this._polyline.getLatLngs();
         var polygonLayer = L.polygon(coords).addTo(this._map);
 
-        polygonLayer.pm.toggleEdit();
-
         this.disable();
 
         this._map.fire('pm:create', {
