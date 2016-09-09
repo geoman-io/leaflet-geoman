@@ -40,6 +40,11 @@ var SnapMixin = {
             this._createSnapList(e);
         }
 
+        // if there are no layers to snap to, stop here
+        if(this._snapList.length <= 0) {
+            return false;
+        }
+
         let marker = e.target;
 
         // get the closest layer, it's closest latlng, segment and the distance
@@ -162,7 +167,7 @@ var SnapMixin = {
         let map = this._poly._map;
 
         // the closest polygon to our dragged marker latlng
-        let closestLayer = {};
+        let closestLayer;
 
         // loop through the layers
         layers.forEach((layer, index) => {
@@ -182,6 +187,7 @@ var SnapMixin = {
         });
 
         // return the closest layer and it's data
+        // if there is no closest layer, return undefined
         return closestLayer;
 
 
