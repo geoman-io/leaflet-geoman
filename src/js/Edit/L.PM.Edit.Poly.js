@@ -34,29 +34,6 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         });
 
 
-        // if multiple markers are on top of each other (e.g. through snapping)
-        // we want to raise the markers of the polygon that was last hovered.
-        this._poly.on('mouseover', (e) => {
-            this._poly._map.fire('pm:raiseMarkers', this._poly);
-        });
-
-
-        this._poly._map.on('pm:raiseMarkers', (layer) => {
-
-            if(this._poly._leaflet_id === layer._leaflet_id) {
-                // if this poly was hoveresd, raise its markers
-                this._markers.forEach((m) => {
-                    m.setZIndexOffset(100);
-                });
-            } else {
-                // lower the markers of this layer if another layer was hovered
-                this._markers.forEach((m) => {
-                    m.setZIndexOffset(50);
-                });
-            }
-
-        });
-
         // preventOverlap needs the turf library. If it's not included, deactivate it again
         // if(window.turf === undefined && this.options.preventOverlap) {
         //     console.warn('TurfJS not found, preventOverlap is deactivated');
