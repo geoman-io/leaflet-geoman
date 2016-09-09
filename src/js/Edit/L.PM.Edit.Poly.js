@@ -131,7 +131,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
             );
         }
 
-        if(this.options.snap) {
+        if(this.options.snappable) {
             this._initSnappableMarkers();
         }
 
@@ -226,7 +226,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         // fire edit event
         this._fireEdit();
 
-        if(this.options.snap) {
+        if(this.options.snappable) {
             this._initSnappableMarkers();
         }
 

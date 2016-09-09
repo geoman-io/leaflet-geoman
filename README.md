@@ -81,7 +81,7 @@ var options = {
     draggable: true,
 
     // makes the vertices snappable to other layers
-    snap: true,
+    snappable: true,
 
     // distance in pixels that needs to be undercut to trigger snapping
     // default: 30
