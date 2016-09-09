@@ -83,6 +83,11 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
 
     disable: function(poly = this._poly) {
 
+        // if it's not enabled, it doesn't need to be disabled
+        if(!this.enabled()) {
+            return false;
+        }
+
         // prevent disabling if polygon is being dragged
         if(poly.pm._dragging) {
             return false;
@@ -126,7 +131,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
             );
         }
 
-        if(this.options.snap) {
+        if(this.options.snappable) {
             this._initSnappableMarkers();
         }
 
@@ -221,7 +226,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         // fire edit event
         this._fireEdit();
 
-        if(this.options.snap) {
+        if(this.options.snappable) {
             this._initSnappableMarkers();
         }
 

@@ -34,4 +34,39 @@ L.PM.Map = L.Class.extend({
 
 
     },
+    globalEditEnabled: function() {
+        return this._globalEditMode;
+    },
+    toggleGlobalEditMode: function(options) {
+
+        // find all layers that are or inherit from Polylines...
+        let layers = [];
+        this.map.eachLayer((layer) => {
+            if(layer instanceof L.Polyline) {
+                layers.push(layer);
+            }
+        });
+
+        if(this.globalEditEnabled()) {
+            // disable
+
+            this._globalEditMode = false;
+
+            layers.forEach(function(layer, index) {
+                layer.pm.disable();
+            });
+
+        } else {
+            // enable
+
+            this._globalEditMode = true;
+
+            layers.forEach(function(layer, index) {
+                layer.pm.enable(options);
+            });
+
+
+        }
+
+    },
 });

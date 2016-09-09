@@ -5,7 +5,7 @@
 L.PM.Toolbar = L.Class.extend({
     options: {
         drawPolygon: true,
-        editPolygon: false,
+        editPolygon: true,
         dragPolygon: false,
         deleteLayer: true
     },
@@ -95,7 +95,10 @@ L.PM.Toolbar = L.Class.extend({
              'onClick': (e) => {
              },
              'afterClick': (e) => {
-
+                 this.map.pm.toggleGlobalEditMode({
+                     snappable: true,
+                     draggable: true
+                 });
              },
              'doToggle': true,
              'toggleStatus': false,
