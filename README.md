@@ -20,6 +20,22 @@ As we are always using the latest leaflet version in a big production app, I wil
 Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/releases). Include `leaflet.pm.min.js` and `leaflet.pm.css` in your project.
 
 
+#### Include via CDN
+CSS
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.10.1/dist/leaflet.pm.css" />`
+
+JS
+`<script src="https://unpkg.com/leaflet.pm@0.10.1/dist/leaflet.pm.min.js"></script>`
+
+#### Include as ES6 Module
+`import 'leaflet.pm';`
+`import 'leaflet.pm/dist/leaflet.pm.css';`
+
+#### Include as CommonJS Module
+`require('leaflet.pm');`
+`require('leaflet.pm/dist/leaflet.pm.css');`
+
+
 #### Init Leaflet.PM
 Just include `leaflet.pm.min.js` right after Leaflet.
 
