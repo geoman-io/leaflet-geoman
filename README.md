@@ -28,11 +28,11 @@ JS
 `<script src="https://unpkg.com/leaflet.pm@0.10.1/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
-`import 'leaflet.pm';`
+`import 'leaflet.pm';`  
 `import 'leaflet.pm/dist/leaflet.pm.css';`
 
 #### Include as CommonJS Module
-`require('leaflet.pm');`
+`require('leaflet.pm');`  
 `require('leaflet.pm/dist/leaflet.pm.css');`
 
 
