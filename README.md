@@ -6,7 +6,7 @@ Draw, Edit, Drag, and Snap Features.
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
 As we are always using the latest leaflet version in a big production app, I will (have to) keep this plugin constantly developed.
 
-#### [Demo](http://codeofsumit.github.io/leaflet.pm/)
+## [Demo](http://leaflet.pm.kaumgeschlafen.com/)
 
 ### Getting Started
 
