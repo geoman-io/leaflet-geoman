@@ -1,15 +1,14 @@
-var DragMixin = {
-    _initDraggableLayer: function() {
+const DragMixin = {
+    _initDraggableLayer() {
         // temporary coord variable for delta calculation
         this._tempDragCoord;
 
         // add CSS class
-        var el = this._poly._path;
+        const el = this._poly._path;
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
 
-        var onMouseUp = (e) => {
-
+        const onMouseUp = (e) => {
             // re-enable map drag
             this._poly._map.dragging.enable();
 
@@ -35,14 +34,10 @@ var DragMixin = {
                 // fire edit
                 this._fireEdit();
             }, 10);
+        };
 
-        }
-
-
-        var onMouseMove = (e) => {
-
+        const onMouseMove = (e) => {
             if(!this._dragging) {
-
                 // set state
                 this._dragging = true;
                 L.DomUtil.addClass(el, 'leaflet-pm-dragging');
@@ -58,16 +53,12 @@ var DragMixin = {
 
                 // fire pm:dragstart event
                 this._poly.fire('pm:dragstart');
-
-
             }
 
             this._onLayerDrag(e);
-
-        }
+        };
 
         this._poly.on('mousedown', (e) => {
-
             // save for delta calculation
             this._tempDragCoord = e.latlng;
 
@@ -76,31 +67,29 @@ var DragMixin = {
             // listen to mousemove on map (instead of polygon),
             // otherwise fast mouse movements stop the drag
             this._poly._map.on('mousemove', onMouseMove);
-
         });
     },
-    dragging: function() {
+    dragging() {
         return this._dragging;
     },
 
-    _onLayerDrag: function(e) {
-
+    _onLayerDrag(e) {
         // latLng of mouse event
-        let latlng = e.latlng;
+        const latlng = e.latlng;
 
         // delta coords (how far was dragged)
-        let deltaLatLng = {
+        const deltaLatLng = {
             lat: latlng.lat - this._tempDragCoord.lat,
-            lng: latlng.lng - this._tempDragCoord.lng
+            lng: latlng.lng - this._tempDragCoord.lng,
         };
 
         // create the new coordinates array
-        let coords = this._poly._latlngs[0];
-        let newLatLngs = coords.map((currentLatLng) => {
+        const coords = this._poly._latlngs[0];
+        const newLatLngs = coords.map((currentLatLng) => {
             return {
                 lat: currentLatLng.lat + deltaLatLng.lat,
-                lng: currentLatLng.lng + deltaLatLng.lng
-            }
+                lng: currentLatLng.lng + deltaLatLng.lng,
+            };
         });
 
         // set new coordinates and redraw
@@ -111,6 +100,5 @@ var DragMixin = {
 
         // fire pm:dragstart event
         this._poly.fire('pm:drag');
-
     },
-}
+};

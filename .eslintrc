@@ -1,0 +1,13 @@
+{
+    "extends": "airbnb-base",
+    "rules": {
+        "indent": ["error", 4],
+        "no-underscore-dangle": 0,
+        "keyword-spacing": 0,
+        "no-param-reassign": 0,
+    },
+    "globals": {
+        "L": true,
+        "window": true,
+    }
+}
