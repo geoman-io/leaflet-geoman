@@ -1,14 +1,14 @@
 const DragMixin = {
     _initDraggableLayer() {
         // temporary coord variable for delta calculation
-        this._tempDragCoord;
+        this._tempDragCoord = null;
 
         // add CSS class
         const el = this._poly._path;
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
 
-        const onMouseUp = (e) => {
+        const onMouseUp = () => {
             // re-enable map drag
             this._poly._map.dragging.enable();
 

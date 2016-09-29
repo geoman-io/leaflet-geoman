@@ -77,6 +77,8 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         // remove draggable class
         const el = poly._path;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+
+        return true;
     },
 
     _initMarkers() {
@@ -98,7 +100,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         this._markers = coords.map(this._createMarker, this);
 
         // create small markers in the middle of the regular markers
-        for(const k = 0; k < coords.length; k++) {
+        for(let k = 0; k < coords.length; k += 1) {
             const nextIndex = k + 1 >= coords.length ? 0 : k + 1;
             this._createMiddleMarker(
                 this._markers[k], this._markers[nextIndex]
@@ -134,7 +136,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         const latlng = this._calcMiddleLatLng(leftM.getLatLng(), rightM.getLatLng());
 
         const middleMarker = this._createMarker(latlng);
-        const middleIcon = L.divIcon({ className: 'marker-icon marker-icon-middle' })
+        const middleIcon = L.divIcon({ className: 'marker-icon marker-icon-middle' });
         middleMarker.setIcon(middleIcon);
 
         // save reference to this middle markers on the neighboor regular markers
@@ -142,7 +144,6 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         rightM._middleMarkerPrev = middleMarker;
 
         middleMarker.on('click', () => {
-
             // TODO: move the next two lines inside _addMarker() as soon as
             // https://github.com/Leaflet/Leaflet/issues/4484
             // is fixed
@@ -184,7 +185,10 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
 
         // push into marker array & update the indexes for every marker
         this._markers.splice(index, 0, newM);
-        this._markers.map((marker, i) => marker._index = i);
+        this._markers.map((marker, i) => {
+            marker._index = i;
+            return true;
+        });
 
         // create the new middlemarkers
         this._createMiddleMarker(leftM, newM);
@@ -237,7 +241,10 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
 
         // remove the marker from the markers array & update indexes
         this._markers.splice(index, 1);
-        this._markers.map((marker, i) => marker._index = i);
+        this._markers.map((m, i) => {
+            m._index = i;
+            return true;
+        });
 
         // if the polygon should be cutted when overlapping another polygon, do it now
         // if(this.options.preventOverlap) {
