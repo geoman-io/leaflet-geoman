@@ -125,6 +125,7 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         marker._origLatLng = latlng;
         marker._index = index;
 
+        marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('drag', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
         marker.on('contextmenu', this._removeMarker, this);
@@ -302,9 +303,19 @@ L.PM.Edit.Poly = L.PM.Edit.extend({
         //     this._applyPossibleCoordsChanges();
         // }
 
+        this._poly.fire('pm:markerdragend', {
+            markerEvent: e
+        });
+
         // fire edit event
         this._fireEdit();
 
+    },
+
+    _onMarkerDragStart: function(e) {
+        this._poly.fire('pm:markerdragstart', {
+            markerEvent: e
+        });
     },
 
     _fireEdit: function () {
