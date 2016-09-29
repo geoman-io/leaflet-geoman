@@ -173,3 +173,6 @@ layerGroup.on('pm:drag', function(e) {
 layerGroup.on('pm:dragend', function(e) {
     console.log(e);
 });
+layerGroup.on('pm:edit', function(e) {
+    console.log(e);
+});
