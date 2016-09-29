@@ -1,6 +1,6 @@
 {
   "name": "leaflet.pm",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -14,7 +14,9 @@
     "data-field-geojson",
     "ui-leaflet-draw"
   ],
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "dist/leaflet.pm.min.js",
   "dependencies": {},
   "devDependencies": {
