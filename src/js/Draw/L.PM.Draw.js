@@ -1,7 +1,6 @@
 L.PM.Draw = L.Class.extend({
 
-    initialize: function(map) {
-
+    initialize(map) {
         // save the map
         this._map = map;
 
@@ -12,16 +11,15 @@ L.PM.Draw = L.Class.extend({
         this.shapes.forEach((shape) => {
             this[shape] = new L.PM.Draw[shape](this._map);
         });
-
     },
-    getShapes: function() {
+
+    getShapes() {
         // if somebody wants to know what shapes are available
         return this.shapes;
     },
-    enable: function(shape) {
-
+    enable(shape) {
         if(!shape) {
-            throw 'Error: Please pass a shape as a parameter. Possible shapes are: ' + this.getShapes().join(',');
+            throw new Error(`Error: Please pass a shape as a parameter. Possible shapes are: ${this.getShapes().join(',')}`);
         }
 
         // disable drawing for all shapes
@@ -29,22 +27,19 @@ L.PM.Draw = L.Class.extend({
 
         // enable draw for a shape
         this[shape].enable();
-
     },
-    disable: function() {
-
+    disable() {
         // there can only be one drawing mode active at a time on a map
         // so it doesn't matter which one should be disabled.
         // just disable all of them
         this.shapes.forEach((shape) => {
             this[shape].disable();
         });
-
     },
-    addControls: function() {
+    addControls() {
         // add control buttons for our shapes
         this.shapes.forEach((shape) => {
             this[shape].addButton();
         });
-    }
+    },
 });

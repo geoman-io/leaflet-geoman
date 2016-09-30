@@ -2,15 +2,23 @@
 // (which inherits from L.PM.Edit) for each layer,
 // so it's not really a parent class
 L.PM.Edit.LayerGroup = L.Class.extend({
-    initialize: function(layerGroup) {
-
+    initialize(layerGroup) {
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
-        let availableEvents = ['pm:edit', 'pm:dragstart', 'pm:drag', 'pm:dragend', 'pm:snap', 'pm:unsnap', 'pm:raiseMarkers', 'pm:markerdragend', 'pm:markerdragstart'];
+        const availableEvents = [
+            'pm:edit',
+            'pm:dragstart',
+            'pm:drag',
+            'pm:dragend',
+            'pm:snap',
+            'pm:unsnap',
+            'pm:raiseMarkers',
+            'pm:markerdragend',
+            'pm:markerdragstart',
+        ];
 
         this._layers.forEach((layer) => {
-
             // listen to the events of the layers in this group
             availableEvents.forEach((event) => {
                 layer.on(event, this._fireEvent, this);
@@ -25,7 +33,6 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         // This only works for FeatureGroups, not LayerGroups
         // https://github.com/Leaflet/Leaflet/issues/4861
         this._layerGroup.on('layeradd', (e) => {
-
             this.initialize(layerGroup);
 
             // if editing was already enabled for this group, enable it again
@@ -35,35 +42,35 @@ L.PM.Edit.LayerGroup = L.Class.extend({
             }
         });
     },
-    _fireEvent: function(e) {
+    _fireEvent(e) {
         this._layerGroup.fireEvent(e.type, e);
     },
-    toggleEdit: function(options) {
+    toggleEdit(options) {
         this._options = options;
-        this._layers.forEach(layer => {
+        this._layers.forEach((layer) => {
             layer.pm.toggleEdit(options);
         });
     },
-    enable: function(options) {
+    enable(options) {
         this._options = options;
-        this._layers.forEach(layer => {
+        this._layers.forEach((layer) => {
             layer.pm.enable(options);
         });
     },
-    disable: function() {
-        this._layers.forEach(layer => {
+    disable() {
+        this._layers.forEach((layer) => {
             layer.pm.disable();
         });
     },
-    enabled: function() {
-        let enabled = this._layers.find((layer) => layer.pm.enabled());
+    enabled() {
+        const enabled = this._layers.find(layer => layer.pm.enabled());
         return !!enabled;
     },
-    dragging: function() {
-        let dragging = this._layers.find((layer) => layer.pm.dragging());
+    dragging() {
+        const dragging = this._layers.find(layer => layer.pm.dragging());
         return !!dragging;
     },
-    getOptions: function() {
+    getOptions() {
         return this._options;
-    }
+    },
 });

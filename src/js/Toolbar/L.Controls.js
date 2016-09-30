@@ -1,84 +1,81 @@
 L.Control.PMButton = L.Control.extend({
     options: {
-        position: 'topleft'
+        position: 'topleft',
     },
     // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
-    initialize: function (options) {
+    initialize(options) {
         this._button = {};
         this._button = this.setButton(options);
     },
 
-    onAdd: function (map) {
-
+    onAdd(map) {
         this._map = map;
 
         this._container = this._map.pm.Toolbar.container;
         this.buttonsDomNode = this._makeButton(this._button);
-        this._container.appendChild(this.buttonsDomNode)
+        this._container.appendChild(this.buttonsDomNode);
 
         return this._container;
     },
 
-    onRemove: function (map) {
+    onRemove() {
     },
 
-    setButton: function (options) {
-        var button = {
-            'className': options.className,
-            'iconUrl': options.iconUrl,
-            'onClick': options.onClick,
-            'afterClick': options.afterClick,
-            'doToggle': options.doToggle,
-            'toggleStatus': options.toggleStatus,
-            'disableOtherButtons': options.disableOtherButtons
+    setButton(options) {
+        const button = {
+            className: options.className,
+            iconUrl: options.iconUrl,
+            onClick: options.onClick,
+            afterClick: options.afterClick,
+            doToggle: options.doToggle,
+            toggleStatus: options.toggleStatus,
+            disableOtherButtons: options.disableOtherButtons,
         };
 
         return button;
     },
 
-    getText: function () {
+    getText() {
         return this._button.text;
     },
 
-    getIconUrl: function () {
+    getIconUrl() {
         return this._button.iconUrl;
     },
 
-    destroy: function () {
+    destroy() {
         this._button = {};
         this._update();
     },
 
-    toggle: function (e) {
-        if(typeof e === 'boolean'){
+    toggle(e) {
+        if(typeof e === 'boolean') {
             this._button.toggleStatus = e;
-        }
-        else{
+        } else {
             this._button.toggleStatus = !this._button.toggleStatus;
         }
         this._applyStyleClasses();
 
         return this._button.toggleStatus;
     },
-    toggled: function () {
+    toggled() {
         return this._button.toggleStatus;
     },
-    onCreate: function() {
+    onCreate() {
         this.toggle(false);
     },
-    _triggerClick: function(e) {
+    _triggerClick(e) {
         this._button.onClick(e);
         this._clicked(e);
         this._button.afterClick(e);
     },
-    _makeButton: function(button) {
-
-        var newButton = L.DomUtil.create('a', 'leaflet-buttons-control-button', this._container);
+    _makeButton(button) {
+        const newButton = L.DomUtil.create('a', 'leaflet-buttons-control-button', this._container);
         if(button.toggleStatus) {
-            L.DomUtil.addClass(newButton,'active');
+            L.DomUtil.addClass(newButton, 'active');
         }
 
-        var image = L.DomUtil.create('div', 'control-icon', newButton);
+        const image = L.DomUtil.create('div', 'control-icon', newButton);
         if (button.iconUrl) {
             image.setAttribute('src', button.iconUrl);
         }
@@ -87,7 +84,7 @@ L.Control.PMButton = L.Control.extend({
         }
         // before the actual click, trigger a click on currently toggled buttons to
         // untoggle them and their functionality
-        L.DomEvent.addListener(newButton, 'click', (e) => {
+        L.DomEvent.addListener(newButton, 'click', () => {
             if(this._button.disableOtherButtons) {
                 this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
             }
@@ -96,28 +93,25 @@ L.Control.PMButton = L.Control.extend({
 
         L.DomEvent.disableClickPropagation(newButton);
         return newButton;
-
     },
 
-    _applyStyleClasses: function() {
-
+    _applyStyleClasses() {
         if(!this._container) {
             return;
         }
 
         if(!this._button.toggleStatus) {
-            L.DomUtil.removeClass(this.buttonsDomNode,'active');
+            L.DomUtil.removeClass(this.buttonsDomNode, 'active');
         } else {
-            L.DomUtil.addClass(this.buttonsDomNode,'active');
+            L.DomUtil.addClass(this.buttonsDomNode, 'active');
         }
     },
 
-    _clicked: function () {
-
-        if(this._button.doToggle){
+    _clicked() {
+        if(this._button.doToggle) {
             this.toggle();
         }
         return;
-    }
+    },
 
 });

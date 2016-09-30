@@ -5,16 +5,14 @@
 // 4. pass the option preventOverlap to the enable() function on your layer
 var OverlapMixin = {
 
-    _applyPossibleCoordsChanges: function() {
-
+    _applyPossibleCoordsChanges() {
         // after the polygon was dragged and changed it's shape because of unallowed intersecting
         // with another polygon, this function takes the temporarily drawn polygon (during drag) and applies
         // it's coordinates to our main polygon
 
         if(this._tempPolygon) {
-
             // get the new coordinates
-            var latlngs = this._tempPolygon.getLayers()[0].getLatLngs();
+            const latlngs = this._tempPolygon.getLayers()[0].getLatLngs();
 
             // reshape our main polygon
             this._poly.setLatLngs(latlngs).redraw();
@@ -22,30 +20,25 @@ var OverlapMixin = {
             // initialize the markers again
             this._initMarkers();
         }
-
     },
 
-    _drawTemporaryPolygon: function(geoJson) {
-
+    _drawTemporaryPolygon(geoJson) {
         // hide our polygon
-        this._poly.setStyle({opacity: 0, fillOpacity: 0});
+        this._poly.setStyle({ opacity: 0, fillOpacity: 0 });
 
         // draw a temporary polygon (happens during drag & intersection)
         this._tempPolygon = L.geoJson(geoJson).addTo(this._poly._map).bringToBack();
-
     },
 
-    _handleOverlap: function() {
-
-        let mainPoly = this._poly;
-        let layers = this._layerGroup.getLayers();
+    _handleOverlap() {
+        const mainPoly = this._poly;
+        const layers = this._layerGroup.getLayers();
         let changed = false;
         let resultingGeoJson = this._poly.toGeoJSON();
 
         layers
         .filter(layer => !Object.is(layer, mainPoly))
         .map((layer) => {
-
             let intersect;
 
             // this needs to be in a try catch block because turf isn't reliable
@@ -65,6 +58,7 @@ var OverlapMixin = {
                 }
             }
 
+            return true;
         });
 
         if(this._tempPolygon) {
@@ -75,10 +69,7 @@ var OverlapMixin = {
         if(changed) {
             this._drawTemporaryPolygon(resultingGeoJson);
         } else {
-            this._poly.setStyle({opacity: 1, fillOpacity: 0.2});
+            this._poly.setStyle({ opacity: 1, fillOpacity: 0.2 });
         }
-
-
-
-    }
-}
+    },
+};
