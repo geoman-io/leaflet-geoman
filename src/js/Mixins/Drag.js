@@ -18,6 +18,11 @@ const DragMixin = {
             // clear up mouseup event
             this._poly.off('mouseup');
 
+            // if no drag happened, don't do anything
+            if(!this._dragging) {
+                return false;
+            }
+
             // show markers again
             this._initMarkers();
 

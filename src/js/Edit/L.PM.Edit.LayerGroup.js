@@ -6,7 +6,17 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
-        const availableEvents = ['pm:edit', 'pm:dragstart', 'pm:drag', 'pm:dragend', 'pm:snap', 'pm:unsnap', 'pm:raiseMarkers'];
+        const availableEvents = [
+            'pm:edit',
+            'pm:dragstart',
+            'pm:drag',
+            'pm:dragend',
+            'pm:snap',
+            'pm:unsnap',
+            'pm:raiseMarkers',
+            'pm:markerdragend',
+            'pm:markerdragstart',
+        ];
 
         this._layers.forEach((layer) => {
             // listen to the events of the layers in this group
