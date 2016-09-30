@@ -1,4 +1,4 @@
-var SnapMixin = {
+const SnapMixin = {
     _initSnappableMarkers() {
         this.options.snapDistance = this.options.snapDistance || 30;
 
