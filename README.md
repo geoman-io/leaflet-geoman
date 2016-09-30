@@ -6,7 +6,7 @@ Draw, Edit, Drag, and Snap Features.
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
 As we are always using the latest leaflet version in a big production app, I will (have to) keep this plugin constantly developed.
 
-#### [Demo](http://codeofsumit.github.io/leaflet.pm/)
+## [Demo](http://leaflet.pm.kaumgeschlafen.com/)
 
 ### Getting Started
 
@@ -18,6 +18,22 @@ As we are always using the latest leaflet version in a big production app, I wil
 
 #### Install Manually
 Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/releases). Include `leaflet.pm.min.js` and `leaflet.pm.css` in your project.
+
+
+#### Include via CDN
+CSS
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.10.1/dist/leaflet.pm.css" />`
+
+JS
+`<script src="https://unpkg.com/leaflet.pm@0.10.1/dist/leaflet.pm.min.js"></script>`
+
+#### Include as ES6 Module
+`import 'leaflet.pm';`  
+`import 'leaflet.pm/dist/leaflet.pm.css';`
+
+#### Include as CommonJS Module
+`require('leaflet.pm');`  
+`require('leaflet.pm/dist/leaflet.pm.css');`
 
 
 #### Init Leaflet.PM
@@ -107,6 +123,10 @@ polygonLayer.on('pm:edit', function(e) {//...});
 polygonLayer.on('pm:dragstart', function(e) {//...});
 polygonLayer.on('pm:drag', function(e) {//...});
 polygonLayer.on('pm:dragend', function(e) {//...});
+
+// listen to when a marker of a polygon-vertex is being dragged
+polygonLayer.on('pm:markerdragstart', function(e) {//...});
+polygonLayer.on('pm:markerdragend', function(e) {//...});
 
 // listen to when snapping occurs
 // pm:snap and pm:unsnap are, in addition to the layer, also fired on the markers of the polygon
