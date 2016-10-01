@@ -91,7 +91,14 @@ const DragMixin = {
         };
 
         // create the new coordinates array
-        const coords = this._layer._latlngs[0];
+        let coords;
+
+        if(this._layer instanceof L.Polygon) {
+            coords = this._layer._latlngs[0];
+        } else {
+            coords = this._layer._latlngs;
+        }
+
         const newLatLngs = coords.map((currentLatLng) => {
             return {
                 lat: currentLatLng.lat + deltaLatLng.lat,
