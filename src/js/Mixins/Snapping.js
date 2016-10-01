@@ -180,11 +180,20 @@ const SnapMixin = {
     _calcLayerDistances(latlng, layer) {
         const map = this._layer._map;
 
+        // is this a polyline, or polygon?
+        const closedShape = layer instanceof L.Polygon;
+
         // the point P which we want to snap (probpably the marker that is dragged)
         const P = latlng;
 
+        let coords;
+
         // the coords of the layer
-        const coords = layer.getLatLngs()[0];
+        if(closedShape) {
+            coords = layer.getLatLngs()[0];
+        } else {
+            coords = layer.getLatLngs();
+        }
 
         // the closest segment (line between two points) of the layer
         let closestSegment;
@@ -196,19 +205,29 @@ const SnapMixin = {
         coords.forEach((coord, index) => {
             // take this coord (A)...
             const A = coord;
+            let nextIndex;
 
             // and the next coord (B) as points
-            const nextIndex = index + 1 === coords.length ? 0 : index + 1;
+            if(closedShape) {
+                nextIndex = index + 1 === coords.length ? 0 : index + 1;
+            } else {
+                nextIndex = index + 1 === coords.length ? undefined : index + 1;
+            }
+
             const B = coords[nextIndex];
 
-            // calc the distance between P and AB-segment
-            const distance = this._getDistanceToSegment(map, P, A, B);
+            if(B) {
+                // calc the distance between P and AB-segment
+                const distance = this._getDistanceToSegment(map, P, A, B);
 
-            // is the distance shorter than the previous one? Save it and the segment
-            if(shortestDistance === undefined || distance < shortestDistance) {
-                shortestDistance = distance;
-                closestSegment = [A, B];
+                // is the distance shorter than the previous one? Save it and the segment
+                if(shortestDistance === undefined || distance < shortestDistance) {
+                    shortestDistance = distance;
+                    closestSegment = [A, B];
+                }
             }
+
+            return true;
         });
 
         // now, take the closest segment (closestSegment) and calc the closest point to P on it.
