@@ -94,15 +94,15 @@ L.PM.Draw.Line = L.PM.Draw.extend({
 
         this._hintline.setLatLngs([e.latlng, e.latlng]);
     },
-    _finishPolygon() {
+    _finishShape() {
         const coords = this._polyline.getLatLngs();
-        const polygonLayer = L.polygon(coords).addTo(this._map);
+        const polylineLayer = L.polyline(coords).addTo(this._map);
 
         this.disable();
 
         this._map.fire('pm:create', {
             shape: this._shape,
-            layer: polygonLayer,
+            layer: polylineLayer,
         });
     },
     _createMarker(latlng) {
@@ -112,6 +112,8 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         });
 
         this._layerGroup.addLayer(marker);
+
+        marker.on('click', this._finishShape, this);
 
         return marker;
     },
