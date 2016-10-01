@@ -94,14 +94,14 @@ L.PM.Edit.Line = L.PM.Edit.extend({
         map.addLayer(this._markerGroup);
 
         // create marker for each coordinate
-        const coords = this._layer._latlngs[0];
+        const coords = this._layer._latlngs;
 
         // the marker array, it includes only the markers that're associated with the coordinates
         this._markers = coords.map(this._createMarker, this);
 
         // create small markers in the middle of the regular markers
-        for(let k = 0; k < coords.length; k += 1) {
-            const nextIndex = k + 1 >= coords.length ? 0 : k + 1;
+        for(let k = 0; k < coords.length - 1; k += 1) {
+            const nextIndex = k + 1;
             this._createMiddleMarker(
                 this._markers[k], this._markers[nextIndex]
             );
@@ -176,7 +176,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
 
         // now, create the polygon coordinate point for that marker
         const latlng = newM.getLatLng();
-        const coords = this._layer._latlngs[0];
+        const coords = this._layer._latlngs;
         const index = leftM._index + 1;
 
         coords.splice(index, 0, latlng);
@@ -205,7 +205,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
 
     _removeMarker(e) {
         const marker = e.target;
-        const coords = this._layer._latlngs[0];
+        const coords = this._layer._latlngs;
         const index = marker._index;
 
         // only continue if this is NOT a middle marker (those can't be deleted)
@@ -225,16 +225,22 @@ L.PM.Edit.Line = L.PM.Edit.extend({
         }
 
         // remove the marker and the middlemarkers next to it from the map
-        this._markerGroup.removeLayer(marker._middleMarkerPrev);
-        this._markerGroup.removeLayer(marker._middleMarkerNext);
+        if(marker._middleMarkerPrev) {
+            this._markerGroup.removeLayer(marker._middleMarkerPrev);
+        }
+        if(marker._middleMarkerNext) {
+            this._markerGroup.removeLayer(marker._middleMarkerNext);
+        }
+
         this._markerGroup.removeLayer(marker);
 
         // find neighbor marker-indexes
-        const leftMarkerIndex = index - 1 < 0 ? this._markers.length - 1 : index - 1;
-        const rightMarkerIndex = index + 1 >= this._markers.length ? 0 : index + 1;
+        const leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
+        const rightMarkerIndex = index + 1 >= this._markers.length ? undefined : index + 1;
 
         // don't create middlemarkers if there is only one marker left
-        if(rightMarkerIndex !== leftMarkerIndex) {
+        // or if the middlemarker would be between the first and last coordinate of a polyline
+        if(rightMarkerIndex && leftMarkerIndex && rightMarkerIndex !== leftMarkerIndex) {
             const leftM = this._markers[leftMarkerIndex];
             const rightM = this._markers[rightMarkerIndex];
             this._createMiddleMarker(leftM, rightM);
@@ -275,11 +281,15 @@ L.PM.Edit.Line = L.PM.Edit.extend({
         const prevMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
         const nextMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
 
-        const middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
-        marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
+        if(marker._middleMarkerNext) {
+            const middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
+            marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
+        }
 
-        const middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
-        marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
+        if(marker._middleMarkerPrev) {
+            const middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
+            marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
+        }
 
         // if the dragged polygon should be cutted when overlapping another polygon, go ahead
         // if(this.options.preventOverlap) {

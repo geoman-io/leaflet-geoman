@@ -21,6 +21,13 @@ L.PM = L.PM || {
         L.Polygon.addInitHook(initPolygon);
 
 
+        function initPolyline() {
+            this.pm = new L.PM.Edit.Line(this);
+        }
+
+        L.Polyline.addInitHook(initPolyline);
+
+
         function initMap() {
             this.pm = new L.PM.Map(this);
         }
