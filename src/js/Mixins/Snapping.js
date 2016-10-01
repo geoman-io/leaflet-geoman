@@ -11,8 +11,8 @@ const SnapMixin = {
         });
 
 
-        this._poly.off('pm:dragstart', this._unsnap, this);
-        this._poly.on('pm:dragstart', this._unsnap, this);
+        this._layer.off('pm:dragstart', this._unsnap, this);
+        this._layer.on('pm:dragstart', this._unsnap, this);
     },
 
     _unsnap() {
@@ -57,7 +57,7 @@ const SnapMixin = {
             marker,
             snapLatLng,
             segment: closestLayer.segment,
-            layer: this._poly,
+            layer: this._layer,
             layerInteractedWith: closestLayer.layer, // for lack of a better property name
         };
 
@@ -71,7 +71,7 @@ const SnapMixin = {
                 // if yes, save it and fire the pm:snap event
                 this._snapLatLng = snapLatLng;
                 marker.fire('pm:snap', eventInfo);
-                this._poly.fire('pm:snap', eventInfo);
+                this._layer.fire('pm:snap', eventInfo);
             }
         } else if(this._snapLatLng) {
             // no more snapping
@@ -82,7 +82,7 @@ const SnapMixin = {
 
             // and fire unsnap event
             eventInfo.marker.fire('pm:unsnap', eventInfo);
-            this._poly.fire('pm:unsnap', eventInfo);
+            this._layer.fire('pm:unsnap', eventInfo);
         }
 
         return true;
@@ -91,7 +91,7 @@ const SnapMixin = {
     // we got the point we want to snap to (C), but we need to check if a coord of the polygon
     // receives priority over C as the snapping point. Let's check this here
     _checkPrioritiySnapping(closestLayer) {
-        const map = this._poly._map;
+        const map = this._layer._map;
 
         // A and B are the points of the closest segment to P (the marker position we want to snap)
         const A = closestLayer.segment[0];
@@ -134,7 +134,7 @@ const SnapMixin = {
         const debugIndicatorLines = [];
 
         // find all layers that are or inherit from Polylines...
-        this._poly._map.eachLayer((layer) => {
+        this._layer._map.eachLayer((layer) => {
             if(layer instanceof L.Polyline) {
                 layers.push(layer);
 
@@ -143,12 +143,12 @@ const SnapMixin = {
                 debugIndicatorLines.push(debugLine);
 
                 // uncomment 👇 this in to show debugging lines
-                // debugLine.addTo(this._poly._map);
+                // debugLine.addTo(this._layer._map);
             }
         });
 
         // ...except myself
-        layers = layers.filter(layer => this._poly !== layer);
+        layers = layers.filter(layer => this._layer !== layer);
 
         this._snapList = layers;
         this.debugIndicatorLines = debugIndicatorLines;
@@ -178,7 +178,7 @@ const SnapMixin = {
     },
 
     _calcLayerDistances(latlng, layer) {
-        const map = this._poly._map;
+        const map = this._layer._map;
 
         // the point P which we want to snap (probpably the marker that is dragged)
         const P = latlng;
