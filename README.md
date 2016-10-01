@@ -66,8 +66,8 @@ Use Drawing Mode on a map like this
 // enable drawing mode for shape - e.g. Poly
 map.pm.enableDraw('Poly');
 
-// get array of all available shapes (currently only Poly)
-map.pm.getShapes();
+// get array of all available shapes (currently Poly and Line)
+map2.pm.Draw.getShapes()
 
 // listen to when drawing mode gets enabled
 map.on('pm:drawstart', function(e) {//...});

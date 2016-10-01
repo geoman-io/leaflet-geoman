@@ -95,24 +95,30 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._hintline.setLatLngs([e.latlng, e.latlng]);
     },
     _finishShape() {
+        // get coordinates, create the leaflet shape and add it to the map
         const coords = this._polyline.getLatLngs();
         const polylineLayer = L.polyline(coords).addTo(this._map);
 
+        // disable drawing
         this.disable();
 
+        // fire the pm:create event and pass shape and layer
         this._map.fire('pm:create', {
             shape: this._shape,
             layer: polylineLayer,
         });
     },
     _createMarker(latlng) {
+        // create the new marker
         const marker = new L.Marker(latlng, {
             draggable: false,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
+        // add it to the map
         this._layerGroup.addLayer(marker);
 
+        // a click on any marker finishes this shape
         marker.on('click', this._finishShape, this);
 
         return marker;

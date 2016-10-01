@@ -26,6 +26,7 @@ map2.pm.addControls({
     drawPolyline: true,
     deleteLayer: true,
 });
+
 map2.pm.enableDraw('Poly');
 // map2.pm.disableDraw('Poly');
 
