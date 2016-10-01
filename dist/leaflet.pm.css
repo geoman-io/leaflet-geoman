@@ -19,6 +19,11 @@
   background-image: url("assets/icons/draw.png");
 }
 
+.leaflet-pm-toolbar .icon-polyline {
+  background-image: url("assets/icons/line.png");
+  background-size: 80%;
+}
+
 .leaflet-pm-toolbar .icon-drag {
   background-image: url("assets/icons/drag.png");
 }

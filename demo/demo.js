@@ -23,8 +23,10 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 map2.pm.addControls({
     drawPolygon: true,
-    deleteLayer: true
+    drawPolyline: true,
+    deleteLayer: true,
 });
+
 map2.pm.enableDraw('Poly');
 // map2.pm.disableDraw('Poly');
 
@@ -114,7 +116,7 @@ polygonLayer.pm.toggleEdit();
 
 // Layer Group Example
 
-var layerGroupItem1 = L.polygon([
+var layerGroupItem1 = L.polyline([
     [51.51, -0.09],
     [51.513, -0.08],
     [51.514, -0.11]
