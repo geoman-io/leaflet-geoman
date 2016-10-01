@@ -116,7 +116,7 @@ polygonLayer.pm.toggleEdit();
 
 // Layer Group Example
 
-var layerGroupItem1 = L.polygon([
+var layerGroupItem1 = L.polyline([
     [51.51, -0.09],
     [51.513, -0.08],
     [51.514, -0.11]
