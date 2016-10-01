@@ -5,6 +5,7 @@
 L.PM.Toolbar = L.Class.extend({
     options: {
         drawPolygon: true,
+        drawPolyline: true,
         editPolygon: true,
         dragPolygon: false,
         deleteLayer: true,
@@ -87,6 +88,20 @@ L.PM.Toolbar = L.Class.extend({
             disableOtherButtons: true,
         };
 
+        const drawLineButton = {
+            className: 'icon-polyline',
+            onClick: () => {
+
+            },
+            afterClick: () => {
+                // toggle drawing mode
+                this.map.pm.Draw.Line.toggle();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+        };
+
         const editButton = {
             className: 'icon-edit',
             onClick: () => {
@@ -115,6 +130,7 @@ L.PM.Toolbar = L.Class.extend({
         };
 
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
         this._addButton('editPolygon', new L.Control.PMButton(editButton));
         this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
         this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));

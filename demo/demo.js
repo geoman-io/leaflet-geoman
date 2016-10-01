@@ -23,7 +23,8 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 map2.pm.addControls({
     drawPolygon: true,
-    deleteLayer: true
+    drawPolyline: true,
+    deleteLayer: true,
 });
 map2.pm.enableDraw('Poly');
 // map2.pm.disableDraw('Poly');
