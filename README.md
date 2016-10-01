@@ -66,11 +66,26 @@ Use Drawing Mode on a map like this
 
 ```
 
+// optional options for line style during draw. These are the defaults
+var options = {
+    // the lines between coordinates/markers
+    templineStyle: {
+        color: 'red',
+    },
+
+    // the line from the last marker to the mouse cursor
+    hintlineStyle: {
+        color: 'red',
+        dashArray: [5, 5],
+    },
+};
+
 // enable drawing mode for shape - e.g. Poly or Line
-map.pm.enableDraw('Poly');
+map.pm.enableDraw('Poly', options);
+map.pm.enableDraw('Line', options);
 
 // get array of all available shapes (currently Poly and Line)
-map2.pm.Draw.getShapes()
+map.pm.Draw.getShapes()
 
 // listen to when drawing mode gets enabled
 map.on('pm:drawstart', function(e) {//...});

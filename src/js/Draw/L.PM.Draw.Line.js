@@ -4,9 +4,12 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._shape = 'Line';
         this.toolbarButtonName = 'drawPolyline';
     },
-    enable() {
-        // enable draw mode
+    enable(options) {
+        // TODO: Think about if these options could be passed globally for all
+        // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+        L.Util.setOptions(this, options);
 
+        // enable draw mode
         this._enabled = true;
 
         // create a new layergroup
@@ -14,14 +17,11 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._layerGroup.addTo(this._map);
 
         // this is the polyLine that'll make up the polygon
-        this._polyline = L.polyline([], { color: 'red' });
+        this._polyline = L.polyline([], this.options.templineStyle);
         this._layerGroup.addLayer(this._polyline);
 
         // this is the hintline from the mouse cursor to the last marker
-        this._hintline = L.polyline([], {
-            color: 'red',
-            dashArray: [5, 5],
-        });
+        this._hintline = L.polyline([], this.options.hintlineStyle);
         this._layerGroup.addLayer(this._hintline);
 
 

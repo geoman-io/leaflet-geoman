@@ -1,5 +1,13 @@
 L.PM.Draw = L.Class.extend({
-
+    options: {
+        templineStyle: {
+            color: 'red',
+        },
+        hintlineStyle: {
+            color: 'red',
+            dashArray: [5, 5],
+        },
+    },
     initialize(map) {
         // save the map
         this._map = map;
@@ -12,12 +20,11 @@ L.PM.Draw = L.Class.extend({
             this[shape] = new L.PM.Draw[shape](this._map);
         });
     },
-
     getShapes() {
         // if somebody wants to know what shapes are available
         return this.shapes;
     },
-    enable(shape) {
+    enable(shape, options) {
         if(!shape) {
             throw new Error(`Error: Please pass a shape as a parameter. Possible shapes are: ${this.getShapes().join(',')}`);
         }
@@ -26,7 +33,7 @@ L.PM.Draw = L.Class.extend({
         this.disable();
 
         // enable draw for a shape
-        this[shape].enable();
+        this[shape].enable(options);
     },
     disable() {
         // there can only be one drawing mode active at a time on a map

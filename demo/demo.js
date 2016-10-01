@@ -27,8 +27,17 @@ map2.pm.addControls({
     deleteLayer: true,
 });
 
+map2.pm.enableDraw('Poly', {
+    templineStyle: {
+        color: 'blue',
+    },
+    hintlineStyle: {
+        color: 'blue',
+        dashArray: [5, 5],
+    },
+});
+map2.pm.disableDraw('Poly');
 map2.pm.enableDraw('Poly');
-// map2.pm.disableDraw('Poly');
 
 // GEOSJON EXAMPLE
 
