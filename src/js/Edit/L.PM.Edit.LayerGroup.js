@@ -4,11 +4,39 @@
 L.PM.Edit.LayerGroup = L.Class.extend({
     initialize(layerGroup) {
         this._layerGroup = layerGroup;
-        this._layers = layerGroup.getLayers();
+        this._layers = this.findLayers();
+
+        // init all layers of the group
+        this._layers.forEach(layer => this._initLayer(layer));
+
+        // if a new layer is added to the group, reinitialize
+        // This only works for FeatureGroups, not LayerGroups
+        // https://github.com/Leaflet/Leaflet/issues/4861
+        this._layerGroup.on('layeradd', (e) => {
+            this._layers = this.findLayers();
+
+            // init the newly added layer
+            this._initLayer(e.layer);
+
+            // if editing was already enabled for this group, enable it again
+            // so the new layers are enabled
+            if(e.target.pm.enabled()) {
+                this.enable(this.getOptions());
+            }
+        });
+    },
+    findLayers() {
+        // get all layers of the layer group
+        let layers = this._layerGroup.getLayers();
 
         // filter out layers that don't have leaflet.pm (like markers and stuff)
-        this._layers = this._layers.filter(layer => !!layer.pm);
+        layers = layers.filter(layer => !!layer.pm);
 
+        // return them
+        return layers;
+    },
+    _initLayer(layer) {
+        // available events
         const availableEvents = [
             'pm:edit',
             'pm:dragstart',
@@ -21,29 +49,13 @@ L.PM.Edit.LayerGroup = L.Class.extend({
             'pm:markerdragstart',
         ];
 
-        this._layers.forEach((layer) => {
-            // listen to the events of the layers in this group
-            availableEvents.forEach((event) => {
-                layer.on(event, this._fireEvent, this);
-            });
-
-            // add reference for the group to each layer inside said group
-            layer.pm._layerGroup = this._layerGroup;
+        // listen to the events of the layers in this group
+        availableEvents.forEach((event) => {
+            layer.on(event, this._fireEvent, this);
         });
 
-
-        // if a new layer is added to the group, reinitialize
-        // This only works for FeatureGroups, not LayerGroups
-        // https://github.com/Leaflet/Leaflet/issues/4861
-        this._layerGroup.on('layeradd', (e) => {
-            this.initialize(layerGroup);
-
-            // if editing was already enabled for this group, enable it again
-            // so the new layers are enabled
-            if(e.target.pm.enabled()) {
-                this.enable(this.getOptions());
-            }
-        });
+        // add reference for the group to each layer inside said group
+        layer.pm._layerGroup = this._layerGroup;
     },
     _fireEvent(e) {
         this._layerGroup.fireEvent(e.type, e);

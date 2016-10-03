@@ -154,8 +154,44 @@ var layerGroupItem3 = L.polygon([
     -0.06450164634969281
   ]
 ]);
+var layerGroupItem4 = L.polygon([
+  [
+    51.51549835365031,
+    -0.06450164634969281
+  ],
+  [
+    51.51944818307178,
+    -0.08425079345703125
+  ],
+  [
+    51.51868369995795,
+    -0.06131630004205801
+  ],
+  [
+    51.51549835365031,
+    -0.06450164634969281
+  ]
+]);
+var layerGroupItem5 = L.polygon([
+  [
+    51.51549835365031,
+    -0.06450164634969281
+  ],
+  [
+    51.51944818307178,
+    -0.08425079345703125
+  ],
+  [
+    51.51868369995795,
+    -0.06131630004205801
+  ],
+  [
+    51.51549835365031,
+    -0.06450164634969281
+  ]
+]);
 
-var layerGroup = L.featureGroup([layerGroupItem1, layerGroupItem2]).addTo(map4);
+var layerGroup = L.featureGroup([layerGroupItem1]).addTo(map4);
 layerGroup.pm.toggleEdit({
     draggable: true,
     snappable: true,
@@ -173,7 +209,10 @@ layerGroup.on('pm:unsnap', function(e) {
 
 map4.pm.addControls();
 
+layerGroup.addLayer(layerGroupItem2);
 layerGroup.addLayer(layerGroupItem3);
+// layerGroup.addLayer(layerGroupItem4);
+// layerGroup.addLayer(layerGroupItem5);
 
 layerGroup.on('pm:dragstart', function(e) {
     console.log(e);
