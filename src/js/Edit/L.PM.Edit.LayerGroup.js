@@ -24,8 +24,10 @@ L.PM.Edit.LayerGroup = L.Class.extend({
                 layer.on(event, this._fireEvent, this);
             });
 
-            // add reference for the group to each layer inside said group
-            layer.pm._layerGroup = this._layerGroup;
+            if (layer.pm) {
+                // add reference for the group to each layer inside said group
+                layer.pm._layerGroup = this._layerGroup;
+            }
         });
 
 
@@ -37,7 +39,7 @@ L.PM.Edit.LayerGroup = L.Class.extend({
 
             // if editing was already enabled for this group, enable it again
             // so the new layers are enabled
-            if(e.target.pm.enabled()) {
+            if (e.target.pm && e.target.pm.enabled()) {
                 this.enable(this.getOptions());
             }
         });
@@ -48,26 +50,32 @@ L.PM.Edit.LayerGroup = L.Class.extend({
     toggleEdit(options) {
         this._options = options;
         this._layers.forEach((layer) => {
-            layer.pm.toggleEdit(options);
+            if (layer.pm) {
+                layer.pm.toggleEdit(options);
+            }
         });
     },
     enable(options) {
         this._options = options;
         this._layers.forEach((layer) => {
-            layer.pm.enable(options);
+            if (layer.pm) {
+                layer.pm.enable(options);
+            }
         });
     },
     disable() {
         this._layers.forEach((layer) => {
-            layer.pm.disable();
+            if (layer.pm) {
+                layer.pm.disable();
+            }
         });
     },
     enabled() {
-        const enabled = this._layers.find(layer => layer.pm.enabled());
+        const enabled = this._layers.find(layer => layer.pm && layer.pm.enabled());
         return !!enabled;
     },
     dragging() {
-        const dragging = this._layers.find(layer => layer.pm.dragging());
+        const dragging = this._layers.find(layer => layer.pm && layer.pm.dragging());
         return !!dragging;
     },
     getOptions() {
