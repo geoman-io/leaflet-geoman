@@ -18,7 +18,9 @@
     "dist"
   ],
   "main": "dist/leaflet.pm.min.js",
-  "dependencies": {},
+  "dependencies": {
+    "leaflet": "^1.0.1"
+  },
   "devDependencies": {
     "babel-preset-es2015": "^6.14.0",
     "eslint": "^3.5.0",
