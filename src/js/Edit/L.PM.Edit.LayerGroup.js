@@ -6,6 +6,9 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         this._layerGroup = layerGroup;
         this._layers = layerGroup.getLayers();
 
+        // filter out layers that don't have leaflet.pm (like markers and stuff)
+        this._layers = this._layers.filter(layer => !!layer.pm);
+
         const availableEvents = [
             'pm:edit',
             'pm:dragstart',

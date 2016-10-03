@@ -190,3 +190,10 @@ layerGroup.on('pm:markerdragstart', function(e) {
 layerGroup.on('pm:markerdragend', function(e) {
     console.log(e);
 });
+
+// test with markercluster
+// var markers = L.markerClusterGroup();
+// markers.addLayer(L.marker([51.505, -0.07]));
+// markers.addLayer(L.marker([51.505, -0.08]));
+// markers.addLayer(L.marker([51.505, -0.09]));
+// map4.addLayer(markers);
