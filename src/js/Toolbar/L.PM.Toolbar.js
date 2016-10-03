@@ -67,7 +67,9 @@ L.PM.Toolbar = L.Class.extend({
 
             },
             afterClick: () => {
-                this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
+                if (this.map.pm) {
+                    this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
+                }
             },
             doToggle: true,
             toggleStatus: false,
@@ -80,8 +82,10 @@ L.PM.Toolbar = L.Class.extend({
 
             },
             afterClick: () => {
-                // toggle drawing mode
-                this.map.pm.Draw.Poly.toggle();
+                if (this.map.pm) {
+                    // toggle drawing mode
+                    this.map.pm.Draw.Poly.toggle();
+                }
             },
             doToggle: true,
             toggleStatus: false,
@@ -94,8 +98,10 @@ L.PM.Toolbar = L.Class.extend({
 
             },
             afterClick: () => {
-                // toggle drawing mode
-                this.map.pm.Draw.Line.toggle();
+                if (this.map.pm) {
+                    // toggle drawing mode
+                    this.map.pm.Draw.Line.toggle();
+                }
             },
             doToggle: true,
             toggleStatus: false,
@@ -107,10 +113,12 @@ L.PM.Toolbar = L.Class.extend({
             onClick: () => {
             },
             afterClick: () => {
-                this.map.pm.toggleGlobalEditMode({
-                    snappable: true,
-                    draggable: true,
-                });
+                if (this.map.pm) {
+                    this.map.pm.toggleGlobalEditMode({
+                        snappable: true,
+                        draggable: true,
+                    });
+                }
             },
             doToggle: true,
             toggleStatus: false,

@@ -64,11 +64,13 @@ L.PM.Edit.Line = L.PM.Edit.extend({
         }
 
         // prevent disabling if polygon is being dragged
-        if(poly.pm._dragging) {
+        if(poly.pm && poly.pm._dragging) {
             return false;
         }
-        poly.pm._enabled = false;
-        poly.pm._markerGroup.clearLayers();
+        if (poly.pm) {
+            poly.pm._enabled = false;
+            poly.pm._markerGroup.clearLayers();
+        }
 
         // clean up draggable
         poly.off('mousedown');

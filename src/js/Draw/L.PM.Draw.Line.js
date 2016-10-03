@@ -37,8 +37,10 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         // fire drawstart event
         this._map.fire('pm:drawstart', { shape: this._shape });
 
-        // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+        if (this._map.pm) {
+            // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
+            this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+        }
     },
     disable() {
         // disable draw mode
@@ -63,8 +65,10 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         // fire drawend event
         this._map.fire('pm:drawend', { shape: this._shape });
 
-        // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+        if (this._map.pm) {
+            // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
+            this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+        }
     },
     enabled() {
         return this._enabled;

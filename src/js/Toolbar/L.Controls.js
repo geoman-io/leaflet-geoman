@@ -11,7 +11,9 @@ L.Control.PMButton = L.Control.extend({
     onAdd(map) {
         this._map = map;
 
-        this._container = this._map.pm.Toolbar.container;
+        if (this._map.pm) {
+            this._container = this._map.pm.Toolbar.container;
+        }
         this.buttonsDomNode = this._makeButton(this._button);
         this._container.appendChild(this.buttonsDomNode);
 
@@ -85,7 +87,7 @@ L.Control.PMButton = L.Control.extend({
         // before the actual click, trigger a click on currently toggled buttons to
         // untoggle them and their functionality
         L.DomEvent.addListener(newButton, 'click', () => {
-            if(this._button.disableOtherButtons) {
+            if(this._button.disableOtherButtons && this._map.pm) {
                 this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
             }
         });

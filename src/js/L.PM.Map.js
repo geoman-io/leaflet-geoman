@@ -15,7 +15,7 @@ L.PM.Map = L.Class.extend({
     },
     removeLayer(e) {
         const layer = e.target;
-        if(!layer._layers && !layer.pm.dragging()) {
+        if(!layer._layers && (layer.pm && !layer.pm.dragging())) {
             e.target.remove();
         }
     },
@@ -48,7 +48,9 @@ L.PM.Map = L.Class.extend({
             this._globalEditMode = false;
 
             layers.forEach((layer) => {
-                layer.pm.disable();
+                if (layer.pm) {
+                    layer.pm.disable();
+                }
             });
         } else {
             // enable
@@ -56,7 +58,9 @@ L.PM.Map = L.Class.extend({
             this._globalEditMode = true;
 
             layers.forEach((layer) => {
-                layer.pm.enable(options);
+                if (layer.pm) {
+                    layer.pm.enable(options);
+                }
             });
         }
     },
