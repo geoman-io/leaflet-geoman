@@ -7,6 +7,9 @@
 
 L.PM = L.PM || {
     initialize() {
+        this.addInitHooks();
+    },
+    addInitHooks() {
         function initLayerGroup() {
             this.pm = new L.PM.Edit.LayerGroup(this);
         }
