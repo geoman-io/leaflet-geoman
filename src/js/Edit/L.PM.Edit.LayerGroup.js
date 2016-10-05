@@ -16,7 +16,9 @@ L.PM.Edit.LayerGroup = L.Class.extend({
             this._layers = this.findLayers();
 
             // init the newly added layer
-            this._initLayer(e.layer);
+            if(e.layer.pm) {
+                this._initLayer(e.layer);
+            }
 
             // if editing was already enabled for this group, enable it again
             // so the new layers are enabled
