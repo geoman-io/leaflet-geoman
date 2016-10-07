@@ -6,26 +6,37 @@
 */
 
 L.PM = L.PM || {
-    initialize: function() {
-
-        var initLayerGroup = function() {
+    initialize() {
+        this.addInitHooks();
+    },
+    addInitHooks() {
+        function initLayerGroup() {
             this.pm = new L.PM.Edit.LayerGroup(this);
-        };
+        }
+
         L.LayerGroup.addInitHook(initLayerGroup);
 
 
-        var initPolygon = function() {
+        function initPolygon() {
             this.pm = new L.PM.Edit.Poly(this);
-        };
+        }
+
         L.Polygon.addInitHook(initPolygon);
 
 
-        var initMap = function() {
-            this.pm = new L.PM.Map(this);
-        };
-        L.Map.addInitHook(initMap);
+        function initPolyline() {
+            this.pm = new L.PM.Edit.Line(this);
+        }
 
-    }
+        L.Polyline.addInitHook(initPolyline);
+
+
+        function initMap() {
+            this.pm = new L.PM.Map(this);
+        }
+
+        L.Map.addInitHook(initMap);
+    },
 };
 
 // initialize leaflet.pm

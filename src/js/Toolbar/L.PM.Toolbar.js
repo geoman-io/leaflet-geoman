@@ -5,9 +5,10 @@
 L.PM.Toolbar = L.Class.extend({
     options: {
         drawPolygon: true,
+        drawPolyline: true,
         editPolygon: true,
         dragPolygon: false,
-        deleteLayer: true
+        deleteLayer: true,
     },
     initialize(map) {
         this.map = map;
@@ -16,26 +17,26 @@ L.PM.Toolbar = L.Class.extend({
         this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
         this._defineButtons();
     },
-    getButtons: function() {
+    getButtons() {
         return this.buttons;
     },
 
-    addControls: function(options = this.options) {
+    addControls(options = this.options) {
         // adds all buttons to the map specified inside options
 
         // first set the options
-        L.Util.setOptions(this, options)
+        L.Util.setOptions(this, options);
 
         // now show the specified buttons
         this._showHideButtons();
     },
-    _addButton: function(name, button) {
+    _addButton(name, button) {
         this.buttons[name] = button;
         this.options[name] = this.options[name] || false;
 
         return this.buttons[name];
     },
-    triggerClickOnToggledButtons: function(exceptThisButton) {
+    triggerClickOnToggledButtons(exceptThisButton) {
         // this function is used when - e.g. drawing mode is enabled and a possible
         // other active mode (like removal tool) is already active.
         // we can't have two active modes because of possible event conflicts
@@ -46,7 +47,7 @@ L.PM.Toolbar = L.Class.extend({
             }
         }
     },
-    toggleButton: function(name, status) {
+    toggleButton(name, status) {
         // does not fire the events/functionality of the button
         // this just changes the state and is used if a functionality (like Draw)
         // is enabled manually via script
@@ -57,75 +58,87 @@ L.PM.Toolbar = L.Class.extend({
 
         // now toggle the state of the button
         return this.buttons[name].toggle(status);
-
-
     },
-    _defineButtons: function() {
-
+    _defineButtons() {
         // some buttons are still in their respective classes, like L.PM.Draw.Poly
-        var deleteButton = {
-            'className': 'icon-delete',
-            'onClick': (e) => {
+        const deleteButton = {
+            className: 'icon-delete',
+            onClick: () => {
 
             },
-            'afterClick': (e) => {
+            afterClick: () => {
                 this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
             },
-            'doToggle': true,
-            'toggleStatus': false,
-            'disableOtherButtons': true
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
         };
 
-        var drawPolyButton = {
-             'className': 'icon-polygon',
-             'onClick': (e) => {
+        const drawPolyButton = {
+            className: 'icon-polygon',
+            onClick: () => {
 
-             },
-             'afterClick': (e) => {
-                 // toggle drawing mode
-                 this.map.pm.Draw.Poly.toggle();
-             },
-             'doToggle': true,
-             'toggleStatus': false,
-             'disableOtherButtons': true
+            },
+            afterClick: () => {
+                // toggle drawing mode
+                this.map.pm.Draw.Poly.toggle();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
         };
 
-        var editButton = {
-             'className': 'icon-edit',
-             'onClick': (e) => {
-             },
-             'afterClick': (e) => {
-                 this.map.pm.toggleGlobalEditMode({
-                     snappable: true,
-                     draggable: true
-                 });
-             },
-             'doToggle': true,
-             'toggleStatus': false,
-             'disableOtherButtons': true
+        const drawLineButton = {
+            className: 'icon-polyline',
+            onClick: () => {
+
+            },
+            afterClick: () => {
+                // toggle drawing mode
+                this.map.pm.Draw.Line.toggle();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
         };
 
-        var dragButton = {
-             'className': 'icon-drag',
-             'onClick': (e) => {
-             },
-             'afterClick': (e) => {
+        const editButton = {
+            className: 'icon-edit',
+            onClick: () => {
+            },
+            afterClick: () => {
+                this.map.pm.toggleGlobalEditMode({
+                    snappable: true,
+                    draggable: true,
+                });
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+        };
 
-             },
-             'doToggle': true,
-             'toggleStatus': false,
-             'disableOtherButtons': true
+        const dragButton = {
+            className: 'icon-drag',
+            onClick: () => {
+            },
+            afterClick: () => {
+
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
         };
 
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
         this._addButton('editPolygon', new L.Control.PMButton(editButton));
         this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
         this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
-
     },
-    _showHideButtons: function() {
+
+    _showHideButtons() {
         // loop through all buttons
-        var buttons = this.getButtons();
+        const buttons = this.getButtons();
 
         for (var btn in buttons) {
             if(this.options[btn]) {
@@ -136,5 +149,5 @@ L.PM.Toolbar = L.Class.extend({
                 buttons[btn].remove();
             }
         }
-    }
+    },
 });

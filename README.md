@@ -1,6 +1,8 @@
-# Leaflet Polygon Management
+# Leaflet Geometry Management
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
 Draw, Edit, Drag, and Snap Features.
+
+In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time, this plugin only supported polygons. Now you can edit Polylines, Polygons, LayerGroups, GeoJSON and more are coming.
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
@@ -22,10 +24,10 @@ Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/rel
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.10.1/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.11.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.10.1/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.11.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
@@ -47,6 +49,7 @@ This plugin comes with an optional toolbar to give you buttons to use the variou
 // define toolbar options
 var options = {
     drawPolygon: true,  // adds button to draw a polygon
+    drawPolyline: true,  // adds button to draw a polyline
     editPolygon: true,  // adds button to toggle global edit mode
     deleteLayer: true   // adds a button to delete layers
 };
@@ -63,11 +66,26 @@ Use Drawing Mode on a map like this
 
 ```
 
-// enable drawing mode for shape - e.g. Poly
-map.pm.enableDraw('Poly');
+// optional options for line style during draw. These are the defaults
+var options = {
+    // the lines between coordinates/markers
+    templineStyle: {
+        color: 'red',
+    },
 
-// get array of all available shapes (currently only Poly)
-map.pm.getShapes();
+    // the line from the last marker to the mouse cursor
+    hintlineStyle: {
+        color: 'red',
+        dashArray: [5, 5],
+    },
+};
+
+// enable drawing mode for shape - e.g. Poly or Line
+map.pm.enableDraw('Poly', options);
+map.pm.enableDraw('Line', options);
+
+// get array of all available shapes (currently Poly and Line)
+map.pm.Draw.getShapes()
 
 // listen to when drawing mode gets enabled
 map.on('pm:drawstart', function(e) {//...});

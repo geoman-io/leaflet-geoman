@@ -1,23 +1,22 @@
-var DragMixin = {
-    _initDraggableLayer: function() {
+const DragMixin = {
+    _initDraggableLayer() {
         // temporary coord variable for delta calculation
-        this._tempDragCoord;
+        this._tempDragCoord = null;
 
         // add CSS class
-        var el = this._poly._path;
+        const el = this._layer._path;
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
 
-        var onMouseUp = (e) => {
-
+        const onMouseUp = () => {
             // re-enable map drag
-            this._poly._map.dragging.enable();
+            this._layer._map.dragging.enable();
 
             // clear up mousemove event
-            this._poly._map.off('mousemove');
+            this._layer._map.off('mousemove');
 
             // clear up mouseup event
-            this._poly.off('mouseup');
+            this._layer.off('mouseup');
 
             // if no drag happened, don't do anything
             if(!this._dragging) {
@@ -35,87 +34,85 @@ var DragMixin = {
                 L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
                 // fire pm:dragend event
-                this._poly.fire('pm:dragend');
+                this._layer.fire('pm:dragend');
 
                 // fire edit
                 this._fireEdit();
             }, 10);
 
-        }
+            return true;
+        };
 
-
-        var onMouseMove = (e) => {
-
+        const onMouseMove = (e) => {
             if(!this._dragging) {
-
                 // set state
                 this._dragging = true;
                 L.DomUtil.addClass(el, 'leaflet-pm-dragging');
 
                 // bring it to front to prevent drag interception
-                this._poly.bringToFront();
+                this._layer.bringToFront();
 
                 // disbale map drag
-                this._poly._map.dragging.disable();
+                this._layer._map.dragging.disable();
 
                 // hide markers
                 this._markerGroup.clearLayers();
 
                 // fire pm:dragstart event
-                this._poly.fire('pm:dragstart');
-
-
+                this._layer.fire('pm:dragstart');
             }
 
             this._onLayerDrag(e);
+        };
 
-        }
-
-        this._poly.on('mousedown', (e) => {
-
+        this._layer.on('mousedown', (e) => {
             // save for delta calculation
             this._tempDragCoord = e.latlng;
 
-            this._poly.on('mouseup', onMouseUp);
+            this._layer.on('mouseup', onMouseUp);
 
             // listen to mousemove on map (instead of polygon),
             // otherwise fast mouse movements stop the drag
-            this._poly._map.on('mousemove', onMouseMove);
-
+            this._layer._map.on('mousemove', onMouseMove);
         });
     },
-    dragging: function() {
+    dragging() {
         return this._dragging;
     },
 
-    _onLayerDrag: function(e) {
-
+    _onLayerDrag(e) {
         // latLng of mouse event
-        let latlng = e.latlng;
+        const latlng = e.latlng;
 
         // delta coords (how far was dragged)
-        let deltaLatLng = {
+        const deltaLatLng = {
             lat: latlng.lat - this._tempDragCoord.lat,
-            lng: latlng.lng - this._tempDragCoord.lng
+            lng: latlng.lng - this._tempDragCoord.lng,
         };
 
         // create the new coordinates array
-        let coords = this._poly._latlngs[0];
-        let newLatLngs = coords.map((currentLatLng) => {
+        let coords;
+
+        if(this._layer instanceof L.Polygon) {
+            coords = this._layer._latlngs[0];
+        } else {
+            coords = this._layer._latlngs;
+        }
+
+        const newLatLngs = coords.map((currentLatLng) => {
             return {
                 lat: currentLatLng.lat + deltaLatLng.lat,
-                lng: currentLatLng.lng + deltaLatLng.lng
-            }
+                lng: currentLatLng.lng + deltaLatLng.lng,
+            };
         });
 
         // set new coordinates and redraw
-        this._poly.setLatLngs(newLatLngs).redraw();
+        this._layer.setLatLngs(newLatLngs).redraw();
 
         // save current latlng for next delta calculation
         this._tempDragCoord = latlng;
 
         // fire pm:dragstart event
-        this._poly.fire('pm:drag');
-
+        this._layer.fire('pm:drag');
     },
-}
+};

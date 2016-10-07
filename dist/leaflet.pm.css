@@ -19,6 +19,11 @@
   background-image: url("assets/icons/draw.png");
 }
 
+.leaflet-pm-toolbar .icon-polyline {
+  background-image: url("assets/icons/line.png");
+  background-size: 80%;
+}
+
 .leaflet-pm-toolbar .icon-drag {
   background-image: url("assets/icons/drag.png");
 }
@@ -62,7 +67,8 @@
   transition: opacity ease .3s;
 }
 
-.marker-icon-middle {
+.marker-icon-middle,
+.marker-icon-middle:focus {
   opacity: .7;
   margin: -6px 0 0 -6px !important;
   width: 10px !important;

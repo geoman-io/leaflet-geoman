@@ -1,169 +1,37 @@
-L.PM.Draw.Poly = L.PM.Draw.extend({
+L.PM.Draw.Poly = L.PM.Draw.Line.extend({
 
-    initialize: function(map) {
+    initialize(map) {
         this._map = map;
         this._shape = 'Poly';
-        this.registerButton();
         this.toolbarButtonName = 'drawPolygon';
     },
-    enable: function(options) {
-        // enable draw mode
+    _finishShape() {
+        // get coordinates, create the leaflet shape and add it to the map
+        const coords = this._polyline.getLatLngs();
+        const polygonLayer = L.polygon(coords).addTo(this._map);
 
-        this._enabled = true;
-
-        // create a new layergroup
-        this._layerGroup = new L.LayerGroup();
-        this._layerGroup.addTo(this._map);
-
-        // this is the polyLine that'll make up the polygon
-        this._polyline = L.polyline([], {color: 'red'});
-        this._layerGroup.addLayer(this._polyline);
-
-        // this is the hintline from the mouse cursor to the last marker
-        this._hintline = L.polyline([], {
-            color: 'red',
-            dashArray: [5, 5]
-        });
-        this._layerGroup.addLayer(this._hintline);
-
-
-        // change map cursor
-        this._map._container.style.cursor = 'crosshair';
-
-        // create a polygon-point on click
-        this._map.on('click', this._createPolygonPoint, this);
-
-        // sync the hintline on mousemove
-        this._map.on('mousemove', this._syncHintLine, this);
-
-        // fire drawstart event
-        this._map.fire('pm:drawstart', {shape: this._shape});
-
-        // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
-
-    },
-    disable: function() {
-        // disable draw mode
-
-        // cancel, if drawing mode isn't even enabled
-        if(!this._enabled) {
-            return;
-        }
-
-        this._enabled = false;
-
-        // reset cursor
-        this._map._container.style.cursor = 'default';
-
-        // unbind listeners
-        this._map.off('click', this._createPolygonPoint);
-        this._map.off('mousemove', this._syncHintLine);
-
-        // remove layer
-        this._map.removeLayer(this._layerGroup);
-
-        // fire drawend event
-        this._map.fire('pm:drawend', {shape: this._shape});
-
-        // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
-
-    },
-    enabled: function() {
-        return this._enabled;
-    },
-    toggle: function(options) {
-
-        if(this.enabled()) {
-            this.disable();
-        } else {
-            this.enable(options);
-        }
-
-    },
-    registerButton: function(map) {
-
-        var drawPolyButton = {
-            'className': 'icon-polygon',
-            'onClick': function() {
-
-            },
-            'afterClick': function(e) {
-                self.toggle();
-            },
-            'doToggle': true,
-            'toggleStatus': false
-        };
-
-
-        // this._drawButton = L.PM.Toolbar.addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
-        //
-        // this._map.on('pm:drawstart', (e) => {
-        //     if(e.shape === this._shape && !this._drawButton.toggled()) {
-        //         this._drawButton._clicked();
-        //     }
-        // });
-        //
-        // this._map.on('pm:drawend', (e) => {
-        //     if(e.shape === this._shape && this._drawButton.toggled()) {
-        //         this._drawButton._clicked();
-        //     }
-        // });
-
-
-
-    },
-    _syncHintLine: function(e) {
-
-        var polyPoints = this._polyline.getLatLngs();
-
-        if(polyPoints.length > 0) {
-            var lastPolygonPoint = polyPoints[polyPoints.length - 1];
-            this._hintline.setLatLngs([lastPolygonPoint, e.latlng]);
-        }
-
-
-
-    },
-    _createPolygonPoint: function(e) {
-
-        // is this the first point?
-        var first = this._polyline.getLatLngs().length === 0 ? true : false;
-
-        this._polyline.addLatLng(e.latlng);
-        this._createMarker(e.latlng, first);
-
-
-        this._hintline.setLatLngs([e.latlng, e.latlng]);
-
-    },
-    _finishPolygon: function() {
-
-        var coords = this._polyline.getLatLngs();
-        var polygonLayer = L.polygon(coords).addTo(this._map);
-
+        // disable drawing
         this.disable();
 
+        // fire the pm:create event and pass shape and layer
         this._map.fire('pm:create', {
             shape: this._shape,
-            layer: polygonLayer
+            layer: polygonLayer,
         });
     },
-    _createMarker: function(latlng, first) {
-
-        var marker = new L.Marker(latlng, {
+    _createMarker(latlng, first) {
+        // create the new marker
+        const marker = new L.Marker(latlng, {
             draggable: false,
-            icon: L.divIcon({className: 'marker-icon'})
+            icon: L.divIcon({ className: 'marker-icon' }),
         });
 
+        // add it to the map
         this._layerGroup.addLayer(marker);
 
+        // if the first marker gets clicked again, finish this shape
         if(first) {
-            marker.on('click', this._finishPolygon, this);
+            marker.on('click', this._finishShape, this);
         }
-
-        return marker;
-
     },
 });
