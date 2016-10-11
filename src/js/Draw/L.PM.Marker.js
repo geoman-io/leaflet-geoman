@@ -43,6 +43,12 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
             draggable: true,
         });
 
+        marker.on('contextmenu', this._removeMarker, this);
+
         marker.addTo(this._map);
+    },
+    _removeMarker(e) {
+        const marker = e.target;
+        marker.remove();
     },
 });
