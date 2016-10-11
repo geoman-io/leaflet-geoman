@@ -3,6 +3,8 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         this._map = map;
         this._shape = 'Marker';
         this.toolbarButtonName = 'drawMarker';
+
+        this._markers = [];
     },
     enable(options) {
         // TODO: Think about if these options could be passed globally for all
@@ -12,10 +14,7 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // enable draw mode
         this._enabled = true;
 
-        this._map.on('click', (e) => {
-            const latlng = e.latlng;
-            this._createMarker(latlng);
-        }, this);
+        this._map.on('click', this._createMarker, this);
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -25,6 +24,7 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         if(!this._enabled) {
             return;
         }
+        this._map.off('click', this._createMarker);
 
         this._enabled = false;
     },
@@ -38,7 +38,8 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
             this.enable(options);
         }
     },
-    _createMarker(latlng) {
+    _createMarker(e) {
+        const latlng = e.latlng;
         const marker = new L.Marker(latlng, {
             draggable: true,
         });
@@ -53,9 +54,15 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
             shape: this._shape,
             marker,
         });
+
+        this._markers.push(marker);
     },
     _removeMarker(e) {
         const marker = e.target;
+
+        const index = this._markers.indexOf(marker);
+        this._markers.splice(index, 1);
+
         marker.remove();
     },
     _onDragEnd() {
