@@ -96,6 +96,7 @@ L.PM.Toolbar = L.Class.extend({
             },
             afterClick: () => {
                 // toggle drawing mode
+                this.map.pm.Draw.Marker.toggle();
             },
             doToggle: true,
             toggleStatus: false,
