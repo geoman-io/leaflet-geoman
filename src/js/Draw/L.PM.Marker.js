@@ -44,11 +44,20 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         });
 
         marker.on('contextmenu', this._removeMarker, this);
+        marker.on('dragend', this._onDragEnd, this);
 
         marker.addTo(this._map);
+
+        // fire the pm:create event and pass shape and marker
+        this._map.fire('pm:create', {
+            shape: this._shape,
+            marker,
+        });
     },
     _removeMarker(e) {
         const marker = e.target;
         marker.remove();
+    },
+    _onDragEnd() {
     },
 });
