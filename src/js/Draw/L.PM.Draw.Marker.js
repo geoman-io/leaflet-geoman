@@ -85,6 +85,10 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
 
         marker.remove();
     },
-    _onDragEnd() {
+    _onDragEnd(e) {
+        const marker = e.target;
+
+        // fire the pm:edit event and pass shape and marker
+        marker.fire('pm:edit');
     },
 });
