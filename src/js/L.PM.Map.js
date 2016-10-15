@@ -36,9 +36,12 @@ L.PM.Map = L.Class.extend({
     toggleGlobalEditMode(options) {
         // find all layers that are or inherit from Polylines...
         const layers = [];
+        const markers = [];
         this.map.eachLayer((layer) => {
             if(layer instanceof L.Polyline) {
                 layers.push(layer);
+            } else if(layer instanceof L.Marker) {
+                markers.push(layer);
             }
         });
 
@@ -57,6 +60,10 @@ L.PM.Map = L.Class.extend({
 
             layers.forEach((layer) => {
                 layer.pm.enable(options);
+            });
+
+            markers.forEach((marker) => {
+                
             });
         }
     },

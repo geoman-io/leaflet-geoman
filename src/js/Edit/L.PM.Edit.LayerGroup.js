@@ -41,6 +41,7 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         // available events
         const availableEvents = [
             'pm:edit',
+            'pm:remove',
             'pm:dragstart',
             'pm:drag',
             'pm:dragend',

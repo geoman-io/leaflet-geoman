@@ -14,18 +14,18 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // change enabled state
         this._enabled = true;
 
-        // enable dragging and removal for all current markers
-        this._markers.forEach((marker) => {
-            marker.dragging.enable();
-
-            marker.on('contextmenu', this._removeMarker, this);
-        });
-
         // create a marker on click on the map
         this._map.on('click', this._createMarker, this);
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+
+        // enable edit mode for existing markers
+        this._map.eachLayer((layer) => {
+            if(layer instanceof L.Marker) {
+                layer.pm.enable();
+            }
+        });
     },
     disable() {
         // cancel, if drawing mode isn't even enabled
@@ -37,10 +37,10 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         this._map.off('click', this._createMarker, this);
 
         // disable dragging and removing for all markers
-        this._markers.forEach((marker) => {
-            marker.dragging.disable();
-
-            marker.off('contextmenu', this._removeMarker, this);
+        this._map.eachLayer((layer) => {
+            if(layer instanceof L.Marker) {
+                layer.pm.disable();
+            }
         });
 
         // change enabled state
@@ -65,12 +65,11 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
             draggable: true,
         });
 
-        // handle dragging and removing of the marker
-        marker.on('contextmenu', this._removeMarker, this);
-        marker.on('dragend', this._onDragEnd, this);
-
         // add marker to the map
         marker.addTo(this._map);
+
+        // enable editing for the marker
+        marker.pm.enable();
 
         // fire the pm:create event and pass shape and marker
         this._map.fire('pm:create', {
@@ -80,19 +79,5 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
 
         // save marker into markers array for later reference
         this._markers.push(marker);
-    },
-    _removeMarker(e) {
-        const marker = e.target;
-
-        const index = this._markers.indexOf(marker);
-        this._markers.splice(index, 1);
-
-        marker.remove();
-    },
-    _onDragEnd(e) {
-        const marker = e.target;
-
-        // fire the pm:edit event and pass shape and marker
-        marker.fire('pm:edit');
     },
 });
