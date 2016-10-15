@@ -60,6 +60,10 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // save coords of click
         const latlng = e.latlng;
 
+        if(!latlng) {
+            return;
+        }
+
         // create marker
         const marker = new L.Marker(latlng, {
             draggable: true,
