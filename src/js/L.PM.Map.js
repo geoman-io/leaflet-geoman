@@ -35,15 +35,14 @@ L.PM.Map = L.Class.extend({
     },
     toggleGlobalEditMode(options) {
         // find all layers that are or inherit from Polylines...
-        const layers = [];
-        const markers = [];
+        let layers = [];
         this.map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline) {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
                 layers.push(layer);
-            } else if(layer instanceof L.Marker) {
-                markers.push(layer);
             }
         });
+
+        layers = layers.filter(layer => !!layer.pm);
 
         if(this.globalEditEnabled()) {
             // disable
@@ -60,9 +59,6 @@ L.PM.Map = L.Class.extend({
 
             layers.forEach((layer) => {
                 layer.pm.enable(options);
-            });
-
-            markers.forEach(() => {
             });
         }
     },

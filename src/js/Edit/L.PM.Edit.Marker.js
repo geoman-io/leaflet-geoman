@@ -36,7 +36,6 @@ L.PM.Edit.Marker = L.PM.Edit.extend({
         this._marker.off('contextmenu', this._removeMarker, this);
     },
     _removeMarker(e) {
-        console.log('remove marker');
         const marker = e.target;
         marker.remove();
         marker.fire('pm:remove');
