@@ -4,8 +4,7 @@ L.Control.PMButton = L.Control.extend({
     },
     // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
     initialize(options) {
-        this._button = {};
-        this._button = this.setButton(options);
+        this._button = L.Util.setOptions(this, options);
     },
 
     onAdd(map) {
@@ -19,20 +18,6 @@ L.Control.PMButton = L.Control.extend({
     },
 
     onRemove() {
-    },
-
-    setButton(options) {
-        const button = {
-            className: options.className,
-            iconUrl: options.iconUrl,
-            onClick: options.onClick,
-            afterClick: options.afterClick,
-            doToggle: options.doToggle,
-            toggleStatus: options.toggleStatus,
-            disableOtherButtons: options.disableOtherButtons,
-        };
-
-        return button;
     },
 
     getText() {

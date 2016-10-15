@@ -214,7 +214,9 @@ layerGroup.on('pm:unsnap', function(e) {
     console.log(e);
 });
 
-map4.pm.addControls();
+map4.pm.addControls({
+    position: 'bottomleft'
+});
 
 layerGroup.addLayer(layerGroupItem2);
 layerGroup.addLayer(layerGroupItem3);
