@@ -11,9 +11,15 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
         L.Util.setOptions(this, options);
 
-        // enable draw mode
+        // change enabled state
         this._enabled = true;
 
+        // enable dragging for all current markers
+        this._markers.forEach((marker) => {
+            marker.dragging.disable();
+        });
+
+        // create a marker on click on the map
         this._map.on('click', this._createMarker, this);
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
@@ -24,8 +30,16 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         if(!this._enabled) {
             return;
         }
-        this._map.off('click', this._createMarker);
 
+        // undbind click event, don't create a marker on click anymore
+        this._map.off('click', this._createMarker, this);
+
+        // disable dragging for all markers
+        this._markers.forEach((marker) => {
+            marker.dragging.disable();
+        });
+
+        // change enabled state
         this._enabled = false;
     },
     enabled() {
@@ -39,14 +53,19 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         }
     },
     _createMarker(e) {
+        // save coords of click
         const latlng = e.latlng;
+
+        // create marker
         const marker = new L.Marker(latlng, {
             draggable: true,
         });
 
+        // handle dragging and removing of the marker
         marker.on('contextmenu', this._removeMarker, this);
         marker.on('dragend', this._onDragEnd, this);
 
+        // add marker to the map
         marker.addTo(this._map);
 
         // fire the pm:create event and pass shape and marker
@@ -55,6 +74,7 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
             marker,
         });
 
+        // save marker into markers array for later reference
         this._markers.push(marker);
     },
     _removeMarker(e) {
