@@ -2,7 +2,7 @@
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
 Draw, Edit, Drag, and Snap Features.
 
-In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time, this plugin only supported polygons. Now you can edit Polylines, Polygons, LayerGroups, GeoJSON and more are coming.
+In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time, this plugin only supported polygons. Now you can edit Markers, Polylines, Polygons, LayerGroups, GeoJSON and more are coming.
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
@@ -48,6 +48,8 @@ This plugin comes with an optional toolbar to give you buttons to use the variou
 ```
 // define toolbar options
 var options = {
+    position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
+    drawMarker: true,  // adds button to draw markers
     drawPolygon: true,  // adds button to draw a polygon
     drawPolyline: true,  // adds button to draw a polyline
     editPolygon: true,  // adds button to toggle global edit mode
@@ -83,6 +85,7 @@ var options = {
 // enable drawing mode for shape - e.g. Poly or Line
 map.pm.enableDraw('Poly', options);
 map.pm.enableDraw('Line', options);
+map.pm.enableDraw('Marker', options);
 
 // get array of all available shapes (currently Poly and Line)
 map.pm.Draw.getShapes()
