@@ -62,8 +62,7 @@ L.PM.Map = L.Class.extend({
                 layer.pm.enable(options);
             });
 
-            markers.forEach((marker) => {
-                
+            markers.forEach(() => {
             });
         }
     },

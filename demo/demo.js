@@ -5,6 +5,13 @@ map2.on('pm:create', function(e) {
     console.log(e);
 });
 
+var m1 = L.marker([51.50313, -0.091223]);
+var m2 = L.marker([51.50614, -0.0989]);
+var m3 = L.marker([51.50915, -0.096112]);
+
+var mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
+console.log(mGroup);
+
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map2);
