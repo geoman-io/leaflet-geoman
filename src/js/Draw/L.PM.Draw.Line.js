@@ -54,8 +54,8 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._map._container.style.cursor = 'default';
 
         // unbind listeners
-        this._map.off('click', this._createPolygonPoint);
-        this._map.off('mousemove', this._syncHintLine);
+        this._map.off('click', this._createPolygonPoint, this);
+        this._map.off('mousemove', this._syncHintLine, this);
 
         // remove layer
         this._map.removeLayer(this._layerGroup);

@@ -31,7 +31,7 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         // get all layers of the layer group
         let layers = this._layerGroup.getLayers();
 
-        // filter out layers that don't have leaflet.pm (like markers and stuff)
+        // filter out layers that don't have leaflet.pm
         layers = layers.filter(layer => !!layer.pm);
 
         // return them
@@ -41,6 +41,7 @@ L.PM.Edit.LayerGroup = L.Class.extend({
         // available events
         const availableEvents = [
             'pm:edit',
+            'pm:remove',
             'pm:dragstart',
             'pm:drag',
             'pm:dragend',

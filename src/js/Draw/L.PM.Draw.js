@@ -13,7 +13,7 @@ L.PM.Draw = L.Class.extend({
         this._map = map;
 
         // define all possible shapes that can be drawn
-        this.shapes = ['Poly', 'Line'];
+        this.shapes = ['Poly', 'Line', 'Marker'];
 
         // initiate drawing class for our shapes
         this.shapes.forEach((shape) => {
