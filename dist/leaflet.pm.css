@@ -20,7 +20,7 @@
 }
 
 .leaflet-pm-toolbar .icon-polygon {
-  background-image: url("assets/icons/draw.png");
+  /*background-image: url('assets/icons/draw.png');*/
 }
 
 .leaflet-pm-toolbar .icon-polyline {
