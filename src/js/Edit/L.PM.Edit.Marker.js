@@ -4,6 +4,7 @@ L.PM.Edit.Marker = L.PM.Edit.extend({
         this._marker = layer;
         this._enabled = false;
 
+        // register dragend event e.g. to fire pm:edit
         this._marker.on('dragend', this._onDragEnd, this);
     },
 
@@ -21,6 +22,7 @@ L.PM.Edit.Marker = L.PM.Edit.extend({
         }
         this._enabled = true;
 
+        // enable dragging and removal for the marker
         this._marker.dragging.enable();
         this._marker.on('contextmenu', this._removeMarker, this);
     },
@@ -32,6 +34,7 @@ L.PM.Edit.Marker = L.PM.Edit.extend({
     disable() {
         this._enabled = false;
 
+        // disable dragging and removal for the marker
         this._marker.dragging.disable();
         this._marker.off('contextmenu', this._removeMarker, this);
     },

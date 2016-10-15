@@ -42,6 +42,7 @@ L.PM.Map = L.Class.extend({
             }
         });
 
+        // filter out layers that don't have the leaflet.pm instance
         layers = layers.filter(layer => !!layer.pm);
 
         if(this.globalEditEnabled()) {
