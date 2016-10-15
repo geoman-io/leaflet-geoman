@@ -14,9 +14,11 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // change enabled state
         this._enabled = true;
 
-        // enable dragging for all current markers
+        // enable dragging and removal for all current markers
         this._markers.forEach((marker) => {
-            marker.dragging.disable();
+            marker.dragging.enable();
+
+            marker.on('contextmenu', this._removeMarker, this);
         });
 
         // create a marker on click on the map
@@ -34,9 +36,11 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // undbind click event, don't create a marker on click anymore
         this._map.off('click', this._createMarker, this);
 
-        // disable dragging for all markers
+        // disable dragging and removing for all markers
         this._markers.forEach((marker) => {
             marker.dragging.disable();
+
+            marker.off('contextmenu', this._removeMarker, this);
         });
 
         // change enabled state
