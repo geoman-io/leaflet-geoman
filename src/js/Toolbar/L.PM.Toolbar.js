@@ -10,6 +10,7 @@ L.PM.Toolbar = L.Class.extend({
         editPolygon: true,
         dragPolygon: false,
         deleteLayer: true,
+        position: 'topleft',
     },
     initialize(map) {
         this.map = map;
@@ -73,6 +74,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const drawPolyButton = {
@@ -87,6 +89,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const drawMarkerButton = {
@@ -101,6 +104,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const drawLineButton = {
@@ -115,6 +119,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const editButton = {
@@ -130,6 +135,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const dragButton = {
@@ -142,6 +148,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
@@ -159,6 +166,7 @@ L.PM.Toolbar = L.Class.extend({
         for (const btn in buttons) {
             if(this.options[btn]) {
                 // if options say the button should be visible, add it to the map
+                buttons[btn].setPosition(this.options.position);
                 buttons[btn].addTo(this.map);
             } else {
                 // if not, remove it
