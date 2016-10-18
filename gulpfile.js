@@ -6,6 +6,8 @@ const uglify = require('gulp-uglify');
 const concatCss = require('gulp-concat-css');
 const babel = require('gulp-babel');
 const sourcemaps = require('gulp-sourcemaps');
+const browserify = require('browserify');
+const run = require('tape-run');
 
 gulp.task('scripts', () =>
     gulp.src([
@@ -58,6 +60,13 @@ gulp.task('assets', () =>
 
 gulp.task('watch', () => {
     gulp.watch('src/**/*', ['default']);
+});
+
+gulp.task('test', () => {
+    browserify('spec/test.spec.js')
+   .bundle()
+   .pipe(run())
+   .pipe(process.stdout);
 });
 
 gulp.task('build', ['scripts', 'styles', 'assets']);

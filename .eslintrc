@@ -10,5 +10,6 @@
     "globals": {
         "L": true,
         "window": true,
+        "document": true,
     }
 }
