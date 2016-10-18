@@ -3,6 +3,8 @@ const test = require('tape');
 const L = require('leaflet');
 require('../dist/leaflet.pm.min.js');
 
+require('./toolbar.spec.js');
+
 
 test('is L defined', (t) => {
     t.notEquals(L, undefined, 'leaflet is defined');
