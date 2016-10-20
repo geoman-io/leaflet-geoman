@@ -18,10 +18,9 @@
         "dist"
     ],
     "main": "dist/leaflet.pm.min.js",
-    "dependencies": {
-        "leaflet": "^1.0.1"
-    },
+    "dependencies": {},
     "devDependencies": {
+        "leaflet": "^1.0.1",
         "babel-preset-es2015": "^6.14.0",
         "browserify": "^13.1.0",
         "eslint": "^3.5.0",
@@ -37,6 +36,9 @@
         "tape": "^4.6.2",
         "tape-run": "^2.1.4"
     },
+    "peerDependencies": {
+        "leaflet": "^1.0.1"
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -44,7 +46,11 @@
         "type": "git",
         "url": "git+https://github.com/codeofsumit/leaflet.pm.git"
     },
-    "author": "",
+    "author": {
+        "name": "Sumit Kumar",
+        "email": "sk@outlook.com",
+        "url": "http://twitter.com/TweetsOfSumit"
+    },
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/codeofsumit/leaflet.pm/issues"
