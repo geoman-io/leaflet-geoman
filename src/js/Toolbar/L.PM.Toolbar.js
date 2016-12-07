@@ -4,11 +4,13 @@
 
 L.PM.Toolbar = L.Class.extend({
     options: {
+        drawMarker: true,
         drawPolygon: true,
         drawPolyline: true,
         editPolygon: true,
         dragPolygon: false,
         deleteLayer: true,
+        position: 'topleft',
     },
     initialize(map) {
         this.map = map;
@@ -41,7 +43,7 @@ L.PM.Toolbar = L.Class.extend({
         // other active mode (like removal tool) is already active.
         // we can't have two active modes because of possible event conflicts
         // so, we trigger a click on all currently active (toggled) buttons
-        for (var name in this.buttons) {
+        for (const name in this.buttons) {
             if(this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
                 this.buttons[name]._triggerClick();
             }
@@ -72,6 +74,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const drawPolyButton = {
@@ -86,6 +89,22 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
+        };
+
+        const drawMarkerButton = {
+            className: 'icon-marker',
+            onClick: () => {
+
+            },
+            afterClick: () => {
+                // toggle drawing mode
+                this.map.pm.Draw.Marker.toggle();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const drawLineButton = {
@@ -100,6 +119,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const editButton = {
@@ -115,6 +135,7 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
         const dragButton = {
@@ -127,8 +148,10 @@ L.PM.Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
+            position: this.options.position,
         };
 
+        this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
         this._addButton('editPolygon', new L.Control.PMButton(editButton));
@@ -140,13 +163,17 @@ L.PM.Toolbar = L.Class.extend({
         // loop through all buttons
         const buttons = this.getButtons();
 
-        for (var btn in buttons) {
+        // remove all buttons, that's because the Toolbar can be added again with
+        // different options so it's basically a reset and add again
+        for (const btn in buttons) {
+            buttons[btn].remove();
+        }
+
+        for (const btn in buttons) {
             if(this.options[btn]) {
                 // if options say the button should be visible, add it to the map
+                buttons[btn].setPosition(this.options.position);
                 buttons[btn].addTo(this.map);
-            } else {
-                // if not, remove it
-                buttons[btn].remove();
             }
         }
     },

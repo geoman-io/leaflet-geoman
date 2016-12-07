@@ -35,12 +35,15 @@ L.PM.Map = L.Class.extend({
     },
     toggleGlobalEditMode(options) {
         // find all layers that are or inherit from Polylines...
-        const layers = [];
+        let layers = [];
         this.map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline) {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
                 layers.push(layer);
             }
         });
+
+        // filter out layers that don't have the leaflet.pm instance
+        layers = layers.filter(layer => !!layer.pm);
 
         if(this.globalEditEnabled()) {
             // disable

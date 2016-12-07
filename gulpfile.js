@@ -1,19 +1,22 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
-var concatCss = require('gulp-concat-css');
-var babel = require('gulp-babel');
-var sourcemaps = require('gulp-sourcemaps');
+/* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
+const gulp = require('gulp');
+const concat = require('gulp-concat');
+const rename = require('gulp-rename');
+const uglify = require('gulp-uglify');
+const concatCss = require('gulp-concat-css');
+const babel = require('gulp-babel');
+const sourcemaps = require('gulp-sourcemaps');
+const browserify = require('browserify');
+const run = require('tape-run');
 
-gulp.task('scripts', function() {
-    return gulp.src([
+gulp.task('scripts', () =>
+    gulp.src([
         'src/js/Mixins/**.js',
         'src/js/L.PM.js',
         'src/js/L.PM.Map.js',
         'src/js/Draw/L.PM.Draw.js',
         'src/js/Edit/L.PM.Edit.js',
-        'src/js/**/*.js'
+        'src/js/**/*.js',
     ])
 
     // init sourcemaps
@@ -22,7 +25,7 @@ gulp.task('scripts', function() {
 
     // parse es6
     .pipe(babel({
-        presets: ['es2015']
+        presets: ['es2015'],
     }))
 
     // Compine all js files into one file
@@ -38,25 +41,32 @@ gulp.task('scripts', function() {
     .pipe(sourcemaps.write('maps'))
 
     // output the minified file
-    .pipe(gulp.dest('dist/'));
-});
+    .pipe(gulp.dest('dist/'))
+);
 
-gulp.task('styles', function() {
-    return gulp.src([
-        'src/css/**/*.css'
+gulp.task('styles', () =>
+    gulp.src([
+        'src/css/**/*.css',
     ])
     .pipe(concatCss('leaflet.pm.css'))
-    .pipe(gulp.dest('dist/'));
-});
+    .pipe(gulp.dest('dist/'))
+);
 
-gulp.task('assets', function() {
-    return gulp.src(['src/assets/**/*'])
+gulp.task('assets', () =>
+    gulp.src(['src/assets/**/*'])
     .pipe(gulp.dest('dist/assets/'))
-    .pipe(gulp.dest('demo/assets/'));
+    .pipe(gulp.dest('demo/assets/'))
+);
+
+gulp.task('watch', () => {
+    gulp.watch('src/**/*', ['default']);
 });
 
-gulp.task('watch', function() {
-    gulp.watch('src/**/*', ['default']);
+gulp.task('test', () => {
+    browserify('spec/test.spec.js')
+   .bundle()
+   .pipe(run())
+   .pipe(process.stdout);
 });
 
 gulp.task('build', ['scripts', 'styles', 'assets']);

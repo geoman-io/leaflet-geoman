@@ -16,6 +16,12 @@ L.PM = L.PM || {
 
         L.LayerGroup.addInitHook(initLayerGroup);
 
+        function initMarker() {
+            this.pm = new L.PM.Edit.Marker(this);
+        }
+
+        L.Marker.addInitHook(initMarker);
+
 
         function initPolygon() {
             this.pm = new L.PM.Edit.Poly(this);
