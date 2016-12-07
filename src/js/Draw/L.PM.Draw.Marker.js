@@ -76,7 +76,8 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // fire the pm:create event and pass shape and marker
         this._map.fire('pm:create', {
             shape: this._shape,
-            marker,
+            marker,                     // DEPRECATED
+            layer: marker,
         });
     },
 });
