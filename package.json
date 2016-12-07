@@ -51,9 +51,9 @@
         "email": "sk@outlook.com",
         "url": "http://twitter.com/TweetsOfSumit"
     },
-    "license": "ISC",
+    "license": "MIT",
     "bugs": {
         "url": "https://github.com/codeofsumit/leaflet.pm/issues"
     },
-    "homepage": "http://codeofsumit.github.io/leaflet.pm/"
+    "homepage": "https://codeofsumit.github.io/leaflet.pm/"
 }
