@@ -18,6 +18,9 @@ L.Control.PMButton = L.Control.extend({
     },
 
     onRemove() {
+        this.buttonsDomNode.remove();
+
+        return this._container;
     },
 
     getText() {

@@ -163,14 +163,17 @@ L.PM.Toolbar = L.Class.extend({
         // loop through all buttons
         const buttons = this.getButtons();
 
+        // remove all buttons, that's because the Toolbar can be added again with
+        // different options so it's basically a reset and add again
+        for (const btn in buttons) {
+            buttons[btn].remove();
+        }
+
         for (const btn in buttons) {
             if(this.options[btn]) {
                 // if options say the button should be visible, add it to the map
                 buttons[btn].setPosition(this.options.position);
                 buttons[btn].addTo(this.map);
-            } else {
-                // if not, remove it
-                buttons[btn].remove();
             }
         }
     },
