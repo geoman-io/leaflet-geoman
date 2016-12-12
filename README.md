@@ -158,6 +158,58 @@ polygonLayer.on('pm:unsnap', function(e) {//...});
 ```
 
 
+### Customize Style
+
+In order to change the style of the lines during draw, pass these options to the `enableDraw()` function.
+
+```
+// optional options for line style during draw. These are the defaults
+var options = {
+    // the lines between coordinates/markers
+    templineStyle: {
+        color: 'red',
+    },
+
+    // the line from the last marker to the mouse cursor
+    hintlineStyle: {
+        color: 'red',
+        dashArray: [5, 5],
+    },
+};
+
+// enable drawing mode for shape - e.g. Poly or Line
+map.pm.enableDraw('Poly', options);
+```
+
+To customize the style of the drawn layer (polygon, polyline) with leaflets options, you can either pass the options to `enableDraw` as well:
+
+```
+// optional options for line style during draw. These are the defaults
+var options = {
+    templineStyle: {},
+    hintlineStyle: {},
+    pathOptions: {
+        // add leaflet options for polylines/polygons
+        color: 'orange',
+        fillColor: 'green',
+    }
+};
+
+// enable drawing mode for shape - e.g. Poly or Line
+map.pm.enableDraw('Poly', options);
+```
+
+or set the options generally:
+
+```
+map.pm.setPathOptions({
+    color: 'orange',
+    fillColor: 'green',
+    fillOpacity: 0.4,
+});
+```
+
+
 ### Credit
 As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be surprised to see some familiar code.
 
