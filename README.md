@@ -39,7 +39,7 @@ JS
 
 
 #### Init Leaflet.PM
-Just include `leaflet.pm.min.js` right after Leaflet.
+Just include `leaflet.pm.min.js` right after Leaflet. It initializes itself.
 
 
 ##### Leaflet.PM Toolbar
