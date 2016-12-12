@@ -20,6 +20,9 @@ L.PM.Draw = L.Class.extend({
             this[shape] = new L.PM.Draw[shape](this._map);
         });
     },
+    setPathOptions(options) {
+        this.options.pathOptions = options;
+    },
     getShapes() {
         // if somebody wants to know what shapes are available
         return this.shapes;

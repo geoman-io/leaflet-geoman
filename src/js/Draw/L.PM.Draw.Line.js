@@ -97,7 +97,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
     _finishShape() {
         // get coordinates, create the leaflet shape and add it to the map
         const coords = this._polyline.getLatLngs();
-        const polylineLayer = L.polyline(coords).addTo(this._map);
+        const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(this._map);
 
         // disable drawing
         this.disable();
