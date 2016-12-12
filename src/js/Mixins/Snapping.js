@@ -29,6 +29,11 @@ const SnapMixin = {
         });
     },
     _handleSnapping(e) {
+        // if snapping is disabled via holding ALT during drag, stop right here
+        if(e.originalEvent.altKey) {
+            return false;
+        }
+
         // create a list of polygons that the marker could snap to
         // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
         // after dragstart/movestart so it wouldn't fire for them
