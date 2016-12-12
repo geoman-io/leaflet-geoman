@@ -119,6 +119,7 @@ var options = {
     draggable: true,
 
     // makes the vertices snappable to other layers
+    // temporarily disable snapping during drag by pressing ALT
     snappable: true,
 
     // distance in pixels that needs to be undercut to trigger snapping
