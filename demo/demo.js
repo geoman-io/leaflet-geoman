@@ -64,6 +64,11 @@ map2.pm.enableDraw('Poly', {
         color: 'blue',
         dashArray: [5, 5],
     },
+    pathOptions: {
+        color: 'red',
+        fillColor: 'orange',
+        fillOpacity: 0.7,
+    },
 });
 map2.pm.disableDraw('Poly');
 map2.pm.enableDraw('Poly');
@@ -239,6 +244,12 @@ layerGroup.on('pm:unsnap', (e) => {
 map4.pm.addControls({
     position: 'topright',
 });
+
+// map4.pm.setPathOptions({
+//     color: 'orange',
+//     fillColor: 'green',
+//     fillOpacity: 0.4,
+// });
 
 layerGroup.addLayer(layerGroupItem2);
 layerGroup.addLayer(layerGroupItem3);
