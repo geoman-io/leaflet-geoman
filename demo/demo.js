@@ -245,6 +245,12 @@ map4.pm.addControls({
     position: 'topright',
 });
 
+// map4.pm.setPathOptions({
+//     color: 'orange',
+//     fillColor: 'green',
+//     fillOpacity: 0.4,
+// });
+
 layerGroup.addLayer(layerGroupItem2);
 layerGroup.addLayer(layerGroupItem3);
 // layerGroup.addLayer(layerGroupItem4);
