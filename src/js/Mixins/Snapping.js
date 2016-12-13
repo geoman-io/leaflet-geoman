@@ -140,15 +140,15 @@ const SnapMixin = {
 
         // find all layers that are or inherit from Polylines...
         this._layer._map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline) {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
                 layers.push(layer);
 
                 // this is for debugging
                 const debugLine = L.polyline([], { color: 'red' });
                 debugIndicatorLines.push(debugLine);
 
-                // uncomment 👇 this in to show debugging lines
-                // debugLine.addTo(this._layer._map);
+                // uncomment 👇 this line to show helper lines for debugging
+                debugLine.addTo(this._layer._map);
             }
         });
 
@@ -186,7 +186,9 @@ const SnapMixin = {
         const map = this._layer._map;
 
         // is this a polyline, or polygon?
-        const closedShape = layer instanceof L.Polygon;
+        const isPolygon = layer instanceof L.Polygon;
+        const isPolyline = !(layer instanceof L.Polygon) && layer instanceof L.Polyline;
+        const isMarker = layer instanceof L.Marker;
 
         // the point P which we want to snap (probpably the marker that is dragged)
         const P = latlng;
@@ -194,10 +196,20 @@ const SnapMixin = {
         let coords;
 
         // the coords of the layer
-        if(closedShape) {
+        if(isPolygon) {
+            // polygon
             coords = layer.getLatLngs()[0];
-        } else {
+        } else if(isPolyline) {
+            // polyline
             coords = layer.getLatLngs();
+        } else if(isMarker) {
+            // marker
+            coords = layer.getLatLng();
+
+            return {
+                latlng: coords,
+                distance: this._getDistance(map, coords, P),
+            };
         }
 
         // the closest segment (line between two points) of the layer
@@ -213,7 +225,7 @@ const SnapMixin = {
             let nextIndex;
 
             // and the next coord (B) as points
-            if(closedShape) {
+            if(isPolygon) {
                 nextIndex = index + 1 === coords.length ? 0 : index + 1;
             } else {
                 nextIndex = index + 1 === coords.length ? undefined : index + 1;
