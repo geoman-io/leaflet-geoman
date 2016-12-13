@@ -51,8 +51,15 @@ const SnapMixin = {
         // get the closest layer, it's closest latlng, segment and the distance
         const closestLayer = this._calcClosestLayer(marker.getLatLng(), this._snapList);
 
+        const isMarker = closestLayer.layer instanceof L.Marker;
+
         // find the final latlng that we want to snap to
-        const snapLatLng = this._checkPrioritiySnapping(closestLayer);
+        let snapLatLng;
+        if(!isMarker) {
+            snapLatLng = this._checkPrioritiySnapping(closestLayer);
+        } else {
+            snapLatLng = closestLayer.latlng;
+        }
 
         // minimal distance before marker snaps (in pixels)
         const minDistance = this.options.snapDistance;
