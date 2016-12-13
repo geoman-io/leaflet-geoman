@@ -156,7 +156,7 @@ const SnapMixin = {
                 debugIndicatorLines.push(debugLine);
 
                 // uncomment 👇 this line to show helper lines for debugging
-                debugLine.addTo(this._layer._map);
+                // debugLine.addTo(this._layer._map);
             }
         });
 
