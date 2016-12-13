@@ -138,9 +138,10 @@ const SnapMixin = {
         let layers = [];
         const debugIndicatorLines = [];
 
-        // find all layers that are or inherit from Polylines...
+        // find all layers that are or inherit from Polylines... and markers that are not
+        // temporary markers of polygon-edits
         this._layer._map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
+            if(layer instanceof L.Polyline || (layer instanceof L.Marker && !layer._pmEditMarker)) {
                 layers.push(layer);
 
                 // this is for debugging

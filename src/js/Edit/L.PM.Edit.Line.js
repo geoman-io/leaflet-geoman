@@ -121,6 +121,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
 
         marker._origLatLng = latlng;
         marker._index = index;
+        marker._pmEditMarker = true;
 
         marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('drag', this._onMarkerDrag, this);
