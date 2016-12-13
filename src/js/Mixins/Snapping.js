@@ -199,7 +199,7 @@ const SnapMixin = {
     _calcLayerDistances(latlng, layer) {
         const map = this._layer._map;
 
-        // is this a polyline, or polygon?
+        // is this a polyline, marker or polygon?
         const isPolygon = layer instanceof L.Polygon;
         const isPolyline = !(layer instanceof L.Polygon) && layer instanceof L.Polyline;
         const isMarker = layer instanceof L.Marker;
@@ -220,6 +220,7 @@ const SnapMixin = {
             // marker
             coords = layer.getLatLng();
 
+            // return the info for the marker, no more calculations needed
             return {
                 latlng: coords,
                 distance: this._getDistance(map, coords, P),
