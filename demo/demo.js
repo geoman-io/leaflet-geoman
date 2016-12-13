@@ -10,6 +10,7 @@ const m2 = L.marker([51.50614, -0.0989]);
 const m3 = L.marker([51.50915, -0.096112]);
 
 const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
+mGroup.pm.enable();
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',

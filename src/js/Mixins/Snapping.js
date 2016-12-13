@@ -76,7 +76,10 @@ const SnapMixin = {
         if(closestLayer.distance < minDistance) {
             // snap the marker
             marker.setLatLng(snapLatLng);
-            this._onMarkerDrag(e);
+
+            if(!(this._layer instanceof L.Marker)) {
+                this._onMarkerDrag(e);
+            }
 
             // check if the snapping position differs from the last snap
             if(this._snapLatLng !== snapLatLng) {
@@ -156,7 +159,7 @@ const SnapMixin = {
                 debugIndicatorLines.push(debugLine);
 
                 // uncomment 👇 this line to show helper lines for debugging
-                // debugLine.addTo(this._layer._map);
+                debugLine.addTo(this._layer._map);
             }
         });
 
