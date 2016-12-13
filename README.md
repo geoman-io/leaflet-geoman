@@ -115,7 +115,7 @@ var polygonLayer = L.geoJson(data).addTo(map);
 // optional options
 var options = {
 
-    // makes the polygon draggable
+    // makes the layer draggable
     draggable: true,
 
     // makes the vertices snappable to other layers
@@ -130,6 +130,7 @@ var options = {
 
 // enable edit mode
 polygonLayer.pm.enable(options);
+marker.pm.enable(options);
 
 // disable edit mode
 polygonLayer.pm.disable();

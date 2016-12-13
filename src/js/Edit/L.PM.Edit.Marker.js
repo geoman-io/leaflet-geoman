@@ -1,11 +1,11 @@
 L.PM.Edit.Marker = L.PM.Edit.extend({
     initialize(layer) {
         // layer is a marker in this case :-)
-        this._marker = layer;
+        this._layer = layer;
         this._enabled = false;
 
         // register dragend event e.g. to fire pm:edit
-        this._marker.on('dragend', this._onDragEnd, this);
+        this._layer.on('dragend', this._onDragEnd, this);
     },
 
     toggleEdit(options) {
@@ -16,15 +16,30 @@ L.PM.Edit.Marker = L.PM.Edit.extend({
         }
     },
 
-    enable() {
+    enable(options = {
+        draggable: true,
+        snappable: true,
+    }) {
+        this.options = options;
+
         if(this.enabled()) {
             return;
         }
         this._enabled = true;
 
+
+        // enable removal for the marker
+        this._layer.on('contextmenu', this._removeMarker, this);
+
         // enable dragging and removal for the marker
-        this._marker.dragging.enable();
-        this._marker.on('contextmenu', this._removeMarker, this);
+        if(this.options.snappable) {
+            this._layer.dragging.enable();
+        }
+
+        // enable snapping
+        if(this.options.snappable) {
+            this._initSnappableMarkers();
+        }
     },
 
     enabled() {
@@ -35,8 +50,8 @@ L.PM.Edit.Marker = L.PM.Edit.extend({
         this._enabled = false;
 
         // disable dragging and removal for the marker
-        this._marker.dragging.disable();
-        this._marker.off('contextmenu', this._removeMarker, this);
+        this._layer.dragging.disable();
+        this._layer.off('contextmenu', this._removeMarker, this);
     },
     _removeMarker(e) {
         const marker = e.target;
@@ -48,5 +63,21 @@ L.PM.Edit.Marker = L.PM.Edit.extend({
 
         // fire the pm:edit event and pass shape and marker
         marker.fire('pm:edit');
+    },
+
+    // overwrite initSnappableMarkers from Snapping.js Mixin
+    _initSnappableMarkers() {
+        const marker = this._layer;
+
+        this.options.snapDistance = this.options.snapDistance || 30;
+
+        marker.off('drag', this._handleSnapping, this);
+        marker.on('drag', this._handleSnapping, this);
+
+        marker.off('dragend', this._cleanupSnapping, this);
+        marker.on('dragend', this._cleanupSnapping, this);
+
+        marker.off('pm:dragstart', this._unsnap, this);
+        marker.on('pm:dragstart', this._unsnap, this);
     },
 });

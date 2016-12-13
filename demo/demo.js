@@ -10,6 +10,7 @@ const m2 = L.marker([51.50614, -0.0989]);
 const m3 = L.marker([51.50915, -0.096112]);
 
 const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
+mGroup.pm.enable();
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -56,22 +57,22 @@ map2.pm.addControls({
 //     deleteLayer: false,
 // });
 
-map2.pm.enableDraw('Poly', {
-    templineStyle: {
-        color: 'blue',
-    },
-    hintlineStyle: {
-        color: 'blue',
-        dashArray: [5, 5],
-    },
-    pathOptions: {
-        color: 'red',
-        fillColor: 'orange',
-        fillOpacity: 0.7,
-    },
-});
-map2.pm.disableDraw('Poly');
-map2.pm.enableDraw('Poly');
+// map2.pm.enableDraw('Poly', {
+//     templineStyle: {
+//         color: 'blue',
+//     },
+//     hintlineStyle: {
+//         color: 'blue',
+//         dashArray: [5, 5],
+//     },
+//     pathOptions: {
+//         color: 'red',
+//         fillColor: 'orange',
+//         fillOpacity: 0.7,
+//     },
+// });
+// map2.pm.disableDraw('Poly');
+// map2.pm.enableDraw('Poly');
 
 // GEOSJON EXAMPLE
 
@@ -122,6 +123,7 @@ const geoJsonData = {
 const geoJsonButton = document.getElementById('test-geojson');
 const geoJsonLayer = L.geoJson().addTo(map3);
 geoJsonLayer.addData(geoJsonData);
+geoJsonLayer.addTo(map2);
 geoJsonLayer.pm.toggleEdit({
     draggable: true,
     snappable: true,
@@ -153,7 +155,7 @@ const polygonLayer = L.polygon([
     [51.509, -0.08],
     [51.503, -0.06],
     [51.51, -0.047],
-]).addTo(map3);
+]).addTo(map3).addTo(map2);
 polygonLayer.pm.toggleEdit();
 
 
@@ -164,6 +166,7 @@ const layerGroupItem1 = L.polyline([
     [51.513, -0.08],
     [51.514, -0.11],
 ]);
+layerGroupItem1.addTo(map2);
 const layerGroupItem2 = L.polygon([
     [51.52, -0.06],
     [51.51, -0.07],
