@@ -57,22 +57,22 @@ map2.pm.addControls({
 //     deleteLayer: false,
 // });
 
-// map2.pm.enableDraw('Poly', {
-//     templineStyle: {
-//         color: 'blue',
-//     },
-//     hintlineStyle: {
-//         color: 'blue',
-//         dashArray: [5, 5],
-//     },
-//     pathOptions: {
-//         color: 'red',
-//         fillColor: 'orange',
-//         fillOpacity: 0.7,
-//     },
-// });
-// map2.pm.disableDraw('Poly');
-// map2.pm.enableDraw('Poly');
+map2.pm.enableDraw('Poly', {
+    templineStyle: {
+        color: 'blue',
+    },
+    hintlineStyle: {
+        color: 'blue',
+        dashArray: [5, 5],
+    },
+    pathOptions: {
+        color: 'red',
+        fillColor: 'orange',
+        fillOpacity: 0.7,
+    },
+});
+map2.pm.disableDraw('Poly');
+map2.pm.enableDraw('Poly');
 
 // GEOSJON EXAMPLE
 
@@ -166,7 +166,6 @@ const layerGroupItem1 = L.polyline([
     [51.513, -0.08],
     [51.514, -0.11],
 ]);
-layerGroupItem1.addTo(map2);
 const layerGroupItem2 = L.polygon([
     [51.52, -0.06],
     [51.51, -0.07],

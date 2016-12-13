@@ -18,10 +18,12 @@ L.PM.Draw.Line = L.PM.Draw.extend({
 
         // this is the polyLine that'll make up the polygon
         this._polyline = L.polyline([], this.options.templineStyle);
+        this._polyline._pmTempLayer = true;
         this._layerGroup.addLayer(this._polyline);
 
         // this is the hintline from the mouse cursor to the last marker
         this._hintline = L.polyline([], this.options.hintlineStyle);
+        this._hintline._pmTempLayer = true;
         this._layerGroup.addLayer(this._hintline);
 
 
@@ -114,6 +116,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
             draggable: false,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
+        marker._pmTempLayer = true;
 
         // add it to the map
         this._layerGroup.addLayer(marker);

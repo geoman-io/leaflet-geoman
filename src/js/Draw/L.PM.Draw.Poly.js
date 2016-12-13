@@ -26,6 +26,8 @@ L.PM.Draw.Poly = L.PM.Draw.Line.extend({
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
+        marker._pmTempLayer = true;
+
         // add it to the map
         this._layerGroup.addLayer(marker);
 

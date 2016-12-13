@@ -154,7 +154,7 @@ const SnapMixin = {
         // find all layers that are or inherit from Polylines... and markers that are not
         // temporary markers of polygon-edits
         this._layer._map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline || (layer instanceof L.Marker && !layer._pmEditMarker)) {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
                 layers.push(layer);
 
                 // this is for debugging
@@ -168,6 +168,12 @@ const SnapMixin = {
 
         // ...except myself
         layers = layers.filter(layer => this._layer !== layer);
+
+        // also remove everything that has no coordinates yet
+        layers = layers.filter(layer => layer._latlng || layer._latlngs.length > 0);
+
+        // finally remove everything that's leaflet.pm specific temporary stuff
+        layers = layers.filter(layer => !layer._pmTempLayer);
 
         this._snapList = layers;
         this.debugIndicatorLines = debugIndicatorLines;
