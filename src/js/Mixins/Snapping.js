@@ -29,6 +29,11 @@ const SnapMixin = {
         });
     },
     _handleSnapping(e) {
+        // if snapping is disabled via holding ALT during drag, stop right here
+        if(e.originalEvent.altKey) {
+            return false;
+        }
+
         // create a list of polygons that the marker could snap to
         // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
         // after dragstart/movestart so it wouldn't fire for them
@@ -46,8 +51,15 @@ const SnapMixin = {
         // get the closest layer, it's closest latlng, segment and the distance
         const closestLayer = this._calcClosestLayer(marker.getLatLng(), this._snapList);
 
+        const isMarker = closestLayer.layer instanceof L.Marker;
+
         // find the final latlng that we want to snap to
-        const snapLatLng = this._checkPrioritiySnapping(closestLayer);
+        let snapLatLng;
+        if(!isMarker) {
+            snapLatLng = this._checkPrioritiySnapping(closestLayer);
+        } else {
+            snapLatLng = closestLayer.latlng;
+        }
 
         // minimal distance before marker snaps (in pixels)
         const minDistance = this.options.snapDistance;
@@ -64,7 +76,13 @@ const SnapMixin = {
         if(closestLayer.distance < minDistance) {
             // snap the marker
             marker.setLatLng(snapLatLng);
-            this._onMarkerDrag(e);
+
+            // fire onMarkerDrag for pmEditMarkers (vertex markers on polylines/polygons)
+            // TODO: think about how to move this into L.PM.Edit.Line.js, so Snapping.js is
+            // generic for Edit.Marker and Edit.Line
+            if(!(this._layer instanceof L.Marker)) {
+                this._onMarkerDrag(e);
+            }
 
             // check if the snapping position differs from the last snap
             if(this._snapLatLng !== snapLatLng) {
@@ -133,22 +151,29 @@ const SnapMixin = {
         let layers = [];
         const debugIndicatorLines = [];
 
-        // find all layers that are or inherit from Polylines...
+        // find all layers that are or inherit from Polylines... and markers that are not
+        // temporary markers of polygon-edits
         this._layer._map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline) {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
                 layers.push(layer);
 
                 // this is for debugging
                 const debugLine = L.polyline([], { color: 'red' });
                 debugIndicatorLines.push(debugLine);
 
-                // uncomment 👇 this in to show debugging lines
+                // uncomment 👇 this line to show helper lines for debugging
                 // debugLine.addTo(this._layer._map);
             }
         });
 
         // ...except myself
         layers = layers.filter(layer => this._layer !== layer);
+
+        // also remove everything that has no coordinates yet
+        layers = layers.filter(layer => layer._latlng || layer._latlngs.length > 0);
+
+        // finally remove everything that's leaflet.pm specific temporary stuff
+        layers = layers.filter(layer => !layer._pmTempLayer);
 
         this._snapList = layers;
         this.debugIndicatorLines = debugIndicatorLines;
@@ -180,8 +205,10 @@ const SnapMixin = {
     _calcLayerDistances(latlng, layer) {
         const map = this._layer._map;
 
-        // is this a polyline, or polygon?
-        const closedShape = layer instanceof L.Polygon;
+        // is this a polyline, marker or polygon?
+        const isPolygon = layer instanceof L.Polygon;
+        const isPolyline = !(layer instanceof L.Polygon) && layer instanceof L.Polyline;
+        const isMarker = layer instanceof L.Marker;
 
         // the point P which we want to snap (probpably the marker that is dragged)
         const P = latlng;
@@ -189,10 +216,21 @@ const SnapMixin = {
         let coords;
 
         // the coords of the layer
-        if(closedShape) {
+        if(isPolygon) {
+            // polygon
             coords = layer.getLatLngs()[0];
-        } else {
+        } else if(isPolyline) {
+            // polyline
             coords = layer.getLatLngs();
+        } else if(isMarker) {
+            // marker
+            coords = layer.getLatLng();
+
+            // return the info for the marker, no more calculations needed
+            return {
+                latlng: coords,
+                distance: this._getDistance(map, coords, P),
+            };
         }
 
         // the closest segment (line between two points) of the layer
@@ -208,7 +246,7 @@ const SnapMixin = {
             let nextIndex;
 
             // and the next coord (B) as points
-            if(closedShape) {
+            if(isPolygon) {
                 nextIndex = index + 1 === coords.length ? 0 : index + 1;
             } else {
                 nextIndex = index + 1 === coords.length ? undefined : index + 1;

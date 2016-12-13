@@ -10,6 +10,7 @@ const m2 = L.marker([51.50614, -0.0989]);
 const m3 = L.marker([51.50915, -0.096112]);
 
 const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
+mGroup.pm.enable();
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -64,6 +65,11 @@ map2.pm.enableDraw('Poly', {
         color: 'blue',
         dashArray: [5, 5],
     },
+    pathOptions: {
+        color: 'red',
+        fillColor: 'orange',
+        fillOpacity: 0.7,
+    },
 });
 map2.pm.disableDraw('Poly');
 map2.pm.enableDraw('Poly');
@@ -117,6 +123,7 @@ const geoJsonData = {
 const geoJsonButton = document.getElementById('test-geojson');
 const geoJsonLayer = L.geoJson().addTo(map3);
 geoJsonLayer.addData(geoJsonData);
+geoJsonLayer.addTo(map2);
 geoJsonLayer.pm.toggleEdit({
     draggable: true,
     snappable: true,
@@ -148,7 +155,7 @@ const polygonLayer = L.polygon([
     [51.509, -0.08],
     [51.503, -0.06],
     [51.51, -0.047],
-]).addTo(map3);
+]).addTo(map3).addTo(map2);
 polygonLayer.pm.toggleEdit();
 
 
@@ -239,6 +246,12 @@ layerGroup.on('pm:unsnap', (e) => {
 map4.pm.addControls({
     position: 'topright',
 });
+
+// map4.pm.setPathOptions({
+//     color: 'orange',
+//     fillColor: 'green',
+//     fillOpacity: 0.4,
+// });
 
 layerGroup.addLayer(layerGroupItem2);
 layerGroup.addLayer(layerGroupItem3);

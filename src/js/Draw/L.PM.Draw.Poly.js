@@ -8,7 +8,7 @@ L.PM.Draw.Poly = L.PM.Draw.Line.extend({
     _finishShape() {
         // get coordinates, create the leaflet shape and add it to the map
         const coords = this._polyline.getLatLngs();
-        const polygonLayer = L.polygon(coords).addTo(this._map);
+        const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(this._map);
 
         // disable drawing
         this.disable();
@@ -25,6 +25,8 @@ L.PM.Draw.Poly = L.PM.Draw.Line.extend({
             draggable: false,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
+
+        marker._pmTempLayer = true;
 
         // add it to the map
         this._layerGroup.addLayer(marker);

@@ -24,10 +24,10 @@ Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/rel
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.12.4/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.13.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.12.4/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.13.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
@@ -39,7 +39,7 @@ JS
 
 
 #### Init Leaflet.PM
-Just include `leaflet.pm.min.js` right after Leaflet.
+Just include `leaflet.pm.min.js` right after Leaflet. It initializes itself.
 
 
 ##### Leaflet.PM Toolbar
@@ -115,10 +115,11 @@ var polygonLayer = L.geoJson(data).addTo(map);
 // optional options
 var options = {
 
-    // makes the polygon draggable
+    // makes the layer draggable
     draggable: true,
 
     // makes the vertices snappable to other layers
+    // temporarily disable snapping during drag by pressing ALT
     snappable: true,
 
     // distance in pixels that needs to be undercut to trigger snapping
@@ -129,6 +130,7 @@ var options = {
 
 // enable edit mode
 polygonLayer.pm.enable(options);
+marker.pm.enable(options);
 
 // disable edit mode
 polygonLayer.pm.disable();
@@ -155,6 +157,58 @@ polygonLayer.on('pm:markerdragend', function(e) {//...});
 polygonLayer.on('pm:snap', function(e) {//...});
 polygonLayer.on('pm:unsnap', function(e) {//...});
 
+```
+
+
+### Customize Style
+
+In order to change the style of the lines during draw, pass these options to the `enableDraw()` function.
+
+```
+// optional options for line style during draw. These are the defaults
+var options = {
+    // the lines between coordinates/markers
+    templineStyle: {
+        color: 'red',
+    },
+
+    // the line from the last marker to the mouse cursor
+    hintlineStyle: {
+        color: 'red',
+        dashArray: [5, 5],
+    },
+};
+
+// enable drawing mode for shape - e.g. Poly or Line
+map.pm.enableDraw('Poly', options);
+```
+
+To customize the style of the drawn layer (polygon, polyline) with leaflets options, you can either pass the options to `enableDraw` as well:
+
+```
+// optional options for line style during draw. These are the defaults
+var options = {
+    templineStyle: {},
+    hintlineStyle: {},
+    pathOptions: {
+        // add leaflet options for polylines/polygons
+        color: 'orange',
+        fillColor: 'green',
+    }
+};
+
+// enable drawing mode for shape - e.g. Poly or Line
+map.pm.enableDraw('Poly', options);
+```
+
+or set the options generally:
+
+```
+map.pm.setPathOptions({
+    color: 'orange',
+    fillColor: 'green',
+    fillOpacity: 0.4,
+});
 ```
 
 

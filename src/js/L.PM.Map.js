@@ -13,6 +13,9 @@ L.PM.Map = L.Class.extend({
     disableDraw(shape = 'Poly') {
         this.Draw.disable(shape);
     },
+    setPathOptions(options) {
+        this.Draw.setPathOptions(options);
+    },
     removeLayer(e) {
         const layer = e.target;
         if(!layer._layers && !layer.pm.dragging()) {
