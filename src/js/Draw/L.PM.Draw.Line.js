@@ -26,6 +26,13 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._hintline._pmTempLayer = true;
         this._layerGroup.addLayer(this._hintline);
 
+        // this is the hintmarker on the mouse cursor
+        this._hintMarker = L.marker([0, 0], {
+            icon: L.divIcon({ className: 'marker-icon' }),
+        });
+        this._hintMarker._pmTempLayer = true;
+        this._layerGroup.addLayer(this._hintMarker);
+
 
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
@@ -34,7 +41,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._map.on('click', this._createPolygonPoint, this);
 
         // sync the hintline on mousemove
-        this._map.on('mousemove', this._syncHintLine, this);
+        this._map.on('mousemove', this._syncHintLayers, this);
 
         // fire drawstart event
         this._map.fire('pm:drawstart', { shape: this._shape });
@@ -57,7 +64,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
 
         // unbind listeners
         this._map.off('click', this._createPolygonPoint, this);
-        this._map.off('mousemove', this._syncHintLine, this);
+        this._map.off('mousemove', this._syncHintLayers, this);
 
         // remove layer
         this._map.removeLayer(this._layerGroup);
@@ -78,13 +85,15 @@ L.PM.Draw.Line = L.PM.Draw.extend({
             this.enable(options);
         }
     },
-    _syncHintLine(e) {
+    _syncHintLayers(e) {
         const polyPoints = this._polyline.getLatLngs();
 
         if(polyPoints.length > 0) {
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
             this._hintline.setLatLngs([lastPolygonPoint, e.latlng]);
         }
+
+        this._hintMarker.setLatLng(e.latlng);
     },
     _createPolygonPoint(e) {
         // is this the first point?
