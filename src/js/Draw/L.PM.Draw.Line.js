@@ -4,6 +4,9 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._shape = 'Line';
         this.toolbarButtonName = 'drawPolyline';
     },
+    _initSnappableMarkers() {
+        this.options.snapDistance = this.options.snapDistance || 30;
+    },
     enable(options) {
         // TODO: Think about if these options could be passed globally for all
         // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
@@ -48,6 +51,8 @@ L.PM.Draw.Line = L.PM.Draw.extend({
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+
+        this._initSnappableMarkers();
     },
     disable() {
         // disable draw mode
@@ -88,12 +93,19 @@ L.PM.Draw.Line = L.PM.Draw.extend({
     _syncHintLayers(e) {
         const polyPoints = this._polyline.getLatLngs();
 
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
+
+        const fakeDragEvent = e;
+        fakeDragEvent.target = this._hintMarker;
+        this._handleSnapping(fakeDragEvent);
+
         if(polyPoints.length > 0) {
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
-            this._hintline.setLatLngs([lastPolygonPoint, e.latlng]);
-        }
 
-        this._hintMarker.setLatLng(e.latlng);
+            // set coords for hintline from marker to last vertex of drawin polyline
+            this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
+        }
     },
     _createPolygonPoint(e) {
         // is this the first point?

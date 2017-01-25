@@ -15,6 +15,8 @@ L.PM.Edit.Line = L.PM.Edit.extend({
     enable(options = {}) {
         this.options = options;
 
+        this._map = this._layer._map;
+
         if(!this.enabled()) {
             // if it was already enabled, disable first
             // we don't block enabling again because new options might be passed
@@ -82,7 +84,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
     },
 
     _initMarkers() {
-        const map = this._layer._map;
+        const map = this._map;
 
         // cleanup old ones first
         if(this._markerGroup) {
@@ -326,7 +328,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
         // calculate the middle coordinates between two markers
         // TODO: put this into a utils.js or something
 
-        const map = this._layer._map;
+        const map = this._map;
         const p1 = map.project(latlng1);
         const p2 = map.project(latlng2);
 

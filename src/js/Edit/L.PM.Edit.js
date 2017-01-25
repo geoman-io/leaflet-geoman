@@ -1,3 +1,3 @@
 L.PM.Edit = L.Class.extend({
-    includes: [DragMixin, SnapMixin]
+    includes: [DragMixin, SnapMixin],
 });

@@ -22,6 +22,8 @@ L.PM.Edit.Marker = L.PM.Edit.extend({
     }) {
         this.options = options;
 
+        this._map = this._layer._map;
+
         if(this.enabled()) {
             return;
         }

@@ -10,7 +10,6 @@ const SnapMixin = {
             marker.on('dragend', this._cleanupSnapping, this);
         });
 
-
         this._layer.off('pm:dragstart', this._unsnap, this);
         this._layer.on('pm:dragstart', this._unsnap, this);
     },
@@ -109,7 +108,7 @@ const SnapMixin = {
     // we got the point we want to snap to (C), but we need to check if a coord of the polygon
     // receives priority over C as the snapping point. Let's check this here
     _checkPrioritiySnapping(closestLayer) {
-        const map = this._layer._map;
+        const map = this._map;
 
         // A and B are the points of the closest segment to P (the marker position we want to snap)
         const A = closestLayer.segment[0];
@@ -150,10 +149,11 @@ const SnapMixin = {
     _createSnapList() {
         let layers = [];
         const debugIndicatorLines = [];
+        const map = this._map;
 
         // find all layers that are or inherit from Polylines... and markers that are not
         // temporary markers of polygon-edits
-        this._layer._map.eachLayer((layer) => {
+        map.eachLayer((layer) => {
             if(layer instanceof L.Polyline || layer instanceof L.Marker) {
                 layers.push(layer);
 
@@ -162,7 +162,7 @@ const SnapMixin = {
                 debugIndicatorLines.push(debugLine);
 
                 // uncomment 👇 this line to show helper lines for debugging
-                // debugLine.addTo(this._layer._map);
+                debugLine.addTo(map);
             }
         });
 
@@ -203,7 +203,7 @@ const SnapMixin = {
     },
 
     _calcLayerDistances(latlng, layer) {
-        const map = this._layer._map;
+        const map = this._map;
 
         // is this a polyline, marker or polygon?
         const isPolygon = layer instanceof L.Polygon;

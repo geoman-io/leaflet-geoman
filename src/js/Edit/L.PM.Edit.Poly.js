@@ -1,7 +1,7 @@
 L.PM.Edit.Poly = L.PM.Edit.Line.extend({
 
     _initMarkers() {
-        const map = this._layer._map;
+        const map = this._map;
 
         // cleanup old ones first
         if(this._markerGroup) {

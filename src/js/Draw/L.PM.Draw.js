@@ -1,4 +1,5 @@
 L.PM.Draw = L.Class.extend({
+    includes: [SnapMixin],
     options: {
         templineStyle: {
             color: 'red',
