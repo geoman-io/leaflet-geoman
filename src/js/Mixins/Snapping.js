@@ -76,13 +76,6 @@ const SnapMixin = {
             // snap the marker
             marker.setLatLng(snapLatLng);
 
-            // fire onMarkerDrag for pmEditMarkers (vertex markers on polylines/polygons)
-            // TODO: think about how to move this into L.PM.Edit.Line.js, so Snapping.js is
-            // generic for Edit.Marker and Edit.Line
-            if(!(this._layer instanceof L.Marker)) {
-                this._onMarkerDrag(e);
-            }
-
             // check if the snapping position differs from the last snap
             if(this._snapLatLng !== snapLatLng) {
                 // if yes, save it and fire the pm:snap event
@@ -162,7 +155,7 @@ const SnapMixin = {
                 debugIndicatorLines.push(debugLine);
 
                 // uncomment 👇 this line to show helper lines for debugging
-                debugLine.addTo(map);
+                // debugLine.addTo(map);
             }
         });
 

@@ -4,9 +4,6 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._shape = 'Line';
         this.toolbarButtonName = 'drawPolyline';
     },
-    _initSnappableMarkers() {
-        this.options.snapDistance = this.options.snapDistance || 30;
-    },
     enable(options) {
         // TODO: Think about if these options could be passed globally for all
         // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
@@ -20,9 +17,9 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._layerGroup.addTo(this._map);
 
         // this is the polyLine that'll make up the polygon
-        this._polyline = L.polyline([], this.options.templineStyle);
-        this._polyline._pmTempLayer = true;
-        this._layerGroup.addLayer(this._polyline);
+        this._layer = L.polyline([], this.options.templineStyle);
+        this._layer._pmTempLayer = true;
+        this._layerGroup.addLayer(this._layer);
 
         // this is the hintline from the mouse cursor to the last marker
         this._hintline = L.polyline([], this.options.hintlineStyle);
@@ -44,15 +41,15 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._map.on('click', this._createPolygonPoint, this);
 
         // sync the hintline on mousemove
-        this._map.on('mousemove', this._syncHintLayers, this);
+        this._map.on('mousemove', this._syncHintMarker, this);
+
+        this._hintMarker.on('move', this._syncHintLine, this);
 
         // fire drawstart event
         this._map.fire('pm:drawstart', { shape: this._shape });
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
-
-        this._initSnappableMarkers();
     },
     disable() {
         // disable draw mode
@@ -69,7 +66,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
 
         // unbind listeners
         this._map.off('click', this._createPolygonPoint, this);
-        this._map.off('mousemove', this._syncHintLayers, this);
+        this._map.off('mousemove', this._syncHintMarker, this);
 
         // remove layer
         this._map.removeLayer(this._layerGroup);
@@ -90,15 +87,18 @@ L.PM.Draw.Line = L.PM.Draw.extend({
             this.enable(options);
         }
     },
-    _syncHintLayers(e) {
-        const polyPoints = this._polyline.getLatLngs();
-
+    _syncHintMarker(e) {
         // move the cursor marker
         this._hintMarker.setLatLng(e.latlng);
 
-        const fakeDragEvent = e;
-        fakeDragEvent.target = this._hintMarker;
-        this._handleSnapping(fakeDragEvent);
+        if(this.options.snappable) {
+            const fakeDragEvent = e;
+            fakeDragEvent.target = this._hintMarker;
+            this._handleSnapping(fakeDragEvent);
+        }
+    },
+    _syncHintLine() {
+        const polyPoints = this._layer.getLatLngs();
 
         if(polyPoints.length > 0) {
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
@@ -107,19 +107,23 @@ L.PM.Draw.Line = L.PM.Draw.extend({
             this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
         }
     },
-    _createPolygonPoint(e) {
+    // TODO: rename this function to _createVertex
+    _createPolygonPoint() {
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
+
         // is this the first point?
-        const first = this._polyline.getLatLngs().length === 0;
+        const first = this._layer.getLatLngs().length === 0;
 
-        this._polyline.addLatLng(e.latlng);
-        this._createMarker(e.latlng, first);
+        this._layer.addLatLng(latlng);
+        this._createMarker(latlng, first);
 
 
-        this._hintline.setLatLngs([e.latlng, e.latlng]);
+        this._hintline.setLatLngs([latlng, latlng]);
     },
     _finishShape() {
         // get coordinates, create the leaflet shape and add it to the map
-        const coords = this._polyline.getLatLngs();
+        const coords = this._layer.getLatLngs();
         const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(this._map);
 
         // disable drawing

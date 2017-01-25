@@ -126,7 +126,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
         marker._pmTempLayer = true;
 
         marker.on('dragstart', this._onMarkerDragStart, this);
-        marker.on('drag', this._onMarkerDrag, this);
+        marker.on('move', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
         marker.on('contextmenu', this._removeMarker, this);
 
@@ -269,6 +269,11 @@ L.PM.Edit.Line = L.PM.Edit.extend({
     _onMarkerDrag(e) {
         // dragged marker
         const marker = e.target;
+
+        // only continue if this is NOT a middle marker (those can't be deleted)
+        if(marker._index === undefined) {
+            return;
+        }
 
         // the dragged markers neighbors
         const nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
