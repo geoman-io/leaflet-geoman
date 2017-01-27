@@ -151,7 +151,9 @@ L.PM.Draw.Line = L.PM.Draw.extend({
             layer: polylineLayer,
         });
 
-        this._cleanupSnapping();
+        if(this.options.snappable) {
+            this._cleanupSnapping();
+        }
     },
     _createMarker(latlng) {
         // create the new marker

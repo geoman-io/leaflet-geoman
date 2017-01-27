@@ -45,7 +45,10 @@ L.PM.Draw.Poly = L.PM.Draw.Line.extend({
 
             // add the first vertex to "other snapping layers" so the polygon is easier to finish
             this._tempSnapLayerIndex = this._otherSnapLayers.push(marker) - 1;
-            this._cleanupSnapping();
+
+            if(this.options.snappable) {
+                this._cleanupSnapping();
+            }
         }
     },
 });
