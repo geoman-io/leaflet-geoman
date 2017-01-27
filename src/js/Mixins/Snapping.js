@@ -13,7 +13,6 @@ const SnapMixin = {
         this._layer.off('pm:dragstart', this._unsnap, this);
         this._layer.on('pm:dragstart', this._unsnap, this);
     },
-
     _unsnap() {
         // delete the last snap
         delete this._snapLatLng;
@@ -169,7 +168,7 @@ const SnapMixin = {
         layers = layers.filter(layer => !layer._pmTempLayer);
 
         // save snaplist from layers and the other snap layers added from other classes/scripts
-        this._snapList = this._otherSnapLayers.length > 0 ? layers.concat(this._otherSnapLayers) : layers;
+        this._snapList = layers.concat(this._otherSnapLayers);
 
         this.debugIndicatorLines = debugIndicatorLines;
     },

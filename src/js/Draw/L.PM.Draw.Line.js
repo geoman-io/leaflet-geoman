@@ -38,7 +38,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._map._container.style.cursor = 'crosshair';
 
         // create a polygon-point on click
-        this._map.on('click', this._createPolygonPoint, this);
+        this._map.on('click', this._createVertex, this);
 
         // sync the hintline on mousemove
         this._map.on('mousemove', this._syncHintMarker, this);
@@ -69,7 +69,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._map._container.style.cursor = 'default';
 
         // unbind listeners
-        this._map.off('click', this._createPolygonPoint, this);
+        this._map.off('click', this._createVertex, this);
         this._map.off('mousemove', this._syncHintMarker, this);
 
         // remove layer
@@ -113,7 +113,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         }
     },
     // TODO: rename this function to _createVertex
-    _createPolygonPoint() {
+    _createVertex() {
         // get coordinate for new vertex by hintMarker (cursor marker)
         const latlng = this._hintMarker.getLatLng();
 
