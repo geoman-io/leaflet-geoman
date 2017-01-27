@@ -28,7 +28,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
 
         // this is the hintmarker on the mouse cursor
         this._hintMarker = L.marker([0, 0], {
-            icon: L.divIcon({ className: 'marker-icon' }),
+            icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
         });
         this._hintMarker._pmTempLayer = true;
         this._layerGroup.addLayer(this._hintMarker);
@@ -50,6 +50,10 @@ L.PM.Draw.Line = L.PM.Draw.extend({
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+
+        // an array used in the snapping mixin.
+        // TODO: think about moving this somewhere else?
+        this._otherSnapLayers = [];
     },
     disable() {
         // disable draw mode
@@ -91,6 +95,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         // move the cursor marker
         this._hintMarker.setLatLng(e.latlng);
 
+        // if snapping is enabled, do it
         if(this.options.snappable) {
             const fakeDragEvent = e;
             fakeDragEvent.target = this._hintMarker;
@@ -134,6 +139,8 @@ L.PM.Draw.Line = L.PM.Draw.extend({
             shape: this._shape,
             layer: polylineLayer,
         });
+
+        this._cleanupSnapping();
     },
     _createMarker(latlng) {
         // create the new marker

@@ -132,7 +132,7 @@ const SnapMixin = {
         if(shortestDistance < priorityDistance) {
             snapLatlng = closestVertexLatLng;
         } else {
-            snapLatlng = closestLayer.latlng;
+            snapLatlng = C;
         }
 
         // return the snapping point
@@ -155,12 +155,12 @@ const SnapMixin = {
                 debugIndicatorLines.push(debugLine);
 
                 // uncomment 👇 this line to show helper lines for debugging
-                // debugLine.addTo(map);
+                debugLine.addTo(map);
             }
         });
 
         // ...except myself
-        layers = layers.filter(layer => this._layer !== layer);
+        // layers = layers.filter(layer => this._layer !== layer);
 
         // also remove everything that has no coordinates yet
         layers = layers.filter(layer => layer._latlng || layer._latlngs.length > 0);
@@ -168,7 +168,9 @@ const SnapMixin = {
         // finally remove everything that's leaflet.pm specific temporary stuff
         layers = layers.filter(layer => !layer._pmTempLayer);
 
-        this._snapList = layers;
+        // save snaplist from layers and the other snap layers added from other classes/scripts
+        this._snapList = this._otherSnapLayers.length > 0 ? layers.concat(this._otherSnapLayers) : layers;
+
         this.debugIndicatorLines = debugIndicatorLines;
     },
     _calcClosestLayer(latlng, layers) {

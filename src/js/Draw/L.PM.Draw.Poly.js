@@ -18,6 +18,13 @@ L.PM.Draw.Poly = L.PM.Draw.Line.extend({
             shape: this._shape,
             layer: polygonLayer,
         });
+
+        // clean up snapping states
+        this._cleanupSnapping();
+
+        // remove the first vertex from "other snapping layers"
+        this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
+        delete this._tempSnapLayerIndex;
     },
     _createMarker(latlng, first) {
         // create the new marker
@@ -26,6 +33,7 @@ L.PM.Draw.Poly = L.PM.Draw.Line.extend({
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
+        // mark this marker as temporary
         marker._pmTempLayer = true;
 
         // add it to the map
@@ -34,6 +42,10 @@ L.PM.Draw.Poly = L.PM.Draw.Line.extend({
         // if the first marker gets clicked again, finish this shape
         if(first) {
             marker.on('click', this._finishShape, this);
+
+            // add the first vertex to "other snapping layers" so the polygon is easier to finish
+            this._tempSnapLayerIndex = this._otherSnapLayers.push(marker) - 1;
+            this._cleanupSnapping();
         }
     },
 });
