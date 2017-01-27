@@ -117,6 +117,17 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         // get coordinate for new vertex by hintMarker (cursor marker)
         const latlng = this._hintMarker.getLatLng();
 
+        // check if the first and this vertex have the same latlng
+        if(latlng === this._layer.getLatLngs()[0]) {
+            // yes? finish the polygon
+            this._finishShape();
+
+            // "why?", you ask? Because this happens when we snap the last vertex to the first one
+            // and then click without hitting the last marker. Click happens on the map
+            // in 99% of cases it's because the user wants to finish the polygon. So...
+            return;
+        }
+
         // is this the first point?
         const first = this._layer.getLatLngs().length === 0;
 
