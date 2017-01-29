@@ -22,9 +22,11 @@ const SnapMixin = {
         // meanwhile, new layers could've been added to the map
         delete this._snapList;
 
-        this.debugIndicatorLines.forEach((line) => {
-            line.remove();
-        });
+        if(this.debugIndicatorLines) {
+            this.debugIndicatorLines.forEach((line) => {
+                line.remove();
+            });
+        }
     },
     _handleSnapping(e) {
         // if snapping is disabled via holding ALT during drag, stop right here
