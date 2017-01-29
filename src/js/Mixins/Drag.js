@@ -7,74 +7,76 @@ const DragMixin = {
         const el = this._layer._path;
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
+        this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
+    },
+    _dragMixinOnMouseUp() {
+        const el = this._layer._path;
 
-        const onMouseUp = () => {
-            // re-enable map drag
-            this._layer._map.dragging.enable();
+        // re-enable map drag
+        this._layer._map.dragging.enable();
 
-            // clear up mousemove event
-            this._layer._map.off('mousemove');
+        // clear up mousemove event
+        this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
 
-            // clear up mouseup event
-            this._layer.off('mouseup');
+        // clear up mouseup event
+        this._layer.off('mouseup', this._dragMixinOnMouseUp, this);
 
-            // if no drag happened, don't do anything
-            if(!this._dragging) {
-                return false;
-            }
+        // if no drag happened, don't do anything
+        if(!this._dragging) {
+            return false;
+        }
 
-            // show markers again
-            this._initMarkers();
+        // show markers again
+        this._initMarkers();
 
-            // timeout to prevent click event after drag :-/
-            // TODO: do it better as soon as leaflet has a way to do it better :-)
-            window.setTimeout(() => {
-                // set state
-                this._dragging = false;
-                L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+        // timeout to prevent click event after drag :-/
+        // TODO: do it better as soon as leaflet has a way to do it better :-)
+        window.setTimeout(() => {
+            // set state
+            this._dragging = false;
+            L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
-                // fire pm:dragend event
-                this._layer.fire('pm:dragend');
+            // fire pm:dragend event
+            this._layer.fire('pm:dragend');
 
-                // fire edit
-                this._fireEdit();
-            }, 10);
+            // fire edit
+            this._fireEdit();
+        }, 10);
 
-            return true;
-        };
+        return true;
+    },
+    _dragMixinOnMouseMove(e) {
+        const el = this._layer._path;
 
-        const onMouseMove = (e) => {
-            if(!this._dragging) {
-                // set state
-                this._dragging = true;
-                L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+        if(!this._dragging) {
+            // set state
+            this._dragging = true;
+            L.DomUtil.addClass(el, 'leaflet-pm-dragging');
 
-                // bring it to front to prevent drag interception
-                this._layer.bringToFront();
+            // bring it to front to prevent drag interception
+            this._layer.bringToFront();
 
-                // disbale map drag
-                this._layer._map.dragging.disable();
+            // disbale map drag
+            this._layer._map.dragging.disable();
 
-                // hide markers
-                this._markerGroup.clearLayers();
+            // hide markers
+            this._markerGroup.clearLayers();
 
-                // fire pm:dragstart event
-                this._layer.fire('pm:dragstart');
-            }
+            // fire pm:dragstart event
+            this._layer.fire('pm:dragstart');
+        }
 
-            this._onLayerDrag(e);
-        };
+        this._onLayerDrag(e);
+    },
+    _dragMixinOnMouseDown(e) {
+        // save for delta calculation
+        this._tempDragCoord = e.latlng;
 
-        this._layer.on('mousedown', (e) => {
-            // save for delta calculation
-            this._tempDragCoord = e.latlng;
+        this._layer.on('mouseup', this._dragMixinOnMouseUp, this);
 
-            this._layer.on('mouseup', onMouseUp);
-
-            // listen to mousemove on map (instead of polygon),
-            // otherwise fast mouse movements stop the drag
-            this._layer._map.on('mousemove', onMouseMove);
-        });
+        // listen to mousemove on map (instead of polygon),
+        // otherwise fast mouse movements stop the drag
+        this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
     },
     dragging() {
         return this._dragging;
@@ -100,10 +102,11 @@ const DragMixin = {
         }
 
         const newLatLngs = coords.map((currentLatLng) => {
-            return {
+            const c = {
                 lat: currentLatLng.lat + deltaLatLng.lat,
                 lng: currentLatLng.lng + deltaLatLng.lng,
             };
+            return c;
         });
 
         // set new coordinates and redraw
