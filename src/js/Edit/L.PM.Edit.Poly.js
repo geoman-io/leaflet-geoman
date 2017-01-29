@@ -76,6 +76,11 @@ L.PM.Edit.Poly = L.PM.Edit.Line.extend({
             return;
         }
 
+        // don't remove a marker if a polygon has only 3 coordinates.
+        if(coords.length <= 3) {
+            return;
+        }
+
         // remove polygon coordinate from this marker
         coords.splice(index, 1);
 
