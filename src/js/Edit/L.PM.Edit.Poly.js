@@ -115,12 +115,6 @@ L.PM.Edit.Poly = L.PM.Edit.Line.extend({
             return true;
         });
 
-        // if the polygon should be cutted when overlapping another polygon, do it now
-        // if(this.options.preventOverlap) {
-        //     this._handleOverlap();
-        //     this._applyPossibleCoordsChanges();
-        // }
-
         // fire edit event
         this._fireEdit();
     },

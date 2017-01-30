@@ -34,25 +34,9 @@ L.PM.Edit.Line = L.PM.Edit.extend({
             this.disable(e.target);
         });
 
-
-        // preventOverlap needs the turf library. If it's not included, deactivate it again
-        // if(window.turf === undefined && this.options.preventOverlap) {
-        //     console.warn('TurfJS not found, preventOverlap is deactivated');
-        //     this.options.preventOverlap = false;
-        // }
-
         if(this.options.draggable) {
             this._initDraggableLayer();
         }
-
-        // if(this.options.preventOverlap) {
-        //
-        //     // if the dragged polygon should be cutted when overlapping another polygon, go ahead
-        //     this._layer.on('pm:drag', this._handleOverlap, this);
-        //
-        //     // set new coordinates, more details inside the function
-        //     this._layer.on('pm:dragend', this._applyPossibleCoordsChanges, this);
-        // }
     },
 
     enabled() {
@@ -256,12 +240,6 @@ L.PM.Edit.Line = L.PM.Edit.extend({
             return true;
         });
 
-        // if the polygon should be cutted when overlapping another polygon, do it now
-        // if(this.options.preventOverlap) {
-        //     this._handleOverlap();
-        //     this._applyPossibleCoordsChanges();
-        // }
-
         // fire edit event
         this._fireEdit();
     },
@@ -298,18 +276,9 @@ L.PM.Edit.Line = L.PM.Edit.extend({
             const middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
             marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
         }
-
-        // if the dragged polygon should be cutted when overlapping another polygon, go ahead
-        // if(this.options.preventOverlap) {
-        //     this._handleOverlap();
-        // }
     },
 
     _onMarkerDragEnd(e) {
-        // if(this.options.preventOverlap) {
-        //     this._applyPossibleCoordsChanges();
-        // }
-
         this._layer.fire('pm:markerdragend', {
             markerEvent: e,
         });
