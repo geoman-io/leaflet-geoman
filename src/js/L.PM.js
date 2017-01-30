@@ -6,6 +6,7 @@
 */
 
 L.PM = L.PM || {
+    version: '0.14.0',
     initialize() {
         this.addInitHooks();
     },
