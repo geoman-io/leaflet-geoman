@@ -161,7 +161,7 @@ const SnapMixin = {
         });
 
         // ...except myself
-        // layers = layers.filter(layer => this._layer !== layer);
+        layers = layers.filter(layer => this._layer !== layer);
 
         // also remove everything that has no coordinates yet
         layers = layers.filter(layer => layer._latlng || layer._latlngs.length > 0);
