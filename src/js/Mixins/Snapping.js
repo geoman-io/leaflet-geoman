@@ -136,8 +136,8 @@ const SnapMixin = {
             snapLatlng = C;
         }
 
-        // return the snapping point
-        return snapLatlng;
+        // return the copy of snapping point
+        return Object.assign({}, snapLatlng);
     },
 
     _createSnapList() {
