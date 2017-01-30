@@ -58,7 +58,7 @@ map2.pm.addControls({
 // });
 
 map2.pm.enableDraw('Poly', {
-    snappable: false,
+    snappable: true,
     templineStyle: {
         color: 'blue',
     },

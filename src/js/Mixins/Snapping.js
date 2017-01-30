@@ -77,6 +77,8 @@ const SnapMixin = {
             // snap the marker
             marker.setLatLng(snapLatLng);
 
+            marker._snapped = true;
+
             // check if the snapping position differs from the last snap
             if(this._snapLatLng !== snapLatLng) {
                 // if yes, save it and fire the pm:snap event
@@ -90,6 +92,8 @@ const SnapMixin = {
             // if it was previously snapped...
             // ...unsnap
             this._unsnap(eventInfo);
+
+            marker._snapped = false;
 
             // and fire unsnap event
             eventInfo.marker.fire('pm:unsnap', eventInfo);

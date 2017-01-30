@@ -40,9 +40,10 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         // create a polygon-point on click
         this._map.on('click', this._createVertex, this);
 
-        // sync the hintline on mousemove
+        // sync hint marker with mouse cursor
         this._map.on('mousemove', this._syncHintMarker, this);
 
+        // sync the hintline with hint marker
         this._hintMarker.on('move', this._syncHintLine, this);
 
         // fire drawstart event
@@ -91,6 +92,16 @@ L.PM.Draw.Line = L.PM.Draw.extend({
             this.enable(options);
         }
     },
+    _syncHintLine() {
+        const polyPoints = this._layer.getLatLngs();
+
+        if(polyPoints.length > 0) {
+            const lastPolygonPoint = polyPoints[polyPoints.length - 1];
+
+            // set coords for hintline from marker to last vertex of drawin polyline
+            this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
+        }
+    },
     _syncHintMarker(e) {
         // move the cursor marker
         this._hintMarker.setLatLng(e.latlng);
@@ -102,18 +113,13 @@ L.PM.Draw.Line = L.PM.Draw.extend({
             this._handleSnapping(fakeDragEvent);
         }
     },
-    _syncHintLine() {
-        const polyPoints = this._layer.getLatLngs();
-
-        if(polyPoints.length > 0) {
-            const lastPolygonPoint = polyPoints[polyPoints.length - 1];
-
-            // set coords for hintline from marker to last vertex of drawin polyline
-            this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
+    _createVertex(e) {
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if(!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
         }
-    },
-    // TODO: rename this function to _createVertex
-    _createVertex() {
+
         // get coordinate for new vertex by hintMarker (cursor marker)
         const latlng = this._hintMarker.getLatLng();
 
