@@ -170,7 +170,11 @@ const SnapMixin = {
         layers = layers.filter(layer => !layer._pmTempLayer);
 
         // save snaplist from layers and the other snap layers added from other classes/scripts
-        this._snapList = layers.concat(this._otherSnapLayers);
+        if(this._otherSnapLayers) {
+            this._snapList = layers.concat(this._otherSnapLayers);
+        } else {
+            this._snapList = layers;
+        }
 
         this.debugIndicatorLines = debugIndicatorLines;
     },
