@@ -1,8 +1,12 @@
 # Leaflet Geometry Management
+[![CDNJS](https://img.shields.io/cdnjs/v/leaflet.pm.svg)](https://cdnjs.com/libraries/leaflet.pm)
+
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
 Draw, Edit, Drag, and Snap Features.
 
 In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time, this plugin only supported polygons. Now you can edit Markers, Polylines, Polygons, LayerGroups, GeoJSON and more are coming.
+
+![snap at drag](https://cloud.githubusercontent.com/assets/2399810/22544799/8f4478b0-e936-11e6-9cb0-907394c5e51f.gif)
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
@@ -24,10 +28,10 @@ Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/rel
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.13.0/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.14.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.13.0/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.14.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
@@ -70,6 +74,10 @@ Use Drawing Mode on a map like this
 
 // optional options for line style during draw. These are the defaults
 var options = {
+    // snapping
+    snappable: true,
+    snapDistance: 20,
+
     // the lines between coordinates/markers
     templineStyle: {
         color: 'red',

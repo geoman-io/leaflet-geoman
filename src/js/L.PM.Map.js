@@ -48,6 +48,9 @@ L.PM.Map = L.Class.extend({
         // filter out layers that don't have the leaflet.pm instance
         layers = layers.filter(layer => !!layer.pm);
 
+        // filter out everything that's leaflet.pm specific temporary stuff
+        layers = layers.filter(layer => !layer._pmTempLayer);
+
         if(this.globalEditEnabled()) {
             // disable
 

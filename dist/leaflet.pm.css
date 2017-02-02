@@ -82,3 +82,9 @@
 .leaflet-pm-draggable {
   cursor: move !important;
 }
+
+.cursor-marker {
+  cursor: crosshair;
+  pointer-events: none;
+  display: none;
+}

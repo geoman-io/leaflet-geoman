@@ -36,7 +36,7 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
 
         // disable dragging and removing for all markers
         this._map.eachLayer((layer) => {
-            if(layer instanceof L.Marker) {
+            if(layer instanceof L.Marker && !layer._pmTempLayer) {
                 layer.pm.disable();
             }
         });

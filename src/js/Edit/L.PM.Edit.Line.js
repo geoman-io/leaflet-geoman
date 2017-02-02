@@ -15,6 +15,8 @@ L.PM.Edit.Line = L.PM.Edit.extend({
     enable(options = {}) {
         this.options = options;
 
+        this._map = this._layer._map;
+
         if(!this.enabled()) {
             // if it was already enabled, disable first
             // we don't block enabling again because new options might be passed
@@ -32,25 +34,9 @@ L.PM.Edit.Line = L.PM.Edit.extend({
             this.disable(e.target);
         });
 
-
-        // preventOverlap needs the turf library. If it's not included, deactivate it again
-        // if(window.turf === undefined && this.options.preventOverlap) {
-        //     console.warn('TurfJS not found, preventOverlap is deactivated');
-        //     this.options.preventOverlap = false;
-        // }
-
         if(this.options.draggable) {
             this._initDraggableLayer();
         }
-
-        // if(this.options.preventOverlap) {
-        //
-        //     // if the dragged polygon should be cutted when overlapping another polygon, go ahead
-        //     this._layer.on('pm:drag', this._handleOverlap, this);
-        //
-        //     // set new coordinates, more details inside the function
-        //     this._layer.on('pm:dragend', this._applyPossibleCoordsChanges, this);
-        // }
     },
 
     enabled() {
@@ -82,7 +68,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
     },
 
     _initMarkers() {
-        const map = this._layer._map;
+        const map = this._map;
 
         // cleanup old ones first
         if(this._markerGroup) {
@@ -124,7 +110,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
         marker._pmTempLayer = true;
 
         marker.on('dragstart', this._onMarkerDragStart, this);
-        marker.on('drag', this._onMarkerDrag, this);
+        marker.on('move', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
         marker.on('contextmenu', this._removeMarker, this);
 
@@ -254,12 +240,6 @@ L.PM.Edit.Line = L.PM.Edit.extend({
             return true;
         });
 
-        // if the polygon should be cutted when overlapping another polygon, do it now
-        // if(this.options.preventOverlap) {
-        //     this._handleOverlap();
-        //     this._applyPossibleCoordsChanges();
-        // }
-
         // fire edit event
         this._fireEdit();
     },
@@ -267,6 +247,11 @@ L.PM.Edit.Line = L.PM.Edit.extend({
     _onMarkerDrag(e) {
         // dragged marker
         const marker = e.target;
+
+        // only continue if this is NOT a middle marker (those can't be deleted)
+        if(marker._index === undefined) {
+            return;
+        }
 
         // the dragged markers neighbors
         const nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
@@ -291,18 +276,9 @@ L.PM.Edit.Line = L.PM.Edit.extend({
             const middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
             marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
         }
-
-        // if the dragged polygon should be cutted when overlapping another polygon, go ahead
-        // if(this.options.preventOverlap) {
-        //     this._handleOverlap();
-        // }
     },
 
     _onMarkerDragEnd(e) {
-        // if(this.options.preventOverlap) {
-        //     this._applyPossibleCoordsChanges();
-        // }
-
         this._layer.fire('pm:markerdragend', {
             markerEvent: e,
         });
@@ -326,7 +302,7 @@ L.PM.Edit.Line = L.PM.Edit.extend({
         // calculate the middle coordinates between two markers
         // TODO: put this into a utils.js or something
 
-        const map = this._layer._map;
+        const map = this._map;
         const p1 = map.project(latlng1);
         const p2 = map.project(latlng2);
 
