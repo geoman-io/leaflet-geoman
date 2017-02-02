@@ -1,7 +1,7 @@
 L.PM.Edit.Poly = L.PM.Edit.Line.extend({
 
     _initMarkers() {
-        const map = this._layer._map;
+        const map = this._map;
 
         // cleanup old ones first
         if(this._markerGroup) {
@@ -114,12 +114,6 @@ L.PM.Edit.Poly = L.PM.Edit.Line.extend({
             m._index = i;
             return true;
         });
-
-        // if the polygon should be cutted when overlapping another polygon, do it now
-        // if(this.options.preventOverlap) {
-        //     this._handleOverlap();
-        //     this._applyPossibleCoordsChanges();
-        // }
 
         // fire edit event
         this._fireEdit();

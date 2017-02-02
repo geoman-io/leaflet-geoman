@@ -72,6 +72,10 @@ Use Drawing Mode on a map like this
 
 // optional options for line style during draw. These are the defaults
 var options = {
+    // snapping
+    snappable: true,
+    snapDistance: 20,
+    
     // the lines between coordinates/markers
     templineStyle: {
         color: 'red',
