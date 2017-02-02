@@ -49,13 +49,13 @@ map2.pm.addControls({
 //     drawPolyline: false,
 //     deleteLayer: true,
 // });
-// map2.pm.addControls({
-//     drawMarker: true,
-//     drawPolygon: false,
-//     editPolygon: false,
-//     drawPolyline: true,
-//     deleteLayer: false,
-// });
+map2.pm.addControls({
+    drawMarker: true,
+    drawPolygon: true,
+    editPolygon: true,
+    drawPolyline: true,
+    deleteLayer: true,
+});
 
 map2.pm.enableDraw('Poly', {
     snappable: true,
