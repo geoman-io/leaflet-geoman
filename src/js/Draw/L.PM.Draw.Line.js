@@ -81,6 +81,11 @@ L.PM.Draw.Line = L.PM.Draw.extend({
 
         // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+
+        // cleanup snapping
+        if(this.options.snappable) {
+            this._cleanupSnapping();
+        }
     },
     enabled() {
         return this._enabled;
@@ -124,7 +129,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         const latlng = this._hintMarker.getLatLng();
 
         // check if the first and this vertex have the same latlng
-        if(latlng === this._layer.getLatLngs()[0]) {
+        if(latlng.equals(this._layer.getLatLngs()[0])) {
             // yes? finish the polygon
             this._finishShape();
 

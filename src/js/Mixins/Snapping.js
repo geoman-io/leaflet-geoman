@@ -232,7 +232,7 @@ const SnapMixin = {
 
             // return the info for the marker, no more calculations needed
             return {
-                latlng: coords,
+                latlng: Object.assign({}, coords),
                 distance: this._getDistance(map, coords, P),
             };
         }
@@ -277,7 +277,7 @@ const SnapMixin = {
 
         // return the latlng of that sucker
         return {
-            latlng: C,
+            latlng: Object.assign({}, C),
             segment: closestSegment,
             distance: shortestDistance,
         };
