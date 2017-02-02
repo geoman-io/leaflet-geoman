@@ -6,6 +6,8 @@ Draw, Edit, Drag, and Snap Features.
 
 In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time, this plugin only supported polygons. Now you can edit Markers, Polylines, Polygons, LayerGroups, GeoJSON and more are coming.
 
+![snap at drag](https://cloud.githubusercontent.com/assets/2399810/22544799/8f4478b0-e936-11e6-9cb0-907394c5e51f.gif)
+
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
 As we are always using the latest leaflet version in a big production app, I will (have to) keep this plugin constantly developed.
