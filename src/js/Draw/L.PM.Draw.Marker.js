@@ -18,6 +18,14 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
+        // this is the hintmarker on the mouse cursor
+        this._hintMarker = L.marker([0, 0]);
+        this._hintMarker._pmTempLayer = true;
+        this._hintMarker.addTo(this._map);
+
+        // sync hint marker with mouse cursor
+        this._map.on('mousemove', this._syncHintMarker, this);
+
         // enable edit mode for existing markers
         this._map.eachLayer((layer) => {
             if(layer instanceof L.Marker) {
@@ -33,6 +41,12 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
 
         // undbind click event, don't create a marker on click anymore
         this._map.off('click', this._createMarker, this);
+
+        // remove hint marker
+        this._hintMarker.remove();
+
+        // remove event listener to sync hint marker
+        this._map.off('mousemove', this._syncHintMarker, this);
 
         // disable dragging and removing for all markers
         this._map.eachLayer((layer) => {
@@ -79,5 +93,16 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
             marker,                     // DEPRECATED
             layer: marker,
         });
+    },
+    _syncHintMarker(e) {
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
+
+        // if snapping is enabled, do it
+        if(this.options.snappable) {
+            const fakeDragEvent = e;
+            fakeDragEvent.target = this._hintMarker;
+            this._handleSnapping(fakeDragEvent);
+        }
     },
 });
