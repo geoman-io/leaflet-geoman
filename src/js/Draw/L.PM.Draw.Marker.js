@@ -72,6 +72,10 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         }
     },
     _createMarker(e) {
+        if(!e.latlng) {
+            return;
+        }
+
         // assign the coordinate of the click to the hintMarker, that's necessary for
         // mobile where the marker can't follow a cursor
         if(!this._hintMarker._snapped) {
@@ -80,10 +84,6 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
 
         // get coordinate for new vertex by hintMarker (cursor marker)
         const latlng = this._hintMarker.getLatLng();
-
-        if(!latlng) {
-            return;
-        }
 
         // create marker
         const marker = new L.Marker(latlng, {
@@ -102,6 +102,8 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
             marker,                     // DEPRECATED
             layer: marker,
         });
+
+        this._cleanupSnapping();
     },
     _syncHintMarker(e) {
         // move the cursor marker
