@@ -23,6 +23,9 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         this._hintMarker._pmTempLayer = true;
         this._hintMarker.addTo(this._map);
 
+        // this is just to keep the snappable mixin happy
+        this._layer = this._hintMarker;
+
         // sync hint marker with mouse cursor
         this._map.on('mousemove', this._syncHintMarker, this);
 
@@ -69,8 +72,14 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         }
     },
     _createMarker(e) {
-        // save coords of click
-        const latlng = e.latlng;
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if(!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
 
         if(!latlng) {
             return;
