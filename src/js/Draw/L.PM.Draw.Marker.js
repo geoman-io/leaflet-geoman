@@ -18,6 +18,17 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
+        // this is the hintmarker on the mouse cursor
+        this._hintMarker = L.marker([0, 0]);
+        this._hintMarker._pmTempLayer = true;
+        this._hintMarker.addTo(this._map);
+
+        // this is just to keep the snappable mixin happy
+        this._layer = this._hintMarker;
+
+        // sync hint marker with mouse cursor
+        this._map.on('mousemove', this._syncHintMarker, this);
+
         // enable edit mode for existing markers
         this._map.eachLayer((layer) => {
             if(layer instanceof L.Marker) {
@@ -33,6 +44,12 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
 
         // undbind click event, don't create a marker on click anymore
         this._map.off('click', this._createMarker, this);
+
+        // remove hint marker
+        this._hintMarker.remove();
+
+        // remove event listener to sync hint marker
+        this._map.off('mousemove', this._syncHintMarker, this);
 
         // disable dragging and removing for all markers
         this._map.eachLayer((layer) => {
@@ -55,12 +72,18 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         }
     },
     _createMarker(e) {
-        // save coords of click
-        const latlng = e.latlng;
-
-        if(!latlng) {
+        if(!e.latlng) {
             return;
         }
+
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if(!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
+
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
 
         // create marker
         const marker = new L.Marker(latlng, {
@@ -79,5 +102,18 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
             marker,                     // DEPRECATED
             layer: marker,
         });
+
+        this._cleanupSnapping();
+    },
+    _syncHintMarker(e) {
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
+
+        // if snapping is enabled, do it
+        if(this.options.snappable) {
+            const fakeDragEvent = e;
+            fakeDragEvent.target = this._hintMarker;
+            this._handleSnapping(fakeDragEvent);
+        }
     },
 });
