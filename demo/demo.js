@@ -1,11 +1,11 @@
 const map2 = L.map('example2').setView([51.505, -0.09], 13);
 
 map2.on('pm:create', (e) => {
-    alert('pm:create event fired. See console for details');
+    // alert('pm:create event fired. See console for details');
     console.log(e);
 });
 
-const m1 = L.circleMarker([51.50313, -0.091223], {radius: 100});
+const m1 = L.circleMarker([51.50313, -0.091223], { radius: 100 });
 const m2 = L.marker([51.50614, -0.0989]);
 const m3 = L.marker([51.50915, -0.096112]);
 
@@ -121,7 +121,7 @@ const geoJsonData = {
         },
     ],
 };
-const geoJsonButton = document.getElementById('test-geojson');
+// const geoJsonButton = document.getElementById('test-geojson');
 const geoJsonLayer = L.geoJson().addTo(map3);
 geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.addTo(map2);
@@ -142,9 +142,9 @@ geoJsonLayer.on('pm:edit', (e) => {
 geoJsonLayer.on('pm:dragstart', (e) => {
     console.log(e);
 });
-geoJsonLayer.on('pm:drag', (e) => {
-    // console.log(e);
-});
+// geoJsonLayer.on('pm:drag', (e) => {
+//     console.log(e);
+// });
 geoJsonLayer.on('pm:dragend', (e) => {
     console.log(e);
 });
