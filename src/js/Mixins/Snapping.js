@@ -51,7 +51,7 @@ const SnapMixin = {
         // get the closest layer, it's closest latlng, segment and the distance
         const closestLayer = this._calcClosestLayer(marker.getLatLng(), this._snapList);
 
-        const isMarker = closestLayer.layer instanceof L.Marker;
+        const isMarker = closestLayer.layer instanceof L.Marker || closestLayer.layer instanceof L.CircleMarker;
 
         // find the final latlng that we want to snap to
         let snapLatLng;
@@ -152,7 +152,7 @@ const SnapMixin = {
         // find all layers that are or inherit from Polylines... and markers that are not
         // temporary markers of polygon-edits
         map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.CircleMarker) {
                 layers.push(layer);
 
                 // this is for debugging
@@ -212,7 +212,7 @@ const SnapMixin = {
         // is this a polyline, marker or polygon?
         const isPolygon = layer instanceof L.Polygon;
         const isPolyline = !(layer instanceof L.Polygon) && layer instanceof L.Polyline;
-        const isMarker = layer instanceof L.Marker;
+        const isMarker = layer instanceof L.Marker || layer instanceof L.CircleMarker;
 
         // the point P which we want to snap (probpably the marker that is dragged)
         const P = latlng;
