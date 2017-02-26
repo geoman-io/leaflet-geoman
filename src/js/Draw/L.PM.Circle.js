@@ -23,13 +23,11 @@ L.PM.Draw.Circle = L.PM.Draw.extend({
         this._layer._pmTempLayer = true;
         this._layerGroup.addLayer(this._layer);
 
-        // mark the circle layer as "not placed yet", it's because leaflet requires
-        // us to provide coords but we have assigned 0, 0 as the circle is not placed yet
-        this._layer._placed = false;
-
         // this is the marker in the center of the circle
         this._centerMarker = L.marker([0, 0], {
-            icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+            icon: L.divIcon({ className: 'marker-icon' }),
+            draggable: true,
+            zIndexOffset: 100,
         });
         this._centerMarker._pmTempLayer = true;
         this._layerGroup.addLayer(this._centerMarker);
@@ -66,7 +64,35 @@ L.PM.Draw.Circle = L.PM.Draw.extend({
         this._otherSnapLayers = [];
     },
     disable() {
+        // disable drawing mode
 
+        // cancel, if drawing mode isn't event enabled
+        if(!this._enabled) {
+            return;
+        }
+
+        this._enabled = false;
+
+        // reset cursor
+        this._map._container.style.cursor = 'default';
+
+        // unbind listeners
+        this._map.off('click', this._finishShape, this);
+        this._map.off('click', this._placeCenterMarker, this);
+        this._map.off('mousemove', this._syncHintMarker, this);
+
+        // remove helping layers
+        this._map.removeLayer(this._layerGroup);
+
+        // fire drawend event
+        this._map.fire('pm:drawend', { shape: this._shape });
+
+        // TODO: toolbar stuff?
+
+        // cleanup snapping
+        if(this.options.snappable) {
+            this._cleanupSnapping();
+        }
     },
     enabled() {
         return this._enabled;
@@ -116,6 +142,7 @@ L.PM.Draw.Circle = L.PM.Draw.extend({
         this._centerMarker.setLatLng(latlng);
 
         this._map.off('click', this._placeCenterMarker, this);
+        this._map.on('click', this._finishShape, this);
 
         this._placeCircleCenter();
     },
@@ -131,7 +158,14 @@ L.PM.Draw.Circle = L.PM.Draw.extend({
         }
     },
     _finishShape() {
+        const center = this._centerMarker.getLatLng();
+        const cursor = this._hintMarker.getLatLng();
 
+        const radius = center.distanceTo(cursor);
+
+        const circleLayer = L.circle(center, { radius }).addTo(this._map);
+
+        this.disable();
     },
     _createMarker(latlng) {
         // create the new marker

@@ -23,5 +23,5 @@
 .cursor-marker {
     cursor: crosshair;
     pointer-events: none;
-    /*display: none;*/
+    display: none;
 }
