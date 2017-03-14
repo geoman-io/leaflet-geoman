@@ -7,6 +7,7 @@ L.PM.Toolbar = L.Class.extend({
         drawMarker: true,
         drawPolygon: true,
         drawPolyline: true,
+        drawCircle: true,
         editPolygon: true,
         dragPolygon: false,
         deleteLayer: true,
@@ -43,6 +44,8 @@ L.PM.Toolbar = L.Class.extend({
         // other active mode (like removal tool) is already active.
         // we can't have two active modes because of possible event conflicts
         // so, we trigger a click on all currently active (toggled) buttons
+
+        console.log(this.buttons);
         for (const name in this.buttons) {
             if(this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
                 this.buttons[name]._triggerClick();
@@ -122,6 +125,21 @@ L.PM.Toolbar = L.Class.extend({
             position: this.options.position,
         };
 
+        const drawCircleButton = {
+            className: 'icon-circle',
+            onClick: () => {
+
+            },
+            afterClick: () => {
+                // toggle drawing mode
+                this.map.pm.Draw.Circle.toggle();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
+        };
+
         const editButton = {
             className: 'icon-edit',
             onClick: () => {
@@ -154,6 +172,7 @@ L.PM.Toolbar = L.Class.extend({
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
+        this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         this._addButton('editPolygon', new L.Control.PMButton(editButton));
         this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
         this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
