@@ -57,7 +57,7 @@ L.PM.Draw.Circle = L.PM.Draw.extend({
         this._map.fire('pm:drawstart', { shape: this._shape });
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-        // this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
         // an array used in the snapping mixin.
         // TODO: think about moving this somewhere else?
@@ -87,7 +87,8 @@ L.PM.Draw.Circle = L.PM.Draw.extend({
         // fire drawend event
         this._map.fire('pm:drawend', { shape: this._shape });
 
-        // TODO: toolbar stuff?
+        // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
+        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
         // cleanup snapping
         if(this.options.snappable) {
