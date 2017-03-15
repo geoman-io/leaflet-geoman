@@ -45,7 +45,6 @@ L.PM.Toolbar = L.Class.extend({
         // we can't have two active modes because of possible event conflicts
         // so, we trigger a click on all currently active (toggled) buttons
 
-        console.log(this.buttons);
         for (const name in this.buttons) {
             if(this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
                 this.buttons[name]._triggerClick();
