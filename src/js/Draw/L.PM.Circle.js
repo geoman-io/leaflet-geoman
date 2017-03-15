@@ -39,6 +39,11 @@ L.PM.Draw.Circle = L.PM.Draw.extend({
         this._hintMarker._pmTempLayer = true;
         this._layerGroup.addLayer(this._hintMarker);
 
+        // show the hintmarker if the option is set
+        if(this.options.cursorMarker) {
+            L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+        }
+
         // this is the hintline from the hint marker to the center marker
         this._hintline = L.polyline([], this.options.hintlineStyle);
         this._hintline._pmTempLayer = true;

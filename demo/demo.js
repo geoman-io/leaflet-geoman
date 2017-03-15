@@ -73,7 +73,10 @@ map2.pm.enableDraw('Poly', {
     },
 });
 map2.pm.disableDraw('Poly');
-map2.pm.enableDraw('Circle');
+map2.pm.enableDraw('Circle', {
+    snappable: false,
+    cursorMarker: true,
+});
 
 // GEOSJON EXAMPLE
 

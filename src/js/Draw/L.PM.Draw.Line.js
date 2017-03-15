@@ -33,6 +33,10 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         this._hintMarker._pmTempLayer = true;
         this._layerGroup.addLayer(this._hintMarker);
 
+        // show the hintmarker if the option is set
+        if(this.options.cursorMarker) {
+            L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+        }
 
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
