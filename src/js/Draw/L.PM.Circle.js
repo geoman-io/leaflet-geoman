@@ -164,14 +164,22 @@ L.PM.Draw.Circle = L.PM.Draw.extend({
         }
     },
     _finishShape() {
+        // calc the radius
         const center = this._centerMarker.getLatLng();
         const cursor = this._hintMarker.getLatLng();
-
         const radius = center.distanceTo(cursor);
 
+        // create the final circle layer
         const circleLayer = L.circle(center, { radius }).addTo(this._map);
 
+        // disable drawing
         this.disable();
+
+        // fire the pm:create event and pass shape and layer
+        this._map.fire('pm:create', {
+            shape: this._shape,
+            layer: circleLayer,
+        });
     },
     _createMarker(latlng) {
         // create the new marker
