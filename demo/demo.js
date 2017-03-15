@@ -74,7 +74,7 @@ map2.pm.enableDraw('Poly', {
 });
 map2.pm.disableDraw('Poly');
 map2.pm.enableDraw('Circle', {
-    snappable: false,
+    snappable: true,
     cursorMarker: true,
 });
 

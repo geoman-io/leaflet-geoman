@@ -40,7 +40,7 @@ L.PM.Map = L.Class.extend({
         // find all layers that are or inherit from Polylines...
         let layers = [];
         this.map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
                 layers.push(layer);
             }
         });
