@@ -16,6 +16,7 @@ L.PM.Toolbar = L.Class.extend({
         this.map = map;
 
         this.buttons = {};
+        this.isVisible = false;
         this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
         this._defineButtons();
     },
@@ -31,6 +32,7 @@ L.PM.Toolbar = L.Class.extend({
 
         // now show the specified buttons
         this._showHideButtons();
+        this.isVisible = true;
     },
     removeControls() {
         // grab all buttons to loop through
@@ -39,6 +41,15 @@ L.PM.Toolbar = L.Class.extend({
         // remove all buttons
         for (const btn in buttons) {
             buttons[btn].remove();
+        }
+
+        this.isVisible = false;
+    },
+    toggleControls() {
+        if (this.isVisible) {
+            this.removeControls();
+        } else {
+            this.addControls();
         }
     },
     _addButton(name, button) {

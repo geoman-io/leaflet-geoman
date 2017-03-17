@@ -10,6 +10,12 @@ L.PM.Map = L.Class.extend({
     removeControls() {
         this.Toolbar.removeControls();
     },
+    toggleControls() {
+        this.Toolbar.toggleControls();
+    },
+    controlsVisible() {
+        return this.Toolbar.isVisible;
+    },
     enableDraw(shape = 'Poly', options) {
         this.Draw.enable(shape, options);
     },
