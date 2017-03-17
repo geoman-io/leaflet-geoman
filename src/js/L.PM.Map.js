@@ -31,16 +31,21 @@ L.PM.Map = L.Class.extend({
             e.target.remove();
         }
     },
-    toggleRemoval(enabled) {
-        if(enabled) {
-            this.map.eachLayer((layer) => {
-                layer.on('click', this.removeLayer);
-            });
-        } else {
+    toggleRemoval() {
+        if(this.globalRemovalEnabled()) {
+            this._globalRemovalMode = false;
             this.map.eachLayer((layer) => {
                 layer.off('click', this.removeLayer);
             });
+        } else {
+            this._globalRemovalMode = true;
+            this.map.eachLayer((layer) => {
+                layer.on('click', this.removeLayer);
+            });
         }
+    },
+    globalRemovalEnabled() {
+        return this._globalRemovalMode;
     },
     globalEditEnabled() {
         return this._globalEditMode;

@@ -91,7 +91,7 @@ L.PM.Toolbar = L.Class.extend({
 
             },
             afterClick: () => {
-                this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
+                this.map.pm.toggleRemoval();
             },
             doToggle: true,
             toggleStatus: false,
