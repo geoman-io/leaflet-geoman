@@ -34,10 +34,6 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
         this._layer.on('remove', (e) => {
             this.disable(e.target);
         });
-
-        // if(this.options.draggable) {
-        //     this._initDraggableLayer();
-        // }
     },
     disable(layer = this._layer) {
         // if it's not enabled, it doesn't need to be disabled
@@ -78,7 +74,7 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
         const center = this._layer.getLatLng();
         const radius = this._layer._radius;
 
-        const outer = this._getPointOnCircle(center, radius);
+        const outer = this._getLatLngOnCircle(center, radius);
 
         this._centerMarker = this._createCenterMarker(center);
         this._outerMarker = this._createOuterMarker(outer);
@@ -88,7 +84,7 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
         //     this._initSnappableMarkers();
         // }
     },
-    _getPointOnCircle(center, radius) {
+    _getLatLngOnCircle(center, radius) {
         const pointA = this._map.project(center);
         const pointB = L.point(pointA.x + radius, pointA.y);
 
@@ -97,6 +93,16 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
     _resizeCircle() {
         this._syncHintLine();
         this._syncCircleRadius();
+    },
+    _moveCircle(e) {
+        const center = e.latlng;
+        this._layer.setLatLng(center);
+
+        const radius = this._layer._radius;
+
+        const outer = this._getLatLngOnCircle(center, radius);
+        this._outerMarker.setLatLng(outer);
+        this._syncHintLine();
     },
     _syncCircleRadius() {
         const A = this._centerMarker.getLatLng();
@@ -124,7 +130,7 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
         const marker = this._createMarker(latlng);
 
         // marker.on('dragstart', this._onMarkerDragStart, this);
-        // marker.on('move', this._onMarkerDrag, this);
+        marker.on('move', this._moveCircle, this);
         // marker.on('dragend', this._onMarkerDragEnd, this);
         // marker.on('contextmenu', this._removeMarker, this);
 
