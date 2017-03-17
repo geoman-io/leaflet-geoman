@@ -78,11 +78,12 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
 
         this._centerMarker = this._createCenterMarker(center);
         this._outerMarker = this._createOuterMarker(outer);
+        this._markers = [this._centerMarker, this._outerMarker];
         this._createHintLine(this._centerMarker, this._outerMarker);
 
-        // if(this.options.snappable) {
-        //     this._initSnappableMarkers();
-        // }
+        if(this.options.snappable) {
+            this._initSnappableMarkers();
+        }
     },
     _getLatLngOnCircle(center, radius) {
         const pointA = this._map.project(center);
