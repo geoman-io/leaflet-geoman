@@ -7,6 +7,15 @@ L.PM.Map = L.Class.extend({
     addControls(options) {
         this.Toolbar.addControls(options);
     },
+    removeControls() {
+        this.Toolbar.removeControls();
+    },
+    toggleControls() {
+        this.Toolbar.toggleControls();
+    },
+    controlsVisible() {
+        return this.Toolbar.isVisible;
+    },
     enableDraw(shape = 'Poly', options) {
         this.Draw.enable(shape, options);
     },

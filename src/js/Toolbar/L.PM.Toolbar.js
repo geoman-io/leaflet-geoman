@@ -16,6 +16,7 @@ L.PM.Toolbar = L.Class.extend({
         this.map = map;
 
         this.buttons = {};
+        this.isVisible = false;
         this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
         this._defineButtons();
     },
@@ -31,6 +32,25 @@ L.PM.Toolbar = L.Class.extend({
 
         // now show the specified buttons
         this._showHideButtons();
+        this.isVisible = true;
+    },
+    removeControls() {
+        // grab all buttons to loop through
+        const buttons = this.getButtons();
+
+        // remove all buttons
+        for (const btn in buttons) {
+            buttons[btn].remove();
+        }
+
+        this.isVisible = false;
+    },
+    toggleControls() {
+        if (this.isVisible) {
+            this.removeControls();
+        } else {
+            this.addControls();
+        }
     },
     _addButton(name, button) {
         this.buttons[name] = button;
@@ -160,15 +180,11 @@ L.PM.Toolbar = L.Class.extend({
     },
 
     _showHideButtons() {
-        // loop through all buttons
-        const buttons = this.getButtons();
-
         // remove all buttons, that's because the Toolbar can be added again with
         // different options so it's basically a reset and add again
-        for (const btn in buttons) {
-            buttons[btn].remove();
-        }
+        this.removeControls();
 
+        const buttons = this.getButtons();
         for (const btn in buttons) {
             if(this.options[btn]) {
                 // if options say the button should be visible, add it to the map
