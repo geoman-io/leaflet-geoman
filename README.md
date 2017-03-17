@@ -88,12 +88,16 @@ var options = {
         color: 'red',
         dashArray: [5, 5],
     },
+
+    // show a marker at the cursor
+    cursorMarker: false,
 };
 
 // enable drawing mode for shape - e.g. Poly or Line
 map.pm.enableDraw('Poly', options);
 map.pm.enableDraw('Line', options);
 map.pm.enableDraw('Marker', options);
+map.pm.enableDraw('Circle', options);
 
 // get array of all available shapes (currently Poly and Line)
 map.pm.Draw.getShapes()

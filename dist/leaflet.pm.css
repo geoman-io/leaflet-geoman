@@ -28,6 +28,11 @@
   background-size: 80%;
 }
 
+.leaflet-pm-toolbar .icon-circle {
+  background-image: url("assets/icons/circle.png");
+  background-size: 90%;
+}
+
 .leaflet-pm-toolbar .icon-drag {
   /*background-image: url('assets/icons/drag.png');*/
 }
@@ -87,4 +92,8 @@
   cursor: crosshair;
   pointer-events: none;
   display: none;
+}
+
+.cursor-marker.visible {
+  display: block !important;
 }
