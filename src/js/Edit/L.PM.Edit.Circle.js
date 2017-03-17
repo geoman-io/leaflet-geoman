@@ -28,7 +28,7 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
         this._enabled = true;
 
         // // init markers
-        // this._initMarkers();
+        this._initMarkers();
 
         // if polygon gets removed from map, disable edit mode
         this._layer.on('remove', (e) => {
@@ -50,7 +50,7 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
             return false;
         }
         layer.pm._enabled = false;
-        layer.pm._markerGroup.clearLayers();
+        layer.pm._layerGroup.clearLayers();
 
         // clean up draggable
         layer.off('mousedown');
@@ -61,5 +61,96 @@ L.PM.Edit.Circle = L.PM.Edit.extend({
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
         return true;
+    },
+    _initMarkers() {
+        const map = this._map;
+
+        // cleanup old ones first
+        if(this._layerGroup) {
+            this._layerGroup.clearLayers();
+        }
+
+        // add markerGroup to map, markerGroup includes regular and middle markers
+        this._layerGroup = new L.LayerGroup();
+        map.addLayer(this._layerGroup);
+
+        // create marker for each coordinate
+        const center = this._layer.getLatLng();
+        const radius = this._layer._radius;
+
+        const outer = this._getPointOnCircle(center, radius);
+
+        this._centerMarker = this._createCenterMarker(center);
+        this._outerMarker = this._createOuterMarker(outer);
+        this._createHintLine(this._centerMarker, this._outerMarker);
+
+        // if(this.options.snappable) {
+        //     this._initSnappableMarkers();
+        // }
+    },
+    _getPointOnCircle(center, radius) {
+        const pointA = this._map.project(center);
+        const pointB = L.point(pointA.x + radius, pointA.y);
+
+        return this._map.unproject(pointB);
+    },
+    _resizeCircle() {
+        this._syncHintLine();
+        this._syncCircleRadius();
+    },
+    _syncCircleRadius() {
+        const A = this._centerMarker.getLatLng();
+        const B = this._outerMarker.getLatLng();
+
+        const distance = A.distanceTo(B);
+
+        this._layer.setRadius(distance);
+    },
+    _syncHintLine() {
+        const A = this._centerMarker.getLatLng();
+        const B = this._outerMarker.getLatLng();
+
+        // set coords for hintline from marker to last vertex of drawin polyline
+        this._hintline.setLatLngs([A, B]);
+    },
+    _createHintLine(markerA, markerB) {
+        const A = markerA.getLatLng();
+        const B = markerB.getLatLng();
+        this._hintline = L.polyline([A, B], this.options.hintlineStyle);
+        this._hintline._pmTempLayer = true;
+        this._layerGroup.addLayer(this._hintline);
+    },
+    _createCenterMarker(latlng) {
+        const marker = this._createMarker(latlng);
+
+        // marker.on('dragstart', this._onMarkerDragStart, this);
+        // marker.on('move', this._onMarkerDrag, this);
+        // marker.on('dragend', this._onMarkerDragEnd, this);
+        // marker.on('contextmenu', this._removeMarker, this);
+
+        return marker;
+    },
+    _createOuterMarker(latlng) {
+        const marker = this._createMarker(latlng);
+
+        // marker.on('dragstart', this._onMarkerDragStart, this);
+        marker.on('move', this._resizeCircle, this);
+        // marker.on('dragend', this._onMarkerDragEnd, this);
+        // marker.on('contextmenu', this._removeMarker, this);
+
+        return marker;
+    },
+    _createMarker(latlng) {
+        const marker = new L.Marker(latlng, {
+            draggable: true,
+            icon: L.divIcon({ className: 'marker-icon' }),
+        });
+
+        marker._origLatLng = latlng;
+        marker._pmTempLayer = true;
+
+        this._layerGroup.addLayer(marker);
+
+        return marker;
     },
 });
