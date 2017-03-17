@@ -32,6 +32,7 @@ L.PM.Map = L.Class.extend({
         }
     },
     toggleGlobalRemovalMode() {
+        // toggle global edit mode
         if(this.globalRemovalEnabled()) {
             this._globalRemovalMode = false;
             this.map.eachLayer((layer) => {
@@ -44,6 +45,7 @@ L.PM.Map = L.Class.extend({
             });
         }
 
+        // toogle the button in the toolbar
         this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
     },
     globalRemovalEnabled() {
@@ -85,6 +87,7 @@ L.PM.Map = L.Class.extend({
             });
         }
 
+        // toggle the button in the toolbar
         this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
     },
 });

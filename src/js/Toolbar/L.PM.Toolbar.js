@@ -192,8 +192,10 @@ L.PM.Toolbar = L.Class.extend({
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
+        // TODO: rename editPolygon to editMode
         this._addButton('editPolygon', new L.Control.PMButton(editButton));
         this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
+        // TODO: rename deleteLayer to removalMode
         this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
     },
 
