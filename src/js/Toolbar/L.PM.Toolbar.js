@@ -91,7 +91,7 @@ L.PM.Toolbar = L.Class.extend({
 
             },
             afterClick: () => {
-                this.map.pm.toggleRemoval();
+                this.map.pm.toggleGlobalRemovalMode();
             },
             doToggle: true,
             toggleStatus: false,

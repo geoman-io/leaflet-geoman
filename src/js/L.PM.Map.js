@@ -31,7 +31,7 @@ L.PM.Map = L.Class.extend({
             e.target.remove();
         }
     },
-    toggleRemoval() {
+    toggleGlobalRemovalMode() {
         if(this.globalRemovalEnabled()) {
             this._globalRemovalMode = false;
             this.map.eachLayer((layer) => {
@@ -43,6 +43,8 @@ L.PM.Map = L.Class.extend({
                 layer.on('click', this.removeLayer);
             });
         }
+
+        this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
     },
     globalRemovalEnabled() {
         return this._globalRemovalMode;
@@ -50,7 +52,7 @@ L.PM.Map = L.Class.extend({
     globalEditEnabled() {
         return this._globalEditMode;
     },
-    toggleGlobalEditMode(options) {
+    toggleGlobalEditMode(options = { snappable: true, draggable: true }) {
         // find all layers that are or inherit from Polylines...
         let layers = [];
         this.map.eachLayer((layer) => {
@@ -82,5 +84,7 @@ L.PM.Map = L.Class.extend({
                 layer.pm.enable(options);
             });
         }
+
+        this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
     },
 });
