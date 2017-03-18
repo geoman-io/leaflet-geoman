@@ -135,17 +135,14 @@ geoJsonLayer.pm.toggleEdit({
 const bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);
 
-const valveicon = L.icon({
-    iconUrl: '../img/valve.png',
-    shadowUrl: 'leaf-shadow.png',
-    iconSize: [39, 48],
-    shadowSize: [50, 64],
-    iconAnchor: [22, 94],
-    shadowAnchor: [4, 62],
-    popupAnchor: [-3, -76],
-});
+
+const markerStyle = {
+    opacity: 0.5,
+    draggable: false,
+};
+
 const options = {
-    icon: valveicon,
+    markerStyle,
 };
 
 map3.pm.enableDraw('Marker', options);

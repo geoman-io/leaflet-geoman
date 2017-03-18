@@ -91,6 +91,12 @@ var options = {
 
     // show a marker at the cursor
     cursorMarker: false,
+
+    // custom marker style (only for Marker draw)
+    markerStyle: {
+        opacity: 0.5,
+        draggable: true,
+    }
 };
 
 // enable drawing mode for shape - e.g. Poly or Line
