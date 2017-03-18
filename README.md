@@ -175,8 +175,17 @@ polygonLayer.on('pm:markerdragend', function(e) {//...});
 polygonLayer.on('pm:snap', function(e) {//...});
 polygonLayer.on('pm:unsnap', function(e) {//...});
 
+// toggle global edit mode (edit mode for all layers on the map)
+map.pm.toggleGlobalEditMode();
+
 ```
 
+##### Removal Mode
+
+```
+// toggle global removal mode
+map.pm.toggleGlobalRemovalMode();
+```
 
 ### Customize Style
 
