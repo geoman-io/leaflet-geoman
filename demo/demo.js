@@ -134,6 +134,20 @@ geoJsonLayer.pm.toggleEdit({
 });
 const bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);
+
+
+const markerStyle = {
+    opacity: 0.5,
+    draggable: false,
+};
+
+const options = {
+    markerStyle,
+};
+
+map3.pm.enableDraw('Marker', options);
+
+
 geoJsonLayer.addEventListener('click', () => {
     geoJsonLayer.pm.toggleEdit();
 });

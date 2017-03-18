@@ -86,9 +86,7 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         const latlng = this._hintMarker.getLatLng();
 
         // create marker
-        const marker = new L.Marker(latlng, {
-            draggable: true,
-        });
+        const marker = new L.Marker(latlng, this.options.markerStyle);
 
         // add marker to the map
         marker.addTo(this._map);

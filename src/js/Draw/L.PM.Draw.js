@@ -10,6 +10,9 @@ L.PM.Draw = L.Class.extend({
             color: 'red',
             dashArray: [5, 5],
         },
+        markerStyle: {
+            draggable: true,
+        },
     },
     initialize(map) {
         // save the map
