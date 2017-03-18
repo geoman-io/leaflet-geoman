@@ -3,6 +3,7 @@ L.PM.Draw = L.Class.extend({
     options: {
         snappable: true,
         snapDistance: 20,
+        finishOnDoubleClick: false,
         templineStyle: {
             color: 'red',
         },

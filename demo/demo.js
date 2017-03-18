@@ -71,6 +71,7 @@ map2.pm.enableDraw('Poly', {
         fillColor: 'orange',
         fillOpacity: 0.7,
     },
+    finishOnDoubleClick: true,
 });
 map2.pm.disableDraw('Poly');
 map2.pm.enableDraw('Circle', {

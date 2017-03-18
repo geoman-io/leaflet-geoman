@@ -44,6 +44,11 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         // create a polygon-point on click
         this._map.on('click', this._createVertex, this);
 
+        // finish on double click
+        if(this.options.finishOnDoubleClick) {
+            this._map.on('dblclick', this._finishShape, this);
+        }
+
         // sync hint marker with mouse cursor
         this._map.on('mousemove', this._syncHintMarker, this);
 
@@ -76,6 +81,7 @@ L.PM.Draw.Line = L.PM.Draw.extend({
         // unbind listeners
         this._map.off('click', this._createVertex, this);
         this._map.off('mousemove', this._syncHintMarker, this);
+        this._map.off('dblclick', this._finishShape, this);
 
         // remove layer
         this._map.removeLayer(this._layerGroup);

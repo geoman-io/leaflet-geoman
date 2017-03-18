@@ -92,6 +92,9 @@ var options = {
     // show a marker at the cursor
     cursorMarker: false,
 
+    // finish drawing on double click
+    finishOnDoubleClick: false,
+
     // custom marker style (only for Marker draw)
     markerStyle: {
         opacity: 0.5,
