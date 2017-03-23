@@ -17,6 +17,11 @@ L.PM.Edit.Line = L.PM.Edit.extend({
 
         this._map = this._layer._map;
 
+        // cancel when map isn't available, this happens when the polygon is removed before this fires
+        if(!this._map) {
+            return;
+        }
+
         if(!this.enabled()) {
             // if it was already enabled, disable first
             // we don't block enabling again because new options might be passed
