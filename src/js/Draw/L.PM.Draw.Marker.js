@@ -50,13 +50,16 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
 
         // remove event listener to sync hint marker
         this._map.off('mousemove', this._syncHintMarker, this);
-
+        
         // disable dragging and removing for all markers
         this._map.eachLayer((layer) => {
             if(layer instanceof L.Marker && !layer._pmTempLayer) {
                 layer.pm.disable();
             }
         });
+        
+        // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
+        this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
         // change enabled state
         this._enabled = false;
