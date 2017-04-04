@@ -93,6 +93,8 @@ var options = {
     cursorMarker: false,
 
     // finish drawing on double click
+    // this works, but if you enable it, there is a problem that's not fixed yet:
+    // https://github.com/codeofsumit/leaflet.pm/issues/147
     finishOnDoubleClick: false,
 
     // custom marker style (only for Marker draw)
