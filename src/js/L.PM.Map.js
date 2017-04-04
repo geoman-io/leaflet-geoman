@@ -7,6 +7,15 @@ L.PM.Map = L.Class.extend({
     addControls(options) {
         this.Toolbar.addControls(options);
     },
+    removeControls() {
+        this.Toolbar.removeControls();
+    },
+    toggleControls() {
+        this.Toolbar.toggleControls();
+    },
+    controlsVisible() {
+        return this.Toolbar.isVisible;
+    },
     enableDraw(shape = 'Poly', options) {
         this.Draw.enable(shape, options);
     },
@@ -22,25 +31,34 @@ L.PM.Map = L.Class.extend({
             e.target.remove();
         }
     },
-    toggleRemoval(enabled) {
-        if(enabled) {
-            this.map.eachLayer((layer) => {
-                layer.on('click', this.removeLayer);
-            });
-        } else {
+    toggleGlobalRemovalMode() {
+        // toggle global edit mode
+        if(this.globalRemovalEnabled()) {
+            this._globalRemovalMode = false;
             this.map.eachLayer((layer) => {
                 layer.off('click', this.removeLayer);
             });
+        } else {
+            this._globalRemovalMode = true;
+            this.map.eachLayer((layer) => {
+                layer.on('click', this.removeLayer);
+            });
         }
+
+        // toogle the button in the toolbar
+        this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+    },
+    globalRemovalEnabled() {
+        return this._globalRemovalMode;
     },
     globalEditEnabled() {
         return this._globalEditMode;
     },
-    toggleGlobalEditMode(options) {
+    toggleGlobalEditMode(options = { snappable: true, draggable: true }) {
         // find all layers that are or inherit from Polylines...
         let layers = [];
         this.map.eachLayer((layer) => {
-            if(layer instanceof L.Polyline || layer instanceof L.Marker) {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
                 layers.push(layer);
             }
         });
@@ -68,5 +86,8 @@ L.PM.Map = L.Class.extend({
                 layer.pm.enable(options);
             });
         }
+
+        // toggle the button in the toolbar
+        this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
     },
 });

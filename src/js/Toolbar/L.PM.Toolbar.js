@@ -7,6 +7,7 @@ L.PM.Toolbar = L.Class.extend({
         drawMarker: true,
         drawPolygon: true,
         drawPolyline: true,
+        drawCircle: true,
         editPolygon: true,
         dragPolygon: false,
         deleteLayer: true,
@@ -16,6 +17,7 @@ L.PM.Toolbar = L.Class.extend({
         this.map = map;
 
         this.buttons = {};
+        this.isVisible = false;
         this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
         this._defineButtons();
     },
@@ -31,6 +33,25 @@ L.PM.Toolbar = L.Class.extend({
 
         // now show the specified buttons
         this._showHideButtons();
+        this.isVisible = true;
+    },
+    removeControls() {
+        // grab all buttons to loop through
+        const buttons = this.getButtons();
+
+        // remove all buttons
+        for (const btn in buttons) {
+            buttons[btn].remove();
+        }
+
+        this.isVisible = false;
+    },
+    toggleControls() {
+        if (this.isVisible) {
+            this.removeControls();
+        } else {
+            this.addControls();
+        }
     },
     _addButton(name, button) {
         this.buttons[name] = button;
@@ -43,6 +64,7 @@ L.PM.Toolbar = L.Class.extend({
         // other active mode (like removal tool) is already active.
         // we can't have two active modes because of possible event conflicts
         // so, we trigger a click on all currently active (toggled) buttons
+
         for (const name in this.buttons) {
             if(this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
                 this.buttons[name]._triggerClick();
@@ -69,7 +91,7 @@ L.PM.Toolbar = L.Class.extend({
 
             },
             afterClick: () => {
-                this.map.pm.toggleRemoval(this.buttons.deleteLayer.toggled());
+                this.map.pm.toggleGlobalRemovalMode();
             },
             doToggle: true,
             toggleStatus: false,
@@ -122,6 +144,21 @@ L.PM.Toolbar = L.Class.extend({
             position: this.options.position,
         };
 
+        const drawCircleButton = {
+            className: 'icon-circle',
+            onClick: () => {
+
+            },
+            afterClick: () => {
+                // toggle drawing mode
+                this.map.pm.Draw.Circle.toggle();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
+        };
+
         const editButton = {
             className: 'icon-edit',
             onClick: () => {
@@ -154,21 +191,20 @@ L.PM.Toolbar = L.Class.extend({
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
+        this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
+        // TODO: rename editPolygon to editMode
         this._addButton('editPolygon', new L.Control.PMButton(editButton));
         this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
+        // TODO: rename deleteLayer to removalMode
         this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
     },
 
     _showHideButtons() {
-        // loop through all buttons
-        const buttons = this.getButtons();
-
         // remove all buttons, that's because the Toolbar can be added again with
         // different options so it's basically a reset and add again
-        for (const btn in buttons) {
-            buttons[btn].remove();
-        }
+        this.removeControls();
 
+        const buttons = this.getButtons();
         for (const btn in buttons) {
             if(this.options[btn]) {
                 // if options say the button should be visible, add it to the map

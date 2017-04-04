@@ -3,6 +3,7 @@ L.PM.Draw = L.Class.extend({
     options: {
         snappable: true,
         snapDistance: 20,
+        finishOnDoubleClick: false,
         templineStyle: {
             color: 'red',
         },
@@ -10,13 +11,16 @@ L.PM.Draw = L.Class.extend({
             color: 'red',
             dashArray: [5, 5],
         },
+        markerStyle: {
+            draggable: true,
+        },
     },
     initialize(map) {
         // save the map
         this._map = map;
 
         // define all possible shapes that can be drawn
-        this.shapes = ['Poly', 'Line', 'Marker'];
+        this.shapes = ['Poly', 'Line', 'Marker', 'Circle'];
 
         // initiate drawing class for our shapes
         this.shapes.forEach((shape) => {

@@ -6,13 +6,13 @@ Draw, Edit, Drag, and Snap Features.
 
 In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time, this plugin only supported polygons. Now you can edit Markers, Polylines, Polygons, LayerGroups, GeoJSON and more are coming.
 
+## [Demo (click here)](http://leaflet.pm.kaumgeschlafen.com/)
+
 ![snap at drag](https://cloud.githubusercontent.com/assets/2399810/22544799/8f4478b0-e936-11e6-9cb0-907394c5e51f.gif)
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
 As we are always using the latest leaflet version in a big production app, I will (have to) keep this plugin constantly developed.
-
-## [Demo](http://leaflet.pm.kaumgeschlafen.com/)
 
 ### Getting Started
 
@@ -28,10 +28,10 @@ Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/rel
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.14.0/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.15.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.14.0/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.15.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
@@ -88,12 +88,27 @@ var options = {
         color: 'red',
         dashArray: [5, 5],
     },
+
+    // show a marker at the cursor
+    cursorMarker: false,
+
+    // finish drawing on double click
+    // this works, but if you enable it, there is a problem that's not fixed yet:
+    // https://github.com/codeofsumit/leaflet.pm/issues/147
+    finishOnDoubleClick: false,
+
+    // custom marker style (only for Marker draw)
+    markerStyle: {
+        opacity: 0.5,
+        draggable: true,
+    }
 };
 
 // enable drawing mode for shape - e.g. Poly or Line
 map.pm.enableDraw('Poly', options);
 map.pm.enableDraw('Line', options);
 map.pm.enableDraw('Marker', options);
+map.pm.enableDraw('Circle', options);
 
 // get array of all available shapes (currently Poly and Line)
 map.pm.Draw.getShapes()
@@ -165,8 +180,17 @@ polygonLayer.on('pm:markerdragend', function(e) {//...});
 polygonLayer.on('pm:snap', function(e) {//...});
 polygonLayer.on('pm:unsnap', function(e) {//...});
 
+// toggle global edit mode (edit mode for all layers on the map)
+map.pm.toggleGlobalEditMode();
+
 ```
 
+##### Removal Mode
+
+```
+// toggle global removal mode
+map.pm.toggleGlobalRemovalMode();
+```
 
 ### Customize Style
 

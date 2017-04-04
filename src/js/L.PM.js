@@ -38,6 +38,13 @@ L.PM = L.PM || {
         L.Polyline.addInitHook(initPolyline);
 
 
+        function initCircle() {
+            this.pm = new L.PM.Edit.Circle(this);
+        }
+
+        L.Circle.addInitHook(initCircle);
+
+
         function initMap() {
             this.pm = new L.PM.Map(this);
         }

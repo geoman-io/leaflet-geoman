@@ -1,11 +1,11 @@
 const map2 = L.map('example2').setView([51.505, -0.09], 13);
 
 map2.on('pm:create', (e) => {
-    alert('pm:create event fired. See console for details');
+    // alert('pm:create event fired. See console for details');
     console.log(e);
 });
 
-const m1 = L.marker([51.50313, -0.091223]);
+const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
 const m2 = L.marker([51.50614, -0.0989]);
 const m3 = L.marker([51.50915, -0.096112]);
 
@@ -71,9 +71,13 @@ map2.pm.enableDraw('Poly', {
         fillColor: 'orange',
         fillOpacity: 0.7,
     },
+    finishOnDoubleClick: true,
 });
 map2.pm.disableDraw('Poly');
-map2.pm.enableDraw('Poly');
+map2.pm.enableDraw('Circle', {
+    snappable: true,
+    cursorMarker: true,
+});
 
 // GEOSJON EXAMPLE
 
@@ -121,7 +125,7 @@ const geoJsonData = {
         },
     ],
 };
-const geoJsonButton = document.getElementById('test-geojson');
+// const geoJsonButton = document.getElementById('test-geojson');
 const geoJsonLayer = L.geoJson().addTo(map3);
 geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.addTo(map2);
@@ -131,6 +135,20 @@ geoJsonLayer.pm.toggleEdit({
 });
 const bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);
+
+
+const markerStyle = {
+    opacity: 0.5,
+    draggable: false,
+};
+
+const options = {
+    markerStyle,
+};
+
+map3.pm.enableDraw('Marker', options);
+
+
 geoJsonLayer.addEventListener('click', () => {
     geoJsonLayer.pm.toggleEdit();
 });
@@ -142,9 +160,9 @@ geoJsonLayer.on('pm:edit', (e) => {
 geoJsonLayer.on('pm:dragstart', (e) => {
     console.log(e);
 });
-geoJsonLayer.on('pm:drag', (e) => {
-    // console.log(e);
-});
+// geoJsonLayer.on('pm:drag', (e) => {
+//     console.log(e);
+// });
 geoJsonLayer.on('pm:dragend', (e) => {
     console.log(e);
 });
