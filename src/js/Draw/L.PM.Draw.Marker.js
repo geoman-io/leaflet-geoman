@@ -19,7 +19,7 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
         // this is the hintmarker on the mouse cursor
-        this._hintMarker = L.marker([0, 0]);
+        this._hintMarker = L.marker([0, 0], this.options.markerStyle);
         this._hintMarker._pmTempLayer = true;
         this._hintMarker.addTo(this._map);
 
@@ -50,14 +50,14 @@ L.PM.Draw.Marker = L.PM.Draw.extend({
 
         // remove event listener to sync hint marker
         this._map.off('mousemove', this._syncHintMarker, this);
-        
+
         // disable dragging and removing for all markers
         this._map.eachLayer((layer) => {
             if(layer instanceof L.Marker && !layer._pmTempLayer) {
                 layer.pm.disable();
             }
         });
-        
+
         // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
