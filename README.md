@@ -110,7 +110,7 @@ map.pm.enableDraw('Line', options);
 map.pm.enableDraw('Marker', options);
 map.pm.enableDraw('Circle', options);
 
-// get array of all available shapes (currently Poly and Line)
+// get array of all available shapes
 map.pm.Draw.getShapes()
 
 // listen to when drawing mode gets enabled
