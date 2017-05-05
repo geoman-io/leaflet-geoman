@@ -86,7 +86,7 @@ L.PM.Toolbar = L.Class.extend({
     _defineButtons() {
         // some buttons are still in their respective classes, like L.PM.Draw.Poly
         const deleteButton = {
-            className: 'icon-delete',
+            className: ' leaflet-pm-icon-delete',
             onClick: () => {
 
             },
@@ -100,7 +100,7 @@ L.PM.Toolbar = L.Class.extend({
         };
 
         const drawPolyButton = {
-            className: 'icon-polygon',
+            className: 'leaflet-pm-icon-polygon',
             onClick: () => {
 
             },
@@ -115,7 +115,7 @@ L.PM.Toolbar = L.Class.extend({
         };
 
         const drawMarkerButton = {
-            className: 'icon-marker',
+            className: 'leaflet-pm-icon-marker',
             onClick: () => {
 
             },
@@ -130,7 +130,7 @@ L.PM.Toolbar = L.Class.extend({
         };
 
         const drawLineButton = {
-            className: 'icon-polyline',
+            className: 'leaflet-pm-icon-polyline',
             onClick: () => {
 
             },
@@ -145,7 +145,7 @@ L.PM.Toolbar = L.Class.extend({
         };
 
         const drawCircleButton = {
-            className: 'icon-circle',
+            className: 'leaflet-pm-icon-circle',
             onClick: () => {
 
             },
@@ -160,7 +160,7 @@ L.PM.Toolbar = L.Class.extend({
         };
 
         const editButton = {
-            className: 'icon-edit',
+            className: 'leaflet-pm-icon-edit',
             onClick: () => {
             },
             afterClick: () => {
@@ -176,7 +176,7 @@ L.PM.Toolbar = L.Class.extend({
         };
 
         const dragButton = {
-            className: 'icon-drag',
+            className: 'leaflet-pm-icon-drag',
             onClick: () => {
             },
             afterClick: () => {
