@@ -24,21 +24,23 @@
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.4.0",
     "css-loader": "^0.28.0",
-    "extract-text-webpack-plugin": "^2.1.0",
-    "style-loader": "^0.16.1",
-    "url-loader": "^0.5.8",
-    "webpack": "^2.4.1",
     "eslint": "^3.5.0",
     "eslint-config-airbnb-base": "^7.1.0",
     "eslint-plugin-import": "^1.15.0",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
+    "style-loader": "^0.16.1",
     "tape": "^4.6.2",
-    "tape-run": "^2.1.4"
+    "tape-run": "^2.1.4",
+    "url-loader": "^0.5.8",
+    "webpack": "^2.4.1"
   },
   "peerDependencies": {
     "leaflet": "^1.0.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "./node_modules/.bin/webpack",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
