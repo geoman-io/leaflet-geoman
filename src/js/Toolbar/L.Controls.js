@@ -1,4 +1,4 @@
-L.Control.PMButton = L.Control.extend({
+const PMButton = L.Control.extend({
     options: {
         position: 'topleft',
     },
@@ -103,3 +103,5 @@ L.Control.PMButton = L.Control.extend({
     },
 
 });
+
+export default PMButton;

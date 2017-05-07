@@ -5,8 +5,34 @@
 * Github Repo: https://github.com/codeofsumit/leaflet.pm
 */
 
+import { version } from '../../package.json';
+
+import Map from './L.PM.Map';
+import Toolbar from './Toolbar/L.PM.Toolbar';
+
+
+import Draw from './Draw/L.PM.Draw';
+import './Draw/L.PM.Draw.Circle';
+import './Draw/L.PM.Draw.Line';
+import './Draw/L.PM.Draw.Poly';
+import './Draw/L.PM.Draw.Marker';
+
+import Edit from './Edit/L.PM.Edit';
+import './Edit/L.PM.Edit.Line';
+import './Edit/L.PM.Edit.Poly';
+import './Edit/L.PM.Edit.Circle';
+import './Edit/L.PM.Edit.Marker';
+import './Edit/L.PM.Edit.LayerGroup';
+
+import '../css/layers.css';
+import '../css/controls.css';
+
 L.PM = L.PM || {
-    version: '0.14.0',
+    Map,
+    Toolbar,
+    Draw,
+    Edit,
+    version,
     initialize() {
         this.addInitHooks();
     },

@@ -1,4 +1,6 @@
-L.PM.Edit.Line = L.PM.Edit.extend({
+import Edit from './L.PM.Edit';
+
+Edit.Line = Edit.extend({
     initialize(layer) {
         this._layer = layer;
         this._enabled = false;

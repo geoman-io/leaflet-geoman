@@ -18,28 +18,28 @@
 }
 
 .leaflet-pm-toolbar .icon-marker {
-    background-image: url('assets/icons/marker.png');
+    background-image: url('../assets/icons/marker.png');
 }
 .leaflet-pm-toolbar .icon-polygon {
-    background-image: url('assets/icons/draw.png');
+    background-image: url('../assets/icons/draw.png');
 }
 .leaflet-pm-toolbar .icon-polyline {
-    background-image: url('assets/icons/line.png');
+    background-image: url('../assets/icons/line.png');
     background-size: 80%;
 }
 .leaflet-pm-toolbar .icon-circle {
-    background-image: url('assets/icons/circle.png');
+    background-image: url('../assets/icons/circle.png');
     background-size: 90%;
 }
 .leaflet-pm-toolbar .icon-drag {
-    /*background-image: url('assets/icons/drag.png');*/
+    /*background-image: url('../assets/icons/drag.png');*/
 }
 .leaflet-pm-toolbar .icon-delete {
-    background-image: url('assets/icons/remove.png');
+    background-image: url('../assets/icons/remove.png');
     background-size: 70%;
 }
 .leaflet-pm-toolbar .icon-edit {
-    background-image: url('assets/icons/edit.png');
+    background-image: url('../assets/icons/edit.png');
     background-size: 80%;
     background-position: 4px center;
 }

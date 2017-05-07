@@ -119,3 +119,5 @@ const DragMixin = {
         this._layer.fire('pm:drag');
     },
 };
+
+export default DragMixin;
