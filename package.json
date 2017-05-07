@@ -39,8 +39,8 @@
     "leaflet": "^1.0.2"
   },
   "scripts": {
-    "build": "./node_modules/.bin/webpack",
-    "prepare": "npm run build"
+    "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
+    "prepare": "./node_modules/.bin/webpack --config=webpack.build.js"
   },
   "repository": {
     "type": "git",
