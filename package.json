@@ -40,7 +40,7 @@
   },
   "scripts": {
     "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
-    "prepare": "./node_modules/.bin/webpack --config=webpack.build.js"
+    "prepublish": "./node_modules/.bin/webpack --config=webpack.build.js"
   },
   "repository": {
     "type": "git",
