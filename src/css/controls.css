@@ -17,28 +17,28 @@
     background-position: center center;
 }
 
-.leaflet-pm-toolbar .icon-marker {
+.leaflet-pm-toolbar .leaflet-pm-icon-marker {
     background-image: url('../assets/icons/marker.png');
 }
-.leaflet-pm-toolbar .icon-polygon {
+.leaflet-pm-toolbar .leaflet-pm-icon-polygon {
     background-image: url('../assets/icons/draw.png');
 }
-.leaflet-pm-toolbar .icon-polyline {
+.leaflet-pm-toolbar .leaflet-pm-icon-polyline {
     background-image: url('../assets/icons/line.png');
     background-size: 80%;
 }
-.leaflet-pm-toolbar .icon-circle {
+.leaflet-pm-toolbar .leaflet-pm-icon-circle {
     background-image: url('../assets/icons/circle.png');
     background-size: 90%;
 }
-.leaflet-pm-toolbar .icon-drag {
+.leaflet-pm-toolbar .leaflet-pm-icon-drag {
     /*background-image: url('../assets/icons/drag.png');*/
 }
-.leaflet-pm-toolbar .icon-delete {
+.leaflet-pm-toolbar .leaflet-pm-icon-delete {
     background-image: url('../assets/icons/remove.png');
     background-size: 70%;
 }
-.leaflet-pm-toolbar .icon-edit {
+.leaflet-pm-toolbar .leaflet-pm-icon-edit {
     background-image: url('../assets/icons/edit.png');
     background-size: 80%;
     background-position: 4px center;
