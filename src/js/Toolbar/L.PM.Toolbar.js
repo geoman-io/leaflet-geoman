@@ -2,7 +2,10 @@
 * The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
 */
 
-L.PM.Toolbar = L.Class.extend({
+import PMButton from './L.Controls';
+L.Control.PMButton = PMButton;
+
+const Toolbar = L.Class.extend({
     options: {
         drawMarker: true,
         drawPolygon: true,
@@ -214,3 +217,5 @@ L.PM.Toolbar = L.Class.extend({
         }
     },
 });
+
+export default Toolbar;

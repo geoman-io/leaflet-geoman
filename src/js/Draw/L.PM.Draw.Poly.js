@@ -1,4 +1,6 @@
-L.PM.Draw.Poly = L.PM.Draw.Line.extend({
+import Draw from './L.PM.Draw';
+
+Draw.Poly = Draw.Line.extend({
 
     initialize(map) {
         this._map = map;

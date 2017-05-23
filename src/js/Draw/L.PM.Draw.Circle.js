@@ -1,4 +1,6 @@
-L.PM.Draw.Circle = L.PM.Draw.extend({
+import Draw from './L.PM.Draw';
+
+Draw.Circle = Draw.extend({
     initialize(map) {
         this._map = map;
         this._shape = 'Circle';

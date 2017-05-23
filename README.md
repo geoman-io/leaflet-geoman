@@ -19,7 +19,7 @@ As we are always using the latest leaflet version in a big production app, I wil
 #### Install via npm
 `npm install leaflet.pm --save`
 
-#### Install via Bower
+#### Install via Bower (DEPRECATED - leaflet.pm is no longer supporting bower since 0.17.0)
 `bower install leaflet.pm --save`
 
 #### Install Manually
@@ -28,10 +28,10 @@ Download the latest release [here](https://github.com/codeofsumit/leaflet.pm/rel
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.16.0/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.17.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.16.0/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.17.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  

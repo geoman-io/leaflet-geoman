@@ -304,3 +304,5 @@ const SnapMixin = {
         return map.latLngToLayerPoint(latlngA).distanceTo(map.latLngToLayerPoint(latlngB));
     },
 };
+
+export default SnapMixin;

@@ -1,4 +1,6 @@
-L.PM.Draw.Line = L.PM.Draw.extend({
+import Draw from './L.PM.Draw';
+
+Draw.Line = Draw.extend({
     initialize(map) {
         this._map = map;
         this._shape = 'Line';

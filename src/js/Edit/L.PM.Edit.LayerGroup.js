@@ -1,7 +1,9 @@
+import Edit from './L.PM.Edit';
+
 // LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Poly
 // (which inherits from L.PM.Edit) for each layer,
 // so it's not really a parent class
-L.PM.Edit.LayerGroup = L.Class.extend({
+Edit.LayerGroup = L.Class.extend({
     initialize(layerGroup) {
         this._layerGroup = layerGroup;
         this._layers = this.findLayers();

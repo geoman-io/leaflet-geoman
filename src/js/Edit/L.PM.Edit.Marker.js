@@ -1,4 +1,6 @@
-L.PM.Edit.Marker = L.PM.Edit.extend({
+import Edit from './L.PM.Edit';
+
+Edit.Marker = Edit.extend({
     initialize(layer) {
         // layer is a marker in this case :-)
         this._layer = layer;

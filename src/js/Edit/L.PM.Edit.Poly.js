@@ -1,4 +1,6 @@
-L.PM.Edit.Poly = L.PM.Edit.Line.extend({
+import Edit from './L.PM.Edit';
+
+Edit.Poly = Edit.Line.extend({
 
     _initMarkers() {
         const map = this._map;

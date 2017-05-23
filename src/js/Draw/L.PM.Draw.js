@@ -1,4 +1,6 @@
-L.PM.Draw = L.Class.extend({
+import SnapMixin from '../Mixins/Snapping';
+
+const Draw = L.Class.extend({
     includes: [SnapMixin],
     options: {
         snappable: true,
@@ -60,3 +62,5 @@ L.PM.Draw = L.Class.extend({
         });
     },
 });
+
+export default Draw;

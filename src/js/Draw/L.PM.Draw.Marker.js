@@ -1,4 +1,6 @@
-L.PM.Draw.Marker = L.PM.Draw.extend({
+import Draw from './L.PM.Draw';
+
+Draw.Marker = Draw.extend({
     initialize(map) {
         this._map = map;
         this._shape = 'Marker';

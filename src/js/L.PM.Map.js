@@ -1,4 +1,4 @@
-L.PM.Map = L.Class.extend({
+const Map = L.Class.extend({
     initialize(map) {
         this.map = map;
         this.Draw = new L.PM.Draw(map);
@@ -91,3 +91,5 @@ L.PM.Map = L.Class.extend({
         this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
     },
 });
+
+export default Map;
