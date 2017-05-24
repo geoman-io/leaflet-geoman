@@ -27,7 +27,7 @@ const Map = L.Class.extend({
     },
     removeLayer(e) {
         const layer = e.target;
-        if(!layer._layers && !layer.pm.dragging()) {
+        if(!layer._layers && (!layer.pm || !layer.pm.dragging())) {
             e.target.remove();
         }
     },
