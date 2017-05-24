@@ -37,13 +37,15 @@ Edit.Line = Edit.extend({
         this._initMarkers();
 
         // if polygon gets removed from map, disable edit mode
-        this._layer.on('remove', (e) => {
-            this.disable(e.target);
-        });
+        this._layer.on('remove', this._onLayerRemove, this);
 
         if(this.options.draggable) {
             this._initDraggableLayer();
         }
+    },
+
+    _onLayerRemove(e) {
+        this.disable(e.target);
     },
 
     enabled() {
@@ -66,6 +68,9 @@ Edit.Line = Edit.extend({
         // clean up draggable
         poly.off('mousedown');
         poly.off('mouseup');
+
+        // remove onRemove listener
+        this._layer.off('remove', this._onLayerRemove);
 
         // remove draggable class
         const el = poly._path;
