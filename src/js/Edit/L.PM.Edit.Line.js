@@ -89,6 +89,7 @@ Edit.Line = Edit.extend({
 
         // add markerGroup to map, markerGroup includes regular and middle markers
         this._markerGroup = new L.LayerGroup();
+        this._markerGroup._pmTempLayer = true;
         map.addLayer(this._markerGroup);
 
         // create marker for each coordinate
