@@ -38,41 +38,53 @@ L.PM = L.PM || {
     },
     addInitHooks() {
         function initLayerGroup() {
-            this.pm = new L.PM.Edit.LayerGroup(this);
+            if(!this.options.pmIgnore) {
+                this.pm = new L.PM.Edit.LayerGroup(this);
+            }
         }
 
         L.LayerGroup.addInitHook(initLayerGroup);
 
         function initMarker() {
-            this.pm = new L.PM.Edit.Marker(this);
+            if(!this.options.pmIgnore) {
+                this.pm = new L.PM.Edit.Marker(this);
+            }
         }
 
         L.Marker.addInitHook(initMarker);
 
 
         function initPolygon() {
-            this.pm = new L.PM.Edit.Poly(this);
+            if(!this.options.pmIgnore) {
+                this.pm = new L.PM.Edit.Poly(this);
+            }
         }
 
         L.Polygon.addInitHook(initPolygon);
 
 
         function initPolyline() {
-            this.pm = new L.PM.Edit.Line(this);
+            if(!this.options.pmIgnore) {
+                this.pm = new L.PM.Edit.Line(this);
+            }
         }
 
         L.Polyline.addInitHook(initPolyline);
 
 
         function initCircle() {
-            this.pm = new L.PM.Edit.Circle(this);
+            if(!this.options.pmIgnore) {
+                this.pm = new L.PM.Edit.Circle(this);
+            }
         }
 
         L.Circle.addInitHook(initCircle);
 
 
         function initMap() {
-            this.pm = new L.PM.Map(this);
+            if(!this.options.pmIgnore) {
+                this.pm = new L.PM.Map(this);
+            }
         }
 
         L.Map.addInitHook(initMap);
