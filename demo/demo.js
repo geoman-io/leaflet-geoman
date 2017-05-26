@@ -132,7 +132,7 @@ const geoJsonData = {
     ],
 };
 // const geoJsonButton = document.getElementById('test-geojson');
-const geoJsonLayer = L.geoJson().addTo(map3);
+const geoJsonLayer = L.geoJson(null, {pmIgnore: false}).addTo(map3);
 geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.addTo(map2);
 geoJsonLayer.pm.toggleEdit({
