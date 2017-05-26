@@ -190,6 +190,9 @@ map.pm.toggleGlobalEditMode();
 ```
 // toggle global removal mode
 map.pm.toggleGlobalRemovalMode();
+
+// listen to removal of layers that are NOT ignored and NOT helpers by leaflet.pm
+map.on('pm:remove', function(e) {//...})
 ```
 
 ### Customize Style
