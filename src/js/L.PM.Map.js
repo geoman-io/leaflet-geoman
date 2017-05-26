@@ -3,6 +3,12 @@ const Map = L.Class.extend({
         this.map = map;
         this.Draw = new L.PM.Draw(map);
         this.Toolbar = new L.PM.Toolbar(map);
+
+        this.map.on('layerremove', (e) => {
+            if(e.layer.pm && !e.layer._pmTempLayer) {
+                this.map.fire('pm:remove', e);
+            }
+        });
     },
     addControls(options) {
         this.Toolbar.addControls(options);
