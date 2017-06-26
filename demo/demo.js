@@ -1,13 +1,19 @@
+/* eslint-disable */
+
 const map2 = L.map('example2').setView([51.505, -0.09], 13);
 
 map2.on('pm:create', (e) => {
     // alert('pm:create event fired. See console for details');
     console.log(e);
 });
+map2.on('pm:remove', (e) => {
+    alert('pm:remove event fired. See console for details');
+    console.log(e);
+});
 
 const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
 const m2 = L.marker([51.50614, -0.0989]);
-const m3 = L.marker([51.50915, -0.096112]);
+const m3 = L.marker([51.50915, -0.096112], {pmIgnore: true});
 
 const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
 mGroup.pm.enable();
@@ -126,7 +132,7 @@ const geoJsonData = {
     ],
 };
 // const geoJsonButton = document.getElementById('test-geojson');
-const geoJsonLayer = L.geoJson().addTo(map3);
+const geoJsonLayer = L.geoJson(null, {pmIgnore: false}).addTo(map3);
 geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.addTo(map2);
 geoJsonLayer.pm.toggleEdit({

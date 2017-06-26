@@ -16,6 +16,7 @@ Draw.Line = Draw.extend({
 
         // create a new layergroup
         this._layerGroup = new L.LayerGroup();
+        this._layerGroup._pmTempLayer = true;
         this._layerGroup.addTo(this._map);
 
         // this is the polyLine that'll make up the polygon

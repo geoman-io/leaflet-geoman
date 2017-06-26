@@ -33,7 +33,7 @@ Draw.Marker = Draw.extend({
 
         // enable edit mode for existing markers
         this._map.eachLayer((layer) => {
-            if(layer instanceof L.Marker) {
+            if(layer instanceof L.Marker && layer.pm) {
                 layer.pm.enable();
             }
         });
@@ -55,7 +55,7 @@ Draw.Marker = Draw.extend({
 
         // disable dragging and removing for all markers
         this._map.eachLayer((layer) => {
-            if(layer instanceof L.Marker && !layer._pmTempLayer) {
+            if(layer instanceof L.Marker && layer.pm && !layer._pmTempLayer) {
                 layer.pm.disable();
             }
         });

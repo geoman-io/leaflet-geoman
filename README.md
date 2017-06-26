@@ -44,7 +44,10 @@ JS
 
 #### Init Leaflet.PM
 Just include `leaflet.pm.min.js` right after Leaflet. It initializes itself.
-
+If you want certain layers to be ignored by leaflet.pm, pass `pmIgnore: true` to their options when creating them. Example:
+```
+L.marker([51.50915, -0.096112], {pmIgnore: true}).addTo(map);
+```
 
 ##### Leaflet.PM Toolbar
 This plugin comes with an optional toolbar to give you buttons to use the various features.
@@ -190,6 +193,9 @@ map.pm.toggleGlobalEditMode();
 ```
 // toggle global removal mode
 map.pm.toggleGlobalRemovalMode();
+
+// listen to removal of layers that are NOT ignored and NOT helpers by leaflet.pm
+map.on('pm:remove', function(e) {//...})
 ```
 
 ### Customize Style
