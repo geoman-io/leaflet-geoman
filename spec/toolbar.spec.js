@@ -3,6 +3,7 @@ const test = require('tape');
 const L = require('leaflet');
 
 test('TOOLBAR', (t) => {
+    t.plan(4);
     const mapContainer = document.createElement('DIV');
     document.body.appendChild(mapContainer);
     const map = L.map(mapContainer);
@@ -19,11 +20,9 @@ test('TOOLBAR', (t) => {
     const toolbarPosRight = toolbar.parentNode.classList.contains('leaflet-right');
     t.ok((toolbarPosRight && toolbarPosBottom), 'Toolbar is correctly positioned');
 
-    const drawPolyButton = toolbar.querySelector('.icon-polygon');
+    const drawPolyButton = toolbar.querySelector('.leaflet-pm-icon-polygon');
     t.ok(document.body.contains(drawPolyButton), 'Polygon Button is added');
 
-    const deleteLayerButton = toolbar.querySelector('.icon-delete');
+    const deleteLayerButton = toolbar.querySelector('.leaflet-pm-icon-delete');
     t.notOk(document.body.contains(deleteLayerButton), 'Remove Button is not added');
-
-    t.end();
 });

@@ -40,6 +40,7 @@
   },
   "scripts": {
     "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
+    "test": "browserify ./spec/test.spec.js | tape-run",
     "prepublish": "./node_modules/.bin/webpack --config=webpack.build.js"
   },
   "repository": {

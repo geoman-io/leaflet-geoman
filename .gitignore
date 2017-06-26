@@ -4,3 +4,4 @@ npm-debug.log
 /bower_components/
 /.idea/
 /dist/
+\.source*
