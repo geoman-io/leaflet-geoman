@@ -96,6 +96,7 @@ Edit.Circle = Edit.extend({
     _resizeCircle() {
         this._syncHintLine();
         this._syncCircleRadius();
+        this._fireEdit();
     },
     _moveCircle(e) {
         const center = e.latlng;
@@ -106,6 +107,7 @@ Edit.Circle = Edit.extend({
         const outer = this._getLatLngOnCircle(center, radius);
         this._outerMarker.setLatLng(outer);
         this._syncHintLine();
+        this._fireEdit();
     },
     _syncCircleRadius() {
         const A = this._centerMarker.getLatLng();
@@ -162,4 +164,9 @@ Edit.Circle = Edit.extend({
 
         return marker;
     },
+    _fireEdit() {
+    // fire edit event
+        this._layer.fire('pm:edit');
+    },
+
 });
