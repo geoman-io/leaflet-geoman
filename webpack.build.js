@@ -6,7 +6,7 @@ const path = require('path');
 module.exports = {
     watch: false,
     devtool: 'cheap-eval-source-map',
-    entry: './src/js/L.PM.js',
+    entry: ['babel-polyfill', './src/js/L.PM.js'],
     output: {
         filename: 'leaflet.pm.min.js',
         path: path.resolve(__dirname, 'dist'),
