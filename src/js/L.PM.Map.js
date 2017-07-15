@@ -47,7 +47,9 @@ const Map = L.Class.extend({
         } else {
             this._globalRemovalMode = true;
             this.map.eachLayer((layer) => {
-                layer.on('click', this.removeLayer);
+                if(layer.pm) {
+                    layer.on('click', this.removeLayer);
+                }
             });
         }
 
