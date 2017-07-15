@@ -135,10 +135,10 @@ const geoJsonData = {
 const geoJsonLayer = L.geoJson(null, {pmIgnore: false}).addTo(map3);
 geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.addTo(map2);
-geoJsonLayer.pm.toggleEdit({
-    draggable: true,
-    snappable: true,
-});
+// geoJsonLayer.pm.toggleEdit({
+//     draggable: true,
+//     snappable: true,
+// });
 const bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);
 
