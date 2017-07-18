@@ -5,6 +5,7 @@
 * Github Repo: https://github.com/codeofsumit/leaflet.pm
 */
 
+import './polyfills.js';
 import { version } from '../../package.json';
 
 import Map from './L.PM.Map';
