@@ -2,11 +2,11 @@
 
 const map2 = L.map('example2').setView([51.505, -0.09], 13);
 
-map2.on('pm:create', (e) => {
+map2.on('pm:create', function(e) {
     // alert('pm:create event fired. See console for details');
     console.log(e);
 });
-map2.on('pm:remove', (e) => {
+map2.on('pm:remove', function(e) {
     alert('pm:remove event fired. See console for details');
     console.log(e);
 });
@@ -149,27 +149,27 @@ const markerStyle = {
 };
 
 const options = {
-    markerStyle,
+    markerStyle: markerStyle,
 };
 
 map3.pm.enableDraw('Marker', options);
 
 
-geoJsonLayer.addEventListener('click', () => {
+geoJsonLayer.addEventListener('click', function(e) {
     geoJsonLayer.pm.toggleEdit();
 });
 
-geoJsonLayer.on('pm:edit', (e) => {
+geoJsonLayer.on('pm:edit', function(e) {
     console.log(e);
 });
 
-geoJsonLayer.on('pm:dragstart', (e) => {
+geoJsonLayer.on('pm:dragstart', function(e) {
     console.log(e);
 });
-// geoJsonLayer.on('pm:drag', (e) => {
+// geoJsonLayer.on('pm:drag', function(e) {
 //     console.log(e);
 // });
-geoJsonLayer.on('pm:dragend', (e) => {
+geoJsonLayer.on('pm:dragend', function(e) {
     console.log(e);
 });
 
@@ -259,11 +259,11 @@ layerGroup.pm.toggleEdit({
     snapDistance: 30,
 });
 
-layerGroup.on('pm:snap', (e) => {
+layerGroup.on('pm:snap', function(e) {
     console.log('snap');
     console.log(e);
 });
-layerGroup.on('pm:unsnap', (e) => {
+layerGroup.on('pm:unsnap', function(e) {
     console.log('unsnap');
     console.log(e);
 });
@@ -283,19 +283,19 @@ layerGroup.addLayer(layerGroupItem3);
 // layerGroup.addLayer(layerGroupItem4);
 // layerGroup.addLayer(layerGroupItem5);
 
-layerGroup.on('pm:dragstart', (e) => {
+layerGroup.on('pm:dragstart', function(e) {
     console.log(e);
 });
-layerGroup.on('pm:drag', (e) => {
+layerGroup.on('pm:drag', function(e) {
     console.log(e);
 });
-layerGroup.on('pm:dragend', (e) => {
+layerGroup.on('pm:dragend', function(e) {
     console.log(e);
 });
-layerGroup.on('pm:markerdragstart', (e) => {
+layerGroup.on('pm:markerdragstart', function(e) {
     console.log(e);
 });
-layerGroup.on('pm:markerdragend', (e) => {
+layerGroup.on('pm:markerdragend', function(e) {
     console.log(e);
 });
 
