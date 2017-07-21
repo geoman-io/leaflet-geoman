@@ -23,7 +23,7 @@ As we are always using the latest leaflet version in a big production app, I wil
 `bower install leaflet.pm --save`
 
 #### Install Manually
-Download [https://unpkg.com/leaflet.pm@0.17.2/dist/leaflet.pm.css](`leaflet.pm.css`) and [https://unpkg.com/leaflet.pm@0.17.2/dist/leaflet.pm.min.js](`leaflet.pm.min.js`) and include them in your project.
+Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.17.2/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.17.2/dist/leaflet.pm.min.js) and include them in your project.
 
 
 #### Include via CDN
