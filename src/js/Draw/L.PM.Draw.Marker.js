@@ -31,6 +31,9 @@ Draw.Marker = Draw.extend({
         // sync hint marker with mouse cursor
         this._map.on('mousemove', this._syncHintMarker, this);
 
+        // fire drawstart event
+        this._map.fire('pm:drawstart', { shape: this._shape });
+
         // enable edit mode for existing markers
         this._map.eachLayer((layer) => {
             if(layer instanceof L.Marker && layer.pm) {

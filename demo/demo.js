@@ -10,6 +10,9 @@ map2.on('pm:remove', function(e) {
     alert('pm:remove event fired. See console for details');
     console.log(e);
 });
+map2.on('pm:drawstart', function(e) {
+    console.log(e);
+});
 
 const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
 const m2 = L.marker([51.50614, -0.0989]);
