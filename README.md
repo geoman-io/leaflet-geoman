@@ -23,15 +23,15 @@ As we are always using the latest leaflet version in a big production app, I wil
 `bower install leaflet.pm --save`
 
 #### Install Manually
-Download [https://unpkg.com/leaflet.pm@0.17.1/dist/leaflet.pm.css](`leaflet.pm.css`) and [https://unpkg.com/leaflet.pm@0.17.1/dist/leaflet.pm.min.js](`leaflet.pm.min.js`) and include them in your project.
+Download [https://unpkg.com/leaflet.pm@0.17.2/dist/leaflet.pm.css](`leaflet.pm.css`) and [https://unpkg.com/leaflet.pm@0.17.2/dist/leaflet.pm.min.js](`leaflet.pm.min.js`) and include them in your project.
 
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.17.1/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.17.2/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.17.1/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.17.2/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
