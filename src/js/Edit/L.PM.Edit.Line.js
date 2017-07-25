@@ -265,7 +265,7 @@ Edit.Line = Edit.extend({
         this._fireEdit();
     },
 
-    updatePolygonCoordsFromMarker(marker) {
+    updatePolygonCoordsFromMarkerDrag(marker) {
         // update polygon coords
         const coords = this._layer.getLatLngs();
         const index = marker._index;
@@ -290,7 +290,7 @@ Edit.Line = Edit.extend({
         // update marker coordinates
         L.extend(marker._origLatLng, marker._latlng);
 
-        this.updatePolygonCoordsFromMarker(marker);
+        this.updatePolygonCoordsFromMarkerDrag(marker);
 
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array

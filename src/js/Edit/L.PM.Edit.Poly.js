@@ -33,7 +33,7 @@ Edit.Poly = Edit.Line.extend({
         }
     },
 
-    updatePolygonCoordsFromMarker(marker) {
+    updatePolygonCoordsFromMarkerDrag(marker) {
         // update polygon coords
         const coords = this._layer.getLatLngs()[0];
         const index = marker._index;
