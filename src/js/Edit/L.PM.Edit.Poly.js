@@ -33,6 +33,15 @@ Edit.Poly = Edit.Line.extend({
         }
     },
 
+    updatePolygonCoordsFromMarker(marker) {
+        // update polygon coords
+        const coords = this._layer.getLatLngs()[0];
+        const index = marker._index;
+
+        coords.splice(index, 1, marker.getLatLng());
+        this._layer.setLatLngs(coords).redraw();
+    },
+
     // adds a new marker from a middlemarker
     _addMarker(newM, leftM, rightM) {
         // first, make this middlemarker a regular marker

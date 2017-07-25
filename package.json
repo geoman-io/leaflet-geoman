@@ -42,7 +42,8 @@
     "start": "npm run dev",
     "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
     "test": "browserify ./spec/test.spec.js | tape-run",
-    "prepublish": "./node_modules/.bin/webpack --config=webpack.build.js"
+    "build": "./node_modules/.bin/webpack --config=webpack.build.js",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",

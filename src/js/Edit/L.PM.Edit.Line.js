@@ -181,6 +181,8 @@ Edit.Line = Edit.extend({
 
         coords.splice(index, 0, latlng);
 
+        console.log(coords);
+
         // set new latlngs to trigger bounds update
         this._layer.setLatLngs(coords);
 
@@ -263,6 +265,15 @@ Edit.Line = Edit.extend({
         this._fireEdit();
     },
 
+    updatePolygonCoordsFromMarker(marker) {
+        // update polygon coords
+        const coords = this._layer.getLatLngs();
+        const index = marker._index;
+
+        coords.splice(index, 1, marker.getLatLng());
+        this._layer.setLatLngs(coords).redraw();
+    },
+
     _onMarkerDrag(e) {
         // dragged marker
         const marker = e.target;
@@ -279,11 +290,7 @@ Edit.Line = Edit.extend({
         // update marker coordinates
         L.extend(marker._origLatLng, marker._latlng);
 
-        // update polygon coords
-        const coords = this._layer._latlngs;
-        const index = marker._index;
-        coords.splice(index, 1, marker._origLatLng);
-        this._layer.setLatLngs(coords).redraw();
+        this.updatePolygonCoordsFromMarker(marker);
 
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array
