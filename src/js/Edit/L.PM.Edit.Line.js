@@ -181,6 +181,9 @@ Edit.Line = Edit.extend({
 
         coords.splice(index, 0, latlng);
 
+        // set new latlngs to trigger bounds update
+        this._layer.setLatLngs(coords);
+
         // associate polygon coordinate with marker coordinate
         newM._origLatLng = coords[index];
 
@@ -215,6 +218,9 @@ Edit.Line = Edit.extend({
 
         // remove polygon coordinate from this marker
         coords.splice(index, 1);
+
+        // set new latlngs to trigger bounds update
+        this._layer.setLatLngs(coords);
 
         // if the poly has no coordinates left, remove the layer
         // else, redraw it
@@ -257,6 +263,15 @@ Edit.Line = Edit.extend({
         this._fireEdit();
     },
 
+    updatePolygonCoordsFromMarkerDrag(marker) {
+        // update polygon coords
+        const coords = this._layer.getLatLngs();
+        const index = marker._index;
+
+        coords.splice(index, 1, marker.getLatLng());
+        this._layer.setLatLngs(coords).redraw();
+    },
+
     _onMarkerDrag(e) {
         // dragged marker
         const marker = e.target;
@@ -270,9 +285,10 @@ Edit.Line = Edit.extend({
         const nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
         const prevMarkerIndex = marker._index - 1 < 0 ? this._markers.length - 1 : marker._index - 1;
 
-        // update marker coordinates which will update polygon coordinates
+        // update marker coordinates
         L.extend(marker._origLatLng, marker._latlng);
-        this._layer.redraw();
+
+        this.updatePolygonCoordsFromMarkerDrag(marker);
 
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array

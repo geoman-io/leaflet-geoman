@@ -33,6 +33,15 @@ Edit.Poly = Edit.Line.extend({
         }
     },
 
+    updatePolygonCoordsFromMarkerDrag(marker) {
+        // update polygon coords
+        const coords = this._layer.getLatLngs()[0];
+        const index = marker._index;
+
+        coords.splice(index, 1, marker.getLatLng());
+        this._layer.setLatLngs(coords).redraw();
+    },
+
     // adds a new marker from a middlemarker
     _addMarker(newM, leftM, rightM) {
         // first, make this middlemarker a regular marker
@@ -45,6 +54,9 @@ Edit.Poly = Edit.Line.extend({
         const index = leftM._index + 1;
 
         coords.splice(index, 0, latlng);
+
+        // set new latlngs to trigger bounds update
+        this._layer.setLatLngs(coords);
 
         // associate polygon coordinate with marker coordinate
         newM._origLatLng = coords[index];
@@ -85,6 +97,9 @@ Edit.Poly = Edit.Line.extend({
 
         // remove polygon coordinate from this marker
         coords.splice(index, 1);
+
+        // set new latlngs to trigger bounds update
+        this._layer.setLatLngs(coords);
 
         // if the poly has no coordinates left, remove the layer
         // else, redraw it
