@@ -46,6 +46,9 @@ Edit.Poly = Edit.Line.extend({
 
         coords.splice(index, 0, latlng);
 
+        // set new latlngs to trigger bounds update
+        this._layer.setLatLngs(coords);
+
         // associate polygon coordinate with marker coordinate
         newM._origLatLng = coords[index];
 
@@ -85,6 +88,9 @@ Edit.Poly = Edit.Line.extend({
 
         // remove polygon coordinate from this marker
         coords.splice(index, 1);
+
+        // set new latlngs to trigger bounds update
+        this._layer.setLatLngs(coords);
 
         // if the poly has no coordinates left, remove the layer
         // else, redraw it
