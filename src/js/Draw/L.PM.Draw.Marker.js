@@ -63,6 +63,9 @@ Draw.Marker = Draw.extend({
             }
         });
 
+        // fire drawend event
+        this._map.fire('pm:drawend', { shape: this._shape });
+
         // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
