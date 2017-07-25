@@ -181,8 +181,6 @@ Edit.Line = Edit.extend({
 
         coords.splice(index, 0, latlng);
 
-        console.log(coords);
-
         // set new latlngs to trigger bounds update
         this._layer.setLatLngs(coords);
 
