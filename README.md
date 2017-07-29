@@ -59,6 +59,7 @@ var options = {
     drawMarker: true,  // adds button to draw markers
     drawPolygon: true,  // adds button to draw a polygon
     drawPolyline: true,  // adds button to draw a polyline
+    drawCircle: true,  // adds button to draw a cricle
     editPolygon: true,  // adds button to toggle global edit mode
     deleteLayer: true   // adds a button to delete layers
 };
