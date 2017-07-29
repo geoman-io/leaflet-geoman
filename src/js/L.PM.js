@@ -39,12 +39,11 @@ L.PM = L.PM || {
     },
     addInitHooks() {
         function initLayerGroup() {
-            if(!this.options.pmIgnore) {
-                this.pm = new L.PM.Edit.LayerGroup(this);
-            }
+            this.pm = new L.PM.Edit.LayerGroup(this);
         }
 
         L.LayerGroup.addInitHook(initLayerGroup);
+
 
         function initMarker() {
             if(!this.options.pmIgnore) {

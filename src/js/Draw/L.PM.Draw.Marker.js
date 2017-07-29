@@ -31,6 +31,9 @@ Draw.Marker = Draw.extend({
         // sync hint marker with mouse cursor
         this._map.on('mousemove', this._syncHintMarker, this);
 
+        // fire drawstart event
+        this._map.fire('pm:drawstart', { shape: this._shape });
+
         // enable edit mode for existing markers
         this._map.eachLayer((layer) => {
             if(layer instanceof L.Marker && layer.pm) {
@@ -59,6 +62,9 @@ Draw.Marker = Draw.extend({
                 layer.pm.disable();
             }
         });
+
+        // fire drawend event
+        this._map.fire('pm:drawend', { shape: this._shape });
 
         // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
