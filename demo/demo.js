@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 const map2 = L.map('example2').setView([51.505, -0.09], 13);
+// map2.dragging.disable();
 
 map2.on('pm:create', function(e) {
     // alert('pm:create event fired. See console for details');

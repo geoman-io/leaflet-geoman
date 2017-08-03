@@ -13,7 +13,9 @@ const DragMixin = {
         const el = this._layer._path;
 
         // re-enable map drag
-        this._layer._map.dragging.enable();
+        if(this._originalMapDragState) {
+            this._layer._map.dragging.enable();
+        }
 
         // clear up mousemove event
         this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
@@ -57,7 +59,10 @@ const DragMixin = {
             this._layer.bringToFront();
 
             // disbale map drag
-            this._layer._map.dragging.disable();
+            if(this._originalMapDragState) {
+                this._layer._map.dragging.disable();
+            }
+
 
             // hide markers
             this._markerGroup.clearLayers();
@@ -69,6 +74,9 @@ const DragMixin = {
         this._onLayerDrag(e);
     },
     _dragMixinOnMouseDown(e) {
+        // save current map dragging state
+        this._originalMapDragState = this._layer._map.dragging._enabled;
+
         // save for delta calculation
         this._tempDragCoord = e.latlng;
 
