@@ -190,6 +190,10 @@ polygonLayer.on('pm:snap', function(e) {
     console.log(e);
 });
 
+polygonLayer.on('pm:edit', function(e) {
+    console.log(e);
+});
+
 
 
 // Layer Group Example
