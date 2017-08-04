@@ -79,12 +79,19 @@ const SnapMixin = {
 
             marker._snapped = true;
 
-            // check if the snapping position differs from the last snap
-            if(this._snapLatLng !== snapLatLng) {
-                // if yes, save it and fire the pm:snap event
+            const triggerSnap = () => {
                 this._snapLatLng = snapLatLng;
                 marker.fire('pm:snap', eventInfo);
                 this._layer.fire('pm:snap', eventInfo);
+            };
+
+            // check if the snapping position differs from the last snap
+            // Thanks Max & car2go Team
+            const a = this._snapLatLng || {};
+            const b = snapLatLng || {};
+
+            if(a.lat !== b.lat || b.lng !== b.lng) {
+                triggerSnap();
             }
         } else if(this._snapLatLng) {
             // no more snapping

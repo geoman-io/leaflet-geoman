@@ -146,7 +146,6 @@ geoJsonLayer.addTo(map2);
 const bounds = geoJsonLayer.getBounds();
 map3.fitBounds(bounds);
 
-
 const markerStyle = {
     opacity: 0.5,
     draggable: false,
@@ -186,6 +185,11 @@ const polygonLayer = L.polygon([
     [51.51, -0.047],
 ]).addTo(map3).addTo(map2);
 polygonLayer.pm.toggleEdit();
+
+polygonLayer.on('pm:snap', function(e) {
+    console.log(e);
+});
+
 
 
 // Layer Group Example
