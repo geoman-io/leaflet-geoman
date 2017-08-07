@@ -92,23 +92,44 @@ Edit.Line = Edit.extend({
         this._markerGroup._pmTempLayer = true;
         map.addLayer(this._markerGroup);
 
-        // create marker for each coordinate
-        const coords = this._layer._latlngs;
+        console.log('LatLngs', this._layer);
 
-        // the marker array, it includes only the markers that're associated with the coordinates
-        this._markers = coords.map(this._createMarker, this);
+        // handle coord-rings (outer, inner, etc)
+        const handleRing = (coords) => {
+            // the marker array, it includes only the markers that're associated with the coordinates
+            const ringArr = coords.map(this._createMarker, this);
 
-        // create small markers in the middle of the regular markers
-        for(let k = 0; k < coords.length - 1; k += 1) {
-            const nextIndex = k + 1;
-            this._createMiddleMarker(
-                this._markers[k], this._markers[nextIndex]
-            );
+            // create small markers in the middle of the regular markers
+            coords.map((v, k) => {
+                let prevIndex;
+
+                if(this._layer instanceof L.Polygon) {
+                    prevIndex = k - 1 < 0 ? coords.length - 1 : k - 1;
+                } else {
+                    prevIndex = k - 1;
+                }
+                return this._createMiddleMarker(ringArr[k], ringArr[prevIndex]);
+            });
+
+            return ringArr;
+        };
+
+        this._markers = [];
+
+        if(this._layer._latlngs[0] instanceof Array) {
+            // coords is a multidimansional array, handle all rings
+            this._markers = this._layer._latlngs.map(handleRing, this);
+        } else {
+            // coords is one dimensional, handle the ring
+            this._markers = handleRing(this._layer._latlngs);
         }
 
-        if(this.options.snappable) {
-            this._initSnappableMarkers();
-        }
+
+        // if(this.options.snappable) {
+        //     this._initSnappableMarkers();
+        // }
+
+        console.log('Markers', this._markers);
     },
 
     // creates initial markers for coordinates
@@ -134,6 +155,11 @@ Edit.Line = Edit.extend({
 
     // creates the middle markes between coordinates
     _createMiddleMarker(leftM, rightM) {
+        // cancel if there are no two markers
+        if(!leftM || !rightM) {
+            return false;
+        }
+
         const latlng = this._calcMiddleLatLng(leftM.getLatLng(), rightM.getLatLng());
 
         const middleMarker = this._createMarker(latlng);
@@ -166,6 +192,8 @@ Edit.Line = Edit.extend({
 
             this._addMarker(middleMarker, leftM, rightM);
         });
+
+        return middleMarker;
     },
 
     // adds a new marker from a middlemarker

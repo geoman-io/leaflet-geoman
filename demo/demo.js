@@ -136,14 +136,29 @@ const geoJsonData = {
     ],
 };
 // const geoJsonButton = document.getElementById('test-geojson');
-const geoJsonLayer = L.geoJson(null, {pmIgnore: true}).addTo(map3);
+const geoJsonLayer = L.geoJson(null, {pmIgnore: true});
 geoJsonLayer.addData(geoJsonData);
 geoJsonLayer.addTo(map2);
 // geoJsonLayer.pm.toggleEdit({
 //     draggable: true,
 //     snappable: true,
 // });
-const bounds = geoJsonLayer.getBounds();
+
+map3.pm.addControls({
+    drawMarker: true,
+    drawPolygon: true,
+    editPolygon: true,
+    drawPolyline: true,
+    deleteLayer: true,
+});
+
+var scotland = L.polygon([[[60,-13],[60,0],[50,4],[50,-13]],
+                  [[55.7,-4.5],[56,-4.5],[56,-4],[55.7,-4]]]);
+scotland.addTo(map3);
+
+const bounds = scotland.getBounds();
+
+
 map3.fitBounds(bounds);
 
 const markerStyle = {

@@ -2,36 +2,38 @@ import Edit from './L.PM.Edit';
 
 Edit.Poly = Edit.Line.extend({
 
-    _initMarkers() {
-        const map = this._map;
+    // _initMarkers() {
+    //     const map = this._map;
 
-        // cleanup old ones first
-        if(this._markerGroup) {
-            this._markerGroup.clearLayers();
-        }
+    //     // cleanup old ones first
+    //     if(this._markerGroup) {
+    //         this._markerGroup.clearLayers();
+    //     }
 
-        // add markerGroup to map, markerGroup includes regular and middle markers
-        this._markerGroup = new L.LayerGroup();
-        map.addLayer(this._markerGroup);
+    //     // add markerGroup to map, markerGroup includes regular and middle markers
+    //     this._markerGroup = new L.LayerGroup();
+    //     map.addLayer(this._markerGroup);
 
-        // create marker for each coordinate
-        const coords = this._layer._latlngs[0];
+    //     console.log(this._layer._latlngs);
 
-        // the marker array, it includes only the markers that're associated with the coordinates
-        this._markers = coords.map(this._createMarker, this);
+    //     // create marker for each coordinate
+    //     const coords = this._layer._latlngs[0];
 
-        // create small markers in the middle of the regular markers
-        for(let k = 0; k < coords.length; k += 1) {
-            const nextIndex = k + 1 >= coords.length ? 0 : k + 1;
-            this._createMiddleMarker(
-                this._markers[k], this._markers[nextIndex]
-            );
-        }
+    //     // the marker array, it includes only the markers that're associated with the coordinates
+    //     this._markers = coords.map(this._createMarker, this);
 
-        if(this.options.snappable) {
-            this._initSnappableMarkers();
-        }
-    },
+    //     // create small markers in the middle of the regular markers
+    //     for(let k = 0; k < coords.length; k += 1) {
+    //         const nextIndex = k + 1 >= coords.length ? 0 : k + 1;
+    //         this._createMiddleMarker(
+    //             this._markers[k], this._markers[nextIndex]
+    //         );
+    //     }
+
+    //     if(this.options.snappable) {
+    //         this._initSnappableMarkers();
+    //     }
+    // },
 
     updatePolygonCoordsFromMarkerDrag(marker) {
         // update polygon coords
