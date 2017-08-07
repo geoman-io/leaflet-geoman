@@ -3,6 +3,7 @@
 */
 
 import PMButton from './L.Controls';
+
 L.Control.PMButton = PMButton;
 
 const Toolbar = L.Class.extend({
