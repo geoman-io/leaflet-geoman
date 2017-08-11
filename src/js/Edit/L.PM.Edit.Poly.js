@@ -35,14 +35,14 @@ Edit.Poly = Edit.Line.extend({
     //     }
     // },
 
-    updatePolygonCoordsFromMarkerDrag(marker) {
-        // update polygon coords
-        const coords = this._layer.getLatLngs()[0];
-        const index = marker._index;
+    // updatePolygonCoordsFromMarkerDrag(marker) {
+    //     // update polygon coords
+    //     const coords = this._layer.getLatLngs()[0];
+    //     const index = marker._index;
 
-        coords.splice(index, 1, marker.getLatLng());
-        this._layer.setLatLngs(coords).redraw();
-    },
+    //     coords.splice(index, 1, marker.getLatLng());
+    //     this._layer.setLatLngs(coords).redraw();
+    // },
 
     // adds a new marker from a middlemarker
     _addMarker(newM, leftM, rightM) {

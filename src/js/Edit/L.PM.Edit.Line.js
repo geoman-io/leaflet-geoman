@@ -116,7 +116,7 @@ Edit.Line = Edit.extend({
 
         this._markers = [];
 
-        if(this._layer._latlngs[0] instanceof Array) {
+        if(this._layer instanceof L.Polygon) {
             // coords is a multidimansional array, handle all rings
             this._markers = this._layer._latlngs.map(handleRing, this);
         } else {
@@ -291,12 +291,37 @@ Edit.Line = Edit.extend({
         this._fireEdit();
     },
 
+    findMarkerIndex(markers, marker) {
+        let index;
+        let ringIndex;
+
+        if(!(this._layer instanceof L.Polygon)) {
+            index = markers.findIndex(m => marker._leaflet_id === m._leaflet_id);
+        } else {
+            ringIndex = markers.findIndex((inner) => {
+                index = inner.findIndex(m => marker._leaflet_id === m._leaflet_id);
+                return index > -1;
+            });
+        }
+
+        return {
+            index,
+            ringIndex,
+        };
+    },
+
     updatePolygonCoordsFromMarkerDrag(marker) {
         // update polygon coords
         const coords = this._layer.getLatLngs();
-        const index = marker._index;
+        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
 
-        coords.splice(index, 1, marker.getLatLng());
+        if(ringIndex > -1) {
+            coords[ringIndex].splice(index, 1, marker.getLatLng());
+        } else {
+            coords.splice(index, 1, marker.getLatLng());
+        }
+
+        // set new coords on layer
         this._layer.setLatLngs(coords).redraw();
     },
 
@@ -304,25 +329,44 @@ Edit.Line = Edit.extend({
         // dragged marker
         const marker = e.target;
 
-        // only continue if this is NOT a middle marker (those can't be deleted)
+        // only continue if this is NOT a middle marker
         if(marker._index === undefined) {
             return;
         }
-
-        // the dragged markers neighbors
-        const nextMarkerIndex = marker._index + 1 >= this._markers.length ? 0 : marker._index + 1;
-        const prevMarkerIndex = marker._index - 1 < 0 ? this._markers.length - 1 : marker._index - 1;
 
         // update marker coordinates
         L.extend(marker._origLatLng, marker._latlng);
 
         this.updatePolygonCoordsFromMarkerDrag(marker);
 
+
+        // the dragged markers neighbors
+        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+        let nextMarkerIndex;
+        let prevMarkerIndex;
+        if(ringIndex > -1) {
+            nextMarkerIndex = index + 1 >= this._markers[ringIndex][index].length ? 0 : index + 1;
+            prevMarkerIndex = index - 1 < 0 ? this._markers[ringIndex][index].length - 1 : index - 1;
+        } else {
+            nextMarkerIndex = index + 1 >= this._markers[index].length ? 0 : index + 1;
+            prevMarkerIndex = index - 1 < 0 ? this._markers[index].length - 1 : index - 1;
+        }
+
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array
         const markerLatLng = marker.getLatLng();
-        const prevMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
-        const nextMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
+
+        let prevMarkerLatLng;
+        let nextMarkerLatLng;
+
+        if(ringIndex > -1) {
+            console.log(ringIndex, index, this._markers);
+            prevMarkerLatLng = this._markers[ringIndex][prevMarkerIndex].getLatLng();
+            nextMarkerLatLng = this._markers[ringIndex][nextMarkerIndex].getLatLng();
+        } else {
+            prevMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
+            nextMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
+        }
 
         if(marker._middleMarkerNext) {
             const middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
