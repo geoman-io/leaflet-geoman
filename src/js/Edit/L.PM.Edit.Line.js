@@ -345,11 +345,11 @@ Edit.Line = Edit.extend({
         let nextMarkerIndex;
         let prevMarkerIndex;
         if(ringIndex > -1) {
-            nextMarkerIndex = index + 1 >= this._markers[ringIndex][index].length ? 0 : index + 1;
-            prevMarkerIndex = index - 1 < 0 ? this._markers[ringIndex][index].length - 1 : index - 1;
+            nextMarkerIndex = index + 1 >= this._markers[ringIndex].length ? 0 : index + 1;
+            prevMarkerIndex = index - 1 < 0 ? this._markers[ringIndex].length - 1 : index - 1;
         } else {
-            nextMarkerIndex = index + 1 >= this._markers[index].length ? 0 : index + 1;
-            prevMarkerIndex = index - 1 < 0 ? this._markers[index].length - 1 : index - 1;
+            nextMarkerIndex = index + 1 >= this._markers.length ? 0 : index + 1;
+            prevMarkerIndex = index - 1 < 0 ? this._markers.length - 1 : index - 1;
         }
 
         // update middle markers on the left and right
@@ -359,13 +359,14 @@ Edit.Line = Edit.extend({
         let prevMarkerLatLng;
         let nextMarkerLatLng;
 
+        // console.log(`marker index: ${index}`, `prev: ${prevMarkerIndex}`, `next: ${nextMarkerIndex}`);
+
         if(ringIndex > -1) {
-            console.log(ringIndex, index, this._markers);
-            prevMarkerLatLng = this._markers[ringIndex][prevMarkerIndex].getLatLng();
-            nextMarkerLatLng = this._markers[ringIndex][nextMarkerIndex].getLatLng();
+            nextMarkerLatLng = this._markers[ringIndex][prevMarkerIndex].getLatLng();
+            prevMarkerLatLng = this._markers[ringIndex][nextMarkerIndex].getLatLng();
         } else {
-            prevMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
-            nextMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
+            nextMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
+            prevMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
         }
 
         if(marker._middleMarkerNext) {
