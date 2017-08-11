@@ -92,8 +92,6 @@ Edit.Line = Edit.extend({
         this._markerGroup._pmTempLayer = true;
         map.addLayer(this._markerGroup);
 
-        console.log('LatLngs', this._layer);
-
         // handle coord-rings (outer, inner, etc)
         const handleRing = (coords) => {
             // the marker array, it includes only the markers that're associated with the coordinates
@@ -133,14 +131,12 @@ Edit.Line = Edit.extend({
     },
 
     // creates initial markers for coordinates
-    _createMarker(latlng, index) {
+    _createMarker(latlng) {
         const marker = new L.Marker(latlng, {
             draggable: true,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
-        marker._origLatLng = latlng;
-        marker._index = index;
         marker._pmTempLayer = true;
 
         marker.on('dragstart', this._onMarkerDragStart, this);
@@ -203,24 +199,23 @@ Edit.Line = Edit.extend({
         newM.off('click');
 
         // now, create the polygon coordinate point for that marker
+        // and push into marker array
+        // and associate polygon coordinate with marker coordinate
         const latlng = newM.getLatLng();
         const coords = this._layer._latlngs;
-        const index = leftM._index + 1;
+        const { ringIndex, index } = this.findMarkerIndex(this._markers, leftM);
 
-        coords.splice(index, 0, latlng);
+        if(ringIndex > -1) {
+            coords[ringIndex].splice(index, 0, latlng);
+            this._markers[ringIndex].splice(index, 0, newM);
+        } else {
+            coords.splice(index, 0, latlng);
+            this._markers.splice(index, 0, newM);
+        }
+
 
         // set new latlngs to trigger bounds update
         this._layer.setLatLngs(coords);
-
-        // associate polygon coordinate with marker coordinate
-        newM._origLatLng = coords[index];
-
-        // push into marker array & update the indexes for every marker
-        this._markers.splice(index, 0, newM);
-        this._markers.map((marker, i) => {
-            marker._index = i;
-            return true;
-        });
 
         // create the new middlemarkers
         this._createMiddleMarker(leftM, newM);
@@ -230,32 +225,48 @@ Edit.Line = Edit.extend({
         this._fireEdit();
 
         if(this.options.snappable) {
-            this._initSnappableMarkers();
+            // this._initSnappableMarkers();
         }
     },
 
     _removeMarker(e) {
         const marker = e.target;
         const coords = this._layer._latlngs;
-        const index = marker._index;
+        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
 
         // only continue if this is NOT a middle marker (those can't be deleted)
-        if(index === undefined) {
+        const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
+        if(isMiddleMarker) {
             return;
         }
 
         // remove polygon coordinate from this marker
-        coords.splice(index, 1);
+        if(ringIndex > -1) {
+            coords[ringIndex].splice(index, 1);
 
-        // set new latlngs to trigger bounds update
-        this._layer.setLatLngs(coords);
+            // set new latlngs to trigger bounds update
+            this._layer.setLatLngs(coords);
 
-        // if the poly has no coordinates left, remove the layer
-        // else, redraw it
-        if(coords.length < 1) {
-            this._layer.remove();
+            // if the poly has no coordinates left, remove the layer
+            // else, redraw it
+            if(coords[ringIndex].length < 1) {
+                this._layer.remove();
+            } else {
+                this._layer.redraw();
+            }
         } else {
-            this._layer.redraw();
+            coords.splice(index, 1);
+
+            // set new latlngs to trigger bounds update
+            this._layer.setLatLngs(coords);
+
+            // if the poly has no coordinates left, remove the layer
+            // else, redraw it
+            if(coords.length < 1) {
+                this._layer.remove();
+            } else {
+                this._layer.redraw();
+            }
         }
 
         // remove the marker and the middlemarkers next to it from the map
@@ -281,11 +292,11 @@ Edit.Line = Edit.extend({
         }
 
         // remove the marker from the markers array & update indexes
-        this._markers.splice(index, 1);
-        this._markers.map((m, i) => {
-            m._index = i;
-            return true;
-        });
+        if(ringIndex > -1) {
+            this._markers[ringIndex].splice(index, 1);
+        } else {
+            this._markers.splice(index, 1);
+        }
 
         // fire edit event
         this._fireEdit();
@@ -330,12 +341,10 @@ Edit.Line = Edit.extend({
         const marker = e.target;
 
         // only continue if this is NOT a middle marker
-        if(marker._index === undefined) {
+        const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
+        if(isMiddleMarker) {
             return;
         }
-
-        // update marker coordinates
-        L.extend(marker._origLatLng, marker._latlng);
 
         this.updatePolygonCoordsFromMarkerDrag(marker);
 
@@ -358,8 +367,6 @@ Edit.Line = Edit.extend({
 
         let prevMarkerLatLng;
         let nextMarkerLatLng;
-
-        // console.log(`marker index: ${index}`, `prev: ${prevMarkerIndex}`, `next: ${nextMarkerIndex}`);
 
         if(ringIndex > -1) {
             nextMarkerLatLng = this._markers[ringIndex][prevMarkerIndex].getLatLng();
