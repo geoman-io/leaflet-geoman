@@ -11,8 +11,6 @@ Draw.Rectangle = Draw.extend({
         // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
         L.Util.setOptions(this, options);
 
-        this.options.radius = 0;
-
         // enable draw mode
         this._enabled = true;
 
@@ -27,10 +25,12 @@ Draw.Rectangle = Draw.extend({
         this._layerGroup.addLayer(this._layer);
 
         // this is the marker at the origin of the rectangle
+        // this needs to be present, for tracking purposes, but we'll make it invisible if a user doesn't want to see it!
         this._startMarker = L.marker([0, 0], {
             icon: L.divIcon({ className: 'marker-icon' }),
             draggable: true,
             zIndexOffset: 100,
+            opacity: this.options.cursorMarker ? 1 : 0
         });
         this._startMarker._pmTempLayer = true;
         this._layerGroup.addLayer(this._startMarker);
@@ -45,13 +45,27 @@ Draw.Rectangle = Draw.extend({
         // show the hintmarker if the option is set
         if(this.options.cursorMarker) {
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+
+            // Add two more matching style markers, if cursor marker is rendered
+            this._styleMarkers = []
+            for(let i = 0; i < 2; i++){
+                let styleMarker = L.marker([0, 0], {
+                    icon: L.divIcon({ className: 'marker-icon' }),
+                    draggable: true,
+                    zIndexOffset: 100
+                });
+                styleMarker._pmTempLayer = true;
+                this._layerGroup.addLayer(styleMarker);
+
+                this._styleMarkers.push(styleMarker)
+            } 
         }
 
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
 
         // create a polygon-point on click
-        this._map.on('click', this._placeStartMarker, this);
+        this._map.on('click', this._placeStartingMarkers, this);
 
         // sync hint marker with mouse cursor
         this._map.on('mousemove', this._syncHintMarker, this);
@@ -81,7 +95,7 @@ Draw.Rectangle = Draw.extend({
 
         // unbind listeners
         this._map.off('click', this._finishShape, this);
-        this._map.off('click', this._placeStartMarker, this);
+        this._map.off('click', this._placeStartingMarkers, this);
         this._map.off('mousemove', this._syncHintMarker, this);
 
         // remove helping layers
@@ -108,11 +122,38 @@ Draw.Rectangle = Draw.extend({
             this.enable(options);
         }
     },
-    _syncRectangleSize() {
-        const A = this._startMarker.getLatLng();
-        const B = this._hintMarker.getLatLng();
+    _placeStartingMarkers(e) {
+        // assign the coordinate of the click to the hintMarker, that's necessary for
+        // mobile where the marker can't follow a cursor
+        if(!this._hintMarker._snapped) {
+            this._hintMarker.setLatLng(e.latlng);
+        }
 
-        this._layer.setBounds([A, B]);
+        // get coordinate for new vertex by hintMarker (cursor marker)
+        const latlng = this._hintMarker.getLatLng();
+
+        this._startMarker.setLatLng(latlng);
+
+        // if we have the other two visibilty markers, place them now
+        if(this.options.cursorMarker && this._styleMarkers){
+            this._styleMarkers.forEach((styleMarker) => {
+                styleMarker.setLatLng(latlng)
+            })
+        }
+
+        this._map.off('click', this._placeStartingMarkers, this);
+        this._map.on('click', this._finishShape, this);
+
+        this._setRectangleOrigin();
+    },
+    _setRectangleOrigin() {
+        const latlng = this._startMarker.getLatLng();
+
+        if(latlng) {
+            this._layer.setLatLngs([latlng, latlng]);
+
+            this._hintMarker.on('move', this._syncRectangleSize, this);
+        }
     },
     _syncHintMarker(e) {
         // move the cursor marker
@@ -125,38 +166,35 @@ Draw.Rectangle = Draw.extend({
             this._handleSnapping(fakeDragEvent);
         }
     },
-    _placeStartMarker(e) {
-        // assign the coordinate of the click to the hintMarker, that's necessary for
-        // mobile where the marker can't follow a cursor
-        if(!this._hintMarker._snapped) {
-            this._hintMarker.setLatLng(e.latlng);
-        }
-
-        // get coordinate for new vertex by hintMarker (cursor marker)
-        const latlng = this._hintMarker.getLatLng();
-
-        this._startMarker.setLatLng(latlng);
-
-        this._map.off('click', this._placeStartMarker, this);
-        this._map.on('click', this._finishShape, this);
-
-        this._placeRectangleOrigin();
-    },
-    _placeRectangleOrigin() {
-        const latlng = this._startMarker.getLatLng();
-
-        if(latlng) {
-            this._layer.setLatLngs([latlng, latlng]);
-
-            this._hintMarker.on('move', this._syncRectangleSize, this);
-        }
-    },
-    _finishShape() {
-        // calc the radius
+    _syncRectangleSize() {
+        // Create a box using corners A & B (A = Starting Position, B = Current Mouse Position)
         const A = this._startMarker.getLatLng();
         const B = this._hintMarker.getLatLng();
 
-        // create the final rectangle layer
+        this._layer.setBounds([A, B]);
+
+        // Add matching style markers, if cursor marker is shown
+        if(this.options.cursorMarker && this._styleMarkers){
+            const corners = this._findCorners()
+            let unmarkedCorners = []
+
+            // Find two corners not currently occupied by starting marker and hint marker
+            corners.forEach((corner) => {
+                if(!corner.equals(this._startMarker.getLatLng()) && !corner.equals(this._hintMarker.getLatLng())){
+                    unmarkedCorners.push(corner)
+                }
+            })
+
+            // Reposition style markers
+            unmarkedCorners.forEach((unmarkedCorner, index) =>{
+                this._styleMarkers[index].setLatLng(unmarkedCorner)
+            })
+        }
+    },
+    _finishShape() {
+        // create the final rectangle layer, based on opposite corners A & B
+        const A = this._startMarker.getLatLng();
+        const B = this._hintMarker.getLatLng();
         const rectangleLayer = L.rectangle([A, B]).addTo(this._map);
 
         // disable drawing
@@ -168,17 +206,14 @@ Draw.Rectangle = Draw.extend({
             layer: rectangleLayer,
         });
     },
-    _createMarker(latlng) {
-        // create the new marker
-        const marker = new L.Marker(latlng, {
-            draggable: false,
-            icon: L.divIcon({ className: 'marker-icon' }),
-        });
-        marker._pmTempLayer = true;
+    _findCorners(){
+        var corners = this._layer.getBounds();
+        
+        var northwest = corners.getNorthWest();
+        var northeast = corners.getNorthEast();
+        var southeast = corners.getSouthEast();
+        var southwest = corners.getSouthWest();
 
-        // add it to the map
-        this._layerGroup.addLayer(marker);
-
-        return marker;
-    },
+        return [northwest, northeast, southeast, southwest];        
+    },    
 });
