@@ -90,7 +90,7 @@ const SnapMixin = {
             const a = this._snapLatLng || {};
             const b = snapLatLng || {};
 
-            if(a.lat !== b.lat || b.lng !== b.lng) {
+            if(a.lat !== b.lat || a.lng !== b.lng) {
                 triggerSnap();
             }
         } else if(this._snapLatLng) {

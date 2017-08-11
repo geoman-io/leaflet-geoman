@@ -42,10 +42,17 @@ Edit.Rectangle = Edit.Poly.extend({
         marker.on('drag', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
         marker.on('contextmenu', this._removeMarker, this);
-
+        marker.on('pm:snap', this._adjustRectangleForMarkerSnap, this);
         this._markerGroup.addLayer(marker);
 
         return marker;
+    },
+
+    // Empty callback for 'contextmenu' binding set in L.PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
+    // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
+    _removeMarker(e) {
+        // The method, it does nothing!!!
+        return null
     },
 
     _onMarkerDragStart(e){
@@ -66,18 +73,10 @@ Edit.Rectangle = Edit.Poly.extend({
             return;
         }
 
-        // update dragged marker coordinates
-        L.extend(draggedMarker._origLatLng, draggedMarker._latlng);
-
-        // update rectangle boundaries, based on dragged marker's new LatLng and cached opposite corner's LatLng
-        const draggedLatLng = draggedMarker.getLatLng();
-        this._layer.setBounds(L.latLngBounds(draggedLatLng, draggedMarker._oppositeCornerLatLng));
-
-        // Reposition the markers at each corner
-        this._placeCornerMarkers(draggedMarker)
-
-        // Redraw the shape (to update dragging rectangle)
-        this._layer.redraw()
+        // If marker is currently snapped to an object, then ignore all drag events (as this resets rectangle shape)
+        if(!draggedMarker._snapped){
+            this._adjustRectangleForMarkerMove(draggedMarker)
+        }
     },
 
     _onMarkerDragEnd(e){
@@ -91,11 +90,30 @@ Edit.Rectangle = Edit.Poly.extend({
         this._layer.redraw()
     },
 
-    // Empty callback for 'contextmenu' binding set in L.PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
-    // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
-    _removeMarker(e) {
-        // The method, it does nothing!!!
-        return null
+    _adjustRectangleForMarkerMove(movedMarker){
+        // update moved marker coordinates
+        L.extend(movedMarker._origLatLng, movedMarker._latlng);
+
+        // update rectangle boundaries, based on moved marker's new LatLng and cached opposite corner's LatLng
+        const movedLatLng = movedMarker.getLatLng();
+        this._layer.setBounds(L.latLngBounds(movedLatLng, movedMarker._oppositeCornerLatLng));
+
+        // Reposition the markers at each corner
+        this._placeCornerMarkers(movedMarker)
+
+        // Redraw the shape (to update altered rectangle)
+        this._layer.redraw()
+    },
+
+
+    _adjustRectangleForMarkerSnap(e){
+        if(!this.options.snappable){
+            return
+        }
+
+        const snappedMarker = e.target
+
+        this._adjustRectangleForMarkerMove(snappedMarker)
     },
 
     _findCorners(){
@@ -117,5 +135,5 @@ Edit.Rectangle = Edit.Poly.extend({
         this._markers.forEach((marker, index) => {
             marker.setLatLng(corners[index])
         })                
-    }
+    },
 });
