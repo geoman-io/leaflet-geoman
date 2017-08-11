@@ -8,7 +8,7 @@ map2.on('pm:create', function(e) {
     console.log(e);
 });
 map2.on('pm:remove', function(e) {
-    alert('pm:remove event fired. See console for details');
+    // alert('pm:remove event fired. See console for details');
     console.log(e);
 });
 map2.on('pm:drawstart', function(e) {
@@ -81,6 +81,7 @@ map2.pm.enableDraw('Poly', {
         fillColor: 'orange',
         fillOpacity: 0.7,
     },
+    cursorMarker: false,
     finishOnDoubleClick: true,
 });
 map2.pm.disableDraw('Poly');
