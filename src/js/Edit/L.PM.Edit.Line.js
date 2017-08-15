@@ -94,19 +94,19 @@ Edit.Line = Edit.extend({
 
         // handle coord-rings (outer, inner, etc)
         const handleRing = (coords) => {
-            // the marker array, it includes only the markers that're associated with the coordinates
+            // the marker array, it includes only the markers of vertexes (no middle markers)
             const ringArr = coords.map(this._createMarker, this);
 
             // create small markers in the middle of the regular markers
             coords.map((v, k) => {
-                let prevIndex;
+                let nextIndex;
 
                 if(this._layer instanceof L.Polygon) {
-                    prevIndex = k - 1 < 0 ? coords.length - 1 : k - 1;
+                    nextIndex = (k + 1) % coords.length;
                 } else {
-                    prevIndex = k - 1;
+                    nextIndex = k + 1;
                 }
-                return this._createMiddleMarker(ringArr[k], ringArr[prevIndex]);
+                return this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
             });
 
             return ringArr;
@@ -203,7 +203,7 @@ Edit.Line = Edit.extend({
         // and associate polygon coordinate with marker coordinate
         const latlng = newM.getLatLng();
         const coords = this._layer._latlngs;
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, leftM);
+        const { ringIndex, index } = this.findMarkerIndex(this._markers, rightM);
 
         if(ringIndex > -1) {
             coords[ringIndex].splice(index, 0, latlng);
@@ -230,9 +230,20 @@ Edit.Line = Edit.extend({
     },
 
     _removeMarker(e) {
+        // the marker that should be removed
         const marker = e.target;
+
+        // coords of the layer
         const coords = this._layer._latlngs;
+
+        // find the coord ring index and index of the marker
         const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+
+        // define the coordsRing that is edited
+        const coordsRing = ringIndex > -1 ? coords[ringIndex] : coords;
+
+        // define the markers array that is edited
+        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
 
         // only continue if this is NOT a middle marker (those can't be deleted)
         const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
@@ -241,34 +252,20 @@ Edit.Line = Edit.extend({
         }
 
         // remove polygon coordinate from this marker
-        if(ringIndex > -1) {
-            coords[ringIndex].splice(index, 1);
+        coordsRing.splice(index, 1);
 
-            // set new latlngs to trigger bounds update
-            this._layer.setLatLngs(coords);
+        // set new latlngs to the polygon
+        this._layer.setLatLngs(coords);
 
-            // if the poly has no coordinates left, remove the layer
-            // else, redraw it
-            if(coords[ringIndex].length < 1) {
-                this._layer.remove();
-            } else {
-                this._layer.redraw();
-            }
+        // if the poly has no coordinates left, remove the layer
+        // else, redraw it - the polygon is updated now
+        if(coords.length < 1) {
+            this._layer.remove();
         } else {
-            coords.splice(index, 1);
-
-            // set new latlngs to trigger bounds update
-            this._layer.setLatLngs(coords);
-
-            // if the poly has no coordinates left, remove the layer
-            // else, redraw it
-            if(coords.length < 1) {
-                this._layer.remove();
-            } else {
-                this._layer.redraw();
-            }
+            this._layer.redraw();
         }
 
+        // now handle the middle markers
         // remove the marker and the middlemarkers next to it from the map
         if(marker._middleMarkerPrev) {
             this._markerGroup.removeLayer(marker._middleMarkerPrev);
@@ -277,26 +274,31 @@ Edit.Line = Edit.extend({
             this._markerGroup.removeLayer(marker._middleMarkerNext);
         }
 
+        // remove the marker from the map
         this._markerGroup.removeLayer(marker);
 
-        // find neighbor marker-indexes
-        const leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
-        const rightMarkerIndex = index + 1 >= this._markers.length ? undefined : index + 1;
+        let rightMarkerIndex;
+        let leftMarkerIndex;
+
+        if(this._layer instanceof L.Polygon) {
+            // find neighbor marker-indexes
+            rightMarkerIndex = (index + 1) % markerArr.length;
+            leftMarkerIndex = ((index + markerArr.length) - 1) % markerArr.length;
+        } else {
+            // find neighbor marker-indexes
+            leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
+            rightMarkerIndex = index + 1 >= markerArr.length ? undefined : index + 1;
+        }
 
         // don't create middlemarkers if there is only one marker left
-        // or if the middlemarker would be between the first and last coordinate of a polyline
-        if(rightMarkerIndex && leftMarkerIndex && rightMarkerIndex !== leftMarkerIndex) {
-            const leftM = this._markers[leftMarkerIndex];
-            const rightM = this._markers[rightMarkerIndex];
+        if(rightMarkerIndex !== leftMarkerIndex) {
+            const leftM = markerArr[leftMarkerIndex];
+            const rightM = markerArr[rightMarkerIndex];
             this._createMiddleMarker(leftM, rightM);
         }
 
-        // remove the marker from the markers array & update indexes
-        if(ringIndex > -1) {
-            this._markers[ringIndex].splice(index, 1);
-        } else {
-            this._markers.splice(index, 1);
-        }
+        // remove the marker from the markers array
+        markerArr.splice(index, 1);
 
         // fire edit event
         this._fireEdit();
@@ -325,12 +327,9 @@ Edit.Line = Edit.extend({
         // update polygon coords
         const coords = this._layer.getLatLngs();
         const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+        const ring = ringIndex > -1 ? coords[ringIndex] : coords;
 
-        if(ringIndex > -1) {
-            coords[ringIndex].splice(index, 1, marker.getLatLng());
-        } else {
-            coords.splice(index, 1, marker.getLatLng());
-        }
+        ring.splice(index, 1, marker.getLatLng());
 
         // set new coords on layer
         this._layer.setLatLngs(coords).redraw();
@@ -348,33 +347,21 @@ Edit.Line = Edit.extend({
 
         this.updatePolygonCoordsFromMarkerDrag(marker);
 
-
         // the dragged markers neighbors
         const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
-        let nextMarkerIndex;
-        let prevMarkerIndex;
-        if(ringIndex > -1) {
-            nextMarkerIndex = index + 1 >= this._markers[ringIndex].length ? 0 : index + 1;
-            prevMarkerIndex = index - 1 < 0 ? this._markers[ringIndex].length - 1 : index - 1;
-        } else {
-            nextMarkerIndex = index + 1 >= this._markers.length ? 0 : index + 1;
-            prevMarkerIndex = index - 1 < 0 ? this._markers.length - 1 : index - 1;
-        }
+        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
+
+        // find the indizes of next and previous markers
+        const nextMarkerIndex = (index + 1) % markerArr.length;
+        const prevMarkerIndex = ((index + markerArr.length) - 1) % markerArr.length;
 
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array
         const markerLatLng = marker.getLatLng();
 
-        let prevMarkerLatLng;
-        let nextMarkerLatLng;
-
-        if(ringIndex > -1) {
-            nextMarkerLatLng = this._markers[ringIndex][prevMarkerIndex].getLatLng();
-            prevMarkerLatLng = this._markers[ringIndex][nextMarkerIndex].getLatLng();
-        } else {
-            nextMarkerLatLng = this._markers[prevMarkerIndex].getLatLng();
-            prevMarkerLatLng = this._markers[nextMarkerIndex].getLatLng();
-        }
+        // get latlng of prev and next marker
+        const prevMarkerLatLng = markerArr[prevMarkerIndex].getLatLng();
+        const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
 
         if(marker._middleMarkerNext) {
             const middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
