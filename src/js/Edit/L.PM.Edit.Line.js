@@ -101,7 +101,7 @@ Edit.Line = Edit.extend({
             coords.map((v, k) => {
                 let nextIndex;
 
-                if(this._layer instanceof L.Polygon) {
+                if(this.isPolygon()) {
                     nextIndex = (k + 1) % coords.length;
                 } else {
                     nextIndex = k + 1;
@@ -114,7 +114,7 @@ Edit.Line = Edit.extend({
 
         this._markers = [];
 
-        if(this._layer instanceof L.Polygon) {
+        if(this.isPolygon()) {
             // coords is a multidimansional array, handle all rings
             this._markers = this._layer._latlngs.map(handleRing, this);
         } else {
@@ -123,9 +123,9 @@ Edit.Line = Edit.extend({
         }
 
 
-        // if(this.options.snappable) {
-        //     this._initSnappableMarkers();
-        // }
+        if(this.options.snappable) {
+            this._initSnappableMarkers();
+        }
     },
 
     // creates initial markers for coordinates
@@ -226,7 +226,7 @@ Edit.Line = Edit.extend({
         this._fireEdit();
 
         if(this.options.snappable) {
-            // this._initSnappableMarkers();
+            this._initSnappableMarkers();
         }
     },
 
@@ -281,7 +281,7 @@ Edit.Line = Edit.extend({
         let rightMarkerIndex;
         let leftMarkerIndex;
 
-        if(this._layer instanceof L.Polygon) {
+        if(this.isPolygon()) {
             // find neighbor marker-indexes
             rightMarkerIndex = (index + 1) % markerArr.length;
             leftMarkerIndex = ((index + markerArr.length) - 1) % markerArr.length;
@@ -305,13 +305,16 @@ Edit.Line = Edit.extend({
         this._fireEdit();
     },
 
+    isPolygon() {
+        return this._layer instanceof L.Polygon;
+    },
     findMarkerIndex(markers, marker) {
         // find the index of a marker in the markers array and returns the parent index as well in case of a multidimensional array
         // Multidimensional arrays would mean the layer has multiple coordinate rings (like holes in polygons)
         let index;
         let ringIndex;
 
-        if(!(this._layer instanceof L.Polygon)) {
+        if(!this.isPolygon()) {
             index = markers.findIndex(m => marker._leaflet_id === m._leaflet_id);
         } else {
             ringIndex = markers.findIndex((inner) => {
