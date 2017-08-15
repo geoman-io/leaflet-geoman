@@ -126,8 +126,6 @@ Edit.Line = Edit.extend({
         // if(this.options.snappable) {
         //     this._initSnappableMarkers();
         // }
-
-        console.log('Markers', this._markers);
     },
 
     // creates initial markers for coordinates
@@ -205,16 +203,19 @@ Edit.Line = Edit.extend({
         const coords = this._layer._latlngs;
         const { ringIndex, index } = this.findMarkerIndex(this._markers, rightM);
 
-        if(ringIndex > -1) {
-            coords[ringIndex].splice(index, 0, latlng);
-            this._markers[ringIndex].splice(index, 0, newM);
-        } else {
-            coords.splice(index, 0, latlng);
-            this._markers.splice(index, 0, newM);
-        }
+        // define the coordsRing that is edited
+        const coordsRing = ringIndex > -1 ? coords[ringIndex] : coords;
 
+        // define the markers array that is edited
+        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
 
-        // set new latlngs to trigger bounds update
+        // add coordinate to coordinate array
+        coordsRing.splice(index, 0, latlng);
+
+        // add marker to marker array
+        markerArr.splice(index, 0, newM);
+
+        // set new latlngs to update polygon
         this._layer.setLatLngs(coords);
 
         // create the new middlemarkers
@@ -305,6 +306,8 @@ Edit.Line = Edit.extend({
     },
 
     findMarkerIndex(markers, marker) {
+        // find the index of a marker in the markers array and returns the parent index as well in case of a multidimensional array
+        // Multidimensional arrays would mean the layer has multiple coordinate rings (like holes in polygons)
         let index;
         let ringIndex;
 
