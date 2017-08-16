@@ -100,16 +100,8 @@ const DragMixin = {
             lng: latlng.lng - this._tempDragCoord.lng,
         };
 
-        // create the new coordinates array
-        let coords;
-
-        if(this._layer instanceof L.Polygon) {
-            coords = this._layer._latlngs[0];
-        } else {
-            coords = this._layer._latlngs;
-        }
-
-        const newLatLngs = coords.map((currentLatLng) => {
+        // move the coordinates by the delta
+        const moveCoords = coords => coords.map((currentLatLng) => {
             const c = {
                 lat: currentLatLng.lat + deltaLatLng.lat,
                 lng: currentLatLng.lng + deltaLatLng.lng,
@@ -117,8 +109,17 @@ const DragMixin = {
             return c;
         });
 
+        // create the new coordinates array
+        let newCoords;
+
+        if(this.isPolygon()) {
+            newCoords = this._layer._latlngs.map(moveCoords, this);
+        } else {
+            newCoords = moveCoords(this._layer._latlngs);
+        }
+
         // set new coordinates and redraw
-        this._layer.setLatLngs(newLatLngs).redraw();
+        this._layer.setLatLngs(newCoords).redraw();
 
         // save current latlng for next delta calculation
         this._tempDragCoord = latlng;

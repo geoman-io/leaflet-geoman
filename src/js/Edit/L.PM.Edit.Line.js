@@ -304,10 +304,6 @@ Edit.Line = Edit.extend({
         // fire edit event
         this._fireEdit();
     },
-
-    isPolygon() {
-        return this._layer instanceof L.Polygon;
-    },
     findMarkerIndex(markers, marker) {
         // find the index of a marker in the markers array and returns the parent index as well in case of a multidimensional array
         // Multidimensional arrays would mean the layer has multiple coordinate rings (like holes in polygons)
