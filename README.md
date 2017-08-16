@@ -108,14 +108,14 @@ var options = {
     }
 };
 
-// enable drawing mode for shape - e.g. Poly or Line
+// enable drawing mode for shape - e.g. Poly, Line, etc
 map.pm.enableDraw('Poly', options);
 map.pm.enableDraw('Line', options);
 map.pm.enableDraw('Marker', options);
 map.pm.enableDraw('Circle', options);
 
 // get array of all available shapes
-map.pm.Draw.getShapes()
+map.pm.Draw.getShapes();
 
 // listen to when drawing mode gets enabled
 map.on('pm:drawstart', function(e) {//...});
@@ -218,11 +218,11 @@ var options = {
     },
 };
 
-// enable drawing mode for shape - e.g. Poly or Line
+// enable drawing mode for shape - e.g. Poly, Line, Circle, etc
 map.pm.enableDraw('Poly', options);
 ```
 
-To customize the style of the drawn layer (polygon, polyline) with leaflets options, you can either pass the options to `enableDraw` as well:
+To customize the style of the drawn layer with leaflet options, you can either pass the options to `enableDraw`:
 
 ```
 // optional options for line style during draw. These are the defaults
