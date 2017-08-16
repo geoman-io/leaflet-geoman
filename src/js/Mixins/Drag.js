@@ -93,6 +93,7 @@ const DragMixin = {
     _onLayerDrag(e) {
         // latLng of mouse event
         const latlng = e.latlng;
+        const coords = this._layer._latlngs;
 
         // delta coords (how far was dragged)
         const deltaLatLng = {
@@ -101,7 +102,7 @@ const DragMixin = {
         };
 
         // move the coordinates by the delta
-        const moveCoords = coords => coords.map((currentLatLng) => {
+        const moveCoords = coordsArr => coordsArr.map((currentLatLng) => {
             const c = {
                 lat: currentLatLng.lat + deltaLatLng.lat,
                 lng: currentLatLng.lng + deltaLatLng.lng,
@@ -113,9 +114,9 @@ const DragMixin = {
         let newCoords;
 
         if(this.isPolygon()) {
-            newCoords = this._layer._latlngs.map(moveCoords, this);
+            newCoords = coords.map(moveCoords, this);
         } else {
-            newCoords = moveCoords(this._layer._latlngs);
+            newCoords = moveCoords(coords);
         }
 
         // set new coordinates and redraw

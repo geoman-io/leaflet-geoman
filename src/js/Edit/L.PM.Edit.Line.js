@@ -252,7 +252,7 @@ Edit.Line = Edit.extend({
             return;
         }
 
-        // remove polygon coordinate from this marker
+        // remove coordinate
         coordsRing.splice(index, 1);
 
         // set new latlngs to the polygon
