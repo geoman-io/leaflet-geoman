@@ -81,6 +81,7 @@ Edit.Line = Edit.extend({
 
     _initMarkers() {
         const map = this._map;
+        const coords = this._layer._latlngs;
 
         // cleanup old ones first
         if(this._markerGroup) {
@@ -93,16 +94,16 @@ Edit.Line = Edit.extend({
         map.addLayer(this._markerGroup);
 
         // handle coord-rings (outer, inner, etc)
-        const handleRing = (coords) => {
+        const handleRing = (coordsArr) => {
             // the marker array, it includes only the markers of vertexes (no middle markers)
-            const ringArr = coords.map(this._createMarker, this);
+            const ringArr = coordsArr.map(this._createMarker, this);
 
             // create small markers in the middle of the regular markers
-            coords.map((v, k) => {
+            coordsArr.map((v, k) => {
                 let nextIndex;
 
                 if(this.isPolygon()) {
-                    nextIndex = (k + 1) % coords.length;
+                    nextIndex = (k + 1) % coordsArr.length;
                 } else {
                     nextIndex = k + 1;
                 }
@@ -116,10 +117,10 @@ Edit.Line = Edit.extend({
 
         if(this.isPolygon()) {
             // coords is a multidimansional array, handle all rings
-            this._markers = this._layer._latlngs.map(handleRing, this);
+            this._markers = coords.map(handleRing, this);
         } else {
             // coords is one dimensional, handle the ring
-            this._markers = handleRing(this._layer._latlngs);
+            this._markers = handleRing(coords);
         }
 
 
