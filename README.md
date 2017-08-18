@@ -8,7 +8,7 @@ In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time, th
 
 ## [Demo (click here)](https://leafletpm.now.sh)
 
-![snap at drag](https://cloud.githubusercontent.com/assets/2399810/22544799/8f4478b0-e936-11e6-9cb0-907394c5e51f.gif)
+![snap at drag](https://github.com/codeofsumit/leaflet.pm-demo/blob/master/static/gifs/github-demo.gif)
 
 ### Why *another* geometry editing plugin?
 As leaflet.draw development seemed to came to a halt and I needed support for leaflet 1.0 I created this plugin myself due to a lack of alternatives.  
