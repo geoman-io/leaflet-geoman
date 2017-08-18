@@ -2,6 +2,8 @@
 * The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
 */
 
+import intersect from '@turf/intersect';
+import difference from '@turf/difference';
 import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
@@ -13,6 +15,7 @@ const Toolbar = L.Class.extend({
         drawPolyline: true,
         drawCircle: true,
         editPolygon: true,
+        cutPolygon: true,
         dragPolygon: false,
         deleteLayer: true,
         position: 'topleft',
@@ -118,6 +121,64 @@ const Toolbar = L.Class.extend({
             position: this.options.position,
         };
 
+        const cutButton = {
+            className: 'leaflet-pm-icon-cut',
+            onClick: () => {
+            },
+            afterClick: () => {
+                // TODO:
+                // take care of the "double activating" and button activation problem
+                // handle cancelation of cutting
+                // move the code into a class or helper or whatever
+                // check if we can alter the current layer instead of replacing it to keep references
+
+                // disable all edit modes
+                this.map.pm.disableGlobalEditMode();
+                console.log('bla');
+
+                // enable polygon drawing mode without snap
+                this.map.pm.Draw.Poly.enable({ snappable: false });
+
+                this.map.off('pm:create');
+                this.map.on('pm:create', (e) => {
+                    const layer = e.layer;
+                    console.log('CREATED');
+                    const all = this.map._layers;
+
+                    const layers = Object.keys(all)
+
+                    // convert object to array
+                    .map(l => all[l])
+
+                    // only layers handled by leaflet.pm
+                    .filter(l => l.pm)
+
+                    // only polygons
+                    .filter(l => l instanceof L.Polygon)
+
+                    // exclude the drawn one
+                    .filter(l => l !== layer)
+
+                    // only layers with intersections
+                    .filter(l => !!intersect(layer.toGeoJSON(), l.toGeoJSON()));
+
+                    layers.forEach((l) => {
+                        const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
+                        L.geoJSON(diff).addTo(this.map);
+
+                        l.remove();
+                        layer.remove();
+                    });
+
+                    console.log(layers);
+                });
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
+        };
+
         const drawMarkerButton = {
             className: 'leaflet-pm-icon-marker',
             onClick: () => {
@@ -194,6 +255,7 @@ const Toolbar = L.Class.extend({
 
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         // TODO: rename editPolygon to editMode

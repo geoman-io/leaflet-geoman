@@ -8,7 +8,7 @@ map2.on('pm:create', function(e) {
     console.log(e);
 });
 map2.on('pm:remove', function(e) {
-    alert('pm:remove event fired. See console for details');
+    console.log('pm:remove event fired. See console for details');
     console.log(e);
 });
 map2.on('pm:drawstart', function(e) {

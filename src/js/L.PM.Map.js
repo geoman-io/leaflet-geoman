@@ -62,8 +62,8 @@ const Map = L.Class.extend({
     globalEditEnabled() {
         return this._globalEditMode;
     },
-    toggleGlobalEditMode(options = { snappable: true, draggable: true }) {
-        // find all layers that are or inherit from Polylines...
+    enableGlobalEditMode(options) {
+        // find all layers handles by leaflet.pm
         let layers = [];
         this.map.eachLayer((layer) => {
             if(layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
@@ -77,22 +77,40 @@ const Map = L.Class.extend({
         // filter out everything that's leaflet.pm specific temporary stuff
         layers = layers.filter(layer => !layer._pmTempLayer);
 
+        this._globalEditMode = true;
+
+        layers.forEach((layer) => {
+            layer.pm.enable(options);
+        });
+    },
+    disableGlobalEditMode() {
+        // find all layers handles by leaflet.pm
+        let layers = [];
+        this.map.eachLayer((layer) => {
+            if(layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
+                layers.push(layer);
+            }
+        });
+
+        // filter out layers that don't have the leaflet.pm instance
+        layers = layers.filter(layer => !!layer.pm);
+
+        // filter out everything that's leaflet.pm specific temporary stuff
+        layers = layers.filter(layer => !layer._pmTempLayer);
+
+        this._globalEditMode = false;
+
+        layers.forEach((layer) => {
+            layer.pm.disable();
+        });
+    },
+    toggleGlobalEditMode(options = { snappable: true, draggable: true }) {
         if(this.globalEditEnabled()) {
             // disable
-
-            this._globalEditMode = false;
-
-            layers.forEach((layer) => {
-                layer.pm.disable();
-            });
+            this.disableGlobalEditMode();
         } else {
             // enable
-
-            this._globalEditMode = true;
-
-            layers.forEach((layer) => {
-                layer.pm.enable(options);
-            });
+            this.enableGlobalEditMode(options);
         }
 
         // toggle the button in the toolbar
