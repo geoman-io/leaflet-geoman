@@ -57,7 +57,7 @@ Edit.Rectangle = Edit.Poly.extend({
 
     _onMarkerDragStart(e){
         // dragged marker
-        const draggedMarker = e.target        
+        const draggedMarker = e.target
 
         // Store a reference to marker in opposite corner
         const corners = this._findCorners()
@@ -80,8 +80,8 @@ Edit.Rectangle = Edit.Poly.extend({
     },
 
     _onMarkerDragEnd(e){
-        // Reposition the markers at each corner
-        this._placeCornerMarkers()
+        // Reposition the markers adjacent to starting marker (opposite corner never moves)
+        this._adjustAdjacentMarkers(e.target)
 
         // Update bounding box
         this._layer.setLatLngs(this._findCorners())
@@ -99,7 +99,7 @@ Edit.Rectangle = Edit.Poly.extend({
         this._layer.setBounds(L.latLngBounds(movedLatLng, movedMarker._oppositeCornerLatLng));
 
         // Reposition the markers at each corner
-        this._placeCornerMarkers(movedMarker)
+        this._adjustAdjacentMarkers(movedMarker)
 
         // Redraw the shape (to update altered rectangle)
         this._layer.redraw()
@@ -111,8 +111,7 @@ Edit.Rectangle = Edit.Poly.extend({
             return
         }
 
-        const snappedMarker = e.target
-
+        const snappedMarker = e.target        
         this._adjustRectangleForMarkerMove(snappedMarker)
     },
 
@@ -127,13 +126,33 @@ Edit.Rectangle = Edit.Poly.extend({
         return [northwest, northeast, southeast, southwest];        
     },
 
-    _placeCornerMarkers(){
-        const corners = this._findCorners()
+    _adjustAdjacentMarkers(draggedMarker){
+        if(!draggedMarker || !draggedMarker.getLatLng || !draggedMarker._oppositeCornerLatLng){
+            return
+        }
 
-        // update place of ALL markers
-        // All must be updated, in case rectangle has "crossed over" itself, changing marker indices (i.e. NW marker is now NE or SW marker)
-        this._markers.forEach((marker, index) => {
-            marker.setLatLng(corners[index])
-        })                
+        const draggedLatLng = draggedMarker.getLatLng()
+        const oppositeLatLng = draggedMarker._oppositeCornerLatLng
+
+        // Find two corners not currently occupied by dragged marker and its opposite corner
+        const corners = this._findCorners()
+        let unmarkedCorners = []        
+        corners.forEach((corner) => {
+            if(!corner.equals(draggedLatLng) && !corner.equals(oppositeLatLng)){
+                unmarkedCorners.push(corner)
+            }
+        })
+
+        if(unmarkedCorners.length == 2){
+            // Reposition markers for those corners
+            let unmarkedCornerIndex = 0
+            this._markers.forEach((marker) =>{
+                let markerLatLng = marker.getLatLng()
+                if(!markerLatLng.equals(draggedLatLng) && !markerLatLng.equals(oppositeLatLng)){
+                    marker.setLatLng(unmarkedCorners[unmarkedCornerIndex])
+                    unmarkedCornerIndex++
+                }
+            })
+        }
     },
 });
