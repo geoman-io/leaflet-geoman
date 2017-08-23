@@ -66,6 +66,7 @@ Edit.Rectangle = Edit.Poly.extend({
         draggedMarker._oppositeCornerLatLng = corners[(draggedMarker._index + 2) % 4];
 
         // Automatically unsnap all markers on drag start (they'll snap back if close enough to another snappable object)
+        // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
         draggedMarker._snapped = false
     },
 
@@ -164,7 +165,7 @@ Edit.Rectangle = Edit.Poly.extend({
             }
         })
 
-        // Reposition markers for those corners
+        // reposition markers for those corners
         let unmarkedCornerIndex = 0
         if(unmarkedCorners.length == 2){
             this._markers.forEach((marker) =>{
@@ -174,8 +175,6 @@ Edit.Rectangle = Edit.Poly.extend({
                     unmarkedCornerIndex++
                 }
             })
-        }else{
-
         }
     },
 
