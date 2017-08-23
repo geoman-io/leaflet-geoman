@@ -32,8 +32,7 @@ Edit.Rectangle = Edit.Poly.extend({
     _createMarker(latlng, index) {
         const marker = new L.Marker(latlng, {
             draggable: true,
-            icon: L.divIcon({ className: 'marker-icon' }),
-            title: index.toString(),
+            icon: L.divIcon({ className: 'marker-icon' })
         });
 
         marker._origLatLng = latlng;
