@@ -64,6 +64,9 @@ Edit.Rectangle = Edit.Poly.extend({
         // Store/update a reference to marker in opposite corner
         const corners = this._findCorners()
         draggedMarker._oppositeCornerLatLng = corners[(draggedMarker._index + 2) % 4];
+
+        // Automatically unsnap all markers on drag start (they'll snap back if close enough to another snappable object)
+        draggedMarker._snapped = false
     },
 
     _onMarkerDrag(e) {
@@ -86,6 +89,11 @@ Edit.Rectangle = Edit.Poly.extend({
 
         // Reposition ALL markers (so that indices are correctly correlated with corner order (NW, NE, SE, SW))
         this._adjustAllMarkers(corners)
+
+        // Clean-up data attributes
+        this._markers.forEach((marker) =>{
+            delete marker._oppositeCornerLatLng
+        })
 
         // Update bounding box
         this._layer.setLatLngs(corners)
@@ -166,6 +174,8 @@ Edit.Rectangle = Edit.Poly.extend({
                     unmarkedCornerIndex++
                 }
             })
+        }else{
+
         }
     },
 
