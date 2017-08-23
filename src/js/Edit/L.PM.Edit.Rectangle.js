@@ -5,6 +5,7 @@ import Edit from './L.PM.Edit';
 
 Edit.Rectangle = Edit.Poly.extend({
 
+    // initializes Rectangle Markers
     _initMarkers() {
         const map = this._map;
 
@@ -93,6 +94,8 @@ Edit.Rectangle = Edit.Poly.extend({
         this._layer.redraw()
     },
 
+    // adjusts the rectangle's size and bounds whenever a marker is moved
+    // params: movedMarker -- the Marker object
     _adjustRectangleForMarkerMove(movedMarker){
         // update moved marker coordinates
         L.extend(movedMarker._origLatLng, movedMarker._latlng);
@@ -108,7 +111,8 @@ Edit.Rectangle = Edit.Poly.extend({
         this._layer.redraw()
     },
 
-
+    // adjusts the rectangle's size and bounds whenever a marker snaps to another polygon
+    // params: e -- the snap event
     _adjustRectangleForMarkerSnap(e){
         if(!this.options.snappable){
             return
@@ -118,6 +122,8 @@ Edit.Rectangle = Edit.Poly.extend({
         this._adjustRectangleForMarkerMove(snappedMarker)
     },
 
+    // adjusts the position of all Markers
+    // params: markerLatLngs -- an array of exactly LatLng objects 
     _adjustAllMarkers(markerLatLngs){
         if(!markerLatLngs.length || markerLatLngs.length != 4){
             console.error("_adjustAllMarkers() requires an array of EXACTLY 4 LatLng coordinates")
@@ -129,6 +135,8 @@ Edit.Rectangle = Edit.Poly.extend({
         })
     },
 
+    // adjusts the position of the two Markers adjacent to the Marker specified
+    // params: anchorMarker -- the Marker object used to determine adjacent Markers
     _adjustAdjacentMarkers(anchorMarker){
         if(!anchorMarker || !anchorMarker.getLatLng || !anchorMarker._oppositeCornerLatLng){
             console.error("_adjustAdjacentMarkers() requires a valid Marker object")
@@ -154,15 +162,15 @@ Edit.Rectangle = Edit.Poly.extend({
             this._markers.forEach((marker) =>{
                 let markerLatLng = marker.getLatLng()
                 if(!markerLatLng.equals(anchorLatLng) && !markerLatLng.equals(oppositeLatLng)){
-                    if(unmarkedCorners[unmarkedCornerIndex]){
-                        marker.setLatLng(unmarkedCorners[unmarkedCornerIndex])
-                        unmarkedCornerIndex++
-                    }
+                    marker.setLatLng(unmarkedCorners[unmarkedCornerIndex])
+                    unmarkedCornerIndex++
                 }
             })
         }
     },
 
+    // finds the 4 corners of the current bounding box
+    // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
     _findCorners(){
         var corners = this._layer.getBounds();
         
