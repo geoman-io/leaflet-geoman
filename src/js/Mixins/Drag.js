@@ -96,8 +96,6 @@ const DragMixin = {
 
         this._layer.on('mouseup', this._dragMixinOnMouseUp, this);
 
-        console.log(this)
-
         // listen to mousemove on map (instead of polygon),
         // otherwise fast mouse movements stop the drag
         this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
