@@ -23,7 +23,7 @@ const DragMixin = {
             this._layer._map.dragging.enable();
         }
 
-        // if event fired, it's safe to cache the map draggable state on the next mouse down
+        // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
         this._safeToCacheDragState = true
 
         // clear up mousemove event
