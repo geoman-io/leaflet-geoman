@@ -136,7 +136,7 @@ const Toolbar = L.Class.extend({
                 this.map.pm.disableGlobalEditMode();
 
                 // enable polygon drawing mode without snap
-                this.map.pm.Draw.Poly.enable({ snappable: false });
+                this.map.pm.Draw.Poly.enable({ snappable: false, cursorMarker: false });
 
                 // TODO: move this to other file
                 const cut = (e) => {

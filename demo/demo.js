@@ -67,23 +67,6 @@ map2.pm.addControls({
     deleteLayer: true,
 });
 
-map2.pm.enableDraw('Poly', {
-    snappable: true,
-    templineStyle: {
-        color: 'blue',
-    },
-    hintlineStyle: {
-        color: 'blue',
-        dashArray: [5, 5],
-    },
-    pathOptions: {
-        color: 'red',
-        fillColor: 'orange',
-        fillOpacity: 0.7,
-    },
-    cursorMarker: false,
-    finishOnDoubleClick: true,
-});
 map2.pm.disableDraw('Poly');
 map2.pm.enableDraw('Circle', {
     snappable: true,
@@ -153,6 +136,30 @@ map3.pm.addControls({
     deleteLayer: true,
 });
 
+const markerStyle = {
+    opacity: 0.5,
+    draggable: false,
+};
+
+map3.pm.enableDraw('Poly', {
+    snappable: true,
+    templineStyle: {
+        color: 'blue',
+    },
+    hintlineStyle: {
+        color: 'blue',
+        dashArray: [5, 5],
+    },
+    pathOptions: {
+        color: 'red',
+        fillColor: 'orange',
+        fillOpacity: 0.7,
+    },
+    markerStyle: markerStyle,
+    cursorMarker: false,
+    finishOnDoubleClick: true,
+});
+
 var scotland = L.polygon([[[60,-13],[60,0],[50,4],[50,-13]],
                   [[55.7,-4.5],[56,-4.5],[56,-4],[55.7,-4]]]);
 scotland.addTo(map3);
@@ -161,17 +168,6 @@ const bounds = scotland.getBounds();
 
 
 map3.fitBounds(bounds);
-
-const markerStyle = {
-    opacity: 0.5,
-    draggable: false,
-};
-
-const options = {
-    markerStyle: markerStyle,
-};
-
-map3.pm.enableDraw('Marker', options);
 
 
 geoJsonLayer.addEventListener('click', function(e) {
