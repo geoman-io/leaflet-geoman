@@ -134,7 +134,6 @@ const Toolbar = L.Class.extend({
 
                 // disable all edit modes
                 this.map.pm.disableGlobalEditMode();
-                console.log('bla');
 
                 // enable polygon drawing mode without snap
                 this.map.pm.Draw.Poly.enable({ snappable: false });
@@ -142,7 +141,6 @@ const Toolbar = L.Class.extend({
                 this.map.off('pm:create');
                 this.map.on('pm:create', (e) => {
                     const layer = e.layer;
-                    console.log('CREATED');
                     const all = this.map._layers;
 
                     const layers = Object.keys(all)
@@ -169,8 +167,6 @@ const Toolbar = L.Class.extend({
                         l.remove();
                         layer.remove();
                     });
-
-                    console.log(layers);
                 });
             },
             doToggle: true,
