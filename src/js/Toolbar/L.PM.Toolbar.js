@@ -164,10 +164,22 @@ const Toolbar = L.Class.extend({
                         // find layer difference
                         const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
 
-                        console.log(diff);
+                        // if result is a multipolygon, split it into regular polygons
+                        // TODO: remove as soon as multipolygons are supported
+                        if(diff.geometry.type === 'MultiPolygon') {
+                            const geoJSONs = diff.geometry.coordinates.reduce((arr, coords) => {
+                                arr.push({ type: 'Polygon', coordinates: coords });
+                                return arr;
+                            }, []);
 
-                        // add new layer to map
-                        L.geoJSON(diff).addTo(this.map);
+                            // add new layers to map
+                            geoJSONs.forEach((g) => {
+                                L.geoJSON(g).addTo(this.map);
+                            });
+                        } else {
+                            // add new layer to map
+                            L.geoJSON(diff).addTo(this.map);
+                        }
 
                         // add templayer prop so pm:remove isn't fired
                         l._pmTempLayer = true;
