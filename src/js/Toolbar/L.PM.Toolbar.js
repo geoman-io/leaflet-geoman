@@ -138,6 +138,7 @@ const Toolbar = L.Class.extend({
                 // enable polygon drawing mode without snap
                 this.map.pm.Draw.Poly.enable({ snappable: false });
 
+                // TODO: move this to other file
                 const cut = (e) => {
                     const layer = e.layer;
                     const all = this.map._layers;
@@ -163,8 +164,14 @@ const Toolbar = L.Class.extend({
                         // find layer difference
                         const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
 
+                        console.log(diff);
+
                         // add new layer to map
                         L.geoJSON(diff).addTo(this.map);
+
+                        // add templayer prop so pm:remove isn't fired
+                        l._pmTempLayer = true;
+                        layer._pmTempLayer = true;
 
                         // remove old layer and cutting layer
                         l.remove();
