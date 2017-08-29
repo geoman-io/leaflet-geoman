@@ -1,6 +1,21 @@
 /* eslint-disable */
+// Provide your access token
+const accessToken = 'pk.eyJ1IjoibWFwc29mc3VtaXQiLCJhIjoiY2l1ZDF3dHE5MDAxZDMwbjA0cTR3dG50eSJ9.63Xci-GKFikhAobboF0DVQ';
 
-const map2 = L.map('example2').setView([51.505, -0.09], 13);
+// set mapbox tile layer
+const mapboxTiles1 = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
+  attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+});
+const mapboxTiles2 = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
+  attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+});
+const mapboxTiles3 = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
+  attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+});
+
+const map2 = L.map('example2').setView([51.505, -0.09], 13).addLayer(mapboxTiles1);
+const map3 = L.map('example3').setView([51.505, -0.09], 13).addLayer(mapboxTiles2);
+const map4 = L.map('example4').setView([51.505, -0.09], 13).addLayer(mapboxTiles3);
 // map2.dragging.disable();
 
 map2.on('pm:create', function(e) {
@@ -22,22 +37,6 @@ const m3 = L.marker([51.50915, -0.096112], {pmIgnore: true});
 
 const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
 mGroup.pm.enable();
-
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map2);
-
-const map3 = L.map('example3').setView([51.505, -0.09], 13);
-
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map3);
-
-const map4 = L.map('example4').setView([51.505, -0.09], 13);
-
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map4);
 
 map2.pm.addControls({
     drawMarker: false,
