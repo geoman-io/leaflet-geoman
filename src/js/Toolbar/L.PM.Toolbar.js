@@ -1,9 +1,6 @@
 /**
 * The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
 */
-
-import intersect from '@turf/intersect';
-import difference from '@turf/difference';
 import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
@@ -126,75 +123,11 @@ const Toolbar = L.Class.extend({
             onClick: () => {
             },
             afterClick: () => {
-                // TODO:
-                // take care of the "double activating" and button activation problem
-                // handle cancelation of cutting
-                // move the code into a class or helper or whatever
-                // check if we can alter the current layer instead of replacing it to keep references
-
                 // disable all edit modes
                 this.map.pm.disableGlobalEditMode();
 
                 // enable polygon drawing mode without snap
-                this.map.pm.Draw.Poly.enable({ snappable: false, cursorMarker: false });
-
-                // TODO: move this to other file
-                const cut = (e) => {
-                    const layer = e.layer;
-                    const all = this.map._layers;
-
-                    const layers = Object.keys(all)
-
-                    // convert object to array
-                    .map(l => all[l])
-
-                    // only layers handled by leaflet.pm
-                    .filter(l => l.pm)
-
-                    // only polygons
-                    .filter(l => l instanceof L.Polygon)
-
-                    // exclude the drawn one
-                    .filter(l => l !== layer)
-
-                    // only layers with intersections
-                    .filter(l => !!intersect(layer.toGeoJSON(), l.toGeoJSON()));
-
-                    layers.forEach((l) => {
-                        // find layer difference
-                        const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
-
-                        // if result is a multipolygon, split it into regular polygons
-                        // TODO: remove as soon as multipolygons are supported
-                        if(diff.geometry.type === 'MultiPolygon') {
-                            const geoJSONs = diff.geometry.coordinates.reduce((arr, coords) => {
-                                arr.push({ type: 'Polygon', coordinates: coords });
-                                return arr;
-                            }, []);
-
-                            // add new layers to map
-                            geoJSONs.forEach((g) => {
-                                L.geoJSON(g).addTo(this.map);
-                            });
-                        } else {
-                            // add new layer to map
-                            L.geoJSON(diff).addTo(this.map);
-                        }
-
-                        // add templayer prop so pm:remove isn't fired
-                        l._pmTempLayer = true;
-                        layer._pmTempLayer = true;
-
-                        // remove old layer and cutting layer
-                        l.remove();
-                        layer.remove();
-                    });
-
-                    this.map.off('pm:create', cut);
-                };
-
-                this.map.off('pm:create');
-                this.map.on('pm:create', cut);
+                this.map.pm.Draw.Cut.toggle({ snappable: false, cursorMarker: false });
             },
             doToggle: true,
             toggleStatus: false,
