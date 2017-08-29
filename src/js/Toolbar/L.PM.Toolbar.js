@@ -138,8 +138,7 @@ const Toolbar = L.Class.extend({
                 // enable polygon drawing mode without snap
                 this.map.pm.Draw.Poly.enable({ snappable: false });
 
-                this.map.off('pm:create');
-                this.map.on('pm:create', (e) => {
+                const cut = (e) => {
                     const layer = e.layer;
                     const all = this.map._layers;
 
@@ -161,13 +160,22 @@ const Toolbar = L.Class.extend({
                     .filter(l => !!intersect(layer.toGeoJSON(), l.toGeoJSON()));
 
                     layers.forEach((l) => {
+                        // find layer difference
                         const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
+
+                        // add new layer to map
                         L.geoJSON(diff).addTo(this.map);
 
+                        // remove old layer and cutting layer
                         l.remove();
                         layer.remove();
                     });
-                });
+
+                    this.map.off('pm:create', cut);
+                };
+
+                this.map.off('pm:create');
+                this.map.on('pm:create', cut);
             },
             doToggle: true,
             toggleStatus: false,
