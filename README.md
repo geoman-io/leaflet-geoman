@@ -276,6 +276,7 @@ The icons used for the toolbar are CC-BY [Glyphicons](http://glyphicons.com/).
 I also took a hard look at the great [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some of my helper functions.
 
 
+
 ### License
 Released under the MIT license.
 

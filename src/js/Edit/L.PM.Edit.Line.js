@@ -259,12 +259,23 @@ Edit.Line = Edit.extend({
         // set new latlngs to the polygon
         this._layer.setLatLngs(coords);
 
-        // if the poly has no coordinates left, remove the layer
-        // else, redraw it - the polygon is updated now
+        // if the ring of the poly has no coordinates left, remove the ring
+        if(coordsRing.length <= 1) {
+            // remove coords ring
+            coords.splice(ringIndex, 1);
+
+            // set new coords
+            this._layer.setLatLngs(coords);
+
+            // re-enable editing so unnecessary markers are removed
+            // TODO: kind of an ugly workaround maybe to it better?
+            this.disable();
+            this.enable(this.options);
+        }
+
+        // if no coords are left, remove the layer
         if(coords.length < 1) {
             this._layer.remove();
-        } else {
-            this._layer.redraw();
         }
 
         // now handle the middle markers
