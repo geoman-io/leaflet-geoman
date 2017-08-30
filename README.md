@@ -58,6 +58,7 @@ var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
     drawMarker: true,  // adds button to draw markers
     drawPolygon: true,  // adds button to draw a polygon
+    cutPolygon: true,  // adds button to cut a hole in a polygon
     drawPolyline: true,  // adds button to draw a polyline
     drawCircle: true,  // adds button to draw a cricle
     editPolygon: true,  // adds button to toggle global edit mode
