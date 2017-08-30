@@ -49,6 +49,7 @@ Edit.LayerGroup = L.Class.extend({
             'pm:dragend',
             'pm:snap',
             'pm:unsnap',
+            'pm:cut',
             'pm:raiseMarkers',
             'pm:markerdragend',
             'pm:markerdragstart',
