@@ -21,6 +21,17 @@ const map4 = L.map('example4').setView([51.505, -0.09], 13).addLayer(mapboxTiles
 map2.on('pm:create', function(e) {
     // alert('pm:create event fired. See console for details');
     console.log(e);
+
+    const layer = e.layer;
+    layer.on('pm:cut', function(ev) {
+        console.log('cut event on layer');
+        console.log(ev);
+    });
+
+});
+map2.on('pm:cut', function(e) {
+    console.log('cut event on map');
+    console.log(e);
 });
 map2.on('pm:remove', function(e) {
     console.log('pm:remove event fired. See console for details');

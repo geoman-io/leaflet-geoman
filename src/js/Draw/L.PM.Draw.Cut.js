@@ -28,6 +28,9 @@ Draw.Cut = Draw.Poly.extend({
         // only layers with intersections
         .filter(l => !!intersect(layer.toGeoJSON(), l.toGeoJSON()));
 
+        // the resulting layers after the cut
+        const resultingLayers = [];
+
         // TODO:
         // check if we can alter the current layer instead of replacing it to keep references
         layers.forEach((l) => {
@@ -44,12 +47,30 @@ Draw.Cut = Draw.Poly.extend({
 
                 // add new layers to map
                 geoJSONs.forEach((g) => {
-                    L.geoJSON(g, this.options.pathOptions).addTo(this._map);
+                    const newL = L.geoJSON(g, this.options.pathOptions);
+                    resultingLayers.push(newL);
+                    newL.addTo(this._map);
                 });
             } else {
                 // add new layer to map
-                L.geoJSON(diff, this.options.pathOptions).addTo(this._map);
+                const newL = L.geoJSON(diff, this.options.pathOptions).addTo(this._map);
+                resultingLayers.push(newL);
+                newL.addTo(this._map);
             }
+
+            // fire pm:cut on the cutted layer
+            l.fire('pm:cut', {
+                shape: this._shape,
+                layer: l,
+                resultingLayers,
+            });
+
+            // fire pm:cut on the map for each cutted layer
+            this._map.fire('pm:cut', {
+                shape: this._shape,
+                cuttedLayer: l,
+                resultingLayers,
+            });
 
             // add templayer prop so pm:remove isn't fired
             l._pmTempLayer = true;
