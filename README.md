@@ -23,15 +23,15 @@ As we are always using the latest leaflet version in a big production app, I wil
 `bower install leaflet.pm --save`
 
 #### Install Manually
-Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.17.3/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.17.3/dist/leaflet.pm.min.js) and include them in your project.
+Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.min.js) and include them in your project.
 
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.17.3/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.17.3/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
@@ -132,6 +132,23 @@ map.on('pm:create', function(e) {//...});
 
 ```
 
+##### Creating Holes or Cutting a Polygon
+![cut polygon](https://user-images.githubusercontent.com/2399810/29863151-15929280-8d6f-11e7-90e8-1935695175aa.gif)
+Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from all underlying polygons.
+This way you can create holes, cut polygons in half or remove parts of it.
+```
+// recommended options (used when enabled via toolbar)
+var options = { snappable: false, cursorMarker: false };
+
+// enable cutting
+map.pm.Draw.Cut.enable(options);
+
+// disable cutting
+map.pm.Draw.Cut.disable(options);
+
+// toggle cutting
+map.pm.Draw.Cut.toggle(options);
+```
 
 ##### Edit Mode
 Use Edit Mode for a layer like this:
