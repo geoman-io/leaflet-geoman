@@ -136,6 +136,9 @@ map.on('pm:create', function(e) {//...});
 ![cut polygon](https://user-images.githubusercontent.com/2399810/29863151-15929280-8d6f-11e7-90e8-1935695175aa.gif)
 Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from all underlying polygons.
 This way you can create holes, cut polygons in half or remove parts of it.
+
+Important: the cutted layer will be replaced, not updated. Listen to the `pm:cut` event to update your layer references in your code.
+The `pm:cut` event will provide you with the old/removed/cut layer and returns the resulting layer(s) that is/are added to the map.
 ```
 // recommended options (used when enabled via toolbar)
 var options = { snappable: false, cursorMarker: false };
@@ -148,6 +151,12 @@ map.pm.Draw.Cut.disable(options);
 
 // toggle cutting
 map.pm.Draw.Cut.toggle(options);
+
+// listen to when a specific layer gets cut
+layer.on('pm:cut', function(e) {//...});
+
+// listen to when any layer on the map gets cut
+map.on('pm:cut', function(e) {//...});
 ```
 
 ##### Edit Mode
