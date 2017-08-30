@@ -43,6 +43,11 @@
     background-size: 80%;
     background-position: 4px center;
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-cut {
+    background-image: url('../assets/icons/cut.png');
+    background-size: 80%;
+    background-position: 4px center;
+}
 
 .leaflet-buttons-control-button:hover {
     cursor: pointer;

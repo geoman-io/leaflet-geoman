@@ -18,7 +18,10 @@
     "dist"
   ],
   "main": "dist/leaflet.pm.min.js",
-  "dependencies": {},
+  "dependencies": {
+    "@turf/difference": "^4.6.0",
+    "@turf/intersect": "^4.6.0"
+  },
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-loader": "^7.0.0",
