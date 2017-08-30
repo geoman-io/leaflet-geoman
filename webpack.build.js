@@ -1,11 +1,11 @@
 /* eslint import/no-extraneous-dependencies: 0 */
-
+const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 
 module.exports = {
     watch: false,
-    devtool: 'cheap-eval-source-map',
+    devtool: 'cheap-source-map',
     entry: ['./src/js/L.PM.js'],
     output: {
         filename: 'leaflet.pm.min.js',
@@ -38,5 +38,6 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('leaflet.pm.css'),
+        new webpack.optimize.UglifyJsPlugin(),
     ],
 };
