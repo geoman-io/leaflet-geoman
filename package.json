@@ -39,7 +39,7 @@
     "webpack": "^2.4.1"
   },
   "peerDependencies": {
-    "leaflet": "^1.0.2"
+    "leaflet": "^1.2.0"
   },
   "scripts": {
     "start": "npm run dev",
