@@ -11,8 +11,6 @@ Draw.Cut = Draw.Poly.extend({
     _cut(layer) {
         const all = this._map._layers;
 
-        console.log(layer);
-
         const layers = Object.keys(all)
 
         // convert object to array
