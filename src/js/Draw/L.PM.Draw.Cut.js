@@ -11,6 +11,7 @@ Draw.Cut = Draw.Poly.extend({
     _cut(layer) {
         const all = this._map._layers;
 
+        // find all layers that intersect with `layer`, the just drawn cutting layer
         const layers = Object.keys(all)
 
         // convert object to array
@@ -31,8 +32,7 @@ Draw.Cut = Draw.Poly.extend({
         // the resulting layers after the cut
         const resultingLayers = [];
 
-        // TODO:
-        // check if we can alter the current layer instead of replacing it to keep references
+        // loop through all layers that intersect with the drawn (cutting) layer
         layers.forEach((l) => {
             // find layer difference
             const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
