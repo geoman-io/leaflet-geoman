@@ -8,6 +8,7 @@ Edit.Rectangle = Edit.Poly.extend({
     // initializes Rectangle Markers
     _initMarkers() {
         const map = this._map;
+        const corners = this._findCorners()
 
         // cleanup old ones first
         if(this._markerGroup) {
@@ -16,11 +17,12 @@ Edit.Rectangle = Edit.Poly.extend({
 
         // add markerGroup to map, markerGroup includes regular and middle markers
         this._markerGroup = new L.LayerGroup();
+        this._markerGroup._pmTempLayer = true;
         map.addLayer(this._markerGroup);
 
         // create markers for four corners of rectangle
-        const corners = this._findCorners()
-        this._markers = corners.map(this._createMarker, this);
+        this._markers = []
+        this._markers[0] = corners.map(this._createMarker, this);
 
         if(this.options.snappable) {
             this._initSnappableMarkers();
@@ -91,7 +93,7 @@ Edit.Rectangle = Edit.Poly.extend({
         this._adjustAllMarkers(corners)
 
         // Clean-up data attributes
-        this._markers.forEach((marker) =>{
+        this._markers[0].forEach((marker) =>{
             delete marker._oppositeCornerLatLng
         })
 
@@ -138,7 +140,7 @@ Edit.Rectangle = Edit.Poly.extend({
             return
         }
 
-        this._markers.forEach((marker, index)=>{
+        this._markers[0].forEach((marker, index)=>{
             marker.setLatLng(markerLatLngs[index])
         })
     },
@@ -167,7 +169,7 @@ Edit.Rectangle = Edit.Poly.extend({
         // reposition markers for those corners
         let unmarkedCornerIndex = 0
         if(unmarkedCorners.length == 2){
-            this._markers.forEach((marker) =>{
+            this._markers[0].forEach((marker) =>{
                 let markerLatLng = marker.getLatLng()
                 if(!markerLatLng.equals(anchorLatLng) && !markerLatLng.equals(oppositeLatLng)){
                     marker.setLatLng(unmarkedCorners[unmarkedCornerIndex])
