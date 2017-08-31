@@ -1,7 +1,6 @@
 /**
 * The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
 */
-
 import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
@@ -14,6 +13,7 @@ const Toolbar = L.Class.extend({
         drawCircle: true,
         drawRectangle: true,
         editPolygon: true,
+        cutPolygon: true,
         dragPolygon: false,
         deleteLayer: true,
         position: 'topleft',
@@ -119,6 +119,23 @@ const Toolbar = L.Class.extend({
             position: this.options.position,
         };
 
+        const cutButton = {
+            className: 'leaflet-pm-icon-cut',
+            onClick: () => {
+            },
+            afterClick: () => {
+                // disable all edit modes
+                this.map.pm.disableGlobalEditMode();
+
+                // enable polygon drawing mode without snap
+                this.map.pm.Draw.Cut.toggle({ snappable: false, cursorMarker: false });
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
+        };
+
         const drawMarkerButton = {
             className: 'leaflet-pm-icon-marker',
             onClick: () => {
@@ -210,6 +227,7 @@ const Toolbar = L.Class.extend({
 
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         this._addButton('drawRectangle', new L.Control.PMButton(drawRectangleButton));

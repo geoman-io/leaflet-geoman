@@ -23,15 +23,15 @@ As we are always using the latest leaflet version in a big production app, I wil
 `bower install leaflet.pm --save`
 
 #### Install Manually
-Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.17.3/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.17.3/dist/leaflet.pm.min.js) and include them in your project.
+Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.min.js) and include them in your project.
 
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.17.3/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.17.3/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
@@ -58,6 +58,7 @@ var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
     drawMarker: true,  // adds button to draw markers
     drawPolygon: true,  // adds button to draw a polygon
+    cutPolygon: true,  // adds button to cut a hole in a polygon
     drawPolyline: true,  // adds button to draw a polyline
     drawCircle: true,  // adds button to draw a cricle
     editPolygon: true,  // adds button to toggle global edit mode
@@ -108,14 +109,14 @@ var options = {
     }
 };
 
-// enable drawing mode for shape - e.g. Poly or Line
+// enable drawing mode for shape - e.g. Poly, Line, etc
 map.pm.enableDraw('Poly', options);
 map.pm.enableDraw('Line', options);
 map.pm.enableDraw('Marker', options);
 map.pm.enableDraw('Circle', options);
 
 // get array of all available shapes
-map.pm.Draw.getShapes()
+map.pm.Draw.getShapes();
 
 // listen to when drawing mode gets enabled
 map.on('pm:drawstart', function(e) {//...});
@@ -132,6 +133,32 @@ map.on('pm:create', function(e) {//...});
 
 ```
 
+##### Creating Holes or Cutting a Polygon
+![cut polygon](https://user-images.githubusercontent.com/2399810/29863151-15929280-8d6f-11e7-90e8-1935695175aa.gif)
+Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from all underlying polygons.
+This way you can create holes, cut polygons in half or remove parts of it.
+
+Important: the cutted layer will be replaced, not updated. Listen to the `pm:cut` event to update your layer references in your code.
+The `pm:cut` event will provide you with the old/removed/cut layer and returns the resulting layer(s) that is/are added to the map.
+```
+// recommended options (used when enabled via toolbar)
+var options = { snappable: false, cursorMarker: false };
+
+// enable cutting
+map.pm.Draw.Cut.enable(options);
+
+// disable cutting
+map.pm.Draw.Cut.disable(options);
+
+// toggle cutting
+map.pm.Draw.Cut.toggle(options);
+
+// listen to when a specific layer gets cut
+layer.on('pm:cut', function(e) {//...});
+
+// listen to when any layer on the map gets cut
+map.on('pm:cut', function(e) {//...});
+```
 
 ##### Edit Mode
 Use Edit Mode for a layer like this:
@@ -218,11 +245,11 @@ var options = {
     },
 };
 
-// enable drawing mode for shape - e.g. Poly or Line
+// enable drawing mode for shape - e.g. Poly, Line, Circle, etc
 map.pm.enableDraw('Poly', options);
 ```
 
-To customize the style of the drawn layer (polygon, polyline) with leaflets options, you can either pass the options to `enableDraw` as well:
+To customize the style of the drawn layer with leaflet options, you can either pass the options to `enableDraw`:
 
 ```
 // optional options for line style during draw. These are the defaults
@@ -257,6 +284,7 @@ As I never built a leaflet plugin before, I looked heavily into the code of leaf
 The icons used for the toolbar are CC-BY [Glyphicons](http://glyphicons.com/).
 
 I also took a hard look at the great [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some of my helper functions.
+
 
 
 ### License

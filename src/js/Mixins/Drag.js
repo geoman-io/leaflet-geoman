@@ -7,6 +7,12 @@ const DragMixin = {
         const el = this._layer._path;
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
+        this._originalMapDragState = this._layer._map.dragging._enabled;
+
+        // can we reliably save the map's draggable state?
+        // (if the mouse up event happens outside the container, then the map can become undraggable)
+        this._safeToCacheDragState = true;
+
         this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
     },
     _dragMixinOnMouseUp() {
@@ -16,6 +22,9 @@ const DragMixin = {
         if(this._originalMapDragState) {
             this._layer._map.dragging.enable();
         }
+
+        // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
+        this._safeToCacheDragState = true
 
         // clear up mousemove event
         this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
@@ -75,7 +84,12 @@ const DragMixin = {
     },
     _dragMixinOnMouseDown(e) {
         // save current map dragging state
-        this._originalMapDragState = this._layer._map.dragging._enabled;
+        if(this._safeToCacheDragState){
+            this._originalMapDragState = this._layer._map.dragging._enabled;
+
+            // don't cache the state again until another mouse up is registered
+            this._safeToCacheDragState = false           
+        }
 
         // save for delta calculation
         this._tempDragCoord = e.latlng;
@@ -100,16 +114,8 @@ const DragMixin = {
             lng: latlng.lng - this._tempDragCoord.lng,
         };
 
-        // create the new coordinates array
-        let coords;
-
-        if(this._layer instanceof L.Polygon) {
-            coords = this._layer._latlngs[0];
-        } else {
-            coords = this._layer._latlngs;
-        }
-
-        const newLatLngs = coords.map((currentLatLng) => {
+        // move the coordinates by the delta
+        const moveCoords = coords => coords.map((currentLatLng) => {
             const c = {
                 lat: currentLatLng.lat + deltaLatLng.lat,
                 lng: currentLatLng.lng + deltaLatLng.lng,
@@ -117,8 +123,17 @@ const DragMixin = {
             return c;
         });
 
+        // create the new coordinates array
+        let newCoords;
+
+        if(this.isPolygon()) {
+            newCoords = this._layer._latlngs.map(moveCoords, this);
+        } else {
+            newCoords = moveCoords(this._layer._latlngs);
+        }
+
         // set new coordinates and redraw
-        this._layer.setLatLngs(newLatLngs).redraw();
+        this._layer.setLatLngs(newCoords).redraw();
 
         // save current latlng for next delta calculation
         this._tempDragCoord = latlng;
