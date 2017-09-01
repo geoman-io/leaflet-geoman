@@ -22,7 +22,10 @@ Edit.Rectangle = Edit.Poly.extend({
 
         // create markers for four corners of rectangle
         this._markers = []
+        // nest set of corner markers in a 2D array so that we can Cut this Rectangle, if needed
         this._markers[0] = corners.map(this._createMarker, this);
+        // convenience alias, for better readability
+        this._cornerMarkers = this._markers[0]
 
         if(this.options.snappable) {
             this._initSnappableMarkers();
@@ -93,9 +96,10 @@ Edit.Rectangle = Edit.Poly.extend({
         this._adjustAllMarkers(corners)
 
         // Clean-up data attributes
-        this._markers[0].forEach((marker) =>{
+        this._cornerMarkers.forEach((marker) =>{
             delete marker._oppositeCornerLatLng
         })
+
 
         // Update bounding box
         this._layer.setLatLngs(corners)
@@ -140,7 +144,7 @@ Edit.Rectangle = Edit.Poly.extend({
             return
         }
 
-        this._markers[0].forEach((marker, index)=>{
+        this._cornerMarkers.forEach((marker, index)=>{
             marker.setLatLng(markerLatLngs[index])
         })
     },
@@ -169,7 +173,7 @@ Edit.Rectangle = Edit.Poly.extend({
         // reposition markers for those corners
         let unmarkedCornerIndex = 0
         if(unmarkedCorners.length == 2){
-            this._markers[0].forEach((marker) =>{
+            this._cornerMarkers.forEach((marker) =>{
                 let markerLatLng = marker.getLatLng()
                 if(!markerLatLng.equals(anchorLatLng) && !markerLatLng.equals(oppositeLatLng)){
                     marker.setLatLng(unmarkedCorners[unmarkedCornerIndex])
