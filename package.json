@@ -32,6 +32,7 @@
     "eslint-plugin-import": "^1.15.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.11.1",
+    "leaflet": "^1.2.0",
     "style-loader": "^0.16.1",
     "tape": "^4.6.2",
     "tape-run": "^2.1.4",
@@ -46,7 +47,7 @@
     "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
     "test": "browserify ./spec/test.spec.js | tape-run",
     "build": "./node_modules/.bin/webpack --config=webpack.build.js",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",

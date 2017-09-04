@@ -3,7 +3,7 @@ const test = require('tape');
 const L = require('leaflet');
 
 test('MAP', (t) => {
-    t.plan(2);
+    t.plan(3);
     const mapContainer = document.createElement('DIV');
     document.body.appendChild(mapContainer);
     const map = L.map(mapContainer);
@@ -16,4 +16,8 @@ test('MAP', (t) => {
     map.pm.toggleGlobalEditMode();
 
     t.ok(map.pm.globalEditEnabled(), 'Global Edit Mode enabled');
+
+    map.pm.disableGlobalEditMode();
+
+    t.notOk(map.pm.globalEditEnabled(), 'Global Edit Mode disabled');
 });
