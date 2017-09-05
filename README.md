@@ -57,12 +57,12 @@ This plugin comes with an optional toolbar to give you buttons to use the variou
 var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
     drawMarker: true,  // adds button to draw markers
-    drawPolygon: true,  // adds button to draw a polygon
-    cutPolygon: true,  // adds button to cut a hole in a polygon
     drawPolyline: true,  // adds button to draw a polyline
+    drawPolygon: true,  // adds button to draw a polygon
     drawCircle: true,  // adds button to draw a cricle
-    editPolygon: true,  // adds button to toggle global edit mode
-    deleteLayer: true   // adds a button to delete layers
+    cutPolygon: true,  // adds button to cut a hole in a polygon
+    editMode: true,  // adds button to toggle edit mode for all layers
+    removalMode: true   // adds a button to remove layers
 };
 
 // add leaflet.pm controls to the map
