@@ -12,10 +12,10 @@ const Toolbar = L.Class.extend({
         drawPolyline: true,
         drawCircle: true,
         drawRectangle: true,
-        editPolygon: true,
+        editMode: true,
         cutPolygon: true,
         dragPolygon: false,
-        deleteLayer: true,
+        removalMode: true,
         position: 'topleft',
     },
     initialize(map) {
@@ -32,6 +32,14 @@ const Toolbar = L.Class.extend({
 
     addControls(options = this.options) {
         // adds all buttons to the map specified inside options
+
+        // make button renaming backwards compatible
+        if(typeof options.editPolygon !== 'undefined') {
+            options.editMode = options.editPolygon;
+        }
+        if(typeof options.deleteLayer !== 'undefined') {
+            options.removalMode = options.deleteLayer;
+        }
 
         // first set the options
         L.Util.setOptions(this, options);
@@ -51,11 +59,11 @@ const Toolbar = L.Class.extend({
 
         this.isVisible = false;
     },
-    toggleControls() {
+    toggleControls(options = this.options) {
         if (this.isVisible) {
             this.removeControls();
         } else {
-            this.addControls();
+            this.addControls(options);
         }
     },
     _addButton(name, button) {
@@ -80,6 +88,14 @@ const Toolbar = L.Class.extend({
         // does not fire the events/functionality of the button
         // this just changes the state and is used if a functionality (like Draw)
         // is enabled manually via script
+
+        // backwards compatibility with button rename
+        if(name === 'editPolygon') {
+            name = 'editMode';
+        }
+        if(name === 'deleteLayer') {
+            name = 'removalMode';
+        }
 
         // as some mode got enabled, we still have to trigger the click on the other buttons
         // to disable their mode
@@ -193,7 +209,7 @@ const Toolbar = L.Class.extend({
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
-            position: this.options.position,            
+            position: this.options.position,
         };
 
         const editButton = {
@@ -226,16 +242,14 @@ const Toolbar = L.Class.extend({
         };
 
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
-        this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
-        this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
-        this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         this._addButton('drawRectangle', new L.Control.PMButton(drawRectangleButton));
-        // TODO: rename editPolygon to editMode
-        this._addButton('editPolygon', new L.Control.PMButton(editButton));
+        this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+        this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
+        this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
+        this._addButton('editMode', new L.Control.PMButton(editButton));
         this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
-        // TODO: rename deleteLayer to removalMode
-        this._addButton('deleteLayer', new L.Control.PMButton(deleteButton));
+        this._addButton('removalMode', new L.Control.PMButton(deleteButton));
     },
 
     _showHideButtons() {
