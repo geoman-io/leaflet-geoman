@@ -23,15 +23,15 @@ As we are always using the latest leaflet version in a big production app, I wil
 `bower install leaflet.pm --save`
 
 #### Install Manually
-Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.min.js) and include them in your project.
+Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.19.0/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.19.0/dist/leaflet.pm.min.js) and include them in your project.
 
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.19.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.18.0/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.19.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
@@ -58,6 +58,7 @@ var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
     drawMarker: true,  // adds button to draw markers
     drawPolyline: true,  // adds button to draw a polyline
+    drawRectangle: true,  // adds button to draw a rectangle
     drawPolygon: true,  // adds button to draw a polygon
     drawCircle: true,  // adds button to draw a cricle
     cutPolygon: true,  // adds button to cut a hole in a polygon
@@ -111,6 +112,7 @@ var options = {
 
 // enable drawing mode for shape - e.g. Poly, Line, etc
 map.pm.enableDraw('Poly', options);
+map.pm.enableDraw('Rectangle', options);
 map.pm.enableDraw('Line', options);
 map.pm.enableDraw('Marker', options);
 map.pm.enableDraw('Circle', options);
