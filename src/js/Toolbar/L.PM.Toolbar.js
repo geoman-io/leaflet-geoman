@@ -89,6 +89,14 @@ const Toolbar = L.Class.extend({
         // this just changes the state and is used if a functionality (like Draw)
         // is enabled manually via script
 
+        // backwards compatibility with button rename
+        if(name === 'editPolygon') {
+            name = 'editMode';
+        }
+        if(name === 'deleteLayer') {
+            name = 'removalMode';
+        }
+
         // as some mode got enabled, we still have to trigger the click on the other buttons
         // to disable their mode
         this.triggerClickOnToggledButtons(this.buttons[name]);
