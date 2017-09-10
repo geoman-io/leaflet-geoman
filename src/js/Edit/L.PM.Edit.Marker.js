@@ -36,7 +36,7 @@ Edit.Marker = Edit.extend({
         this._layer.on('contextmenu', this._removeMarker, this);
 
         // enable dragging and removal for the marker
-        if(this.options.snappable) {
+        if(this.options.draggable) {
             this._layer.dragging.enable();
         }
 
