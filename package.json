@@ -14,9 +14,7 @@
     "data-field-geojson",
     "ui-leaflet-draw"
   ],
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "dist/leaflet.pm.min.js",
   "dependencies": {
     "@turf/difference": "^4.6.0",
@@ -62,5 +60,5 @@
   "bugs": {
     "url": "https://github.com/codeofsumit/leaflet.pm/issues"
   },
-  "homepage": "https://codeofsumit.github.io/leaflet.pm/"
+  "homepage": "https://leafletpm.now.sh"
 }
