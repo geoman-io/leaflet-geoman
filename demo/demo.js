@@ -143,7 +143,9 @@ map3.pm.addControls({
     drawMarker: true,
     drawPolygon: true,
     editPolygon: true,
-    drawPolyline: true,
+    drawPolyline: {
+        finishOn: 'contextmenu'   
+    },
     deleteLayer: true,
 });
 
@@ -168,7 +170,8 @@ map3.pm.enableDraw('Poly', {
     },
     markerStyle: markerStyle,
     cursorMarker: false,
-    finishOnDoubleClick: true,
+    // finishOnDoubleClick: true,
+    finishOn: 'contextmenu',
 });
 
 var scotland = L.polygon([[[60,-13],[60,0],[50,4],[50,-13]],
