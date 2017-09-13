@@ -102,6 +102,10 @@ var options = {
     // this works, but if you enable it, there is a problem that's not fixed yet:
     // https://github.com/codeofsumit/leaflet.pm/issues/147
     finishOnDoubleClick: false,
+    
+    // specify type of layer event to perform finish drawing
+    // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
+    finishOn: 'contextmenu',
 
     // custom marker style (only for Marker draw)
     markerStyle: {
