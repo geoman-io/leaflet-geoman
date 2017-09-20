@@ -40,6 +40,7 @@ map2.on('pm:remove', function(e) {
 });
 map2.on('pm:drawstart', function(e) {
     console.log(e);
+    console.log(e.workingLayer);
 });
 
 const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
