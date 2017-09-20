@@ -142,6 +142,7 @@ Edit.Line = Edit.extend({
         marker.on('move', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
         marker.on('contextmenu', this._removeMarker, this);
+        marker.on('mouseup', this._onMouseUp, this);
 
         this._markerGroup.addLayer(marker);
 
@@ -401,7 +402,11 @@ Edit.Line = Edit.extend({
             markerEvent: e,
         });
     },
-
+    _onMouseUp(e) {
+        this._layer.fire('pm:markermouseup', {
+            markerEvent: e,
+        });
+    },
     _fireEdit() {
         // fire edit event
         this._layer.edited = true;
