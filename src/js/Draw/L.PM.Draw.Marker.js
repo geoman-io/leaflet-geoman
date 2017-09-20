@@ -32,7 +32,7 @@ Draw.Marker = Draw.extend({
         this._map.on('mousemove', this._syncHintMarker, this);
 
         // fire drawstart event
-        this._map.fire('pm:drawstart', { shape: this._shape });
+        this._map.fire('pm:drawstart', { shape: this._shape, workingLayer: this._layer });
 
         // enable edit mode for existing markers
         this._map.eachLayer((layer) => {
