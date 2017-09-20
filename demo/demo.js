@@ -143,9 +143,7 @@ map3.pm.addControls({
     drawMarker: true,
     drawPolygon: true,
     editPolygon: true,
-    drawPolyline: {
-        finishOn: 'contextmenu'   
-    },
+    finishOn: 'contextmenu',
     deleteLayer: true,
 });
 

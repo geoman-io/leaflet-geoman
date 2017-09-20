@@ -7,6 +7,7 @@ const Draw = L.Class.extend({
         snapDistance: 20,
         cursorMarker: true,
         finishOnDoubleClick: false,
+        finishOn: null,
         templineStyle: {
             color: 'red',
         },
