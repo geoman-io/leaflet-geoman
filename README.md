@@ -121,17 +121,24 @@ map.pm.enableDraw('Circle', options);
 map.pm.Draw.getShapes();
 
 // listen to when drawing mode gets enabled
-map.on('pm:drawstart', function(e) {//...});
-
+map.on('pm:drawstart', function(e) {
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+    e.workingLayer; // the leaflet layer displayed while editing
+});
 
 // disable drawing mode
 map.pm.disableDraw('Poly');
 
 // listen to when drawing mode gets disabled
-map.on('pm:drawend', function(e) {//...});
+map.on('pm:drawend', function(e) {
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+});
 
 // listen to when a new layer is created
-map.on('pm:create', function(e) {//...});
+map.on('pm:create', function(e) {
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+    e.layer; // the leaflet layer created
+});
 
 ```
 
