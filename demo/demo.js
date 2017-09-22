@@ -191,6 +191,13 @@ const polygonLayer = L.polygon([[51.509, -0.08], [51.503, -0.06], [51.51, -0.047
     .addTo(map2);
 polygonLayer.pm.toggleEdit();
 
+map2.on('pm:drawstart', function(e) {
+    var layer = e.workingLayer;
+    layer.on('pm:vertexadded', function(e) {
+        console.log(e);
+    });
+});
+
 polygonLayer.on('pm:vertexadded', function(e) {
     console.log(e);
 });
