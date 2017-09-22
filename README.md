@@ -204,7 +204,11 @@ polygonLayer.on('pm:drag', function(e) {//...});
 polygonLayer.on('pm:dragend', function(e) {//...});
 
 // listen to when a marker of a polygon-vertex is being dragged
-polygonLayer.on('pm:markerdragstart', function(e) {//...});
+polygonLayer.on('pm:markerdragstart', function(e) {
+    // the property e.ringIndex refers to the coordinate ring inside the polygon the marker belongs to
+    // if it's undefined, there are no rings
+    // e.index is the index of the marker inside the coordinate ring / array it belongs to
+});
 polygonLayer.on('pm:markerdragend', function(e) {//...});
 
 // listen to when snapping occurs
