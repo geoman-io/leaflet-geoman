@@ -38,9 +38,21 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('leaflet.pm.css'),
-        new webpack.optimize.UglifyJsPlugin(),
-        // new webpack.DefinePlugin({
-        //     'process.env.NODE_ENV': '"production"',
-        // }),
+        new webpack.optimize.UglifyJsPlugin({
+            minimize: true,
+            compress: {
+                warnings: false, // Suppress uglification warnings
+                screw_ie8: true,
+            },
+            output: {
+                comments: false,
+            },
+        }),
+        new webpack.DefinePlugin({
+            'process.env': {
+                // This has effect on the react lib size
+                NODE_ENV: JSON.stringify('production'),
+            },
+        }),
     ],
 };
