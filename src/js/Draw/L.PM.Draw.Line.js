@@ -59,7 +59,7 @@ Draw.Line = Draw.extend({
         this._hintMarker.on('move', this._syncHintLine, this);
 
         // fire drawstart event
-        this._map.fire('pm:drawstart', { shape: this._shape });
+        this._map.fire('pm:drawstart', { shape: this._shape, workingLayer: this._layer });
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
