@@ -205,7 +205,7 @@ polygonLayer.on('pm:vertexremoved', function(e) {
     console.log(e);
 });
 
-polygonLayer.on('pm:edit', function(e) {
+polygonLayer.on('pm:markerdragstart', function(e) {
     console.log(e);
 });
 
