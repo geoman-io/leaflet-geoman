@@ -123,7 +123,7 @@ map.pm.Draw.getShapes();
 // listen to when drawing mode gets enabled
 map.on('pm:drawstart', function(e) {
     e.shape; // the name of the shape being drawn (i.e. 'Circle')
-    e.workingLayer; // the leaflet layer displayed while editing
+    e.workingLayer; // the leaflet layer displayed while drawing
 });
 
 // disable drawing mode
