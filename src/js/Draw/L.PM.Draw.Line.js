@@ -30,7 +30,7 @@ Draw.Line = Draw.extend({
         this._layerGroup.addLayer(this._hintline);
 
         // this is the hintmarker on the mouse cursor
-        this._hintMarker = L.marker([0, 0], {
+        this._hintMarker = L.marker(this._map.getCenter(), {
             icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
         });
         this._hintMarker._pmTempLayer = true;
