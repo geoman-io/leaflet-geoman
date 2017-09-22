@@ -140,6 +140,16 @@ map.on('pm:create', function(e) {
     e.layer; // the leaflet layer created
 });
 
+// listen to vertexes being added to the workingLayer
+map.on('pm:drawstart', function(e) {
+    var layer = e.workingLayer;
+    layer.on('pm:vertexadded', function(e) {
+        // e includes the new vertex, it's marker
+        // the index in the coordinates array
+        // the working layer and shape
+    });
+});
+
 ```
 
 ##### Creating Holes or Cutting a Polygon
@@ -209,6 +219,10 @@ polygonLayer.on('pm:edit', function(e) {//...});
 polygonLayer.on('pm:dragstart', function(e) {//...});
 polygonLayer.on('pm:drag', function(e) {//...});
 polygonLayer.on('pm:dragend', function(e) {//...});
+
+// listen to when vertexes are being added or removed from the layer
+polygonLayer.on('pm:vertexadded', function(e) {//...);
+polygonLayer.on('pm:vertexremoved', function(e) {//...);
 
 // listen to when a marker of a polygon-vertex is being dragged
 polygonLayer.on('pm:markerdragstart', function(e) {
