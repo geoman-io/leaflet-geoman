@@ -6,7 +6,7 @@ Edit.Circle = Edit.extend({
         this._enabled = false;
     },
     toggleEdit(options) {
-        if(!this.enabled()) {
+        if (!this.enabled()) {
             this.enable(options);
         } else {
             this.disable();
@@ -20,7 +20,7 @@ Edit.Circle = Edit.extend({
 
         this._map = this._layer._map;
 
-        if(!this.enabled()) {
+        if (!this.enabled()) {
             // if it was already enabled, disable first
             // we don't block enabling again because new options might be passed
             this.disable();
@@ -39,12 +39,12 @@ Edit.Circle = Edit.extend({
     },
     disable(layer = this._layer) {
         // if it's not enabled, it doesn't need to be disabled
-        if(!this.enabled()) {
+        if (!this.enabled()) {
             return false;
         }
 
         // prevent disabling if layer is being dragged
-        if(layer.pm._dragging) {
+        if (layer.pm._dragging) {
             return false;
         }
         layer.pm._enabled = false;
@@ -64,7 +64,7 @@ Edit.Circle = Edit.extend({
         const map = this._map;
 
         // cleanup old ones first
-        if(this._layerGroup) {
+        if (this._layerGroup) {
             this._layerGroup.clearLayers();
         }
 
@@ -83,7 +83,7 @@ Edit.Circle = Edit.extend({
         this._markers = [this._centerMarker, this._outerMarker];
         this._createHintLine(this._centerMarker, this._outerMarker);
 
-        if(this.options.snappable) {
+        if (this.options.snappable) {
             this._initSnappableMarkers();
         }
     },
@@ -165,8 +165,7 @@ Edit.Circle = Edit.extend({
         return marker;
     },
     _fireEdit() {
-    // fire edit event
+        // fire edit event
         this._layer.fire('pm:edit');
     },
-
 });
