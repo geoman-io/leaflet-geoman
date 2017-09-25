@@ -1,7 +1,6 @@
 import Draw from './L.PM.Draw';
 
 Draw.Poly = Draw.Line.extend({
-
     initialize(map) {
         this._map = map;
         this._shape = 'Poly';
@@ -42,15 +41,17 @@ Draw.Poly = Draw.Line.extend({
         this._layerGroup.addLayer(marker);
 
         // if the first marker gets clicked again, finish this shape
-        if(first) {
+        if (first) {
             marker.on('click', this._finishShape, this);
 
             // add the first vertex to "other snapping layers" so the polygon is easier to finish
             this._tempSnapLayerIndex = this._otherSnapLayers.push(marker) - 1;
 
-            if(this.options.snappable) {
+            if (this.options.snappable) {
                 this._cleanupSnapping();
             }
         }
+
+        return marker;
     },
 });

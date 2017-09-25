@@ -225,6 +225,14 @@ Edit.Line = Edit.extend({
         // fire edit event
         this._fireEdit();
 
+        this._layer.fire('pm:vertexadded', {
+            layer: this._layer,
+            marker: newM,
+            index,
+            ringIndex,
+            // TODO: maybe add latlng as well?
+        });
+
         if (this.options.snappable) {
             this._initSnappableMarkers();
         }
@@ -314,6 +322,15 @@ Edit.Line = Edit.extend({
 
         // fire edit event
         this._fireEdit();
+
+        // fire vertex removal event
+        this._layer.fire('pm:vertexremoved', {
+            layer: this._layer,
+            marker,
+            index,
+            ringIndex,
+            // TODO: maybe add latlng as well?
+        });
     },
     findMarkerIndex(markers, marker) {
         // find the index of a marker in the markers array and returns the parent index as well in case of a multidimensional array
