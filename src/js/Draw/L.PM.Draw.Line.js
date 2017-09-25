@@ -48,8 +48,13 @@ Draw.Line = Draw.extend({
         this._map.on('click', this._createVertex, this);
 
         // finish on double click
-        if(this.options.finishOnDoubleClick) {
+        if (this.options.finishOnDoubleClick) {
             this._map.on('dblclick', this._finishShape, this);
+        }
+        // finish on layer event 
+        // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
+        if (this.options.finishOn) {
+            this._map.on(this.options.finishOn, this._finishShape, this);
         }
 
         // sync hint marker with mouse cursor
