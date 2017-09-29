@@ -1,6 +1,4 @@
 # Leaflet Geometry Management
-[![CDNJS](https://img.shields.io/cdnjs/v/leaflet.pm.svg)](https://cdnjs.com/libraries/leaflet.pm)
-
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.  
 Draw, Edit, Drag, and Snap Features.
 
