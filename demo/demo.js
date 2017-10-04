@@ -256,7 +256,7 @@ map4.pm.addControls({
 });
 
 map4.pm.enableDraw('Poly', {
-    finishOn: 'mouseout'
+    finishOnDoubleClick: true
 });
 
 // map4.pm.setPathOptions({

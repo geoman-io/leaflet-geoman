@@ -7,6 +7,12 @@ Draw.Line = Draw.extend({
         this.toolbarButtonName = 'drawPolyline';
     },
     enable(options) {
+        // fallback option for finishOnDoubleClick
+        // TODO: remove in a later release
+        if (options.finishOnDoubleClick && !options.finishOn) {
+            options.finishOn = 'dblclick';
+        }
+
         // TODO: Think about if these options could be passed globally for all
         // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
         L.Util.setOptions(this, options);
@@ -47,10 +53,6 @@ Draw.Line = Draw.extend({
         // create a polygon-point on click
         this._map.on('click', this._createVertex, this);
 
-        // finish on double click
-        if (this.options.finishOnDoubleClick) {
-            this._map.on('dblclick', this._finishShape, this);
-        }
         // finish on layer event
         // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
         if (this.options.finishOn) {
@@ -89,7 +91,6 @@ Draw.Line = Draw.extend({
         // unbind listeners
         this._map.off('click', this._createVertex, this);
         this._map.off('mousemove', this._syncHintMarker, this);
-        this._map.off('dblclick', this._finishShape, this);
         this._map.off(this.options.finishOn, this._finishShape, this);
 
         // remove layer

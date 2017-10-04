@@ -99,12 +99,12 @@ var options = {
     cursorMarker: false,
 
     // finish drawing on double click
-    // this works, but if you enable it, there is a problem that's not fixed yet:
-    // https://github.com/codeofsumit/leaflet.pm/issues/147
+    // DEPRECATED: use finishOn: 'dblclick' instead
     finishOnDoubleClick: false,
     
-    // specify type of layer event to perform finish drawing
-    // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
+    // specify type of layer event to finish the drawn shape
+    // example events: 'mouseout', 'dblclick', 'contextmenu'
+    // List: http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
     finishOn: 'contextmenu',
 
     // custom marker style (only for Marker draw)
