@@ -9,13 +9,14 @@ Draw.Line = Draw.extend({
     enable(options) {
         // fallback option for finishOnDoubleClick
         // TODO: remove in a later release
-        if (options.finishOnDoubleClick && !options.finishOn) {
-            options.finishOn = 'dblclick';
-        }
 
         // TODO: Think about if these options could be passed globally for all
         // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
         L.Util.setOptions(this, options);
+
+        if (this.options.finishOnDoubleClick && !this.options.finishOn) {
+            this.options.finishOn = 'dblclick';
+        }
 
         // enable draw mode
         this._enabled = true;
