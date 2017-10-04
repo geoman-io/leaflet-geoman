@@ -132,8 +132,7 @@ map3.pm.addControls({
     drawPolygon: true,
     editPolygon: true,
     deleteLayer: true,
-    drawPolyline: true,
-    finishOn: 'contextmenu'
+    drawPolyline: true
 });
 
 const markerStyle = {
@@ -256,7 +255,7 @@ map4.pm.addControls({
 });
 
 map4.pm.enableDraw('Poly', {
-    finishOnDoubleClick: true
+    finishOn: 'mouseout'
 });
 
 // map4.pm.setPathOptions({
