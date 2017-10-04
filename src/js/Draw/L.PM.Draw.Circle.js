@@ -29,7 +29,7 @@ Draw.Circle = Draw.extend({
         // this is the marker in the center of the circle
         this._centerMarker = L.marker([0, 0], {
             icon: L.divIcon({ className: 'marker-icon' }),
-            draggable: true,
+            draggable: false,
             zIndexOffset: 100,
         });
         this._centerMarker._pmTempLayer = true;

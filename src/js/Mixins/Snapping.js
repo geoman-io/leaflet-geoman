@@ -175,8 +175,6 @@ const SnapMixin = {
         const debugIndicatorLines = [];
         const map = this._map;
 
-        console.log('create snaplist');
-
         // find all layers that are or inherit from Polylines... and markers that are not
         // temporary markers of polygon-edits
         map.eachLayer((layer) => {
