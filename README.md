@@ -23,15 +23,15 @@ As we are always using the latest leaflet version in a big production app, I wil
 `bower install leaflet.pm --save`
 
 #### Install Manually
-Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.19.0/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.19.0/dist/leaflet.pm.min.js) and include them in your project.
+Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@0.20.0/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@0.20.0/dist/leaflet.pm.min.js) and include them in your project.
 
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.19.0/dist/leaflet.pm.css" />`
+`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@0.20.0/dist/leaflet.pm.css" />`
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@0.19.0/dist/leaflet.pm.min.js"></script>`
+`<script src="https://unpkg.com/leaflet.pm@0.20.0/dist/leaflet.pm.min.js"></script>`
 
 #### Include as ES6 Module
 `import 'leaflet.pm';`  
@@ -45,14 +45,14 @@ JS
 #### Init Leaflet.PM
 Just include `leaflet.pm.min.js` right after Leaflet. It initializes itself.
 If you want certain layers to be ignored by leaflet.pm, pass `pmIgnore: true` to their options when creating them. Example:
-```
+``` js
 L.marker([51.50915, -0.096112], {pmIgnore: true}).addTo(map);
 ```
 
 ##### Leaflet.PM Toolbar
 This plugin comes with an optional toolbar to give you buttons to use the various features.
 
-```
+``` js
 // define toolbar options
 var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
@@ -76,7 +76,7 @@ If no options are passed, all buttons will be shown.
 Use Drawing Mode on a map like this
 
 
-```
+``` js
 
 // optional options for line style during draw. These are the defaults
 var options = {
@@ -125,17 +125,34 @@ map.pm.enableDraw('Circle', options);
 map.pm.Draw.getShapes();
 
 // listen to when drawing mode gets enabled
-map.on('pm:drawstart', function(e) {//...});
-
+map.on('pm:drawstart', function(e) {
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+    e.workingLayer; // the leaflet layer displayed while drawing
+});
 
 // disable drawing mode
 map.pm.disableDraw('Poly');
 
 // listen to when drawing mode gets disabled
-map.on('pm:drawend', function(e) {//...});
+map.on('pm:drawend', function(e) {
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+});
 
 // listen to when a new layer is created
-map.on('pm:create', function(e) {//...});
+map.on('pm:create', function(e) {
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+    e.layer; // the leaflet layer created
+});
+
+// listen to vertexes being added to the workingLayer
+map.on('pm:drawstart', function(e) {
+    var layer = e.workingLayer;
+    layer.on('pm:vertexadded', function(e) {
+        // e includes the new vertex, it's marker
+        // the index in the coordinates array
+        // the working layer and shape
+    });
+});
 
 ```
 
@@ -146,7 +163,7 @@ This way you can create holes, cut polygons in half or remove parts of it.
 
 Important: the cutted layer will be replaced, not updated. Listen to the `pm:cut` event to update your layer references in your code.
 The `pm:cut` event will provide you with the old/removed/cut layer and returns the resulting layer(s) that is/are added to the map.
-```
+``` js
 // recommended options (used when enabled via toolbar)
 var options = { snappable: false, cursorMarker: false };
 
@@ -169,7 +186,7 @@ map.on('pm:cut', function(e) {//...});
 ##### Edit Mode
 Use Edit Mode for a layer like this:
 
-```
+``` js
 var polygonLayer = L.geoJson(data).addTo(map);
 
 // optional options
@@ -207,8 +224,16 @@ polygonLayer.on('pm:dragstart', function(e) {//...});
 polygonLayer.on('pm:drag', function(e) {//...});
 polygonLayer.on('pm:dragend', function(e) {//...});
 
+// listen to when vertexes are being added or removed from the layer
+polygonLayer.on('pm:vertexadded', function(e) {//...);
+polygonLayer.on('pm:vertexremoved', function(e) {//...);
+
 // listen to when a marker of a polygon-vertex is being dragged
-polygonLayer.on('pm:markerdragstart', function(e) {//...});
+polygonLayer.on('pm:markerdragstart', function(e) {
+    // the property e.ringIndex refers to the coordinate ring inside the polygon the marker belongs to
+    // if it's undefined, there are no rings
+    // e.index is the index of the marker inside the coordinate ring / array it belongs to
+});
 polygonLayer.on('pm:markerdragend', function(e) {//...});
 
 // listen to when snapping occurs
@@ -224,7 +249,7 @@ map.pm.toggleGlobalEditMode();
 
 ##### Removal Mode
 
-```
+``` js
 // toggle global removal mode
 map.pm.toggleGlobalRemovalMode();
 
@@ -236,7 +261,7 @@ map.on('pm:remove', function(e) {//...})
 
 In order to change the style of the lines during draw, pass these options to the `enableDraw()` function.
 
-```
+``` js
 // optional options for line style during draw. These are the defaults
 var options = {
     // the lines between coordinates/markers
@@ -257,7 +282,7 @@ map.pm.enableDraw('Poly', options);
 
 To customize the style of the drawn layer with leaflet options, you can either pass the options to `enableDraw`:
 
-```
+``` js
 // optional options for line style during draw. These are the defaults
 var options = {
     templineStyle: {},
@@ -275,7 +300,7 @@ map.pm.enableDraw('Poly', options);
 
 or set the options generally:
 
-```
+``` js
 map.pm.setPathOptions({
     color: 'orange',
     fillColor: 'green',

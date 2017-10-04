@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
     watch: false,
-    devtool: 'cheap-source-map',
+    // devtool: 'cheap-source-map',
     entry: ['./src/js/L.PM.js'],
     output: {
         filename: 'leaflet.pm.min.js',
@@ -38,6 +38,21 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('leaflet.pm.css'),
-        new webpack.optimize.UglifyJsPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            minimize: true,
+            compress: {
+                warnings: false, // Suppress uglification warnings
+                screw_ie8: true,
+            },
+            output: {
+                comments: false,
+            },
+        }),
+        new webpack.DefinePlugin({
+            'process.env': {
+                // This has effect on the react lib size
+                NODE_ENV: JSON.stringify('production'),
+            },
+        }),
     ],
 };

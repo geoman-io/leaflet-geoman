@@ -30,14 +30,14 @@ Draw.Line = Draw.extend({
         this._layerGroup.addLayer(this._hintline);
 
         // this is the hintmarker on the mouse cursor
-        this._hintMarker = L.marker([0, 0], {
+        this._hintMarker = L.marker(this._map.getCenter(), {
             icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
         });
         this._hintMarker._pmTempLayer = true;
         this._layerGroup.addLayer(this._hintMarker);
 
         // show the hintmarker if the option is set
-        if(this.options.cursorMarker) {
+        if (this.options.cursorMarker) {
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
         }
 
@@ -64,7 +64,7 @@ Draw.Line = Draw.extend({
         this._hintMarker.on('move', this._syncHintLine, this);
 
         // fire drawstart event
-        this._map.fire('pm:drawstart', { shape: this._shape });
+        this._map.fire('pm:drawstart', { shape: this._shape, workingLayer: this._layer });
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -77,7 +77,7 @@ Draw.Line = Draw.extend({
         // disable draw mode
 
         // cancel, if drawing mode isn't even enabled
-        if(!this._enabled) {
+        if (!this._enabled) {
             return;
         }
 
@@ -101,7 +101,7 @@ Draw.Line = Draw.extend({
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
         // cleanup snapping
-        if(this.options.snappable) {
+        if (this.options.snappable) {
             this._cleanupSnapping();
         }
     },
@@ -109,7 +109,7 @@ Draw.Line = Draw.extend({
         return this._enabled;
     },
     toggle(options) {
-        if(this.enabled()) {
+        if (this.enabled()) {
             this.disable();
         } else {
             this.enable(options);
@@ -118,7 +118,7 @@ Draw.Line = Draw.extend({
     _syncHintLine() {
         const polyPoints = this._layer.getLatLngs();
 
-        if(polyPoints.length > 0) {
+        if (polyPoints.length > 0) {
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
 
             // set coords for hintline from marker to last vertex of drawin polyline
@@ -130,7 +130,7 @@ Draw.Line = Draw.extend({
         this._hintMarker.setLatLng(e.latlng);
 
         // if snapping is enabled, do it
-        if(this.options.snappable) {
+        if (this.options.snappable) {
             const fakeDragEvent = e;
             fakeDragEvent.target = this._hintMarker;
             this._handleSnapping(fakeDragEvent);
@@ -139,7 +139,7 @@ Draw.Line = Draw.extend({
     _createVertex(e) {
         // assign the coordinate of the click to the hintMarker, that's necessary for
         // mobile where the marker can't follow a cursor
-        if(!this._hintMarker._snapped) {
+        if (!this._hintMarker._snapped) {
             this._hintMarker.setLatLng(e.latlng);
         }
 
@@ -147,7 +147,7 @@ Draw.Line = Draw.extend({
         const latlng = this._hintMarker.getLatLng();
 
         // check if the first and this vertex have the same latlng
-        if(latlng.equals(this._layer.getLatLngs()[0])) {
+        if (latlng.equals(this._layer.getLatLngs()[0])) {
             // yes? finish the polygon
             this._finishShape();
 
@@ -161,10 +161,16 @@ Draw.Line = Draw.extend({
         const first = this._layer.getLatLngs().length === 0;
 
         this._layer.addLatLng(latlng);
-        this._createMarker(latlng, first);
-
+        const newMarker = this._createMarker(latlng, first);
 
         this._hintline.setLatLngs([latlng, latlng]);
+
+        this._layer.fire('pm:vertexadded', {
+            shape: this._shape,
+            workingLayer: this._layer,
+            marker: newMarker,
+            latlng,
+        });
     },
     _finishShape() {
         // get coordinates, create the leaflet shape and add it to the map
@@ -180,7 +186,7 @@ Draw.Line = Draw.extend({
             layer: polylineLayer,
         });
 
-        if(this.options.snappable) {
+        if (this.options.snappable) {
             this._cleanupSnapping();
         }
     },

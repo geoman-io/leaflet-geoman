@@ -7,7 +7,7 @@ Edit.Line = Edit.extend({
     },
 
     toggleEdit(options) {
-        if(!this.enabled()) {
+        if (!this.enabled()) {
             this.enable(options);
         } else {
             this.disable();
@@ -20,11 +20,11 @@ Edit.Line = Edit.extend({
         this._map = this._layer._map;
 
         // cancel when map isn't available, this happens when the polygon is removed before this fires
-        if(!this._map) {
+        if (!this._map) {
             return;
         }
 
-        if(!this.enabled()) {
+        if (!this.enabled()) {
             // if it was already enabled, disable first
             // we don't block enabling again because new options might be passed
             this.disable();
@@ -39,7 +39,7 @@ Edit.Line = Edit.extend({
         // if polygon gets removed from map, disable edit mode
         this._layer.on('remove', this._onLayerRemove, this);
 
-        if(this.options.draggable) {
+        if (this.options.draggable) {
             this._initDraggableLayer();
         }
     },
@@ -54,12 +54,12 @@ Edit.Line = Edit.extend({
 
     disable(poly = this._layer) {
         // if it's not enabled, it doesn't need to be disabled
-        if(!this.enabled()) {
+        if (!this.enabled()) {
             return false;
         }
 
         // prevent disabling if polygon is being dragged
-        if(poly.pm._dragging) {
+        if (poly.pm._dragging) {
             return false;
         }
         poly.pm._enabled = false;
@@ -84,7 +84,7 @@ Edit.Line = Edit.extend({
         const coords = this._layer._latlngs;
 
         // cleanup old ones first
-        if(this._markerGroup) {
+        if (this._markerGroup) {
             this._markerGroup.clearLayers();
         }
 
@@ -102,7 +102,7 @@ Edit.Line = Edit.extend({
             coordsArr.map((v, k) => {
                 let nextIndex;
 
-                if(this.isPolygon()) {
+                if (this.isPolygon()) {
                     nextIndex = (k + 1) % coordsArr.length;
                 } else {
                     nextIndex = k + 1;
@@ -115,7 +115,7 @@ Edit.Line = Edit.extend({
 
         this._markers = [];
 
-        if(this.isPolygon()) {
+        if (this.isPolygon()) {
             // coords is a multidimansional array, handle all rings
             this._markers = coords.map(handleRing, this);
         } else {
@@ -123,8 +123,7 @@ Edit.Line = Edit.extend({
             this._markers = handleRing(coords);
         }
 
-
-        if(this.options.snappable) {
+        if (this.options.snappable) {
             this._initSnappableMarkers();
         }
     },
@@ -151,7 +150,7 @@ Edit.Line = Edit.extend({
     // creates the middle markes between coordinates
     _createMiddleMarker(leftM, rightM) {
         // cancel if there are no two markers
-        if(!leftM || !rightM) {
+        if (!leftM || !rightM) {
             return false;
         }
 
@@ -226,7 +225,15 @@ Edit.Line = Edit.extend({
         // fire edit event
         this._fireEdit();
 
-        if(this.options.snappable) {
+        this._layer.fire('pm:vertexadded', {
+            layer: this._layer,
+            marker: newM,
+            index,
+            ringIndex,
+            // TODO: maybe add latlng as well?
+        });
+
+        if (this.options.snappable) {
             this._initSnappableMarkers();
         }
     },
@@ -249,7 +256,7 @@ Edit.Line = Edit.extend({
 
         // only continue if this is NOT a middle marker (those can't be deleted)
         const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
-        if(isMiddleMarker) {
+        if (isMiddleMarker) {
             return;
         }
 
@@ -260,7 +267,7 @@ Edit.Line = Edit.extend({
         this._layer.setLatLngs(coords);
 
         // if the ring of the poly has no coordinates left, remove the ring
-        if(coordsRing.length <= 1) {
+        if (coordsRing.length <= 1) {
             // remove coords ring
             coords.splice(ringIndex, 1);
 
@@ -274,16 +281,16 @@ Edit.Line = Edit.extend({
         }
 
         // if no coords are left, remove the layer
-        if(coords.length < 1) {
+        if (coords.length < 1) {
             this._layer.remove();
         }
 
         // now handle the middle markers
         // remove the marker and the middlemarkers next to it from the map
-        if(marker._middleMarkerPrev) {
+        if (marker._middleMarkerPrev) {
             this._markerGroup.removeLayer(marker._middleMarkerPrev);
         }
-        if(marker._middleMarkerNext) {
+        if (marker._middleMarkerNext) {
             this._markerGroup.removeLayer(marker._middleMarkerNext);
         }
 
@@ -293,10 +300,10 @@ Edit.Line = Edit.extend({
         let rightMarkerIndex;
         let leftMarkerIndex;
 
-        if(this.isPolygon()) {
+        if (this.isPolygon()) {
             // find neighbor marker-indexes
             rightMarkerIndex = (index + 1) % markerArr.length;
-            leftMarkerIndex = ((index + markerArr.length) - 1) % markerArr.length;
+            leftMarkerIndex = (index + markerArr.length - 1) % markerArr.length;
         } else {
             // find neighbor marker-indexes
             leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
@@ -304,7 +311,7 @@ Edit.Line = Edit.extend({
         }
 
         // don't create middlemarkers if there is only one marker left
-        if(rightMarkerIndex !== leftMarkerIndex) {
+        if (rightMarkerIndex !== leftMarkerIndex) {
             const leftM = markerArr[leftMarkerIndex];
             const rightM = markerArr[rightMarkerIndex];
             this._createMiddleMarker(leftM, rightM);
@@ -315,6 +322,15 @@ Edit.Line = Edit.extend({
 
         // fire edit event
         this._fireEdit();
+
+        // fire vertex removal event
+        this._layer.fire('pm:vertexremoved', {
+            layer: this._layer,
+            marker,
+            index,
+            ringIndex,
+            // TODO: maybe add latlng as well?
+        });
     },
     findMarkerIndex(markers, marker) {
         // find the index of a marker in the markers array and returns the parent index as well in case of a multidimensional array
@@ -322,7 +338,7 @@ Edit.Line = Edit.extend({
         let index;
         let ringIndex;
 
-        if(!this.isPolygon()) {
+        if (!this.isPolygon()) {
             index = markers.findIndex(m => marker._leaflet_id === m._leaflet_id);
         } else {
             ringIndex = markers.findIndex((inner) => {
@@ -355,7 +371,7 @@ Edit.Line = Edit.extend({
 
         // only continue if this is NOT a middle marker
         const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
-        if(isMiddleMarker) {
+        if (isMiddleMarker) {
             return;
         }
 
@@ -367,7 +383,7 @@ Edit.Line = Edit.extend({
 
         // find the indizes of next and previous markers
         const nextMarkerIndex = (index + 1) % markerArr.length;
-        const prevMarkerIndex = ((index + markerArr.length) - 1) % markerArr.length;
+        const prevMarkerIndex = (index + markerArr.length - 1) % markerArr.length;
 
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array
@@ -377,28 +393,38 @@ Edit.Line = Edit.extend({
         const prevMarkerLatLng = markerArr[prevMarkerIndex].getLatLng();
         const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
 
-        if(marker._middleMarkerNext) {
+        if (marker._middleMarkerNext) {
             const middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
             marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
         }
 
-        if(marker._middleMarkerPrev) {
+        if (marker._middleMarkerPrev) {
             const middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
             marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
         }
     },
 
     _onMarkerDragEnd(e) {
+        const marker = e.target;
+        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+
         this._layer.fire('pm:markerdragend', {
             markerEvent: e,
+            ringIndex,
+            index,
         });
 
         // fire edit event
         this._fireEdit();
     },
     _onMarkerDragStart(e) {
+        const marker = e.target;
+        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+
         this._layer.fire('pm:markerdragstart', {
             markerEvent: e,
+            ringIndex,
+            index,
         });
     },
 
