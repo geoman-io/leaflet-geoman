@@ -69,6 +69,22 @@ map.pm.addControls(options);
 ```
 If no options are passed, all buttons will be shown.
 
+If you are wondering how e.g. the `drawPolygon` button will enable drawing mode with specific options, here it is:
+Simply enable drawing mode programatically, pass it your options and disable it again. The options will persist, even when the mode is enabled/disabled via the toolbar.
+
+Example:
+``` js
+// make markers not snappable during marker draw
+map.pm.enableDraw('Marker', { snappable: false });
+map.pm.disableDraw('Marker');
+
+// let polygons finish their shape on double click
+map.pm.enableDraw('Poly', { finishOn: 'dblclick' });
+map.pm.disableDraw('Poly');
+
+```
+All available options are specified in the Drawing Mode Section below
+
 
 ##### Drawing Mode
 Use Drawing Mode on a map like this

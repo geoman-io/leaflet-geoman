@@ -257,6 +257,12 @@ map4.pm.addControls({
 map4.pm.enableDraw('Poly', {
     finishOn: 'mouseout'
 });
+map4.pm.disableDraw('Poly');
+
+map4.pm.enableDraw('Marker', {
+    snappable: false
+});
+map4.pm.disableDraw('Marker');
 
 // map4.pm.setPathOptions({
 //     color: 'orange',
