@@ -51,7 +51,7 @@ Draw.Line = Draw.extend({
         if (this.options.finishOnDoubleClick) {
             this._map.on('dblclick', this._finishShape, this);
         }
-        // finish on layer event 
+        // finish on layer event
         // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
         if (this.options.finishOn) {
             this._map.on(this.options.finishOn, this._finishShape, this);
@@ -90,6 +90,7 @@ Draw.Line = Draw.extend({
         this._map.off('click', this._createVertex, this);
         this._map.off('mousemove', this._syncHintMarker, this);
         this._map.off('dblclick', this._finishShape, this);
+        this._map.off(this.options.finishOn, this._finishShape, this);
 
         // remove layer
         this._map.removeLayer(this._layerGroup);

@@ -131,9 +131,9 @@ map3.pm.addControls({
     drawMarker: true,
     drawPolygon: true,
     editPolygon: true,
-    finishOn: 'contextmenu',
     deleteLayer: true,
     drawPolyline: true,
+    finishOn: 'contextmenu'
 });
 
 const markerStyle = {
@@ -157,7 +157,7 @@ map3.pm.enableDraw('Poly', {
     },
     markerStyle: markerStyle,
     cursorMarker: false,
-    finishOn: 'contextmenu',
+    // finishOn: 'contextmenu',
     finishOnDoubleClick: true
 });
 
@@ -253,6 +253,10 @@ layerGroup.on('pm:unsnap', function(e) {
 
 map4.pm.addControls({
     position: 'topright'
+});
+
+map4.pm.enableDraw('Poly', {
+    finishOn: 'mouseout'
 });
 
 // map4.pm.setPathOptions({
