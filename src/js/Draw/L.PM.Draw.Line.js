@@ -11,6 +11,12 @@ Draw.Line = Draw.extend({
         // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
         L.Util.setOptions(this, options);
 
+        // fallback option for finishOnDoubleClick
+        // TODO: remove in a later release
+        if (this.options.finishOnDoubleClick && !this.options.finishOn) {
+            this.options.finishOn = 'dblclick';
+        }
+
         // enable draw mode
         this._enabled = true;
 
@@ -47,9 +53,19 @@ Draw.Line = Draw.extend({
         // create a polygon-point on click
         this._map.on('click', this._createVertex, this);
 
-        // finish on double click
-        if (this.options.finishOnDoubleClick) {
-            this._map.on('dblclick', this._finishShape, this);
+        // finish on layer event
+        // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
+        if (this.options.finishOn) {
+            this._map.on(this.options.finishOn, this._finishShape, this);
+        }
+
+        // prevent zoom on double click if finishOn is === dblclick
+        if (this.options.finishOn === 'dblclick') {
+            this.tempMapDoubleClickZoomState = this._map.doubleClickZoom._enabled;
+
+            if (this.tempMapDoubleClickZoomState) {
+                this._map.doubleClickZoom.disable();
+            }
         }
 
         // sync hint marker with mouse cursor
@@ -84,7 +100,11 @@ Draw.Line = Draw.extend({
         // unbind listeners
         this._map.off('click', this._createVertex, this);
         this._map.off('mousemove', this._syncHintMarker, this);
-        this._map.off('dblclick', this._finishShape, this);
+        this._map.off(this.options.finishOn, this._finishShape, this);
+
+        if (this.tempMapDoubleClickZoomState) {
+            this._map.doubleClickZoom.enable();
+        }
 
         // remove layer
         this._map.removeLayer(this._layerGroup);
@@ -144,7 +164,7 @@ Draw.Line = Draw.extend({
         // check if the first and this vertex have the same latlng
         if (latlng.equals(this._layer.getLatLngs()[0])) {
             // yes? finish the polygon
-            this._finishShape();
+            this._finishShape(e);
 
             // "why?", you ask? Because this happens when we snap the last vertex to the first one
             // and then click without hitting the last marker. Click happens on the map
