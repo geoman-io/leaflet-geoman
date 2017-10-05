@@ -1,0 +1,1 @@
+<!-- hey there, thanks for reporting an issue or feature request. If you found unexpected behaviour or problems using leaflet.pm in combination with another leaflet plugin, please provide a demo via codepen or JSfiddle that reproduces the problem. This saves me a lot of time to find the issue and I can help you / fix it much faster :-) - THANKS-->
