@@ -15,10 +15,14 @@ As we are always using the latest leaflet version in a big production app, I wil
 ### Getting Started
 
 #### Install via npm
-`npm install leaflet.pm --save`
+```
+npm install leaflet.pm --save
+```
 
 #### Install via Bower (DEPRECATED - leaflet.pm is no longer supporting bower since 0.17.0)
-`bower install leaflet.pm --save`
+```
+bower install leaflet.pm --save
+```
 
 #### Install Manually
 Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css) and [`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.min.js) and include them in your project.
@@ -26,18 +30,26 @@ Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.
 
 #### Include via CDN
 CSS
-`<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css" />`
+``` html
+<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css" />
+```
 
 JS
-`<script src="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.min.js"></script>`
+``` html
+<script src="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.min.js"></script>
+```
 
 #### Include as ES6 Module
-`import 'leaflet.pm';`  
-`import 'leaflet.pm/dist/leaflet.pm.css';`
+``` js
+import 'leaflet.pm';
+import 'leaflet.pm/dist/leaflet.pm.css';
+```
 
 #### Include as CommonJS Module
-`require('leaflet.pm');`  
-`require('leaflet.pm/dist/leaflet.pm.css');`
+```js
+require('leaflet.pm');
+require('leaflet.pm/dist/leaflet.pm.css');
+```
 
 
 #### Init Leaflet.PM
