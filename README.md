@@ -31,11 +31,15 @@ Download [`leaflet.pm.css`](https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.
 #### Include via CDN
 CSS
 ``` html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.pm@latest/dist/leaflet.pm.min.css">
+<!-- or -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css" />
 ```
 
 JS
 ``` html
+<script src="https://cdn.jsdelivr.net/npm/leaflet.pm@latest/dist/leaflet.pm.min.js"></script>
+<!-- or -->
 <script src="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.min.js"></script>
 ```
 
