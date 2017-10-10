@@ -19,8 +19,8 @@
   ],
   "main": "dist/leaflet.pm.min.js",
   "dependencies": {
-    "@turf/difference": "^4.6.0",
-    "@turf/intersect": "^4.6.0"
+    "@turf/difference": "^4.7.4",
+    "@turf/intersect": "^4.7.4"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -37,7 +37,7 @@
     "tape": "^4.6.2",
     "tape-run": "^2.1.4",
     "url-loader": "^0.5.8",
-    "webpack": "^2.4.1"
+    "webpack": "^3.6.0"
   },
   "peerDependencies": {
     "leaflet": "^1.2.0"
