@@ -88,9 +88,13 @@ map2.pm.addControls({
 });
 
 map2.pm.disableDraw('Poly');
-map2.pm.enableDraw('Circle', {
-    snappable: true,
-    cursorMarker: true
+// map2.pm.enableDraw('Circle', {
+//     snappable: true,
+//     cursorMarker: true
+// });
+
+map2.pm.enableDraw('Poly', {
+    allowSelfIntersection: false
 });
 
 // GEOSJON EXAMPLE

@@ -1,4 +1,5 @@
 import Draw from './L.PM.Draw';
+import kinks from '@turf/kinks';
 
 Draw.Line = Draw.extend({
     initialize(map) {
@@ -149,6 +150,12 @@ Draw.Line = Draw.extend({
             const fakeDragEvent = e;
             fakeDragEvent.target = this._hintMarker;
             this._handleSnapping(fakeDragEvent);
+        }
+
+        // if self-intersection is forbidden, handle it
+        if (!this.options.allowSelfIntersection) {
+            const selfIntersect = kinks(this._layer.toGeoJSON());
+            console.log(selfIntersect);
         }
     },
     _createVertex(e) {
