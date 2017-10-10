@@ -1,5 +1,5 @@
-import Draw from './L.PM.Draw';
 import kinks from '@turf/kinks';
+import Draw from './L.PM.Draw';
 
 Draw.Line = Draw.extend({
     initialize(map) {
