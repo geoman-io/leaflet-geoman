@@ -9,11 +9,8 @@ const Draw = L.Class.extend({
         finishOnDoubleClick: false,
         finishOn: null,
         allowSelfIntersection: true,
-        templineStyle: {
-            color: 'red',
-        },
+        templineStyle: {},
         hintlineStyle: {
-            color: 'red',
             dashArray: [5, 5],
         },
         markerStyle: {

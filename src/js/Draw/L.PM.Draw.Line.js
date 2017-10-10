@@ -154,11 +154,32 @@ Draw.Line = Draw.extend({
 
         // if self-intersection is forbidden, handle it
         if (!this.options.allowSelfIntersection) {
-            const selfIntersect = kinks(this._layer.toGeoJSON());
-            console.log(selfIntersect);
+            this._handleSelfIntersection();
+        }
+    },
+    _handleSelfIntersection() {
+        const clone = L.polyline(this._layer.getLatLngs());
+        clone.addLatLng(this._hintMarker.getLatLng());
+        const selfIntersection = kinks(clone.toGeoJSON());
+        this._doesSelfIntersect = selfIntersection.features.length > 0;
+
+        console.log(selfIntersection);
+
+        if (this._doesSelfIntersect) {
+            this._hintline.setStyle({
+                color: 'red',
+            });
+        } else {
+            this._hintline.setStyle({
+                color: '#3388ff',
+            });
         }
     },
     _createVertex(e) {
+        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+            return;
+        }
+
         // assign the coordinate of the click to the hintMarker, that's necessary for
         // mobile where the marker can't follow a cursor
         if (!this._hintMarker._snapped) {
@@ -195,6 +216,10 @@ Draw.Line = Draw.extend({
         });
     },
     _finishShape() {
+        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+            return;
+        }
+
         // get coordinates, create the leaflet shape and add it to the map
         const coords = this._layer.getLatLngs();
         const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(this._map);
