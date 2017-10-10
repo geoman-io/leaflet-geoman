@@ -100,7 +100,9 @@ Draw.Line = Draw.extend({
         // unbind listeners
         this._map.off('click', this._createVertex, this);
         this._map.off('mousemove', this._syncHintMarker, this);
-        this._map.off(this.options.finishOn, this._finishShape, this);
+        if (this.options.finishOn) {
+            this._map.off(this.options.finishOn, this._finishShape, this);
+        }
 
         if (this.tempMapDoubleClickZoomState) {
             this._map.doubleClickZoom.enable();
