@@ -27,29 +27,29 @@ const map4 = L.map('example4')
     .addLayer(mapboxTiles3);
 // map2.dragging.disable();
 
-map2.on('pm:create', function(e) {
-    // alert('pm:create event fired. See console for details');
-    console.log(e);
+// map2.on('pm:create', function(e) {
+//     // alert('pm:create event fired. See console for details');
+//     console.log(e);
 
-    const layer = e.layer;
-    layer.on('pm:cut', function(ev) {
-        console.log('cut event on layer');
-        console.log(ev);
-    });
-});
-map2.on('pm:cut', function(e) {
-    console.log('cut event on map');
-    console.log(e);
-});
-map2.on('pm:remove', function(e) {
-    console.log('pm:remove event fired. See console for details');
-    // alert('pm:remove event fired. See console for details');
-    console.log(e);
-});
-map2.on('pm:drawstart', function(e) {
-    console.log(e);
-    console.log(e.workingLayer);
-});
+//     const layer = e.layer;
+//     layer.on('pm:cut', function(ev) {
+//         console.log('cut event on layer');
+//         console.log(ev);
+//     });
+// });
+// map2.on('pm:cut', function(e) {
+//     console.log('cut event on map');
+//     console.log(e);
+// });
+// map2.on('pm:remove', function(e) {
+//     console.log('pm:remove event fired. See console for details');
+//     // alert('pm:remove event fired. See console for details');
+//     console.log(e);
+// });
+// map2.on('pm:drawstart', function(e) {
+//     console.log(e);
+//     console.log(e.workingLayer);
+// });
 
 const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
 const m2 = L.marker([51.50614, -0.0989]);
@@ -93,9 +93,8 @@ map2.pm.disableDraw('Poly');
 //     cursorMarker: true
 // });
 
-map2.pm.enableDraw('Poly', {
-    allowSelfIntersection: false
-});
+map2.pm.enableDraw('Line', { allowSelfIntersection: false });
+map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 
 // GEOSJON EXAMPLE
 

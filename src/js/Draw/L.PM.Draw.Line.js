@@ -165,8 +165,6 @@ Draw.Line = Draw.extend({
         const selfIntersection = kinks(clone.toGeoJSON());
         this._doesSelfIntersect = selfIntersection.features.length > 0;
 
-        console.log(selfIntersection);
-
         if (this._doesSelfIntersect) {
             this._hintline.setStyle({
                 color: 'red',
