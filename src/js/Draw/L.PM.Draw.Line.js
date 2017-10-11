@@ -6,10 +6,9 @@ Draw.Line = Draw.extend({
         this._map = map;
         this._shape = 'Line';
         this.toolbarButtonName = 'drawPolyline';
+        this._doesSelfIntersect = false;
     },
     enable(options) {
-        // TODO: Think about if these options could be passed globally for all
-        // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
         L.Util.setOptions(this, options);
 
         // fallback option for finishOnDoubleClick
@@ -132,6 +131,9 @@ Draw.Line = Draw.extend({
         } else {
             this.enable(options);
         }
+    },
+    hasSelfIntersection() {
+        return this._doesSelfIntersect;
     },
     _syncHintLine() {
         const polyPoints = this._layer.getLatLngs();

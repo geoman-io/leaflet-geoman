@@ -34,10 +34,10 @@ const Toolbar = L.Class.extend({
         // adds all buttons to the map specified inside options
 
         // make button renaming backwards compatible
-        if(typeof options.editPolygon !== 'undefined') {
+        if (typeof options.editPolygon !== 'undefined') {
             options.editMode = options.editPolygon;
         }
-        if(typeof options.deleteLayer !== 'undefined') {
+        if (typeof options.deleteLayer !== 'undefined') {
             options.removalMode = options.deleteLayer;
         }
 
@@ -79,7 +79,7 @@ const Toolbar = L.Class.extend({
         // so, we trigger a click on all currently active (toggled) buttons
 
         for (const name in this.buttons) {
-            if(this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
+            if (this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
                 this.buttons[name]._triggerClick();
             }
         }
@@ -90,10 +90,10 @@ const Toolbar = L.Class.extend({
         // is enabled manually via script
 
         // backwards compatibility with button rename
-        if(name === 'editPolygon') {
+        if (name === 'editPolygon') {
             name = 'editMode';
         }
-        if(name === 'deleteLayer') {
+        if (name === 'deleteLayer') {
             name = 'removalMode';
         }
 
@@ -108,9 +108,7 @@ const Toolbar = L.Class.extend({
         // some buttons are still in their respective classes, like L.PM.Draw.Poly
         const deleteButton = {
             className: ' leaflet-pm-icon-delete',
-            onClick: () => {
-
-            },
+            onClick: () => {},
             afterClick: () => {
                 this.map.pm.toggleGlobalRemovalMode();
             },
@@ -122,9 +120,7 @@ const Toolbar = L.Class.extend({
 
         const drawPolyButton = {
             className: 'leaflet-pm-icon-polygon',
-            onClick: () => {
-
-            },
+            onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
                 this.map.pm.Draw.Poly.toggle();
@@ -137,8 +133,7 @@ const Toolbar = L.Class.extend({
 
         const cutButton = {
             className: 'leaflet-pm-icon-cut',
-            onClick: () => {
-            },
+            onClick: () => {},
             afterClick: () => {
                 // disable all edit modes
                 this.map.pm.disableGlobalEditMode();
@@ -154,9 +149,7 @@ const Toolbar = L.Class.extend({
 
         const drawMarkerButton = {
             className: 'leaflet-pm-icon-marker',
-            onClick: () => {
-
-            },
+            onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
                 this.map.pm.Draw.Marker.toggle();
@@ -169,9 +162,7 @@ const Toolbar = L.Class.extend({
 
         const drawLineButton = {
             className: 'leaflet-pm-icon-polyline',
-            onClick: () => {
-
-            },
+            onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
                 this.map.pm.Draw.Line.toggle();
@@ -184,9 +175,7 @@ const Toolbar = L.Class.extend({
 
         const drawCircleButton = {
             className: 'leaflet-pm-icon-circle',
-            onClick: () => {
-
-            },
+            onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
                 this.map.pm.Draw.Circle.toggle();
@@ -199,9 +188,7 @@ const Toolbar = L.Class.extend({
 
         const drawRectangleButton = {
             className: 'leaflet-pm-icon-rectangle',
-            onClick: () => {
-
-            },
+            onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
                 this.map.pm.Draw.Rectangle.toggle();
@@ -214,13 +201,9 @@ const Toolbar = L.Class.extend({
 
         const editButton = {
             className: 'leaflet-pm-icon-edit',
-            onClick: () => {
-            },
+            onClick: () => {},
             afterClick: () => {
-                this.map.pm.toggleGlobalEditMode({
-                    snappable: true,
-                    draggable: true,
-                });
+                this.map.pm.toggleGlobalEditMode();
             },
             doToggle: true,
             toggleStatus: false,
@@ -230,11 +213,8 @@ const Toolbar = L.Class.extend({
 
         const dragButton = {
             className: 'leaflet-pm-icon-drag',
-            onClick: () => {
-            },
-            afterClick: () => {
-
-            },
+            onClick: () => {},
+            afterClick: () => {},
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
@@ -259,7 +239,7 @@ const Toolbar = L.Class.extend({
 
         const buttons = this.getButtons();
         for (const btn in buttons) {
-            if(this.options[btn]) {
+            if (this.options[btn]) {
                 // if options say the button should be visible, add it to the map
                 buttons[btn].setPosition(this.options.position);
                 buttons[btn].addTo(this.map);

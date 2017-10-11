@@ -94,7 +94,7 @@ map2.pm.disableDraw('Poly');
 // });
 
 map2.pm.enableDraw('Line', { allowSelfIntersection: false });
-map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
+map2.pm.enableDraw('Poly', { allowSelfIntersection: true });
 
 // GEOSJON EXAMPLE
 
@@ -193,7 +193,19 @@ geoJsonLayer.on('pm:dragend', function(e) {
 const polygonLayer = L.polygon([[51.509, -0.08], [51.503, -0.06], [51.51, -0.047]])
     .addTo(map3)
     .addTo(map2);
-polygonLayer.pm.toggleEdit();
+polygonLayer.pm.toggleEdit({
+    allowSelfIntersection: false
+});
+
+map2.pm.toggleGlobalEditMode({
+    allowSelfIntersection: false
+});
+map2.pm.disableGlobalEditMode();
+
+map2.on('pm:create', function(e) {
+    e.layer.pm.enable({ allowSelfIntersection: false });
+    console.log(e.layer.pm.selfIntersection());
+});
 
 map2.on('pm:drawstart', function(e) {
     var layer = e.workingLayer;

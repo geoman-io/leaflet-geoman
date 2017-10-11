@@ -1,9 +1,11 @@
+import kinks from '@turf/kinks';
 import Edit from './L.PM.Edit';
 
 Edit.Line = Edit.extend({
     initialize(layer) {
         this._layer = layer;
         this._enabled = false;
+        this._doesSelfIntersect = false;
     },
 
     toggleEdit(options) {
@@ -14,8 +16,8 @@ Edit.Line = Edit.extend({
         }
     },
 
-    enable(options = {}) {
-        this.options = options;
+    enable(options) {
+        L.Util.setOptions(this, options);
 
         this._map = this._layer._map;
 
@@ -41,6 +43,10 @@ Edit.Line = Edit.extend({
 
         if (this.options.draggable) {
             this._initDraggableLayer();
+        }
+
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection();
         }
     },
 
@@ -77,6 +83,25 @@ Edit.Line = Edit.extend({
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
         return true;
+    },
+
+    hasSelfIntersection() {
+        return this._doesSelfIntersect;
+    },
+
+    _handleSelfIntersection() {
+        const selfIntersection = kinks(this._layer.toGeoJSON());
+        this._doesSelfIntersect = selfIntersection.features.length > 0;
+
+        if (this._doesSelfIntersect) {
+            this._layer.setStyle({
+                color: 'red',
+            });
+        } else {
+            this._layer.setStyle({
+                color: '#3388ff',
+            });
+        }
     },
 
     _initMarkers() {
@@ -366,6 +391,10 @@ Edit.Line = Edit.extend({
     },
 
     _onMarkerDrag(e) {
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(e);
+        }
+
         // dragged marker
         const marker = e.target;
 
@@ -408,6 +437,14 @@ Edit.Line = Edit.extend({
         const marker = e.target;
         const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
 
+        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+            this._layer.setLatLngs(this._coordsBeforeEdit);
+            this._coordsBeforeEdit = null;
+            this._initMarkers();
+            this._handleSelfIntersection();
+            return;
+        }
+
         this._layer.fire('pm:markerdragend', {
             markerEvent: e,
             ringIndex,
@@ -426,6 +463,10 @@ Edit.Line = Edit.extend({
             ringIndex,
             index,
         });
+
+        if (!this.options.allowSelfIntersection) {
+            this._coordsBeforeEdit = this._layer.getLatLngs();
+        }
     },
 
     _fireEdit() {
