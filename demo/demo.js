@@ -203,8 +203,8 @@ map2.pm.toggleGlobalEditMode({
 map2.pm.disableGlobalEditMode();
 
 map2.on('pm:create', function(e) {
-    e.layer.pm.enable({ allowSelfIntersection: false });
-    e.layer.pm.disable();
+    // e.layer.pm.enable({ allowSelfIntersection: false });
+    // e.layer.pm.disable();
     console.log(e.layer.pm.hasSelfIntersection());
 });
 

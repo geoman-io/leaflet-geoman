@@ -93,7 +93,8 @@ Edit.Line = Edit.extend({
     },
 
     hasSelfIntersection() {
-        return this._doesSelfIntersect;
+        const selfIntersection = kinks(this._layer.toGeoJSON());
+        return selfIntersection.features.length > 0;
     },
 
     _handleSelfIntersection() {
