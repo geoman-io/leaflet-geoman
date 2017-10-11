@@ -133,7 +133,9 @@ Draw.Line = Draw.extend({
         }
     },
     hasSelfIntersection() {
-        return this._doesSelfIntersect;
+        // check for self intersection of the layer and return true/false
+        const selfIntersection = kinks(this._layer.toGeoJSON());
+        return selfIntersection.features.length > 0;
     },
     _syncHintLine() {
         const polyPoints = this._layer.getLatLngs();
@@ -162,11 +164,23 @@ Draw.Line = Draw.extend({
         }
     },
     _handleSelfIntersection() {
+        // ok we need to check the self intersection here
+        // problem: during draw, the marker on the cursor is not yet part
+        // of the layer. So we need to clone the layer, add the
+        // potential new vertex (cursor markers latlngs) and check the self
+        // intersection on the clone. Phew... - let's do it 💪
+
+        // clone layer (polyline is enough, even when it's a polygon)
         const clone = L.polyline(this._layer.getLatLngs());
+
+        // add the vertex
         clone.addLatLng(this._hintMarker.getLatLng());
+
+        // check the self intersection
         const selfIntersection = kinks(clone.toGeoJSON());
         this._doesSelfIntersect = selfIntersection.features.length > 0;
 
+        // change the style based on self intersection
         if (this._doesSelfIntersect) {
             this._hintline.setStyle({
                 color: 'red',
@@ -218,6 +232,7 @@ Draw.Line = Draw.extend({
         });
     },
     _finishShape() {
+        // if self intersection is not allowed, do not finish the shape!
         if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
             return;
         }

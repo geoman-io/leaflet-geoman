@@ -93,18 +93,23 @@ Edit.Line = Edit.extend({
     },
 
     hasSelfIntersection() {
+        // check for self intersection of the layer and return true/false
         const selfIntersection = kinks(this._layer.toGeoJSON());
         return selfIntersection.features.length > 0;
     },
 
     _handleSelfIntersection() {
+        // check layer for self intersection
         const selfIntersection = kinks(this._layer.toGeoJSON());
         this._doesSelfIntersect = selfIntersection.features.length > 0;
 
+        // if it does self-intersect, mark it read
         if (this._doesSelfIntersect) {
             this._layer.setStyle({
                 color: 'red',
             });
+
+            // if not, reset the style to the default color
         } else {
             this._layer.setStyle({
                 color: '#3388ff',
@@ -399,10 +404,6 @@ Edit.Line = Edit.extend({
     },
 
     _onMarkerDrag(e) {
-        if (!this.options.allowSelfIntersection) {
-            this._handleSelfIntersection(e);
-        }
-
         // dragged marker
         const marker = e.target;
 
@@ -439,16 +440,28 @@ Edit.Line = Edit.extend({
             const middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
             marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
         }
+
+        // if self intersection is not allowed, handle it
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection();
+        }
     },
 
     _onMarkerDragEnd(e) {
         const marker = e.target;
         const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
 
+        // if self intersection is not allowed but this edit caused a self intersection,
+        // reset and cancel; do not fire events
         if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+            // reset coordinates
             this._layer.setLatLngs(this._coordsBeforeEdit);
             this._coordsBeforeEdit = null;
+
+            // re-enable markers for the new coords
             this._initMarkers();
+
+            // check for selfintersection again (mainly to reset the style)
             this._handleSelfIntersection();
             return;
         }
@@ -472,6 +485,8 @@ Edit.Line = Edit.extend({
             index,
         });
 
+        // if self intersection isn't allowed, save the coords upon dragstart
+        // in case we need to reset the layer
         if (!this.options.allowSelfIntersection) {
             this._coordsBeforeEdit = this._layer.getLatLngs();
         }

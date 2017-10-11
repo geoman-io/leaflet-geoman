@@ -7,6 +7,7 @@ Draw.Poly = Draw.Line.extend({
         this.toolbarButtonName = 'drawPolygon';
     },
     _finishShape() {
+        // if self intersection is not allowed, do not finish the shape!
         if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
             return;
         }

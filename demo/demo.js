@@ -212,6 +212,7 @@ map2.on('pm:drawstart', function(e) {
     var layer = e.workingLayer;
     layer.on('pm:vertexadded', function(e) {
         console.log(e);
+        console.log(e.workingLayer.pm.hasSelfIntersection());
     });
 });
 
