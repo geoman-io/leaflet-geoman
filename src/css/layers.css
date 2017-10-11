@@ -32,8 +32,7 @@
   display: block !important;
 }
 
-.leaflet-interactive.leaflet-pm-invalid {
-  fill: red;
+.leaflet-pm-invalid {
   stroke: red;
   transition: fill ease 0s, stroke ease 0s;
 }

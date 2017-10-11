@@ -119,8 +119,6 @@ Edit.Line = Edit.extend({
     _handleLayerStyle(flash) {
         const el = this._layer._path;
 
-        // console.log(`change style while intersecting ${this.hasSelfIntersection()}`);
-
         if (this.hasSelfIntersection()) {
             // if it does self-intersect, mark or flash it red
             if (flash) {
@@ -132,7 +130,6 @@ Edit.Line = Edit.extend({
                 L.DomUtil.addClass(el, 'leaflet-pm-invalid');
             }
         } else {
-            console.log('remove it');
             // if not, reset the style to the default color
             L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
         }
@@ -516,7 +513,6 @@ Edit.Line = Edit.extend({
         // if self intersection isn't allowed, save the coords upon dragstart
         // in case we need to reset the layer
         if (!this.options.allowSelfIntersection) {
-            console.log('SET coordsBeforeEdit from markerDragStart');
             this._coordsBeforeEdit = this._layer.getLatLngs();
         }
     },
