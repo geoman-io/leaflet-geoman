@@ -41,19 +41,7 @@ Edit.Line = Edit.extend({
         this._layer.on('remove', this._onLayerRemove, this);
 
         if (!this.options.selfIntersection) {
-            this._layer.on('pm:vertexremoved', () => {
-                if (this.hasSelfIntersection()) {
-                    // check for selfintersection again (mainly to reset the style)
-                    this._handleLayerStyle(true);
-
-                    // reset coordinates
-                    this._layer.setLatLngs(this._coordsBeforeEdit);
-                    this._coordsBeforeEdit = null;
-
-                    // re-enable markers for the new coords
-                    this._initMarkers();
-                }
-            });
+            this._layer.on('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval, this);
         }
 
         if (this.options.draggable) {
@@ -92,6 +80,7 @@ Edit.Line = Edit.extend({
 
         // remove onRemove listener
         this._layer.off('remove', this._onLayerRemove);
+        this._layer.off('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval);
 
         // remove draggable class
         const el = poly._path;
@@ -113,8 +102,24 @@ Edit.Line = Edit.extend({
         return selfIntersection.features.length > 0;
     },
 
+    _handleSelfIntersectionOnVertexRemoval() {
+        // check for selfintersection again (mainly to reset the style)
+        this._handleLayerStyle(true);
+
+        if (this.hasSelfIntersection()) {
+            // reset coordinates
+            this._layer.setLatLngs(this._coordsBeforeEdit);
+            this._coordsBeforeEdit = null;
+
+            // re-enable markers for the new coords
+            this._initMarkers();
+        }
+    },
+
     _handleLayerStyle(flash) {
         const el = this._layer._path;
+
+        // console.log(`change style while intersecting ${this.hasSelfIntersection()}`);
 
         if (this.hasSelfIntersection()) {
             // if it does self-intersect, mark or flash it red
@@ -127,6 +132,7 @@ Edit.Line = Edit.extend({
                 L.DomUtil.addClass(el, 'leaflet-pm-invalid');
             }
         } else {
+            console.log('remove it');
             // if not, reset the style to the default color
             L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
         }
