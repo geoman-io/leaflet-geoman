@@ -118,9 +118,6 @@ const Map = L.Class.extend({
             // enable
             this.enableGlobalEditMode(options);
         }
-
-        // toggle the button in the toolbar
-        this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
     },
 });
 

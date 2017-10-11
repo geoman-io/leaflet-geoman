@@ -13,21 +13,16 @@ Draw.Cut = Draw.Poly.extend({
 
         // find all layers that intersect with `layer`, the just drawn cutting layer
         const layers = Object.keys(all)
-
-        // convert object to array
-        .map(l => all[l])
-
-        // only layers handled by leaflet.pm
-        .filter(l => l.pm)
-
-        // only polygons
-        .filter(l => l instanceof L.Polygon)
-
-        // exclude the drawn one
-        .filter(l => l !== layer)
-
-        // only layers with intersections
-        .filter(l => !!intersect(layer.toGeoJSON(), l.toGeoJSON()));
+            // convert object to array
+            .map(l => all[l])
+            // only layers handled by leaflet.pm
+            .filter(l => l.pm)
+            // only polygons
+            .filter(l => l instanceof L.Polygon)
+            // exclude the drawn one
+            .filter(l => l !== layer)
+            // only layers with intersections
+            .filter(l => !!intersect(layer.toGeoJSON(), l.toGeoJSON()));
 
         // the resulting layers after the cut
         const resultingLayers = [];
@@ -39,7 +34,7 @@ Draw.Cut = Draw.Poly.extend({
 
             // if result is a multipolygon, split it into regular polygons
             // TODO: remove as soon as multipolygons are supported
-            if(diff.geometry.type === 'MultiPolygon') {
+            if (diff.geometry.type === 'MultiPolygon') {
                 const geoJSONs = diff.geometry.coordinates.reduce((arr, coords) => {
                     arr.push({ type: 'Polygon', coordinates: coords });
                     return arr;
