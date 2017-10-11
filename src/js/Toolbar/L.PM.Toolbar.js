@@ -80,7 +80,6 @@ const Toolbar = L.Class.extend({
 
         for (const name in this.buttons) {
             if (this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
-                // console.log(`disable ${name}`, exceptThisButton);
                 this.buttons[name]._triggerClick();
             }
         }
@@ -100,7 +99,6 @@ const Toolbar = L.Class.extend({
 
         // as some mode got enabled, we still have to trigger the click on the other buttons
         // to disable their mode
-        console.log(name);
         this.triggerClickOnToggledButtons(this.buttons[name]);
 
         // now toggle the state of the button

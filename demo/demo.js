@@ -205,26 +205,26 @@ map2.pm.disableGlobalEditMode();
 map2.on('pm:create', function(e) {
     e.layer.pm.enable({ allowSelfIntersection: false });
     // e.layer.pm.disable();
-    console.log(e.layer.pm.hasSelfIntersection());
+    // console.log(e.layer.pm.hasSelfIntersection());
 });
 
 map2.on('pm:drawstart', function(e) {
     var layer = e.workingLayer;
     layer.on('pm:vertexadded', function(e) {
-        console.log(e);
-        console.log(e.workingLayer.pm.hasSelfIntersection());
+        // console.log(e);
+        // console.log(e.workingLayer.pm.hasSelfIntersection());
     });
 });
 
 polygonLayer.on('pm:vertexadded', function(e) {
-    console.log(e);
+    // console.log(e);
 });
 polygonLayer.on('pm:vertexremoved', function(e) {
-    console.log(e);
+    // console.log(e);
 });
 
 polygonLayer.on('pm:markerdragstart', function(e) {
-    console.log(e);
+    // console.log(e);
 });
 
 // Layer Group Example

@@ -40,7 +40,7 @@ Edit.Line = Edit.extend({
         // if polygon gets removed from map, disable edit mode
         this._layer.on('remove', this._onLayerRemove, this);
 
-        if (!this.options.selfIntersection) {
+        if (!this.options.allowSelfIntersection) {
             this._layer.on('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval, this);
         }
 
@@ -80,7 +80,10 @@ Edit.Line = Edit.extend({
 
         // remove onRemove listener
         this._layer.off('remove', this._onLayerRemove);
-        this._layer.off('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval);
+
+        if (!this.options.allowSelfIntersection) {
+            this._layer.off('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval);
+        }
 
         // remove draggable class
         const el = poly._path;
