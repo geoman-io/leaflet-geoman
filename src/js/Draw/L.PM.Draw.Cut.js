@@ -53,6 +53,7 @@ Draw.Cut = Draw.Poly.extend({
                     resultingLayers.push(newL);
                     newL.addTo(this._map);
 
+                    // give the new layer the original options
                     newL.pm.enable(this.options);
                     newL.pm.disable();
                 });
@@ -63,6 +64,7 @@ Draw.Cut = Draw.Poly.extend({
                 resultingLayers.push(newL);
                 newL.addTo(this._map);
 
+                // give the new layer the original options
                 newL.pm.enable(this.options);
                 newL.pm.disable();
             }
