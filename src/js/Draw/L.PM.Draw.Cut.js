@@ -49,15 +49,22 @@ Draw.Cut = Draw.Poly.extend({
 
                 // add new layers to map
                 geoJSONs.forEach((g) => {
-                    const newL = L.geoJSON(g, this.options.pathOptions);
+                    const newL = L.geoJSON(g, l.options);
                     resultingLayers.push(newL);
                     newL.addTo(this._map);
+
+                    newL.pm.enable(this.options);
+                    newL.pm.disable();
                 });
             } else {
+                console.log(l);
                 // add new layer to map
-                const newL = L.geoJSON(diff, this.options.pathOptions).addTo(this._map);
+                const newL = L.geoJSON(diff, l.options).addTo(this._map);
                 resultingLayers.push(newL);
                 newL.addTo(this._map);
+
+                newL.pm.enable(this.options);
+                newL.pm.disable();
             }
 
             // fire pm:cut on the cutted layer
