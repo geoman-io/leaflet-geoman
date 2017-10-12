@@ -89,11 +89,9 @@ Edit.Line = Edit.extend({
         const el = poly._path;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
-        // reset style in case it got modified by the self-intersection handler
+        // remove invalid class if layer has self intersection
         if (this.hasSelfIntersection()) {
-            this._layer.setStyle({
-                color: '#3388ff',
-            });
+            L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
         }
 
         return true;
