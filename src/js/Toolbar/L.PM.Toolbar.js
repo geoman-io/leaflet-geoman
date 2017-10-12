@@ -136,7 +136,7 @@ const Toolbar = L.Class.extend({
             onClick: () => {},
             afterClick: () => {
                 // enable polygon drawing mode without snap
-                this.map.pm.Draw.Cut.toggle({ snappable: false, cursorMarker: false });
+                this.map.pm.Draw.Cut.toggle({ snappable: false, cursorMarker: false, allowSelfIntersection: false });
             },
             doToggle: true,
             toggleStatus: false,
