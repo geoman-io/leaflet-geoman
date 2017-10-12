@@ -22,7 +22,14 @@ Draw.Cut = Draw.Poly.extend({
             // exclude the drawn one
             .filter(l => l !== layer)
             // only layers with intersections
-            .filter(l => !!intersect(layer.toGeoJSON(), l.toGeoJSON()));
+            .filter((l) => {
+                try {
+                    return !!intersect(layer.toGeoJSON(), l.toGeoJSON());
+                } catch (e) {
+                    console.error('You cant cut polygons with self-intersections');
+                    return false;
+                }
+            });
 
         // the resulting layers after the cut
         const resultingLayers = [];
