@@ -58,7 +58,6 @@ Draw.Cut = Draw.Poly.extend({
                     newL.pm.disable();
                 });
             } else {
-                console.log(l);
                 // add new layer to map
                 const newL = L.geoJSON(diff, l.options).addTo(this._map);
                 resultingLayers.push(newL);
