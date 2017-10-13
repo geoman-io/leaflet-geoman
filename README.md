@@ -277,6 +277,10 @@ polygonLayer.on('pm:markerdragend', function(e) {//...});
 polygonLayer.on('pm:snap', function(e) {//...});
 polygonLayer.on('pm:unsnap', function(e) {//...});
 
+// if allowSelfIntersection is false: listen to when a self-intersection is detected
+// e.intersection includes a geoJSON of the intersection
+polygonLayer.on('pm:intersect', function(e) {//...});
+
 // toggle global edit mode (edit mode for all layers on the map)
 map.pm.toggleGlobalEditMode(options);
 

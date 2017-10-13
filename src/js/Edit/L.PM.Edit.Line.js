@@ -121,6 +121,10 @@ Edit.Line = Edit.extend({
         const el = this._layer._path;
 
         if (this.hasSelfIntersection()) {
+            if (L.DomUtil.hasClass(el, 'leaflet-pm-invalid')) {
+                return;
+            }
+
             // if it does self-intersect, mark or flash it red
             if (flash) {
                 L.DomUtil.addClass(el, 'leaflet-pm-invalid');
@@ -130,6 +134,11 @@ Edit.Line = Edit.extend({
             } else {
                 L.DomUtil.addClass(el, 'leaflet-pm-invalid');
             }
+
+            // fire intersect event
+            this._layer.fire('pm:intersect', {
+                intersection: kinks(this._layer.toGeoJSON()),
+            });
         } else {
             // if not, reset the style to the default color
             L.DomUtil.removeClass(el, 'leaflet-pm-invalid');

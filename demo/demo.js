@@ -197,6 +197,10 @@ polygonLayer.pm.toggleEdit({
     allowSelfIntersection: false
 });
 
+polygonLayer.on('pm:intersect', function(e) {
+    console.log(e);
+});
+
 map2.pm.toggleGlobalEditMode({
     allowSelfIntersection: false
 });
