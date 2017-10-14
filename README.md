@@ -110,6 +110,9 @@ var options = {
     snappable: true,
     snapDistance: 20,
 
+    // self intersection
+    allowSelfIntersection: true,
+
     // the lines between coordinates/markers
     templineStyle: {
         color: 'red',
@@ -178,6 +181,9 @@ map.on('pm:drawstart', function(e) {
         // the index in the coordinates array
         // the working layer and shape
     });
+
+    // check self intersection
+    layer.pm.hasSelfIntersection();
 });
 
 ```
@@ -227,7 +233,10 @@ var options = {
 
     // distance in pixels that needs to be undercut to trigger snapping
     // default: 30
-    snapDistance: 30
+    snapDistance: 30,
+
+    // self intersection allowed?
+    allowSelfIntersection: true,
 
 };
 
@@ -268,8 +277,15 @@ polygonLayer.on('pm:markerdragend', function(e) {//...});
 polygonLayer.on('pm:snap', function(e) {//...});
 polygonLayer.on('pm:unsnap', function(e) {//...});
 
+// if allowSelfIntersection is false: listen to when a self-intersection is detected
+// e.intersection includes a geoJSON of the intersection
+polygonLayer.on('pm:intersect', function(e) {//...});
+
 // toggle global edit mode (edit mode for all layers on the map)
-map.pm.toggleGlobalEditMode();
+map.pm.toggleGlobalEditMode(options);
+
+// check self intersection
+polygonLayer.pm.hasSelfIntersection(); // true/false
 
 ```
 

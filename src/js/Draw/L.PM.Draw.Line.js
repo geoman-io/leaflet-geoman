@@ -1,3 +1,4 @@
+import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
 
 Draw.Line = Draw.extend({
@@ -5,10 +6,9 @@ Draw.Line = Draw.extend({
         this._map = map;
         this._shape = 'Line';
         this.toolbarButtonName = 'drawPolyline';
+        this._doesSelfIntersect = false;
     },
     enable(options) {
-        // TODO: Think about if these options could be passed globally for all
-        // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
         L.Util.setOptions(this, options);
 
         // fallback option for finishOnDoubleClick
@@ -132,6 +132,11 @@ Draw.Line = Draw.extend({
             this.enable(options);
         }
     },
+    hasSelfIntersection() {
+        // check for self intersection of the layer and return true/false
+        const selfIntersection = kinks(this._layer.toGeoJSON());
+        return selfIntersection.features.length > 0;
+    },
     _syncHintLine() {
         const polyPoints = this._layer.getLatLngs();
 
@@ -152,8 +157,45 @@ Draw.Line = Draw.extend({
             fakeDragEvent.target = this._hintMarker;
             this._handleSnapping(fakeDragEvent);
         }
+
+        // if self-intersection is forbidden, handle it
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection();
+        }
+    },
+    _handleSelfIntersection() {
+        // ok we need to check the self intersection here
+        // problem: during draw, the marker on the cursor is not yet part
+        // of the layer. So we need to clone the layer, add the
+        // potential new vertex (cursor markers latlngs) and check the self
+        // intersection on the clone. Phew... - let's do it 💪
+
+        // clone layer (polyline is enough, even when it's a polygon)
+        const clone = L.polyline(this._layer.getLatLngs());
+
+        // add the vertex
+        clone.addLatLng(this._hintMarker.getLatLng());
+
+        // check the self intersection
+        const selfIntersection = kinks(clone.toGeoJSON());
+        this._doesSelfIntersect = selfIntersection.features.length > 0;
+
+        // change the style based on self intersection
+        if (this._doesSelfIntersect) {
+            this._hintline.setStyle({
+                color: 'red',
+            });
+        } else {
+            this._hintline.setStyle({
+                color: '#3388ff',
+            });
+        }
     },
     _createVertex(e) {
+        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+            return;
+        }
+
         // assign the coordinate of the click to the hintMarker, that's necessary for
         // mobile where the marker can't follow a cursor
         if (!this._hintMarker._snapped) {
@@ -190,6 +232,11 @@ Draw.Line = Draw.extend({
         });
     },
     _finishShape() {
+        // if self intersection is not allowed, do not finish the shape!
+        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+            return;
+        }
+
         // get coordinates, create the leaflet shape and add it to the map
         const coords = this._layer.getLatLngs();
         const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(this._map);

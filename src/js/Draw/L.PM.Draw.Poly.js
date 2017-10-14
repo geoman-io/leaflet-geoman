@@ -7,6 +7,11 @@ Draw.Poly = Draw.Line.extend({
         this.toolbarButtonName = 'drawPolygon';
     },
     _finishShape() {
+        // if self intersection is not allowed, do not finish the shape!
+        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+            return;
+        }
+
         // get coordinates, create the leaflet shape and add it to the map
         const coords = this._layer.getLatLngs();
         const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(this._map);

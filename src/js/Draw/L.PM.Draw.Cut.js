@@ -13,21 +13,23 @@ Draw.Cut = Draw.Poly.extend({
 
         // find all layers that intersect with `layer`, the just drawn cutting layer
         const layers = Object.keys(all)
-
-        // convert object to array
-        .map(l => all[l])
-
-        // only layers handled by leaflet.pm
-        .filter(l => l.pm)
-
-        // only polygons
-        .filter(l => l instanceof L.Polygon)
-
-        // exclude the drawn one
-        .filter(l => l !== layer)
-
-        // only layers with intersections
-        .filter(l => !!intersect(layer.toGeoJSON(), l.toGeoJSON()));
+            // convert object to array
+            .map(l => all[l])
+            // only layers handled by leaflet.pm
+            .filter(l => l.pm)
+            // only polygons
+            .filter(l => l instanceof L.Polygon)
+            // exclude the drawn one
+            .filter(l => l !== layer)
+            // only layers with intersections
+            .filter((l) => {
+                try {
+                    return !!intersect(layer.toGeoJSON(), l.toGeoJSON());
+                } catch (e) {
+                    console.error('You cant cut polygons with self-intersections');
+                    return false;
+                }
+            });
 
         // the resulting layers after the cut
         const resultingLayers = [];
@@ -39,7 +41,7 @@ Draw.Cut = Draw.Poly.extend({
 
             // if result is a multipolygon, split it into regular polygons
             // TODO: remove as soon as multipolygons are supported
-            if(diff.geometry.type === 'MultiPolygon') {
+            if (diff.geometry.type === 'MultiPolygon') {
                 const geoJSONs = diff.geometry.coordinates.reduce((arr, coords) => {
                     arr.push({ type: 'Polygon', coordinates: coords });
                     return arr;
@@ -47,15 +49,23 @@ Draw.Cut = Draw.Poly.extend({
 
                 // add new layers to map
                 geoJSONs.forEach((g) => {
-                    const newL = L.geoJSON(g, this.options.pathOptions);
+                    const newL = L.geoJSON(g, l.options);
                     resultingLayers.push(newL);
                     newL.addTo(this._map);
+
+                    // give the new layer the original options
+                    newL.pm.enable(this.options);
+                    newL.pm.disable();
                 });
             } else {
                 // add new layer to map
-                const newL = L.geoJSON(diff, this.options.pathOptions).addTo(this._map);
+                const newL = L.geoJSON(diff, l.options).addTo(this._map);
                 resultingLayers.push(newL);
                 newL.addTo(this._map);
+
+                // give the new layer the original options
+                newL.pm.enable(this.options);
+                newL.pm.disable();
             }
 
             // fire pm:cut on the cutted layer

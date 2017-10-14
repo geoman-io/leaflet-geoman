@@ -8,11 +8,9 @@ const Draw = L.Class.extend({
         cursorMarker: true,
         finishOnDoubleClick: false,
         finishOn: null,
-        templineStyle: {
-            color: 'red',
-        },
+        allowSelfIntersection: true,
+        templineStyle: {},
         hintlineStyle: {
-            color: 'red',
             dashArray: [5, 5],
         },
         markerStyle: {
@@ -39,7 +37,7 @@ const Draw = L.Class.extend({
         return this.shapes;
     },
     enable(shape, options) {
-        if(!shape) {
+        if (!shape) {
             throw new Error(`Error: Please pass a shape as a parameter. Possible shapes are: ${this.getShapes().join(',')}`);
         }
 

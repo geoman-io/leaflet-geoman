@@ -1,3 +1,4 @@
+import kinks from '@turf/kinks';
 import Edit from './L.PM.Edit';
 
 Edit.Line = Edit.extend({
@@ -14,8 +15,8 @@ Edit.Line = Edit.extend({
         }
     },
 
-    enable(options = {}) {
-        this.options = options;
+    enable(options) {
+        L.Util.setOptions(this, options);
 
         this._map = this._layer._map;
 
@@ -39,8 +40,16 @@ Edit.Line = Edit.extend({
         // if polygon gets removed from map, disable edit mode
         this._layer.on('remove', this._onLayerRemove, this);
 
+        if (!this.options.allowSelfIntersection) {
+            this._layer.on('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval, this);
+        }
+
         if (this.options.draggable) {
             this._initDraggableLayer();
+        }
+
+        if (!this.options.allowSelfIntersection) {
+            this._handleLayerStyle();
         }
     },
 
@@ -72,16 +81,73 @@ Edit.Line = Edit.extend({
         // remove onRemove listener
         this._layer.off('remove', this._onLayerRemove);
 
+        if (!this.options.allowSelfIntersection) {
+            this._layer.off('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval);
+        }
+
         // remove draggable class
         const el = poly._path;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
+        // remove invalid class if layer has self intersection
+        if (this.hasSelfIntersection()) {
+            L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+        }
+
         return true;
+    },
+
+    hasSelfIntersection() {
+        // check for self intersection of the layer and return true/false
+        const selfIntersection = kinks(this._layer.toGeoJSON());
+        return selfIntersection.features.length > 0;
+    },
+
+    _handleSelfIntersectionOnVertexRemoval() {
+        // check for selfintersection again (mainly to reset the style)
+        this._handleLayerStyle(true);
+
+        if (this.hasSelfIntersection()) {
+            // reset coordinates
+            this._layer.setLatLngs(this._coordsBeforeEdit);
+            this._coordsBeforeEdit = null;
+
+            // re-enable markers for the new coords
+            this._initMarkers();
+        }
+    },
+
+    _handleLayerStyle(flash) {
+        const el = this._layer._path;
+
+        if (this.hasSelfIntersection()) {
+            if (L.DomUtil.hasClass(el, 'leaflet-pm-invalid')) {
+                return;
+            }
+
+            // if it does self-intersect, mark or flash it red
+            if (flash) {
+                L.DomUtil.addClass(el, 'leaflet-pm-invalid');
+                window.setTimeout(() => {
+                    L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+                }, 200);
+            } else {
+                L.DomUtil.addClass(el, 'leaflet-pm-invalid');
+            }
+
+            // fire intersect event
+            this._layer.fire('pm:intersect', {
+                intersection: kinks(this._layer.toGeoJSON()),
+            });
+        } else {
+            // if not, reset the style to the default color
+            L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+        }
     },
 
     _initMarkers() {
         const map = this._map;
-        const coords = this._layer._latlngs;
+        const coords = this._layer.getLatLngs();
 
         // cleanup old ones first
         if (this._markerGroup) {
@@ -239,11 +305,18 @@ Edit.Line = Edit.extend({
     },
 
     _removeMarker(e) {
+        // if self intersection isn't allowed, save the coords upon dragstart
+        // in case we need to reset the layer
+        if (!this.options.allowSelfIntersection) {
+            const c = this._layer.getLatLngs();
+            this._coordsBeforeEdit = JSON.parse(JSON.stringify(c));
+        }
+
         // the marker that should be removed
         const marker = e.target;
 
         // coords of the layer
-        const coords = this._layer._latlngs;
+        const coords = this._layer.getLatLngs();
 
         // find the coord ring index and index of the marker
         const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
@@ -275,7 +348,7 @@ Edit.Line = Edit.extend({
             this._layer.setLatLngs(coords);
 
             // re-enable editing so unnecessary markers are removed
-            // TODO: kind of an ugly workaround maybe to it better?
+            // TODO: kind of an ugly workaround maybe do it better?
             this.disable();
             this.enable(this.options);
         }
@@ -303,7 +376,7 @@ Edit.Line = Edit.extend({
         if (this.isPolygon()) {
             // find neighbor marker-indexes
             rightMarkerIndex = (index + 1) % markerArr.length;
-            leftMarkerIndex = (index + markerArr.length - 1) % markerArr.length;
+            leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
         } else {
             // find neighbor marker-indexes
             leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
@@ -402,11 +475,31 @@ Edit.Line = Edit.extend({
             const middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
             marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
         }
+
+        // if self intersection is not allowed, handle it
+        if (!this.options.allowSelfIntersection) {
+            this._handleLayerStyle();
+        }
     },
 
     _onMarkerDragEnd(e) {
         const marker = e.target;
         const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+
+        // if self intersection is not allowed but this edit caused a self intersection,
+        // reset and cancel; do not fire events
+        if (!this.options.allowSelfIntersection && this.hasSelfIntersection()) {
+            // reset coordinates
+            this._layer.setLatLngs(this._coordsBeforeEdit);
+            this._coordsBeforeEdit = null;
+
+            // re-enable markers for the new coords
+            this._initMarkers();
+
+            // check for selfintersection again (mainly to reset the style)
+            this._handleLayerStyle();
+            return;
+        }
 
         this._layer.fire('pm:markerdragend', {
             markerEvent: e,
@@ -426,6 +519,12 @@ Edit.Line = Edit.extend({
             ringIndex,
             index,
         });
+
+        // if self intersection isn't allowed, save the coords upon dragstart
+        // in case we need to reset the layer
+        if (!this.options.allowSelfIntersection) {
+            this._coordsBeforeEdit = this._layer.getLatLngs();
+        }
     },
 
     _fireEdit() {

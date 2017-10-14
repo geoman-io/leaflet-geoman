@@ -1,31 +1,38 @@
-.marker-icon, .marker-icon:focus {
-    background-color: #ffffff;
-    border: 1px solid #3388FF;
-    border-radius: 50%;
-    margin: -8px 0 0 -8px !important;
-    width: 14px !important;
-    height: 14px !important;
-    outline: 0;
-    transition: opacity ease .3s;
+.marker-icon,
+.marker-icon:focus {
+  background-color: #ffffff;
+  border: 1px solid #3388ff;
+  border-radius: 50%;
+  margin: -8px 0 0 -8px !important;
+  width: 14px !important;
+  height: 14px !important;
+  outline: 0;
+  transition: opacity ease 0.3s;
 }
 
-.marker-icon-middle, .marker-icon-middle:focus {
-    opacity: .7;
-    margin: -6px 0 0 -6px !important;
-    width: 10px !important;
-    height: 10px !important;
+.marker-icon-middle,
+.marker-icon-middle:focus {
+  opacity: 0.7;
+  margin: -6px 0 0 -6px !important;
+  width: 10px !important;
+  height: 10px !important;
 }
 
 .leaflet-pm-draggable {
-    cursor: move !important;
+  cursor: move !important;
 }
 
 .cursor-marker {
-    cursor: crosshair;
-    pointer-events: none;
-    display: none;
+  cursor: crosshair;
+  pointer-events: none;
+  display: none;
 }
 
 .cursor-marker.visible {
-    display: block !important;
+  display: block !important;
+}
+
+.leaflet-pm-invalid {
+  stroke: red;
+  transition: fill ease 0s, stroke ease 0s;
 }

@@ -20,7 +20,8 @@
   "main": "dist/leaflet.pm.min.js",
   "dependencies": {
     "@turf/difference": "^4.7.4",
-    "@turf/intersect": "^4.7.4"
+    "@turf/intersect": "^4.7.4",
+    "@turf/kinks": "^4.7.3"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
