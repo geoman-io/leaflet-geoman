@@ -210,6 +210,10 @@ map2.on('pm:create', function(e) {
     e.layer.pm.enable({ allowSelfIntersection: false });
     // e.layer.pm.disable();
     // console.log(e.layer.pm.hasSelfIntersection());
+
+    e.layer.on('pm:markerdragend', function(e) {
+        console.log(e);
+    });
 });
 
 map2.on('pm:drawstart', function(e) {

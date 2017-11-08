@@ -15,8 +15,8 @@ Edit.Circle = Edit.extend({
     enabled() {
         return this._enabled;
     },
-    enable(options = {}) {
-        this.options = options;
+    enable(options) {
+        L.Util.setOptions(this, options);
 
         this._map = this._layer._map;
 
@@ -109,6 +109,17 @@ Edit.Circle = Edit.extend({
         this._syncHintLine();
         this._fireEdit();
     },
+    _onMarkerDragStart(e) {
+        console.log(this.options);
+        this._layer.fire('pm:markerdragstart', {
+            markerEvent: e,
+        });
+    },
+    _onMarkerDragEnd(e) {
+        this._layer.fire('pm:markerdragend', {
+            markerEvent: e,
+        });
+    },
     _syncCircleRadius() {
         const A = this._centerMarker.getLatLng();
         const B = this._outerMarker.getLatLng();
@@ -134,19 +145,14 @@ Edit.Circle = Edit.extend({
     _createCenterMarker(latlng) {
         const marker = this._createMarker(latlng);
 
-        // marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('move', this._moveCircle, this);
-        // marker.on('dragend', this._onMarkerDragEnd, this);
         // marker.on('contextmenu', this._removeMarker, this);
 
         return marker;
     },
     _createOuterMarker(latlng) {
         const marker = this._createMarker(latlng);
-
-        // marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('move', this._resizeCircle, this);
-        // marker.on('dragend', this._onMarkerDragEnd, this);
         // marker.on('contextmenu', this._removeMarker, this);
 
         return marker;
@@ -159,6 +165,9 @@ Edit.Circle = Edit.extend({
 
         marker._origLatLng = latlng;
         marker._pmTempLayer = true;
+
+        marker.on('dragstart', this._onMarkerDragStart, this);
+        marker.on('dragend', this._onMarkerDragEnd, this);
 
         this._layerGroup.addLayer(marker);
 
