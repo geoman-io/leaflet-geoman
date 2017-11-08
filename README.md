@@ -209,10 +209,10 @@ map.pm.Draw.Cut.disable(options);
 map.pm.Draw.Cut.toggle(options);
 
 // listen to when a specific layer gets cut
-layer.on('pm:cut', function(e) {//...});
+layer.on('pm:cut', function(e) {});
 
 // listen to when any layer on the map gets cut
-map.on('pm:cut', function(e) {//...});
+map.on('pm:cut', function(e) {});
 ```
 
 ##### Edit Mode
@@ -254,14 +254,14 @@ polygonLayer.pm.toggleEdit(options);
 polygonLayer.pm.enabled(); // returns true/false
 
 // listen to changes
-polygonLayer.on('pm:edit', function(e) {//...});
-polygonLayer.on('pm:dragstart', function(e) {//...});
-polygonLayer.on('pm:drag', function(e) {//...});
-polygonLayer.on('pm:dragend', function(e) {//...});
+polygonLayer.on('pm:edit', function(e) {});
+polygonLayer.on('pm:dragstart', function(e) {});
+polygonLayer.on('pm:drag', function(e) {});
+polygonLayer.on('pm:dragend', function(e) {});
 
 // listen to when vertexes are being added or removed from the layer
-polygonLayer.on('pm:vertexadded', function(e) {//...);
-polygonLayer.on('pm:vertexremoved', function(e) {//...);
+polygonLayer.on('pm:vertexadded', function(e) {});
+polygonLayer.on('pm:vertexremoved', function(e) {});
 
 // listen to when a marker of a polygon-vertex is being dragged
 polygonLayer.on('pm:markerdragstart', function(e) {
@@ -269,17 +269,17 @@ polygonLayer.on('pm:markerdragstart', function(e) {
     // if it's undefined, there are no rings
     // e.index is the index of the marker inside the coordinate ring / array it belongs to
 });
-polygonLayer.on('pm:markerdragend', function(e) {//...});
+polygonLayer.on('pm:markerdragend', function(e) {});
 
 // listen to when snapping occurs
 // pm:snap and pm:unsnap are, in addition to the layer, also fired on the markers of the polygon
 // if you'd need it for some advanced behaviour
-polygonLayer.on('pm:snap', function(e) {//...});
-polygonLayer.on('pm:unsnap', function(e) {//...});
+polygonLayer.on('pm:snap', function(e) {});
+polygonLayer.on('pm:unsnap', function(e) {});
 
 // if allowSelfIntersection is false: listen to when a self-intersection is detected
 // e.intersection includes a geoJSON of the intersection
-polygonLayer.on('pm:intersect', function(e) {//...});
+polygonLayer.on('pm:intersect', function(e) {});
 
 // toggle global edit mode (edit mode for all layers on the map)
 map.pm.toggleGlobalEditMode(options);
@@ -296,7 +296,7 @@ polygonLayer.pm.hasSelfIntersection(); // true/false
 map.pm.toggleGlobalRemovalMode();
 
 // listen to removal of layers that are NOT ignored and NOT helpers by leaflet.pm
-map.on('pm:remove', function(e) {//...})
+map.on('pm:remove', function(e) {})
 ```
 
 ### Customize Style
