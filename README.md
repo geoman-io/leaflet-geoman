@@ -284,6 +284,9 @@ polygonLayer.on('pm:intersect', function(e) {});
 // toggle global edit mode (edit mode for all layers on the map)
 map.pm.toggleGlobalEditMode(options);
 
+// listen to when global edit mode is toggled
+map.on('pm:globaleditmodetoggled', function(e) {});
+
 // check self intersection
 polygonLayer.pm.hasSelfIntersection(); // true/false
 

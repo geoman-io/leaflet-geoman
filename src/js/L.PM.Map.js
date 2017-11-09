@@ -85,6 +85,9 @@ const Map = L.Class.extend({
 
         // toggle the button in the toolbar
         this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
+
+        // fire event
+        this._fireEditModeEvent(true);
     },
     disableGlobalEditMode() {
         // find all layers handles by leaflet.pm
@@ -109,6 +112,15 @@ const Map = L.Class.extend({
 
         // toggle the button in the toolbar
         this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
+
+        // fire event
+        this._fireEditModeEvent(false);
+    },
+    _fireEditModeEvent(enabled) {
+        this.map.fire('pm:globaleditmodetoggled', {
+            enabled,
+            map: this.map,
+        });
     },
     toggleGlobalEditMode(options) {
         if (this.globalEditEnabled()) {

@@ -96,6 +96,10 @@ map2.pm.disableDraw('Poly');
 map2.pm.enableDraw('Line', { allowSelfIntersection: false });
 map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 
+map2.on('pm:globaleditmodetoggled', function(e) {
+    console.log(e);
+});
+
 // GEOSJON EXAMPLE
 
 const geoJsonData = {
