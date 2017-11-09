@@ -119,12 +119,6 @@ Edit.Rectangle = Edit.Poly.extend({
         this._fireEdit();
     },
 
-    _fireEdit() {
-        // fire edit event
-        this._layer.edited = true;
-        this._layer.fire('pm:edit');
-    },
-
     // adjusts the rectangle's size and bounds whenever a marker is moved
     // params: movedMarker -- the Marker object
     _adjustRectangleForMarkerMove(movedMarker) {

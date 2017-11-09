@@ -97,7 +97,7 @@ map2.pm.enableDraw('Line', { allowSelfIntersection: false });
 map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 
 map2.on('pm:globaleditmodetoggled', function(e) {
-    console.log(e);
+    // console.log(e);
 });
 
 // GEOSJON EXAMPLE
@@ -201,6 +201,10 @@ polygonLayer.pm.toggleEdit({
     allowSelfIntersection: false
 });
 
+polygonLayer.on('pm:update', function(e) {
+    console.log(e);
+});
+
 polygonLayer.on('pm:intersect', function(e) {
     console.log(e);
 });
@@ -216,6 +220,10 @@ map2.on('pm:create', function(e) {
     // console.log(e.layer.pm.hasSelfIntersection());
 
     e.layer.on('pm:markerdragend', function(e) {
+        // console.log(e);
+    });
+
+    e.layer.on('pm:update', function(e) {
         console.log(e);
     });
 });

@@ -94,6 +94,11 @@ Edit.Line = Edit.extend({
             L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
         }
 
+        if(this._layerEdited) {
+            this._layer.fire('pm:update', {});
+        }
+        this._layerEdited = false;
+
         return true;
     },
 
@@ -529,7 +534,7 @@ Edit.Line = Edit.extend({
 
     _fireEdit() {
         // fire edit event
-        this._layer.edited = true;
+        this._layerEdited = true;
         this._layer.fire('pm:edit');
     },
 

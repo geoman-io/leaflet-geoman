@@ -43,6 +43,7 @@ Edit.LayerGroup = L.Class.extend({
         // available events
         const availableEvents = [
             'pm:edit',
+            'pm:update',
             'pm:remove',
             'pm:dragstart',
             'pm:drag',
@@ -50,9 +51,12 @@ Edit.LayerGroup = L.Class.extend({
             'pm:snap',
             'pm:unsnap',
             'pm:cut',
+            'pm:intersect',
             'pm:raiseMarkers',
             'pm:markerdragend',
             'pm:markerdragstart',
+            'pm:vertexadded',
+            'pm:vertexremoved',
         ];
 
         // listen to the events of the layers in this group
