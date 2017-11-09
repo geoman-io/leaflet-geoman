@@ -110,7 +110,6 @@ Edit.Circle = Edit.extend({
         this._fireEdit();
     },
     _onMarkerDragStart(e) {
-        console.log(this.options);
         this._layer.fire('pm:markerdragstart', {
             markerEvent: e,
         });
