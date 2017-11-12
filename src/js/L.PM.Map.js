@@ -9,6 +9,8 @@ const Map = L.Class.extend({
                 this.map.fire('pm:remove', e);
             }
         });
+
+        this._globalRemovalMode = false;
     },
     addControls(options) {
         this.Toolbar.addControls(options);
