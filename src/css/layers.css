@@ -36,3 +36,17 @@
   stroke: red;
   transition: fill ease 0s, stroke ease 0s;
 }
+
+.rect-style-marker,
+.rect-start-marker {
+  opacity: 0;
+}
+
+.rect-style-marker.visible,
+.rect-start-marker.visible {
+  opacity: 1 !important;
+}
+
+.hidden {
+  display: none;
+}
