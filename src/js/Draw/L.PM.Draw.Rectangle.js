@@ -20,7 +20,7 @@ Draw.Rectangle = Draw.extend({
         this._layerGroup.addTo(this._map);
 
         // the rectangle we want to draw
-        this._layer = L.rectangle([[0, 0], [0, 0]]);
+        this._layer = L.rectangle([[0, 0], [0, 0]], this.options.pathOptions);
         this._layer._pmTempLayer = true;
 
         // this is the marker at the origin of the rectangle
@@ -200,7 +200,7 @@ Draw.Rectangle = Draw.extend({
         // create the final rectangle layer, based on opposite corners A & B
         const A = this._startMarker.getLatLng();
         const B = this._hintMarker.getLatLng();
-        const rectangleLayer = L.rectangle([A, B]).addTo(this._map);
+        const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(this._map);
 
         // disable drawing
         this.disable();
