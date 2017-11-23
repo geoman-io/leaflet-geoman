@@ -2,6 +2,7 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
     watch: false,
@@ -38,15 +39,14 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('leaflet.pm.css'),
-        new webpack.optimize.UglifyJsPlugin({
-            minimize: true,
-            compress: {
+        new UglifyJsPlugin({
+            uglifyOptions: {
+                ie8: true,
                 warnings: false, // Suppress uglification warnings
-                screw_ie8: true,
-            },
-            output: {
-                comments: false,
-            },
+                output: {
+                    comments: false,
+                }
+            }
         }),
         new webpack.DefinePlugin({
             'process.env': {
