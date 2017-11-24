@@ -18,37 +18,37 @@
 }
 
 .leaflet-pm-toolbar .leaflet-pm-icon-marker {
-    background-image: url('../assets/icons/marker.png');
+    background-image: url('icons/marker.png');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-polygon {
-    background-image: url('../assets/icons/draw.png');
+    background-image: url('icons/draw.png');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-polyline {
-    background-image: url('../assets/icons/line.png');
+    background-image: url('icons/line.png');
     background-size: 80%;
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-circle {
-    background-image: url('../assets/icons/circle.png');
+    background-image: url('icons/circle.png');
     background-size: 90%;
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-rectangle {
-    background-image: url('../assets/icons/rectangle.png');
+    background-image: url('icons/rectangle.png');
     background-size: 90%;
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-drag {
-    /*background-image: url('../assets/icons/drag.png');*/
+    /*background-image: url('icons/drag.png');*/
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-delete {
-    background-image: url('../assets/icons/remove.png');
+    background-image: url('icons/remove.png');
     background-size: 70%;
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-edit {
-    background-image: url('../assets/icons/edit.png');
+    background-image: url('icons/edit.png');
     background-size: 80%;
     background-position: 4px center;
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-cut {
-    background-image: url('../assets/icons/cut.png');
+    background-image: url('icons/cut.png');
     background-size: 80%;
     background-position: 4px center;
 }

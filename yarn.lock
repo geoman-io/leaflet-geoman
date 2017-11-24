@@ -1155,7 +1155,7 @@ colormin@^1.0.5:
     css-color-names "0.0.4"
     has "^1.0.1"
 
-colors@~1.1.2:
+colors@^1.1.2, colors@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.1.2.tgz#168a4701756b6a7f51a12ce0c97bfa28c084ed63"
 
@@ -2098,6 +2098,14 @@ fs-extra@^0.30.0:
     path-is-absolute "^1.0.0"
     rimraf "^2.2.8"
 
+fs-extra@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-3.0.1.tgz#3794f378c58b342ea7dbbb23095109c4b3b62291"
+  dependencies:
+    graceful-fs "^4.1.2"
+    jsonfile "^3.0.0"
+    universalify "^0.1.0"
+
 fs-write-stream-atomic@^1.0.8:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/fs-write-stream-atomic/-/fs-write-stream-atomic-1.0.10.tgz#b47df53493ef911df75731e70a9ded0189db40c9"
@@ -2735,6 +2743,12 @@ json5@^0.5.0, json5@^0.5.1:
 jsonfile@^2.1.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-2.4.0.tgz#3736a2b428b87bbda0cc83b53fa3d633a35c2ae8"
+  optionalDependencies:
+    graceful-fs "^4.1.6"
+
+jsonfile@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-3.0.1.tgz#a5ecc6f65f53f662c4415c7675a0331d0992ec66"
   optionalDependencies:
     graceful-fs "^4.1.6"
 
@@ -4127,6 +4141,13 @@ rollup-plugin-commonjs@^8.2.6:
     resolve "^1.4.0"
     rollup-pluginutils "^2.0.1"
 
+rollup-plugin-copy@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-copy/-/rollup-plugin-copy-0.2.3.tgz#dac1ab81d1f220baeb98e5c4c0108252e1edbb98"
+  dependencies:
+    colors "^1.1.2"
+    fs-extra "^3.0.0"
+
 rollup-plugin-css-only@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/rollup-plugin-css-only/-/rollup-plugin-css-only-0.2.0.tgz#e7c583b2726ff15c88e701ead5c9ad80e1cf4324"
@@ -4805,6 +4826,10 @@ unique-string@^1.0.0:
   resolved "https://registry.yarnpkg.com/unique-string/-/unique-string-1.0.0.tgz#9e1057cca851abb93398f8b33ae187b99caec11a"
   dependencies:
     crypto-random-string "^1.0.0"
+
+universalify@^0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/universalify/-/universalify-0.1.1.tgz#fa71badd4437af4c148841e3b3b165f9e9e590b7"
 
 url-join@^2.0.2:
   version "2.0.2"

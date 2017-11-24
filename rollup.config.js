@@ -1,5 +1,6 @@
 import babel from 'rollup-plugin-babel'
 // import uglify from 'rollup-plugin-uglify'
+import copy from 'rollup-plugin-copy';
 import css from 'rollup-plugin-css-only'
 import resolve from 'rollup-plugin-node-resolve';
 
@@ -8,13 +9,17 @@ export default {
   input: 'src/js/L.PM.js',
   output: {
     extend: true,
-    file: 'dist/ru/leaflet.pm.js',
+    file: 'dist/leaflet.pm.js',
     name: 'pm',
     format: 'cjs'
   },
   plugins: [
-    css({ output: 'dist/ru/leaflet.pm.css' }),
+    css({ output: 'dist/leaflet.pm.css' }),
     resolve(),
+    copy({
+        "src/css/icons": "dist/icons",
+        verbose: true
+    }),
     // uglify(),
     babel({
       presets: [['env', {
