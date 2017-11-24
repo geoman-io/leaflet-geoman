@@ -29,8 +29,5 @@ export default {
       ],
       babelrc: false
     })
-  ],
-  globals: {
-    "@turf/kinks": 'kinks'
-  }
+  ]
 }
