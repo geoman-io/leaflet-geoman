@@ -7,11 +7,11 @@
         "no-param-reassign": 0,
         "max-len": ["error", 140],
         "no-restricted-syntax": 0,
-        "guard-for-in": 0,
+        "guard-for-in": 0
     },
     "globals": {
         "L": true,
         "window": true,
-        "document": true,
+        "document": true
     }
 }
