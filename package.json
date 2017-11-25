@@ -21,7 +21,9 @@
   "dependencies": {
     "@turf/difference": "^5.0.4",
     "@turf/intersect": "^5.0.4",
-    "@turf/kinks": "^5.0.4"
+    "@turf/kinks": "^5.0.4",
+    "turf-jsts": "^0.1.0",
+    "uglify-es": "^3.1.10"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
