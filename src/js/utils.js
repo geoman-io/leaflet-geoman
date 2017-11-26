@@ -20,12 +20,12 @@ export function intersect(poly1, poly2) {
 }
 
 export function difference(polygon1, polygon2) {
-  debugger
   var geom1 = getGeom(polygon1);
   var geom2 = getGeom(polygon2);
   var properties = polygon1.properties || {};
 
   // Issue #721 - JSTS can't handle empty polygons
+  // TODO: find function for this
   // geom1 = removeEmptyPolygon(geom1);
   // geom2 = removeEmptyPolygon(geom2);
   if (!geom1) return null;

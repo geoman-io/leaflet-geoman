@@ -9,7 +9,7 @@ module.exports = {
     // devtool: 'cheap-source-map',
     entry: ['./src/js/L.PM.js'],
     output: {
-        filename: 'leaflet.pm.js',
+        filename: 'leaflet.pm.min.js',
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
@@ -39,15 +39,15 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('leaflet.pm.css'),
-        // new UglifyJsPlugin({
-        //     uglifyOptions: {
-        //         ie8: true,
-        //         warnings: false, // Suppress uglification warnings
-        //         output: {
-        //             comments: false,
-        //         }
-        //     }
-        // }),
+        new UglifyJsPlugin({
+            uglifyOptions: {
+                ie8: true,
+                warnings: false, // Suppress uglification warnings
+                output: {
+                    comments: false,
+                }
+            }
+        }),
         new webpack.DefinePlugin({
             'process.env': {
                 // This has effect on the react lib size
