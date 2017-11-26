@@ -1,4 +1,47 @@
-import { point } from '@turf/helpers'
+import { point, feature } from '@turf/helpers'
+import { getGeom } from '@turf/invariant';
+import { GeoJSONReader, GeoJSONWriter, OverlayOp } from 'turf-jsts';
+
+export function intersect(poly1, poly2) {
+  var geom1 = getGeom(poly1);
+  var geom2 = getGeom(poly2);
+
+  var reader = new GeoJSONReader();
+  var a = reader.read(geom1);
+  var b = reader.read(geom2);
+  var intersection = OverlayOp.intersection(a, b);
+
+  // https://github.com/Turfjs/turf/issues/951
+  if (intersection.isEmpty()) return null;
+
+  var writer = new GeoJSONWriter();
+  var geom = writer.write(intersection);
+  return feature(geom);
+}
+
+export function difference(polygon1, polygon2) {
+  debugger
+  var geom1 = getGeom(polygon1);
+  var geom2 = getGeom(polygon2);
+  var properties = polygon1.properties || {};
+
+  // Issue #721 - JSTS can't handle empty polygons
+  // geom1 = removeEmptyPolygon(geom1);
+  // geom2 = removeEmptyPolygon(geom2);
+  if (!geom1) return null;
+  if (!geom2) return feature(geom1, properties);
+
+  // JSTS difference operation
+  var reader = new GeoJSONReader();
+  var a = reader.read(geom1);
+  var b = reader.read(geom2);
+  var differenced = OverlayOp.difference(a, b);
+  if (differenced.isEmpty()) return null;
+  var writer = new GeoJSONWriter();
+  var geom = writer.write(differenced);
+
+  return feature(geom, properties);
+}
 
 export function kinks(featureIn) {
   var coordinates

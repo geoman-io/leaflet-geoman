@@ -9,7 +9,7 @@ export default {
   input: 'src/js/L.PM.js',
   output: {
     extend: true,
-    file: 'dist/leaflet.pm.js',
+    file: 'dist/leaflet.pm.min.js',
     name: 'pm',
     format: 'cjs'
   },
