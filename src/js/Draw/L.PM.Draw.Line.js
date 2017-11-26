@@ -134,9 +134,9 @@ Draw.Line = Draw.extend({
     },
     hasSelfIntersection() {
         // check for self intersection of the layer and return true/false
-        // const selfIntersection = kinks(this._layer.toGeoJSON());
-        // return selfIntersection.features.length > 0;
-        return false;
+        const selfIntersection = kinks(this._layer.toGeoJSON());
+        console.log(selfIntersection)
+        return selfIntersection.features.length > 0;
     },
     _syncHintLine() {
         const polyPoints = this._layer.getLatLngs();

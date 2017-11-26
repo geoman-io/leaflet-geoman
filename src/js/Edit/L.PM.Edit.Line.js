@@ -1,6 +1,6 @@
-// import kinks from '@turf/kinks';
+import kinks from '@turf/kinks';
 import Edit from './L.PM.Edit';
-import { kinks } from '../utils'
+// import { kinks } from '../utils'
 
 Edit.Line = Edit.extend({
     initialize(layer) {
@@ -105,9 +105,9 @@ Edit.Line = Edit.extend({
 
     hasSelfIntersection() {
         // check for self intersection of the layer and return true/false
-        // const selfIntersection = kinks(this._layer.toGeoJSON());
-        // return selfIntersection.features.length > 0;
-        return false;
+        const selfIntersection = kinks(this._layer.toGeoJSON());
+        console.log(selfIntersection)
+        return selfIntersection.features.length > 0;
     },
 
     _handleSelfIntersectionOnVertexRemoval() {
