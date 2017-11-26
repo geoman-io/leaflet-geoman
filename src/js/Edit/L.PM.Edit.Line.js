@@ -1,5 +1,6 @@
 // import kinks from '@turf/kinks';
 import Edit from './L.PM.Edit';
+import { kinks } from '../utils'
 
 Edit.Line = Edit.extend({
     initialize(layer) {

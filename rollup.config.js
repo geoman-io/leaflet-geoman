@@ -1,5 +1,5 @@
 import babel from 'rollup-plugin-babel'
-// import uglify from 'rollup-plugin-uglify'
+import uglify from 'rollup-plugin-uglify-es'
 import copy from 'rollup-plugin-copy';
 import css from 'rollup-plugin-css-only'
 import resolve from 'rollup-plugin-node-resolve';
@@ -20,7 +20,7 @@ export default {
         "src/css/icons": "dist/icons",
         verbose: true
     }),
-    // uglify(),
+    uglify(),
     babel({
       presets: [['env', {
         modules: false,

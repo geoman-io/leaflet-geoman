@@ -1,6 +1,6 @@
 // import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
-
+import { kinks } from '../utils'
 Draw.Line = Draw.extend({
     initialize(map) {
         this._map = map;
