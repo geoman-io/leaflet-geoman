@@ -58,7 +58,7 @@ Edit.Circle = Edit.extend({
         const el = layer._path;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
-        if(this._layerEdited) {
+        if (this._layerEdited) {
             this._layer.fire('pm:update', {});
         }
         this._layerEdited = false;
@@ -113,6 +113,11 @@ Edit.Circle = Edit.extend({
         this._outerMarker.setLatLng(outer);
         this._syncHintLine();
         this._fireEdit();
+
+        this._layer.fire('pm:centerplaced', {
+            layer: this._layer,
+            latlng: center,
+        });
     },
     _onMarkerDragStart(e) {
         this._layer.fire('pm:markerdragstart', {

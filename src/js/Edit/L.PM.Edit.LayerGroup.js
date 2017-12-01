@@ -18,13 +18,13 @@ Edit.LayerGroup = L.Class.extend({
             this._layers = this.findLayers();
 
             // init the newly added layer
-            if(e.layer.pm) {
+            if (e.layer.pm) {
                 this._initLayer(e.layer);
             }
 
             // if editing was already enabled for this group, enable it again
             // so the new layers are enabled
-            if(e.target.pm.enabled()) {
+            if (e.target.pm.enabled()) {
                 this.enable(this.getOptions());
             }
         });
@@ -57,6 +57,7 @@ Edit.LayerGroup = L.Class.extend({
             'pm:markerdragstart',
             'pm:vertexadded',
             'pm:vertexremoved',
+            'pm:centerplaced',
         ];
 
         // listen to the events of the layers in this group

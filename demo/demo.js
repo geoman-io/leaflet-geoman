@@ -5,15 +5,15 @@ const accessToken = 'pk.eyJ1IjoibWFwc29mc3VtaXQiLCJhIjoiY2l1ZDF3dHE5MDAxZDMwbjA0
 // set mapbox tile layer
 const mapboxTiles1 = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
     attribution:
-        '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 });
 const mapboxTiles2 = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
     attribution:
-        '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 });
 const mapboxTiles3 = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`, {
     attribution:
-        '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 });
 
 const map2 = L.map('example2')
@@ -63,7 +63,7 @@ map2.pm.addControls({
     drawPolygon: true,
     editPolygon: false,
     drawPolyline: false,
-    deleteLayer: true
+    deleteLayer: true,
 });
 // map2.pm.addControls({
 //     drawMarker: false,
@@ -84,7 +84,7 @@ map2.pm.addControls({
     drawPolygon: true,
     editPolygon: true,
     drawPolyline: true,
-    deleteLayer: true
+    deleteLayer: true,
 });
 
 map2.pm.disableDraw('Poly');
@@ -118,12 +118,12 @@ const geoJsonData = {
                         [-0.13149261474609375, 51.5042549065934],
                         [-0.11758804321289061, 51.518463972439385],
                         [-0.13303756713867188, 51.53106680201548],
-                        [-0.15483856201171872, 51.527329038465936]
-                    ]
-                ]
-            }
-        }
-    ]
+                        [-0.15483856201171872, 51.527329038465936],
+                    ],
+                ],
+            },
+        },
+    ],
 };
 // const geoJsonButton = document.getElementById('test-geojson');
 const geoJsonLayer = L.geoJson(null, { pmIgnore: true });
@@ -139,32 +139,32 @@ map3.pm.addControls({
     drawPolygon: true,
     editPolygon: true,
     deleteLayer: true,
-    drawPolyline: true
+    drawPolyline: true,
 });
 
 const markerStyle = {
     opacity: 0.5,
-    draggable: false
+    draggable: false,
 };
 
 map3.pm.enableDraw('Poly', {
     snappable: true,
     templineStyle: {
-        color: 'blue'
+        color: 'blue',
     },
     hintlineStyle: {
         color: 'blue',
-        dashArray: [5, 5]
+        dashArray: [5, 5],
     },
     pathOptions: {
         color: 'red',
         fillColor: 'orange',
-        fillOpacity: 0.7
+        fillOpacity: 0.7,
     },
     markerStyle: markerStyle,
     cursorMarker: false,
     // finishOn: 'contextmenu',
-    finishOnDoubleClick: true
+    finishOnDoubleClick: true,
 });
 
 var scotland = L.polygon([[[60, -13], [60, 0], [50, 4], [50, -13]], [[55.7, -4.5], [56, -4.5], [56, -4], [55.7, -4]]]);
@@ -192,13 +192,28 @@ geoJsonLayer.on('pm:dragend', function(e) {
     console.log(e);
 });
 
+map2.on('pm:drawstart', function(e) {
+    var layer = e.workingLayer;
+    // console.log(layer);
+    layer.on('pm:centerplaced', function(e) {
+        // console.log(e);
+    });
+});
+map2.on('pm:create', function(e) {
+    var layer = e.layer;
+    // console.log(layer);
+    layer.on('pm:centerplaced', function(e) {
+        // console.log(e);
+    });
+});
+
 // Polygon Example
 
 const polygonLayer = L.polygon([[51.509, -0.08], [51.503, -0.06], [51.51, -0.047]])
     .addTo(map3)
     .addTo(map2);
 polygonLayer.pm.toggleEdit({
-    allowSelfIntersection: false
+    allowSelfIntersection: false,
 });
 
 polygonLayer.on('pm:update', function(e) {
@@ -210,7 +225,7 @@ polygonLayer.on('pm:intersect', function(e) {
 });
 
 map2.pm.toggleGlobalEditMode({
-    allowSelfIntersection: false
+    allowSelfIntersection: false,
 });
 map2.pm.disableGlobalEditMode();
 
@@ -224,6 +239,10 @@ map2.on('pm:create', function(e) {
     });
 
     e.layer.on('pm:update', function(e) {
+        console.log(e);
+    });
+
+    e.layer.on('pm:cut', function(e) {
         console.log(e);
     });
 });
@@ -256,26 +275,26 @@ const layerGroupItem3 = L.polygon([
     [51.51549835365031, -0.06450164634969281],
     [51.51944818307178, -0.08425079345703125],
     [51.51868369995795, -0.06131630004205801],
-    [51.51549835365031, -0.06450164634969281]
+    [51.51549835365031, -0.06450164634969281],
 ]);
 const layerGroupItem4 = L.polygon([
     [51.51549835365031, -0.06450164634969281],
     [51.51944818307178, -0.08425079345703125],
     [51.51868369995795, -0.06131630004205801],
-    [51.51549835365031, -0.06450164634969281]
+    [51.51549835365031, -0.06450164634969281],
 ]);
 const layerGroupItem5 = L.polygon([
     [51.51549835365031, -0.06450164634969281],
     [51.51944818307178, -0.08425079345703125],
     [51.51868369995795, -0.06131630004205801],
-    [51.51549835365031, -0.06450164634969281]
+    [51.51549835365031, -0.06450164634969281],
 ]);
 
 const layerGroup = L.featureGroup([layerGroupItem1]).addTo(map4);
 layerGroup.pm.toggleEdit({
     draggable: true,
     snappable: true,
-    snapDistance: 30
+    snapDistance: 30,
 });
 
 layerGroup.on('pm:snap', function(e) {
@@ -288,16 +307,16 @@ layerGroup.on('pm:unsnap', function(e) {
 });
 
 map4.pm.addControls({
-    position: 'topright'
+    position: 'topright',
 });
 
 map4.pm.enableDraw('Poly', {
-    finishOn: 'mouseout'
+    finishOn: 'mouseout',
 });
 map4.pm.disableDraw('Poly');
 
 map4.pm.enableDraw('Marker', {
-    snappable: false
+    snappable: false,
 });
 map4.pm.disableDraw('Marker');
 
