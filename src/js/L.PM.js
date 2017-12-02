@@ -6,7 +6,7 @@
 */
 
 import './polyfills.js';
-import { version } from '../../package.json';
+// import { version } from '../../package.json';
 
 import Map from './L.PM.Map';
 import Toolbar from './Toolbar/L.PM.Toolbar';
@@ -35,7 +35,7 @@ L.PM = L.PM || {
     Toolbar,
     Draw,
     Edit,
-    version,
+    // version,
     initialize() {
         this.addInitHooks();
     },

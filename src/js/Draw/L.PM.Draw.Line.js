@@ -1,6 +1,6 @@
-import kinks from '@turf/kinks';
+// import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
-
+import { kinks } from '../utils'
 Draw.Line = Draw.extend({
     initialize(map) {
         this._map = map;
@@ -135,6 +135,7 @@ Draw.Line = Draw.extend({
     hasSelfIntersection() {
         // check for self intersection of the layer and return true/false
         const selfIntersection = kinks(this._layer.toGeoJSON());
+        console.log(selfIntersection)
         return selfIntersection.features.length > 0;
     },
     _syncHintLine() {

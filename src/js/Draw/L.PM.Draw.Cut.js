@@ -1,6 +1,8 @@
-import intersect from '@turf/intersect';
-import difference from '@turf/difference';
+// import intersect from '@turf/intersect';
+import { GeoJSONReader, GeoJSONWriter, OverlayOp } from 'turf-jsts';
+// import difference from '@turf/difference';
 import Draw from './L.PM.Draw';
+import {intersect, difference} from '../utils'
 
 Draw.Cut = Draw.Poly.extend({
     initialize(map) {
@@ -38,6 +40,7 @@ Draw.Cut = Draw.Poly.extend({
         layers.forEach((l) => {
             // find layer difference
             const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
+            console.log(diff)
 
             // if result is a multipolygon, split it into regular polygons
             // TODO: remove as soon as multipolygons are supported

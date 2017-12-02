@@ -20,8 +20,11 @@
   "main": "dist/leaflet.pm.min.js",
   "dependencies": {
     "@turf/difference": "^5.0.4",
+    "@turf/helpers": "^5.0.4",
     "@turf/intersect": "^5.0.4",
-    "@turf/kinks": "^5.0.4"
+    "@turf/invariant": "^5.0.4",
+    "@turf/kinks": "^5.0.4",
+    "turf-jsts": "^0.1.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -34,6 +37,14 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^0.11.1",
     "leaflet": "^1.2.0",
+    "rollup": "^0.52.0",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-copy": "^0.2.3",
+    "rollup-plugin-css-only": "^0.2.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^2.0.1",
+    "rollup-plugin-uglify-es": "^0.0.1",
     "style-loader": "^0.19.0",
     "tape": "^4.8.0",
     "tape-run": "^3.0.0",

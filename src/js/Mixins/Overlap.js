@@ -3,6 +3,25 @@
 // 2. include the turf.js dependency in your project before leaflet.pm
 // 3. uncomment all code inside L.PM.Edit.Poly that has an if-check on options.preventOverlap
 // 4. pass the option preventOverlap to the enable() function on your layer
+import { GeoJSONReader, GeoJSONWriter, OverlayOp } from 'turf-jsts';
+
+function intersect(poly1, poly2) {
+    var geom1 = getGeom(poly1);
+    var geom2 = getGeom(poly2);
+
+    var reader = new GeoJSONReader();
+    var a = reader.read(geom1);
+    var b = reader.read(geom2);
+    var intersection = OverlayOp.intersection(a, b);
+
+    // https://github.com/Turfjs/turf/issues/951
+    if (intersection.isEmpty()) return null;
+
+    var writer = new GeoJSONWriter();
+    var geom = writer.write(intersection);
+    return feature(geom);
+}
+
 var OverlapMixin = {
 
     _applyPossibleCoordsChanges() {
@@ -44,7 +63,7 @@ var OverlapMixin = {
             // this needs to be in a try catch block because turf isn't reliable
             // it throws self-intersection errors even if there are none
             try {
-                intersect = turf.intersect(resultingGeoJson, layer.toGeoJSON());
+                intersect = intersect(resultingGeoJson, layer.toGeoJSON());
             } catch(e) {
                 console.warn('Turf Error.');
             }
