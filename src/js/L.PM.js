@@ -1,11 +1,11 @@
 /**
-*
-* A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
-* by Sumit Kumar (@TweetsOfSumit)
-* Github Repo: https://github.com/codeofsumit/leaflet.pm
-*/
+ *
+ * A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
+ * by Sumit Kumar (@TweetsOfSumit)
+ * Github Repo: https://github.com/codeofsumit/leaflet.pm
+ */
 
-import './polyfills.js';
+import './polyfills';
 import { version } from '../../package.json';
 
 import Map from './L.PM.Map';

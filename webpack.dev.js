@@ -19,7 +19,7 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['env'],
+                        presets: ['@babel/preset-env'],
                     },
                 },
             },
@@ -36,7 +36,5 @@ module.exports = {
             },
         ],
     },
-    plugins: [
-        new ExtractTextPlugin('leaflet.pm.css'),
-    ],
+    plugins: [new ExtractTextPlugin('leaflet.pm.css')],
 };

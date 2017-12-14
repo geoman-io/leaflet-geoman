@@ -2,7 +2,7 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     watch: false,
@@ -20,7 +20,7 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['env'],
+                        presets: ['@babel/preset-env'],
                     },
                 },
             },
@@ -45,8 +45,8 @@ module.exports = {
                 warnings: false, // Suppress uglification warnings
                 output: {
                     comments: false,
-                }
-            }
+                },
+            },
         }),
         new webpack.DefinePlugin({
             'process.env': {
