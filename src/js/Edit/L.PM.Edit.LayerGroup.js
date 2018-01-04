@@ -15,17 +15,19 @@ Edit.LayerGroup = L.Class.extend({
         // This only works for FeatureGroups, not LayerGroups
         // https://github.com/Leaflet/Leaflet/issues/4861
         this._layerGroup.on('layeradd', (e) => {
-            this._layers = this.findLayers();
+            if (e.target._pmTempLayer) {
+                return;
+            }
 
+            this._layers = this.findLayers();
             // init the newly added layer
             if (e.layer.pm) {
                 this._initLayer(e.layer);
             }
-
             // if editing was already enabled for this group, enable it again
             // so the new layers are enabled
             if (e.target.pm.enabled()) {
-                this.enable(this.getOptions());
+                // this.enable(this.getOptions());
             }
         });
     },
@@ -35,6 +37,9 @@ Edit.LayerGroup = L.Class.extend({
 
         // filter out layers that don't have leaflet.pm
         layers = layers.filter(layer => !!layer.pm);
+
+        // filter out everything that's leaflet.pm specific temporary stuff
+        layers = layers.filter(layer => !layer._pmTempLayer);
 
         // return them
         return layers;

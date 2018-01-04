@@ -125,10 +125,11 @@ const geoJsonData = {
         },
     ],
 };
+
 // const geoJsonButton = document.getElementById('test-geojson');
-const geoJsonLayer = L.geoJson(null, { pmIgnore: true });
-geoJsonLayer.addData(geoJsonData);
+const geoJsonLayer = L.geoJson(null, { pmIgnore: false });
 geoJsonLayer.addTo(map2);
+geoJsonLayer.addData(geoJsonData);
 // geoJsonLayer.pm.toggleEdit({
 //     draggable: true,
 //     snappable: true,
@@ -277,18 +278,15 @@ const layerGroupItem3 = L.polygon([
     [51.51868369995795, -0.06131630004205801],
     [51.51549835365031, -0.06450164634969281],
 ]);
-const layerGroupItem4 = L.polygon([
-    [51.51549835365031, -0.06450164634969281],
-    [51.51944818307178, -0.08425079345703125],
-    [51.51868369995795, -0.06131630004205801],
-    [51.51549835365031, -0.06450164634969281],
-]);
-const layerGroupItem5 = L.polygon([
-    [51.51549835365031, -0.06450164634969281],
-    [51.51944818307178, -0.08425079345703125],
-    [51.51868369995795, -0.06131630004205801],
-    [51.51549835365031, -0.06450164634969281],
-]);
+
+const feature = {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+        type: 'Polygon',
+        coordinates: [[[72.839012, 19.058873], [72.92038, 19.066985], [72.856178, 19.019928], [72.839012, 19.058873]]],
+    },
+};
 
 const layerGroup = L.featureGroup([layerGroupItem1]).addTo(map4);
 layerGroup.pm.toggleEdit({
@@ -296,6 +294,12 @@ layerGroup.pm.toggleEdit({
     snappable: true,
     snapDistance: 30,
 });
+const someLayer = L.geoJSON(feature);
+
+layerGroup.addLayer(someLayer);
+
+someLayer.addData(feature);
+console.log(layerGroup);
 
 layerGroup.on('pm:snap', function(e) {
     console.log('snap');
