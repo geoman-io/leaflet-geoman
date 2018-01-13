@@ -11,7 +11,8 @@ const Draw = L.Class.extend({
         allowSelfIntersection: true,
         templineStyle: {},
         hintlineStyle: {
-            dashArray: [5, 5],
+            //dashArray: [5, 5],
+            dashArray: '5,5',
         },
         markerStyle: {
             draggable: true,

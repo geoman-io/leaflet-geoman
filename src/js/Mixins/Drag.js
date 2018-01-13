@@ -4,7 +4,12 @@ const DragMixin = {
         this._tempDragCoord = null;
 
         // add CSS class
-        const el = this._layer._path;
+        if (this._layer._path === undefined) {
+            var el = this._layer._renderer._container;
+        } else {
+            var el = this._layer._path;
+        }
+        console.log(this, el);
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
         this._originalMapDragState = this._layer._map.dragging._enabled;
@@ -16,7 +21,12 @@ const DragMixin = {
         this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
     },
     _dragMixinOnMouseUp() {
-        const el = this._layer._path;
+        //const el = this._layer._path;
+        if (this._layer._path === undefined) {
+            var el = this._layer._renderer._container;
+        } else {
+            var el = this._layer._path;
+        }
 
         // re-enable map drag
         if(this._originalMapDragState) {
@@ -57,7 +67,12 @@ const DragMixin = {
         return true;
     },
     _dragMixinOnMouseMove(e) {
-        const el = this._layer._path;
+        //const el = this._layer._path;
+        if (this._layer._path === undefined) {
+            var el = this._layer._renderer._container;
+        } else {
+            var el = this._layer._path;
+        }
 
         if(!this._dragging) {
             // set state
@@ -88,7 +103,7 @@ const DragMixin = {
             this._originalMapDragState = this._layer._map.dragging._enabled;
 
             // don't cache the state again until another mouse up is registered
-            this._safeToCacheDragState = false           
+            this._safeToCacheDragState = false
         }
 
         // save for delta calculation
