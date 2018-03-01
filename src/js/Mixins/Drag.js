@@ -67,7 +67,7 @@ const DragMixin = {
             // bring it to front to prevent drag interception
             this._layer.bringToFront();
 
-            // disbale map drag
+            // disable map drag
             if(this._originalMapDragState) {
                 this._layer._map.dragging.disable();
             }
@@ -115,10 +115,14 @@ const DragMixin = {
         };
 
         // move the coordinates by the delta
-        const moveCoords = coords => coords.map((currentLatLng) => {
+        const moveCoords = coords => coords.map((currentElement) => {
+            if (Array.isArray(currentElement)) {
+                return moveCoords(currentElement);
+            }
+
             const c = {
-                lat: currentLatLng.lat + deltaLatLng.lat,
-                lng: currentLatLng.lng + deltaLatLng.lng,
+                lat: currentElement.lat + deltaLatLng.lat,
+                lng: currentElement.lng + deltaLatLng.lng,
             };
             return c;
         });
