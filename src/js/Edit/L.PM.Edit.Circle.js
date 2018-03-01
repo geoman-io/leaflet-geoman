@@ -79,14 +79,19 @@ Edit.Circle = Edit.extend({
 
         // create marker for each coordinate
         const center = this._layer.getLatLng();
-        const radius = this._layer._radius;
 
-        const outer = this._getLatLngOnCircle(center, radius);
+        if (!this.options.disableNodeEditing) {
+            const radius = this._layer._radius;
+            const outer = this._getLatLngOnCircle(center, radius);
 
-        this._centerMarker = this._createCenterMarker(center);
-        this._outerMarker = this._createOuterMarker(outer);
-        this._markers = [this._centerMarker, this._outerMarker];
-        this._createHintLine(this._centerMarker, this._outerMarker);
+            this._centerMarker = this._createCenterMarker(center);
+            this._outerMarker = this._createOuterMarker(outer);
+            this._markers = [this._centerMarker, this._outerMarker];
+            this._createHintLine(this._centerMarker, this._outerMarker);
+        } else {
+            this._centerMarker = this._createCenterMarker(center);
+            this._markers = [this._centerMarker];
+        }
 
         if (this.options.snappable) {
             this._initSnappableMarkers();
@@ -107,11 +112,13 @@ Edit.Circle = Edit.extend({
         const center = e.latlng;
         this._layer.setLatLng(center);
 
-        const radius = this._layer._radius;
+        if (!this.options.disableNodeEditing) {
+            const radius = this._layer._radius;
+            const outer = this._getLatLngOnCircle(center, radius);
+            this._outerMarker.setLatLng(outer);
+            this._syncHintLine();
+        }
 
-        const outer = this._getLatLngOnCircle(center, radius);
-        this._outerMarker.setLatLng(outer);
-        this._syncHintLine();
         this._fireEdit();
 
         this._layer.fire('pm:centerplaced', {

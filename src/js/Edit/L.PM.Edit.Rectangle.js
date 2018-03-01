@@ -7,6 +7,10 @@ Edit.Rectangle = Edit.Poly.extend({
 
     // initializes Rectangle Markers
     _initMarkers() {
+        if (this.options.disableNodeEditing) {
+            return;
+        }
+
         const map = this._map;
         const corners = this._findCorners();
 

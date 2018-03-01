@@ -72,7 +72,10 @@ Edit.Line = Edit.extend({
             return false;
         }
         poly.pm._enabled = false;
-        poly.pm._markerGroup.clearLayers();
+
+        if (poly.pm._markerGroup) {
+            poly.pm._markerGroup.clearLayers();
+        }
 
         // clean up draggable
         poly.off('mousedown');
@@ -151,6 +154,10 @@ Edit.Line = Edit.extend({
     },
 
     _initMarkers() {
+        if (this.options.disableNodeEditing) {
+            return;
+        }
+
         const map = this._map;
         const coords = this._layer.getLatLngs();
 

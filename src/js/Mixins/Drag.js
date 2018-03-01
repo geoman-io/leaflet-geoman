@@ -72,9 +72,10 @@ const DragMixin = {
                 this._layer._map.dragging.disable();
             }
 
-
             // hide markers
-            this._markerGroup.clearLayers();
+            if (this._markerGroup) {
+                this._markerGroup.clearLayers();
+            }
 
             // fire pm:dragstart event
             this._layer.fire('pm:dragstart');

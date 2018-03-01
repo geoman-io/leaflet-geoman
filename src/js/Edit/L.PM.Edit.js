@@ -7,6 +7,7 @@ const Edit = L.Class.extend({
         snappable: true,
         snapDistance: 20,
         allowSelfIntersection: true,
+        disableNodeEditing: false,
         draggable: true,
     },
     isPolygon() {
