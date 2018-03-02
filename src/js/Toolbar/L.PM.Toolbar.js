@@ -16,6 +16,7 @@ const Toolbar = L.Class.extend({
         cutPolygon: true,
         dragPolygon: false,
         removalMode: true,
+        drawCircleMarker: false,
         position: 'topleft',
     },
     initialize(map) {
@@ -183,6 +184,20 @@ const Toolbar = L.Class.extend({
             position: this.options.position,
         };
 
+
+        const drawCircleMarkerButton = {
+            className: 'leaflet-pm-icon-circle',
+            onClick: () => {},
+            afterClick: () => {
+                // toggle drawing mode
+                this.map.pm.Draw.CircleMarker.toggle();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
+        };
+
         const drawRectangleButton = {
             className: 'leaflet-pm-icon-rectangle',
             onClick: () => {},
@@ -223,6 +238,7 @@ const Toolbar = L.Class.extend({
         this._addButton('drawRectangle', new L.Control.PMButton(drawRectangleButton));
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
+        this._addButton('drawCircleMarker', new L.Control.PMButton(drawCircleMarkerButton));
         this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('editMode', new L.Control.PMButton(editButton));
         this._addButton('dragPolygon', new L.Control.PMButton(dragButton));

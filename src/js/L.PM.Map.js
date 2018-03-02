@@ -68,7 +68,7 @@ const Map = L.Class.extend({
         // find all layers handles by leaflet.pm
         let layers = [];
         this.map.eachLayer((layer) => {
-            if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
+            if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle || layer instanceof L.CircleMarker) {
                 layers.push(layer);
             }
         });
@@ -95,7 +95,7 @@ const Map = L.Class.extend({
         // find all layers handles by leaflet.pm
         let layers = [];
         this.map.eachLayer((layer) => {
-            if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
+            if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle || layer instanceof L.CircleMarker) {
                 layers.push(layer);
             }
         });
