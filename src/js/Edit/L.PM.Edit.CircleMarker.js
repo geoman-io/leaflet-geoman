@@ -104,8 +104,6 @@ Edit.CircleMarker = Edit.extend({
 
         marker.on('move', this._moveMarker, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
-
-        // marker.on('move', this._moveMarker, this);
         marker.on('contextmenu', this._removeMarker, this);
 
         this._markerGroup.addLayer(marker);
