@@ -56,8 +56,6 @@ Draw.CircleMarker = Draw.extend({
         this._otherSnapLayers = [];
     },
     disable() {
-        // disable drawing mode
-
         // cancel, if drawing mode isn't event enabled
         if (!this._enabled) {
             return;
