@@ -68,7 +68,6 @@ Draw.CircleMarker = Draw.extend({
 
         // unbind listeners
         this._map.off('click', this._finishShape, this);
-        this._map.off('click', this._placeCenterMarker, this);
         this._map.off('mousemove', this._syncHintMarker, this);
 
         // remove helping layers
