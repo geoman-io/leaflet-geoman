@@ -256,12 +256,12 @@ const SnapMixin = {
             parts = [layer.getLatLngs()];
         } else if (isMarker) {
             // marker
-            parts = [layer.getLatLng()];
+            const markerPosition = layer.getLatLng();
 
             // return the info for the marker, no more calculations needed
             return {
-                latlng: Object.assign({}, coords),
-                distance: this._getDistance(map, coords, P),
+                latlng: Object.assign({}, markerPosition),
+                distance: this._getDistance(map, markerPosition, P),
             };
         }
 
