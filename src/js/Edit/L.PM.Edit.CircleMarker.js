@@ -20,6 +20,11 @@ Edit.CircleMarker = Edit.extend({
 
         this._map = this._layer._map;
 
+        // cancel when map isn't available, this happens when the polygon is removed before this fires
+        if (!this._map) {
+            return;
+        }
+
         if (!this.enabled()) {
             // if it was already enabled, disable first
             // we don't block enabling again because new options might be passed
@@ -72,15 +77,17 @@ Edit.CircleMarker = Edit.extend({
         layer.pm._enabled = false;
         layer.pm._markerGroup.clearLayers();
 
-        // clean up draggable
-        layer.off('mousedown');
-        layer.off('mouseup');
+
+        // clean up events
+        this._hintMarker.off('move', this._moveMarker, this);
+        this._hintMarker.off('dragend', this._onMarkerDragEnd, this);
+        this._hintMarker.off('contextmenu', this._removeMarker, this);
 
         // remove draggable class
-        const el = layer._path;
-        L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
-
-        // layer.addTo(this._map);
+        if (layer._path) {
+            const el = layer._path;
+            L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+        }
 
         if (this._layerEdited) {
             this._layer.fire('pm:update', {});
@@ -111,8 +118,8 @@ Edit.CircleMarker = Edit.extend({
         return marker;
     },
     _removeMarker() {
-        this._layer.remove();
         this._layer.fire('pm:remove');
+        this._layer.remove();
     },
     _fireEdit() {
         // fire edit event
