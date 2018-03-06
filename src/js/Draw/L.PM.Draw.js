@@ -61,6 +61,15 @@ const Draw = L.Class.extend({
             this[shape].addButton();
         });
     },
+    removeLastVertex(shape) {
+        if (!shape) {
+            throw new Error(`Error: Please pass a shape as a parameter. Possible shapes are: ${this.getShapes().join(',')}`);
+        }
+
+        if (this[shape] && this[shape].removeLastVertex) {
+            this[shape].removeLastVertex();
+        }
+    },
 });
 
 export default Draw;

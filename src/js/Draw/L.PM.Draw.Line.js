@@ -270,4 +270,12 @@ Draw.Line = Draw.extend({
 
         return marker;
     },
+    removeLastVertex() {
+        if (this.enabled() && this._layer && this._layer.pm.removeLastVertex(true)) {
+            const layers = this._layerGroup.getLayers();
+            const lastVertex = layers[layers.length - 1];
+            this._layerGroup.removeLayer(lastVertex);
+            this._syncHintLine();
+        }
+    },
 });

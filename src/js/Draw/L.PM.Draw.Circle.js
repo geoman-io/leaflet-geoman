@@ -203,4 +203,10 @@ Draw.Circle = Draw.extend({
 
         return marker;
     },
+    removeLastVertex() {
+        if (this.enabled()) {
+            this.disable();
+            this.enable();
+        }
+    },
 });

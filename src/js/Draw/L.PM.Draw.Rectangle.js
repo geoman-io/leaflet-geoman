@@ -221,4 +221,10 @@ Draw.Rectangle = Draw.extend({
 
         return [northwest, northeast, southeast, southwest];
     },
+    removeLastVertex() {
+        if (this.enabled()) {
+            this.disable();
+            this.enable();
+        }
+    },
 });

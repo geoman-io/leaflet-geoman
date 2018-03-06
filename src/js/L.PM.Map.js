@@ -30,6 +30,9 @@ const Map = L.Class.extend({
     disableDraw(shape = 'Poly') {
         this.Draw.disable(shape);
     },
+    removeLastVertex(shape) {
+        this.Draw.removeLastVertex(shape);
+    },
     setPathOptions(options) {
         this.Draw.setPathOptions(options);
     },
