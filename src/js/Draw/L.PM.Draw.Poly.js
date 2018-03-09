@@ -14,7 +14,7 @@ Draw.Poly = Draw.Line.extend({
 
         // get coordinates, create the leaflet shape and add it to the map
         const coords = this._layer.getLatLngs();
-        if (event != null && event.type === 'dblclick') {
+        if (event != null && event.type === 'dblclick' && !L.Browser.touch) {
             // Leaflet creates an extra node with double click
             coords.splice(coords.length - 1, 1);
         }
