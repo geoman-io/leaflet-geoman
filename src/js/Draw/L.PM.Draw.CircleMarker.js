@@ -105,9 +105,13 @@ Draw.CircleMarker = Draw.extend({
             this._handleSnapping(fakeDragEvent);
         }
     },
-    _finishShape() {
-        // calc the radius
-        const center = this._hintMarker.getLatLng();
+    _finishShape(event) {
+        if(!event.latlng) {
+            return;
+        }
+
+        // The CircleMarker coordinates
+        const center = event.latlng;
 
         // create the final circle layer
         const circleLayer = L.circleMarker(center, this.options.pathOptions).addTo(this._map);
