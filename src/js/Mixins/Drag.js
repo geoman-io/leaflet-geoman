@@ -109,7 +109,7 @@ const DragMixin = {
 
     _onLayerDrag(e) {
         // latLng of mouse event
-        const latlng = e.latlng;
+        const { latlng } = e;
 
         // delta coords (how far was dragged)
         const deltaLatLng = {

@@ -130,6 +130,7 @@ const geoJsonData = {
 const geoJsonLayer = L.geoJson(null, { pmIgnore: false });
 geoJsonLayer.addTo(map2);
 geoJsonLayer.addData(geoJsonData);
+
 // geoJsonLayer.pm.toggleEdit({
 //     draggable: true,
 //     snappable: true,
@@ -213,6 +214,8 @@ map2.on('pm:create', function(e) {
 const polygonLayer = L.polygon([[51.509, -0.08], [51.503, -0.06], [51.51, -0.047]])
     .addTo(map3)
     .addTo(map2);
+
+console.log(polygonLayer);
 polygonLayer.pm.toggleEdit({
     allowSelfIntersection: false,
 });
@@ -300,7 +303,6 @@ const someLayer = L.geoJSON(feature);
 layerGroup.addLayer(someLayer);
 
 someLayer.addData(feature);
-console.log(layerGroup);
 
 layerGroup.on('pm:snap', function(e) {
     console.log('snap');
