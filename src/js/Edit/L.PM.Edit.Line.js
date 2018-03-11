@@ -94,7 +94,7 @@ Edit.Line = Edit.extend({
             L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
         }
 
-        if(this._layerEdited) {
+        if (this._layerEdited) {
             this._layer.fire('pm:update', {});
         }
         this._layerEdited = false;
@@ -211,7 +211,9 @@ Edit.Line = Edit.extend({
         marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('move', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
-        marker.on('contextmenu', this._removeMarker, this);
+        if (!this.options.preventMarkerRemoval) {
+            marker.on('contextmenu', this._removeMarker, this);
+        }
 
         this._markerGroup.addLayer(marker);
 

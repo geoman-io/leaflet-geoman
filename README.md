@@ -85,15 +85,15 @@ various features.
 ```js
 // define toolbar options
 var options = {
-  position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
-  drawMarker: true, // adds button to draw markers
-  drawPolyline: true, // adds button to draw a polyline
-  drawRectangle: true, // adds button to draw a rectangle
-  drawPolygon: true, // adds button to draw a polygon
-  drawCircle: true, // adds button to draw a cricle
-  cutPolygon: true, // adds button to cut a hole in a polygon
-  editMode: true, // adds button to toggle edit mode for all layers
-  removalMode: true, // adds a button to remove layers
+    position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
+    drawMarker: true, // adds button to draw markers
+    drawPolyline: true, // adds button to draw a polyline
+    drawRectangle: true, // adds button to draw a rectangle
+    drawPolygon: true, // adds button to draw a polygon
+    drawCircle: true, // adds button to draw a cricle
+    cutPolygon: true, // adds button to cut a hole in a polygon
+    editMode: true, // adds button to toggle edit mode for all layers
+    removalMode: true, // adds a button to remove layers
 };
 
 // add leaflet.pm controls to the map
@@ -128,41 +128,41 @@ Use Drawing Mode on a map like this
 ```js
 // optional options for line style during draw. These are the defaults
 var options = {
-  // snapping
-  snappable: true,
-  snapDistance: 20,
+    // snapping
+    snappable: true,
+    snapDistance: 20,
 
-  // self intersection
-  allowSelfIntersection: true,
+    // self intersection
+    allowSelfIntersection: true,
 
-  // the lines between coordinates/markers
-  templineStyle: {
-    color: 'red',
-  },
+    // the lines between coordinates/markers
+    templineStyle: {
+        color: 'red',
+    },
 
-  // the line from the last marker to the mouse cursor
-  hintlineStyle: {
-    color: 'red',
-    dashArray: [5, 5],
-  },
+    // the line from the last marker to the mouse cursor
+    hintlineStyle: {
+        color: 'red',
+        dashArray: [5, 5],
+    },
 
-  // show a marker at the cursor
-  cursorMarker: false,
+    // show a marker at the cursor
+    cursorMarker: false,
 
-  // finish drawing on double click
-  // DEPRECATED: use finishOn: 'dblclick' instead
-  finishOnDoubleClick: false,
+    // finish drawing on double click
+    // DEPRECATED: use finishOn: 'dblclick' instead
+    finishOnDoubleClick: false,
 
-  // specify type of layer event to finish the drawn shape
-  // example events: 'mouseout', 'dblclick', 'contextmenu'
-  // List: http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
-  finishOn: 'contextmenu',
+    // specify type of layer event to finish the drawn shape
+    // example events: 'mouseout', 'dblclick', 'contextmenu'
+    // List: http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
+    finishOn: 'contextmenu',
 
-  // custom marker style (only for Marker draw)
-  markerStyle: {
-    opacity: 0.5,
-    draggable: true,
-  },
+    // custom marker style (only for Marker draw)
+    markerStyle: {
+        opacity: 0.5,
+        draggable: true,
+    },
 };
 
 // enable drawing mode for shape - e.g. Poly, Line, etc
@@ -177,8 +177,8 @@ map.pm.Draw.getShapes();
 
 // listen to when drawing mode gets enabled
 map.on('pm:drawstart', function(e) {
-  e.shape; // the name of the shape being drawn (i.e. 'Circle')
-  e.workingLayer; // the leaflet layer displayed while drawing
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+    e.workingLayer; // the leaflet layer displayed while drawing
 });
 
 // disable drawing mode
@@ -186,46 +186,46 @@ map.pm.disableDraw('Poly');
 
 // listen to when drawing mode gets disabled
 map.on('pm:drawend', function(e) {
-  e.shape; // the name of the shape being drawn (i.e. 'Circle')
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
 });
 
 // listen to when a new layer is created
 map.on('pm:create', function(e) {
-  e.shape; // the name of the shape being drawn (i.e. 'Circle')
-  e.layer; // the leaflet layer created
+    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+    e.layer; // the leaflet layer created
 });
 
 // listen to vertexes being added to the workingLayer (works only on polylines & polygons)
 map.on('pm:drawstart', function(e) {
-  var layer = e.workingLayer;
-  layer.on('pm:vertexadded', function(e) {
-    // e includes the new vertex, it's marker
-    // the index in the coordinates array
-    // the working layer and shape
-  });
+    var layer = e.workingLayer;
+    layer.on('pm:vertexadded', function(e) {
+        // e includes the new vertex, it's marker
+        // the index in the coordinates array
+        // the working layer and shape
+    });
 
-  // check self intersection
-  layer.pm.hasSelfIntersection();
+    // check self intersection
+    layer.pm.hasSelfIntersection();
 });
 
 // listen to the center of a circle being added
 map.on('pm:drawstart', function(e) {
-  var circle = e.workingLayer;
+    var circle = e.workingLayer;
 
-  // this fires only for circles
-  circle.on('pm:centerplaced', function(e) {
-    console.log(e);
-  });
+    // this fires only for circles
+    circle.on('pm:centerplaced', function(e) {
+        console.log(e);
+    });
 });
 
 // listen to when the center of a circle is moved
 map.on('pm:create', function(e) {
-  var circle = e.layer;
+    var circle = e.layer;
 
-  // this fires only for circles
-  circle.on('pm:centerplaced', function(e) {
-    console.log(e);
-  });
+    // this fires only for circles
+    circle.on('pm:centerplaced', function(e) {
+        console.log(e);
+    });
 });
 ```
 
@@ -270,19 +270,22 @@ var polygonLayer = L.geoJson(data).addTo(map);
 
 // optional options
 var options = {
-  // makes the layer draggable
-  draggable: true,
+    // makes the layer draggable
+    draggable: true,
 
-  // makes the vertices snappable to other layers
-  // temporarily disable snapping during drag by pressing ALT
-  snappable: true,
+    // makes the vertices snappable to other layers
+    // temporarily disable snapping during drag by pressing ALT
+    snappable: true,
 
-  // distance in pixels that needs to be undercut to trigger snapping
-  // default: 30
-  snapDistance: 30,
+    // distance in pixels that needs to be undercut to trigger snapping
+    // default: 30
+    snapDistance: 30,
 
-  // self intersection allowed?
-  allowSelfIntersection: true,
+    // self intersection allowed?
+    allowSelfIntersection: true,
+
+    // disable the removal of markers/vertexes via right click
+    preventMarkerRemoval: false,
 };
 
 // enable edit mode
@@ -310,9 +313,9 @@ polygonLayer.on('pm:vertexremoved', function(e) {});
 
 // listen to when a marker of a polygon-vertex is being dragged
 polygonLayer.on('pm:markerdragstart', function(e) {
-  // the property e.ringIndex refers to the coordinate ring inside the polygon the marker belongs to
-  // if it's undefined, there are no rings
-  // e.index is the index of the marker inside the coordinate ring / array it belongs to
+    // the property e.ringIndex refers to the coordinate ring inside the polygon the marker belongs to
+    // if it's undefined, there are no rings
+    // e.index is the index of the marker inside the coordinate ring / array it belongs to
 });
 polygonLayer.on('pm:markerdragend', function(e) {});
 
@@ -354,16 +357,16 @@ In order to change the style of the lines during draw, pass these options to the
 ```js
 // optional options for line style during draw. These are the defaults
 var options = {
-  // the lines between coordinates/markers
-  templineStyle: {
-    color: 'red',
-  },
+    // the lines between coordinates/markers
+    templineStyle: {
+        color: 'red',
+    },
 
-  // the line from the last marker to the mouse cursor
-  hintlineStyle: {
-    color: 'red',
-    dashArray: [5, 5],
-  },
+    // the line from the last marker to the mouse cursor
+    hintlineStyle: {
+        color: 'red',
+        dashArray: [5, 5],
+    },
 };
 
 // enable drawing mode for shape - e.g. Poly, Line, Circle, etc
@@ -376,13 +379,13 @@ pass the options to `enableDraw`:
 ```js
 // optional options for line style during draw. These are the defaults
 var options = {
-  templineStyle: {},
-  hintlineStyle: {},
-  pathOptions: {
-    // add leaflet options for polylines/polygons
-    color: 'orange',
-    fillColor: 'green',
-  },
+    templineStyle: {},
+    hintlineStyle: {},
+    pathOptions: {
+        // add leaflet options for polylines/polygons
+        color: 'orange',
+        fillColor: 'green',
+    },
 };
 
 // enable drawing mode for shape - e.g. Poly or Line
@@ -393,9 +396,9 @@ or set the options generally:
 
 ```js
 map.pm.setPathOptions({
-  color: 'orange',
-  fillColor: 'green',
-  fillOpacity: 0.4,
+    color: 'orange',
+    fillColor: 'green',
+    fillOpacity: 0.4,
 });
 ```
 

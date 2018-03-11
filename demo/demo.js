@@ -99,14 +99,6 @@ map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 map2.on('pm:globaleditmodetoggled', function(e) {
     // console.log(e);
 });
-map2.pm.enableDraw('Poly', {
-    hintlineStyle: {
-        color: 'green',
-        dashArray: [5, 5],
-    },
-    //false causes hintlineStyle to be default color
-    allowSelfIntersection: false,
-});
 
 // GEOSJON EXAMPLE
 
@@ -235,8 +227,9 @@ polygonLayer.on('pm:intersect', function(e) {
 
 map2.pm.toggleGlobalEditMode({
     allowSelfIntersection: false,
+    preventMarkerRemoval: false,
 });
-map2.pm.disableGlobalEditMode();
+// map2.pm.disableGlobalEditMode();
 
 map2.on('pm:create', function(e) {
     e.layer.pm.enable({ allowSelfIntersection: false });
