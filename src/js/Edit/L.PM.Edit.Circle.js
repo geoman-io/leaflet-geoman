@@ -163,6 +163,9 @@ Edit.Circle = Edit.extend({
     },
     _createOuterMarker(latlng) {
         const marker = this._createMarker(latlng);
+        if (this.options.preventVertexEdit) {
+            marker.dragging.disable();
+        }
         marker.on('move', this._resizeCircle, this);
         // marker.on('contextmenu', this._removeMarker, this);
 

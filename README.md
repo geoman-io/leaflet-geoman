@@ -286,6 +286,9 @@ var options = {
 
     // disable the removal of markers/vertexes via right click
     preventMarkerRemoval: false,
+
+    // disable the possibility to edit vertexes
+    preventVertexEdit: false,
 };
 
 // enable edit mode

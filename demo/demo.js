@@ -216,9 +216,11 @@ const polygonLayer = L.polygon([[51.509, -0.08], [51.503, -0.06], [51.51, -0.047
     .addTo(map2);
 
 console.log(polygonLayer);
-polygonLayer.pm.toggleEdit({
-    allowSelfIntersection: false,
-});
+// polygonLayer.pm.toggleEdit({
+//     allowSelfIntersection: false,
+//     preventVertexEdit: true,
+//     preventMarkerRemoval: false,
+// });
 
 polygonLayer.on('pm:update', function(e) {
     console.log(e);
@@ -231,6 +233,7 @@ polygonLayer.on('pm:intersect', function(e) {
 map2.pm.toggleGlobalEditMode({
     allowSelfIntersection: false,
     preventMarkerRemoval: false,
+    preventVertexEdit: true,
 });
 // map2.pm.disableGlobalEditMode();
 

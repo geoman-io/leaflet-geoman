@@ -202,7 +202,7 @@ Edit.Line = Edit.extend({
     // creates initial markers for coordinates
     _createMarker(latlng) {
         const marker = new L.Marker(latlng, {
-            draggable: true,
+            draggable: !this.options.preventVertexEdit,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
@@ -211,6 +211,7 @@ Edit.Line = Edit.extend({
         marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('move', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
+
         if (!this.options.preventMarkerRemoval) {
             marker.on('contextmenu', this._removeMarker, this);
         }
