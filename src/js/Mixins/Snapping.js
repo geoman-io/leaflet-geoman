@@ -246,23 +246,22 @@ const SnapMixin = {
         // the point P which we want to snap (probpably the marker that is dragged)
         const P = latlng;
 
-        let coords;
+        let parts;
 
         // the coords of the layer
         if (isPolygon) {
-            // polygon
-            coords = layer.getLatLngs()[0];
+            parts = this._flattenCoordArrays(layer.getLatLngs());
         } else if (isPolyline) {
             // polyline
-            coords = layer.getLatLngs();
+            parts = [layer.getLatLngs()];
         } else if (isMarker) {
             // marker
-            coords = layer.getLatLng();
+            const markerPosition = layer.getLatLng();
 
             // return the info for the marker, no more calculations needed
             return {
-                latlng: Object.assign({}, coords),
-                distance: this._getDistance(map, coords, P),
+                latlng: Object.assign({}, markerPosition),
+                distance: this._getDistance(map, markerPosition, P),
             };
         }
 
@@ -272,33 +271,35 @@ const SnapMixin = {
         // the shortest distance from P to closestSegment
         let shortestDistance;
 
-        // loop through the coords of the layer
-        coords.forEach((coord, index) => {
-            // take this coord (A)...
-            const A = coord;
-            let nextIndex;
+        parts.forEach(coords => {
+            // loop through the coords of the layer
+            coords.forEach((coord, index) => {
+                // take this coord (A)...
+                const A = coord;
+                let nextIndex;
 
-            // and the next coord (B) as points
-            if (isPolygon) {
-                nextIndex = index + 1 === coords.length ? 0 : index + 1;
-            } else {
-                nextIndex = index + 1 === coords.length ? undefined : index + 1;
-            }
-
-            const B = coords[nextIndex];
-
-            if (B) {
-                // calc the distance between P and AB-segment
-                const distance = this._getDistanceToSegment(map, P, A, B);
-
-                // is the distance shorter than the previous one? Save it and the segment
-                if (shortestDistance === undefined || distance < shortestDistance) {
-                    shortestDistance = distance;
-                    closestSegment = [A, B];
+                // and the next coord (B) as points
+                if (isPolygon) {
+                    nextIndex = index + 1 === coords.length ? 0 : index + 1;
+                } else {
+                    nextIndex = index + 1 === coords.length ? undefined : index + 1;
                 }
-            }
 
-            return true;
+                const B = coords[nextIndex];
+
+                if (B) {
+                    // calc the distance between P and AB-segment
+                    const distance = this._getDistanceToSegment(map, P, A, B);
+
+                    // is the distance shorter than the previous one? Save it and the segment
+                    if (shortestDistance === undefined || distance < shortestDistance) {
+                        shortestDistance = distance;
+                        closestSegment = [A, B];
+                    }
+                }
+
+                return true;
+            });
         });
 
         // now, take the closest segment (closestSegment) and calc the closest point to P on it.
@@ -310,6 +311,42 @@ const SnapMixin = {
             segment: closestSegment,
             distance: shortestDistance,
         };
+    },
+
+    _flattenCoordArrays(nestedLatLngs) {
+        const arrayDepth = this._determineArrayDepth(nestedLatLngs, 0);
+        if (arrayDepth >= 2) {
+            return this._collectArrays(nestedLatLngs, arrayDepth - 1);
+        }
+        return nestedLatLngs;
+    },
+
+    _determineArrayDepth(nestedArray, currentDepth) {
+        if (!Array.isArray(nestedArray)) {
+            return currentDepth;
+        }
+
+        let maxDepth = 0;
+        nestedArray.forEach((arrayElement) => {
+            const currentElementDepth = this._determineArrayDepth(arrayElement, currentDepth + 1);
+            if (currentElementDepth > maxDepth) {
+                maxDepth = currentElementDepth;
+            }
+        });
+
+        return maxDepth;
+    },
+
+    _collectArrays(nestedArray, depthLevel) {
+        if (depthLevel === 1) {
+            return nestedArray;
+        }
+
+        let parts = [];
+        nestedArray.forEach((element) => {
+            parts = parts.concat(this._collectArrays(element, depthLevel - 1));
+        });
+        return parts;
     },
 
     _getClosestPointOnSegment(map, latlng, latlngA, latlngB) {
