@@ -99,6 +99,12 @@ map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 map2.on('pm:globaleditmodetoggled', function(e) {
     // console.log(e);
 });
+map2.on('pm:create', function(e) {
+    var layer = e.layer;
+    layer.on('pm:edit', function() {
+        console.log('edit');
+    });
+});
 
 // GEOSJON EXAMPLE
 
