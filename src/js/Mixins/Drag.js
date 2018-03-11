@@ -83,6 +83,10 @@ const DragMixin = {
         this._onLayerDrag(e);
     },
     _dragMixinOnMouseDown(e) {
+        // cancel if mouse button is NOT the left button
+        if (e.originalEvent.button > 0) {
+            return;
+        }
         // save current map dragging state
         if (this._safeToCacheDragState) {
             this._originalMapDragState = this._layer._map.dragging._enabled;

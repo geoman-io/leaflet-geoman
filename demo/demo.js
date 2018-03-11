@@ -99,6 +99,14 @@ map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 map2.on('pm:globaleditmodetoggled', function(e) {
     // console.log(e);
 });
+map2.pm.enableDraw('Poly', {
+    hintlineStyle: {
+        color: 'green',
+        dashArray: [5, 5],
+    },
+    //false causes hintlineStyle to be default color
+    allowSelfIntersection: false,
+});
 
 // GEOSJON EXAMPLE
 

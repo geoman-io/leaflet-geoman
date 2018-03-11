@@ -186,9 +186,7 @@ Draw.Line = Draw.extend({
                 color: 'red',
             });
         } else {
-            this._hintline.setStyle({
-                color: '#3388ff',
-            });
+            this._hintline.setStyle(this.options.hintlineStyle);
         }
     },
     _createVertex(e) {
