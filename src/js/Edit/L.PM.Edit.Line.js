@@ -86,7 +86,7 @@ Edit.Line = Edit.extend({
         }
 
         // remove draggable class
-        const el = poly._path;
+        const el = poly._path ? poly._path : this._layer._renderer._container;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
         // remove invalid class if layer has self intersection
@@ -123,7 +123,7 @@ Edit.Line = Edit.extend({
     },
 
     _handleLayerStyle(flash) {
-        const el = this._layer._path;
+        const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
 
         if (this.hasSelfIntersection()) {
             if (L.DomUtil.hasClass(el, 'leaflet-pm-invalid')) {
