@@ -16,13 +16,13 @@ const mapboxTiles3 = L.tileLayer(`https://api.mapbox.com/styles/v1/mapbox/street
         '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 });
 
-const map2 = L.map('example2')
+const map2 = L.map('example2', {preferCanvas: true})
     .setView([51.505, -0.09], 13)
     .addLayer(mapboxTiles1);
-const map3 = L.map('example3')
+const map3 = L.map('example3', {preferCanvas: true})
     .setView([51.505, -0.09], 13)
     .addLayer(mapboxTiles2);
-const map4 = L.map('example4')
+const map4 = L.map('example4', {preferCanvas: true})
     .setView([51.505, -0.09], 13)
     .addLayer(mapboxTiles3);
 // map2.dragging.disable();
@@ -130,7 +130,6 @@ const geoJsonData = {
 const geoJsonLayer = L.geoJson(null, { pmIgnore: false });
 geoJsonLayer.addTo(map2);
 geoJsonLayer.addData(geoJsonData);
-
 // geoJsonLayer.pm.toggleEdit({
 //     draggable: true,
 //     snappable: true,
@@ -156,7 +155,7 @@ map3.pm.enableDraw('Poly', {
     },
     hintlineStyle: {
         color: 'blue',
-        dashArray: [5, 5],
+        dashArray: '5,5',
     },
     pathOptions: {
         color: 'red',
@@ -214,13 +213,9 @@ map2.on('pm:create', function(e) {
 const polygonLayer = L.polygon([[51.509, -0.08], [51.503, -0.06], [51.51, -0.047]])
     .addTo(map3)
     .addTo(map2);
-
-console.log(polygonLayer);
-// polygonLayer.pm.toggleEdit({
-//     allowSelfIntersection: false,
-//     preventVertexEdit: true,
-//     preventMarkerRemoval: false,
-// });
+polygonLayer.pm.toggleEdit({
+    allowSelfIntersection: false,
+});
 
 polygonLayer.on('pm:update', function(e) {
     console.log(e);
@@ -232,10 +227,8 @@ polygonLayer.on('pm:intersect', function(e) {
 
 map2.pm.toggleGlobalEditMode({
     allowSelfIntersection: false,
-    preventMarkerRemoval: false,
-    preventVertexEdit: true,
 });
-// map2.pm.disableGlobalEditMode();
+map2.pm.disableGlobalEditMode();
 
 map2.on('pm:create', function(e) {
     e.layer.pm.enable({ allowSelfIntersection: false });
@@ -306,6 +299,7 @@ const someLayer = L.geoJSON(feature);
 layerGroup.addLayer(someLayer);
 
 someLayer.addData(feature);
+console.log(layerGroup);
 
 layerGroup.on('pm:snap', function(e) {
     console.log('snap');

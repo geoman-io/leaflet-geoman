@@ -86,7 +86,7 @@ Edit.Line = Edit.extend({
         }
 
         // remove draggable class
-        const el = poly._path;
+        const el = poly._path ? poly._path : this._layer._renderer._container;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
         // remove invalid class if layer has self intersection
@@ -94,7 +94,7 @@ Edit.Line = Edit.extend({
             L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
         }
 
-        if(this._layerEdited) {
+        if (this._layerEdited) {
             this._layer.fire('pm:update', {});
         }
         this._layerEdited = false;
@@ -123,7 +123,7 @@ Edit.Line = Edit.extend({
     },
 
     _handleLayerStyle(flash) {
-        const el = this._layer._path;
+        const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
 
         if (this.hasSelfIntersection()) {
             if (L.DomUtil.hasClass(el, 'leaflet-pm-invalid')) {
@@ -202,7 +202,7 @@ Edit.Line = Edit.extend({
     // creates initial markers for coordinates
     _createMarker(latlng) {
         const marker = new L.Marker(latlng, {
-            draggable: true,
+            draggable: !this.options.preventVertexEdit,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
@@ -211,7 +211,10 @@ Edit.Line = Edit.extend({
         marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('move', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
-        marker.on('contextmenu', this._removeMarker, this);
+
+        if (!this.options.preventMarkerRemoval) {
+            marker.on('contextmenu', this._removeMarker, this);
+        }
 
         this._markerGroup.addLayer(marker);
 

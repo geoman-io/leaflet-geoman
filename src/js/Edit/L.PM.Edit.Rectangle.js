@@ -4,14 +4,13 @@
 import Edit from './L.PM.Edit';
 
 Edit.Rectangle = Edit.Poly.extend({
-
     // initializes Rectangle Markers
     _initMarkers() {
         const map = this._map;
         const corners = this._findCorners();
 
         // cleanup old ones first
-        if(this._markerGroup) {
+        if (this._markerGroup) {
             this._markerGroup.clearLayers();
         }
 
@@ -27,16 +26,15 @@ Edit.Rectangle = Edit.Poly.extend({
         // convenience alias, for better readability
         this._cornerMarkers = this._markers[0];
 
-        if(this.options.snappable) {
+        if (this.options.snappable) {
             this._initSnappableMarkers();
         }
     },
 
-
     // creates initial markers for coordinates
     _createMarker(latlng, index) {
         const marker = new L.Marker(latlng, {
-            draggable: true,
+            draggable: !this.options.preventVertexEdit,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
@@ -47,8 +45,10 @@ Edit.Rectangle = Edit.Poly.extend({
         marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('drag', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
-        marker.on('contextmenu', this._removeMarker, this);
         marker.on('pm:snap', this._adjustRectangleForMarkerSnap, this);
+        if (!this.options.preventMarkerRemoval) {
+            marker.on('contextmenu', this._removeMarker, this);
+        }
         this._markerGroup.addLayer(marker);
 
         return marker;
@@ -83,12 +83,12 @@ Edit.Rectangle = Edit.Poly.extend({
         const draggedMarker = e.target;
 
         // only continue if this is NOT a middle marker (should NEVER be one, but this is just a safety check)
-        if(draggedMarker._index === undefined) {
+        if (draggedMarker._index === undefined) {
             return;
         }
 
         // If marker is currently snapped to an object, then ignore all drag events (as this resets rectangle shape)
-        if(!draggedMarker._snapped) {
+        if (!draggedMarker._snapped) {
             this._adjustRectangleForMarkerMove(draggedMarker);
         }
     },
@@ -103,7 +103,6 @@ Edit.Rectangle = Edit.Poly.extend({
         this._cornerMarkers.forEach((m) => {
             delete m._oppositeCornerLatLng;
         });
-
 
         // Update bounding box
         this._layer.setLatLngs(corners);
@@ -139,7 +138,7 @@ Edit.Rectangle = Edit.Poly.extend({
     // adjusts the rectangle's size and bounds whenever a marker snaps to another polygon
     // params: e -- the snap event
     _adjustRectangleForMarkerSnap(e) {
-        if(!this.options.snappable) {
+        if (!this.options.snappable) {
             return;
         }
 
@@ -150,7 +149,7 @@ Edit.Rectangle = Edit.Poly.extend({
     // adjusts the position of all Markers
     // params: markerLatLngs -- an array of exactly LatLng objects
     _adjustAllMarkers(markerLatLngs) {
-        if(!markerLatLngs.length || markerLatLngs.length != 4) {
+        if (!markerLatLngs.length || markerLatLngs.length != 4) {
             console.error('_adjustAllMarkers() requires an array of EXACTLY 4 LatLng coordinates');
             return;
         }
@@ -163,7 +162,7 @@ Edit.Rectangle = Edit.Poly.extend({
     // adjusts the position of the two Markers adjacent to the Marker specified
     // params: anchorMarker -- the Marker object used to determine adjacent Markers
     _adjustAdjacentMarkers(anchorMarker) {
-        if(!anchorMarker || !anchorMarker.getLatLng || !anchorMarker._oppositeCornerLatLng) {
+        if (!anchorMarker || !anchorMarker.getLatLng || !anchorMarker._oppositeCornerLatLng) {
             console.error('_adjustAdjacentMarkers() requires a valid Marker object');
             return;
         }
@@ -176,17 +175,17 @@ Edit.Rectangle = Edit.Poly.extend({
         const corners = this._findCorners();
 
         corners.forEach((corner) => {
-            if(!corner.equals(anchorLatLng) && !corner.equals(oppositeLatLng)) {
+            if (!corner.equals(anchorLatLng) && !corner.equals(oppositeLatLng)) {
                 unmarkedCorners.push(corner);
             }
         });
 
         // reposition markers for those corners
         let unmarkedCornerIndex = 0;
-        if(unmarkedCorners.length == 2) {
+        if (unmarkedCorners.length == 2) {
             this._cornerMarkers.forEach((marker) => {
                 const markerLatLng = marker.getLatLng();
-                if(!markerLatLng.equals(anchorLatLng) && !markerLatLng.equals(oppositeLatLng)) {
+                if (!markerLatLng.equals(anchorLatLng) && !markerLatLng.equals(oppositeLatLng)) {
                     marker.setLatLng(unmarkedCorners[unmarkedCornerIndex]);
                     unmarkedCornerIndex += 1;
                 }

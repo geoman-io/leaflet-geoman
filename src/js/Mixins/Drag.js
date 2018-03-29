@@ -4,7 +4,8 @@ const DragMixin = {
         this._tempDragCoord = null;
 
         // add CSS class
-        const el = this._layer._path;
+        const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
+
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
         this._originalMapDragState = this._layer._map.dragging._enabled;
@@ -16,15 +17,15 @@ const DragMixin = {
         this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
     },
     _dragMixinOnMouseUp() {
-        const el = this._layer._path;
+        const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
 
         // re-enable map drag
-        if(this._originalMapDragState) {
+        if (this._originalMapDragState) {
             this._layer._map.dragging.enable();
         }
 
         // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
-        this._safeToCacheDragState = true
+        this._safeToCacheDragState = true;
 
         // clear up mousemove event
         this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
@@ -33,7 +34,7 @@ const DragMixin = {
         this._layer.off('mouseup', this._dragMixinOnMouseUp, this);
 
         // if no drag happened, don't do anything
-        if(!this._dragging) {
+        if (!this._dragging) {
             return false;
         }
 
@@ -57,9 +58,9 @@ const DragMixin = {
         return true;
     },
     _dragMixinOnMouseMove(e) {
-        const el = this._layer._path;
+        const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
 
-        if(!this._dragging) {
+        if (!this._dragging) {
             // set state
             this._dragging = true;
             L.DomUtil.addClass(el, 'leaflet-pm-dragging');
@@ -68,10 +69,9 @@ const DragMixin = {
             this._layer.bringToFront();
 
             // disbale map drag
-            if(this._originalMapDragState) {
+            if (this._originalMapDragState) {
                 this._layer._map.dragging.disable();
             }
-
 
             // hide markers
             this._markerGroup.clearLayers();
@@ -83,12 +83,16 @@ const DragMixin = {
         this._onLayerDrag(e);
     },
     _dragMixinOnMouseDown(e) {
+        // cancel if mouse button is NOT the left button
+        if (e.originalEvent.button > 0) {
+            return;
+        }
         // save current map dragging state
-        if(this._safeToCacheDragState){
+        if (this._safeToCacheDragState) {
             this._originalMapDragState = this._layer._map.dragging._enabled;
 
             // don't cache the state again until another mouse up is registered
-            this._safeToCacheDragState = false           
+            this._safeToCacheDragState = false;
         }
 
         // save for delta calculation
@@ -106,7 +110,7 @@ const DragMixin = {
 
     _onLayerDrag(e) {
         // latLng of mouse event
-        const latlng = e.latlng;
+        const { latlng } = e;
 
         // delta coords (how far was dragged)
         const deltaLatLng = {
@@ -115,18 +119,19 @@ const DragMixin = {
         };
 
         // move the coordinates by the delta
-        const moveCoords = coords => coords.map((currentLatLng) => {
-            const c = {
-                lat: currentLatLng.lat + deltaLatLng.lat,
-                lng: currentLatLng.lng + deltaLatLng.lng,
-            };
-            return c;
-        });
+        const moveCoords = coords =>
+            coords.map((currentLatLng) => {
+                const c = {
+                    lat: currentLatLng.lat + deltaLatLng.lat,
+                    lng: currentLatLng.lng + deltaLatLng.lng,
+                };
+                return c;
+            });
 
         // create the new coordinates array
         let newCoords;
 
-        if(this.isPolygon()) {
+        if (this.isPolygon()) {
             newCoords = this._layer._latlngs.map(moveCoords, this);
         } else {
             newCoords = moveCoords(this._layer._latlngs);
