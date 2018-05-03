@@ -195,9 +195,6 @@ const SnapMixin = {
                 else {
                     layers.push(layer);
                 }
-
-                map.off('pm:remove', this._handleSnapLayerRemoval, this);
-                map.on('pm:remove', this._handleSnapLayerRemoval, this);
             }
         });
 
@@ -224,6 +221,8 @@ const SnapMixin = {
             this._snapList = layers;
         }
 
+        map.off('pm:remove', this._handleSnapLayerRemoval, this);
+        map.on('pm:remove', this._handleSnapLayerRemoval, this);
     },
     _calcClosestLayer(latlng, layers) {
         // the closest polygon to our dragged marker latlng
