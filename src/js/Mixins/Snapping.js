@@ -183,8 +183,16 @@ const SnapMixin = {
                 if (layer instanceof L.Polygon && layer._latlngs[0][0] instanceof Array) {
                     layer._latlngs.forEach(ring =>
                         layers.push(new L.Polygon(ring))
-                } else {
                     );
+                }
+                // split MultiLine layers into multiple single Polyline layers
+                else if (layer instanceof L.Polyline && layer._latlngs[0] instanceof Array) {
+                    layer._latlngs.forEach(segment =>
+                        layers.push(new L.Polyline(segment))
+                    );
+                }
+                // MultiPoint layers aren't causing any troubles, add all remaining layers as they are
+                else {
                     layers.push(layer);
                 }
 
