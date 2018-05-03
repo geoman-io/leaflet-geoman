@@ -198,16 +198,16 @@ const SnapMixin = {
 
                 map.off('pm:remove', this._handleSnapLayerRemoval, this);
                 map.on('pm:remove', this._handleSnapLayerRemoval, this);
-
-                // this is for debugging
-                const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
-                debugIndicatorLines.push(debugLine);
-
-                // uncomment 👇 this line to show helper lines for debugging
-                // debugLine.addTo(map);
             }
         });
 
+        // this is for debugging
+        this.debugIndicatorLines = layers.map(() =>
+            L.polyline([], { color: 'red', pmIgnore: true }),
+        );
+
+        // uncomment 👇 this line to show helper lines for debugging
+        // this.debugIndicatorLines.forEach(debugLine => debugLine.addTo(map));
         // ...except myself
         layers = layers.filter(layer => this._layer !== layer);
 
@@ -224,7 +224,6 @@ const SnapMixin = {
             this._snapList = layers;
         }
 
-        this.debugIndicatorLines = debugIndicatorLines;
     },
     _calcClosestLayer(latlng, layers) {
         // the closest polygon to our dragged marker latlng
