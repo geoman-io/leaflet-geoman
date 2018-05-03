@@ -179,7 +179,14 @@ const SnapMixin = {
         // temporary markers of polygon-edits
         map.eachLayer((layer) => {
             if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.CircleMarker) {
-                layers.push(layer);
+                // split MultiPolygon layers into multiple single Polygon layers
+                if (layer instanceof L.Polygon && layer._latlngs[0][0] instanceof Array) {
+                    layer._latlngs.forEach(ring =>
+                        layers.push(new L.Polygon(ring))
+                } else {
+                    );
+                    layers.push(layer);
+                }
 
                 map.off('pm:remove', this._handleSnapLayerRemoval, this);
                 map.on('pm:remove', this._handleSnapLayerRemoval, this);
