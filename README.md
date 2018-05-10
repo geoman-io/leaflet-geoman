@@ -67,6 +67,8 @@ require('leaflet.pm');
 require('leaflet.pm/dist/leaflet.pm.css');
 ```
 
+### Documentation
+
 #### Init Leaflet.PM
 
 Just include `leaflet.pm.min.js` right after Leaflet. It initializes itself. If
@@ -404,6 +406,12 @@ map.pm.setPathOptions({
     fillOpacity: 0.4,
 });
 ```
+
+### Feature Request
+
+I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.
+You can upvote to existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
+Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+label%3A%22feature+request%22+is%3Aclosed)
 
 ### Credit
 
