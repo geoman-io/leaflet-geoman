@@ -22,7 +22,7 @@ Edit.Marker = Edit.extend({
         draggable: true,
         snappable: true,
     }) {
-        this.options = options;
+        L.Util.setOptions(this, options);
 
         this._map = this._layer._map;
 

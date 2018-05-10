@@ -56,7 +56,7 @@ const m2 = L.marker([51.50614, -0.0989]);
 const m3 = L.marker([51.50915, -0.096112], { pmIgnore: true });
 
 const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
-mGroup.pm.enable();
+// mGroup.pm.enable();
 
 map2.pm.addControls({
     drawMarker: false,
@@ -215,7 +215,6 @@ const polygonLayer = L.polygon([[51.509, -0.08], [51.503, -0.06], [51.51, -0.047
     .addTo(map3)
     .addTo(map2);
 
-console.log(polygonLayer);
 // polygonLayer.pm.toggleEdit({
 //     allowSelfIntersection: false,
 //     preventVertexEdit: true,
