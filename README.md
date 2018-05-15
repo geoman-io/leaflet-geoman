@@ -411,7 +411,7 @@ map.pm.setPathOptions({
 
 I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.
 You can upvote to existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
-Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+label%3A%22feature+request%22+is%3Aclosed)
+Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+label%3A%22feature+request%22+is%3Aclosed) and upvote if you want them to be implemented.
 
 ### Credit
 
