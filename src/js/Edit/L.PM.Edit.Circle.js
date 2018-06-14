@@ -55,7 +55,7 @@ Edit.Circle = Edit.extend({
         layer.off('mouseup');
 
         // remove draggable class
-        const el = layer._path;
+        const el = layer._path ? layer._path : this._layer._renderer._container;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
         if (this._layerEdited) {
