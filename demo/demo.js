@@ -275,7 +275,7 @@ polygonLayer.on('pm:markerdragstart', function(e) {
 
 // Layer Group Example
 
-const layerGroupItem1 = L.polyline([[51.51, -0.09], [51.513, -0.08], [51.514, -0.11]]);
+const layerGroupItem1 = L.polyline([[51.51, -0.09], [51.513, -0.08], [51.514, -0.11]], { pmIgnore: true });
 const layerGroupItem2 = L.polygon([[51.52, -0.06], [51.51, -0.07], [51.52, -0.05]]);
 
 const layerGroupItem3 = L.polygon([

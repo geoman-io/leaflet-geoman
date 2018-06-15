@@ -27,13 +27,16 @@ Edit.LayerGroup = L.Class.extend({
             // if editing was already enabled for this group, enable it again
             // so the new layers are enabled
             if (e.target.pm.enabled()) {
-                // this.enable(this.getOptions());
+                this.enable(this.getOptions());
             }
         });
     },
     findLayers() {
         // get all layers of the layer group
         let layers = this._layerGroup.getLayers();
+
+        // filter out layers that don't have leaflet.pm
+        layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
 
         // filter out layers that don't have leaflet.pm
         layers = layers.filter(layer => !!layer.pm);
