@@ -82,7 +82,7 @@ Draw.Circle = Draw.extend({
         this._enabled = false;
 
         // reset cursor
-        this._map._container.style.cursor = 'default';
+        this._map._container.style.cursor = '';
 
         // unbind listeners
         this._map.off('click', this._finishShape, this);
