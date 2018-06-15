@@ -166,36 +166,29 @@ Edit.Line = Edit.extend({
 
         // handle coord-rings (outer, inner, etc)
         const handleRing = (coordsArr) => {
+            // if there is another coords ring, go a level deep and do this again
+            if (Array.isArray(coordsArr[0])) {
+                return coordsArr.map(handleRing, this);
+            }
+
             // the marker array, it includes only the markers of vertexes (no middle markers)
             const ringArr = coordsArr.map(this._createMarker, this);
 
             // create small markers in the middle of the regular markers
             coordsArr.map((v, k) => {
-                let nextIndex;
-
-                if (this.isPolygon()) {
-                    nextIndex = (k + 1) % coordsArr.length;
-                } else {
-                    nextIndex = k + 1;
-                }
+                // find the next index fist
+                const nextIndex = this.isPolygon() ? (k + 1) % coordsArr.length : k + 1;
+                // create the marker
                 return this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
             });
 
             return ringArr;
         };
 
-        this._markers = [];
-
-        if (this.isPolygon()) {
-            // coords is a multidimansional array, handle all rings
-            this._markers = coords.map(handleRing, this);
-        } else {
-            // coords is one dimensional, handle the ring
-            this._markers = handleRing(coords);
-        }
+        this._markers = coords.map(handleRing, this);
 
         if (this.options.snappable) {
-            this._initSnappableMarkers();
+            // this._initSnappableMarkers();
         }
     },
 
