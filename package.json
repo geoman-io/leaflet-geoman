@@ -19,9 +19,9 @@
   ],
   "main": "dist/leaflet.pm.min.js",
   "dependencies": {
-    "@turf/difference": "^5.1.5",
-    "@turf/intersect": "^6.1.2",
-    "@turf/kinks": "^5.1.5"
+    "@turf/difference": "6.x",
+    "@turf/intersect": "6.x",
+    "@turf/kinks": "6.x"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.40",
