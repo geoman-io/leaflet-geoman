@@ -1,4 +1,5 @@
 import kinks from '@turf/kinks';
+import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 
 Edit.Line = Edit.extend({
@@ -186,6 +187,8 @@ Edit.Line = Edit.extend({
         };
 
         this._markers = coords.map(handleRing, this);
+
+        console.log(this._markers);
 
         if (this.options.snappable) {
             // this._initSnappableMarkers();
@@ -406,6 +409,24 @@ Edit.Line = Edit.extend({
             // TODO: maybe add latlng as well?
         });
     },
+    findDeepMarkerIndex(arr, marker) {
+        // thanks for the function, Felix Heck
+
+        let result;
+
+        const run = path => (v, i) => {
+            const iRes = path.concat(i);
+
+            if (v._leaflet_id === marker._leaflet_id) {
+                result = iRes;
+                return true;
+            }
+
+            return Array.isArray(v) && v.some(run(iRes));
+        };
+        arr.some(run([]));
+        return result;
+    },
     findMarkerIndex(markers, marker) {
         // find the index of a marker in the markers array and returns the parent index as well in case of a multidimensional array
         // Multidimensional arrays would mean the layer has multiple coordinate rings (like holes in polygons)
@@ -430,10 +451,17 @@ Edit.Line = Edit.extend({
     updatePolygonCoordsFromMarkerDrag(marker) {
         // update polygon coords
         const coords = this._layer.getLatLngs();
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
-        const ring = ringIndex > -1 ? coords[ringIndex] : coords;
 
-        ring.splice(index, 1, marker.getLatLng());
+        // this is only the parent path after the subsequent pop(), the popped value is the marker index
+        const parentRingPath = this.findDeepMarkerIndex(this._markers, marker);
+        const markerIndexInParent = parentRingPath.pop();
+
+        // get marker latlng
+        const latlng = marker.getLatLng();
+
+        // update coord
+        const parent = get(coords, parentRingPath);
+        parent.splice(markerIndexInParent, 1, latlng);
 
         // set new coords on layer
         this._layer.setLatLngs(coords).redraw();
@@ -444,12 +472,14 @@ Edit.Line = Edit.extend({
         const marker = e.target;
 
         // only continue if this is NOT a middle marker
-        const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
+        const isMiddleMarker = !this.findDeepMarkerIndex(this._markers, marker);
+
         if (isMiddleMarker) {
             return;
         }
 
         this.updatePolygonCoordsFromMarkerDrag(marker);
+        return;
 
         // the dragged markers neighbors
         const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);

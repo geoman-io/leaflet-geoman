@@ -87,14 +87,14 @@ map2.pm.addControls({
     deleteLayer: true,
 });
 
-map2.pm.disableDraw('Poly');
+// map2.pm.disableDraw('Poly');
 // map2.pm.enableDraw('Circle', {
 //     snappable: true,
 //     cursorMarker: true
 // });
 
-map2.pm.enableDraw('Line', { allowSelfIntersection: false });
-map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
+// map2.pm.enableDraw('Line', { allowSelfIntersection: false });
+// map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 
 map2.on('pm:globaleditmodetoggled', function(e) {
     // console.log(e);
@@ -189,9 +189,9 @@ const bounds = scotland.getBounds();
 
 map3.fitBounds(bounds);
 
-geoJsonLayer.addEventListener('click', function(e) {
-    geoJsonLayer.pm.toggleEdit();
-});
+// geoJsonLayer.addEventListener('click', function(e) {
+//     geoJsonLayer.pm.toggleEdit();
+// });
 
 geoJsonLayer.on('pm:edit', function(e) {
     console.log(e);
@@ -245,7 +245,7 @@ polygonLayer.on('pm:intersect', function(e) {
 map2.pm.toggleGlobalEditMode({
     allowSelfIntersection: false,
     preventMarkerRemoval: false,
-    preventVertexEdit: true,
+    preventVertexEdit: false,
 });
 // map2.pm.disableGlobalEditMode();
 

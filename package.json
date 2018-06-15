@@ -21,7 +21,8 @@
   "dependencies": {
     "@turf/difference": "6.x",
     "@turf/intersect": "6.x",
-    "@turf/kinks": "6.x"
+    "@turf/kinks": "6.x",
+    "lodash": "^4.17.10"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.40",
