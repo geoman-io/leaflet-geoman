@@ -328,20 +328,25 @@ Edit.Line = Edit.extend({
         // coords of the layer
         const coords = this._layer.getLatLngs();
 
-        // find the coord ring index and index of the marker
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
-
-        // define the coordsRing that is edited
-        const coordsRing = ringIndex > -1 ? coords[ringIndex] : coords;
-
-        // define the markers array that is edited
-        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
+        // the index path to the marker inside the multidimensional marker array
+        const markerIndexPath = this.findDeepMarkerIndex(this._markers, marker);
 
         // only continue if this is NOT a middle marker (those can't be deleted)
-        const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
-        if (isMiddleMarker) {
+        if (!markerIndexPath) {
             return;
         }
+
+        // the index path to the array block of the marker (basically the parent array of the marker)
+        const markerArrIndexPath = markerIndexPath.slice(0, markerIndexPath.length - 1);
+
+        // index of the marker inside it's parent array
+        const index = markerIndexPath[markerIndexPath.length - 1];
+
+        // define the coordsRing that is edited
+        const coordsRing = get(coords, markerArrIndexPath);
+
+        // define the markers array that is edited
+        const markerArr = get(this._markers, markerArrIndexPath);
 
         // remove coordinate
         coordsRing.splice(index, 1);
@@ -351,8 +356,11 @@ Edit.Line = Edit.extend({
 
         // if the ring of the poly has no coordinates left, remove the ring
         if (coordsRing.length <= 1) {
+            // find the parent array index path of the coords ring
+            const coordsRingParentIndexPath = markerArrIndexPath.slice(0, markerIndexPath.length - 1);
+
             // remove coords ring
-            coords.splice(ringIndex, 1);
+            get(coords, coordsRingParentIndexPath).splice(markerArrIndexPath, 1);
 
             // set new coords
             this._layer.setLatLngs(coords);
@@ -410,8 +418,7 @@ Edit.Line = Edit.extend({
         this._layer.fire('pm:vertexremoved', {
             layer: this._layer,
             marker,
-            index,
-            ringIndex,
+            markerIndexPath,
             // TODO: maybe add latlng as well?
         });
     },
