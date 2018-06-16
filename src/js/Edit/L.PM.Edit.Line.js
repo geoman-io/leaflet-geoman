@@ -440,27 +440,6 @@ Edit.Line = Edit.extend({
         arr.some(run([]));
         return result;
     },
-    findMarkerIndex(markers, marker) {
-        // find the index of a marker in the markers array and returns the parent index as well in case of a multidimensional array
-        // Multidimensional arrays would mean the layer has multiple coordinate rings (like holes in polygons)
-        let index;
-        let ringIndex;
-
-        if (!this.isPolygon()) {
-            index = markers.findIndex(m => marker._leaflet_id === m._leaflet_id);
-        } else {
-            ringIndex = markers.findIndex((inner) => {
-                index = inner.findIndex(m => marker._leaflet_id === m._leaflet_id);
-                return index > -1;
-            });
-        }
-
-        return {
-            index,
-            ringIndex,
-        };
-    },
-
     updatePolygonCoordsFromMarkerDrag(marker) {
         // update polygon coords
         const coords = this._layer.getLatLngs();
@@ -529,7 +508,7 @@ Edit.Line = Edit.extend({
 
     _onMarkerDragEnd(e) {
         const marker = e.target;
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+        const markerIndexPath = this.findDeepMarkerIndex(this._markers, marker);
 
         // if self intersection is not allowed but this edit caused a self intersection,
         // reset and cancel; do not fire events
@@ -548,8 +527,7 @@ Edit.Line = Edit.extend({
 
         this._layer.fire('pm:markerdragend', {
             markerEvent: e,
-            ringIndex,
-            index,
+            markerIndexPath,
         });
 
         // fire edit event
@@ -557,12 +535,11 @@ Edit.Line = Edit.extend({
     },
     _onMarkerDragStart(e) {
         const marker = e.target;
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+        const markerIndexPath = this.findDeepMarkerIndex(this._markers, marker);
 
         this._layer.fire('pm:markerdragstart', {
             markerEvent: e,
-            ringIndex,
-            index,
+            markerIndexPath,
         });
 
         // if self intersection isn't allowed, save the coords upon dragstart
