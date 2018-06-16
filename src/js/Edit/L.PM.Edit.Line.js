@@ -186,9 +186,8 @@ Edit.Line = Edit.extend({
             return ringArr;
         };
 
+        // create markers
         this._markers = coords.map(handleRing, this);
-
-        console.log(this._markers);
 
         if (this.options.snappable) {
             // this._initSnappableMarkers();
@@ -471,23 +470,24 @@ Edit.Line = Edit.extend({
         // dragged marker
         const marker = e.target;
 
-        // only continue if this is NOT a middle marker
-        const isMiddleMarker = !this.findDeepMarkerIndex(this._markers, marker);
+        const markerIndexPath = this.findDeepMarkerIndex(this._markers, marker);
 
-        if (isMiddleMarker) {
+        // only continue if this is NOT a middle marker
+        if (!markerIndexPath) {
             return;
         }
 
         this.updatePolygonCoordsFromMarkerDrag(marker);
-        return;
 
         // the dragged markers neighbors
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
-        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
+        const markerArrIndexPath = markerIndexPath.slice(0, markerIndexPath.length - 1);
+
+        const markerArr = get(this._markers, markerArrIndexPath);
+        const index = markerIndexPath[markerIndexPath.length - 1];
 
         // find the indizes of next and previous markers
         const nextMarkerIndex = (index + 1) % markerArr.length;
-        const prevMarkerIndex = (index + markerArr.length - 1) % markerArr.length;
+        const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
 
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array
