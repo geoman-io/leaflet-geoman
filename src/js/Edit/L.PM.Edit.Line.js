@@ -2,6 +2,14 @@ import kinks from '@turf/kinks';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 
+// Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
+// Multipolygons with holes means lots of nested, multidimensional arrays.
+// In order to find a value inside such an array you need a path to adress it directly.
+// Example: var arr = [[['a', 'b'], ['c']]];
+// The indexPath to 'b' is [0, 0, 1]. The indexPath to 'c' is [0, 1, 0].
+// So I can get 'b' with: arr[0][0][1].
+// Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
+
 Edit.Line = Edit.extend({
     initialize(layer) {
         this._layer = layer;
@@ -190,7 +198,7 @@ Edit.Line = Edit.extend({
         this._markers = coords.map(handleRing, this);
 
         if (this.options.snappable) {
-            // this._initSnappableMarkers();
+            this._initSnappableMarkers();
         }
     },
 
@@ -310,7 +318,7 @@ Edit.Line = Edit.extend({
         });
 
         if (this.options.snappable) {
-            // this._initSnappableMarkers();
+            this._initSnappableMarkers();
         }
     },
 

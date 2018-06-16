@@ -2,13 +2,7 @@ const SnapMixin = {
     _initSnappableMarkers() {
         this.options.snapDistance = this.options.snapDistance || 30;
 
-        if (this.isPolygon()) {
-            // coords is a multidimansional array, handle all rings
-            this._markers.map(this._assignEvents, this);
-        } else {
-            // coords is one dimensional, handle the ring
-            this._assignEvents(this._markers);
-        }
+        this._assignEvents(this._markers);
 
         this._layer.off('pm:dragstart', this._unsnap, this);
         this._layer.on('pm:dragstart', this._unsnap, this);
@@ -16,9 +10,17 @@ const SnapMixin = {
     _assignEvents(markerArr) {
         // loop through marker array and assign events to the markers
         markerArr.forEach((marker) => {
+            // if the marker is another array (Multipolygon stuff), recursively do this again
+            if (Array.isArray(marker)) {
+                this._assignEvents(marker);
+                return;
+            }
+
+            // add handleSnapping event on drag
             marker.off('drag', this._handleSnapping, this);
             marker.on('drag', this._handleSnapping, this);
 
+            // cleanup event on dragend
             marker.off('dragend', this._cleanupSnapping, this);
             marker.on('dragend', this._cleanupSnapping, this);
         });
@@ -189,7 +191,7 @@ const SnapMixin = {
                 debugIndicatorLines.push(debugLine);
 
                 // uncomment 👇 this line to show helper lines for debugging
-                // debugLine.addTo(map);
+                debugLine.addTo(map);
             }
         });
 
