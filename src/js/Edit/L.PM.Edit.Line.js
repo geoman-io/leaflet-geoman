@@ -270,13 +270,21 @@ Edit.Line = Edit.extend({
         // and associate polygon coordinate with marker coordinate
         const latlng = newM.getLatLng();
         const coords = this._layer._latlngs;
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, rightM);
+
+        // the index path to the marker inside the multidimensional marker array
+        const markerIndexPath = this.findDeepMarkerIndex(this._markers, rightM);
+
+        // the index path to the array block of the marker (basically the parent array of the marker)
+        const markerArrIndexPath = markerIndexPath.slice(0, markerIndexPath.length - 1);
+
+        // index of the marker inside it's parent array
+        const index = markerIndexPath[markerIndexPath.length - 1];
 
         // define the coordsRing that is edited
-        const coordsRing = ringIndex > -1 ? coords[ringIndex] : coords;
+        const coordsRing = get(coords, markerArrIndexPath);
 
         // define the markers array that is edited
-        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
+        const markerArr = get(this._markers, markerArrIndexPath);
 
         // add coordinate to coordinate array
         coordsRing.splice(index, 0, latlng);
@@ -297,13 +305,12 @@ Edit.Line = Edit.extend({
         this._layer.fire('pm:vertexadded', {
             layer: this._layer,
             marker: newM,
-            index,
-            ringIndex,
+            markerIndexPath,
             // TODO: maybe add latlng as well?
         });
 
         if (this.options.snappable) {
-            this._initSnappableMarkers();
+            // this._initSnappableMarkers();
         }
     },
 
