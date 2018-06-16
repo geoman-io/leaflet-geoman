@@ -39,34 +39,14 @@ Draw.Cut = Draw.Poly.extend({
             // find layer difference
             const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
 
-            // if result is a multipolygon, split it into regular polygons
-            // TODO: remove as soon as multipolygons are supported
-            if (diff.geometry.type === 'MultiPolygon') {
-                const geoJSONs = diff.geometry.coordinates.reduce((arr, coords) => {
-                    arr.push({ type: 'Polygon', coordinates: coords });
-                    return arr;
-                }, []);
+            // add new layer to map
+            const newL = L.geoJSON(diff, l.options).addTo(this._map);
+            resultingLayers.push(newL);
+            newL.addTo(this._map);
 
-                // add new layers to map
-                geoJSONs.forEach((g) => {
-                    const newL = L.geoJSON(g, l.options);
-                    resultingLayers.push(newL);
-                    newL.addTo(this._map);
-
-                    // give the new layer the original options
-                    newL.pm.enable(this.options);
-                    newL.pm.disable();
-                });
-            } else {
-                // add new layer to map
-                const newL = L.geoJSON(diff, l.options).addTo(this._map);
-                resultingLayers.push(newL);
-                newL.addTo(this._map);
-
-                // give the new layer the original options
-                newL.pm.enable(this.options);
-                newL.pm.disable();
-            }
+            // give the new layer the original options
+            newL.pm.enable(this.options);
+            newL.pm.disable();
 
             // fire pm:cut on the cutted layer
             l.fire('pm:cut', {
