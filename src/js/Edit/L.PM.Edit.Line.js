@@ -355,8 +355,12 @@ Edit.Line = Edit.extend({
             // find the parent array index path of the coords ring
             const coordsRingParentIndexPath = parentPath.slice(0, indexPath.length - 1);
 
-            // remove coords ring
-            get(coords, coordsRingParentIndexPath).splice(parentPath, 1);
+            if (indexPath.length > 1) {
+                // remove coords ring
+                get(coords, coordsRingParentIndexPath).splice(parentPath, 1);
+            } else {
+                coords.splice(parentPath, 1);
+            }
 
             // set new coords
             this._layer.setLatLngs(coords);
