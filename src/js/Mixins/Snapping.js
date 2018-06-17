@@ -177,14 +177,14 @@ const SnapMixin = {
         const debugIndicatorLines = [];
         const map = this._map;
 
+        map.off('pm:remove', this._handleSnapLayerRemoval, this);
+        map.on('pm:remove', this._handleSnapLayerRemoval, this);
+
         // find all layers that are or inherit from Polylines... and markers that are not
         // temporary markers of polygon-edits
         map.eachLayer((layer) => {
             if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.CircleMarker) {
                 layers.push(layer);
-
-                map.off('pm:remove', this._handleSnapLayerRemoval, this);
-                map.on('pm:remove', this._handleSnapLayerRemoval, this);
 
                 // this is for debugging
                 const debugLine = L.polyline([], { color: 'red', pmIgnore: true });

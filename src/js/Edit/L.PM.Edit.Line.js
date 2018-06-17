@@ -372,7 +372,7 @@ Edit.Line = Edit.extend({
         }
 
         // if no coords are left, remove the layer
-        if (coords.length < 1) {
+        if (this.isEmptyDeep(coords)) {
             this._layer.remove();
         }
 
@@ -421,6 +421,12 @@ Edit.Line = Edit.extend({
             indexPath,
             // TODO: maybe add latlng as well?
         });
+    },
+    isEmptyDeep(l) {
+        const flatten = list =>
+            list.filter(x => ![null, '', undefined].includes(x)).reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+
+        return !flatten(l).length;
     },
     findDeepMarkerIndex(arr, marker) {
         // thanks for the function, Felix Heck
