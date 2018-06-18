@@ -31,11 +31,11 @@ Draw.Cut = Draw.Poly.extend({
                 }
             });
 
-        // the resulting layers after the cut
-        const resultingLayers = [];
 
         // loop through all layers that intersect with the drawn (cutting) layer
         layers.forEach((l) => {
+            // the resulting layers after the cut
+            const resultingLayers = [];
             // find layer difference
             const diff = difference(l.toGeoJSON(), layer.toGeoJSON());
 
