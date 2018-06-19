@@ -179,20 +179,32 @@ const SnapMixin = {
         // temporary markers of polygon-edits
         map.eachLayer((layer) => {
             if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.CircleMarker) {
-                layers.push(layer);
-
-                map.off('pm:remove', this._handleSnapLayerRemoval, this);
-                map.on('pm:remove', this._handleSnapLayerRemoval, this);
-
-                // this is for debugging
-                const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
-                debugIndicatorLines.push(debugLine);
-
-                // uncomment 👇 this line to show helper lines for debugging
-                // debugLine.addTo(map);
+                // split MultiPolygon layers into multiple single Polygon layers
+                if (layer instanceof L.Polygon && layer._latlngs[0][0] instanceof Array) {
+                    layer._latlngs.forEach(ring =>
+                        layers.push(new L.Polygon(ring))
+                    );
+                }
+                // split MultiLine layers into multiple single Polyline layers
+                else if (layer instanceof L.Polyline && layer._latlngs[0] instanceof Array) {
+                    layer._latlngs.forEach(segment =>
+                        layers.push(new L.Polyline(segment))
+                    );
+                }
+                // MultiPoint layers aren't causing any troubles, add all remaining layers as they are
+                else {
+                    layers.push(layer);
+                }
             }
         });
 
+        // this is for debugging
+        this.debugIndicatorLines = layers.map(() =>
+            L.polyline([], { color: 'red', pmIgnore: true }),
+        );
+
+        // uncomment 👇 this line to show helper lines for debugging
+        // this.debugIndicatorLines.forEach(debugLine => debugLine.addTo(map));
         // ...except myself
         layers = layers.filter(layer => this._layer !== layer);
 
@@ -209,7 +221,8 @@ const SnapMixin = {
             this._snapList = layers;
         }
 
-        this.debugIndicatorLines = debugIndicatorLines;
+        map.off('pm:remove', this._handleSnapLayerRemoval, this);
+        map.on('pm:remove', this._handleSnapLayerRemoval, this);
     },
     _calcClosestLayer(latlng, layers) {
         // the closest polygon to our dragged marker latlng
