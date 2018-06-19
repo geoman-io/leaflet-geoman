@@ -87,14 +87,14 @@ map2.pm.addControls({
     deleteLayer: true,
 });
 
-map2.pm.disableDraw('Poly');
+// map2.pm.disableDraw('Poly');
 // map2.pm.enableDraw('Circle', {
 //     snappable: true,
 //     cursorMarker: true
 // });
 
-map2.pm.enableDraw('Line', { allowSelfIntersection: false });
-map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
+// map2.pm.enableDraw('Line', { allowSelfIntersection: false });
+// map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 
 map2.on('pm:globaleditmodetoggled', function(e) {
     // console.log(e);
@@ -109,7 +109,7 @@ const geoJsonData = {
             type: 'Feature',
             properties: {},
             geometry: {
-                type: 'Polygon',
+                type: 'MultiLineString',
                 coordinates: [
                     [
                         [-0.15483856201171872, 51.527329038465936],
@@ -118,7 +118,14 @@ const geoJsonData = {
                         [-0.13149261474609375, 51.5042549065934],
                         [-0.11758804321289061, 51.518463972439385],
                         [-0.13303756713867188, 51.53106680201548],
-                        [-0.15483856201171872, 51.527329038465936],
+                    ],
+                    [
+                        [-0.20483856201171872, 51.527329038465936],
+                        [-0.19577310180664062, 51.51643437722083],
+                        [-0.18564508056640625, 51.50094238217541],
+                        [-0.17149261474609375, 51.5042549065934],
+                        [-0.17758804321289061, 51.518463972439385],
+                        [-0.19303756713867188, 51.53106680201548],
                     ],
                 ],
             },
@@ -176,9 +183,9 @@ const bounds = scotland.getBounds();
 
 map3.fitBounds(bounds);
 
-geoJsonLayer.addEventListener('click', function(e) {
-    geoJsonLayer.pm.toggleEdit();
-});
+// geoJsonLayer.addEventListener('click', function(e) {
+//     geoJsonLayer.pm.toggleEdit();
+// });
 
 geoJsonLayer.on('pm:edit', function(e) {
     console.log(e);
@@ -232,7 +239,7 @@ polygonLayer.on('pm:intersect', function(e) {
 map2.pm.toggleGlobalEditMode({
     allowSelfIntersection: false,
     preventMarkerRemoval: false,
-    preventVertexEdit: true,
+    preventVertexEdit: false,
 });
 // map2.pm.disableGlobalEditMode();
 

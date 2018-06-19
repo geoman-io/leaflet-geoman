@@ -120,22 +120,22 @@ const DragMixin = {
 
         // move the coordinates by the delta
         const moveCoords = coords =>
+            // alter the coordinates
             coords.map((currentLatLng) => {
-                const c = {
+                if (Array.isArray(currentLatLng)) {
+                    // do this recursively as coords might be nested
+                    return moveCoords(currentLatLng);
+                }
+
+                // move the coord and return it
+                return {
                     lat: currentLatLng.lat + deltaLatLng.lat,
                     lng: currentLatLng.lng + deltaLatLng.lng,
                 };
-                return c;
             });
 
         // create the new coordinates array
-        let newCoords;
-
-        if (this.isPolygon()) {
-            newCoords = this._layer._latlngs.map(moveCoords, this);
-        } else {
-            newCoords = moveCoords(this._layer._latlngs);
-        }
+        const newCoords = moveCoords(this._layer._latlngs);
 
         // set new coordinates and redraw
         this._layer.setLatLngs(newCoords).redraw();

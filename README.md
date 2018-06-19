@@ -5,7 +5,7 @@ Draw, Edit, Drag, Cut and Snap Features.
 
 In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time,
 this plugin only supported polygons. Now you can edit Markers, Polylines,
-Polygons, Circles, Rectangles, LayerGroups, GeoJSON and more are coming.
+Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiPolylines and more are coming.
 
 ## [Demo (click here)](https://leafletpm.now.sh)
 
@@ -24,12 +24,6 @@ As we are always using the latest leaflet version in a big production app, I wil
 
 ```
 npm install leaflet.pm --save
-```
-
-#### Install via Bower (DEPRECATED - leaflet.pm is no longer supporting bower since 0.17.0)
-
-```
-bower install leaflet.pm --save
 ```
 
 #### Install Manually
