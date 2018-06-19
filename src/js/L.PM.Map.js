@@ -125,7 +125,7 @@ const Map = L.Class.extend({
         });
     },
     toggleGlobalEditMode(options) {
-        console.log('toggle global edit mode', options);
+        // console.log('toggle global edit mode', options);
         if (this.globalEditEnabled()) {
             // disable
             this.disableGlobalEditMode();
