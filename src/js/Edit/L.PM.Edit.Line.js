@@ -350,17 +350,9 @@ Edit.Line = Edit.extend({
         // set new latlngs to the polygon
         this._layer.setLatLngs(coords);
 
-        // if the ring of the poly has no coordinates left, remove the ring
+        // if the ring of the poly has no coordinates left, remove the last coord too
         if (coordsRing.length <= 1) {
-            // find the parent array index path of the coords ring
-            const coordsRingParentIndexPath = parentPath.slice(0, indexPath.length - 1);
-
-            if (indexPath.length > 1) {
-                // remove coords ring
-                get(coords, coordsRingParentIndexPath).splice(parentPath, 1);
-            } else {
-                coords.splice(parentPath, 1);
-            }
+            coordsRing.splice(0, coordsRing.length);
 
             // set new coords
             this._layer.setLatLngs(coords);
@@ -370,6 +362,8 @@ Edit.Line = Edit.extend({
             this.disable();
             this.enable(this.options);
         }
+
+        // TODO: we may should remove all empty coord-rings here as well.
 
         // if no coords are left, remove the layer
         if (this.isEmptyDeep(coords)) {
