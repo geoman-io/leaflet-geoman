@@ -5,7 +5,7 @@ Draw, Edit, Drag, Cut and Snap Features.
 
 In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time,
 this plugin only supported polygons. Now you can edit Markers, Polylines,
-Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiPolylines and more are coming.
+Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiLineStrings and more are coming.
 
 ## [Demo (click here)](https://leafletpm.now.sh)
 
