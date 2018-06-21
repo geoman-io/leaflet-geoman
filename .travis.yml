@@ -1,7 +1,11 @@
 language: node_js
-    - "9.6.1"
-os: osx
+node_js:
+  - 10
+cache:
+  directories:
+    - ~/.npm
+    - ~/.cache
 install:
-    - npm install
+  - npm ci
 script:
-    - npm build && npm test
+  - npm run test

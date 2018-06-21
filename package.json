@@ -48,7 +48,7 @@
     "scripts": {
         "start": "npm run dev",
         "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
-        "test": "./node_modules/.bin/cypress run --headed",
+        "test": "$(npm bin)/cypress run --record",
         "cypress": "./node_modules/.bin/cypress open",
         "build": "./node_modules/.bin/webpack --config=webpack.build.js",
         "prepare": "npm run build"
