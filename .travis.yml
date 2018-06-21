@@ -1,0 +1,6 @@
+language: node_js
+os: osx
+install:
+    - npm install
+script:
+    - npm build && npm test
