@@ -23,3 +23,23 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('hasLayers', (map, count) => {
+    const layerCount = Object.keys(map._layers).length;
+
+    cy.wrap(layerCount).should('eq', count);
+});
+
+Cypress.Commands.add('hasMiddleMarkers', (count) => {
+    cy.get('.marker-icon-middle').should(($p) => {
+        expect($p).to.have.length(count);
+    });
+});
+
+Cypress.Commands.add('hasVertexMarkers', (count) => {
+    cy.get('.marker-icon:not(.marker-icon-middle)').should(($p) => {
+        expect($p).to.have.length(count);
+    });
+});
+
+Cypress.Commands.add('toolbarButton', name => cy.get(`.leaflet-pm-icon-${name}`));
