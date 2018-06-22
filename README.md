@@ -1,6 +1,6 @@
 # Leaflet Geometry Management
 
-<!-- ![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop) -->
+![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
 
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.\
 Draw, Edit, Drag, Cut and Snap Features.
