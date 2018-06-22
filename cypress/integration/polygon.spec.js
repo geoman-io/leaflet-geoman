@@ -6,13 +6,13 @@ describe('Draw & Edit Poly', () => {
             cy.hasLayers(map, 1);
         });
 
-        // activate line drawing
+        // activate polygon drawing
         cy.toolbarButton('polygon')
             .click()
             .parent('a')
             .should('have.class', 'active');
 
-        // draw a line
+        // draw a polygon
         cy.get(mapSelector)
             .click(90, 250)
             .click(100, 50)
@@ -71,5 +71,101 @@ describe('Draw & Edit Poly', () => {
             .click()
             .parent('a')
             .should('have.not.class', 'active');
+    });
+
+    it('draws a polygon with a hole', () => {
+        // activate polygon drawing
+        cy.toolbarButton('polygon')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        // draw a polygon
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(150, 50)
+            .click(500, 50)
+            .click(500, 300)
+            .click(300, 350)
+            .click(90, 250);
+
+        // activate cutting drawing
+        cy.toolbarButton('cut')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        // draw a polygon
+        cy.get(mapSelector)
+            .click(150, 250)
+            .click(170, 80)
+            .click(300, 80)
+            .click(280, 280)
+            .click(200, 285)
+            .click(150, 250);
+
+        // enable global edit mode
+        cy.toolbarButton('edit')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        cy.hasVertexMarkers(10);
+        cy.hasMiddleMarkers(10);
+
+        cy.toolbarButton('edit')
+            .click()
+            .parent('a')
+            .should('have.not.class', 'active');
+    });
+
+    it('should handle MultiPolygons', () => {
+        cy.drawShape('MultiPolygon');
+
+        // enable global edit mode
+        cy.toolbarButton('edit')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        cy.hasVertexMarkers(8);
+        cy.hasMiddleMarkers(8);
+
+        cy.toolbarButton('polyline')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        // draw a line
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(100, 50)
+            .click(150, 50)
+            .click(150, 150)
+            .click(200, 150)
+            .click(200, 150);
+
+        cy.toolbarButton('edit')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        cy.hasVertexMarkers(13);
+        cy.hasMiddleMarkers(12);
+
+        cy.toolbarButton('delete')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        cy.get(mapSelector).click(650, 100);
+
+        cy.toolbarButton('edit')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        cy.hasVertexMarkers(5);
+        cy.hasMiddleMarkers(4);
     });
 });

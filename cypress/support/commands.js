@@ -43,3 +43,17 @@ Cypress.Commands.add('hasVertexMarkers', (count) => {
 });
 
 Cypress.Commands.add('toolbarButton', name => cy.get(`.leaflet-pm-icon-${name}`));
+
+Cypress.Commands.add('drawShape', (shape) => {
+    cy.window().then(({ map, L }) => {
+        if (shape === 'MultiPolygon') {
+            cy.fixture(shape)
+                .as('poly')
+                .then((json) => {
+                    const layer = L.geoJson(json).addTo(map);
+                    const bounds = layer.getBounds();
+                    map.fitBounds(bounds);
+                });
+        }
+    });
+});
