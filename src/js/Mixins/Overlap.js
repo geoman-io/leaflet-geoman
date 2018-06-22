@@ -34,7 +34,7 @@ var OverlapMixin = {
         const mainPoly = this._poly;
         const layers = this._layerGroup.getLayers();
         let changed = false;
-        let resultingGeoJson = this._poly.toGeoJSON();
+        let resultingGeoJson = this._poly.toGeoJSON(15);
 
         layers
         .filter(layer => !Object.is(layer, mainPoly))
@@ -44,13 +44,13 @@ var OverlapMixin = {
             // this needs to be in a try catch block because turf isn't reliable
             // it throws self-intersection errors even if there are none
             try {
-                intersect = turf.intersect(resultingGeoJson, layer.toGeoJSON());
+                intersect = turf.intersect(resultingGeoJson, layer.toGeoJSON(15));
             } catch(e) {
                 console.warn('Turf Error.');
             }
 
             if(intersect) {
-                resultingGeoJson = turf.difference(resultingGeoJson, layer.toGeoJSON());
+                resultingGeoJson = turf.difference(resultingGeoJson, layer.toGeoJSON(15));
 
                 // if the resulting polygon is a MultiPolygon, don't handle it.
                 if(resultingGeoJson.geometry.type !== 'MultiPolygon') {

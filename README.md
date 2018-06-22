@@ -1,11 +1,13 @@
 # Leaflet Geometry Management
 
+![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
+
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.\
 Draw, Edit, Drag, Cut and Snap Features.
 
 In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time,
 this plugin only supported polygons. Now you can edit Markers, Polylines,
-Polygons, Circles, Rectangles, LayerGroups, GeoJSON and more are coming.
+Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiLineStrings and more are coming.
 
 ## [Demo (click here)](https://leafletpm.now.sh)
 
@@ -24,12 +26,6 @@ As we are always using the latest leaflet version in a big production app, I wil
 
 ```
 npm install leaflet.pm --save
-```
-
-#### Install via Bower (DEPRECATED - leaflet.pm is no longer supporting bower since 0.17.0)
-
-```
-bower install leaflet.pm --save
 ```
 
 #### Install Manually
@@ -66,6 +62,8 @@ import 'leaflet.pm/dist/leaflet.pm.css';
 require('leaflet.pm');
 require('leaflet.pm/dist/leaflet.pm.css');
 ```
+
+### Documentation
 
 #### Init Leaflet.PM
 
@@ -404,6 +402,12 @@ map.pm.setPathOptions({
     fillOpacity: 0.4,
 });
 ```
+
+### Feature Request
+
+I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.
+You can upvote to existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
+Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+label%3A%22feature+request%22+is%3Aclosed) and upvote if you want them to be implemented.
 
 ### Credit
 

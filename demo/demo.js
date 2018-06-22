@@ -56,7 +56,7 @@ const m2 = L.marker([51.50614, -0.0989]);
 const m3 = L.marker([51.50915, -0.096112], { pmIgnore: true });
 
 const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
-mGroup.pm.enable();
+// mGroup.pm.enable();
 
 map2.pm.addControls({
     drawMarker: false,
@@ -87,14 +87,14 @@ map2.pm.addControls({
     deleteLayer: true,
 });
 
-map2.pm.disableDraw('Poly');
+// map2.pm.disableDraw('Poly');
 // map2.pm.enableDraw('Circle', {
 //     snappable: true,
 //     cursorMarker: true
 // });
 
-map2.pm.enableDraw('Line', { allowSelfIntersection: false });
-map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
+// map2.pm.enableDraw('Line', { allowSelfIntersection: false });
+// map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
 
 map2.on('pm:globaleditmodetoggled', function(e) {
     // console.log(e);
@@ -109,8 +109,10 @@ const geoJsonData = {
             type: 'Feature',
             properties: {},
             geometry: {
-                type: 'Polygon',
+                type: 'MultiLineString',
+                // type: 'MultiPolygon',
                 coordinates: [
+                    // [
                     [
                         [-0.15483856201171872, 51.527329038465936],
                         [-0.16977310180664062, 51.51643437722083],
@@ -118,8 +120,18 @@ const geoJsonData = {
                         [-0.13149261474609375, 51.5042549065934],
                         [-0.11758804321289061, 51.518463972439385],
                         [-0.13303756713867188, 51.53106680201548],
-                        [-0.15483856201171872, 51.527329038465936],
+                        // [-0.15483856201171872, 51.527329038465936],
                     ],
+                    [
+                        [-0.20483856201171872, 51.527329038465936],
+                        [-0.19577310180664062, 51.51643437722083],
+                        [-0.18564508056640625, 51.50094238217541],
+                        [-0.17149261474609375, 51.5042549065934],
+                        [-0.17758804321289061, 51.518463972439385],
+                        [-0.19303756713867188, 51.53106680201548],
+                        [-0.19303756713867188, 51.53106680201548],
+                    ],
+                    // ],
                 ],
             },
         },
@@ -176,9 +188,9 @@ const bounds = scotland.getBounds();
 
 map3.fitBounds(bounds);
 
-geoJsonLayer.addEventListener('click', function(e) {
-    geoJsonLayer.pm.toggleEdit();
-});
+// geoJsonLayer.addEventListener('click', function(e) {
+//     geoJsonLayer.pm.toggleEdit();
+// });
 
 geoJsonLayer.on('pm:edit', function(e) {
     console.log(e);
@@ -215,7 +227,6 @@ const polygonLayer = L.polygon([[51.509, -0.08], [51.503, -0.06], [51.51, -0.047
     .addTo(map3)
     .addTo(map2);
 
-console.log(polygonLayer);
 // polygonLayer.pm.toggleEdit({
 //     allowSelfIntersection: false,
 //     preventVertexEdit: true,
@@ -233,7 +244,7 @@ polygonLayer.on('pm:intersect', function(e) {
 map2.pm.toggleGlobalEditMode({
     allowSelfIntersection: false,
     preventMarkerRemoval: false,
-    preventVertexEdit: true,
+    preventVertexEdit: false,
 });
 // map2.pm.disableGlobalEditMode();
 
@@ -276,7 +287,7 @@ polygonLayer.on('pm:markerdragstart', function(e) {
 
 // Layer Group Example
 
-const layerGroupItem1 = L.polyline([[51.51, -0.09], [51.513, -0.08], [51.514, -0.11]]);
+const layerGroupItem1 = L.polyline([[51.51, -0.09], [51.513, -0.08], [51.514, -0.11]], { pmIgnore: true });
 const layerGroupItem2 = L.polygon([[51.52, -0.06], [51.51, -0.07], [51.52, -0.05]]);
 
 const layerGroupItem3 = L.polygon([
