@@ -113,7 +113,7 @@ Edit.Line = Edit.extend({
 
     hasSelfIntersection() {
         // check for self intersection of the layer and return true/false
-        const selfIntersection = kinks(this._layer.toGeoJSON());
+        const selfIntersection = kinks(this._layer.toGeoJSON(15));
         return selfIntersection.features.length > 0;
     },
 
@@ -151,7 +151,7 @@ Edit.Line = Edit.extend({
 
             // fire intersect event
             this._layer.fire('pm:intersect', {
-                intersection: kinks(this._layer.toGeoJSON()),
+                intersection: kinks(this._layer.toGeoJSON(15)),
             });
         } else {
             // if not, reset the style to the default color
