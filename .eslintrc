@@ -9,6 +9,10 @@
         "no-restricted-syntax": 0,
         "guard-for-in": 0
     },
+    "plugins": ["cypress"],
+    "env": {
+        "cypress/globals": true
+    },
     "globals": {
         "L": true,
         "window": true,
