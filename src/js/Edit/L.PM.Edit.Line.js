@@ -1,5 +1,14 @@
 import kinks from '@turf/kinks';
+import get from 'lodash/get';
 import Edit from './L.PM.Edit';
+
+// Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
+// Multipolygons with holes means lots of nested, multidimensional arrays.
+// In order to find a value inside such an array you need a path to adress it directly.
+// Example: var arr = [[['a', 'b'], ['c']]];
+// The indexPath to 'b' is [0, 0, 1]. The indexPath to 'c' is [0, 1, 0].
+// So I can get 'b' with: arr[0][0][1].
+// Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
 Edit.Line = Edit.extend({
     initialize(layer) {
@@ -86,7 +95,7 @@ Edit.Line = Edit.extend({
         }
 
         // remove draggable class
-        const el = poly._path;
+        const el = poly._path ? poly._path : this._layer._renderer._container;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
         // remove invalid class if layer has self intersection
@@ -94,7 +103,7 @@ Edit.Line = Edit.extend({
             L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
         }
 
-        if(this._layerEdited) {
+        if (this._layerEdited) {
             this._layer.fire('pm:update', {});
         }
         this._layerEdited = false;
@@ -104,7 +113,7 @@ Edit.Line = Edit.extend({
 
     hasSelfIntersection() {
         // check for self intersection of the layer and return true/false
-        const selfIntersection = kinks(this._layer.toGeoJSON());
+        const selfIntersection = kinks(this._layer.toGeoJSON(15));
         return selfIntersection.features.length > 0;
     },
 
@@ -123,7 +132,7 @@ Edit.Line = Edit.extend({
     },
 
     _handleLayerStyle(flash) {
-        const el = this._layer._path;
+        const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
 
         if (this.hasSelfIntersection()) {
             if (L.DomUtil.hasClass(el, 'leaflet-pm-invalid')) {
@@ -142,7 +151,7 @@ Edit.Line = Edit.extend({
 
             // fire intersect event
             this._layer.fire('pm:intersect', {
-                intersection: kinks(this._layer.toGeoJSON()),
+                intersection: kinks(this._layer.toGeoJSON(15)),
             });
         } else {
             // if not, reset the style to the default color
@@ -166,33 +175,27 @@ Edit.Line = Edit.extend({
 
         // handle coord-rings (outer, inner, etc)
         const handleRing = (coordsArr) => {
+            // if there is another coords ring, go a level deep and do this again
+            if (Array.isArray(coordsArr[0])) {
+                return coordsArr.map(handleRing, this);
+            }
+
             // the marker array, it includes only the markers of vertexes (no middle markers)
             const ringArr = coordsArr.map(this._createMarker, this);
 
             // create small markers in the middle of the regular markers
             coordsArr.map((v, k) => {
-                let nextIndex;
-
-                if (this.isPolygon()) {
-                    nextIndex = (k + 1) % coordsArr.length;
-                } else {
-                    nextIndex = k + 1;
-                }
+                // find the next index fist
+                const nextIndex = this.isPolygon() ? (k + 1) % coordsArr.length : k + 1;
+                // create the marker
                 return this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
             });
 
             return ringArr;
         };
 
-        this._markers = [];
-
-        if (this.isPolygon()) {
-            // coords is a multidimansional array, handle all rings
-            this._markers = coords.map(handleRing, this);
-        } else {
-            // coords is one dimensional, handle the ring
-            this._markers = handleRing(coords);
-        }
+        // create markers
+        this._markers = handleRing(coords);
 
         if (this.options.snappable) {
             this._initSnappableMarkers();
@@ -202,7 +205,7 @@ Edit.Line = Edit.extend({
     // creates initial markers for coordinates
     _createMarker(latlng) {
         const marker = new L.Marker(latlng, {
-            draggable: true,
+            draggable: !this.options.preventVertexEdit,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
@@ -211,7 +214,10 @@ Edit.Line = Edit.extend({
         marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('move', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
-        marker.on('contextmenu', this._removeMarker, this);
+
+        if (!this.options.preventMarkerRemoval) {
+            marker.on('contextmenu', this._removeMarker, this);
+        }
 
         this._markerGroup.addLayer(marker);
 
@@ -272,13 +278,15 @@ Edit.Line = Edit.extend({
         // and associate polygon coordinate with marker coordinate
         const latlng = newM.getLatLng();
         const coords = this._layer._latlngs;
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, rightM);
+
+        // the index path to the marker inside the multidimensional marker array
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, rightM);
 
         // define the coordsRing that is edited
-        const coordsRing = ringIndex > -1 ? coords[ringIndex] : coords;
+        const coordsRing = indexPath.length > 1 ? get(coords, parentPath) : coords;
 
         // define the markers array that is edited
-        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
+        const markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
         // add coordinate to coordinate array
         coordsRing.splice(index, 0, latlng);
@@ -299,8 +307,7 @@ Edit.Line = Edit.extend({
         this._layer.fire('pm:vertexadded', {
             layer: this._layer,
             marker: newM,
-            index,
-            ringIndex,
+            indexPath,
             // TODO: maybe add latlng as well?
         });
 
@@ -323,20 +330,19 @@ Edit.Line = Edit.extend({
         // coords of the layer
         const coords = this._layer.getLatLngs();
 
-        // find the coord ring index and index of the marker
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
-
-        // define the coordsRing that is edited
-        const coordsRing = ringIndex > -1 ? coords[ringIndex] : coords;
-
-        // define the markers array that is edited
-        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
+        // the index path to the marker inside the multidimensional marker array
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
 
         // only continue if this is NOT a middle marker (those can't be deleted)
-        const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
-        if (isMiddleMarker) {
+        if (!indexPath) {
             return;
         }
+
+        // define the coordsRing that is edited
+        const coordsRing = indexPath.length > 1 ? get(coords, parentPath) : coords;
+
+        // define the markers array that is edited
+        const markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
         // remove coordinate
         coordsRing.splice(index, 1);
@@ -344,10 +350,9 @@ Edit.Line = Edit.extend({
         // set new latlngs to the polygon
         this._layer.setLatLngs(coords);
 
-        // if the ring of the poly has no coordinates left, remove the ring
+        // if the ring of the poly has no coordinates left, remove the last coord too
         if (coordsRing.length <= 1) {
-            // remove coords ring
-            coords.splice(ringIndex, 1);
+            coordsRing.splice(0, coordsRing.length);
 
             // set new coords
             this._layer.setLatLngs(coords);
@@ -358,8 +363,10 @@ Edit.Line = Edit.extend({
             this.enable(this.options);
         }
 
+        // TODO: we may should remove all empty coord-rings here as well.
+
         // if no coords are left, remove the layer
-        if (coords.length < 1) {
+        if (this.isEmptyDeep(coords)) {
             this._layer.remove();
         }
 
@@ -405,39 +412,58 @@ Edit.Line = Edit.extend({
         this._layer.fire('pm:vertexremoved', {
             layer: this._layer,
             marker,
-            index,
-            ringIndex,
+            indexPath,
             // TODO: maybe add latlng as well?
         });
     },
-    findMarkerIndex(markers, marker) {
-        // find the index of a marker in the markers array and returns the parent index as well in case of a multidimensional array
-        // Multidimensional arrays would mean the layer has multiple coordinate rings (like holes in polygons)
-        let index;
-        let ringIndex;
+    isEmptyDeep(l) {
+        // thanks for the function, Felix Heck
+        const flatten = list =>
+            list.filter(x => ![null, '', undefined].includes(x)).reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
 
-        if (!this.isPolygon()) {
-            index = markers.findIndex(m => marker._leaflet_id === m._leaflet_id);
-        } else {
-            ringIndex = markers.findIndex((inner) => {
-                index = inner.findIndex(m => marker._leaflet_id === m._leaflet_id);
-                return index > -1;
-            });
+        return !flatten(l).length;
+    },
+    findDeepMarkerIndex(arr, marker) {
+        // thanks for the function, Felix Heck
+        let result;
+
+        const run = path => (v, i) => {
+            const iRes = path.concat(i);
+
+            if (v._leaflet_id === marker._leaflet_id) {
+                result = iRes;
+                return true;
+            }
+
+            return Array.isArray(v) && v.some(run(iRes));
+        };
+        arr.some(run([]));
+
+        let returnVal = {};
+
+        if (result) {
+            returnVal = {
+                indexPath: result,
+                index: result[result.length - 1],
+                parentPath: result.slice(0, result.length - 1),
+            };
         }
 
-        return {
-            index,
-            ringIndex,
-        };
+        return returnVal;
     },
-
     updatePolygonCoordsFromMarkerDrag(marker) {
         // update polygon coords
         const coords = this._layer.getLatLngs();
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
-        const ring = ringIndex > -1 ? coords[ringIndex] : coords;
 
-        ring.splice(index, 1, marker.getLatLng());
+        // get marker latlng
+        const latlng = marker.getLatLng();
+
+        // get indexPath of Marker
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
+
+        // update coord
+        const parent = indexPath.length > 1 ? get(coords, parentPath) : coords;
+        parent.splice(index, 1, latlng);
 
         // set new coords on layer
         this._layer.setLatLngs(coords).redraw();
@@ -447,21 +473,21 @@ Edit.Line = Edit.extend({
         // dragged marker
         const marker = e.target;
 
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, marker);
+
         // only continue if this is NOT a middle marker
-        const isMiddleMarker = this.findMarkerIndex(this._markers, marker).index === -1;
-        if (isMiddleMarker) {
+        if (!indexPath) {
             return;
         }
 
         this.updatePolygonCoordsFromMarkerDrag(marker);
 
         // the dragged markers neighbors
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
-        const markerArr = ringIndex > -1 ? this._markers[ringIndex] : this._markers;
+        const markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
         // find the indizes of next and previous markers
         const nextMarkerIndex = (index + 1) % markerArr.length;
-        const prevMarkerIndex = (index + markerArr.length - 1) % markerArr.length;
+        const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
 
         // update middle markers on the left and right
         // be aware that "next" and "prev" might be interchanged, depending on the geojson array
@@ -489,7 +515,7 @@ Edit.Line = Edit.extend({
 
     _onMarkerDragEnd(e) {
         const marker = e.target;
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+        const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
         // if self intersection is not allowed but this edit caused a self intersection,
         // reset and cancel; do not fire events
@@ -508,8 +534,7 @@ Edit.Line = Edit.extend({
 
         this._layer.fire('pm:markerdragend', {
             markerEvent: e,
-            ringIndex,
-            index,
+            indexPath,
         });
 
         // fire edit event
@@ -517,12 +542,11 @@ Edit.Line = Edit.extend({
     },
     _onMarkerDragStart(e) {
         const marker = e.target;
-        const { ringIndex, index } = this.findMarkerIndex(this._markers, marker);
+        const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
         this._layer.fire('pm:markerdragstart', {
             markerEvent: e,
-            ringIndex,
-            index,
+            indexPath,
         });
 
         // if self intersection isn't allowed, save the coords upon dragstart

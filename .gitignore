@@ -5,3 +5,5 @@ npm-debug.log
 /.idea/
 /dist/
 \.source*
+/cypress/screenshots
+/cypress/videos
