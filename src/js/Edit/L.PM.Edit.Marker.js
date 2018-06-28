@@ -11,7 +11,7 @@ Edit.Marker = Edit.extend({
     },
 
     toggleEdit(options) {
-        if(!this.enabled()) {
+        if (!this.enabled()) {
             this.enable(options);
         } else {
             this.disable();
@@ -22,26 +22,27 @@ Edit.Marker = Edit.extend({
         draggable: true,
         snappable: true,
     }) {
-        this.options = options;
+        L.Util.setOptions(this, options);
 
         this._map = this._layer._map;
 
-        if(this.enabled()) {
+        if (this.enabled()) {
             return;
         }
         this._enabled = true;
 
-
         // enable removal for the marker
-        this._layer.on('contextmenu', this._removeMarker, this);
+        if (!this.options.preventMarkerRemoval) {
+            this._layer.on('contextmenu', this._removeMarker, this);
+        }
 
         // enable dragging and removal for the marker
-        if(this.options.draggable) {
+        if (this.options.draggable) {
             this._layer.dragging.enable();
         }
 
         // enable snapping
-        if(this.options.snappable) {
+        if (this.options.snappable) {
             this._initSnappableMarkers();
         }
     },
@@ -57,7 +58,7 @@ Edit.Marker = Edit.extend({
         this._layer.dragging.disable();
         this._layer.off('contextmenu', this._removeMarker, this);
 
-        if(this._layerEdited) {
+        if (this._layerEdited) {
             this._layer.fire('pm:update', {});
         }
         this._layerEdited = false;
@@ -65,6 +66,7 @@ Edit.Marker = Edit.extend({
     _removeMarker(e) {
         const marker = e.target;
         marker.remove();
+        // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
         marker.fire('pm:remove');
     },
     _onDragEnd(e) {

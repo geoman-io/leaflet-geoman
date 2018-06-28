@@ -95,7 +95,7 @@ Draw.Line = Draw.extend({
         this._enabled = false;
 
         // reset cursor
-        this._map._container.style.cursor = 'default';
+        this._map._container.style.cursor = '';
 
         // unbind listeners
         this._map.off('click', this._createVertex, this);
@@ -134,7 +134,7 @@ Draw.Line = Draw.extend({
     },
     hasSelfIntersection() {
         // check for self intersection of the layer and return true/false
-        const selfIntersection = kinks(this._layer.toGeoJSON());
+        const selfIntersection = kinks(this._layer.toGeoJSON(15));
         return selfIntersection.features.length > 0;
     },
     _syncHintLine() {
@@ -177,7 +177,7 @@ Draw.Line = Draw.extend({
         clone.addLatLng(this._hintMarker.getLatLng());
 
         // check the self intersection
-        const selfIntersection = kinks(clone.toGeoJSON());
+        const selfIntersection = kinks(clone.toGeoJSON(15));
         this._doesSelfIntersect = selfIntersection.features.length > 0;
 
         // change the style based on self intersection
@@ -186,9 +186,7 @@ Draw.Line = Draw.extend({
                 color: 'red',
             });
         } else {
-            this._hintline.setStyle({
-                color: '#3388ff',
-            });
+            this._hintline.setStyle(this.options.hintlineStyle);
         }
     },
     _createVertex(e) {

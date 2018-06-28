@@ -52,7 +52,7 @@ const Map = L.Class.extend({
         } else {
             this._globalRemovalMode = true;
             this.map.eachLayer((layer) => {
-                if (layer.pm) {
+                if (layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval)) {
                     layer.on('click', this.removeLayer);
                 }
             });
@@ -68,7 +68,7 @@ const Map = L.Class.extend({
         return this._globalEditMode;
     },
     enableGlobalEditMode(options) {
-        // find all layers handles by leaflet.pm
+        // find all layers handled by leaflet.pm
         let layers = [];
         this.map.eachLayer((layer) => {
             if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
@@ -128,6 +128,7 @@ const Map = L.Class.extend({
         });
     },
     toggleGlobalEditMode(options) {
+        // console.log('toggle global edit mode', options);
         if (this.globalEditEnabled()) {
             // disable
             this.disableGlobalEditMode();
