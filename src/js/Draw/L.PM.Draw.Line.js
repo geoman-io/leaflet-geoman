@@ -146,6 +146,9 @@ Draw.Line = Draw.extend({
             // set coords for hintline from marker to last vertex of drawin polyline
             this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
         }
+        else {
+            this._hintline.setLatLngs([]);
+        }
     },
     _syncHintMarker(e) {
         // move the cursor marker
