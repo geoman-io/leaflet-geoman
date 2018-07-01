@@ -1,6 +1,28 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
+    it.only('should sync ui and programmatic vertex changes', () => {
+        cy.window().then(({ map, L }) => {
+            // create polygon programatically
+            const latlngs = [[0, 0], [0, 10], [10, 10], [10, 0]];
+            const polygon = L.polygon(latlngs, { color: 'red' }).addTo(map);
+            map.fitBounds(polygon.getBounds());
+
+            // enable edit mode
+            polygon.pm.enable();
+
+            // change coordinates
+            polygon.setLatLngs([[0, 0], [0, 20], [20, 20], [20, 0], [18, 5]]);
+            map.fitBounds(polygon.getBounds());
+
+            // compare coord count with marker count
+            const coords = polygon.getLatLngs()[0];
+
+            expect(coords).to.have.length(5);
+            cy.hasVertexMarkers(5);
+        });
+    });
+
     it('draws and edits a polygon', () => {
         cy.window().then(({ map }) => {
             cy.hasLayers(map, 1);
