@@ -212,6 +212,8 @@ Edit.Line = Edit.extend({
         marker._pmTempLayer = true;
 
         marker.on('dragstart', this._onMarkerDragStart, this);
+        // FIXME: this move event might cause an infinite loop when listening to
+        // changes done via setLatLng. Careful, change to drag if necessary.
         marker.on('move', this._onMarkerDrag, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
 
