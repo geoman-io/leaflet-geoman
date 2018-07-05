@@ -1,7 +1,7 @@
 describe('Draw Rectangle', () => {
     const mapSelector = '#map';
 
-    it('places markers', () => {
+    it('draws a rectangle', () => {
         cy.toolbarButton('rectangle')
             .click()
             .parent('a')
