@@ -172,10 +172,10 @@ Draw.Circle = Draw.extend({
             });
         }
     },
-    _finishShape() {
+    _finishShape(e) {
         // calc the radius
         const center = this._centerMarker.getLatLng();
-        const cursor = this._hintMarker.getLatLng();
+        const cursor = e.latlng;
         const radius = center.distanceTo(cursor);
 
         // create the final circle layer
