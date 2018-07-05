@@ -178,8 +178,10 @@ Draw.Circle = Draw.extend({
         const cursor = e.latlng;
         const radius = center.distanceTo(cursor);
 
+        L.Util.setOptions(this.pathOptions, { radius });
+
         // create the final circle layer
-        const circleLayer = L.circle(center, { radius }).addTo(this._map);
+        const circleLayer = L.circle(center, this.options.pathOptions).addTo(this._map);
 
         // disable drawing
         this.disable();
