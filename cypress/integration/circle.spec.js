@@ -27,17 +27,22 @@ describe('Draw Circle', () => {
                     color: 'red',
                     fillColor: 'orange',
                     fillOpacity: 0.7,
+                    radius: 20,
                 },
             };
             map.pm.enableDraw('Circle', options);
 
-            map.pm.disableDraw('Circle', options);
-
-            const circle = L.circle([10, 10], { radius: 20 }).addTo(map);
-            map.fitBounds(circle.getBounds());
-            console.log(circle.options);
-
-            expect(circle.options.color).to.equal('red');
+            cy.get(mapSelector)
+                .click(200, 200)
+                .click(250, 250)
+                .then(() => {
+                    map.eachLayer((layer) => {
+                        if (layer instanceof L.Circle) {
+                            expect(layer.options.color).to.equal('red');
+                            expect(layer.options.fillColor).to.equal('orange');
+                        }
+                    });
+                });
         });
     });
 });
