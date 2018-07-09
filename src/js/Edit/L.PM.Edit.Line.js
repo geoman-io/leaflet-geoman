@@ -12,9 +12,6 @@ import Edit from './L.PM.Edit';
 
 Edit.Line = Edit.extend({
     initialize(layer) {
-        if (this.options.pathOptions) {
-            layer.setStyle(this.options.pathOptions);
-        }
         this._layer = layer;
         this._enabled = false;
     },
