@@ -117,7 +117,7 @@ map.pm.enableDraw('Poly', { finishOn: 'dblclick' });
 map.pm.disableDraw('Poly');
 ```
 
-All available options are specified in the Drawing Mode Section below
+All available options are specified in the Drawing Mode Section below.
 
 ##### Drawing Mode
 
@@ -129,6 +129,9 @@ var options = {
     // snapping
     snappable: true,
     snapDistance: 20,
+
+    // allow snapping with the middle of segments
+    snapMiddle: false,
 
     // self intersection
     allowSelfIntersection: true,
