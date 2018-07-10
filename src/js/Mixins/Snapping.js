@@ -1,7 +1,8 @@
+import Utils from '../L.PM.Utils';
+
 const SnapMixin = {
     _initSnappableMarkers() {
         this.options.snapDistance = this.options.snapDistance || 30;
-        this.options.snapMiddle = this.options.snapMiddle;
 
         this._assignEvents(this._markers);
 
@@ -155,13 +156,16 @@ const SnapMixin = {
         // distance between closestVertexLatLng and C
         let shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
 
-        // snap to middle of segment if enabled
+        // snap to middle (M) of segment if option is enabled
         if (this.options.snapMiddle) {
-            const M = this._middleLatLng(map, A, B);
+            const M = Utils.calcMiddleLatLng(map, A, B);
             const distanceMC = this._getDistance(map, M, C);
-            const middleIsNearest = (distanceMC < distanceAC && distanceMC < distanceBC);
-            closestVertexLatLng = middleIsNearest ? M : closestVertexLatLng;
-            shortestDistance = middleIsNearest ? distanceMC : shortestDistance;
+
+            if (distanceMC < distanceAC && distanceMC < distanceBC) {
+                // M is the nearest vertex
+                closestVertexLatLng = M;
+                shortestDistance = distanceMC;
+            }
         }
 
         // the distance that needs to be undercut to trigger priority
@@ -170,7 +174,7 @@ const SnapMixin = {
         // the latlng we ultemately want to snap to
         let snapLatlng;
 
-        // if C is closer to the closestVertexLatLng (A or B) than the snapDistance,
+        // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
         // the closestVertexLatLng has priority over C as the snapping point.
         if (shortestDistance < priorityDistance) {
             snapLatlng = closestVertexLatLng;
@@ -342,12 +346,6 @@ const SnapMixin = {
     },
     _getDistance(map, latlngA, latlngB) {
         return map.latLngToLayerPoint(latlngA).distanceTo(map.latLngToLayerPoint(latlngB));
-    },
-    _middleLatLng(map, latlngA, latlngB) {
-        const p1 = map.project(latlngA);
-        const p2 = map.project(latlngB);
-
-        return map.unproject(p1._add(p2)._divideBy(2));
     },
 };
 

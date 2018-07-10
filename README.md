@@ -130,7 +130,7 @@ var options = {
     snappable: true,
     snapDistance: 20,
 
-    // allow snapping with the middle of segments
+    // allow snapping to the middle of segments
     snapMiddle: false,
 
     // self intersection
