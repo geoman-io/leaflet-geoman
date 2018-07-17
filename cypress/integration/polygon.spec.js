@@ -1,7 +1,50 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
-    it.only('adds vertexes in correct order', () => {
+    it.only('adds las vertex to end of array', () => {
+        // when adding a vertex between the first and last current vertex,
+        // the new coord should be added to the end, not the beginning of the coord array
+        // https://github.com/codeofsumit/leaflet.pm/issues/312
+
+        cy.toolbarButton('polygon')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        cy.window().then(({ map, L }) => {
+            cy.get(mapSelector)
+                .click(90, 250)
+                .click(100, 50)
+                .click(150, 50)
+                .click(150, 150)
+                .click(90, 250)
+                .then(() => {
+                    let l;
+                    map.eachLayer((layer) => {
+                        if (layer instanceof L.Polygon) {
+                            layer.pm.enable();
+                            l = layer;
+                        }
+                    });
+                    return l;
+                })
+                .as('poly')
+                .then(poly => poly._latlngs[0][0])
+                .as('firstLatLng');
+        });
+
+        cy.get('.marker-icon-middle').click({ multiple: true });
+
+        cy.get('@poly').then((poly) => {
+            cy.get('@firstLatLng').then((oldFirst) => {
+                const newFirst = poly._latlngs[0][0];
+                expect(oldFirst.lat).to.equal(newFirst.lat);
+                expect(oldFirst.lng).to.equal(newFirst.lng);
+            });
+        });
+    });
+
+    it('pm:create to be called', () => {
         cy.window().then(({ map }) => {
             // an event listener
             Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
@@ -9,10 +52,7 @@ describe('Draw & Edit Poly', () => {
                 poly.pm.enable();
 
                 const markers = poly.pm._markers[0];
-                const lastMiddleMarker = markers[markers.length - 1]._middleMarkerNext._icon;
-
-                // this 👆👆 variable needs to be available in the rest of the text - how?
-                // doesn't work: cy.wrap(lastMiddleMarker).as('middleMarker');
+                expect(markers).to.have.length(4);
             });
         });
 
@@ -29,12 +69,6 @@ describe('Draw & Edit Poly', () => {
             .click(150, 50)
             .click(150, 150)
             .click(90, 250);
-
-        cy.get('@middleMarker').then((m) => {
-            // would like to trigger a click event on the DOM element
-            // saved inside middleMarker, then test more stuff
-            console.log(m);
-        });
     });
 
     it('draws and edits a polygon', () => {
