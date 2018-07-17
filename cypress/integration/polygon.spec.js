@@ -1,7 +1,7 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
-    it('adds new vertex to end of array', () => {
+    it.only('adds new vertex to end of array', () => {
         // when adding a vertex between the first and last current vertex,
         // the new coord should be added to the end, not the beginning of the coord array
         // https://github.com/codeofsumit/leaflet.pm/issues/312
@@ -31,6 +31,15 @@ describe('Draw & Edit Poly', () => {
                 .as('poly')
                 .then(poly => poly._latlngs[0][0])
                 .as('firstLatLng');
+        });
+
+        cy.get('@poly').then((poly) => {
+            Cypress.$(poly).on('pm:vertexadded', ({ originalEvent: event }) => {
+                const { layer, indexPath, latlng } = event;
+                const newLatLng = Cypress._.get(layer._latlngs, indexPath);
+                expect(latlng.lat).to.equal(newLatLng.lat);
+                expect(latlng.lng).to.equal(newLatLng.lng);
+            });
         });
 
         cy.get('.marker-icon-middle').click({ multiple: true });
