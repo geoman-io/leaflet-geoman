@@ -1,6 +1,42 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
+    it.only('adds vertexes in correct order', () => {
+        cy.window().then(({ map }) => {
+            // an event listener
+            Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
+                const poly = event.layer;
+                poly.pm.enable();
+
+                const markers = poly.pm._markers[0];
+                const lastMiddleMarker = markers[markers.length - 1]._middleMarkerNext._icon;
+
+                // this 👆👆 variable needs to be available in the rest of the text - how?
+                // doesn't work: cy.wrap(lastMiddleMarker).as('middleMarker');
+            });
+        });
+
+        // activate polygon drawing
+        cy.toolbarButton('polygon')
+            .click()
+            .parent('a')
+            .should('have.class', 'active');
+
+        // draw a polygon - triggers the event pm:create
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(100, 50)
+            .click(150, 50)
+            .click(150, 150)
+            .click(90, 250);
+
+        cy.get('@middleMarker').then((m) => {
+            // would like to trigger a click event on the DOM element
+            // saved inside middleMarker, then test more stuff
+            console.log(m);
+        });
+    });
+
     it('draws and edits a polygon', () => {
         cy.window().then(({ map }) => {
             cy.hasLayers(map, 1);
@@ -19,7 +55,10 @@ describe('Draw & Edit Poly', () => {
             .click(150, 50)
             .click(150, 150)
             .click(200, 150)
-            .click(90, 250);
+            .click(90, 250)
+            .then((m) => {
+                console.log(m);
+            });
 
         // button should be disabled after successful draw
         cy.toolbarButton('polygon')
