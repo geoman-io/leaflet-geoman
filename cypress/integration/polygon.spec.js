@@ -1,7 +1,7 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
-    it.only('adds las vertex to end of array', () => {
+    it('adds las vertex to end of array', () => {
         // when adding a vertex between the first and last current vertex,
         // the new coord should be added to the end, not the beginning of the coord array
         // https://github.com/codeofsumit/leaflet.pm/issues/312
@@ -46,7 +46,7 @@ describe('Draw & Edit Poly', () => {
 
     it('pm:create to be called', () => {
         cy.window().then(({ map }) => {
-            // an event listener
+            // test pm:create event
             Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
                 const poly = event.layer;
                 poly.pm.enable();
@@ -89,10 +89,7 @@ describe('Draw & Edit Poly', () => {
             .click(150, 50)
             .click(150, 150)
             .click(200, 150)
-            .click(90, 250)
-            .then((m) => {
-                console.log(m);
-            });
+            .click(90, 250);
 
         // button should be disabled after successful draw
         cy.toolbarButton('polygon')

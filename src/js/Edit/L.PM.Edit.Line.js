@@ -279,8 +279,6 @@ Edit.Line = Edit.extend({
         const latlng = newM.getLatLng();
         const coords = this._layer._latlngs;
 
-        console.log(this.findDeepMarkerIndex(this._markers, rightM));
-
         // the index path to the marker inside the multidimensional marker array
         const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, rightM);
 
