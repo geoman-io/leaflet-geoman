@@ -1,7 +1,7 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
-    it('adds las vertex to end of array', () => {
+    it('adds new vertex to end of array', () => {
         // when adding a vertex between the first and last current vertex,
         // the new coord should be added to the end, not the beginning of the coord array
         // https://github.com/codeofsumit/leaflet.pm/issues/312
