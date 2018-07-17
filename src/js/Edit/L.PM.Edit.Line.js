@@ -279,6 +279,8 @@ Edit.Line = Edit.extend({
         const latlng = newM.getLatLng();
         const coords = this._layer._latlngs;
 
+        console.log(this.findDeepMarkerIndex(this._markers, rightM));
+
         // the index path to the marker inside the multidimensional marker array
         const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, rightM);
 
@@ -288,11 +290,14 @@ Edit.Line = Edit.extend({
         // define the markers array that is edited
         const markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
+        // add a new vertex only at the end, never at the beginning of the coords array
+        const indexToInsertAt = () => (index === 0 ? coordsRing.length : index);
+
         // add coordinate to coordinate array
-        coordsRing.splice(index, 0, latlng);
+        coordsRing.splice(indexToInsertAt(), 0, latlng);
 
         // add marker to marker array
-        markerArr.splice(index, 0, newM);
+        markerArr.splice(indexToInsertAt(), 0, newM);
 
         // set new latlngs to update polygon
         this._layer.setLatLngs(coords);
