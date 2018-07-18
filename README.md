@@ -3,15 +3,15 @@
 ![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
 
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.x.\
-Draw, Edit, Drag, Cut and Snap Features.
-
-In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time,
-this plugin only supported polygons. Now you can edit Markers, Polylines,
+Draw, Edit, Drag, Cut and Snap layers like Markers, Polylines,
 Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiLineStrings and more are coming.
 
 ## [Demo (click here)](https://leafletpm.now.sh)
 
 ![snap at drag](https://github.com/codeofsumit/leaflet.pm-demo/blob/master/static/gifs/github-demo.gif)
+
+Need advanced features like GeoJSON Export, storing meta data and more?\
+Check out **[Geoman](https://geoman.now.sh)**.
 
 ### Getting Started
 
