@@ -2,7 +2,7 @@
 
 ![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
 
-A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.\
+A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.x.\
 Draw, Edit, Drag, Cut and Snap Features.
 
 In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time,
@@ -12,13 +12,6 @@ Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiLineStr
 ## [Demo (click here)](https://leafletpm.now.sh)
 
 ![snap at drag](https://github.com/codeofsumit/leaflet.pm-demo/blob/master/static/gifs/github-demo.gif)
-
-### Why _another_ geometry editing plugin?
-
-As leaflet.draw development seemed to came to a halt and I needed support for
-leaflet 1.0 I created this plugin myself due to a lack of alternatives.\
-As we are always using the latest leaflet version in a big production app, I will
-(have to) keep this plugin constantly developed.
 
 ### Getting Started
 
@@ -406,7 +399,7 @@ map.pm.setPathOptions({
 ### Feature Request
 
 I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.
-You can upvote to existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
+You can upvote existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
 Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+label%3A%22feature+request%22+is%3Aclosed) and upvote if you want them to be implemented.
 
 ### Credit
