@@ -280,7 +280,7 @@ Edit.Line = Edit.extend({
         const coords = this._layer._latlngs;
 
         // the index path to the marker inside the multidimensional marker array
-        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, rightM);
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, leftM);
 
         // define the coordsRing that is edited
         const coordsRing = indexPath.length > 1 ? get(coords, parentPath) : coords;
@@ -289,10 +289,10 @@ Edit.Line = Edit.extend({
         const markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
         // add coordinate to coordinate array
-        coordsRing.splice(index, 0, latlng);
+        coordsRing.splice(index + 1, 0, latlng);
 
         // add marker to marker array
-        markerArr.splice(index, 0, newM);
+        markerArr.splice(index + 1, 0, newM);
 
         // set new latlngs to update polygon
         this._layer.setLatLngs(coords);
@@ -307,7 +307,8 @@ Edit.Line = Edit.extend({
         this._layer.fire('pm:vertexadded', {
             layer: this._layer,
             marker: newM,
-            indexPath,
+            indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
+            latlng,
             // TODO: maybe add latlng as well?
         });
 
