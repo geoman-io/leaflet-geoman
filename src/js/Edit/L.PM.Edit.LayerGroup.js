@@ -45,7 +45,7 @@ Edit.LayerGroup = L.Class.extend({
         layers = layers.filter(layer => !layer._pmTempLayer);
 
         // filter out cluster-markers from marker cluster plugin
-        layers = layers.filter(layer => !layer._group);
+        layers = layers.filter(layer => !layer._markerCluster);
 
         // console.log(layers);
 

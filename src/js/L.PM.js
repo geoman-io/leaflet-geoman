@@ -49,13 +49,16 @@ L.PM = L.PM || {
         L.Map.addInitHook(initMap);
 
         function initLayerGroup() {
-            console.log('layergroup', this);
-            this.pm = new L.PM.Edit.LayerGroup(this);
+            // ignore layergroups from markerCluster
+            if (!this._markerCluster) {
+                this.pm = new L.PM.Edit.LayerGroup(this);
+            }
         }
 
         L.LayerGroup.addInitHook(initLayerGroup);
 
         function initMarker() {
+            // also ignore marker clusters (_group)
             if (!this.options.pmIgnore && !this._group) {
                 this.pm = new L.PM.Edit.Marker(this);
             }
@@ -65,7 +68,7 @@ L.PM = L.PM || {
 
         function initPolyline() {
             if (!this.options.pmIgnore) {
-                console.log(this);
+                // console.log(this);
                 this.pm = new L.PM.Edit.Line(this);
             }
         }

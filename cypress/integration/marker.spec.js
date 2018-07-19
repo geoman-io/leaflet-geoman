@@ -35,10 +35,16 @@ describe('Draw Marker', () => {
             // // Add cluster of markers to map
             map.addLayer(markerCluster);
 
-            console.log(markerCluster);
+            // console.log(markerCluster);
 
             const bounds = markerCluster.getBounds();
             map.fitBounds(bounds);
+
+            map.eachLayer((layer) => {
+                if (layer.pm) {
+                    // console.log(layer);
+                }
+            });
         });
 
         // cy.toolbarButton('edit')
