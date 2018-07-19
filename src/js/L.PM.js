@@ -49,13 +49,14 @@ L.PM = L.PM || {
         L.Map.addInitHook(initMap);
 
         function initLayerGroup() {
+            console.log('layergroup', this);
             this.pm = new L.PM.Edit.LayerGroup(this);
         }
 
         L.LayerGroup.addInitHook(initLayerGroup);
 
         function initMarker() {
-            if (!this.options.pmIgnore) {
+            if (!this.options.pmIgnore && !this._group) {
                 this.pm = new L.PM.Edit.Marker(this);
             }
         }
@@ -64,6 +65,7 @@ L.PM = L.PM || {
 
         function initPolyline() {
             if (!this.options.pmIgnore) {
+                console.log(this);
                 this.pm = new L.PM.Edit.Line(this);
             }
         }

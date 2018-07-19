@@ -20,4 +20,32 @@ describe('Draw Marker', () => {
             expect($p).to.have.length(4);
         });
     });
+
+    it.only('works with marker cluster', () => {
+        cy.window().then(({ map, L }) => {
+            // Create cluster group to cluster markers
+            const markerCluster = L.markerClusterGroup([]);
+
+            markerCluster.addLayer(L.marker([0, 1]));
+            markerCluster.addLayer(L.marker([0, 1]));
+            markerCluster.addLayer(L.marker([0, 1]));
+
+            // // Also add a marker outside of the cluster
+            markerCluster.addLayer(L.marker([1, 1]));
+            // // Add cluster of markers to map
+            map.addLayer(markerCluster);
+
+            console.log(markerCluster);
+
+            const bounds = markerCluster.getBounds();
+            map.fitBounds(bounds);
+        });
+
+        // cy.toolbarButton('edit')
+        //     .click()
+        //     .parent('a')
+        //     .should('have.class', 'active');
+
+        // cy.hasVertexMarkers(5);
+    });
 });
