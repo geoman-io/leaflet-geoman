@@ -1,3 +1,5 @@
+import Utils from '../L.PM.Utils';
+
 const SnapMixin = {
     _initSnappableMarkers() {
         this.options.snapDistance = this.options.snapDistance || 30;
@@ -149,10 +151,22 @@ const SnapMixin = {
         const distanceBC = this._getDistance(map, B, C);
 
         // closest latlng of A and B to C
-        const closestVertexLatLng = distanceAC < distanceBC ? A : B;
+        let closestVertexLatLng = distanceAC < distanceBC ? A : B;
 
         // distance between closestVertexLatLng and C
-        const shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
+        let shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
+
+        // snap to middle (M) of segment if option is enabled
+        if (this.options.snapMiddle) {
+            const M = Utils.calcMiddleLatLng(map, A, B);
+            const distanceMC = this._getDistance(map, M, C);
+
+            if (distanceMC < distanceAC && distanceMC < distanceBC) {
+                // M is the nearest vertex
+                closestVertexLatLng = M;
+                shortestDistance = distanceMC;
+            }
+        }
 
         // the distance that needs to be undercut to trigger priority
         const priorityDistance = this.options.snapDistance;
@@ -160,7 +174,7 @@ const SnapMixin = {
         // the latlng we ultemately want to snap to
         let snapLatlng;
 
-        // if C is closer to the closestVertexLatLng (A or B) than the snapDistance,
+        // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
         // the closestVertexLatLng has priority over C as the snapping point.
         if (shortestDistance < priorityDistance) {
             snapLatlng = closestVertexLatLng;
