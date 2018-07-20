@@ -44,9 +44,6 @@ Edit.LayerGroup = L.Class.extend({
         // filter out everything that's leaflet.pm specific temporary stuff
         layers = layers.filter(layer => !layer._pmTempLayer);
 
-        // filter out cluster-markers from marker cluster plugin
-        layers = layers.filter(layer => !layer._markerCluster);
-
         // console.log(layers);
 
         // return them

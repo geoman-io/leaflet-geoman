@@ -8,12 +8,6 @@ Edit.Marker = Edit.extend({
 
         // register dragend event e.g. to fire pm:edit
         this._layer.on('dragend', this._onDragEnd, this);
-        this._layer.on('add', () => {
-            if (this._layer._spiderLeg) {
-                // remove leaflet.pm from the spiderlegs
-                delete this._layer._spiderLeg.pm;
-            }
-        });
     },
 
     toggleEdit(options) {

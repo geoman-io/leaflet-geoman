@@ -8,6 +8,8 @@
 import './polyfills';
 import { version } from '../../package.json';
 
+import './SubPlugins/MarkerCluster.PM';
+
 import Map from './L.PM.Map';
 import Toolbar from './Toolbar/L.PM.Toolbar';
 
@@ -59,7 +61,7 @@ L.PM = L.PM || {
 
         function initMarker() {
             // also ignore marker clusters (_group)
-            if (!this.options.pmIgnore && !this._group) {
+            if (!this.options.pmIgnore) {
                 this.pm = new L.PM.Edit.Marker(this);
             }
         }

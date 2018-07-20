@@ -25,6 +25,7 @@ describe('Draw Marker', () => {
         cy.window().then(({ map, L }) => {
             // Create cluster group to cluster markers
             const markerCluster = L.markerClusterGroup([]);
+            console.log(markerCluster.options);
 
             markerCluster.addLayer(L.marker([0, 1]));
             markerCluster.addLayer(L.marker([0, 1]));
