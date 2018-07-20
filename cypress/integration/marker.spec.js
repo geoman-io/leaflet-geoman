@@ -27,29 +27,34 @@ describe('Draw Marker', () => {
             const markerCluster = L.markerClusterGroup([]);
             console.log(markerCluster.options);
 
-            markerCluster.addLayer(L.marker([0, 1]));
+            // map.pm.toggleGlobalEditMode({
+            //     draggable: false,
+            // });
+
+            const marker1 = L.marker([0, 1]);
+            markerCluster.addLayer(marker1);
             markerCluster.addLayer(L.marker([0, 1]));
             markerCluster.addLayer(L.marker([0, 1]));
 
             // // Also add a marker outside of the cluster
             markerCluster.addLayer(L.marker([1, 1]));
             // // Add cluster of markers to map
-            map.addLayer(markerCluster);
+            markerCluster.addTo(map);
 
             // console.log(markerCluster);
 
             const bounds = markerCluster.getBounds();
             map.fitBounds(bounds);
 
-            map.eachLayer((layer) => {
-                if (layer.pm) {
-                    // console.log(layer);
-                }
+            // markerCluster.removeLayer(marker1);
+
+            map.on('pm:remove', ({ layer }) => {
+                console.log('pm:remove');
             });
 
-            map.on('pm:remove', () => {
-                console.log('layer removed');
-                markerCluster.refreshClusters();
+            map.on('pm:create', ({ layer }) => {
+                layer.remove();
+                markerCluster.addLayer(layer);
             });
         });
 

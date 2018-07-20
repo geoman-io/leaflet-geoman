@@ -22,6 +22,7 @@ Draw.Marker = Draw.extend({
 
         // this is the hintmarker on the mouse cursor
         this._hintMarker = L.marker([0, 0], this.options.markerStyle);
+        this._hintMarker.setZIndexOffset(1000);
         this._hintMarker._pmTempLayer = true;
         this._hintMarker.addTo(this._map);
 
@@ -36,14 +37,14 @@ Draw.Marker = Draw.extend({
 
         // enable edit mode for existing markers
         this._map.eachLayer((layer) => {
-            if(layer instanceof L.Marker && layer.pm) {
+            if (layer instanceof L.Marker && layer.pm) {
                 layer.pm.enable();
             }
         });
     },
     disable() {
         // cancel, if drawing mode isn't even enabled
-        if(!this._enabled) {
+        if (!this._enabled) {
             return;
         }
 
@@ -58,7 +59,7 @@ Draw.Marker = Draw.extend({
 
         // disable dragging and removing for all markers
         this._map.eachLayer((layer) => {
-            if(layer instanceof L.Marker && layer.pm && !layer._pmTempLayer) {
+            if (layer instanceof L.Marker && layer.pm && !layer._pmTempLayer) {
                 layer.pm.disable();
             }
         });
@@ -76,20 +77,20 @@ Draw.Marker = Draw.extend({
         return this._enabled;
     },
     toggle(options) {
-        if(this.enabled()) {
+        if (this.enabled()) {
             this.disable();
         } else {
             this.enable(options);
         }
     },
     _createMarker(e) {
-        if(!e.latlng) {
+        if (!e.latlng) {
             return;
         }
 
         // assign the coordinate of the click to the hintMarker, that's necessary for
         // mobile where the marker can't follow a cursor
-        if(!this._hintMarker._snapped) {
+        if (!this._hintMarker._snapped) {
             this._hintMarker.setLatLng(e.latlng);
         }
 
@@ -108,7 +109,7 @@ Draw.Marker = Draw.extend({
         // fire the pm:create event and pass shape and marker
         this._map.fire('pm:create', {
             shape: this._shape,
-            marker,                     // DEPRECATED
+            marker, // DEPRECATED
             layer: marker,
         });
 
@@ -119,7 +120,7 @@ Draw.Marker = Draw.extend({
         this._hintMarker.setLatLng(e.latlng);
 
         // if snapping is enabled, do it
-        if(this.options.snappable) {
+        if (this.options.snappable) {
             const fakeDragEvent = e;
             fakeDragEvent.target = this._hintMarker;
             this._handleSnapping(fakeDragEvent);

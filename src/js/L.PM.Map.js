@@ -36,7 +36,8 @@ const Map = L.Class.extend({
     removeLayer(e) {
         const layer = e.target;
         if (!layer._layers && (!layer.pm || !layer.pm.dragging())) {
-            e.target.remove();
+            // this.map.removeLayer(layer);
+            layer.remove();
         }
     },
     toggleGlobalRemovalMode() {
@@ -53,7 +54,9 @@ const Map = L.Class.extend({
 
             // remove listener from current layers
             this.map.eachLayer((layer) => {
-                layer.off('click', this.removeLayer);
+                if (layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval)) {
+                    layer.off('click', this.removeLayer);
+                }
             });
 
             // don't add listener to newly added layers
