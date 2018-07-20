@@ -40,19 +40,34 @@ const Map = L.Class.extend({
         }
     },
     toggleGlobalRemovalMode() {
+        const addClickListener = ({ layer }) => {
+            if (layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval)) {
+                layer.off('click', this.removeLayer);
+                layer.on('click', this.removeLayer);
+            }
+        };
+
         // toggle global edit mode
         if (this.globalRemovalEnabled()) {
             this._globalRemovalMode = false;
+
+            // remove listener from current layers
             this.map.eachLayer((layer) => {
                 layer.off('click', this.removeLayer);
             });
+
+            // don't add listener to newly added layers
+            this.map.off('layeradd', addClickListener);
         } else {
             this._globalRemovalMode = true;
+
+            // add removal listener to current layers
             this.map.eachLayer((layer) => {
-                if (layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval)) {
-                    layer.on('click', this.removeLayer);
-                }
+                addClickListener({ layer });
             });
+
+            // add listener to layers added while in removal mode
+            this.map.on('layeradd', addClickListener);
         }
 
         // toogle the button in the toolbar

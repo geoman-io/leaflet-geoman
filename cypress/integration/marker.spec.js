@@ -46,6 +46,11 @@ describe('Draw Marker', () => {
                     // console.log(layer);
                 }
             });
+
+            map.on('pm:remove', () => {
+                console.log('layer removed');
+                markerCluster.refreshClusters();
+            });
         });
 
         // cy.toolbarButton('edit')

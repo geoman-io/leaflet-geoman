@@ -44,8 +44,6 @@ Edit.LayerGroup = L.Class.extend({
         // filter out everything that's leaflet.pm specific temporary stuff
         layers = layers.filter(layer => !layer._pmTempLayer);
 
-        // console.log(layers);
-
         // return them
         return layers;
     },
