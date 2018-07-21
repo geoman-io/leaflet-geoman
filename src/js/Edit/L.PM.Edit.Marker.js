@@ -1,6 +1,10 @@
 import Edit from './L.PM.Edit';
 
 Edit.Marker = Edit.extend({
+    options: {
+        draggable: true,
+        snappable: true,
+    },
     initialize(layer) {
         // layer is a marker in this case :-)
         this._layer = layer;
@@ -18,10 +22,7 @@ Edit.Marker = Edit.extend({
         }
     },
 
-    enable(options = {
-        draggable: true,
-        snappable: true,
-    }) {
+    enable(options) {
         L.Util.setOptions(this, options);
 
         this._map = this._layer._map;

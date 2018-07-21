@@ -25,11 +25,8 @@ describe('Draw Marker', () => {
         cy.window().then(({ map, L }) => {
             // Create cluster group to cluster markers
             const markerCluster = L.markerClusterGroup([]);
-            console.log(markerCluster.options);
 
-            // map.pm.toggleGlobalEditMode({
-            //     draggable: false,
-            // });
+            // map.pm.disableGlobalEditMode();
 
             const marker1 = L.marker([0, 1]);
             markerCluster.addLayer(marker1);
@@ -48,14 +45,22 @@ describe('Draw Marker', () => {
 
             // markerCluster.removeLayer(marker1);
 
-            map.on('pm:remove', ({ layer }) => {
-                console.log('pm:remove');
-            });
+            // marker1.on('click', () => {
+            //     markerCluster.removeLayer(marker1);
+            // });
 
-            map.on('pm:create', ({ layer }) => {
-                layer.remove();
-                markerCluster.addLayer(layer);
-            });
+            // map.on('pm:remove', ({ layer }) => {
+            //     // markerCluster.refreshClusters();
+            // });
+
+            // map.on('pm:create', ({ layer }) => {
+            //     layer.remove();
+            //     markerCluster.addLayer(layer);
+            // });
+
+            // map.pm.toggleGlobalEditMode({
+            //     draggable: false,
+            // });
         });
 
         // cy.toolbarButton('edit')
