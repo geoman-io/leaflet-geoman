@@ -299,7 +299,8 @@ const SnapMixin = {
                     nextIndex = index + 1 === coords.length ? undefined : index + 1;
                 }
 
-                const B = coords[nextIndex];
+                // if that's a line or poly where coord[begin] = coord[end], then B = A
+                const B = (index === 0 && nextIndex === undefined) ? A : coords[nextIndex];
 
                 if (B) {
                     // calc the distance between P and AB-segment
