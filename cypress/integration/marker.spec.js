@@ -1,6 +1,27 @@
 describe('Draw Marker', () => {
     const mapSelector = '#map';
 
+    it.only('removes markers correctly', () => {
+        cy.window().then(({ map, L }) => {
+            console.log(L);
+
+            const markerLayer = L.geoJson().addTo(map);
+
+            map.on('pm:create', ({ marker }) => {
+                markerLayer.addLayer(marker);
+
+                map.pm.disableDraw('Marker');
+
+                markerLayer.removeLayer(marker);
+                markerLayer.pm.disable();
+            });
+
+            map.pm.enableDraw('Marker', {
+                snappable: false,
+            });
+        });
+    });
+
     it('places markers', () => {
         cy.toolbarButton('marker').click();
 
