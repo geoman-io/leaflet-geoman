@@ -2,23 +2,16 @@
 
 ![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
 
-A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.0.\
-Draw, Edit, Drag, Cut and Snap Features.
-
-In the name "leaflet.pm" the "pm" stands for Polygon Management. At the time,
-this plugin only supported polygons. Now you can edit Markers, Polylines,
+A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.x.\
+Draw, Edit, Drag, Cut and Snap layers like Markers, Polylines,
 Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiLineStrings and more are coming.
 
 ## [Demo (click here)](https://leafletpm.now.sh)
 
-![snap at drag](https://github.com/codeofsumit/leaflet.pm-demo/blob/master/static/gifs/github-demo.gif)
+![Demo](https://file-hmgrhlmwxy.now.sh/leafletPM.gif)
 
-### Why _another_ geometry editing plugin?
-
-As leaflet.draw development seemed to came to a halt and I needed support for
-leaflet 1.0 I created this plugin myself due to a lack of alternatives.\
-As we are always using the latest leaflet version in a big production app, I will
-(have to) keep this plugin constantly developed.
+Need advanced features like GeoJSON Export, storing meta data and more?\
+Check out **[Geoman](https://geoman.now.sh)**.
 
 ### Getting Started
 
@@ -117,7 +110,7 @@ map.pm.enableDraw('Poly', { finishOn: 'dblclick' });
 map.pm.disableDraw('Poly');
 ```
 
-All available options are specified in the Drawing Mode Section below
+All available options are specified in the Drawing Mode Section below.
 
 ##### Drawing Mode
 
@@ -129,6 +122,9 @@ var options = {
     // snapping
     snappable: true,
     snapDistance: 20,
+
+    // allow snapping to the middle of segments
+    snapMiddle: false,
 
     // self intersection
     allowSelfIntersection: true,
@@ -406,7 +402,7 @@ map.pm.setPathOptions({
 ### Feature Request
 
 I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.
-You can upvote to existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
+You can upvote existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
 Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+label%3A%22feature+request%22+is%3Aclosed) and upvote if you want them to be implemented.
 
 ### Credit

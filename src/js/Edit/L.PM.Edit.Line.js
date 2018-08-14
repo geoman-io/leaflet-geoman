@@ -1,6 +1,7 @@
 import kinks from '@turf/kinks';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
+import Utils from '../L.PM.Utils';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
@@ -231,7 +232,7 @@ Edit.Line = Edit.extend({
             return false;
         }
 
-        const latlng = this._calcMiddleLatLng(leftM.getLatLng(), rightM.getLatLng());
+        const latlng = Utils.calcMiddleLatLng(this._map, leftM.getLatLng(), rightM.getLatLng());
 
         const middleMarker = this._createMarker(latlng);
         const middleIcon = L.divIcon({ className: 'marker-icon marker-icon-middle' });
@@ -280,7 +281,7 @@ Edit.Line = Edit.extend({
         const coords = this._layer._latlngs;
 
         // the index path to the marker inside the multidimensional marker array
-        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, rightM);
+        const { indexPath, index, parentPath } = this.findDeepMarkerIndex(this._markers, leftM);
 
         // define the coordsRing that is edited
         const coordsRing = indexPath.length > 1 ? get(coords, parentPath) : coords;
@@ -289,10 +290,10 @@ Edit.Line = Edit.extend({
         const markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
         // add coordinate to coordinate array
-        coordsRing.splice(index, 0, latlng);
+        coordsRing.splice(index + 1, 0, latlng);
 
         // add marker to marker array
-        markerArr.splice(index, 0, newM);
+        markerArr.splice(index + 1, 0, newM);
 
         // set new latlngs to update polygon
         this._layer.setLatLngs(coords);
@@ -307,7 +308,8 @@ Edit.Line = Edit.extend({
         this._layer.fire('pm:vertexadded', {
             layer: this._layer,
             marker: newM,
-            indexPath,
+            indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
+            latlng,
             // TODO: maybe add latlng as well?
         });
 
@@ -498,12 +500,12 @@ Edit.Line = Edit.extend({
         const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
 
         if (marker._middleMarkerNext) {
-            const middleMarkerNextLatLng = this._calcMiddleLatLng(markerLatLng, nextMarkerLatLng);
+            const middleMarkerNextLatLng = Utils.calcMiddleLatLng(this._map, markerLatLng, nextMarkerLatLng);
             marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
         }
 
         if (marker._middleMarkerPrev) {
-            const middleMarkerPrevLatLng = this._calcMiddleLatLng(markerLatLng, prevMarkerLatLng);
+            const middleMarkerPrevLatLng = Utils.calcMiddleLatLng(this._map, markerLatLng, prevMarkerLatLng);
             marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
         }
 
@@ -560,18 +562,5 @@ Edit.Line = Edit.extend({
         // fire edit event
         this._layerEdited = true;
         this._layer.fire('pm:edit');
-    },
-
-    _calcMiddleLatLng(latlng1, latlng2) {
-        // calculate the middle coordinates between two markers
-        // TODO: put this into a utils.js or something
-
-        const map = this._map;
-        const p1 = map.project(latlng1);
-        const p2 = map.project(latlng2);
-
-        const latlng = map.unproject(p1._add(p2)._divideBy(2));
-
-        return latlng;
     },
 });

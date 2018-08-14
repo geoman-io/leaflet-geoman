@@ -37,12 +37,14 @@ beforeEach(() => {
             );
 
             // create the map
-            contentWindow.map = L.map('map')
+            const map = L.map('map')
                 .setView([51.505, -0.09], 13)
                 .addLayer(mapboxTiles);
 
+            contentWindow.map = map;
+
             // add leaflet.pm toolbar
-            contentWindow.map.pm.addControls();
+            map.pm.addControls();
         },
     });
 });
