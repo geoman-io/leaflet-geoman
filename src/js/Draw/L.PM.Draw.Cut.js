@@ -34,32 +34,29 @@ Draw.Cut = Draw.Poly.extend({
 
         // loop through all layers that intersect with the drawn (cutting) layer
         layers.forEach((l) => {
-            // the resulting layers after the cut
-            const resultingLayers = [];
             // find layer difference
             const diff = difference(l.toGeoJSON(15), layer.toGeoJSON(15));
 
-            // add new layer to map
-            const newL = L.geoJSON(diff, l.options).addTo(this._map);
-            resultingLayers.push(newL);
-            newL.addTo(this._map);
+            // the resulting layer after the cut
+            const resultingLayer = L.geoJSON(diff, l.options).addTo(this._map);
+            resultingLayer.addTo(this._map);
 
             // give the new layer the original options
-            newL.pm.enable(this.options);
-            newL.pm.disable();
+            resultingLayer.pm.enable(this.options);
+            resultingLayer.pm.disable();
 
             // fire pm:cut on the cutted layer
             l.fire('pm:cut', {
                 shape: this._shape,
                 layer: l,
-                resultingLayers,
+                resultingLayer,
             });
 
             // fire pm:cut on the map for each cutted layer
             this._map.fire('pm:cut', {
                 shape: this._shape,
                 cuttedLayer: l,
-                resultingLayers,
+                resultingLayer,
             });
 
             // add templayer prop so pm:remove isn't fired
