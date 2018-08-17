@@ -31,7 +31,6 @@ Draw.Cut = Draw.Poly.extend({
                 }
             });
 
-
         // loop through all layers that intersect with the drawn (cutting) layer
         layers.forEach((l) => {
             // find layer difference
@@ -48,15 +47,15 @@ Draw.Cut = Draw.Poly.extend({
             // fire pm:cut on the cutted layer
             l.fire('pm:cut', {
                 shape: this._shape,
-                layer: l,
-                resultingLayer,
+                layer: resultingLayer,
+                originalLayer: l,
             });
 
-            // fire pm:cut on the map for each cutted layer
+            // fire pm:cut on the map
             this._map.fire('pm:cut', {
                 shape: this._shape,
-                cuttedLayer: l,
-                resultingLayer,
+                layer: resultingLayer,
+                originalLayer: l,
             });
 
             // add templayer prop so pm:remove isn't fired
