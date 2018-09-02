@@ -198,6 +198,27 @@ describe('Draw & Edit Poly', () => {
             .should('have.not.class', 'active');
     });
 
+    it.only('should cut geojson mutlipolygons fine', () => {
+        cy.drawShape('Geojson');
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(16);
+
+        cy.toolbarButton('cut').click();
+
+        cy.get(mapSelector)
+            .click(100, 300)
+            .click(700, 300)
+            .click(700, 310)
+            .click(100, 310)
+            .click(100, 300);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(20);
+    });
+
     it('should handle MultiPolygons', () => {
         cy.drawShape('MultiPolygon');
 
