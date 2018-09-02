@@ -26,7 +26,10 @@ Draw.Cut = Draw.Poly.extend({
                 try {
                     return !!intersect(layer.toGeoJSON(15), l.toGeoJSON(15));
                 } catch (e) {
-                    console.error('You cant cut polygons with self-intersections');
+                    console.error(
+                        'You cant cut polygons with self-intersections',
+                        e,
+                    );
                     return false;
                 }
             });
@@ -37,7 +40,7 @@ Draw.Cut = Draw.Poly.extend({
             const diff = difference(l.toGeoJSON(15), layer.toGeoJSON(15));
 
             // the resulting layer after the cut
-            const resultingLayer = L.geoJSON(diff, l.options).addTo(this._map);
+            const resultingLayer = L.geoJSON(diff, l.options);
             resultingLayer.addTo(this._map);
 
             // give the new layer the original options
