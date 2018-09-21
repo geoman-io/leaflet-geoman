@@ -11,7 +11,7 @@ Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiLineStr
 ![Demo](https://file-hmgrhlmwxy.now.sh/leafletPM.gif)
 
 Need advanced features like GeoJSON Export, storing meta data and more?\
-Check out **[Geoman](https://geoman.now.sh)**.
+Check out **[Geoman](https://geoman.io)**.
 
 ### Getting Started
 
