@@ -198,6 +198,13 @@ map.on('pm:drawstart', function(e) {
         // the working layer and shape
     });
 
+    // also fired on the markers of the polygon
+    layer.on('pm:snapdrag', function(e) {
+        // e includes marker, snap coordinates
+        // segment, the working layer
+        // and the distance
+    });
+
     // check self intersection
     layer.pm.hasSelfIntersection();
 });

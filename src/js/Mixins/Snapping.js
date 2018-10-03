@@ -94,7 +94,11 @@ const SnapMixin = {
             segment: closestLayer.segment,
             layer: this._layer,
             layerInteractedWith: closestLayer.layer, // for lack of a better property name
+            distance: closestLayer.distance,
         };
+        
+        eventInfo.marker.fire('pm:snapdrag', eventInfo);
+        this._layer.fire('pm:snapdrag', eventInfo);
 
         if (closestLayer.distance < minDistance) {
             // snap the marker
