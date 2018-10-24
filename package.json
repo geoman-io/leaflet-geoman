@@ -19,7 +19,7 @@
     ],
     "main": "dist/leaflet.pm.min.js",
     "dependencies": {
-        "@turf/difference": "^6.0.2",
+        "@turf/difference": "^5.1.5",
         "@turf/intersect": "^6.1.3",
         "@turf/kinks": "6.x",
         "lodash": "^4.17.10"
