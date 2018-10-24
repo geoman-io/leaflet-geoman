@@ -11,6 +11,7 @@ const Draw = L.Class.extend({
         allowSelfIntersection: true,
         templineStyle: {},
         hintlineStyle: {
+            color: '#3388ff',
             dashArray: '5,5',
         },
         markerStyle: {
@@ -38,7 +39,7 @@ const Draw = L.Class.extend({
     },
     enable(shape, options) {
         if (!shape) {
-            throw new Error(`Error: Please pass a shape as a parameter. Possible shapes are: ${this.getShapes().join(',')}`);
+            throw new Error(`Error: Please pass a shape as a parameter. Possible shapes are: ${this.getShapes().join(',',)}`,);
         }
 
         // disable drawing for all shapes

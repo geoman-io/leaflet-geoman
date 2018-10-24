@@ -75,7 +75,10 @@ Draw.Line = Draw.extend({
         this._hintMarker.on('move', this._syncHintLine, this);
 
         // fire drawstart event
-        this._map.fire('pm:drawstart', { shape: this._shape, workingLayer: this._layer });
+        this._map.fire('pm:drawstart', {
+            shape: this._shape,
+            workingLayer: this._layer,
+        });
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -144,7 +147,10 @@ Draw.Line = Draw.extend({
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
 
             // set coords for hintline from marker to last vertex of drawin polyline
-            this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
+            this._hintline.setLatLngs([
+                lastPolygonPoint,
+                this._hintMarker.getLatLng(),
+            ]);
         }
     },
     _syncHintMarker(e) {
@@ -237,7 +243,10 @@ Draw.Line = Draw.extend({
 
         // get coordinates, create the leaflet shape and add it to the map
         const coords = this._layer.getLatLngs();
-        const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(this._map);
+        const polylineLayer = L.polyline(
+            coords,
+            this.options.pathOptions,
+        ).addTo(this._map);
 
         // disable drawing
         this.disable();
