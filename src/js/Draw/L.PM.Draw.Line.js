@@ -241,8 +241,15 @@ Draw.Line = Draw.extend({
             return;
         }
 
-        // get coordinates, create the leaflet shape and add it to the map
+        // get coordinates
         const coords = this._layer.getLatLngs();
+
+        // if there is only one coords, don't finish the shape!
+        if (coords.length <= 1) {
+            return;
+        }
+
+        // create the leaflet shape and add it to the map
         const polylineLayer = L.polyline(
             coords,
             this.options.pathOptions,
