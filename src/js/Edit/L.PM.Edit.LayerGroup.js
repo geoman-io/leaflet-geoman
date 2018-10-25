@@ -35,7 +35,7 @@ Edit.LayerGroup = L.Class.extend({
         // get all layers of the layer group
         let layers = this._layerGroup.getLayers();
 
-        // filter out layers that don't have leaflet.pm
+        // filter out layers that are no layerGroup
         layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
 
         // filter out layers that don't have leaflet.pm
@@ -82,13 +82,16 @@ Edit.LayerGroup = L.Class.extend({
     toggleEdit(options) {
         this._options = options;
         this._layers.forEach((layer) => {
-            layer.pm.toggleEdit(options);
+            console.log('TOGGLE EDIT');
+            // layer.pm.toggleEdit(options);
         });
     },
     enable(options) {
+        console.log('ENABLE');
         this._options = options;
         this._layers.forEach((layer) => {
-            layer.pm.enable(options);
+            console.log(layer);
+            // layer.pm.enable(options);
         });
     },
     disable() {
