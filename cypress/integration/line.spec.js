@@ -3,7 +3,7 @@ describe('Draw & Edit Line', () => {
 
     const mapSelector = '#map';
 
-    it('removes single point lines', () => {
+    it('doesnt finish single point lines', () => {
         cy.toolbarButton('polyline').click();
 
         cy.get(mapSelector)
