@@ -1,6 +1,18 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
+    it('doesnt finish single point polys', () => {
+        cy.toolbarButton('polygon').click();
+
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(90, 250);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(0);
+    });
+
     it('adds new vertex to end of array', () => {
         // when adding a vertex between the first and last current vertex,
         // the new coord should be added to the end, not the beginning of the coord array

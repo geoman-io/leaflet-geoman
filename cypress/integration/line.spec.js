@@ -3,6 +3,18 @@ describe('Draw & Edit Line', () => {
 
     const mapSelector = '#map';
 
+    it('doesnt finish single point lines', () => {
+        cy.toolbarButton('polyline').click();
+
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(90, 250);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(0);
+    });
+
     it('draws and edits a line', () => {
         cy.window().then(({ map }) => {
             cy.hasLayers(map, 1);
