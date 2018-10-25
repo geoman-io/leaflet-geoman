@@ -42,7 +42,8 @@ Cypress.Commands.add('hasVertexMarkers', (count) => {
     });
 });
 
-Cypress.Commands.add('toolbarButton', name => cy.get(`.leaflet-pm-icon-${name}`));
+Cypress.Commands.add('toolbarButton', name =>
+    cy.get(`.leaflet-pm-icon-${name}`),);
 
 Cypress.Commands.add('drawShape', (shape) => {
     cy.window().then(({ map, L }) => {
@@ -51,6 +52,29 @@ Cypress.Commands.add('drawShape', (shape) => {
                 .as('poly')
                 .then((json) => {
                     const layer = L.geoJson(json).addTo(map);
+                    const bounds = layer.getBounds();
+                    map.fitBounds(bounds);
+                });
+        }
+
+        if (shape === 'FeatureCollectionWithCircles') {
+            cy.fixture(shape)
+                .as('poly')
+                .then((json) => {
+                    const layer = L.geoJson(json, {
+                        pointToLayer: (feature, latlng) => {
+                            if (feature.properties.customGeometry) {
+                                return new L.Circle(
+                                    latlng,
+                                    feature.properties.customGeometry.radius,
+                                );
+                            }
+                            return new L.Marker(latlng);
+                        },
+                    });
+
+                    layer.addTo(map);
+
                     const bounds = layer.getBounds();
                     map.fitBounds(bounds);
                 });
