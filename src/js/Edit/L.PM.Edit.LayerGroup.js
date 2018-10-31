@@ -82,16 +82,13 @@ Edit.LayerGroup = L.Class.extend({
     toggleEdit(options) {
         this._options = options;
         this._layers.forEach((layer) => {
-            console.log('TOGGLE EDIT');
-            // layer.pm.toggleEdit(options);
+            layer.pm.toggleEdit(options);
         });
     },
     enable(options) {
-        console.log('ENABLE');
         this._options = options;
         this._layers.forEach((layer) => {
-            console.log(layer);
-            // layer.pm.enable(options);
+            layer.pm.enable(options);
         });
     },
     disable() {

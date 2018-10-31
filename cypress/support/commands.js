@@ -59,7 +59,6 @@ Cypress.Commands.add('drawShape', (shape) => {
 
         if (shape === 'FeatureCollectionWithCircles') {
             cy.fixture(shape)
-                .as('poly')
                 .then((json) => {
                     const layer = L.geoJson(json, {
                         pointToLayer: (feature, latlng) => {
@@ -77,7 +76,10 @@ Cypress.Commands.add('drawShape', (shape) => {
 
                     const bounds = layer.getBounds();
                     map.fitBounds(bounds);
-                });
+
+                    return layer;
+                })
+                .as('featurecol');
         }
     });
 });

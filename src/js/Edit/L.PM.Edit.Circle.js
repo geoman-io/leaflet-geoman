@@ -48,7 +48,7 @@ Edit.Circle = Edit.extend({
             return false;
         }
         layer.pm._enabled = false;
-        layer.pm._layerGroup.clearLayers();
+        layer.pm._helperLayers.clearLayers();
 
         // clean up draggable
         layer.off('mousedown');
