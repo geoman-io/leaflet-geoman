@@ -236,8 +236,8 @@ remove parts of it.
 
 Important: the cutted layer will be replaced, not updated. Listen to the
 `pm:cut` event to update your layer references in your code. The `pm:cut` event
-will provide you with the old/removed/cut layer and returns the resulting
-layer(s) that is/are added to the map.
+will provide you with the original layer and returns the resulting
+layer(s) that is/are added to the map as a Polygon or MultiPolygon.
 
 ```js
 // recommended options (used when enabled via toolbar)
