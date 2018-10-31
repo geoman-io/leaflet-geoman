@@ -143,14 +143,10 @@ var options = {
     // show a marker at the cursor
     cursorMarker: false,
 
-    // finish drawing on double click
-    // DEPRECATED: use finishOn: 'dblclick' instead
-    finishOnDoubleClick: false,
-
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     // List: http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
-    finishOn: 'contextmenu',
+    finishOn: null,
 
     // custom marker style (only for Marker draw)
     markerStyle: {
