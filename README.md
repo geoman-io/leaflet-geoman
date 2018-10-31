@@ -229,6 +229,7 @@ map.on('pm:create', function(e) {
 ##### Creating Holes or Cutting a Polygon
 
 ![cut polygon](https://file-klmbwnzaor.now.sh/cutting.gif)
+
 Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from
 all underlying polygons. This way you can create holes, cut polygons in half or
 remove parts of it.
