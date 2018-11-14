@@ -1,6 +1,6 @@
 /**
-* The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
-*/
+ * The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
+ */
 import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
@@ -23,7 +23,14 @@ const Toolbar = L.Class.extend({
 
         this.buttons = {};
         this.isVisible = false;
-        this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
+        this.container = L.DomUtil.create(
+            'div',
+            'leaflet-pm-toolbar leaflet-bar leaflet-control',
+        );
+        // Create empty actions part of the toolbar
+		this.actionsContainer = L.DomUtil.create('ul', 'leaflet-draw-actions');
+
+
         this._defineButtons();
     },
     getButtons() {
@@ -79,7 +86,10 @@ const Toolbar = L.Class.extend({
         // so, we trigger a click on all currently active (toggled) buttons
 
         for (const name in this.buttons) {
-            if (this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
+            if (
+                this.buttons[name] !== exceptThisButton &&
+                this.buttons[name].toggled()
+            ) {
                 this.buttons[name]._triggerClick();
             }
         }
@@ -136,7 +146,11 @@ const Toolbar = L.Class.extend({
             onClick: () => {},
             afterClick: () => {
                 // enable polygon drawing mode without snap
-                this.map.pm.Draw.Cut.toggle({ snappable: true, cursorMarker: true, allowSelfIntersection: false });
+                this.map.pm.Draw.Cut.toggle({
+                    snappable: true,
+                    cursorMarker: true,
+                    allowSelfIntersection: false,
+                });
             },
             doToggle: true,
             toggleStatus: false,
@@ -183,7 +197,7 @@ const Toolbar = L.Class.extend({
             position: this.options.position,
         };
 
-        const drawRectangleButton = {
+        const drawRectButton = {
             className: 'leaflet-pm-icon-rectangle',
             onClick: () => {},
             afterClick: () => {
@@ -220,7 +234,10 @@ const Toolbar = L.Class.extend({
 
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
-        this._addButton('drawRectangle', new L.Control.PMButton(drawRectangleButton));
+        this._addButton(
+            'drawRectangle',
+            new L.Control.PMButton(drawRectButton),
+        );
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
