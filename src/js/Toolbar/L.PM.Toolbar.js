@@ -5,6 +5,29 @@ import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
 
+const ActionButton = L.Control.extend({
+    options: {
+        position: 'topleft',
+    },
+    onAdd(map) {
+        this._map = map;
+
+        console.log(map);
+
+        this._container = this._map.pm.Toolbar.actionsContainer;
+        this.buttonsDomNode = L.DomUtil.create(
+            'a',
+            'leaflet-buttons-control-button',
+            this._container,
+        );
+        this._container.appendChild(this.buttonsDomNode);
+
+        return this._container;
+    },
+});
+
+L.Control.ActionButton = ActionButton;
+
 const Toolbar = L.Class.extend({
     options: {
         drawMarker: true,
@@ -28,8 +51,10 @@ const Toolbar = L.Class.extend({
             'leaflet-pm-toolbar leaflet-bar leaflet-control',
         );
         // Create empty actions part of the toolbar
-		this.actionsContainer = L.DomUtil.create('ul', 'leaflet-draw-actions');
-
+        this.actionsContainer = L.DomUtil.create(
+            'ul',
+            'leaflet-pm-actions leaflet-bar leaflet-control',
+        );
 
         this._defineButtons();
     },
@@ -54,6 +79,11 @@ const Toolbar = L.Class.extend({
         // now show the specified buttons
         this._showHideButtons();
         this.isVisible = true;
+
+        const test = new L.Control.ActionButton();
+        console.log(test);
+        test.setPosition('topleft');
+        test.addTo(this.map);
     },
     removeControls() {
         // grab all buttons to loop through
