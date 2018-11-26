@@ -52,11 +52,62 @@ const PMButton = L.Control.extend({
         this._button.afterClick(e);
     },
     _makeButton(button) {
+        // button container
+        const buttonContainer = L.DomUtil.create(
+            'div',
+            'button-container',
+            this._container,
+        );
+
+        // the button itself
         const newButton = L.DomUtil.create(
             'a',
             'leaflet-buttons-control-button',
-            this._container,
+            buttonContainer,
         );
+
+        // the buttons actions
+        const actionContainer = L.DomUtil.create(
+            'div',
+            'leaflet-pm-actions-container',
+            buttonContainer,
+        );
+
+        const activeActions = button.actions;
+
+        const actions = {
+            cancel: {
+                text: 'Cancel',
+                onClick() {
+                    this._triggerClick();
+                },
+            },
+            removeLastVertex: {
+                text: 'Remove Last Vertex',
+                onClick() {},
+            },
+            finish: {
+                text: 'Finish',
+                onClick() {
+                    this._map.pm.Draw[button.jsClass]._finishShape();
+                },
+            },
+        };
+
+        activeActions.forEach((name) => {
+            const action = actions[name];
+            const actionNode = L.DomUtil.create(
+                'a',
+                'leaflet-pm-action',
+                actionContainer,
+            );
+
+            actionNode.innerHTML = action.text;
+
+            L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+            L.DomEvent.disableClickPropagation(actionNode);
+        });
+
         if (button.toggleStatus) {
             L.DomUtil.addClass(newButton, 'active');
         }
@@ -78,7 +129,7 @@ const PMButton = L.Control.extend({
         L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
 
         L.DomEvent.disableClickPropagation(newButton);
-        return newButton;
+        return buttonContainer;
     },
 
     _applyStyleClasses() {

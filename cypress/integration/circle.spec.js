@@ -4,7 +4,7 @@ describe('Draw Circle', () => {
     it('draws a circle', () => {
         cy.toolbarButton('circle')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.get(mapSelector)
@@ -13,7 +13,7 @@ describe('Draw Circle', () => {
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(2);
@@ -49,7 +49,7 @@ describe('Draw Circle', () => {
     it('uses correct options from setPathOptions', () => {
         cy.toolbarButton('circle')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.window().then(({ map, L }) => {

@@ -4,7 +4,7 @@ describe('Draw Rectangle', () => {
     it('draws a rectangle', () => {
         cy.toolbarButton('rectangle')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.get(mapSelector)
@@ -13,7 +13,7 @@ describe('Draw Rectangle', () => {
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(4);

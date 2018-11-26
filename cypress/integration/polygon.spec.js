@@ -20,7 +20,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('polygon')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.window().then(({ map, L }) => {
@@ -80,7 +80,7 @@ describe('Draw & Edit Poly', () => {
         // activate polygon drawing
         cy.toolbarButton('polygon')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a polygon - triggers the event pm:create
@@ -100,7 +100,7 @@ describe('Draw & Edit Poly', () => {
         // activate polygon drawing
         cy.toolbarButton('polygon')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a polygon
@@ -114,7 +114,7 @@ describe('Draw & Edit Poly', () => {
 
         // button should be disabled after successful draw
         cy.toolbarButton('polygon')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.window().then(({ map }) => {
@@ -160,7 +160,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
     });
 
@@ -168,7 +168,7 @@ describe('Draw & Edit Poly', () => {
         // activate polygon drawing
         cy.toolbarButton('polygon')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a polygon
@@ -183,22 +183,22 @@ describe('Draw & Edit Poly', () => {
         // activate cutting drawing
         cy.toolbarButton('cut')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a polygon
         cy.get(mapSelector)
-            .click(150, 250)
-            .click(170, 80)
+            .click(250, 250)
+            .click(270, 80)
             .click(300, 80)
             .click(280, 280)
             .click(200, 285)
-            .click(150, 250);
+            .click(250, 250);
 
         // enable global edit mode
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(10);
@@ -206,7 +206,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
     });
 
@@ -216,7 +216,7 @@ describe('Draw & Edit Poly', () => {
         // enable global edit mode
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(8);
@@ -224,7 +224,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('polyline')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a line
@@ -238,7 +238,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(13);
@@ -246,14 +246,14 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('delete')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.get(mapSelector).click(650, 100);
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(5);

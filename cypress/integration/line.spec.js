@@ -23,7 +23,7 @@ describe('Draw & Edit Line', () => {
         // activate line drawing
         cy.toolbarButton('polyline')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a line
@@ -36,7 +36,7 @@ describe('Draw & Edit Line', () => {
 
         // button should be disabled after successful draw
         cy.toolbarButton('polyline')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.window().then(({ map }) => {

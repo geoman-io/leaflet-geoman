@@ -5,28 +5,28 @@ import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
 
-const ActionButton = L.Control.extend({
-    options: {
-        position: 'topleft',
-    },
-    onAdd(map) {
-        this._map = map;
+// const ActionButton = L.Control.extend({
+//     options: {
+//         position: 'topleft',
+//     },
+//     onAdd(map) {
+//         this._map = map;
 
-        console.log(map);
+//         console.log(map);
 
-        this._container = this._map.pm.Toolbar.actionsContainer;
-        this.buttonsDomNode = L.DomUtil.create(
-            'a',
-            'leaflet-buttons-control-button',
-            this._container,
-        );
-        this._container.appendChild(this.buttonsDomNode);
+//         this._container = this._map.pm.Toolbar.actionsContainer;
+//         this.buttonsDomNode = L.DomUtil.create(
+//             'a',
+//             'leaflet-buttons-control-button',
+//             this._container,
+//         );
+//         this._container.appendChild(this.buttonsDomNode);
 
-        return this._container;
-    },
-});
+//         return this._container;
+//     },
+// });
 
-L.Control.ActionButton = ActionButton;
+// L.Control.ActionButton = ActionButton;
 
 const Toolbar = L.Class.extend({
     options: {
@@ -51,10 +51,10 @@ const Toolbar = L.Class.extend({
             'leaflet-pm-toolbar leaflet-bar leaflet-control',
         );
         // Create empty actions part of the toolbar
-        this.actionsContainer = L.DomUtil.create(
-            'ul',
-            'leaflet-pm-actions leaflet-bar leaflet-control',
-        );
+        // this.actionsContainer = L.DomUtil.create(
+        //     'ul',
+        //     'leaflet-pm-actions leaflet-bar leaflet-control',
+        // );
 
         this._defineButtons();
     },
@@ -79,11 +79,6 @@ const Toolbar = L.Class.extend({
         // now show the specified buttons
         this._showHideButtons();
         this.isVisible = true;
-
-        const test = new L.Control.ActionButton();
-        console.log(test);
-        test.setPosition('topleft');
-        test.addTo(this.map);
     },
     removeControls() {
         // grab all buttons to loop through
@@ -156,10 +151,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const drawPolyButton = {
             className: 'leaflet-pm-icon-polygon',
+            jsClass: 'Poly',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -169,10 +166,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['finish', 'cancel'],
         };
 
         const cutButton = {
             className: 'leaflet-pm-icon-cut',
+            jsClass: 'Cut',
             onClick: () => {},
             afterClick: () => {
                 // enable polygon drawing mode without snap
@@ -186,10 +185,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['finish', 'cancel'],
         };
 
         const drawMarkerButton = {
             className: 'leaflet-pm-icon-marker',
+            jsClass: 'Marker',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -199,10 +200,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const drawLineButton = {
             className: 'leaflet-pm-icon-polyline',
+            jsClass: 'Line',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -212,10 +215,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['finish', 'cancel'],
         };
 
         const drawCircleButton = {
             className: 'leaflet-pm-icon-circle',
+            jsClass: 'Circle',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -225,10 +230,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const drawRectButton = {
             className: 'leaflet-pm-icon-rectangle',
+            jsClass: 'Rectangle',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -238,6 +245,7 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const editButton = {
@@ -250,6 +258,7 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const dragButton = {

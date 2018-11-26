@@ -44,16 +44,16 @@ describe('Testing the Toolbar', () => {
     it('Handles Button States', () => {
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.toolbarButton('marker')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.toolbarButton('polyline').click();
@@ -67,20 +67,20 @@ describe('Testing the Toolbar', () => {
         cy.toolbarButton('circle').click();
         cy.toolbarButton('circle')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
         cy.toolbarButton('polyline')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
         cy.toolbarButton('delete')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
         cy.toolbarButton('rectangle')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
     });
 
@@ -90,7 +90,7 @@ describe('Testing the Toolbar', () => {
         });
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.window().then(({ map }) => {
@@ -98,10 +98,10 @@ describe('Testing the Toolbar', () => {
         });
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
         cy.toolbarButton('delete')
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.window().then(({ map }) => {
@@ -111,7 +111,7 @@ describe('Testing the Toolbar', () => {
         });
 
         cy.toolbarButton('delete')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.window().then(({ map }) => {
@@ -122,15 +122,17 @@ describe('Testing the Toolbar', () => {
         });
 
         cy.toolbarButton('delete')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.toolbarButton('marker')
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
+
+        cy.toolbarButton('marker').click();
     });
 });

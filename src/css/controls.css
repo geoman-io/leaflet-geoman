@@ -1,17 +1,17 @@
 .leaflet-pm-toolbar {
-
-
 }
 
 .leaflet-pm-toolbar .leaflet-buttons-control-button {
     padding: 3px;
     box-sizing: border-box;
+    position: relative;
+    z-index: 3;
 }
 .leaflet-pm-toolbar .control-icon {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    opacity: .8;
+    opacity: 0.8;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
@@ -57,14 +57,49 @@
     cursor: pointer;
     background-color: #f4f4f4;
 }
-.leaflet-buttons-control-button.active {
+.active .leaflet-buttons-control-button {
     background-color: #f4f4f4;
 }
 
-.leaflet-buttons-control-button.active > .control-icon {
-    opacity: .5;
+.active .leaflet-buttons-control-button > .control-icon {
+    opacity: 0.5;
 }
 
 .leaflet-buttons-control-text-hide {
     display: none;
+}
+
+.button-container {
+    position: relative;
+}
+
+.button-container .leaflet-pm-actions-container {
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 31px;
+    display: none;
+    white-space: nowrap;
+}
+
+.button-container.active .leaflet-pm-actions-container {
+    display: block;
+}
+
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:last-child {
+    border-radius: 0px 3px 3px 0px;
+    border-right: 0px;
+}
+.button-container .leaflet-pm-actions-container .leaflet-pm-action {
+    padding: 0px 10px;
+    background-color: #666;
+    color: #fff;
+    display: inline-block;
+    width: auto;
+    border-right: 1px solid #eee;
+}
+
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover {
+    cursor: pointer;
+    background-color: #777;
 }
