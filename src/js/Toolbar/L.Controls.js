@@ -84,7 +84,9 @@ const PMButton = L.Control.extend({
             },
             removeLastVertex: {
                 text: 'Remove Last Vertex',
-                onClick() {},
+                onClick() {
+                    this._map.pm.Draw[button.jsClass]._removeLastVertex();
+                },
             },
             finish: {
                 text: 'Finish',

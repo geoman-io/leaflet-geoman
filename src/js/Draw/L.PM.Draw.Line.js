@@ -147,10 +147,7 @@ Draw.Line = Draw.extend({
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
 
             // set coords for hintline from marker to last vertex of drawin polyline
-            this._hintline.setLatLngs([
-                lastPolygonPoint,
-                this._hintMarker.getLatLng(),
-            ]);
+            this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
         }
     },
     _syncHintMarker(e) {
@@ -194,6 +191,32 @@ Draw.Line = Draw.extend({
         } else {
             this._hintline.setStyle(this.options.hintlineStyle);
         }
+    },
+    _removeLastVertex() {
+        // remove last coords
+        const coords = this._layer.getLatLngs();
+        const removedCoord = coords.pop();
+
+        // if all coords are gone, cancel drawing
+        if (coords.length < 1) {
+            this.disable();
+        }
+
+        // find corresponding marker
+        const marker = this._layerGroup
+            .getLayers()
+            .filter(l => l instanceof L.Marker)
+            .filter(l => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
+            .find(l => l.getLatLng() === removedCoord);
+
+        // remove that marker
+        this._layerGroup.removeLayer(marker);
+
+        // update layer with new coords
+        this._layer.setLatLngs(coords);
+
+        // sync the hintline again
+        this._syncHintLine();
     },
     _createVertex(e) {
         if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
@@ -250,10 +273,7 @@ Draw.Line = Draw.extend({
         }
 
         // create the leaflet shape and add it to the map
-        const polylineLayer = L.polyline(
-            coords,
-            this.options.pathOptions,
-        ).addTo(this._map);
+        const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(this._map);
 
         // disable drawing
         this.disable();
