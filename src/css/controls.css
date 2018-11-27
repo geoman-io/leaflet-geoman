@@ -97,6 +97,7 @@
     display: inline-block;
     width: auto;
     border-right: 1px solid #eee;
+    user-select: none;
 }
 
 .button-container .leaflet-pm-actions-container .leaflet-pm-action:hover {

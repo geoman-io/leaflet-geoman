@@ -98,7 +98,7 @@ const PMButton = L.Control.extend({
             const action = actions[name];
             const actionNode = L.DomUtil.create(
                 'a',
-                'leaflet-pm-action',
+                `leaflet-pm-action action-${name}`,
                 actionContainer,
             );
 

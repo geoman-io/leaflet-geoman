@@ -1,4 +1,6 @@
 describe('Testing the Toolbar', () => {
+    const mapSelector = '#map';
+
     it('Repositions The Toolbar', () => {
         cy.get('.leaflet-pm-toolbar')
             .parent('.leaflet-top.leaflet-left')
@@ -134,5 +136,38 @@ describe('Testing the Toolbar', () => {
             .should('have.class', 'active');
 
         cy.toolbarButton('marker').click();
+    });
+
+    it.only('has functioning actions', () => {
+        cy.toolbarButton('polygon').click();
+
+        cy.get('.button-container.active .action-cancel').should('exist');
+
+        cy.get('.button-container.active .action-cancel').click();
+
+        cy.get('.button-container.active .action-cancel').should('not.exist');
+
+        cy.toolbarButton('polygon').click();
+
+        cy.get(mapSelector)
+            .click(250, 250)
+            .click(270, 80)
+            .click(300, 80)
+            .click(280, 280)
+            .click(200, 285);
+
+        cy.hasVertexMarkers(6);
+
+        cy.get('.button-container.active .action-finish').click();
+
+        cy.hasVertexMarkers(0);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(5);
+
+        cy.get('.button-container.active .action-cancel').click();
+
+        cy.hasVertexMarkers(0);
     });
 });
