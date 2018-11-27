@@ -190,12 +190,12 @@ describe('Draw & Edit Poly', () => {
 
         // draw a polygon
         cy.get(mapSelector)
-            .click(250, 250)
-            .click(270, 80)
-            .click(300, 80)
+            .click(150, 150)
+            .click(270, 180)
+            .click(300, 180)
             .click(280, 280)
             .click(200, 285)
-            .click(250, 250);
+            .click(150, 150);
 
         // enable global edit mode
         cy.toolbarButton('edit')
