@@ -1,4 +1,6 @@
 describe('Testing the Toolbar', () => {
+    const mapSelector = '#map';
+
     it('Repositions The Toolbar', () => {
         cy.get('.leaflet-pm-toolbar')
             .parent('.leaflet-top.leaflet-left')
@@ -44,16 +46,16 @@ describe('Testing the Toolbar', () => {
     it('Handles Button States', () => {
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.toolbarButton('marker')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.toolbarButton('polyline').click();
@@ -67,20 +69,20 @@ describe('Testing the Toolbar', () => {
         cy.toolbarButton('circle').click();
         cy.toolbarButton('circle')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
         cy.toolbarButton('polyline')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
         cy.toolbarButton('delete')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
         cy.toolbarButton('rectangle')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
     });
 
@@ -90,7 +92,7 @@ describe('Testing the Toolbar', () => {
         });
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.window().then(({ map }) => {
@@ -98,10 +100,10 @@ describe('Testing the Toolbar', () => {
         });
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
         cy.toolbarButton('delete')
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.window().then(({ map }) => {
@@ -111,7 +113,7 @@ describe('Testing the Toolbar', () => {
         });
 
         cy.toolbarButton('delete')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.window().then(({ map }) => {
@@ -122,15 +124,50 @@ describe('Testing the Toolbar', () => {
         });
 
         cy.toolbarButton('delete')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.toolbarButton('edit')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.toolbarButton('marker')
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
+
+        cy.toolbarButton('marker').click();
+    });
+
+    it('has functioning actions', () => {
+        cy.toolbarButton('polygon').click();
+
+        cy.get('.button-container.active .action-cancel').should('exist');
+
+        cy.get('.button-container.active .action-cancel').click();
+
+        cy.get('.button-container.active .action-cancel').should('not.exist');
+
+        cy.toolbarButton('polygon').click();
+
+        cy.get(mapSelector)
+            .click(250, 250)
+            .click(270, 80)
+            .click(300, 80)
+            .click(280, 280)
+            .click(200, 285);
+
+        cy.hasVertexMarkers(6);
+
+        cy.get('.button-container.active .action-finish').click();
+
+        cy.hasVertexMarkers(0);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(5);
+
+        cy.get('.button-container.active .action-cancel').click();
+
+        cy.hasVertexMarkers(0);
     });
 });

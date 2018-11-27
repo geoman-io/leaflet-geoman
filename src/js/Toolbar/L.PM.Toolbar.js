@@ -1,6 +1,6 @@
 /**
-* The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
-*/
+ * The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
+ */
 import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
@@ -23,7 +23,11 @@ const Toolbar = L.Class.extend({
 
         this.buttons = {};
         this.isVisible = false;
-        this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
+        this.container = L.DomUtil.create(
+            'div',
+            'leaflet-pm-toolbar leaflet-bar leaflet-control',
+        );
+
         this._defineButtons();
     },
     getButtons() {
@@ -79,7 +83,10 @@ const Toolbar = L.Class.extend({
         // so, we trigger a click on all currently active (toggled) buttons
 
         for (const name in this.buttons) {
-            if (this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
+            if (
+                this.buttons[name] !== exceptThisButton &&
+                this.buttons[name].toggled()
+            ) {
                 this.buttons[name]._triggerClick();
             }
         }
@@ -116,10 +123,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const drawPolyButton = {
             className: 'leaflet-pm-icon-polygon',
+            jsClass: 'Poly',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -129,23 +138,31 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['finish', 'cancel'],
         };
 
         const cutButton = {
             className: 'leaflet-pm-icon-cut',
+            jsClass: 'Cut',
             onClick: () => {},
             afterClick: () => {
                 // enable polygon drawing mode without snap
-                this.map.pm.Draw.Cut.toggle({ snappable: true, cursorMarker: true, allowSelfIntersection: false });
+                this.map.pm.Draw.Cut.toggle({
+                    snappable: true,
+                    cursorMarker: true,
+                    allowSelfIntersection: false,
+                });
             },
             doToggle: true,
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['finish', 'cancel'],
         };
 
         const drawMarkerButton = {
             className: 'leaflet-pm-icon-marker',
+            jsClass: 'Marker',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -155,10 +172,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const drawLineButton = {
             className: 'leaflet-pm-icon-polyline',
+            jsClass: 'Line',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -168,10 +187,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['finish', 'cancel'],
         };
 
         const drawCircleButton = {
             className: 'leaflet-pm-icon-circle',
+            jsClass: 'Circle',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -181,10 +202,12 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
-        const drawRectangleButton = {
+        const drawRectButton = {
             className: 'leaflet-pm-icon-rectangle',
+            jsClass: 'Rectangle',
             onClick: () => {},
             afterClick: () => {
                 // toggle drawing mode
@@ -194,6 +217,7 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const editButton = {
@@ -206,6 +230,7 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            actions: ['cancel'],
         };
 
         const dragButton = {
@@ -220,7 +245,10 @@ const Toolbar = L.Class.extend({
 
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
-        this._addButton('drawRectangle', new L.Control.PMButton(drawRectangleButton));
+        this._addButton(
+            'drawRectangle',
+            new L.Control.PMButton(drawRectButton),
+        );
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         this._addButton('cutPolygon', new L.Control.PMButton(cutButton));

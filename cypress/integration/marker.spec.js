@@ -5,8 +5,6 @@ describe('Draw Marker', () => {
         cy.window().then(({ map, L }) => {
             const markerLayer = L.geoJson().addTo(map);
 
-            console.log(markerLayer);
-
             map.pm.enableDraw('Marker', {
                 snappable: false,
             });
