@@ -15,6 +15,26 @@ describe('Draw & Edit Line', () => {
         cy.hasVertexMarkers(0);
     });
 
+    it('removes last vertex', () => {
+        cy.toolbarButton('polyline').click();
+
+        cy.get(mapSelector)
+            .click(190, 250)
+            .click(200, 50)
+            .click(250, 50)
+            .click(250, 250);
+
+        cy.hasVertexMarkers(5);
+
+        cy.get('.button-container.active .action-removeLastVertex').click();
+
+        cy.hasVertexMarkers(4);
+
+        cy.get('.button-container.active .action-removeLastVertex').click();
+
+        cy.hasVertexMarkers(3);
+    });
+
     it('draws and edits a line', () => {
         cy.window().then(({ map }) => {
             cy.hasLayers(map, 1);
