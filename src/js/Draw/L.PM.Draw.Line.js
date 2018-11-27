@@ -195,6 +195,26 @@ Draw.Line = Draw.extend({
             this._hintline.setStyle(this.options.hintlineStyle);
         }
     },
+    _removeLastVertex() {
+        // remove last coords
+        const coords = this._layer.getLatLngs();
+        const removedCoord = coords.pop();
+
+        // find corresponding marker
+        const marker = this._layerGroup
+            .getLayers()
+            .filter(l => l instanceof L.Marker)
+            .find(l => l.getLatLng() === removedCoord);
+
+        // remove that marker
+        this._layerGroup.removeLayer(marker);
+
+        // update layer with new coords
+        this._layer.setLatLngs(coords);
+
+        // sync the hintline again
+        this._syncHintLine();
+    },
     _createVertex(e) {
         if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
             return;

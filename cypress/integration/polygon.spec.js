@@ -1,7 +1,7 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
-    it('doesnt finish single point polys', () => {
+    it.only('doesnt finish single point polys', () => {
         cy.toolbarButton('polygon').click();
 
         cy.get(mapSelector)
@@ -11,6 +11,8 @@ describe('Draw & Edit Poly', () => {
         cy.toolbarButton('edit').click();
 
         cy.hasVertexMarkers(0);
+
+        cy.toolbarButton('edit').click();
     });
 
     it('adds new vertex to end of array', () => {
@@ -258,5 +260,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.hasVertexMarkers(5);
         cy.hasMiddleMarkers(4);
+
+        cy.toolbarButton('edit').click();
     });
 });
