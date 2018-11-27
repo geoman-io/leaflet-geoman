@@ -138,7 +138,7 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
-            actions: ['finish', 'cancel'],
+            actions: ['finish', 'removeLastVertex', 'cancel'],
         };
 
         const cutButton = {
@@ -157,7 +157,7 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
-            actions: ['finish', 'cancel'],
+            actions: ['finish', 'removeLastVertex', 'cancel'],
         };
 
         const drawMarkerButton = {
@@ -187,7 +187,7 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
-            actions: ['finish', 'cancel'],
+            actions: ['finish', 'removeLastVertex', 'cancel'],
         };
 
         const drawCircleButton = {

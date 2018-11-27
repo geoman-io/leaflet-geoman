@@ -200,6 +200,10 @@ Draw.Line = Draw.extend({
         const coords = this._layer.getLatLngs();
         const removedCoord = coords.pop();
 
+        if (coords.length < 1) {
+            this.disable();
+        }
+
         // find corresponding marker
         const marker = this._layerGroup
             .getLayers()
