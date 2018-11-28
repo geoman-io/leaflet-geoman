@@ -47,6 +47,17 @@ Draw.Line = Draw.extend({
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
         }
 
+        // add tooltip to hintmarker
+        const tt = L.tooltip(
+            {
+                sticky: true,
+                permanent: true,
+                opacity: 0.5,
+            },
+            this._hintMarker,
+        );
+        this._hintMarker.bindTooltip('my tooltip text', tt).openTooltip();
+
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
 
