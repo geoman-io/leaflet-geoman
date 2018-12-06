@@ -138,7 +138,7 @@ describe('Testing the Toolbar', () => {
         cy.toolbarButton('marker').click();
     });
 
-    it.only('supports fontawesome', () => {
+    it('supports fontawesome', () => {
         cy.get('.fa-map-marker-alt').should('not.exist');
         cy.get('.fa-pencil-alt').should('not.exist');
         cy.get('.fa-trash-alt').should('not.exist');
