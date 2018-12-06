@@ -138,6 +138,14 @@ describe('Testing the Toolbar', () => {
         cy.toolbarButton('marker').click();
     });
 
+    it.only('supports fontawesome', () => {
+        cy.window().then(({ map }) => {
+            map.pm.addControls({
+                useFontAwesome: true,
+            });
+        });
+    });
+
     it('has functioning actions', () => {
         cy.toolbarButton('polygon').click();
 
