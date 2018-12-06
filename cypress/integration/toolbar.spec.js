@@ -139,11 +139,19 @@ describe('Testing the Toolbar', () => {
     });
 
     it.only('supports fontawesome', () => {
+        cy.get('.fa-map-marker-alt').should('not.exist');
+        cy.get('.fa-pencil-alt').should('not.exist');
+        cy.get('.fa-trash-alt').should('not.exist');
+
         cy.window().then(({ map }) => {
             map.pm.addControls({
                 useFontAwesome: true,
             });
         });
+
+        cy.get('.fa-map-marker-alt').should('exist');
+        cy.get('.fa-pencil-alt').should('exist');
+        cy.get('.fa-trash-alt').should('exist');
     });
 
     it('has functioning actions', () => {
