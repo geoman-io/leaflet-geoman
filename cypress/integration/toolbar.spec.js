@@ -146,12 +146,13 @@ describe('Testing the Toolbar', () => {
         cy.window().then(({ map }) => {
             map.pm.addControls({
                 useFontAwesome: true,
+                removalMode: false,
             });
         });
 
         cy.get('.fa-map-marker-alt').should('exist');
         cy.get('.fa-pencil-alt').should('exist');
-        cy.get('.fa-trash-alt').should('exist');
+        cy.get('.fa-trash-alt').should('not.exist');
     });
 
     it('has functioning actions', () => {
