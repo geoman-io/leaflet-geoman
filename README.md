@@ -33,7 +33,10 @@ and include them in your project.
 CSS
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css" />
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css"
+/>
 ```
 
 JS
@@ -77,6 +80,7 @@ various features.
 // define toolbar options
 var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
+    useFontAwesome: false, // use fontawesome instead of glyphicons (you need to include fontawesome yourself)
     drawMarker: true, // adds button to draw markers
     drawPolyline: true, // adds button to draw a polyline
     drawRectangle: true, // adds button to draw a rectangle
