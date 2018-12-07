@@ -7,6 +7,23 @@
     position: relative;
     z-index: 3;
 }
+
+.leaflet-pm-toolbar .control-fa-icon {
+    font-size: 19px;
+    line-height: 24px;
+}
+
+.fa-ellipsis-v {
+    transform: rotate(45deg);
+}
+
+.leaflet-pm-toolbar .control-fa-icon.fa-pencil-alt {
+    font-size: 16px;
+}
+.leaflet-pm-toolbar .control-fa-icon.fa-trash-alt {
+    font-size: 16px;
+}
+
 .leaflet-pm-toolbar .control-icon {
     width: 100%;
     height: 100%;
