@@ -119,7 +119,7 @@ const PMButton = L.Control.extend({
         if (button.title) {
             image.setAttribute('title', button.title);
         }
-
+      
         if (button.iconUrl) {
             image.setAttribute('src', button.iconUrl);
         }
