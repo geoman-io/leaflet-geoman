@@ -3,7 +3,7 @@ describe('Shows Tooltips', () => {
 
     const mapSelector = '#map';
 
-    it.only('Has Circle Tooltips', () => {
+    it('Has Circle Tooltips', () => {
         cy.get('.leaflet-tooltip-bottom').should('not.exist');
         cy.toolbarButton('circle').click();
 
@@ -20,6 +20,36 @@ describe('Shows Tooltips', () => {
         });
 
         cy.get(mapSelector).click(290, 350);
+
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+    });
+
+    it('Has Line Tooltips', () => {
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+
+        // activate polygon drawing
+        cy.toolbarButton('polyline').click();
+
+        cy.get('.leaflet-tooltip-bottom').should('exist');
+
+        cy.get('.leaflet-tooltip-bottom').then((el) => {
+            expect(el).to.have.text('Click to place first vertex');
+        });
+
+        // draw a polygon
+        cy.get(mapSelector).click(290, 250);
+
+        cy.get('.leaflet-tooltip-bottom').then((el) => {
+            expect(el).to.have.text('Click to continue drawing');
+        });
+
+        cy.get(mapSelector).click(300, 50);
+
+        cy.get('.leaflet-tooltip-bottom').then((el) => {
+            expect(el).to.have.text('Click any existing marker to finish');
+        });
+
+        cy.get(mapSelector).click(290, 250);
 
         cy.get('.leaflet-tooltip-bottom').should('not.exist');
     });

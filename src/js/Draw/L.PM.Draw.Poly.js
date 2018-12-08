@@ -25,7 +25,7 @@ Draw.Poly = Draw.Line.extend({
             // Leaflet creates an extra node with double click
             coords.splice(coords.length - 1, 1);
         }
-        const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(this._map);
+        const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(this._map,);
 
         // disable drawing
         this.disable();
@@ -66,6 +66,16 @@ Draw.Poly = Draw.Line.extend({
             if (this.options.snappable) {
                 this._cleanupSnapping();
             }
+        }
+
+        // handle tooltip text
+        if (first) {
+            this._hintMarker.setTooltipContent('Click to continue drawing');
+        }
+        const third = this._layer.getLatLngs().length === 3;
+
+        if (third) {
+            this._hintMarker.setTooltipContent('Click first marker to finish');
         }
 
         return marker;

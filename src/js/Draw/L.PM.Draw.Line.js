@@ -271,15 +271,6 @@ Draw.Line = Draw.extend({
             marker: newMarker,
             latlng,
         });
-
-        if (first) {
-            this._hintMarker.setTooltipContent('Click to continue drawing');
-        }
-
-        const third = this._layer.getLatLngs().length === 3;
-        if (third) {
-            this._hintMarker.setTooltipContent('Click first marker to finish');
-        }
     },
     _finishShape() {
         // if self intersection is not allowed, do not finish the shape!
@@ -314,7 +305,7 @@ Draw.Line = Draw.extend({
             this._cleanupSnapping();
         }
     },
-    _createMarker(latlng) {
+    _createMarker(latlng, first) {
         // create the new marker
         const marker = new L.Marker(latlng, {
             draggable: false,
@@ -327,6 +318,16 @@ Draw.Line = Draw.extend({
 
         // a click on any marker finishes this shape
         marker.on('click', this._finishShape, this);
+
+        // handle tooltip text
+        if (first) {
+            this._hintMarker.setTooltipContent('Click to continue drawing');
+        }
+        const second = this._layer.getLatLngs().length === 2;
+
+        if (second) {
+            this._hintMarker.setTooltipContent('Click any existing marker to finish',);
+        }
 
         return marker;
     },
