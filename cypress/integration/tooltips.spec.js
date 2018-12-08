@@ -24,6 +24,27 @@ describe('Shows Tooltips', () => {
         cy.get('.leaflet-tooltip-bottom').should('not.exist');
     });
 
+    it('Has Rectangle Tooltips', () => {
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+        cy.toolbarButton('rectangle').click();
+
+        cy.get('.leaflet-tooltip-bottom').should('exist');
+
+        cy.get('.leaflet-tooltip-bottom').then((el) => {
+            expect(el).to.have.text('Click to place first vertex');
+        });
+
+        cy.get(mapSelector).click(290, 250);
+
+        cy.get('.leaflet-tooltip-bottom').then((el) => {
+            expect(el).to.have.text('Click to finish');
+        });
+
+        cy.get(mapSelector).click(390, 350);
+
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+    });
+
     it('Has Circle Tooltips', () => {
         cy.get('.leaflet-tooltip-bottom').should('not.exist');
         cy.toolbarButton('circle').click();
