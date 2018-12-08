@@ -128,6 +128,7 @@ const Toolbar = L.Class.extend({
         // some buttons are still in their respective classes, like L.PM.Draw.Poly
         const deleteButton = {
             className: ' leaflet-pm-icon-delete',
+            title: 'Removal Mode',
             onClick: () => {},
             afterClick: () => {
                 this.map.pm.toggleGlobalRemovalMode();
@@ -141,6 +142,7 @@ const Toolbar = L.Class.extend({
 
         const drawPolyButton = {
             className: 'leaflet-pm-icon-polygon',
+            title: 'Draw Polygon',
             jsClass: 'Poly',
             onClick: () => {},
             afterClick: () => {
@@ -156,6 +158,7 @@ const Toolbar = L.Class.extend({
 
         const cutButton = {
             className: 'leaflet-pm-icon-cut',
+            title: 'Cut Layers',
             jsClass: 'Cut',
             onClick: () => {},
             afterClick: () => {
@@ -175,6 +178,7 @@ const Toolbar = L.Class.extend({
 
         const drawMarkerButton = {
             className: 'leaflet-pm-icon-marker',
+            title: 'Draw Marker',
             jsClass: 'Marker',
             onClick: () => {},
             afterClick: () => {
@@ -190,6 +194,7 @@ const Toolbar = L.Class.extend({
 
         const drawLineButton = {
             className: 'leaflet-pm-icon-polyline',
+            title: 'Draw Polyline',
             jsClass: 'Line',
             onClick: () => {},
             afterClick: () => {
@@ -205,6 +210,7 @@ const Toolbar = L.Class.extend({
 
         const drawCircleButton = {
             className: 'leaflet-pm-icon-circle',
+            title: 'Draw Circle',
             jsClass: 'Circle',
             onClick: () => {},
             afterClick: () => {
@@ -220,6 +226,7 @@ const Toolbar = L.Class.extend({
 
         const drawRectButton = {
             className: 'leaflet-pm-icon-rectangle',
+            title: 'Draw Rectangle',
             jsClass: 'Rectangle',
             onClick: () => {},
             afterClick: () => {
@@ -235,6 +242,7 @@ const Toolbar = L.Class.extend({
 
         const editButton = {
             className: 'leaflet-pm-icon-edit',
+            title: 'Edit Layers',
             onClick: () => {},
             afterClick: () => {
                 this.map.pm.toggleGlobalEditMode();
@@ -248,6 +256,7 @@ const Toolbar = L.Class.extend({
 
         const dragButton = {
             className: 'leaflet-pm-icon-drag',
+            title: 'Drag Layers',
             onClick: () => {},
             afterClick: () => {},
             doToggle: true,
