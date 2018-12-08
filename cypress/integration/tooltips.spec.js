@@ -3,6 +3,27 @@ describe('Shows Tooltips', () => {
 
     const mapSelector = '#map';
 
+    it.only('Has Circle Tooltips', () => {
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+        cy.toolbarButton('circle').click();
+
+        cy.get('.leaflet-tooltip-bottom').should('exist');
+
+        cy.get('.leaflet-tooltip-bottom').then((el) => {
+            expect(el).to.have.text('Click to place circle center');
+        });
+
+        cy.get(mapSelector).click(290, 250);
+
+        cy.get('.leaflet-tooltip-bottom').then((el) => {
+            expect(el).to.have.text('Click to finish circle');
+        });
+
+        cy.get(mapSelector).click(290, 350);
+
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+    });
+
     it('Has Polygon Tooltips', () => {
         cy.get('.leaflet-tooltip-bottom').should('not.exist');
 
@@ -12,7 +33,7 @@ describe('Shows Tooltips', () => {
         cy.get('.leaflet-tooltip-bottom').should('exist');
 
         cy.get('.leaflet-tooltip-bottom').then((el) => {
-            expect(el).to.have.text('Click to Place First Vertex');
+            expect(el).to.have.text('Click to place first vertex');
         });
 
         // draw a polygon
@@ -24,7 +45,7 @@ describe('Shows Tooltips', () => {
             .click(400, 150);
 
         cy.get('.leaflet-tooltip-bottom').then((el) => {
-            expect(el).to.have.text('Click First Marker to Finish');
+            expect(el).to.have.text('Click first marker to finish');
         });
 
         cy.get(mapSelector).click(290, 250);
