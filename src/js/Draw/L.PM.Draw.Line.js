@@ -47,16 +47,16 @@ Draw.Line = Draw.extend({
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
         }
 
-        // // add tooltip to hintmarker
-        // const tt = L.tooltip(
-        //     {
-        //         sticky: true,
-        //         permanent: true,
-        //         opacity: 0.5,
-        //     },
-        //     this._hintMarker,
-        // );
-        // this._hintMarker.bindTooltip('my tooltip text', tt).openTooltip();
+        // add tooltip to hintmarker
+        this._hintMarker
+            .bindTooltip('Click to Place First Vertex', {
+                permanent: true,
+                offset: L.point(0, 10),
+                direction: 'bottom',
+
+                opacity: 0.8,
+            })
+            .openTooltip();
 
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
@@ -271,6 +271,15 @@ Draw.Line = Draw.extend({
             marker: newMarker,
             latlng,
         });
+
+        if (first) {
+            this._hintMarker.setTooltipContent('Click To Continue Drawing');
+        }
+
+        const third = this._layer.getLatLngs().length === 3;
+        if (third) {
+            this._hintMarker.setTooltipContent('Click First Marker to Finish');
+        }
     },
     _finishShape() {
         // if self intersection is not allowed, do not finish the shape!
