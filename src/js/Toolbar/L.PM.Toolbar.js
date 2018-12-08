@@ -74,6 +74,19 @@ const Toolbar = L.Class.extend({
         this.buttons[name] = button;
         this.options[name] = this.options[name] || false;
 
+        // add tooltip to hintmarker
+        // const tt = L.tooltip(
+        //     {
+        //         sticky: true,
+        //         permanent: true,
+        //         opacity: 0.5,
+        //     },
+        //     button,
+        // );
+
+        // console.log(tt);
+        // button.bindTooltip('my tooltip text', tt).openTooltip();
+
         return this.buttons[name];
     },
     triggerClickOnToggledButtons(exceptThisButton) {

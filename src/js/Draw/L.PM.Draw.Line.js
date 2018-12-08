@@ -47,16 +47,16 @@ Draw.Line = Draw.extend({
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
         }
 
-        // add tooltip to hintmarker
-        const tt = L.tooltip(
-            {
-                sticky: true,
-                permanent: true,
-                opacity: 0.5,
-            },
-            this._hintMarker,
-        );
-        this._hintMarker.bindTooltip('my tooltip text', tt).openTooltip();
+        // // add tooltip to hintmarker
+        // const tt = L.tooltip(
+        //     {
+        //         sticky: true,
+        //         permanent: true,
+        //         opacity: 0.5,
+        //     },
+        //     this._hintMarker,
+        // );
+        // this._hintMarker.bindTooltip('my tooltip text', tt).openTooltip();
 
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
@@ -158,7 +158,10 @@ Draw.Line = Draw.extend({
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
 
             // set coords for hintline from marker to last vertex of drawin polyline
-            this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
+            this._hintline.setLatLngs([
+                lastPolygonPoint,
+                this._hintMarker.getLatLng(),
+            ]);
         }
     },
     _syncHintMarker(e) {
@@ -284,7 +287,10 @@ Draw.Line = Draw.extend({
         }
 
         // create the leaflet shape and add it to the map
-        const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(this._map);
+        const polylineLayer = L.polyline(
+            coords,
+            this.options.pathOptions,
+        ).addTo(this._map);
 
         // disable drawing
         this.disable();
