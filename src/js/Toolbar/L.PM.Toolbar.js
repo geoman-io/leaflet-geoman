@@ -112,6 +112,19 @@ const Toolbar = L.Class.extend({
         this.buttons[name] = button;
         this.options[name] = this.options[name] || false;
 
+        // add tooltip to hintmarker
+        // const tt = L.tooltip(
+        //     {
+        //         sticky: true,
+        //         permanent: true,
+        //         opacity: 0.5,
+        //     },
+        //     button,
+        // );
+
+        // console.log(tt);
+        // button.bindTooltip('my tooltip text', tt).openTooltip();
+
         return this.buttons[name];
     },
     triggerClickOnToggledButtons(exceptThisButton) {
@@ -153,6 +166,7 @@ const Toolbar = L.Class.extend({
         // some buttons are still in their respective classes, like L.PM.Draw.Poly
         const drawMarkerButton = {
             className: 'control-icon leaflet-pm-icon-marker',
+            title: 'Draw Marker',
             jsClass: 'Marker',
             onClick: () => {},
             afterClick: () => {
@@ -167,6 +181,7 @@ const Toolbar = L.Class.extend({
         };
 
         const deleteButton = {
+            title: 'Removal Mode',
             className: 'control-icon leaflet-pm-icon-delete',
             onClick: () => {},
             afterClick: () => {
@@ -180,6 +195,7 @@ const Toolbar = L.Class.extend({
         };
 
         const drawPolyButton = {
+            title: 'Draw Polygon',
             className: 'control-icon leaflet-pm-icon-polygon',
             jsClass: 'Poly',
             onClick: () => {},
@@ -195,6 +211,7 @@ const Toolbar = L.Class.extend({
         };
 
         const cutButton = {
+            title: 'Cut Layers',
             className: 'control-icon leaflet-pm-icon-cut',
             jsClass: 'Cut',
             onClick: () => {},
@@ -215,6 +232,7 @@ const Toolbar = L.Class.extend({
 
         const drawLineButton = {
             className: 'control-icon leaflet-pm-icon-polyline',
+            title: 'Draw Polyline',
             jsClass: 'Line',
             onClick: () => {},
             afterClick: () => {
@@ -229,6 +247,7 @@ const Toolbar = L.Class.extend({
         };
 
         const drawCircleButton = {
+            title: 'Draw Circle',
             className: 'control-icon leaflet-pm-icon-circle',
             jsClass: 'Circle',
             onClick: () => {},
@@ -244,6 +263,7 @@ const Toolbar = L.Class.extend({
         };
 
         const drawRectButton = {
+            title: 'Draw Rectangle',
             className: 'control-icon leaflet-pm-icon-rectangle',
             jsClass: 'Rectangle',
             onClick: () => {},
@@ -259,6 +279,7 @@ const Toolbar = L.Class.extend({
         };
 
         const editButton = {
+            title: 'Edit Layers',
             className: 'control-icon leaflet-pm-icon-edit',
             onClick: () => {},
             afterClick: () => {
@@ -272,6 +293,7 @@ const Toolbar = L.Class.extend({
         };
 
         const dragButton = {
+            title: 'Drag Layers',
             className: 'control-icon leaflet-pm-icon-drag',
             onClick: () => {},
             afterClick: () => {},
