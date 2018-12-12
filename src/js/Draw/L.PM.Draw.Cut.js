@@ -68,6 +68,10 @@ Draw.Cut = Draw.Poly.extend({
         });
     },
     _finishShape() {
+        // if self intersection is not allowed, do not finish the shape!
+        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+            return;
+        }
         const coords = this._layer.getLatLngs();
         const polygonLayer = L.polygon(coords, this.options.pathOptions);
         this._cut(polygonLayer);
