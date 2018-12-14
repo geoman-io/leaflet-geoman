@@ -1,6 +1,3 @@
-/**
- * The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
- */
 import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
@@ -68,7 +65,7 @@ const Toolbar = L.Class.extend({
                 editMode: 'control-fa-icon fas fa-pencil-alt',
                 removalMode: 'control-fa-icon far fa-trash-alt',
             },
-            glyphicons: {
+            geomanIcons: {
                 drawMarker: 'control-icon leaflet-pm-icon-marker',
                 drawPolyline: 'control-icon leaflet-pm-icon-polyline',
                 drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
@@ -86,7 +83,7 @@ const Toolbar = L.Class.extend({
             L.Util.setOptions(button, {
                 className: fa
                     ? iconClasses.fontawesome[name]
-                    : iconClasses.glyphicons[name],
+                    : iconClasses.geomanIcons[name],
             });
         }
     },
