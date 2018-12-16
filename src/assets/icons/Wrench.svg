@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>Atoms/Icons/Tools/Wrench</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M27.5354442,18.9468943 C26.5057856,20.7695439 24.5504761,22 22.3077781,22 C19.9540423,22 17.9168571,20.644686 16.9340589,18.6718943 L3.49979471,18.6718943 C2.13288996,18.6718943 1.02479471,17.563799 1.02479471,16.1968943 C1.02479471,14.8299895 2.13288996,13.7218943 3.49979471,13.7218943 L16.7553761,13.7218943 C17.6523964,11.5379213 19.8004868,10 22.3077781,10 C24.7084652,10 26.7798469,11.4099238 27.7390461,13.4468943 L21.4807904,13.4468943 L19.969474,16.1968943 L21.4807904,18.9468943 L27.5354442,18.9468943 Z M3.38700539,17.0768943 C3.943502,17.0768943 4.39463163,16.6336562 4.39463163,16.0868943 C4.39463163,15.5401324 3.943502,15.0968943 3.38700539,15.0968943 C2.83050878,15.0968943 2.37937914,15.5401324 2.37937914,16.0868943 C2.37937914,16.6336562 2.83050878,17.0768943 3.38700539,17.0768943 Z" id="path-1"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Atoms/Icons/Tools/Wrench" transform="translate(-3.000000, -3.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Mask" fill="#5B5B5B" fill-rule="nonzero" transform="translate(14.381920, 16.000000) rotate(-45.000000) translate(-14.381920, -16.000000) " xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>

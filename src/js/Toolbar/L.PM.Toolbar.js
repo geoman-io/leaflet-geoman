@@ -1,6 +1,3 @@
-/**
- * The Icons used in this Toolbar are CC-BY Glyphicons - http://glyphicons.com/
- */
 import PMButton from './L.Controls';
 
 L.Control.PMButton = PMButton;
@@ -68,7 +65,7 @@ const Toolbar = L.Class.extend({
                 editMode: 'control-fa-icon fas fa-pencil-alt',
                 removalMode: 'control-fa-icon far fa-trash-alt',
             },
-            glyphicons: {
+            geomanIcons: {
                 drawMarker: 'control-icon leaflet-pm-icon-marker',
                 drawPolyline: 'control-icon leaflet-pm-icon-polyline',
                 drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
@@ -86,7 +83,7 @@ const Toolbar = L.Class.extend({
             L.Util.setOptions(button, {
                 className: fa
                     ? iconClasses.fontawesome[name]
-                    : iconClasses.glyphicons[name],
+                    : iconClasses.geomanIcons[name],
             });
         }
     },
@@ -292,17 +289,6 @@ const Toolbar = L.Class.extend({
             actions: ['cancel'],
         };
 
-        const dragButton = {
-            title: 'Drag Layers',
-            className: 'control-icon leaflet-pm-icon-drag',
-            onClick: () => {},
-            afterClick: () => {},
-            doToggle: true,
-            toggleStatus: false,
-            disableOtherButtons: true,
-            position: this.options.position,
-        };
-
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
         this._addButton(
@@ -313,7 +299,6 @@ const Toolbar = L.Class.extend({
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('editMode', new L.Control.PMButton(editButton));
-        this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
         this._addButton('removalMode', new L.Control.PMButton(deleteButton));
     },
 
