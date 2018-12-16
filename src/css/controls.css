@@ -48,9 +48,6 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-rectangle {
     background-image: url('../assets/icons/Rectangle.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-drag {
-    /*background-image: url('../assets/icons/drag.png');*/
-}
 .leaflet-pm-toolbar .leaflet-pm-icon-delete {
     background-image: url('../assets/icons/Eraser.svg');
 }

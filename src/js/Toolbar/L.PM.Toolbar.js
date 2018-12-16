@@ -289,17 +289,6 @@ const Toolbar = L.Class.extend({
             actions: ['cancel'],
         };
 
-        const dragButton = {
-            title: 'Drag Layers',
-            className: 'control-icon leaflet-pm-icon-drag',
-            onClick: () => {},
-            afterClick: () => {},
-            doToggle: true,
-            toggleStatus: false,
-            disableOtherButtons: true,
-            position: this.options.position,
-        };
-
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
         this._addButton(
@@ -310,7 +299,6 @@ const Toolbar = L.Class.extend({
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('editMode', new L.Control.PMButton(editButton));
-        this._addButton('dragPolygon', new L.Control.PMButton(dragButton));
         this._addButton('removalMode', new L.Control.PMButton(deleteButton));
     },
 
