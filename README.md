@@ -80,7 +80,7 @@ various features.
 // define toolbar options
 var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
-    useFontAwesome: false, // use fontawesome instead of glyphicons (you need to include fontawesome yourself)
+    useFontAwesome: false, // use fontawesome instead of geomanIcons (you need to include fontawesome yourself)
     drawMarker: true, // adds button to draw markers
     drawPolyline: true, // adds button to draw a polyline
     drawRectangle: true, // adds button to draw a rectangle
@@ -418,8 +418,6 @@ Please see the existing [Feature Requests here](https://github.com/codeofsumit/l
 As I never built a leaflet plugin before, I looked heavily into the code of
 leaflet.draw to find out how to do stuff. So don't be surprised to see some
 familiar code.
-
-The icons used for the toolbar are CC-BY [Glyphicons](http://glyphicons.com/).
 
 I also took a hard look at the great
 [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some
