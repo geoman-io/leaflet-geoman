@@ -125,7 +125,7 @@ describe('Shows Tooltips', () => {
         cy.get('.leaflet-tooltip-bottom').should('not.exist');
     });
 
-    it.only('Properly disables tooltips', () => {
+    it('Properly disables tooltips', () => {
         cy.window().then(({ map }) => {
             map.pm.enableDraw('Poly', {
                 tooltips: false,
@@ -138,5 +138,26 @@ describe('Shows Tooltips', () => {
 
         cy.toolbarButton('polygon').click();
         cy.get('.leaflet-tooltip-bottom').should('not.exist');
+
+        cy.get('.active .action-cancel').click();
+
+        cy.window().then(({ map }) => {
+            map.pm.enableDraw('Poly');
+        });
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+        cy.get('.active .action-cancel').click();
+
+        cy.window().then(({ map }) => {
+            map.pm.enableDraw('Poly', {
+                tooltips: true,
+            });
+        });
+        cy.get('.leaflet-tooltip-bottom').should('exist');
+
+        cy.toolbarButton('polygon').click();
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+
+        cy.toolbarButton('polygon').click();
+        cy.get('.leaflet-tooltip-bottom').should('exist');
     });
 });
