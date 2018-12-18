@@ -5,8 +5,7 @@ Thank you for considering contributing to leaflet.pm.
 Follow these steps to get up and running:
 
 1.  clone the repository
-2.  run `npm install` to install all dependencies.
-3.  run `npm run build` to build the library
-4.  run `npm run dev` to start watching the files.
-5.  open `demo/index.html` in your browser to see the changes to you inside the `src` folder.
-6.  run `npm run cypress` to launch the test suite (also nice for TDD).
+2.  run `npm install`
+3.  run `npm start`
+4.  open `index.html` in your browser
+5.  run `npm run cypress` to launch the test suite (also nice for TDD).
