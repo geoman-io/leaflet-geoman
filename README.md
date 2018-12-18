@@ -127,6 +127,9 @@ var options = {
     snappable: true,
     snapDistance: 20,
 
+    // show tooltips
+    tooltips: true,
+
     // allow snapping to the middle of segments
     snapMiddle: false,
 
