@@ -9,3 +9,4 @@ Follow these steps to get up and running:
 3.  run `npm run build` to build the library
 4.  run `npm run dev` to start watching the files.
 5.  open `demo/index.html` in your browser to see the changes to you inside the `src` folder.
+6.  run `npm run cypress` to launch the test suite (also nice for TDD).
