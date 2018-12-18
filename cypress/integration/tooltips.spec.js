@@ -124,4 +124,19 @@ describe('Shows Tooltips', () => {
 
         cy.get('.leaflet-tooltip-bottom').should('not.exist');
     });
+
+    it.only('Properly disables tooltips', () => {
+        cy.window().then(({ map }) => {
+            map.pm.enableDraw('Poly', {
+                tooltips: false,
+            });
+        });
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+
+        cy.toolbarButton('polygon').click();
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+
+        cy.toolbarButton('polygon').click();
+        cy.get('.leaflet-tooltip-bottom').should('not.exist');
+    });
 });
