@@ -26,15 +26,17 @@ Draw.Marker = Draw.extend({
         this._hintMarker.addTo(this._map);
 
         // add tooltip to hintmarker
-        this._hintMarker
-            .bindTooltip('Click to place marker', {
-                permanent: true,
-                offset: L.point(0, 10),
-                direction: 'bottom',
+        if (this.options.tooltips) {
+            this._hintMarker
+                .bindTooltip('Click to place marker', {
+                    permanent: true,
+                    offset: L.point(0, 10),
+                    direction: 'bottom',
 
-                opacity: 0.8,
-            })
-            .openTooltip();
+                    opacity: 0.8,
+                })
+                .openTooltip();
+        }
 
         // this is just to keep the snappable mixin happy
         this._layer = this._hintMarker;
