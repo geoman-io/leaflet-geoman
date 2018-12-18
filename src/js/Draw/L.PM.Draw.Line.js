@@ -48,15 +48,17 @@ Draw.Line = Draw.extend({
         }
 
         // add tooltip to hintmarker
-        this._hintMarker
-            .bindTooltip('Click to place first vertex', {
-                permanent: true,
-                offset: L.point(0, 10),
-                direction: 'bottom',
+        if (this.options.tooltips) {
+            this._hintMarker
+                .bindTooltip('Click to place first vertex', {
+                    permanent: true,
+                    offset: L.point(0, 10),
+                    direction: 'bottom',
 
-                opacity: 0.8,
-            })
-            .openTooltip();
+                    opacity: 0.8,
+                })
+                .openTooltip();
+        }
 
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
