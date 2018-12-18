@@ -12,9 +12,17 @@ describe('Testing the Toolbar', () => {
             });
         });
 
+        cy.toolbarButton('polygon').click();
+
+        cy.get('.leaflet-pm-actions-container')
+            .should('have.css', 'right')
+            .and('match', /31px/);
+
         cy.get('.leaflet-pm-toolbar')
             .parent('.leaflet-top.leaflet-right')
             .should('exist');
+
+        cy.get('.button-container.active .action-cancel').click();
 
         cy.window().then(({ map }) => {
             map.pm.addControls({
