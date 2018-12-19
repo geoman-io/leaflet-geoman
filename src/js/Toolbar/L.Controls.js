@@ -115,6 +115,11 @@ const PMButton = L.Control.extend({
         }
 
         const image = L.DomUtil.create('div', 'control-icon', newButton);
+
+        if (button.title) {
+            image.setAttribute('title', button.title);
+        }
+      
         if (button.iconUrl) {
             image.setAttribute('src', button.iconUrl);
         }

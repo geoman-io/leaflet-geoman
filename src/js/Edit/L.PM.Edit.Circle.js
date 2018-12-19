@@ -155,6 +155,7 @@ Edit.Circle = Edit.extend({
     _createCenterMarker(latlng) {
         const marker = this._createMarker(latlng);
 
+        L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
         marker.on('move', this._moveCircle, this);
         // marker.on('contextmenu', this._removeMarker, this);
 

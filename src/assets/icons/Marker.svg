@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>Atoms/Icons/Tools/Marker</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M15.5,24.8782959 C15.2909201,24.8772219 15.1744857,24.8467817 14.6590866,24.2354163 C10.2196955,19.4118054 8,15.5014392 8,12.5043177 C8,8.35979746 11.3578644,5 15.5,5 C19.6421356,5 23,8.35979746 23,12.5043177 C23,17 18.2878217,21.9268378 16.3336601,24.2440186 C15.8224622,24.8501802 15.7090799,24.8793699 15.5,24.8782959 Z M15.5,15.5326948 C17.275201,15.5326948 18.7142857,14.1180004 18.7142857,12.3728864 C18.7142857,10.6277723 17.275201,9.21307792 15.5,9.21307792 C13.724799,9.21307792 12.2857143,10.6277723 12.2857143,12.3728864 C12.2857143,14.1180004 13.724799,15.5326948 15.5,15.5326948 Z" id="path-1"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Atoms/Icons/Tools/Marker" transform="translate(-3.000000, -3.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Mask" fill="#5B5B5B" fill-rule="nonzero" xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>

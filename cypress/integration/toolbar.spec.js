@@ -12,9 +12,17 @@ describe('Testing the Toolbar', () => {
             });
         });
 
+        cy.toolbarButton('polygon').click();
+
+        cy.get('.leaflet-pm-actions-container')
+            .should('have.css', 'right')
+            .and('match', /31px/);
+
         cy.get('.leaflet-pm-toolbar')
             .parent('.leaflet-top.leaflet-right')
             .should('exist');
+
+        cy.get('.button-container.active .action-cancel').click();
 
         cy.window().then(({ map }) => {
             map.pm.addControls({
@@ -136,6 +144,23 @@ describe('Testing the Toolbar', () => {
             .should('have.class', 'active');
 
         cy.toolbarButton('marker').click();
+    });
+
+    it('supports fontawesome', () => {
+        cy.get('.fa-map-marker-alt').should('not.exist');
+        cy.get('.fa-pencil-alt').should('not.exist');
+        cy.get('.fa-trash-alt').should('not.exist');
+
+        cy.window().then(({ map }) => {
+            map.pm.addControls({
+                useFontAwesome: true,
+                removalMode: false,
+            });
+        });
+
+        cy.get('.fa-map-marker-alt').should('exist');
+        cy.get('.fa-pencil-alt').should('exist');
+        cy.get('.fa-trash-alt').should('not.exist');
     });
 
     it('has functioning actions', () => {

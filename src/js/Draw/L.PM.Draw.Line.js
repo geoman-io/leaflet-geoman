@@ -47,6 +47,19 @@ Draw.Line = Draw.extend({
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
         }
 
+        // add tooltip to hintmarker
+        if (this.options.tooltips) {
+            this._hintMarker
+                .bindTooltip('Click to place first vertex', {
+                    permanent: true,
+                    offset: L.point(0, 10),
+                    direction: 'bottom',
+
+                    opacity: 0.8,
+                })
+                .openTooltip();
+        }
+
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
 
@@ -147,7 +160,10 @@ Draw.Line = Draw.extend({
             const lastPolygonPoint = polyPoints[polyPoints.length - 1];
 
             // set coords for hintline from marker to last vertex of drawin polyline
-            this._hintline.setLatLngs([lastPolygonPoint, this._hintMarker.getLatLng()]);
+            this._hintline.setLatLngs([
+                lastPolygonPoint,
+                this._hintMarker.getLatLng(),
+            ]);
         }
     },
     _syncHintMarker(e) {
@@ -273,7 +289,10 @@ Draw.Line = Draw.extend({
         }
 
         // create the leaflet shape and add it to the map
-        const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(this._map);
+        const polylineLayer = L.polyline(
+            coords,
+            this.options.pathOptions,
+        ).addTo(this._map);
 
         // disable drawing
         this.disable();
@@ -288,7 +307,7 @@ Draw.Line = Draw.extend({
             this._cleanupSnapping();
         }
     },
-    _createMarker(latlng) {
+    _createMarker(latlng, first) {
         // create the new marker
         const marker = new L.Marker(latlng, {
             draggable: false,
@@ -301,6 +320,16 @@ Draw.Line = Draw.extend({
 
         // a click on any marker finishes this shape
         marker.on('click', this._finishShape, this);
+
+        // handle tooltip text
+        if (first) {
+            this._hintMarker.setTooltipContent('Click to continue drawing');
+        }
+        const second = this._layer.getLatLngs().length === 2;
+
+        if (second) {
+            this._hintMarker.setTooltipContent('Click any existing marker to finish',);
+        }
 
         return marker;
     },

@@ -15,6 +15,32 @@ describe('Draw & Edit Poly', () => {
         cy.toolbarButton('edit').click();
     });
 
+    it('removes last vertex', () => {
+        cy.toolbarButton('polygon').click();
+
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(100, 50)
+            .click(150, 50)
+            .click(150, 150);
+
+        cy.hasVertexMarkers(5);
+
+        cy.window().then(({ map }) => {
+            map.pm.Draw.Poly._removeLastVertex();
+        });
+
+        cy.hasVertexMarkers(4);
+
+        cy.get('.active .action-removeLastVertex').click();
+
+        cy.hasVertexMarkers(3);
+
+        cy.get('.active .action-cancel').click();
+
+        cy.hasVertexMarkers(0);
+    });
+
     it('adds new vertex to end of array', () => {
         // when adding a vertex between the first and last current vertex,
         // the new coord should be added to the end, not the beginning of the coord array
