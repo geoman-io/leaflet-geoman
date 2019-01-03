@@ -26,6 +26,7 @@ import './Edit/L.PM.Edit.Line';
 import './Edit/L.PM.Edit.Poly';
 import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Circle';
+import './Edit/L.PM.Edit.RotatableRectangularPolygon';
 
 import '../css/layers.css';
 import '../css/controls.css';
@@ -72,7 +73,11 @@ L.PM = L.PM || {
 
         function initPolygon() {
             if (!this.options.pmIgnore) {
-                this.pm = new L.PM.Edit.Poly(this);
+                if (this.options.angle) {
+                    this.pm = new L.PM.Edit.RotatableRectangularPolygon(this);
+                } else {
+                    this.pm = new L.PM.Edit.Poly(this);
+                }
             }
         }
 

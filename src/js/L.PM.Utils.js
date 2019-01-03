@@ -7,6 +7,15 @@ const Utils = {
 
         return map.unproject(p1._add(p2)._divideBy(2));
     },
+    latLngToPoint(map, latlng) {
+        return map.latLngToContainerPoint(latlng);
+    },
+    pointToLatLng(map, latlng) {
+        return map.containerPointToLatLng(latlng);
+    },
+    degToRad(degrees) {
+        return (degrees * Math.PI) / 180;
+    },
 };
 
 export default Utils;

@@ -40,3 +40,23 @@ h3 {
 .map {
     height: 500px;
 }
+
+.rectangular-polygon-angle-input {
+    visibility:hidden;
+    padding: 5px;
+    box-sizing: border-box;
+    border: 2px solid #666;
+    border-radius: 3px;
+    position:relative;
+    z-index: 1000;
+    top: 147px;
+    left: 102px;
+    width: 70px;
+    height: 31px;
+    color: #666;
+}
+
+.rectangular-polygon-angle-input:focus {
+    outline: 0;
+}
+

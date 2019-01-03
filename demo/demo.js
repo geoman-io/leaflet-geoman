@@ -305,6 +305,55 @@ map2.on('pm:create', function(e) {
     });
 });
 
+// Rotated Rectangular Polygon Example (Application Input, not built into L.PM.Toolbar.):
+map3.on('pm:drawstart', function(e) {
+    if (e.shape === 'Rectangle') {
+        var input = document.getElementById('angle');
+        input.style.visibility = "visible";
+        input.onclick = function(e) {
+            e.stopPropagation();
+        };
+        input.ondblclick = function(e) {
+            e.stopPropagation();
+        };
+        var layer = e.workingLayer;
+        layer.on('pm:rectanglestart', function (e) {
+            // console.log('pm:rectanglestart', e);
+            var angle = input.value;
+            if (angle !== undefined || angle !== '') {
+                L.Util.setOptions(e.workingLayer, {
+                    angle: angle
+                });
+            }
+            input.style.visibility = "hidden";
+        });
+    }
+});
+
+map3.on('pm:drawend', function(e) {
+    if (e.shape === 'Rectangle') {
+        var input = document.getElementById('angle');
+        input.style.visibility = "hidden";
+    }
+});
+
+const rotatedRectangularPolygon1 = L.polygon([
+    [51.645294049305406, 6.767578125000001],
+    [50.89995055300482, 7.086815701824466],
+    [51.17934297928929, 8.745117187500002],
+    [51.92018204814259, 8.425879610675537]],
+    {angle: 75});
+
+const rotatedRectangularPolygon2 = L.polygon([
+    [52.98833725339543, 9.711914062500002],
+    [52.5246028925231, 11.039104770746617],
+    [53.067626642387374, 11.5576171875],
+    [53.52559000995381, 10.230426479253387]],
+    {angle: 30});
+
+rotatedRectangularPolygon1.addTo(map3);
+rotatedRectangularPolygon2.addTo(map3);
+
 // Polygon Example
 
 const polygonLayer = L.polygon([
