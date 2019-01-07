@@ -63,12 +63,7 @@
     background-color: #f4f4f4;
 }
 .active .leaflet-buttons-control-button {
-    /* background-color: #f4f4f4; */
     box-shadow: inset 0 -1px 5px 2px rgba(81, 77, 77, 0.31);
-}
-
-.active .leaflet-buttons-control-button > .control-icon {
-    /* opacity: 0.5; */
 }
 
 .leaflet-buttons-control-text-hide {
