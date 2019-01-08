@@ -47,15 +47,17 @@ Draw.Circle = Draw.extend({
         }
 
         // add tooltip to hintmarker
-        this._hintMarker
-            .bindTooltip('Click to place circle center', {
-                permanent: true,
-                offset: L.point(0, 10),
-                direction: 'bottom',
+        if (this.options.tooltips) {
+            this._hintMarker
+                .bindTooltip('Click to place circle center', {
+                    permanent: true,
+                    offset: L.point(0, 10),
+                    direction: 'bottom',
 
-                opacity: 0.8,
-            })
-            .openTooltip();
+                    opacity: 0.8,
+                })
+                .openTooltip();
+        }
 
         // this is the hintline from the hint marker to the center marker
         this._hintline = L.polyline([], this.options.hintlineStyle);

@@ -1,6 +1,10 @@
 # Leaflet Geometry Management
 
+
+[![npm version](https://badge.fury.io/js/leaflet.pm.svg)](https://badge.fury.io/js/leaflet.pm)
 ![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
+[![star this repo](http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet.pm&style=default)](https://github.com/codeofsumit/leaflet.pm)
+[![NPM Downloads](https://img.shields.io/npm/dt/leaflet.pm.svg)](https://www.npmjs.com/package/leaflet.pm)
 
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.x.\
 Draw, Edit, Drag, Cut and Snap layers like Markers, Polylines,
@@ -80,7 +84,7 @@ various features.
 // define toolbar options
 var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
-    useFontAwesome: false, // use fontawesome instead of glyphicons (you need to include fontawesome yourself)
+    useFontAwesome: false, // use fontawesome instead of geomanIcons (you need to include fontawesome yourself)
     drawMarker: true, // adds button to draw markers
     drawPolyline: true, // adds button to draw a polyline
     drawRectangle: true, // adds button to draw a rectangle
@@ -126,6 +130,9 @@ var options = {
     // snapping
     snappable: true,
     snapDistance: 20,
+
+    // show tooltips
+    tooltips: true,
 
     // allow snapping to the middle of segments
     snapMiddle: false,
@@ -418,8 +425,6 @@ Please see the existing [Feature Requests here](https://github.com/codeofsumit/l
 As I never built a leaflet plugin before, I looked heavily into the code of
 leaflet.draw to find out how to do stuff. So don't be surprised to see some
 familiar code.
-
-The icons used for the toolbar are CC-BY [Glyphicons](http://glyphicons.com/).
 
 I also took a hard look at the great
 [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some
