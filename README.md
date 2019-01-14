@@ -1,6 +1,10 @@
 # Leaflet Geometry Management
 
+
+[![npm version](https://badge.fury.io/js/leaflet.pm.svg)](https://badge.fury.io/js/leaflet.pm)
 ![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
+[![star this repo](http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet.pm&style=default)](https://github.com/codeofsumit/leaflet.pm)
+[![NPM Downloads](https://img.shields.io/npm/dt/leaflet.pm.svg)](https://www.npmjs.com/package/leaflet.pm)
 
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.x.\
 Draw, Edit, Drag, Cut and Snap layers like Markers, Polylines,

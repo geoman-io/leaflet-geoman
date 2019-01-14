@@ -3,7 +3,6 @@ npm-debug.log
 /node_modules/
 /bower_components/
 /.idea/
-/dist/
 \.source*
 /cypress/screenshots
 /cypress/videos
