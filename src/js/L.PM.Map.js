@@ -29,13 +29,14 @@ const Map = L.Class.extend({
     },
     removeLayer(e) {
         const layer = e.target;
-        if (
-            !layer._layers &&
-            !layer._pmTempLayer &&
-            (!layer.pm || !layer.pm.dragging())
-        ) {
+        // only remove layer, if it's handled by leaflet.pm,
+        // not a tempLayer and not currently being dragged
+        const removeable =
+            !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
+
+        if (removeable) {
             layer.remove();
-            this.map.fire('pm:remove', e);
+            this.map.fire('pm:remove', { layer });
         }
     },
     toggleGlobalRemovalMode() {

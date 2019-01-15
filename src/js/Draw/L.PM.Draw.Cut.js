@@ -26,7 +26,7 @@ Draw.Cut = Draw.Poly.extend({
                 try {
                     return !!intersect(layer.toGeoJSON(15), l.toGeoJSON(15));
                 } catch (e) {
-                    console.error('You cant cut polygons with self-intersections');
+                    console.error('You cant cut polygons with self-intersections',);
                     return false;
                 }
             });
@@ -65,13 +65,22 @@ Draw.Cut = Draw.Poly.extend({
             // remove old layer and cutting layer
             l.remove();
             layer.remove();
+
+            if (resultingLayer.getLayers().length === 0) {
+                this._map.pm.removeLayer({ target: resultingLayer });
+            }
         });
     },
-    _finishShape() {
+    _finishShape(e) {
         // if self intersection is not allowed, do not finish the shape!
-        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-            return;
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(e.latlng);
+
+            if (this._doesSelfIntersect) {
+                return;
+            }
         }
+
         const coords = this._layer.getLatLngs();
         const polygonLayer = L.polygon(coords, this.options.pathOptions);
         this._cut(polygonLayer);
