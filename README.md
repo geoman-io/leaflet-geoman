@@ -1,6 +1,5 @@
 # Leaflet Geometry Management
 
-
 [![npm version](https://badge.fury.io/js/leaflet.pm.svg)](https://badge.fury.io/js/leaflet.pm)
 ![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
 [![star this repo](http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet.pm&style=default)](https://github.com/codeofsumit/leaflet.pm)
@@ -84,7 +83,6 @@ various features.
 // define toolbar options
 var options = {
     position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
-    useFontAwesome: false, // use fontawesome instead of geomanIcons (you need to include fontawesome yourself)
     drawMarker: true, // adds button to draw markers
     drawPolyline: true, // adds button to draw a polyline
     drawRectangle: true, // adds button to draw a rectangle

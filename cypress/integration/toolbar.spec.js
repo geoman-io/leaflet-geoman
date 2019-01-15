@@ -146,23 +146,6 @@ describe('Testing the Toolbar', () => {
         cy.toolbarButton('marker').click();
     });
 
-    it('supports fontawesome', () => {
-        cy.get('.fa-map-marker-alt').should('not.exist');
-        cy.get('.fa-pencil-alt').should('not.exist');
-        cy.get('.fa-trash-alt').should('not.exist');
-
-        cy.window().then(({ map }) => {
-            map.pm.addControls({
-                useFontAwesome: true,
-                removalMode: false,
-            });
-        });
-
-        cy.get('.fa-map-marker-alt').should('exist');
-        cy.get('.fa-pencil-alt').should('exist');
-        cy.get('.fa-trash-alt').should('not.exist');
-    });
-
     it('has functioning actions', () => {
         cy.toolbarButton('polygon').click();
 

@@ -45,26 +45,16 @@ const Toolbar = L.Class.extend({
         // first set the options
         L.Util.setOptions(this, options);
 
-        this.applyIconStyle(this.options.useFontAwesome);
+        this.applyIconStyle();
 
         // now show the specified buttons
         this._showHideButtons();
         this.isVisible = true;
     },
-    applyIconStyle(fa) {
+    applyIconStyle() {
         const buttons = this.getButtons();
 
         const iconClasses = {
-            fontawesome: {
-                drawMarker: 'control-fa-icon fas fa-map-marker-alt',
-                drawPolyline: 'control-fa-icon far fa-ellipsis-v',
-                drawRectangle: 'control-fa-icon far fa-draw-square',
-                drawPolygon: 'control-fa-icon far fa-draw-polygon',
-                drawCircle: 'control-fa-icon far fa-draw-circle',
-                cutPolygon: 'control-fa-icon far fa-cut',
-                editMode: 'control-fa-icon fas fa-pencil-alt',
-                removalMode: 'control-fa-icon far fa-trash-alt',
-            },
             geomanIcons: {
                 drawMarker: 'control-icon leaflet-pm-icon-marker',
                 drawPolyline: 'control-icon leaflet-pm-icon-polyline',
@@ -81,9 +71,7 @@ const Toolbar = L.Class.extend({
             const button = buttons[name];
 
             L.Util.setOptions(button, {
-                className: fa
-                    ? iconClasses.fontawesome[name]
-                    : iconClasses.geomanIcons[name],
+                className: iconClasses.geomanIcons[name],
             });
         }
     },
