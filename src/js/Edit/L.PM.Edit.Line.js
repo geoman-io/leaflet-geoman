@@ -95,7 +95,7 @@ Edit.Line = Edit.extend({
         poly.off('mouseup');
 
         // remove onRemove listener
-        this._layer.off('remove', this._onLayerRemove);
+        this._layer.off('remove', this._onLayerRemove, this);
 
         if (!this.options.allowSelfIntersection) {
             this._layer.off(

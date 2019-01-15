@@ -120,7 +120,7 @@ describe('Draw & Edit Poly', () => {
         });
     });
 
-    it('pm:create to be called', () => {
+    it('events to be called', () => {
         cy.window().then(({ map }) => {
             // test pm:create event
             Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
@@ -129,6 +129,13 @@ describe('Draw & Edit Poly', () => {
 
                 const markers = poly.pm._markers[0];
                 expect(markers).to.have.length(4);
+            });
+
+            Cypress.$(map).on('pm:remove', ({ originalEvent: event }) => {
+                const layer = event.target;
+
+                /* eslint no-unused-expressions: 0 */
+                expect(layer.map).to.be.undefined;
             });
         });
 
@@ -145,6 +152,10 @@ describe('Draw & Edit Poly', () => {
             .click(150, 50)
             .click(150, 150)
             .click(90, 250);
+
+        cy.toolbarButton('delete').click();
+
+        cy.get(mapSelector).click(110, 150);
     });
 
     it('draws and edits a polygon', () => {
