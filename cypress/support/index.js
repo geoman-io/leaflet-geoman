@@ -19,7 +19,8 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-const accessToken = 'pk.eyJ1IjoibWFwc29mc3VtaXQiLCJhIjoiY2l1ZDF3dHE5MDAxZDMwbjA0cTR3dG50eSJ9.63Xci-GKFikhAobboF0DVQ';
+const accessToken =
+    'pk.eyJ1IjoibWFwc29mc3VtaXQiLCJhIjoiY2l1ZDF3dHE5MDAxZDMwbjA0cTR3dG50eSJ9.63Xci-GKFikhAobboF0DVQ';
 
 beforeEach(() => {
     // create the map
@@ -37,7 +38,9 @@ beforeEach(() => {
             );
 
             // create the map
-            const map = L.map('map')
+            const map = L.map('map', {
+                preferCanvas: false,
+            })
                 .setView([51.505, -0.09], 13)
                 .addLayer(mapboxTiles);
 

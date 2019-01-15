@@ -182,7 +182,7 @@ Draw.Line = Draw.extend({
             this._handleSelfIntersection();
         }
     },
-    _handleSelfIntersection() {
+    _handleSelfIntersection(latlng) {
         // ok we need to check the self intersection here
         // problem: during draw, the marker on the cursor is not yet part
         // of the layer. So we need to clone the layer, add the
@@ -192,8 +192,13 @@ Draw.Line = Draw.extend({
         // clone layer (polyline is enough, even when it's a polygon)
         const clone = L.polyline(this._layer.getLatLngs());
 
+        // get vertex from param or from hintmarker
+        if (!latlng) {
+            latlng = this._hintMarker.getLatLng();
+        }
+
         // add the vertex
-        clone.addLatLng(this._hintMarker.getLatLng());
+        clone.addLatLng(latlng);
 
         // check the self intersection
         const selfIntersection = kinks(clone.toGeoJSON(15));
@@ -235,8 +240,13 @@ Draw.Line = Draw.extend({
         this._syncHintLine();
     },
     _createVertex(e) {
-        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-            return;
+        // don't create a vertex if we have a selfIntersection and it is not allowed
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(e.latlng);
+
+            if (this._doesSelfIntersect) {
+                return;
+            }
         }
 
         // assign the coordinate of the click to the hintMarker, that's necessary for
@@ -274,10 +284,14 @@ Draw.Line = Draw.extend({
             latlng,
         });
     },
-    _finishShape() {
+    _finishShape(e) {
         // if self intersection is not allowed, do not finish the shape!
-        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-            return;
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(e.latlng);
+
+            if (this._doesSelfIntersect) {
+                return;
+            }
         }
 
         // get coordinates
@@ -328,7 +342,9 @@ Draw.Line = Draw.extend({
         const second = this._layer.getLatLngs().length === 2;
 
         if (second) {
-            this._hintMarker.setTooltipContent('Click any existing marker to finish',);
+            this._hintMarker.setTooltipContent(
+                'Click any existing marker to finish',
+            );
         }
 
         return marker;

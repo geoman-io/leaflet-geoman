@@ -15,6 +15,33 @@ describe('Draw & Edit Poly', () => {
         cy.toolbarButton('edit').click();
     });
 
+    it('prevents self intersections', () => {
+        cy.window().then(({ map }) => {
+            map.pm.enableDraw('Poly', {
+                allowSelfIntersection: false,
+            });
+
+            Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
+                const poly = event.layer;
+                poly.pm.enable({
+                    allowSelfIntersection: false,
+                });
+            });
+        });
+
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(100, 50)
+            .click(250, 50)
+            .click(150, 150)
+            .click(120, 20)
+            .click(90, 250);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(4);
+    });
+
     it('removes last vertex', () => {
         cy.toolbarButton('polygon').click();
 
@@ -60,7 +87,7 @@ describe('Draw & Edit Poly', () => {
                 .click(90, 250)
                 .then(() => {
                     let l;
-                    map.eachLayer((layer) => {
+                    map.eachLayer(layer => {
                         if (layer instanceof L.Polygon) {
                             layer.pm.enable();
                             l = layer;
@@ -73,7 +100,7 @@ describe('Draw & Edit Poly', () => {
                 .as('firstLatLng');
         });
 
-        cy.get('@poly').then((poly) => {
+        cy.get('@poly').then(poly => {
             Cypress.$(poly).on('pm:vertexadded', ({ originalEvent: event }) => {
                 const { layer, indexPath, latlng } = event;
                 const newLatLng = Cypress._.get(layer._latlngs, indexPath);
@@ -84,8 +111,8 @@ describe('Draw & Edit Poly', () => {
 
         cy.get('.marker-icon-middle').click({ multiple: true });
 
-        cy.get('@poly').then((poly) => {
-            cy.get('@firstLatLng').then((oldFirst) => {
+        cy.get('@poly').then(poly => {
+            cy.get('@firstLatLng').then(oldFirst => {
                 const newFirst = poly._latlngs[0][0];
                 expect(oldFirst.lat).to.equal(newFirst.lat);
                 expect(oldFirst.lng).to.equal(newFirst.lng);

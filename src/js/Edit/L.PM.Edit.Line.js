@@ -63,6 +63,8 @@ Edit.Line = Edit.extend({
         }
 
         if (!this.options.allowSelfIntersection) {
+            this.cachedColor = this._layer.options.color;
+            this.isRed = false;
             this._handleLayerStyle();
         }
     },
@@ -140,23 +142,25 @@ Edit.Line = Edit.extend({
     },
 
     _handleLayerStyle(flash) {
-        const el = this._layer._path
-            ? this._layer._path
-            : this._layer._renderer._container;
+        const layer = this._layer;
 
         if (this.hasSelfIntersection()) {
-            if (L.DomUtil.hasClass(el, 'leaflet-pm-invalid')) {
+            if (this.isRed) {
                 return;
             }
 
             // if it does self-intersect, mark or flash it red
             if (flash) {
-                L.DomUtil.addClass(el, 'leaflet-pm-invalid');
+                layer.setStyle({ color: 'red' });
+                this.isRed = true;
+
                 window.setTimeout(() => {
-                    L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+                    layer.setStyle({ color: this.cachedColor });
+                    this.isRed = false;
                 }, 200);
             } else {
-                L.DomUtil.addClass(el, 'leaflet-pm-invalid');
+                layer.setStyle({ color: 'red' });
+                this.isRed = true;
             }
 
             // fire intersect event
@@ -165,7 +169,8 @@ Edit.Line = Edit.extend({
             });
         } else {
             // if not, reset the style to the default color
-            L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+            layer.setStyle({ color: this.cachedColor });
+            this.isRed = false;
         }
     },
 
