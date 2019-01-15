@@ -6,10 +6,14 @@ Draw.Poly = Draw.Line.extend({
         this._shape = 'Poly';
         this.toolbarButtonName = 'drawPolygon';
     },
-    _finishShape(event) {
+    _finishShape(e) {
         // if self intersection is not allowed, do not finish the shape!
-        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-            return;
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(e.latlng);
+
+            if (this._doesSelfIntersect) {
+                return;
+            }
         }
 
         // get coordinates
@@ -21,7 +25,7 @@ Draw.Poly = Draw.Line.extend({
         }
 
         // create the leaflet shape and add it to the map
-        if (event && event.type === 'dblclick') {
+        if (e && e.type === 'dblclick') {
             // Leaflet creates an extra node with double click
             coords.splice(coords.length - 1, 1);
         }
