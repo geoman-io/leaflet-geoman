@@ -15,6 +15,47 @@ describe('Draw & Edit Poly', () => {
         cy.toolbarButton('edit').click();
     });
 
+    it('removes layer when cut completely', () => {
+        cy.window().then(({ map }) => {
+            Cypress.$(map).on('pm:create', ({ originalEvent }) => {
+                const { layer } = originalEvent;
+                layer.options.cypress = true;
+            });
+
+            Cypress.$(map).on('pm:cut', ({ originalEvent }) => {
+                const { layer } = originalEvent;
+
+                expect(Object.keys(layer.getLayers())).to.have.lengthOf(0);
+            });
+
+            Cypress.$(map).on('pm:remove', ({ originalEvent }) => {
+                const { layer } = originalEvent;
+
+                /* eslint no-unused-expressions: 0 */
+                expect(layer._map).to.be.null;
+                expect(layer.options.cypress).to.be.true;
+            });
+        });
+
+        cy.toolbarButton('polygon').click();
+
+        cy.get(mapSelector)
+            .click(120, 150)
+            .click(120, 100)
+            .click(300, 100)
+            .click(300, 200)
+            .click(120, 150);
+
+        cy.toolbarButton('cut').click();
+
+        cy.get(mapSelector)
+            .click(90, 150)
+            .click(100, 50)
+            .click(350, 50)
+            .click(350, 350)
+            .click(90, 150);
+    });
+
     it('prevents self intersections', () => {
         cy.window().then(({ map }) => {
             map.pm.enableDraw('Poly', {
@@ -87,7 +128,7 @@ describe('Draw & Edit Poly', () => {
                 .click(90, 250)
                 .then(() => {
                     let l;
-                    map.eachLayer(layer => {
+                    map.eachLayer((layer) => {
                         if (layer instanceof L.Polygon) {
                             layer.pm.enable();
                             l = layer;
@@ -100,7 +141,7 @@ describe('Draw & Edit Poly', () => {
                 .as('firstLatLng');
         });
 
-        cy.get('@poly').then(poly => {
+        cy.get('@poly').then((poly) => {
             Cypress.$(poly).on('pm:vertexadded', ({ originalEvent: event }) => {
                 const { layer, indexPath, latlng } = event;
                 const newLatLng = Cypress._.get(layer._latlngs, indexPath);
@@ -111,8 +152,8 @@ describe('Draw & Edit Poly', () => {
 
         cy.get('.marker-icon-middle').click({ multiple: true });
 
-        cy.get('@poly').then(poly => {
-            cy.get('@firstLatLng').then(oldFirst => {
+        cy.get('@poly').then((poly) => {
+            cy.get('@firstLatLng').then((oldFirst) => {
                 const newFirst = poly._latlngs[0][0];
                 expect(oldFirst.lat).to.equal(newFirst.lat);
                 expect(oldFirst.lng).to.equal(newFirst.lng);
