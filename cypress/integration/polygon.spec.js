@@ -93,7 +93,7 @@ describe('Draw & Edit Poly', () => {
         });
     });
 
-    it.only('events to be called', () => {
+    it('events to be called', () => {
         cy.window().then(({ map }) => {
             // test pm:create event
             Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {

@@ -4,12 +4,6 @@ const Map = L.Class.extend({
         this.Draw = new L.PM.Draw(map);
         this.Toolbar = new L.PM.Toolbar(map);
 
-        this.map.on('layerremove', (e) => {
-            if (e.layer.pm && !e.layer._pmTempLayer) {
-                this.map.fire('pm:remove', e);
-            }
-        });
-
         this._globalRemovalMode = false;
     },
     addControls(options) {
@@ -35,8 +29,13 @@ const Map = L.Class.extend({
     },
     removeLayer(e) {
         const layer = e.target;
-        if (!layer._layers && (!layer.pm || !layer.pm.dragging())) {
-            e.target.remove();
+        if (
+            !layer._layers &&
+            !layer._pmTempLayer &&
+            (!layer.pm || !layer.pm.dragging())
+        ) {
+            layer.remove();
+            this.map.fire('pm:remove', e);
         }
     },
     toggleGlobalRemovalMode() {
@@ -44,7 +43,7 @@ const Map = L.Class.extend({
         if (this.globalRemovalEnabled()) {
             this._globalRemovalMode = false;
             this.map.eachLayer((layer) => {
-                layer.off('click', this.removeLayer);
+                layer.off('click', this.removeLayer, this);
             });
         } else {
             this._globalRemovalMode = true;
@@ -53,7 +52,7 @@ const Map = L.Class.extend({
                     layer.pm &&
                     !(layer.pm.options && layer.pm.options.preventMarkerRemoval)
                 ) {
-                    layer.on('click', this.removeLayer);
+                    layer.on('click', this.removeLayer, this);
                 }
             });
         }
