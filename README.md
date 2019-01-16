@@ -1,13 +1,30 @@
-# Leaflet Geometry Management
-
-[![npm version](https://badge.fury.io/js/leaflet.pm.svg)](https://badge.fury.io/js/leaflet.pm)
-![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
-[![star this repo](http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet.pm&style=default)](https://github.com/codeofsumit/leaflet.pm)
-[![NPM Downloads](https://img.shields.io/npm/dt/leaflet.pm.svg)](https://www.npmjs.com/package/leaflet.pm)
-
-A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.x.\
-Draw, Edit, Drag, Cut and Snap layers like Markers, Polylines,
-Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiLineStrings and more are coming.
+<p align="center">
+  <a href="https://leaflet.pm.now.sh">
+    <img alt="Geoman Logo" src="https://file-yydxsjcsnd.now.sh" />
+  </a>
+</p>
+<h1 align="center">
+  Leaflet Geometry Management
+</h1>
+<p align="center">
+  <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
+  Draw, Edit, Drag, Cut and Snap layers<br>
+  like Markers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
+</p>
+<p align="center">
+  <a href="https://badge.fury.io/js/leaflet.pm">
+    <img src="https://badge.fury.io/js/leaflet.pm.svg" alt="npm version" />
+  </a>
+  <a href="#">
+    <img src="https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop" alt="" />
+  </a>
+  <a href="https://github.com/codeofsumit/leaflet.pm">
+    <img src="http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet.pm&style=default" alt="star this repo" />
+  </a>
+  <a href="https://www.npmjs.com/package/leaflet.pm">
+    <img src="https://img.shields.io/npm/dt/leaflet.pm.svg" alt="NPM Downloads" />
+  </a>
+</p>
 
 ## [Demo (click here)](https://leafletpm.now.sh)
 
@@ -16,7 +33,16 @@ Polygons, Circles, Rectangles, LayerGroups, GeoJSON, MultiPolygons, MultiLineStr
 Need advanced features like GeoJSON Export, storing meta data and more?\
 Check out **[Geoman](https://geoman.io)**.
 
-### Getting Started
+## Documentation
+
+-   [Installation](#installation)
+-   [Getting Started](#getting-started)
+-   [Drawing](#drawing-mode)
+-   [Editing](#edit-mode)
+-   [Style Customization](#customize-style)
+-   [Feature Requests](#feature-request)
+
+### Installation
 
 #### Install via npm
 
@@ -62,7 +88,7 @@ require('leaflet.pm');
 require('leaflet.pm/dist/leaflet.pm.css');
 ```
 
-### Documentation
+### Getting Started
 
 #### Init Leaflet.PM
 
