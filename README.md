@@ -4,12 +4,12 @@
   </a>
 </p>
 <h1 align="center">
-  Leaflet Geometry Management
+  Leaflet.PM
 </h1>
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
-  Draw, Edit, Drag, Cut and Snap layers<br>
-  like Markers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
+  Draw, Edit, Drag, Cut and Snap Layers<br>
+  Supports Markers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
   <a href="https://badge.fury.io/js/leaflet.pm">
