@@ -20,10 +20,8 @@ const Toolbar = L.Class.extend({
 
         this.buttons = {};
         this.isVisible = false;
-        this.container = L.DomUtil.create(
-            'div',
-            'leaflet-pm-toolbar leaflet-bar leaflet-control',
-        );
+        this.drawContainer = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-pm-draw leaflet-bar leaflet-control');
+        this.editContainer = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-pm-edit leaflet-bar leaflet-control');
 
         this._defineButtons();
     },
@@ -106,10 +104,7 @@ const Toolbar = L.Class.extend({
         // so, we trigger a click on all currently active (toggled) buttons
 
         for (const name in this.buttons) {
-            if (
-                this.buttons[name] !== exceptThisButton &&
-                this.buttons[name].toggled()
-            ) {
+            if (this.buttons[name] !== exceptThisButton && this.buttons[name].toggled()) {
                 this.buttons[name]._triggerClick();
             }
         }
@@ -152,20 +147,6 @@ const Toolbar = L.Class.extend({
             actions: ['cancel'],
         };
 
-        const deleteButton = {
-            title: 'Removal Mode',
-            className: 'control-icon leaflet-pm-icon-delete',
-            onClick: () => {},
-            afterClick: () => {
-                this.map.pm.toggleGlobalRemovalMode();
-            },
-            doToggle: true,
-            toggleStatus: false,
-            disableOtherButtons: true,
-            position: this.options.position,
-            actions: ['cancel'],
-        };
-
         const drawPolyButton = {
             title: 'Draw Polygon',
             className: 'control-icon leaflet-pm-icon-polygon',
@@ -174,26 +155,6 @@ const Toolbar = L.Class.extend({
             afterClick: () => {
                 // toggle drawing mode
                 this.map.pm.Draw.Poly.toggle();
-            },
-            doToggle: true,
-            toggleStatus: false,
-            disableOtherButtons: true,
-            position: this.options.position,
-            actions: ['finish', 'removeLastVertex', 'cancel'],
-        };
-
-        const cutButton = {
-            title: 'Cut Layers',
-            className: 'control-icon leaflet-pm-icon-cut',
-            jsClass: 'Cut',
-            onClick: () => {},
-            afterClick: () => {
-                // enable polygon drawing mode without snap
-                this.map.pm.Draw.Cut.toggle({
-                    snappable: true,
-                    cursorMarker: true,
-                    allowSelfIntersection: false,
-                });
             },
             doToggle: true,
             toggleStatus: false,
@@ -261,19 +222,53 @@ const Toolbar = L.Class.extend({
             toggleStatus: false,
             disableOtherButtons: true,
             position: this.options.position,
+            tool: 'edit',
+            actions: ['cancel'],
+        };
+
+        const cutButton = {
+            title: 'Cut Layers',
+            className: 'control-icon leaflet-pm-icon-cut',
+            jsClass: 'Cut',
+            onClick: () => {},
+            afterClick: () => {
+                // enable polygon drawing mode without snap
+                this.map.pm.Draw.Cut.toggle({
+                    snappable: true,
+                    cursorMarker: true,
+                    allowSelfIntersection: false,
+                });
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
+            tool: 'edit',
+            actions: ['finish', 'removeLastVertex', 'cancel'],
+        };
+
+        const deleteButton = {
+            title: 'Removal Mode',
+            className: 'control-icon leaflet-pm-icon-delete',
+            onClick: () => {},
+            afterClick: () => {
+                this.map.pm.toggleGlobalRemovalMode();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
+            tool: 'edit',
             actions: ['cancel'],
         };
 
         this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
         this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
-        this._addButton(
-            'drawRectangle',
-            new L.Control.PMButton(drawRectButton),
-        );
+        this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
-        this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('editMode', new L.Control.PMButton(editButton));
+        this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('removalMode', new L.Control.PMButton(deleteButton));
     },
 

@@ -9,7 +9,7 @@ const PMButton = L.Control.extend({
     onAdd(map) {
         this._map = map;
 
-        this._container = this._map.pm.Toolbar.container;
+        this._container = this._button.tool === 'edit' ? this._map.pm.Toolbar.editContainer : this._map.pm.Toolbar.drawContainer;
         this.buttonsDomNode = this._makeButton(this._button);
         this._container.appendChild(this.buttonsDomNode);
 
@@ -53,25 +53,13 @@ const PMButton = L.Control.extend({
     },
     _makeButton(button) {
         // button container
-        const buttonContainer = L.DomUtil.create(
-            'div',
-            'button-container',
-            this._container,
-        );
+        const buttonContainer = L.DomUtil.create('div', 'button-container', this._container);
 
         // the button itself
-        const newButton = L.DomUtil.create(
-            'a',
-            'leaflet-buttons-control-button',
-            buttonContainer,
-        );
+        const newButton = L.DomUtil.create('a', 'leaflet-buttons-control-button', buttonContainer);
 
         // the buttons actions
-        const actionContainer = L.DomUtil.create(
-            'div',
-            'leaflet-pm-actions-container',
-            buttonContainer,
-        );
+        const actionContainer = L.DomUtil.create('div', 'leaflet-pm-actions-container', buttonContainer);
 
         const activeActions = button.actions;
 
@@ -98,11 +86,7 @@ const PMButton = L.Control.extend({
 
         activeActions.forEach((name) => {
             const action = actions[name];
-            const actionNode = L.DomUtil.create(
-                'a',
-                `leaflet-pm-action action-${name}`,
-                actionContainer,
-            );
+            const actionNode = L.DomUtil.create('a', `leaflet-pm-action action-${name}`, actionContainer);
 
             actionNode.innerHTML = action.text;
 
@@ -119,7 +103,7 @@ const PMButton = L.Control.extend({
         if (button.title) {
             image.setAttribute('title', button.title);
         }
-      
+
         if (button.iconUrl) {
             image.setAttribute('src', button.iconUrl);
         }
