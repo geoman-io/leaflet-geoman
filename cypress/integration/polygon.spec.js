@@ -199,7 +199,7 @@ describe('Draw & Edit Poly', () => {
         cy.get(mapSelector).click(110, 150);
     });
 
-    it('draws and edits a polygon', () => {
+    it.only('draws and edits a polygon', () => {
         cy.window().then(({ map }) => {
             cy.hasLayers(map, 1);
         });

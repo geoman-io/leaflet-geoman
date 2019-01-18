@@ -21,10 +21,12 @@ Edit.Rectangle = Edit.Poly.extend({
 
         // create markers for four corners of rectangle
         this._markers = [];
+
         // nest set of corner markers in a 2D array so that we can Cut this Rectangle, if needed
         this._markers[0] = corners.map(this._createMarker, this);
+
         // convenience alias, for better readability
-        this._cornerMarkers = this._markers[0];
+        [this._cornerMarkers] = this._markers;
 
         if (this.options.snappable) {
             this._initSnappableMarkers();

@@ -43,6 +43,9 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-edit {
     background-image: url('../assets/icons/Wrench.svg');
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-drag {
+    /* background-image: url('../assets/icons/Drag.svg'); */
+}
 .leaflet-pm-toolbar .leaflet-pm-icon-cut {
     background-image: url('../assets/icons/Scissors.svg');
 }
@@ -72,10 +75,7 @@
     white-space: nowrap;
 }
 
-.leaflet-right
-    .leaflet-pm-toolbar
-    .button-container
-    .leaflet-pm-actions-container {
+.leaflet-right .leaflet-pm-toolbar .button-container .leaflet-pm-actions-container {
     right: 31px;
     left: auto;
 }

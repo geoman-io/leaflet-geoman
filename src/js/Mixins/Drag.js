@@ -1,11 +1,10 @@
 const DragMixin = {
-    _initDraggableLayer() {
+    enableLayerDrag() {
         // temporary coord variable for delta calculation
         this._tempDragCoord = null;
 
         // add CSS class
         const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
-
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
         this._originalMapDragState = this._layer._map.dragging._enabled;
@@ -14,7 +13,19 @@ const DragMixin = {
         // (if the mouse up event happens outside the container, then the map can become undraggable)
         this._safeToCacheDragState = true;
 
+        // add mousedown event to trigger drag
         this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
+    },
+    disableLayerDrag() {
+        // remove CSS class
+        const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
+        L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+
+        // no longer save the drag state
+        this._safeToCacheDragState = false;
+
+        // disable mousedown event
+        this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
     },
     _dragMixinOnMouseUp() {
         const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
@@ -37,9 +48,6 @@ const DragMixin = {
         if (!this._dragging) {
             return false;
         }
-
-        // show markers again
-        this._initMarkers();
 
         // timeout to prevent click event after drag :-/
         // TODO: do it better as soon as leaflet has a way to do it better :-)
@@ -72,9 +80,6 @@ const DragMixin = {
             if (this._originalMapDragState) {
                 this._layer._map.dragging.disable();
             }
-
-            // hide markers
-            this._markerGroup.clearLayers();
 
             // fire pm:dragstart event
             this._layer.fire('pm:dragstart');

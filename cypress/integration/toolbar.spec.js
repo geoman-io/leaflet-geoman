@@ -146,7 +146,7 @@ describe('Testing the Toolbar', () => {
         cy.toolbarButton('marker').click();
     });
 
-    it('has functioning actions', () => {
+    it.only('has functioning actions', () => {
         cy.toolbarButton('polygon').click();
 
         cy.get('.button-container.active .action-cancel').should('exist');
