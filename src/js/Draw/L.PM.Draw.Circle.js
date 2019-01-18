@@ -46,6 +46,19 @@ Draw.Circle = Draw.extend({
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
         }
 
+        // add tooltip to hintmarker
+        if (this.options.tooltips) {
+            this._hintMarker
+                .bindTooltip('Click to place circle center', {
+                    permanent: true,
+                    offset: L.point(0, 10),
+                    direction: 'bottom',
+
+                    opacity: 0.8,
+                })
+                .openTooltip();
+        }
+
         // this is the hintline from the hint marker to the center marker
         this._hintline = L.polyline([], this.options.hintlineStyle);
         this._hintline._pmTempLayer = true;
@@ -61,7 +74,10 @@ Draw.Circle = Draw.extend({
         this._map.on('mousemove', this._syncHintMarker, this);
 
         // fire drawstart event
-        this._map.fire('pm:drawstart', { shape: this._shape, workingLayer: this._layer });
+        this._map.fire('pm:drawstart', {
+            shape: this._shape,
+            workingLayer: this._layer,
+        });
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -163,6 +179,8 @@ Draw.Circle = Draw.extend({
             // sync the hintline with hint marker
             this._hintMarker.on('move', this._syncHintLine, this);
             this._hintMarker.on('move', this._syncCircleRadius, this);
+
+            this._hintMarker.setTooltipContent('Click to finish circle');
 
             this._layer.fire('pm:centerplaced', {
                 shape: this._shape,

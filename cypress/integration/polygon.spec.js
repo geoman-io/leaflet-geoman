@@ -1,6 +1,114 @@
 describe('Draw & Edit Poly', () => {
     const mapSelector = '#map';
 
+    it('doesnt finish single point polys', () => {
+        cy.toolbarButton('polygon').click();
+
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(90, 250);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(0);
+
+        cy.toolbarButton('edit').click();
+    });
+
+    it('removes layer when cut completely', () => {
+        cy.window().then(({ map }) => {
+            Cypress.$(map).on('pm:create', ({ originalEvent }) => {
+                const { layer } = originalEvent;
+                layer.options.cypress = true;
+            });
+
+            Cypress.$(map).on('pm:cut', ({ originalEvent }) => {
+                const { layer } = originalEvent;
+
+                expect(Object.keys(layer.getLayers())).to.have.lengthOf(0);
+            });
+
+            Cypress.$(map).on('pm:remove', ({ originalEvent }) => {
+                const { layer } = originalEvent;
+
+                /* eslint no-unused-expressions: 0 */
+                expect(layer._map).to.be.null;
+                expect(layer.options.cypress).to.be.true;
+            });
+        });
+
+        cy.toolbarButton('polygon').click();
+
+        cy.get(mapSelector)
+            .click(120, 150)
+            .click(120, 100)
+            .click(300, 100)
+            .click(300, 200)
+            .click(120, 150);
+
+        cy.toolbarButton('cut').click();
+
+        cy.get(mapSelector)
+            .click(90, 150)
+            .click(100, 50)
+            .click(350, 50)
+            .click(350, 350)
+            .click(90, 150);
+    });
+
+    it('prevents self intersections', () => {
+        cy.window().then(({ map }) => {
+            map.pm.enableDraw('Poly', {
+                allowSelfIntersection: false,
+            });
+
+            Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
+                const poly = event.layer;
+                poly.pm.enable({
+                    allowSelfIntersection: false,
+                });
+            });
+        });
+
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(100, 50)
+            .click(250, 50)
+            .click(150, 150)
+            .click(120, 20)
+            .click(90, 250);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(4);
+    });
+
+    it('removes last vertex', () => {
+        cy.toolbarButton('polygon').click();
+
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(100, 50)
+            .click(150, 50)
+            .click(150, 150);
+
+        cy.hasVertexMarkers(5);
+
+        cy.window().then(({ map }) => {
+            map.pm.Draw.Poly._removeLastVertex();
+        });
+
+        cy.hasVertexMarkers(4);
+
+        cy.get('.active .action-removeLastVertex').click();
+
+        cy.hasVertexMarkers(3);
+
+        cy.get('.active .action-cancel').click();
+
+        cy.hasVertexMarkers(0);
+    });
+
     it('adds new vertex to end of array', () => {
         // when adding a vertex between the first and last current vertex,
         // the new coord should be added to the end, not the beginning of the coord array
@@ -8,7 +116,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('polygon')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.window().then(({ map, L }) => {
@@ -53,7 +161,7 @@ describe('Draw & Edit Poly', () => {
         });
     });
 
-    it('pm:create to be called', () => {
+    it('events to be called', () => {
         cy.window().then(({ map }) => {
             // test pm:create event
             Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
@@ -63,12 +171,19 @@ describe('Draw & Edit Poly', () => {
                 const markers = poly.pm._markers[0];
                 expect(markers).to.have.length(4);
             });
+
+            Cypress.$(map).on('pm:remove', ({ originalEvent: event }) => {
+                const layer = event.target;
+
+                /* eslint no-unused-expressions: 0 */
+                expect(layer.map).to.be.undefined;
+            });
         });
 
         // activate polygon drawing
         cy.toolbarButton('polygon')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a polygon - triggers the event pm:create
@@ -78,6 +193,10 @@ describe('Draw & Edit Poly', () => {
             .click(150, 50)
             .click(150, 150)
             .click(90, 250);
+
+        cy.toolbarButton('delete').click();
+
+        cy.get(mapSelector).click(110, 150);
     });
 
     it('draws and edits a polygon', () => {
@@ -88,7 +207,7 @@ describe('Draw & Edit Poly', () => {
         // activate polygon drawing
         cy.toolbarButton('polygon')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a polygon
@@ -102,7 +221,7 @@ describe('Draw & Edit Poly', () => {
 
         // button should be disabled after successful draw
         cy.toolbarButton('polygon')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.window().then(({ map }) => {
@@ -148,7 +267,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
     });
 
@@ -156,7 +275,7 @@ describe('Draw & Edit Poly', () => {
         // activate polygon drawing
         cy.toolbarButton('polygon')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a polygon
@@ -171,22 +290,22 @@ describe('Draw & Edit Poly', () => {
         // activate cutting drawing
         cy.toolbarButton('cut')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
-        // draw a polygon
+        // draw a polygon to cut
         cy.get(mapSelector)
-            .click(150, 250)
-            .click(170, 80)
-            .click(300, 80)
-            .click(280, 280)
-            .click(200, 285)
-            .click(150, 250);
+            .click(160, 100)
+            .click(270, 100)
+            .click(400, 130)
+            .click(350, 280)
+            .click(200, 150)
+            .click(160, 100);
 
         // enable global edit mode
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(10);
@@ -194,7 +313,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
     });
 
@@ -204,7 +323,7 @@ describe('Draw & Edit Poly', () => {
         // enable global edit mode
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(8);
@@ -212,7 +331,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('polyline')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a line
@@ -226,7 +345,7 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(13);
@@ -234,17 +353,19 @@ describe('Draw & Edit Poly', () => {
 
         cy.toolbarButton('delete')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.get(mapSelector).click(650, 100);
 
         cy.toolbarButton('edit')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         cy.hasVertexMarkers(5);
         cy.hasMiddleMarkers(4);
+
+        cy.toolbarButton('edit').click();
     });
 });

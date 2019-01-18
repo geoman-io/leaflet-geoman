@@ -3,6 +3,38 @@ describe('Draw & Edit Line', () => {
 
     const mapSelector = '#map';
 
+    it('doesnt finish single point lines', () => {
+        cy.toolbarButton('polyline').click();
+
+        cy.get(mapSelector)
+            .click(90, 250)
+            .click(90, 250);
+
+        cy.toolbarButton('edit').click();
+
+        cy.hasVertexMarkers(0);
+    });
+
+    it('removes last vertex', () => {
+        cy.toolbarButton('polyline').click();
+
+        cy.get(mapSelector)
+            .click(190, 250)
+            .click(200, 50)
+            .click(250, 50)
+            .click(250, 250);
+
+        cy.hasVertexMarkers(5);
+
+        cy.get('.button-container.active .action-removeLastVertex').click();
+
+        cy.hasVertexMarkers(4);
+
+        cy.get('.button-container.active .action-removeLastVertex').click();
+
+        cy.hasVertexMarkers(3);
+    });
+
     it('draws and edits a line', () => {
         cy.window().then(({ map }) => {
             cy.hasLayers(map, 1);
@@ -11,7 +43,7 @@ describe('Draw & Edit Line', () => {
         // activate line drawing
         cy.toolbarButton('polyline')
             .click()
-            .parent('a')
+            .closest('.button-container')
             .should('have.class', 'active');
 
         // draw a line
@@ -24,7 +56,7 @@ describe('Draw & Edit Line', () => {
 
         // button should be disabled after successful draw
         cy.toolbarButton('polyline')
-            .parent('a')
+            .closest('.button-container')
             .should('have.not.class', 'active');
 
         cy.window().then(({ map }) => {

@@ -47,6 +47,19 @@ Draw.Line = Draw.extend({
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
         }
 
+        // add tooltip to hintmarker
+        if (this.options.tooltips) {
+            this._hintMarker
+                .bindTooltip('Click to place first vertex', {
+                    permanent: true,
+                    offset: L.point(0, 10),
+                    direction: 'bottom',
+
+                    opacity: 0.8,
+                })
+                .openTooltip();
+        }
+
         // change map cursor
         this._map._container.style.cursor = 'crosshair';
 
@@ -169,7 +182,7 @@ Draw.Line = Draw.extend({
             this._handleSelfIntersection();
         }
     },
-    _handleSelfIntersection() {
+    _handleSelfIntersection(latlng) {
         // ok we need to check the self intersection here
         // problem: during draw, the marker on the cursor is not yet part
         // of the layer. So we need to clone the layer, add the
@@ -179,8 +192,13 @@ Draw.Line = Draw.extend({
         // clone layer (polyline is enough, even when it's a polygon)
         const clone = L.polyline(this._layer.getLatLngs());
 
+        // get vertex from param or from hintmarker
+        if (!latlng) {
+            latlng = this._hintMarker.getLatLng();
+        }
+
         // add the vertex
-        clone.addLatLng(this._hintMarker.getLatLng());
+        clone.addLatLng(latlng);
 
         // check the self intersection
         const selfIntersection = kinks(clone.toGeoJSON(15));
@@ -195,9 +213,40 @@ Draw.Line = Draw.extend({
             this._hintline.setStyle(this.options.hintlineStyle);
         }
     },
+    _removeLastVertex() {
+        // remove last coords
+        const coords = this._layer.getLatLngs();
+        const removedCoord = coords.pop();
+
+        // if all coords are gone, cancel drawing
+        if (coords.length < 1) {
+            this.disable();
+        }
+
+        // find corresponding marker
+        const marker = this._layerGroup
+            .getLayers()
+            .filter(l => l instanceof L.Marker)
+            .filter(l => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
+            .find(l => l.getLatLng() === removedCoord);
+
+        // remove that marker
+        this._layerGroup.removeLayer(marker);
+
+        // update layer with new coords
+        this._layer.setLatLngs(coords);
+
+        // sync the hintline again
+        this._syncHintLine();
+    },
     _createVertex(e) {
-        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-            return;
+        // don't create a vertex if we have a selfIntersection and it is not allowed
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(e.latlng);
+
+            if (this._doesSelfIntersect) {
+                return;
+            }
         }
 
         // assign the coordinate of the click to the hintMarker, that's necessary for
@@ -235,14 +284,25 @@ Draw.Line = Draw.extend({
             latlng,
         });
     },
-    _finishShape() {
+    _finishShape(e) {
         // if self intersection is not allowed, do not finish the shape!
-        if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
+        if (!this.options.allowSelfIntersection) {
+            this._handleSelfIntersection(e.latlng);
+
+            if (this._doesSelfIntersect) {
+                return;
+            }
+        }
+
+        // get coordinates
+        const coords = this._layer.getLatLngs();
+
+        // if there is only one coords, don't finish the shape!
+        if (coords.length <= 1) {
             return;
         }
 
-        // get coordinates, create the leaflet shape and add it to the map
-        const coords = this._layer.getLatLngs();
+        // create the leaflet shape and add it to the map
         const polylineLayer = L.polyline(
             coords,
             this.options.pathOptions,
@@ -261,7 +321,7 @@ Draw.Line = Draw.extend({
             this._cleanupSnapping();
         }
     },
-    _createMarker(latlng) {
+    _createMarker(latlng, first) {
         // create the new marker
         const marker = new L.Marker(latlng, {
             draggable: false,
@@ -274,6 +334,18 @@ Draw.Line = Draw.extend({
 
         // a click on any marker finishes this shape
         marker.on('click', this._finishShape, this);
+
+        // handle tooltip text
+        if (first) {
+            this._hintMarker.setTooltipContent('Click to continue drawing');
+        }
+        const second = this._layer.getLatLngs().length === 2;
+
+        if (second) {
+            this._hintMarker.setTooltipContent(
+                'Click any existing marker to finish',
+            );
+        }
 
         return marker;
     },

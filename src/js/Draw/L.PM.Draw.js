@@ -5,6 +5,7 @@ const Draw = L.Class.extend({
     options: {
         snappable: true,
         snapDistance: 20,
+        tooltips: true,
         cursorMarker: true,
         finishOnDoubleClick: false,
         finishOn: null,

@@ -41,6 +41,19 @@ Draw.Rectangle = Draw.extend({
         this._hintMarker._pmTempLayer = true;
         this._layerGroup.addLayer(this._hintMarker);
 
+        // add tooltip to hintmarker
+        if (this.options.tooltips) {
+            this._hintMarker
+                .bindTooltip('Click to place first vertex', {
+                    permanent: true,
+                    offset: L.point(0, 10),
+                    direction: 'bottom',
+
+                    opacity: 0.8,
+                })
+                .openTooltip();
+        }
+
         // show the hintmarker if the option is set
         if (this.options.cursorMarker) {
             L.DomUtil.addClass(this._hintMarker._icon, 'visible');
@@ -49,7 +62,9 @@ Draw.Rectangle = Draw.extend({
             this._styleMarkers = [];
             for (let i = 0; i < 2; i += 1) {
                 const styleMarker = L.marker([0, 0], {
-                    icon: L.divIcon({ className: 'marker-icon rect-style-marker' }),
+                    icon: L.divIcon({
+                        className: 'marker-icon rect-style-marker',
+                    }),
                     draggable: true,
                     zIndexOffset: 100,
                 });
@@ -70,7 +85,10 @@ Draw.Rectangle = Draw.extend({
         this._map.on('mousemove', this._syncHintMarker, this);
 
         // fire drawstart event
-        this._map.fire('pm:drawstart', { shape: this._shape, workingLayer: this._layer });
+        this._map.fire('pm:drawstart', {
+            shape: this._shape,
+            workingLayer: this._layer,
+        });
 
         // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
         this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -146,6 +164,9 @@ Draw.Rectangle = Draw.extend({
         this._map.off('click', this._placeStartingMarkers, this);
         this._map.on('click', this._finishShape, this);
 
+        // change tooltip text
+        this._hintMarker.setTooltipContent('Click to finish');
+
         this._setRectangleOrigin();
     },
     _setRectangleOrigin() {
@@ -185,7 +206,10 @@ Draw.Rectangle = Draw.extend({
 
             // Find two corners not currently occupied by starting marker and hint marker
             corners.forEach((corner) => {
-                if (!corner.equals(this._startMarker.getLatLng()) && !corner.equals(this._hintMarker.getLatLng())) {
+                if (
+                    !corner.equals(this._startMarker.getLatLng()) &&
+                    !corner.equals(this._hintMarker.getLatLng())
+                ) {
                     unmarkedCorners.push(corner);
                 }
             });
@@ -200,7 +224,10 @@ Draw.Rectangle = Draw.extend({
         // create the final rectangle layer, based on opposite corners A & B
         const A = this._startMarker.getLatLng();
         const B = e.latlng;
-        const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(this._map);
+        const rectangleLayer = L.rectangle(
+            [A, B],
+            this.options.pathOptions,
+        ).addTo(this._map);
 
         // disable drawing
         this.disable();

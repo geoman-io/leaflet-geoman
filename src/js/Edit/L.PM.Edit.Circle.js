@@ -48,7 +48,7 @@ Edit.Circle = Edit.extend({
             return false;
         }
         layer.pm._enabled = false;
-        layer.pm._layerGroup.clearLayers();
+        layer.pm._helperLayers.clearLayers();
 
         // clean up draggable
         layer.off('mousedown');
@@ -69,13 +69,12 @@ Edit.Circle = Edit.extend({
         const map = this._map;
 
         // cleanup old ones first
-        if (this._layerGroup) {
-            this._layerGroup.clearLayers();
+        if (this._helperLayers) {
+            this._helperLayers.clearLayers();
         }
 
         // add markerGroup to map, markerGroup includes regular and middle markers
-        this._layerGroup = new L.LayerGroup();
-        map.addLayer(this._layerGroup);
+        this._helperLayers = new L.LayerGroup().addTo(map);
 
         // create marker for each coordinate
         const center = this._layer.getLatLng();
@@ -151,11 +150,12 @@ Edit.Circle = Edit.extend({
         const B = markerB.getLatLng();
         this._hintline = L.polyline([A, B], this.options.hintlineStyle);
         this._hintline._pmTempLayer = true;
-        this._layerGroup.addLayer(this._hintline);
+        this._helperLayers.addLayer(this._hintline);
     },
     _createCenterMarker(latlng) {
         const marker = this._createMarker(latlng);
 
+        L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
         marker.on('move', this._moveCircle, this);
         // marker.on('contextmenu', this._removeMarker, this);
 
@@ -183,7 +183,7 @@ Edit.Circle = Edit.extend({
         marker.on('dragstart', this._onMarkerDragStart, this);
         marker.on('dragend', this._onMarkerDragEnd, this);
 
-        this._layerGroup.addLayer(marker);
+        this._helperLayers.addLayer(marker);
 
         return marker;
     },

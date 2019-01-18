@@ -4,12 +4,6 @@ const Map = L.Class.extend({
         this.Draw = new L.PM.Draw(map);
         this.Toolbar = new L.PM.Toolbar(map);
 
-        this.map.on('layerremove', (e) => {
-            if (e.layer.pm && !e.layer._pmTempLayer) {
-                this.map.fire('pm:remove', e);
-            }
-        });
-
         this._globalRemovalMode = false;
     },
     addControls(options) {
@@ -35,8 +29,14 @@ const Map = L.Class.extend({
     },
     removeLayer(e) {
         const layer = e.target;
-        if (!layer._layers && (!layer.pm || !layer.pm.dragging())) {
-            e.target.remove();
+        // only remove layer, if it's handled by leaflet.pm,
+        // not a tempLayer and not currently being dragged
+        const removeable =
+            !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
+
+        if (removeable) {
+            layer.remove();
+            this.map.fire('pm:remove', { layer });
         }
     },
     toggleGlobalRemovalMode() {
@@ -44,13 +44,16 @@ const Map = L.Class.extend({
         if (this.globalRemovalEnabled()) {
             this._globalRemovalMode = false;
             this.map.eachLayer((layer) => {
-                layer.off('click', this.removeLayer);
+                layer.off('click', this.removeLayer, this);
             });
         } else {
             this._globalRemovalMode = true;
             this.map.eachLayer((layer) => {
-                if (layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval)) {
-                    layer.on('click', this.removeLayer);
+                if (
+                    layer.pm &&
+                    !(layer.pm.options && layer.pm.options.preventMarkerRemoval)
+                ) {
+                    layer.on('click', this.removeLayer, this);
                 }
             });
         }
@@ -68,7 +71,11 @@ const Map = L.Class.extend({
         // find all layers handled by leaflet.pm
         let layers = [];
         this.map.eachLayer((layer) => {
-            if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
+            if (
+                layer instanceof L.Polyline ||
+                layer instanceof L.Marker ||
+                layer instanceof L.Circle
+            ) {
                 layers.push(layer);
             }
         });
@@ -82,6 +89,7 @@ const Map = L.Class.extend({
         this._globalEditMode = true;
 
         layers.forEach((layer) => {
+            // console.log(layer);
             layer.pm.enable(options);
         });
 
@@ -95,7 +103,11 @@ const Map = L.Class.extend({
         // find all layers handles by leaflet.pm
         let layers = [];
         this.map.eachLayer((layer) => {
-            if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
+            if (
+                layer instanceof L.Polyline ||
+                layer instanceof L.Marker ||
+                layer instanceof L.Circle
+            ) {
                 layers.push(layer);
             }
         });

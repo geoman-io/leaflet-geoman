@@ -1,70 +1,104 @@
 .leaflet-pm-toolbar {
-
-
 }
 
 .leaflet-pm-toolbar .leaflet-buttons-control-button {
-    padding: 3px;
+    padding: 5px;
     box-sizing: border-box;
+    position: relative;
+    z-index: 3;
 }
+
+.leaflet-pm-toolbar .control-fa-icon {
+    font-size: 19px;
+    line-height: 24px;
+}
+
 .leaflet-pm-toolbar .control-icon {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    opacity: .8;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
 }
 
 .leaflet-pm-toolbar .leaflet-pm-icon-marker {
-    background-image: url('../assets/icons/marker.png');
+    background-image: url('../assets/icons/Marker.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-polygon {
-    background-image: url('../assets/icons/draw.png');
+    background-image: url('../assets/icons/Polygon.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-polyline {
-    background-image: url('../assets/icons/line.png');
-    background-size: 80%;
+    background-image: url('../assets/icons/Line.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-circle {
-    background-image: url('../assets/icons/circle.png');
-    background-size: 90%;
+    background-image: url('../assets/icons/Circle.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-rectangle {
-    background-image: url('../assets/icons/rectangle.png');
-    background-size: 90%;
-}
-.leaflet-pm-toolbar .leaflet-pm-icon-drag {
-    /*background-image: url('../assets/icons/drag.png');*/
+    background-image: url('../assets/icons/Rectangle.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-delete {
-    background-image: url('../assets/icons/remove.png');
-    background-size: 70%;
+    background-image: url('../assets/icons/Eraser.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-edit {
-    background-image: url('../assets/icons/edit.png');
-    background-size: 80%;
-    background-position: 4px center;
+    background-image: url('../assets/icons/Wrench.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-cut {
-    background-image: url('../assets/icons/cut.png');
-    background-size: 80%;
-    background-position: 4px center;
+    background-image: url('../assets/icons/Scissors.svg');
 }
 
 .leaflet-buttons-control-button:hover {
     cursor: pointer;
     background-color: #f4f4f4;
 }
-.leaflet-buttons-control-button.active {
-    background-color: #f4f4f4;
-}
-
-.leaflet-buttons-control-button.active > .control-icon {
-    opacity: .5;
+.active .leaflet-buttons-control-button {
+    box-shadow: inset 0 -1px 5px 2px rgba(81, 77, 77, 0.31);
 }
 
 .leaflet-buttons-control-text-hide {
     display: none;
+}
+
+.button-container {
+    position: relative;
+}
+
+.button-container .leaflet-pm-actions-container {
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 31px;
+    display: none;
+    white-space: nowrap;
+}
+
+.leaflet-right
+    .leaflet-pm-toolbar
+    .button-container
+    .leaflet-pm-actions-container {
+    right: 31px;
+    left: auto;
+}
+
+.button-container.active .leaflet-pm-actions-container {
+    display: block;
+}
+
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:last-child {
+    border-radius: 0px 3px 3px 0px;
+    border-right: 0px;
+}
+.button-container .leaflet-pm-actions-container .leaflet-pm-action {
+    padding: 0px 10px;
+    background-color: #666;
+    color: #fff;
+    display: inline-block;
+    width: auto;
+    border-right: 1px solid #eee;
+    user-select: none;
+}
+
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover {
+    cursor: pointer;
+    background-color: #777;
 }

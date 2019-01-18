@@ -1,6 +1,9 @@
 # Leaflet Geometry Management
 
+[![npm version](https://badge.fury.io/js/leaflet.pm.svg)](https://badge.fury.io/js/leaflet.pm)
 ![](https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop)
+[![star this repo](http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet.pm&style=default)](https://github.com/codeofsumit/leaflet.pm)
+[![NPM Downloads](https://img.shields.io/npm/dt/leaflet.pm.svg)](https://www.npmjs.com/package/leaflet.pm)
 
 A Leaflet Plugin For Creating And Editing Geometry Layers in Leaflet 1.x.\
 Draw, Edit, Drag, Cut and Snap layers like Markers, Polylines,
@@ -33,7 +36,10 @@ and include them in your project.
 CSS
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css" />
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css"
+/>
 ```
 
 JS
@@ -123,6 +129,9 @@ var options = {
     snappable: true,
     snapDistance: 20,
 
+    // show tooltips
+    tooltips: true,
+
     // allow snapping to the middle of segments
     snapMiddle: false,
 
@@ -143,14 +152,10 @@ var options = {
     // show a marker at the cursor
     cursorMarker: false,
 
-    // finish drawing on double click
-    // DEPRECATED: use finishOn: 'dblclick' instead
-    finishOnDoubleClick: false,
-
     // specify type of layer event to finish the drawn shape
     // example events: 'mouseout', 'dblclick', 'contextmenu'
     // List: http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
-    finishOn: 'contextmenu',
+    finishOn: null,
 
     // custom marker style (only for Marker draw)
     markerStyle: {
@@ -198,6 +203,13 @@ map.on('pm:drawstart', function(e) {
         // the working layer and shape
     });
 
+    // also fired on the markers of the polygon
+    layer.on('pm:snapdrag', function(e) {
+        // e includes marker, snap coordinates
+        // segment, the working layer
+        // and the distance
+    });
+
     // check self intersection
     layer.pm.hasSelfIntersection();
 });
@@ -225,15 +237,16 @@ map.on('pm:create', function(e) {
 
 ##### Creating Holes or Cutting a Polygon
 
-![cut polygon](https://user-images.githubusercontent.com/2399810/29863151-15929280-8d6f-11e7-90e8-1935695175aa.gif)
+![cut polygon](https://file-klmbwnzaor.now.sh/cutting.gif)
+
 Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from
 all underlying polygons. This way you can create holes, cut polygons in half or
 remove parts of it.
 
 Important: the cutted layer will be replaced, not updated. Listen to the
 `pm:cut` event to update your layer references in your code. The `pm:cut` event
-will provide you with the old/removed/cut layer and returns the resulting
-layer(s) that is/are added to the map.
+will provide you with the original layer and returns the resulting
+layer(s) that is/are added to the map as a Polygon or MultiPolygon.
 
 ```js
 // recommended options (used when enabled via toolbar)
@@ -342,7 +355,10 @@ polygonLayer.pm.hasSelfIntersection(); // true/false
 // toggle global removal mode
 map.pm.toggleGlobalRemovalMode();
 
-// listen to removal of layers that are NOT ignored and NOT helpers by leaflet.pm
+// listen to removal of layers
+map.on('layerremove', function(e) {});
+
+// listen to removal of layers by leaflet.pm
 map.on('pm:remove', function(e) {});
 ```
 
@@ -403,15 +419,13 @@ map.pm.setPathOptions({
 
 I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.
 You can upvote existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
-Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+label%3A%22feature+request%22+is%3Aclosed) and upvote if you want them to be implemented.
+Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc) and upvote if you want them to be implemented.
 
 ### Credit
 
 As I never built a leaflet plugin before, I looked heavily into the code of
 leaflet.draw to find out how to do stuff. So don't be surprised to see some
 familiar code.
-
-The icons used for the toolbar are CC-BY [Glyphicons](http://glyphicons.com/).
 
 I also took a hard look at the great
 [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some
