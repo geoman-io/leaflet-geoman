@@ -59,22 +59,17 @@ const Map = L.Class.extend({
     },
     toggleGlobalDragMode() {
         const layers = this.findLayers();
-        console.log('toggle drag mode');
 
         if (this.globalDragModeEnabled()) {
             this._globalDragMode = false;
 
             layers.forEach((layer) => {
-                console.log(layer);
                 layer.pm.disableLayerDrag();
             });
         } else {
             this._globalDragMode = true;
 
-            console.log('init draggable layer');
-
             layers.forEach((layer) => {
-                console.log(layer);
                 layer.pm.enableLayerDrag();
             });
         }

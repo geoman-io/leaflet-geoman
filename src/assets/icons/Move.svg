@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <path id="move-a" d="M21,14 L21,10 L27,15 L21,20 L21,16 L16,16 L16,21 L20,21 L15,27 L10,21 L14,21 L14,16 L9,16 L9,20 L3,15 L9,10 L9,14 L14,14 L14,9 L10,9 L15,3 L20,9 L16,9 L16,14 L21,14 Z"/>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="translate(-3 -3)">
+    <mask id="move-b" fill="#fff">
+      <use xlink:href="#move-a"/>
+    </mask>
+    <use fill="#D8D8D8" xlink:href="#move-a"/>
+    <g fill="#5B5B5B" mask="url(#move-b)">
+      <rect width="30" height="30"/>
+    </g>
+  </g>
+</svg>

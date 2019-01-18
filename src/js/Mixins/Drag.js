@@ -1,5 +1,10 @@
 const DragMixin = {
     enableLayerDrag() {
+        if (this._layer instanceof L.Marker) {
+            this._layer.dragging.enable();
+            return;
+        }
+
         // temporary coord variable for delta calculation
         this._tempDragCoord = null;
 
@@ -17,6 +22,11 @@ const DragMixin = {
         this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
     },
     disableLayerDrag() {
+        if (this._layer instanceof L.Marker) {
+            this._layer.dragging.disable();
+            return;
+        }
+
         // remove CSS class
         const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
         L.DomUtil.removeClass(el, 'leaflet-pm-draggable');

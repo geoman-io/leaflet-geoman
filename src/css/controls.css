@@ -41,10 +41,10 @@
     background-image: url('../assets/icons/Eraser.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-edit {
-    background-image: url('../assets/icons/Wrench.svg');
+    background-image: url('../assets/icons/Edit_Vertex.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-drag {
-    /* background-image: url('../assets/icons/Drag.svg'); */
+    background-image: url('../assets/icons/Move.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-cut {
     background-image: url('../assets/icons/Scissors.svg');
