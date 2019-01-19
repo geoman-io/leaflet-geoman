@@ -137,7 +137,7 @@ describe('Draw & Edit Poly', () => {
                     return l;
                 })
                 .as('poly')
-                .then(poly => poly._latlngs[0][0])
+                .then((poly) => poly._latlngs[0][0])
                 .as('firstLatLng');
         });
 
@@ -199,7 +199,7 @@ describe('Draw & Edit Poly', () => {
         cy.get(mapSelector).click(110, 150);
     });
 
-    it.only('draws and edits a polygon', () => {
+    it('draws and edits a polygon', () => {
         cy.window().then(({ map }) => {
             cy.hasLayers(map, 1);
         });
