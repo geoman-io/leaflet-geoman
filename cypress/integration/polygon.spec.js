@@ -137,7 +137,7 @@ describe('Draw & Edit Poly', () => {
                     return l;
                 })
                 .as('poly')
-                .then(poly => poly._latlngs[0][0])
+                .then((poly) => poly._latlngs[0][0])
                 .as('firstLatLng');
         });
 

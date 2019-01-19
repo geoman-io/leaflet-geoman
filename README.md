@@ -36,10 +36,7 @@ and include them in your project.
 CSS
 
 ```html
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css"
-/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css" />
 ```
 
 JS
@@ -277,9 +274,6 @@ var polygonLayer = L.geoJson(data).addTo(map);
 
 // optional options
 var options = {
-    // makes the layer draggable
-    draggable: true,
-
     // makes the vertices snappable to other layers
     // temporarily disable snapping during drag by pressing ALT
     snappable: true,
@@ -293,9 +287,6 @@ var options = {
 
     // disable the removal of markers/vertexes via right click
     preventMarkerRemoval: false,
-
-    // disable the possibility to edit vertexes
-    preventVertexEdit: false,
 };
 
 // enable edit mode

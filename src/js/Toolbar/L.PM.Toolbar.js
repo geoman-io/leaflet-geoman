@@ -5,13 +5,13 @@ L.Control.PMButton = PMButton;
 const Toolbar = L.Class.extend({
     options: {
         drawMarker: true,
-        drawPolygon: true,
-        drawPolyline: true,
-        drawCircle: true,
         drawRectangle: true,
+        drawPolyline: true,
+        drawPolygon: true,
+        drawCircle: true,
         editMode: true,
+        dragMode: true,
         cutPolygon: true,
-        dragPolygon: false,
         removalMode: true,
         position: 'topleft',
     },
@@ -59,8 +59,9 @@ const Toolbar = L.Class.extend({
                 drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
                 drawPolygon: 'control-icon leaflet-pm-icon-polygon',
                 drawCircle: 'control-icon leaflet-pm-icon-circle',
-                cutPolygon: 'control-icon leaflet-pm-icon-cut',
                 editMode: 'control-icon leaflet-pm-icon-edit',
+                dragMode: 'control-icon leaflet-pm-icon-drag',
+                cutPolygon: 'control-icon leaflet-pm-icon-cut',
                 removalMode: 'control-icon leaflet-pm-icon-delete',
             },
         };
@@ -226,6 +227,21 @@ const Toolbar = L.Class.extend({
             actions: ['cancel'],
         };
 
+        const dragButton = {
+            title: 'Drag Layers',
+            className: 'control-icon leaflet-pm-icon-drag',
+            onClick: () => {},
+            afterClick: () => {
+                this.map.pm.toggleGlobalDragMode();
+            },
+            doToggle: true,
+            toggleStatus: false,
+            disableOtherButtons: true,
+            position: this.options.position,
+            tool: 'edit',
+            actions: ['cancel'],
+        };
+
         const cutButton = {
             title: 'Cut Layers',
             className: 'control-icon leaflet-pm-icon-cut',
@@ -268,6 +284,7 @@ const Toolbar = L.Class.extend({
         this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
         this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
         this._addButton('editMode', new L.Control.PMButton(editButton));
+        this._addButton('dragMode', new L.Control.PMButton(dragButton));
         this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
         this._addButton('removalMode', new L.Control.PMButton(deleteButton));
     },
