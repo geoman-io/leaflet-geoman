@@ -36,7 +36,7 @@ Edit.Rectangle = Edit.Poly.extend({
     // creates initial markers for coordinates
     _createMarker(latlng, index) {
         const marker = new L.Marker(latlng, {
-            draggable: !this.options.preventVertexEdit,
+            draggable: true,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 

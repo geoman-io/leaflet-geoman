@@ -209,7 +209,7 @@ Edit.Line = Edit.extend({
     // creates initial markers for coordinates
     _createMarker(latlng) {
         const marker = new L.Marker(latlng, {
-            draggable: !this.options.preventVertexEdit,
+            draggable: true,
             icon: L.divIcon({ className: 'marker-icon' }),
         });
 
@@ -425,8 +425,8 @@ Edit.Line = Edit.extend({
     },
     isEmptyDeep(l) {
         // thanks for the function, Felix Heck
-        const flatten = (list) =>
-            list.filter((x) => ![null, '', undefined].includes(x)).reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+        const flatten = list =>
+            list.filter(x => ![null, '', undefined].includes(x)).reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
 
         return !flatten(l).length;
     },
@@ -434,7 +434,7 @@ Edit.Line = Edit.extend({
         // thanks for the function, Felix Heck
         let result;
 
-        const run = (path) => (v, i) => {
+        const run = path => (v, i) => {
             const iRes = path.concat(i);
 
             if (v._leaflet_id === marker._leaflet_id) {
