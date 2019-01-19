@@ -40,7 +40,7 @@ Check out **[Geoman](https://geoman.io)**.
 -   [Drawing](#drawing-mode)
 -   [Editing](#edit-mode)
 -   [Style Customization](#customize-style)
--   [Feature Requests](#feature-request)
+-   [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
 ### Installation
 
@@ -78,13 +78,6 @@ import 'leaflet.pm';
 import 'leaflet.pm/dist/leaflet.pm.css';
 ```
 
-#### Include as CommonJS Module
-
-```js
-require('leaflet.pm');
-require('leaflet.pm/dist/leaflet.pm.css');
-```
-
 ### Getting Started
 
 #### Init Leaflet.PM
@@ -111,8 +104,9 @@ var options = {
     drawRectangle: true, // adds button to draw a rectangle
     drawPolygon: true, // adds button to draw a polygon
     drawCircle: true, // adds button to draw a cricle
-    cutPolygon: true, // adds button to cut a hole in a polygon
     editMode: true, // adds button to toggle edit mode for all layers
+    dragMode: true, // adds button to toggle drag mode for all layers
+    cutPolygon: true, // adds button to cut a hole in a polygon
     removalMode: true, // adds a button to remove layers
 };
 
@@ -258,7 +252,7 @@ map.on('pm:create', function(e) {
 });
 ```
 
-##### Creating Holes or Cutting a Polygon
+##### Creating Holes and Cutting a Polygon
 
 ![cut polygon](https://file-klmbwnzaor.now.sh/cutting.gif)
 
@@ -293,12 +287,12 @@ map.on('pm:cut', function(e) {});
 
 ##### Edit Mode
 
-Use Edit Mode for a layer like this:
+Let's you edit vertices of layers. Use it like this:
 
 ```js
 var polygonLayer = L.geoJson(data).addTo(map);
 
-// optional options
+// available options
 var options = {
     // makes the vertices snappable to other layers
     // temporarily disable snapping during drag by pressing ALT
@@ -364,6 +358,18 @@ map.on('pm:globaleditmodetoggled', function(e) {});
 
 // check self intersection
 polygonLayer.pm.hasSelfIntersection(); // true/false
+```
+
+##### Drag Mode
+
+```js
+// toggle global removal mode
+map.pm.toggleGlobalDragMode();
+
+// related events
+map.on('pm:dragstart', function(e) {});
+map.on('pm:drag', function(e) {});
+map.on('pm:dragend', function(e) {});
 ```
 
 ##### Removal Mode
@@ -447,3 +453,5 @@ familiar code.
 I also took a hard look at the great
 [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some
 of my helper functions.
+
+If you want to support the development of leaflet.pm, consider subscribing to the services of [Geoman](https://geoman.io).
