@@ -92,29 +92,32 @@ L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 
 ##### Leaflet.PM Toolbar
 
-This plugin comes with an optional toolbar to give you buttons to use the
-various features.
+<img align="right" height="300" src="https://file-ffrjxxowri.now.sh/" alt="Leaflet.PM Toolbar">
+
+You can add a toolbar to the map to use leaflet.pm features via a user interface.
 
 ```js
-// define toolbar options
-var options = {
-    position: 'topleft', // toolbar position, options are 'topleft', 'topright', 'bottomleft', 'bottomright'
-    drawMarker: true, // adds button to draw markers
-    drawPolyline: true, // adds button to draw a polyline
-    drawRectangle: true, // adds button to draw a rectangle
-    drawPolygon: true, // adds button to draw a polygon
-    drawCircle: true, // adds button to draw a cricle
-    editMode: true, // adds button to toggle edit mode for all layers
-    dragMode: true, // adds button to toggle drag mode for all layers
-    cutPolygon: true, // adds button to cut a hole in a polygon
-    removalMode: true, // adds a button to remove layers
-};
-
-// add leaflet.pm controls to the map
-map.pm.addControls(options);
+// add leaflet.pm controls with some options to the map
+map.pm.addControls({
+    position: 'topleft',
+    drawCircle: false,
+});
 ```
 
-If no options are passed, all buttons will be shown.
+Available options:
+
+| Option        | Default     | Description                                                                                      |
+| ------------- | ----------- | ------------------------------------------------------------------------------------------------ |
+| position      | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
+| drawMarker    | `true`      | adds button to draw markers                                                                      |
+| drawPolyline  | `true`      | adds button to draw rectangle                                                                    |
+| drawRectangle | `true`      | adds button to draw rectangle                                                                    |
+| drawPolygon   | `true`      | adds button to draw polygon                                                                      |
+| drawCircle    | `true`      | adds button to draw cricle                                                                       |
+| editMode      | `true`      | adds button to toggle edit mode for all layers                                                   |
+| dragMode      | `true`      | adds button to toggle drag mode for all layers                                                   |
+| cutPolygon    | `true`      | adds button to cut a hole in a polygon                                                           |
+| removalMode   | `true`      | adds a button to remove layers                                                                   |
 
 If you are wondering how e.g. the `drawPolygon` button will enable drawing mode
 with specific options, here it is: Simply enable drawing mode programatically,
