@@ -92,7 +92,7 @@ L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 
 ##### Leaflet.PM Toolbar
 
-<img align="right" height="300" src="https://file-ffrjxxowri.now.sh/" alt="Leaflet.PM Toolbar">
+<img align="left" height="200" src="https://file-ffrjxxowri.now.sh/" alt="Leaflet.PM Toolbar">
 
 You can add a toolbar to the map to use leaflet.pm features via a user interface.
 
@@ -104,7 +104,7 @@ map.pm.addControls({
 });
 ```
 
-Available options:
+See the available options in the table blow.
 
 | Option        | Default     | Description                                                                                      |
 | ------------- | ----------- | ------------------------------------------------------------------------------------------------ |
