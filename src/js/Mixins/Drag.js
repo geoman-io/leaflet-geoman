@@ -122,7 +122,6 @@ const DragMixin = {
     dragging() {
         return this._dragging;
     },
-
     _onLayerDrag(e) {
         // latLng of mouse event
         const { latlng } = e;
@@ -149,11 +148,24 @@ const DragMixin = {
                 };
             });
 
-        // create the new coordinates array
-        const newCoords = moveCoords(this._layer._latlngs);
+        const moveCoord = coord => ({
+            lat: coord.lat + deltaLatLng.lat,
+            lng: coord.lng + deltaLatLng.lng,
+        });
 
-        // set new coordinates and redraw
-        this._layer.setLatLngs(newCoords).redraw();
+        if (this._layer instanceof L.CircleMarker) {
+            // create the new coordinates array
+            const newCoords = moveCoord(this._layer.getLatLng());
+
+            // set new coordinates and redraw
+            this._layer.setLatLng(newCoords).redraw();
+        } else {
+            // create the new coordinates array
+            const newCoords = moveCoords(this._layer.getLatLngs());
+
+            // set new coordinates and redraw
+            this._layer.setLatLngs(newCoords).redraw();
+        }
 
         // save current latlng for next delta calculation
         this._tempDragCoord = latlng;
