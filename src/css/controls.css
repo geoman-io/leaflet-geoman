@@ -41,7 +41,10 @@
     background-image: url('../assets/icons/Eraser.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-edit {
-    background-image: url('../assets/icons/Wrench.svg');
+    background-image: url('../assets/icons/Edit_Vertex.svg');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-drag {
+    background-image: url('../assets/icons/Move.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-cut {
     background-image: url('../assets/icons/Scissors.svg');
@@ -72,10 +75,7 @@
     white-space: nowrap;
 }
 
-.leaflet-right
-    .leaflet-pm-toolbar
-    .button-container
-    .leaflet-pm-actions-container {
+.leaflet-right .leaflet-pm-toolbar .button-container .leaflet-pm-actions-container {
     right: 31px;
     left: auto;
 }
