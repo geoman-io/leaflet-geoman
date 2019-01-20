@@ -164,7 +164,7 @@ See the available options in the table below.
 
 | Option                | Default                               | Description                                                                                                                                           |
 | --------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| snappable             | `true`                                | enable snapping to other layers vertices for precision draing                                                                                         |
+| snappable             | `true`                                | enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                                             |
 | snapDistance          | `20`                                  | the distance to another vertex when a snap should happen                                                                                              |
 | snapMiddle            | `false`                               | allow snapping to the middle of a layers segments (between two vertexes)                                                                              |
 | tooltips              | `true`                                | show helpful tooltips for your user                                                                                                                   |
@@ -250,101 +250,154 @@ map.on('pm:cut', function(e) {});
 Let's you edit vertices of layers. Use it like this:
 
 ```js
-var polygonLayer = L.geoJson(data).addTo(map);
-
-// available options
-var options = {
-    // makes the vertices snappable to other layers
-    // temporarily disable snapping during drag by pressing ALT
-    snappable: true,
-
-    // distance in pixels that needs to be undercut to trigger snapping
-    // default: 30
-    snapDistance: 30,
-
-    // self intersection allowed?
-    allowSelfIntersection: true,
-
-    // disable the removal of markers/vertexes via right click
-    preventMarkerRemoval: false,
-};
-
 // enable edit mode
-polygonLayer.pm.enable(options);
-marker.pm.enable(options);
-
-// disable edit mode
-polygonLayer.pm.disable();
-
-// toggle edit mode
-polygonLayer.pm.toggleEdit(options);
-
-// check if edit mode is enabled
-polygonLayer.pm.enabled(); // returns true/false
-
-// listen to changes
-polygonLayer.on('pm:edit', function(e) {});
-polygonLayer.on('pm:dragstart', function(e) {});
-polygonLayer.on('pm:drag', function(e) {});
-polygonLayer.on('pm:dragend', function(e) {});
-
-// listen to when vertexes are being added or removed from the layer
-polygonLayer.on('pm:vertexadded', function(e) {});
-polygonLayer.on('pm:vertexremoved', function(e) {});
-
-// listen to when a marker of a polygon-vertex is being dragged
-polygonLayer.on('pm:markerdragstart', function(e) {
-    // the property e.ringIndex refers to the coordinate ring inside the polygon the marker belongs to
-    // if it's undefined, there are no rings
-    // e.index is the index of the marker inside the coordinate ring / array it belongs to
+layer.pm.enable({
+    allowSelfIntersection: false,
 });
-polygonLayer.on('pm:markerdragend', function(e) {});
+```
 
-// listen to when snapping occurs
-// pm:snap and pm:unsnap are, in addition to the layer, also fired on the markers of the polygon
-// if you'd need it for some advanced behaviour
-polygonLayer.on('pm:snap', function(e) {});
-polygonLayer.on('pm:unsnap', function(e) {});
+See the available options in the table below.
 
-// if allowSelfIntersection is false: listen to when a self-intersection is detected
-// e.intersection includes a geoJSON of the intersection
-polygonLayer.on('pm:intersect', function(e) {});
+| Option                | Default | Description                                                                                               |
+| --------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| snappable             | `true`  | enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
+| snapDistance          | `20`    | the distance to another vertex when a snap should happen                                                  |
+| allowSelfIntersection | `true`  | adds button to draw rectangle                                                                             |
+| preventMarkerRemoval  | `false` | disable the removal of markers/vertexes via right click                                                   |
 
-circleLayer.on('pm:centerplaced', function(e) {});
+The following methods are available for layers under `layer.pm`:
 
-// toggle global edit mode (edit mode for all layers on the map)
+| Method                | Returns   | Description                                                                                         |
+| --------------------- | --------- | --------------------------------------------------------------------------------------------------- |
+| enable(`options`)     | -         | enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar. |
+| disable()             | -         | disables edit mode                                                                                  |
+| toggleEdit(`options`) | -         | toggles edit mode. Passed options are preserved                                                     |
+| enabled()             | `Boolean` | Returns `true` if edit mode is enabled. `false` when disabled.                                      |
+| hasSelfIntersection() | `Boolean` | Returns `true` is the layer has a self intersection                                                 |
+
+You can listen to events related to editing on events like this:
+
+```js
+// listen to when a layer is changed in edit mode
+layer.on('pm:edit', (e) => {
+    console.log(e);
+});
+```
+
+The following events are available on a layer instance:
+
+| Event              | Params | Description                                                                                          |
+| ------------------ | ------ | ---------------------------------------------------------------------------------------------------- |
+| pm:edit            | `e`    | Fired when a layer is edited.                                                                        |
+| pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         |
+| pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       |
+| pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 |
+| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          |
+| pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            |
+| pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              |
+| pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. |
+| pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           |
+
+You can enable Edit Mode for all layers on a map like this:
+
+```js
+// enable global edit mode
 map.pm.toggleGlobalEditMode(options);
-
-// listen to when global edit mode is toggled
-map.on('pm:globaleditmodetoggled', function(e) {});
-
-// check self intersection
-polygonLayer.pm.hasSelfIntersection(); // true/false
 ```
 
-##### Drag Mode
+The following methods are available on `map.pm`:
+
+| Method                          | Returns   | Description                                                           |
+| ------------------------------- | --------- | --------------------------------------------------------------------- |
+| enableGlobalEditMode(`options`) | -         | Enables global edit mode.                                             |
+| disableGlobalEditMode()         | -         | Disables global edit mode.                                            |
+| toggleGlobalEditMode(`options`) | -         | Toggles global edit mode.                                             |
+| globalEditEnabled()             | `Boolean` | Returns `true` if global edit mode is enabled. `false` when disabled. |
+
+You can also listen to specific edit mode events on the map instance like this:
 
 ```js
-// toggle global removal mode
+map.on('pm:globaleditmodetoggled', (e) => {
+    console.log(e);
+});
+```
+
+#### Drag Mode
+
+```js
+// toggle drag mode like this:
 map.pm.toggleGlobalDragMode();
-
-// related events
-map.on('pm:dragstart', function(e) {});
-map.on('pm:drag', function(e) {});
-map.on('pm:dragend', function(e) {});
 ```
 
-##### Removal Mode
+The following methods are available on `map.pm`:
+
+| Method                  | Returns   | Description                                                           |
+| ----------------------- | --------- | --------------------------------------------------------------------- |
+| toggleGlobalDragMode()  | -         | Toggles global drag mode.                                             |
+| globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled. |
+
+The following events are available on a layer instance:
+
+| Event        | Params | Description                              |
+| ------------ | ------ | ---------------------------------------- |
+| pm:dragstart | `e`    | Fired when a layer starts being dragged. |
+| pm:drag      | `e`    | Fired when a layer is dragged.           |
+| pm:dragend   | `e`    | Fired when a layer stops being dragged.  |
+
+#### Removal Mode
 
 ```js
-// toggle global removal mode
+// toggle drag mode like this:
 map.pm.toggleGlobalRemovalMode();
+```
 
-// listen to removal of layers
-map.on('layerremove', function(e) {});
+The following methods are available on `map.pm`:
 
-// listen to removal of layers by leaflet.pm
-map.on('pm:remove', function(e) {});
+| Method                    | Returns   | Description                                                              |
+| ------------------------- | --------- | ------------------------------------------------------------------------ |
+| toggleGlobalRemovalMode() | -         | Toggles global removal mode.                                             |
+| globalRemovalEnabled()    | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
+
+The following events are available on a map instance:
+
+| Event       | Params | Description                                              |
+| ----------- | ------ | -------------------------------------------------------- |
+| pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           |
+| layerremove | `e`    | Standard Leaflet event. Fired when any layer is removed. |
+
+#### Cutting Mode
+
+##### Creating Holes and Cutting a Polygon
+
+![cut polygon](https://file-klmbwnzaor.now.sh/cutting.gif)
+
+Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from
+all underlying polygons. This way you can create holes, cut polygons in half or
+remove parts of it.
+
+Important: the cutted layer will be replaced, not updated. Listen to the
+`pm:cut` event to update your layer references in your code. The `pm:cut` event
+will provide you with the original layer and returns the resulting
+layer(s) that is/are added to the map as a Polygon or MultiPolygon.
+
+```js
+// recommended options (used when enabled via toolbar)
+var options = { snappable: false, cursorMarker: false };
+
+// enable cutting
+map.pm.Draw.Cut.enable(options);
+
+// disable cutting
+map.pm.Draw.Cut.disable(options);
+
+// toggle cutting
+map.pm.Draw.Cut.toggle(options);
+
+// listen to when a specific layer gets cut
+layer.on('pm:cut', function(e) {});
+
+// listen to when any layer on the map gets cut
+map.on('pm:cut', function(e) {});
 ```
 
 ### Customize Style
