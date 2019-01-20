@@ -260,20 +260,20 @@ See the available options in the table below.
 
 | Option                | Default | Description                                                                                               |
 | --------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
-| snappable             | `true`  | enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
-| snapDistance          | `20`    | the distance to another vertex when a snap should happen                                                  |
-| allowSelfIntersection | `true`  | adds button to draw rectangle                                                                             |
-| preventMarkerRemoval  | `false` | disable the removal of markers/vertexes via right click                                                   |
+| snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
+| snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
+| allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
+| preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
 
 The following methods are available for layers under `layer.pm`:
 
 | Method                | Returns   | Description                                                                                         |
 | --------------------- | --------- | --------------------------------------------------------------------------------------------------- |
-| enable(`options`)     | -         | enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar. |
-| disable()             | -         | disables edit mode                                                                                  |
-| toggleEdit(`options`) | -         | toggles edit mode. Passed options are preserved                                                     |
+| enable(`options`)     | -         | Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar. |
+| disable()             | -         | Disables edit mode.                                                                                 |
+| toggleEdit(`options`) | -         | Toggles edit mode. Passed options are preserved.                                                    |
 | enabled()             | `Boolean` | Returns `true` if edit mode is enabled. `false` when disabled.                                      |
-| hasSelfIntersection() | `Boolean` | Returns `true` is the layer has a self intersection                                                 |
+| hasSelfIntersection() | `Boolean` | Returns `true` is the layer has a self intersection.                                                |
 
 You can listen to events related to editing on events like this:
 
