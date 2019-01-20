@@ -141,7 +141,7 @@ map.pm.disableDraw('Poly');
 
 All available options are specified in the Drawing Mode Section below.
 
-#### Drawing Mode
+### Drawing Mode
 
 Use Drawing Mode on a map like this
 
@@ -215,7 +215,7 @@ Here's a list of layer events you can listen to:
 | pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               |
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
 
-#### Edit Mode
+### Edit Mode
 
 Let's you edit vertices of layers. Use it like this:
 
@@ -292,7 +292,7 @@ map.on('pm:globaleditmodetoggled', (e) => {
 });
 ```
 
-#### Drag Mode
+### Drag Mode
 
 ```js
 // toggle drag mode like this:
@@ -314,7 +314,7 @@ The following events are available on a layer instance:
 | pm:drag      | `e`    | Fired when a layer is dragged.           |
 | pm:dragend   | `e`    | Fired when a layer stops being dragged.  |
 
-#### Removal Mode
+### Removal Mode
 
 ```js
 // toggle drag mode like this:
@@ -335,7 +335,7 @@ The following events are available on a map instance:
 | pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           |
 | layerremove | `e`    | Standard Leaflet event. Fired when any layer is removed. |
 
-#### Cutting Mode
+### Cutting Mode
 
 ![cut polygon](https://file-klmbwnzaor.now.sh/cutting.gif)
 
