@@ -207,7 +207,9 @@ Here's a list of layer events you can listen to:
 | Event           | Params | Description                                                                                                          |
 | --------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
 | pm:vertexadded  | `e`    | Called when a new vertex is added. Payload includes the new vertex, it's marker, index, working layer and shape type |
-| pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes information about the snapping calculation                         |
+| pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation.               |
+| pm:snap         | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`                                                 |
+| pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               |
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
 
 ##### Creating Holes and Cutting a Polygon
