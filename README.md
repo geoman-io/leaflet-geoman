@@ -245,7 +245,7 @@ layer.on('pm:cut', function(e) {});
 map.on('pm:cut', function(e) {});
 ```
 
-##### Edit Mode
+#### Edit Mode
 
 Let's you edit vertices of layers. Use it like this:
 
