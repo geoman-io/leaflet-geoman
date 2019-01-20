@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://leaflet.pm.now.sh">
-    <img alt="Geoman Logo" src="https://file-yydxsjcsnd.now.sh" />
+    <img width="150" alt="Geoman Logo" src="https://file-jxzyjgqwut.now.sh/" />
   </a>
 </p>
 <h1 align="center">
