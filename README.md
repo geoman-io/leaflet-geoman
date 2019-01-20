@@ -107,7 +107,7 @@ map.pm.addControls({
 See the available options in the table below.
 
 | Option        | Default     | Description                                                                                      |
-| ------------- | ----------- | ------------------------------------------------------------------------------------------------ |
+| :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
 | position      | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
 | drawMarker    | `true`      | adds button to draw markers                                                                      |
 | drawPolyline  | `true`      | adds button to draw rectangle                                                                    |
@@ -163,7 +163,7 @@ map.pm.Draw.getShapes();
 See the available options in the table below.
 
 | Option                | Default                               | Description                                                                                                                                           |
-| --------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| :-------------------- | :------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | snappable             | `true`                                | enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                                             |
 | snapDistance          | `20`                                  | the distance to another vertex when a snap should happen                                                                                              |
 | snapMiddle            | `false`                               | allow snapping to the middle of a layers segments (between two vertexes)                                                                              |
@@ -186,7 +186,7 @@ map.on('pm:drawstart', (e) => {
 Here's a list of map events you can listen to:
 
 | Event        | Params | Description                                                                            |
-| ------------ | ------ | -------------------------------------------------------------------------------------- |
+| :----------- | :----- | :------------------------------------------------------------------------------------- |
 | pm:drawstart | `e`    | Called when drawing mode is enabled. Payload includes the shape type and working layer |
 | pm:drawend   | `e`    | Called when drawing mode is disabled. Payload includes the shape type.                 |
 | pm:create    | `e`    | Called when a shape is drawn/finished. Payload includes shape type and the drawn layer |
@@ -205,7 +205,7 @@ map.on('pm:drawstart', ({ workingLayer }) => {
 Here's a list of layer events you can listen to:
 
 | Event           | Params | Description                                                                                                          |
-| --------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
+| :-------------- | :----- | :------------------------------------------------------------------------------------------------------------------- |
 | pm:vertexadded  | `e`    | Called when a new vertex is added. Payload includes the new vertex, it's marker, index, working layer and shape type |
 | pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation.               |
 | pm:snap         | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`                                                 |
@@ -259,7 +259,7 @@ layer.pm.enable({
 See the available options in the table below.
 
 | Option                | Default | Description                                                                                               |
-| --------------------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |
 | snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
 | snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
 | allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
@@ -268,7 +268,7 @@ See the available options in the table below.
 The following methods are available for layers under `layer.pm`:
 
 | Method                | Returns   | Description                                                                                         |
-| --------------------- | --------- | --------------------------------------------------------------------------------------------------- |
+| :-------------------- | :-------- | :-------------------------------------------------------------------------------------------------- |
 | enable(`options`)     | -         | Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar. |
 | disable()             | -         | Disables edit mode.                                                                                 |
 | toggleEdit(`options`) | -         | Toggles edit mode. Passed options are preserved.                                                    |
@@ -287,7 +287,7 @@ layer.on('pm:edit', (e) => {
 The following events are available on a layer instance:
 
 | Event              | Params | Description                                                                                          |
-| ------------------ | ------ | ---------------------------------------------------------------------------------------------------- |
+| :----------------- | :----- | :--------------------------------------------------------------------------------------------------- |
 | pm:edit            | `e`    | Fired when a layer is edited.                                                                        |
 | pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         |
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       |
@@ -308,7 +308,7 @@ map.pm.toggleGlobalEditMode(options);
 The following methods are available on `map.pm`:
 
 | Method                          | Returns   | Description                                                           |
-| ------------------------------- | --------- | --------------------------------------------------------------------- |
+| :------------------------------ | :-------- | :-------------------------------------------------------------------- |
 | enableGlobalEditMode(`options`) | -         | Enables global edit mode.                                             |
 | disableGlobalEditMode()         | -         | Disables global edit mode.                                            |
 | toggleGlobalEditMode(`options`) | -         | Toggles global edit mode.                                             |
@@ -332,14 +332,14 @@ map.pm.toggleGlobalDragMode();
 The following methods are available on `map.pm`:
 
 | Method                  | Returns   | Description                                                           |
-| ----------------------- | --------- | --------------------------------------------------------------------- |
+| :---------------------- | :-------- | :-------------------------------------------------------------------- |
 | toggleGlobalDragMode()  | -         | Toggles global drag mode.                                             |
 | globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled. |
 
 The following events are available on a layer instance:
 
 | Event        | Params | Description                              |
-| ------------ | ------ | ---------------------------------------- |
+| :----------- | :----- | :--------------------------------------- |
 | pm:dragstart | `e`    | Fired when a layer starts being dragged. |
 | pm:drag      | `e`    | Fired when a layer is dragged.           |
 | pm:dragend   | `e`    | Fired when a layer stops being dragged.  |
@@ -354,14 +354,14 @@ map.pm.toggleGlobalRemovalMode();
 The following methods are available on `map.pm`:
 
 | Method                    | Returns   | Description                                                              |
-| ------------------------- | --------- | ------------------------------------------------------------------------ |
+| :------------------------ | :-------- | :----------------------------------------------------------------------- |
 | toggleGlobalRemovalMode() | -         | Toggles global removal mode.                                             |
 | globalRemovalEnabled()    | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
 
 The following events are available on a map instance:
 
 | Event       | Params | Description                                              |
-| ----------- | ------ | -------------------------------------------------------- |
+| :---------- | :----- | :------------------------------------------------------- |
 | pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           |
 | layerremove | `e`    | Standard Leaflet event. Fired when any layer is removed. |
 
