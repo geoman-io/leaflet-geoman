@@ -212,39 +212,6 @@ Here's a list of layer events you can listen to:
 | pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               |
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
 
-##### Creating Holes and Cutting a Polygon
-
-![cut polygon](https://file-klmbwnzaor.now.sh/cutting.gif)
-
-Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from
-all underlying polygons. This way you can create holes, cut polygons in half or
-remove parts of it.
-
-Important: the cutted layer will be replaced, not updated. Listen to the
-`pm:cut` event to update your layer references in your code. The `pm:cut` event
-will provide you with the original layer and returns the resulting
-layer(s) that is/are added to the map as a Polygon or MultiPolygon.
-
-```js
-// recommended options (used when enabled via toolbar)
-var options = { snappable: false, cursorMarker: false };
-
-// enable cutting
-map.pm.Draw.Cut.enable(options);
-
-// disable cutting
-map.pm.Draw.Cut.disable(options);
-
-// toggle cutting
-map.pm.Draw.Cut.toggle(options);
-
-// listen to when a specific layer gets cut
-layer.on('pm:cut', function(e) {});
-
-// listen to when any layer on the map gets cut
-map.on('pm:cut', function(e) {});
-```
-
 #### Edit Mode
 
 Let's you edit vertices of layers. Use it like this:
@@ -367,8 +334,6 @@ The following events are available on a map instance:
 
 #### Cutting Mode
 
-##### Creating Holes and Cutting a Polygon
-
 ![cut polygon](https://file-klmbwnzaor.now.sh/cutting.gif)
 
 Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from
@@ -381,24 +346,33 @@ will provide you with the original layer and returns the resulting
 layer(s) that is/are added to the map as a Polygon or MultiPolygon.
 
 ```js
-// recommended options (used when enabled via toolbar)
-var options = { snappable: false, cursorMarker: false };
-
-// enable cutting
-map.pm.Draw.Cut.enable(options);
-
-// disable cutting
-map.pm.Draw.Cut.disable(options);
-
-// toggle cutting
-map.pm.Draw.Cut.toggle(options);
-
-// listen to when a specific layer gets cut
-layer.on('pm:cut', function(e) {});
-
-// listen to when any layer on the map gets cut
-map.on('pm:cut', function(e) {});
+// enable cutting mode
+map.pm.Draw.Cut.enable({
+    allowSelfIntersection: false,
+});
 ```
+
+Available options are the [same as in drawing mode](https://github.com/codeofsumit/leaflet.pm/tree/new-docs#drawing-mode).
+
+You can use these methods on `map.pm.Draw.Cut` to handle Cutting mode:
+
+| Method            | Returns | Description          |
+| :---------------- | :------ | :------------------- |
+| enable(`options`) | -       | Enable Cutting Mode. |
+| disable()         | -       | Disable Cutting Mode |
+| toggle(`options`) | -       | Toggle Cutting Mode  |
+
+The following events are available on a layer instance:
+
+| Event  | Params | Description                    |
+| :----- | :----- | :----------------------------- |
+| pm:cut | `e`    | Fired when the layer being cut |
+
+The following events are available on a map instance:
+
+| Event  | Params | Description                       |
+| :----- | :----- | :-------------------------------- |
+| pm:cut | `e`    | Fired when any layer is being cut |
 
 ### Customize Style
 
