@@ -90,7 +90,7 @@ their options when creating them. Example:
 L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 ```
 
-##### Leaflet.PM Toolbar
+#### Leaflet.PM Toolbar
 
 <img align="left" height="200" src="https://file-ffrjxxowri.now.sh/" alt="Leaflet.PM Toolbar">
 
@@ -138,7 +138,7 @@ map.pm.disableDraw('Poly');
 
 All available options are specified in the Drawing Mode Section below.
 
-##### Drawing Mode
+#### Drawing Mode
 
 Use Drawing Mode on a map like this
 
