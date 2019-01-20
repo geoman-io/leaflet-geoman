@@ -37,8 +37,11 @@ Check out **[Geoman](https://geoman.io)**.
 
 -   [Installation](#installation)
 -   [Getting Started](#getting-started)
--   [Drawing](#drawing-mode)
--   [Editing](#edit-mode)
+-   [Drawing Mode](#drawing-mode)
+-   [Editing Mode](#edit-mode)
+-   [Drag Mode](#drag-mode)
+-   [Removal Mode](#removal-mode)
+-   [Cutting Mode](#cutting-mode)
 -   [Style Customization](#customize-style)
 -   [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
