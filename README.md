@@ -104,7 +104,7 @@ map.pm.addControls({
 });
 ```
 
-See the available options in the table blow.
+See the available options in the table below.
 
 | Option        | Default     | Description                                                                                      |
 | ------------- | ----------- | ------------------------------------------------------------------------------------------------ |
@@ -143,117 +143,72 @@ All available options are specified in the Drawing Mode Section below.
 Use Drawing Mode on a map like this
 
 ```js
-// optional options for line style during draw. These are the defaults
-var options = {
-    // snapping
+// enable polygon drawing mode
+map.pm.enableDraw('Poly', {
     snappable: true,
     snapDistance: 20,
-
-    // show tooltips
-    tooltips: true,
-
-    // allow snapping to the middle of segments
-    snapMiddle: false,
-
-    // self intersection
-    allowSelfIntersection: true,
-
-    // the lines between coordinates/markers
-    templineStyle: {
-        color: 'red',
-    },
-
-    // the line from the last marker to the mouse cursor
-    hintlineStyle: {
-        color: 'red',
-        dashArray: [5, 5],
-    },
-
-    // show a marker at the cursor
-    cursorMarker: false,
-
-    // specify type of layer event to finish the drawn shape
-    // example events: 'mouseout', 'dblclick', 'contextmenu'
-    // List: http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
-    finishOn: null,
-
-    // custom marker style (only for Marker draw)
-    markerStyle: {
-        opacity: 0.5,
-        draggable: true,
-    },
-};
-
-// enable drawing mode for shape - e.g. Poly, Line, etc
-map.pm.enableDraw('Poly', options);
-map.pm.enableDraw('Rectangle', options);
-map.pm.enableDraw('Line', options);
-map.pm.enableDraw('Marker', options);
-map.pm.enableDraw('Circle', options);
-
-// get array of all available shapes
-map.pm.Draw.getShapes();
-
-// listen to when drawing mode gets enabled
-map.on('pm:drawstart', function(e) {
-    e.shape; // the name of the shape being drawn (i.e. 'Circle')
-    e.workingLayer; // the leaflet layer displayed while drawing
 });
 
 // disable drawing mode
 map.pm.disableDraw('Poly');
+```
 
-// listen to when drawing mode gets disabled
-map.on('pm:drawend', function(e) {
-    e.shape; // the name of the shape being drawn (i.e. 'Circle')
+Currently available shapes are `Line`, `Rectangle`, `Poly`, `Marker`, `Circle`.
+You can get an array of all available shapes with:
+
+```js
+map.pm.Draw.getShapes();
+```
+
+See the available options in the table below.
+
+| Option                | Default                               | Description                                                                                                                                           |
+| --------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| snappable             | `true`                                | enable snapping to other layers vertices for precision draing                                                                                         |
+| snapDistance          | `20`                                  | the distance to another vertex when a snap should happen                                                                                              |
+| snapMiddle            | `false`                               | allow snapping to the middle of a layers segments (between two vertexes)                                                                              |
+| tooltips              | `true`                                | show helpful tooltips for your user                                                                                                                   |
+| allowSelfIntersection | `true`                                | allow self intersections                                                                                                                              |
+| templineStyle         | `{ color: 'red' },`                   | [leaflet path options](https://leafletjs.com/reference-1.4.0.html#path) for the lines between drawn vertices/markers.                                 |
+| hintlineStyle         | `{ color: 'red', dashArray: [5, 5] }` | [leaflet path options](https://leafletjs.com/reference-1.4.0.html#path) for the helper line between last drawn vertex and the cursor.                 |
+| cursorMarker          | `true`                                | show a marker at the cursor                                                                                                                           |
+| finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.2.0.html#interactive-layer-click). |
+| markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
+
+You can listen to map events to hook into the drawing procedure like this:
+
+```js
+map.on('pm:drawstart', (e) => {
+    console.log(e);
 });
+```
 
-// listen to when a new layer is created
-map.on('pm:create', function(e) {
-    e.shape; // the name of the shape being drawn (i.e. 'Circle')
-    e.layer; // the leaflet layer created
-});
+Here's a list of map events you can listen to:
 
-// listen to vertexes being added to the workingLayer (works only on polylines & polygons)
-map.on('pm:drawstart', function(e) {
-    var layer = e.workingLayer;
-    layer.on('pm:vertexadded', function(e) {
-        // e includes the new vertex, it's marker
-        // the index in the coordinates array
-        // the working layer and shape
-    });
+| Event        | Params | Description                                                                            |
+| ------------ | ------ | -------------------------------------------------------------------------------------- |
+| pm:drawstart | `e`    | Called when drawing mode is enabled. Payload includes the shape type and working layer |
+| pm:drawend   | `e`    | Called when drawing mode is disabled. Payload includes the shape type.                 |
+| pm:create    | `e`    | Called when a shape is drawn/finished. Payload includes shape type and the drawn layer |
 
-    // also fired on the markers of the polygon
-    layer.on('pm:snapdrag', function(e) {
-        // e includes marker, snap coordinates
-        // segment, the working layer
-        // and the distance
-    });
+There are also several events for layers during draw. Register an event like this:
 
-    // check self intersection
-    layer.pm.hasSelfIntersection();
-});
-
-// listen to the center of a circle being added
-map.on('pm:drawstart', function(e) {
-    var circle = e.workingLayer;
-
-    // this fires only for circles
-    circle.on('pm:centerplaced', function(e) {
-        console.log(e);
-    });
-});
-
-// listen to when the center of a circle is moved
-map.on('pm:create', function(e) {
-    var circle = e.layer;
-
-    // this fires only for circles
-    circle.on('pm:centerplaced', function(e) {
+```js
+// listen to vertexes being added to currently drawn layer (called workingLayer)
+map.on('pm:drawstart', ({ workingLayer }) => {
+    workingLayer.on('pm:vertexadded', (e) => {
         console.log(e);
     });
 });
 ```
+
+Here's a list of layer events you can listen to:
+
+| Event           | Params | Description                                                                                                          |
+| --------------- | ------ | -------------------------------------------------------------------------------------------------------------------- |
+| pm:vertexadded  | `e`    | Called when a new vertex is added. Payload includes the new vertex, it's marker, index, working layer and shape type |
+| pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes information about the snapping calculation                         |
+| pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
 
 ##### Creating Holes and Cutting a Polygon
 
@@ -352,6 +307,8 @@ polygonLayer.on('pm:unsnap', function(e) {});
 // if allowSelfIntersection is false: listen to when a self-intersection is detected
 // e.intersection includes a geoJSON of the intersection
 polygonLayer.on('pm:intersect', function(e) {});
+
+circleLayer.on('pm:centerplaced', function(e) {});
 
 // toggle global edit mode (edit mode for all layers on the map)
 map.pm.toggleGlobalEditMode(options);
