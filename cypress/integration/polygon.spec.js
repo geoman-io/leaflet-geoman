@@ -137,7 +137,7 @@ describe('Draw & Edit Poly', () => {
                     return l;
                 })
                 .as('poly')
-                .then(poly => poly._latlngs[0][0])
+                .then((poly) => poly._latlngs[0][0])
                 .as('firstLatLng');
         });
 
@@ -293,14 +293,14 @@ describe('Draw & Edit Poly', () => {
             .closest('.button-container')
             .should('have.class', 'active');
 
-        // draw a polygon
+        // draw a polygon to cut
         cy.get(mapSelector)
-            .click(150, 150)
-            .click(270, 180)
-            .click(300, 180)
-            .click(280, 280)
-            .click(200, 285)
-            .click(150, 150);
+            .click(160, 100)
+            .click(270, 100)
+            .click(400, 130)
+            .click(350, 280)
+            .click(200, 150)
+            .click(160, 100);
 
         // enable global edit mode
         cy.toolbarButton('edit')
