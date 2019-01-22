@@ -337,7 +337,7 @@ The following events are available on a map instance:
 
 ### Cutting Mode
 
-![cut polygon](https://file-klmbwnzaor.now.sh/cutting.gif)
+![cut polygon](https://file-xdeoyklwhw.now.sh/)
 
 Enable drawing for the shape "Cut" to draw a polygon that gets subtracted from
 all underlying polygons. This way you can create holes, cut polygons in half or
