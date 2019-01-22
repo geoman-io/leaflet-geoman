@@ -1,11 +1,15 @@
 const DragMixin = {
-    _initDraggableLayer() {
+    enableLayerDrag() {
+        if (this._layer instanceof L.Marker) {
+            this._layer.dragging.enable();
+            return;
+        }
+
         // temporary coord variable for delta calculation
         this._tempDragCoord = null;
 
         // add CSS class
         const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
-
         L.DomUtil.addClass(el, 'leaflet-pm-draggable');
 
         this._originalMapDragState = this._layer._map.dragging._enabled;
@@ -14,7 +18,24 @@ const DragMixin = {
         // (if the mouse up event happens outside the container, then the map can become undraggable)
         this._safeToCacheDragState = true;
 
+        // add mousedown event to trigger drag
         this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
+    },
+    disableLayerDrag() {
+        if (this._layer instanceof L.Marker) {
+            this._layer.dragging.disable();
+            return;
+        }
+
+        // remove CSS class
+        const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
+        L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+
+        // no longer save the drag state
+        this._safeToCacheDragState = false;
+
+        // disable mousedown event
+        this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
     },
     _dragMixinOnMouseUp() {
         const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
@@ -37,9 +58,6 @@ const DragMixin = {
         if (!this._dragging) {
             return false;
         }
-
-        // show markers again
-        this._initMarkers();
 
         // timeout to prevent click event after drag :-/
         // TODO: do it better as soon as leaflet has a way to do it better :-)
@@ -73,9 +91,6 @@ const DragMixin = {
                 this._layer._map.dragging.disable();
             }
 
-            // hide markers
-            this._markerGroup.clearLayers();
-
             // fire pm:dragstart event
             this._layer.fire('pm:dragstart');
         }
@@ -107,7 +122,6 @@ const DragMixin = {
     dragging() {
         return this._dragging;
     },
-
     _onLayerDrag(e) {
         // latLng of mouse event
         const { latlng } = e;
@@ -134,11 +148,24 @@ const DragMixin = {
                 };
             });
 
-        // create the new coordinates array
-        const newCoords = moveCoords(this._layer._latlngs);
+        const moveCoord = coord => ({
+            lat: coord.lat + deltaLatLng.lat,
+            lng: coord.lng + deltaLatLng.lng,
+        });
 
-        // set new coordinates and redraw
-        this._layer.setLatLngs(newCoords).redraw();
+        if (this._layer instanceof L.CircleMarker) {
+            // create the new coordinates array
+            const newCoords = moveCoord(this._layer.getLatLng());
+
+            // set new coordinates and redraw
+            this._layer.setLatLng(newCoords).redraw();
+        } else {
+            // create the new coordinates array
+            const newCoords = moveCoords(this._layer.getLatLngs());
+
+            // set new coordinates and redraw
+            this._layer.setLatLngs(newCoords).redraw();
+        }
 
         // save current latlng for next delta calculation
         this._tempDragCoord = latlng;

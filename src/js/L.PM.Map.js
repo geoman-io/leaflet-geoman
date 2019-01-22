@@ -27,6 +27,26 @@ const Map = L.Class.extend({
   setPathOptions(options) {
     this.Draw.setPathOptions(options);
   },
+  findLayers() {
+    let layers = [];
+    this.map.eachLayer(layer => {
+      if (
+        layer instanceof L.Polyline ||
+        layer instanceof L.Marker ||
+        layer instanceof L.Circle
+      ) {
+        layers.push(layer);
+      }
+    });
+
+    // filter out layers that don't have the leaflet.pm instance
+    layers = layers.filter(layer => !!layer.pm);
+
+    // filter out everything that's leaflet.pm specific temporary stuff
+    layers = layers.filter(layer => !layer._pmTempLayer);
+
+    return layers;
+  },
   removeLayer(e) {
     const layer = e.target;
     // only remove layer, if it's handled by leaflet.pm,
@@ -39,7 +59,32 @@ const Map = L.Class.extend({
       this.map.fire('pm:remove', { layer });
     }
   },
+  globalDragModeEnabled() {
+    return !!this._globalDragMode;
+  },
+  toggleGlobalDragMode() {
+    const layers = this.findLayers();
+
+    if (this.globalDragModeEnabled()) {
+      this._globalDragMode = false;
+
+      layers.forEach(layer => {
+        layer.pm.disableLayerDrag();
+      });
+    } else {
+      this._globalDragMode = true;
+
+      layers.forEach(layer => {
+        layer.pm.enableLayerDrag();
+      });
+    }
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+  },
   toggleGlobalRemovalMode() {
+    // const layers = this.findLayers();
+
     // toggle global edit mode
     if (this.globalRemovalEnabled()) {
       this._globalRemovalMode = false;
@@ -58,7 +103,7 @@ const Map = L.Class.extend({
       });
     }
 
-    // toogle the button in the toolbar
+    // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
   },
   globalRemovalEnabled() {
@@ -69,26 +114,12 @@ const Map = L.Class.extend({
   },
   enableGlobalEditMode(options) {
     // find all layers handled by leaflet.pm
-    let layers = [];
-    this.map.eachLayer(layer => {
-      if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle
-      ) {
-        layers.push(layer);
-      }
-    });
-
-    // filter out layers that don't have the leaflet.pm instance
-    layers = layers.filter(layer => !!layer.pm);
-
-    // filter out everything that's leaflet.pm specific temporary stuff
-    layers = layers.filter(layer => !layer._pmTempLayer);
+    const layers = this.findLayers();
 
     this._globalEditMode = true;
 
     layers.forEach(layer => {
+      // console.log(layer);
       layer.pm.enable(options);
     });
 
@@ -100,22 +131,7 @@ const Map = L.Class.extend({
   },
   disableGlobalEditMode() {
     // find all layers handles by leaflet.pm
-    let layers = [];
-    this.map.eachLayer(layer => {
-      if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle
-      ) {
-        layers.push(layer);
-      }
-    });
-
-    // filter out layers that don't have the leaflet.pm instance
-    layers = layers.filter(layer => !!layer.pm);
-
-    // filter out everything that's leaflet.pm specific temporary stuff
-    layers = layers.filter(layer => !layer._pmTempLayer);
+    const layers = this.findLayers();
 
     this._globalEditMode = false;
 
@@ -136,6 +152,7 @@ const Map = L.Class.extend({
     });
   },
   toggleGlobalEditMode(options) {
+    // console.log('toggle global edit mode', options);
     if (this.globalEditEnabled()) {
       // disable
       this.disableGlobalEditMode();
