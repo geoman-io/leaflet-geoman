@@ -28,7 +28,7 @@
 
 ## [Demo (click here)](https://leafletpm.now.sh)
 
-![Demo](https://file-hmgrhlmwxy.now.sh/leafletPM.gif)
+![Demo](https://file-gmeileqfmg.now.sh/)
 
 Need advanced features like GeoJSON Export, storing meta data and more?\
 Check out **[Geoman](https://geoman.io)**.
