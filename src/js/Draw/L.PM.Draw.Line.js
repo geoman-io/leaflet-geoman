@@ -221,6 +221,7 @@ Draw.Line = Draw.extend({
     // if all coords are gone, cancel drawing
     if (coords.length < 1) {
       this.disable();
+      return;
     }
 
     // find corresponding marker
