@@ -62,52 +62,110 @@ const Map = L.Class.extend({
   globalDragModeEnabled() {
     return !!this._globalDragMode;
   },
-  toggleGlobalDragMode() {
+  enableGlobalDragMode() {
     const layers = this.findLayers();
 
-    if (this.globalDragModeEnabled()) {
-      this._globalDragMode = false;
+    this._globalDragMode = true;
 
-      layers.forEach(layer => {
-        layer.pm.disableLayerDrag();
-      });
-    } else {
-      this._globalDragMode = true;
+    layers.forEach(layer => {
+      layer.pm.enableLayerDrag();
+    });
 
-      layers.forEach(layer => {
-        layer.pm.enableLayerDrag();
-      });
-    }
+    // remove map handler
+    this.map.on('layeradd', this.layerAddHandler, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
   },
-  toggleGlobalRemovalMode() {
-    // const layers = this.findLayers();
+  disableGlobalDragMode() {
+    const layers = this.findLayers();
 
-    // toggle global edit mode
-    if (this.globalRemovalEnabled()) {
-      this._globalRemovalMode = false;
-      this.map.eachLayer(layer => {
-        layer.off('click', this.removeLayer, this);
-      });
+    this._globalDragMode = false;
+
+    layers.forEach(layer => {
+      layer.pm.disableLayerDrag();
+    });
+
+    // remove map handler
+    this.map.off('layeradd', this.layerAddHandler, this);
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+  },
+  toggleGlobalDragMode() {
+    if (this.globalDragModeEnabled()) {
+      this.disableGlobalDragMode();
     } else {
-      this._globalRemovalMode = true;
-      this.map.eachLayer(layer => {
-        if (
-          layer.pm &&
-          !(layer.pm.options && layer.pm.options.preventMarkerRemoval)
-        ) {
-          layer.on('click', this.removeLayer, this);
-        }
-      });
+      this.enableGlobalDragMode();
     }
+  },
+  layerAddHandler({ layer }) {
+    // is this layer handled by leaflet.pm?
+    const isRelevant = !!layer.pm && !layer._pmTempLayer;
+
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
+    if (!isRelevant) {
+      return;
+    }
+
+    // re-enable global removal mode if it's enabled already
+    if (this.globalRemovalEnabled()) {
+      this.disableGlobalRemovalMode();
+      this.enableGlobalRemovalMode();
+    }
+
+    // re-enable global edit mode if it's enabled already
+    if (this.globalEditEnabled()) {
+      this.disableGlobalEditMode();
+      this.enableGlobalEditMode();
+    }
+
+    // re-enable global drag mode if it's enabled already
+    if (this.globalDragModeEnabled()) {
+      this.disableGlobalDragMode();
+      this.enableGlobalDragMode();
+    }
+  },
+  disableGlobalRemovalMode() {
+    this._globalRemovalMode = false;
+    this.map.eachLayer(layer => {
+      layer.off('click', this.removeLayer, this);
+    });
+
+    // remove map handler
+    this.map.off('layeradd', this.layerAddHandler, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
   },
+  enableGlobalRemovalMode() {
+    const isRelevant = layer =>
+      layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval);
+
+    this._globalRemovalMode = true;
+    // handle existing layers
+    this.map.eachLayer(layer => {
+      if (isRelevant(layer)) {
+        layer.on('click', this.removeLayer, this);
+      }
+    });
+
+    // handle layers that are added while in removal  xmode
+    this.map.on('layeradd', this.layerAddHandler, this);
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+  },
+  toggleGlobalRemovalMode() {
+    // toggle global edit mode
+    if (this.globalRemovalEnabled()) {
+      this.disableGlobalRemovalMode();
+    } else {
+      this.enableGlobalRemovalMode();
+    }
+  },
   globalRemovalEnabled() {
-    return this._globalRemovalMode;
+    return !!this._globalRemovalMode;
   },
   globalEditEnabled() {
     return this._globalEditMode;
@@ -122,6 +180,9 @@ const Map = L.Class.extend({
       // console.log(layer);
       layer.pm.enable(options);
     });
+
+    // handle layers that are added while in removal  xmode
+    this.map.on('layeradd', this.layerAddHandler, this);
 
     // toggle the button in the toolbar
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
@@ -138,6 +199,9 @@ const Map = L.Class.extend({
     layers.forEach(layer => {
       layer.pm.disable();
     });
+
+    // handle layers that are added while in removal  xmode
+    this.map.on('layeroff', this.layerAddHandler, this);
 
     // toggle the button in the toolbar
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
