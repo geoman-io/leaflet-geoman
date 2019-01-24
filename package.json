@@ -56,7 +56,7 @@
     "prepare": "npm run build",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
     "eslint": "eslint src/ --fix",
-    "prettier": "prettier --write 'src/**/*.{js, css}'",
+    "prettier": "prettier --write '{src,cypress}/**/*.{js,css}'",
     "lint": "npm run eslint && npm run prettier"
   },
   "repository": {
