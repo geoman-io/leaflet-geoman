@@ -218,6 +218,8 @@ Draw.Line = Draw.extend({
     const coords = this._layer.getLatLngs();
     const removedCoord = coords.pop();
 
+    console.log('remove last vertex');
+
     // if all coords are gone, cancel drawing
     if (coords.length < 1) {
       this.disable();
