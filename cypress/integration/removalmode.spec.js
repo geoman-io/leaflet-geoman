@@ -46,11 +46,11 @@ describe('Removal Mode', () => {
 
     cy.toolbarButton('marker').click();
 
-    cy.get(mapSelector)
-      .click(90, 250)
-      .click(90, 245);
+    cy.get(mapSelector).click(90, 250);
 
     cy.toolbarButton('marker').click();
+
+    cy.get(mapSelector).click(90, 245);
 
     cy.hasLayers(3);
   });

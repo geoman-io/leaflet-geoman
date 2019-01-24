@@ -82,32 +82,49 @@ const Map = L.Class.extend({
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
   },
-  toggleGlobalRemovalMode() {
-    // const layers = this.findLayers();
+  layerAddHandler() {
+    if (this.globalRemovalEnabled()) {
+      this.disableGlobalRemovalMode();
+      this.enableGlobalRemovalMode();
+    }
+  },
+  disableGlobalRemovalMode() {
+    this._globalRemovalMode = false;
+    this.map.eachLayer(layer => {
+      layer.off('click', this.removeLayer, this);
+    });
 
+    // remove map handler
+    this.map.off('layeradd', this.layerAddHandler, this);
+  },
+  enableGlobalRemovalMode() {
+    const isRelevant = layer =>
+      layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval);
+
+    this._globalRemovalMode = true;
+    // handle existing layers
+    this.map.eachLayer(layer => {
+      if (isRelevant(layer)) {
+        layer.on('click', this.removeLayer, this);
+      }
+    });
+
+    // handle layers that are added while in removal  xmode
+    this.map.on('layeradd', this.layerAddHandler, this);
+  },
+  toggleGlobalRemovalMode() {
     // toggle global edit mode
     if (this.globalRemovalEnabled()) {
-      this._globalRemovalMode = false;
-      this.map.eachLayer(layer => {
-        layer.off('click', this.removeLayer, this);
-      });
+      this.disableGlobalRemovalMode();
     } else {
-      this._globalRemovalMode = true;
-      this.map.eachLayer(layer => {
-        if (
-          layer.pm &&
-          !(layer.pm.options && layer.pm.options.preventMarkerRemoval)
-        ) {
-          layer.on('click', this.removeLayer, this);
-        }
-      });
+      this.enableGlobalRemovalMode();
     }
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
   },
   globalRemovalEnabled() {
-    return this._globalRemovalMode;
+    return !!this._globalRemovalMode;
   },
   globalEditEnabled() {
     return this._globalEditMode;
