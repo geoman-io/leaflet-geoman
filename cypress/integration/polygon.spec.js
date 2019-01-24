@@ -1,7 +1,7 @@
 describe('Draw & Edit Poly', () => {
   const mapSelector = '#map';
 
-  it.only('doesnt finish single point polys', () => {
+  it('doesnt finish single point polys', () => {
     cy.toolbarButton('polygon').click();
 
     cy.get(mapSelector)
