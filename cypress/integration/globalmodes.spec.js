@@ -21,7 +21,7 @@ describe('Removal Mode', () => {
     cy.toolbarButton('delete').click();
   });
 
-  it.only('re-applies edit mode onAdd', () => {
+  it('re-applies edit mode onAdd', () => {
     cy.toolbarButton('polygon').click();
 
     const jsonString =
@@ -44,6 +44,8 @@ describe('Removal Mode', () => {
     });
 
     cy.hasVertexMarkers(8);
+
+    cy.toolbarButton('edit').click();
   });
 
   it('re-applies removal mode onAdd', () => {

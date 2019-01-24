@@ -82,10 +82,25 @@ const Map = L.Class.extend({
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
   },
-  layerAddHandler() {
+  layerAddHandler({ layer }) {
+    // is this layer handled by leaflet.pm?
+    const isRelevant = !!layer.pm && !layer._pmTempLayer;
+
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
+    if (!isRelevant) {
+      return;
+    }
+
+    // re-enable global removal mode if it's enabled already
     if (this.globalRemovalEnabled()) {
       this.disableGlobalRemovalMode();
       this.enableGlobalRemovalMode();
+    }
+
+    // re-enable global edit mode if it's enabled already
+    if (this.globalEditEnabled()) {
+      this.disableGlobalEditMode();
+      this.enableGlobalEditMode();
     }
   },
   disableGlobalRemovalMode() {
@@ -140,6 +155,9 @@ const Map = L.Class.extend({
       layer.pm.enable(options);
     });
 
+    // handle layers that are added while in removal  xmode
+    this.map.on('layeradd', this.layerAddHandler, this);
+
     // toggle the button in the toolbar
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
 
@@ -155,6 +173,9 @@ const Map = L.Class.extend({
     layers.forEach(layer => {
       layer.pm.disable();
     });
+
+    // handle layers that are added while in removal  xmode
+    this.map.on('layeroff', this.layerAddHandler, this);
 
     // toggle the button in the toolbar
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
