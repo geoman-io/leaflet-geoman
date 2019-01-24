@@ -62,25 +62,42 @@ const Map = L.Class.extend({
   globalDragModeEnabled() {
     return !!this._globalDragMode;
   },
-  toggleGlobalDragMode() {
+  enableGlobalDragMode() {
     const layers = this.findLayers();
 
-    if (this.globalDragModeEnabled()) {
-      this._globalDragMode = false;
+    this._globalDragMode = true;
 
-      layers.forEach(layer => {
-        layer.pm.disableLayerDrag();
-      });
-    } else {
-      this._globalDragMode = true;
+    layers.forEach(layer => {
+      layer.pm.enableLayerDrag();
+    });
 
-      layers.forEach(layer => {
-        layer.pm.enableLayerDrag();
-      });
-    }
+    // remove map handler
+    this.map.on('layeradd', this.layerAddHandler, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+  },
+  disableGlobalDragMode() {
+    const layers = this.findLayers();
+
+    this._globalDragMode = false;
+
+    layers.forEach(layer => {
+      layer.pm.disableLayerDrag();
+    });
+
+    // remove map handler
+    this.map.off('layeradd', this.layerAddHandler, this);
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+  },
+  toggleGlobalDragMode() {
+    if (this.globalDragModeEnabled()) {
+      this.disableGlobalDragMode();
+    } else {
+      this.enableGlobalDragMode();
+    }
   },
   layerAddHandler({ layer }) {
     // is this layer handled by leaflet.pm?
@@ -102,6 +119,12 @@ const Map = L.Class.extend({
       this.disableGlobalEditMode();
       this.enableGlobalEditMode();
     }
+
+    // re-enable global drag mode if it's enabled already
+    if (this.globalDragModeEnabled()) {
+      this.disableGlobalDragMode();
+      this.enableGlobalDragMode();
+    }
   },
   disableGlobalRemovalMode() {
     this._globalRemovalMode = false;
@@ -111,6 +134,9 @@ const Map = L.Class.extend({
 
     // remove map handler
     this.map.off('layeradd', this.layerAddHandler, this);
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
   },
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
@@ -126,6 +152,9 @@ const Map = L.Class.extend({
 
     // handle layers that are added while in removal  xmode
     this.map.on('layeradd', this.layerAddHandler, this);
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode
@@ -134,9 +163,6 @@ const Map = L.Class.extend({
     } else {
       this.enableGlobalRemovalMode();
     }
-
-    // toogle the button in the toolbar if this is called programatically
-    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
   },
   globalRemovalEnabled() {
     return !!this._globalRemovalMode;
