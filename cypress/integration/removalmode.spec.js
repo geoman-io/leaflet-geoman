@@ -42,6 +42,16 @@ describe('Removal Mode', () => {
       cy.wrap(m2._icon).click();
     });
 
-    cy.hasLayers(1);
+    cy.hasLayers(2);
+
+    cy.toolbarButton('marker').click();
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(90, 245);
+
+    cy.toolbarButton('marker').click();
+
+    cy.hasLayers(3);
   });
 });
