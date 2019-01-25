@@ -1,7 +1,7 @@
 describe('Draw Circle', () => {
   const mapSelector = '#map';
 
-  it('draws a circle', () => {
+  it.only('draws a circle', () => {
     cy.toolbarButton('circle')
       .click()
       .closest('.button-container')
@@ -18,6 +18,21 @@ describe('Draw Circle', () => {
 
     cy.hasVertexMarkers(2);
     cy.hasMiddleMarkers(0);
+
+    cy.toolbarButton('edit').click();
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(2);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(0);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(2);
+
+    cy.toolbarButton('edit').click();
   });
 
   it('uses correct options from enableDraw', () => {

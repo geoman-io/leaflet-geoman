@@ -74,7 +74,9 @@ Edit.Circle = Edit.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._helperLayers = new L.LayerGroup().addTo(map);
+    this._helperLayers = new L.LayerGroup();
+    this._helperLayers._pmTempLayer = true;
+    this._helperLayers.addTo(map);
 
     // create marker for each coordinate
     const center = this._layer.getLatLng();
