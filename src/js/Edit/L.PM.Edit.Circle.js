@@ -156,7 +156,9 @@ Edit.Circle = Edit.extend({
     const marker = this._createMarker(latlng);
 
     L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
-    marker.on('move', this._moveCircle, this);
+    // TODO: switch back to move event once this leaflet issue is solved:
+    // https://github.com/Leaflet/Leaflet/issues/6492
+    marker.on('drag', this._moveCircle, this);
     // marker.on('contextmenu', this._removeMarker, this);
 
     return marker;
