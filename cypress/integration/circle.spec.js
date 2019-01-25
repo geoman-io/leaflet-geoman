@@ -18,6 +18,21 @@ describe('Draw Circle', () => {
 
     cy.hasVertexMarkers(2);
     cy.hasMiddleMarkers(0);
+
+    cy.toolbarButton('edit').click();
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(2);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(0);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(2);
+
+    cy.toolbarButton('edit').click();
   });
 
   it('uses correct options from enableDraw', () => {
