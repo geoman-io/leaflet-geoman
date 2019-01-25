@@ -1,7 +1,7 @@
 describe('Draw Circle', () => {
   const mapSelector = '#map';
 
-  it.only('draws a circle', () => {
+  it('draws a circle', () => {
     cy.toolbarButton('circle')
       .click()
       .closest('.button-container')
