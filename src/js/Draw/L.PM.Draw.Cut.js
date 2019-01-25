@@ -45,6 +45,8 @@ Draw.Cut = Draw.Poly.extend({
       resultingLayer.pm.enable(this.options);
       resultingLayer.pm.disable();
 
+      console.log('fire cut');
+
       // fire pm:cut on the cutted layer
       l.fire('pm:cut', {
         shape: this._shape,
@@ -72,15 +74,17 @@ Draw.Cut = Draw.Poly.extend({
       }
     });
   },
-  _finishShape(e) {
+  _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(e.latlng);
+      this._handleSelfIntersection(false);
 
       if (this._doesSelfIntersect) {
         return;
       }
     }
+
+    console.log('finish shape and cut');
 
     const coords = this._layer.getLatLngs();
     const polygonLayer = L.polygon(coords, this.options.pathOptions);

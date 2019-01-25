@@ -179,10 +179,10 @@ Draw.Line = Draw.extend({
 
     // if self-intersection is forbidden, handle it
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection();
+      this._handleSelfIntersection(true, e.latlng);
     }
   },
-  _handleSelfIntersection(latlng) {
+  _handleSelfIntersection(addVertex, latlng) {
     // ok we need to check the self intersection here
     // problem: during draw, the marker on the cursor is not yet part
     // of the layer. So we need to clone the layer, add the
@@ -192,13 +192,15 @@ Draw.Line = Draw.extend({
     // clone layer (polyline is enough, even when it's a polygon)
     const clone = L.polyline(this._layer.getLatLngs());
 
-    // get vertex from param or from hintmarker
-    if (!latlng) {
-      latlng = this._hintMarker.getLatLng();
-    }
+    if (addVertex) {
+      // get vertex from param or from hintmarker
+      if (!latlng) {
+        latlng = this._hintMarker.getLatLng();
+      }
 
-    // add the vertex
-    clone.addLatLng(latlng);
+      // add the vertex
+      clone.addLatLng(latlng);
+    }
 
     // check the self intersection
     const selfIntersection = kinks(clone.toGeoJSON(15));
@@ -243,7 +245,7 @@ Draw.Line = Draw.extend({
   _createVertex(e) {
     // don't create a vertex if we have a selfIntersection and it is not allowed
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(e.latlng);
+      this._handleSelfIntersection(true, e.latlng);
 
       if (this._doesSelfIntersect) {
         return;
@@ -285,10 +287,10 @@ Draw.Line = Draw.extend({
       latlng,
     });
   },
-  _finishShape(e) {
+  _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(e.latlng);
+      this._handleSelfIntersection(false);
 
       if (this._doesSelfIntersect) {
         return;

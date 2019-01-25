@@ -140,6 +140,8 @@ Edit.Line = Edit.extend({
   _handleLayerStyle(flash) {
     const layer = this._layer;
 
+    console.log('has self intersection: ', this.hasSelfIntersection());
+
     if (this.hasSelfIntersection()) {
       if (this.isRed) {
         return;
@@ -549,6 +551,8 @@ Edit.Line = Edit.extend({
       );
       marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
     }
+
+    console.log('check self intersection');
 
     // if self intersection is not allowed, handle it
     if (!this.options.allowSelfIntersection) {
