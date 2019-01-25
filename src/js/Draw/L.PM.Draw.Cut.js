@@ -45,8 +45,6 @@ Draw.Cut = Draw.Poly.extend({
       resultingLayer.pm.enable(this.options);
       resultingLayer.pm.disable();
 
-      console.log('fire cut');
-
       // fire pm:cut on the cutted layer
       l.fire('pm:cut', {
         shape: this._shape,
@@ -83,8 +81,6 @@ Draw.Cut = Draw.Poly.extend({
         return;
       }
     }
-
-    console.log('finish shape and cut');
 
     const coords = this._layer.getLatLngs();
     const polygonLayer = L.polygon(coords, this.options.pathOptions);
