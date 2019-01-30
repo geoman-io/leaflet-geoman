@@ -31,69 +31,69 @@ import '../css/layers.css';
 import '../css/controls.css';
 
 L.PM = L.PM || {
-    Map,
-    Toolbar,
-    Draw,
-    Edit,
-    version,
-    initialize() {
-        this.addInitHooks();
-    },
-    addInitHooks() {
-        function initMap() {
-            if (!this.options.pmIgnore) {
-                this.pm = new L.PM.Map(this);
-            }
-        }
+  Map,
+  Toolbar,
+  Draw,
+  Edit,
+  version,
+  initialize() {
+    this.addInitHooks();
+  },
+  addInitHooks() {
+    function initMap() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Map(this);
+      }
+    }
 
-        L.Map.addInitHook(initMap);
+    L.Map.addInitHook(initMap);
 
-        function initLayerGroup() {
-            this.pm = new L.PM.Edit.LayerGroup(this);
-        }
+    function initLayerGroup() {
+      this.pm = new L.PM.Edit.LayerGroup(this);
+    }
 
-        L.LayerGroup.addInitHook(initLayerGroup);
+    L.LayerGroup.addInitHook(initLayerGroup);
 
-        function initMarker() {
-            if (!this.options.pmIgnore) {
-                this.pm = new L.PM.Edit.Marker(this);
-            }
-        }
+    function initMarker() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.Marker(this);
+      }
+    }
 
-        L.Marker.addInitHook(initMarker);
+    L.Marker.addInitHook(initMarker);
 
-        function initPolyline() {
-            if (!this.options.pmIgnore) {
-                this.pm = new L.PM.Edit.Line(this);
-            }
-        }
+    function initPolyline() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.Line(this);
+      }
+    }
 
-        L.Polyline.addInitHook(initPolyline);
+    L.Polyline.addInitHook(initPolyline);
 
-        function initPolygon() {
-            if (!this.options.pmIgnore) {
-                this.pm = new L.PM.Edit.Poly(this);
-            }
-        }
+    function initPolygon() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.Poly(this);
+      }
+    }
 
-        L.Polygon.addInitHook(initPolygon);
+    L.Polygon.addInitHook(initPolygon);
 
-        function initRectangle() {
-            if (!this.options.pmIgnore) {
-                this.pm = new L.PM.Edit.Rectangle(this);
-            }
-        }
+    function initRectangle() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.Rectangle(this);
+      }
+    }
 
-        L.Rectangle.addInitHook(initRectangle);
+    L.Rectangle.addInitHook(initRectangle);
 
-        function initCircle() {
-            if (!this.options.pmIgnore) {
-                this.pm = new L.PM.Edit.Circle(this);
-            }
-        }
+    function initCircle() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.Circle(this);
+      }
+    }
 
-        L.Circle.addInitHook(initCircle);
-    },
+    L.Circle.addInitHook(initCircle);
+  },
 };
 
 // initialize leaflet.pm
