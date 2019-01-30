@@ -4981,7 +4981,7 @@ if (typeof Object.assign != 'function') {
 /* 22 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"leaflet.pm","version":"1.2.2","description":"A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0","keywords":["leaflet","polygon management","geometry editing","map data","map overlay","polygon","geojson","leaflet-draw","data-field-geojson","ui-leaflet-draw"],"files":["dist"],"main":"dist/leaflet.pm.min.js","dependencies":{"@turf/difference":"^6.0.2","@turf/intersect":"^6.1.3","@turf/kinks":"6.x","lodash":"^4.17.11"},"devDependencies":{"@babel/core":"^7.1.2","@babel/preset-env":"^7.1.0","babel-loader":"^8.0.4","css-loader":"^0.28.11","cypress":"^3.1.0","eslint":"^4.18.2","eslint-config-airbnb-base":"^12.1.0","eslint-plugin-cypress":"^2.0.1","eslint-plugin-import":"^2.9.0","extract-text-webpack-plugin":"^3.0.2","file-loader":"^0.11.1","leaflet":"^1.3.4","style-loader":"^0.19.0","uglifyjs-webpack-plugin":"^1.3.0","url-loader":"^0.6.2","webpack":"^3.12.0"},"peerDependencies":{"leaflet":"^1.2.0"},"scripts":{"start":"npm run dev","dev":"./node_modules/.bin/webpack --config=webpack.dev.js","test":"$(npm bin)/cypress run","cypress":"$(npm bin)/cypress open","build":"./node_modules/.bin/webpack --config=webpack.build.js","prepare":"npm run build"},"repository":{"type":"git","url":"git+https://github.com/codeofsumit/leaflet.pm.git"},"author":{"name":"Sumit Kumar","email":"sk@outlook.com","url":"http://twitter.com/TweetsOfSumit"},"license":"MIT","bugs":{"url":"https://github.com/codeofsumit/leaflet.pm/issues"},"homepage":"https://leafletpm.now.sh"}
+module.exports = {"name":"leaflet.pm","version":"2.0.3","description":"A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0","keywords":["leaflet","polygon management","geometry editing","map data","map overlay","polygon","geojson","leaflet-draw","data-field-geojson","ui-leaflet-draw"],"files":["dist"],"main":"dist/leaflet.pm.min.js","dependencies":{"@turf/difference":"^6.0.2","@turf/intersect":"^6.1.3","@turf/kinks":"6.x","lodash":"^4.17.11"},"devDependencies":{"@babel/core":"^7.2.2","@babel/preset-env":"^7.3.1","babel-loader":"^8.0.5","css-loader":"^0.28.11","cypress":"^3.1.4","eslint":"^4.19.1","eslint-config-airbnb-base":"^12.1.0","eslint-config-prettier":"^3.6.0","eslint-plugin-cypress":"^2.2.0","eslint-plugin-import":"^2.15.0","extract-text-webpack-plugin":"^3.0.2","file-loader":"^0.11.1","leaflet":"^1.4.0","prettier":"1.16.1","style-loader":"^0.19.0","uglifyjs-webpack-plugin":"^1.3.0","url-loader":"^0.6.2","webpack":"^3.12.0"},"peerDependencies":{"leaflet":"^1.2.0"},"scripts":{"start":"npm run dev","dev":"./node_modules/.bin/webpack --config=webpack.dev.js","test":"$(npm bin)/cypress run","cypress":"$(npm bin)/cypress open","build":"./node_modules/.bin/webpack --config=webpack.build.js","prepare":"npm run build","eslint-check":"eslint --print-config . | eslint-config-prettier-check","eslint":"eslint src/ --fix","prettier":"prettier --write '{src,cypress}/**/*.{js,css}'","lint":"npm run eslint && npm run prettier"},"repository":{"type":"git","url":"git+https://github.com/codeofsumit/leaflet.pm.git"},"author":{"name":"Sumit Kumar","email":"sk@outlook.com","url":"http://twitter.com/TweetsOfSumit"},"license":"MIT","bugs":{"url":"https://github.com/codeofsumit/leaflet.pm/issues"},"homepage":"https://leafletpm.now.sh","prettier":{"trailingComma":"es5","tabWidth":2,"semi":true,"singleQuote":true}}
 
 /***/ }),
 /* 23 */
@@ -4990,16 +4990,9 @@ module.exports = {"name":"leaflet.pm","version":"1.2.2","description":"A Leaflet
 "use strict";
 var Map = L.Class.extend({
   initialize: function initialize(map) {
-    var _this = this;
-
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
-    this.map.on('layerremove', function (e) {
-      if (e.layer.pm && !e.layer._pmTempLayer) {
-        _this.map.fire('pm:remove', e);
-      }
-    });
     this._globalRemovalMode = false;
   },
   addControls: function addControls(options) {
@@ -5026,42 +5019,7 @@ var Map = L.Class.extend({
   setPathOptions: function setPathOptions(options) {
     this.Draw.setPathOptions(options);
   },
-  removeLayer: function removeLayer(e) {
-    var layer = e.target;
-
-    if (!layer._layers && (!layer.pm || !layer.pm.dragging())) {
-      e.target.remove();
-    }
-  },
-  toggleGlobalRemovalMode: function toggleGlobalRemovalMode() {
-    var _this2 = this;
-
-    // toggle global edit mode
-    if (this.globalRemovalEnabled()) {
-      this._globalRemovalMode = false;
-      this.map.eachLayer(function (layer) {
-        layer.off('click', _this2.removeLayer);
-      });
-    } else {
-      this._globalRemovalMode = true;
-      this.map.eachLayer(function (layer) {
-        if (layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval)) {
-          layer.on('click', _this2.removeLayer);
-        }
-      });
-    } // toogle the button in the toolbar
-
-
-    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
-  },
-  globalRemovalEnabled: function globalRemovalEnabled() {
-    return this._globalRemovalMode;
-  },
-  globalEditEnabled: function globalEditEnabled() {
-    return this._globalEditMode;
-  },
-  enableGlobalEditMode: function enableGlobalEditMode(options) {
-    // find all layers handled by leaflet.pm
+  findLayers: function findLayers() {
     var layers = [];
     this.map.eachLayer(function (layer) {
       if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
@@ -5076,11 +5034,135 @@ var Map = L.Class.extend({
     layers = layers.filter(function (layer) {
       return !layer._pmTempLayer;
     });
+    return layers;
+  },
+  removeLayer: function removeLayer(e) {
+    var layer = e.target; // only remove layer, if it's handled by leaflet.pm,
+    // not a tempLayer and not currently being dragged
+
+    var removeable = !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
+
+    if (removeable) {
+      layer.remove();
+      this.map.fire('pm:remove', {
+        layer: layer
+      });
+    }
+  },
+  globalDragModeEnabled: function globalDragModeEnabled() {
+    return !!this._globalDragMode;
+  },
+  enableGlobalDragMode: function enableGlobalDragMode() {
+    var layers = this.findLayers();
+    this._globalDragMode = true;
+    layers.forEach(function (layer) {
+      layer.pm.enableLayerDrag();
+    }); // remove map handler
+
+    this.map.on('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+  },
+  disableGlobalDragMode: function disableGlobalDragMode() {
+    var layers = this.findLayers();
+    this._globalDragMode = false;
+    layers.forEach(function (layer) {
+      layer.pm.disableLayerDrag();
+    }); // remove map handler
+
+    this.map.off('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+  },
+  toggleGlobalDragMode: function toggleGlobalDragMode() {
+    if (this.globalDragModeEnabled()) {
+      this.disableGlobalDragMode();
+    } else {
+      this.enableGlobalDragMode();
+    }
+  },
+  layerAddHandler: function layerAddHandler(_ref) {
+    var layer = _ref.layer;
+    // is this layer handled by leaflet.pm?
+    var isRelevant = !!layer.pm && !layer._pmTempLayer; // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
+
+    if (!isRelevant) {
+      return;
+    } // re-enable global removal mode if it's enabled already
+
+
+    if (this.globalRemovalEnabled()) {
+      this.disableGlobalRemovalMode();
+      this.enableGlobalRemovalMode();
+    } // re-enable global edit mode if it's enabled already
+
+
+    if (this.globalEditEnabled()) {
+      this.disableGlobalEditMode();
+      this.enableGlobalEditMode();
+    } // re-enable global drag mode if it's enabled already
+
+
+    if (this.globalDragModeEnabled()) {
+      this.disableGlobalDragMode();
+      this.enableGlobalDragMode();
+    }
+  },
+  disableGlobalRemovalMode: function disableGlobalRemovalMode() {
+    var _this = this;
+
+    this._globalRemovalMode = false;
+    this.map.eachLayer(function (layer) {
+      layer.off('click', _this.removeLayer, _this);
+    }); // remove map handler
+
+    this.map.off('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+  },
+  enableGlobalRemovalMode: function enableGlobalRemovalMode() {
+    var _this2 = this;
+
+    var isRelevant = function isRelevant(layer) {
+      return layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval);
+    };
+
+    this._globalRemovalMode = true; // handle existing layers
+
+    this.map.eachLayer(function (layer) {
+      if (isRelevant(layer)) {
+        layer.on('click', _this2.removeLayer, _this2);
+      }
+    }); // handle layers that are added while in removal  xmode
+
+    this.map.on('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+  },
+  toggleGlobalRemovalMode: function toggleGlobalRemovalMode() {
+    // toggle global edit mode
+    if (this.globalRemovalEnabled()) {
+      this.disableGlobalRemovalMode();
+    } else {
+      this.enableGlobalRemovalMode();
+    }
+  },
+  globalRemovalEnabled: function globalRemovalEnabled() {
+    return !!this._globalRemovalMode;
+  },
+  globalEditEnabled: function globalEditEnabled() {
+    return this._globalEditMode;
+  },
+  enableGlobalEditMode: function enableGlobalEditMode(options) {
+    // find all layers handled by leaflet.pm
+    var layers = this.findLayers();
     this._globalEditMode = true;
     layers.forEach(function (layer) {
       // console.log(layer);
       layer.pm.enable(options);
-    }); // toggle the button in the toolbar
+    }); // handle layers that are added while in removal  xmode
+
+    this.map.on('layeradd', this.layerAddHandler, this); // toggle the button in the toolbar
 
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode); // fire event
 
@@ -5088,24 +5170,13 @@ var Map = L.Class.extend({
   },
   disableGlobalEditMode: function disableGlobalEditMode() {
     // find all layers handles by leaflet.pm
-    var layers = [];
-    this.map.eachLayer(function (layer) {
-      if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
-        layers.push(layer);
-      }
-    }); // filter out layers that don't have the leaflet.pm instance
-
-    layers = layers.filter(function (layer) {
-      return !!layer.pm;
-    }); // filter out everything that's leaflet.pm specific temporary stuff
-
-    layers = layers.filter(function (layer) {
-      return !layer._pmTempLayer;
-    });
+    var layers = this.findLayers();
     this._globalEditMode = false;
     layers.forEach(function (layer) {
       layer.pm.disable();
-    }); // toggle the button in the toolbar
+    }); // handle layers that are added while in removal  xmode
+
+    this.map.on('layeroff', this.layerAddHandler, this); // toggle the button in the toolbar
 
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode); // fire event
 
@@ -5141,13 +5212,13 @@ L.Control.PMButton = __WEBPACK_IMPORTED_MODULE_0__L_Controls__["a" /* default */
 var Toolbar = L.Class.extend({
   options: {
     drawMarker: true,
-    drawPolygon: true,
-    drawPolyline: true,
-    drawCircle: true,
     drawRectangle: true,
+    drawPolyline: true,
+    drawPolygon: true,
+    drawCircle: true,
     editMode: true,
+    dragMode: true,
     cutPolygon: true,
-    dragPolygon: false,
     removalMode: true,
     position: 'topleft'
   },
@@ -5155,7 +5226,8 @@ var Toolbar = L.Class.extend({
     this.map = map;
     this.buttons = {};
     this.isVisible = false;
-    this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
+    this.drawContainer = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-pm-draw leaflet-bar leaflet-control');
+    this.editContainer = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-pm-edit leaflet-bar leaflet-control');
 
     this._defineButtons();
   },
@@ -5177,33 +5249,24 @@ var Toolbar = L.Class.extend({
 
 
     L.Util.setOptions(this, options);
-    this.applyIconStyle(this.options.useFontAwesome); // now show the specified buttons
+    this.applyIconStyle(); // now show the specified buttons
 
     this._showHideButtons();
 
     this.isVisible = true;
   },
-  applyIconStyle: function applyIconStyle(fa) {
+  applyIconStyle: function applyIconStyle() {
     var buttons = this.getButtons();
     var iconClasses = {
-      fontawesome: {
-        drawMarker: 'control-fa-icon fas fa-map-marker-alt',
-        drawPolyline: 'control-fa-icon far fa-ellipsis-v',
-        drawRectangle: 'control-fa-icon far fa-draw-square',
-        drawPolygon: 'control-fa-icon far fa-draw-polygon',
-        drawCircle: 'control-fa-icon far fa-draw-circle',
-        cutPolygon: 'control-fa-icon far fa-cut',
-        editMode: 'control-fa-icon fas fa-pencil-alt',
-        removalMode: 'control-fa-icon far fa-trash-alt'
-      },
       geomanIcons: {
         drawMarker: 'control-icon leaflet-pm-icon-marker',
         drawPolyline: 'control-icon leaflet-pm-icon-polyline',
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
-        cutPolygon: 'control-icon leaflet-pm-icon-cut',
         editMode: 'control-icon leaflet-pm-icon-edit',
+        dragMode: 'control-icon leaflet-pm-icon-drag',
+        cutPolygon: 'control-icon leaflet-pm-icon-cut',
         removalMode: 'control-icon leaflet-pm-icon-delete'
       }
     };
@@ -5211,7 +5274,7 @@ var Toolbar = L.Class.extend({
     for (var name in buttons) {
       var button = buttons[name];
       L.Util.setOptions(button, {
-        className: fa ? iconClasses.fontawesome[name] : iconClasses.geomanIcons[name]
+        className: iconClasses.geomanIcons[name]
       });
     }
   },
@@ -5288,19 +5351,6 @@ var Toolbar = L.Class.extend({
       position: this.options.position,
       actions: ['cancel']
     };
-    var deleteButton = {
-      title: 'Removal Mode',
-      className: 'control-icon leaflet-pm-icon-delete',
-      onClick: function onClick() {},
-      afterClick: function afterClick() {
-        _this.map.pm.toggleGlobalRemovalMode();
-      },
-      doToggle: true,
-      toggleStatus: false,
-      disableOtherButtons: true,
-      position: this.options.position,
-      actions: ['cancel']
-    };
     var drawPolyButton = {
       title: 'Draw Polygon',
       className: 'control-icon leaflet-pm-icon-polygon',
@@ -5309,25 +5359,6 @@ var Toolbar = L.Class.extend({
       afterClick: function afterClick() {
         // toggle drawing mode
         _this.map.pm.Draw.Poly.toggle();
-      },
-      doToggle: true,
-      toggleStatus: false,
-      disableOtherButtons: true,
-      position: this.options.position,
-      actions: ['finish', 'removeLastVertex', 'cancel']
-    };
-    var cutButton = {
-      title: 'Cut Layers',
-      className: 'control-icon leaflet-pm-icon-cut',
-      jsClass: 'Cut',
-      onClick: function onClick() {},
-      afterClick: function afterClick() {
-        // enable polygon drawing mode without snap
-        _this.map.pm.Draw.Cut.toggle({
-          snappable: true,
-          cursorMarker: true,
-          allowSelfIntersection: false
-        });
       },
       doToggle: true,
       toggleStatus: false,
@@ -5391,6 +5422,55 @@ var Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
+      tool: 'edit',
+      actions: ['cancel']
+    };
+    var dragButton = {
+      title: 'Drag Layers',
+      className: 'control-icon leaflet-pm-icon-drag',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        _this.map.pm.toggleGlobalDragMode();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      tool: 'edit',
+      actions: ['cancel']
+    };
+    var cutButton = {
+      title: 'Cut Layers',
+      className: 'control-icon leaflet-pm-icon-cut',
+      jsClass: 'Cut',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        // enable polygon drawing mode without snap
+        _this.map.pm.Draw.Cut.toggle({
+          snappable: true,
+          cursorMarker: true,
+          allowSelfIntersection: false
+        });
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      tool: 'edit',
+      actions: ['finish', 'removeLastVertex', 'cancel']
+    };
+    var deleteButton = {
+      title: 'Removal Mode',
+      className: 'control-icon leaflet-pm-icon-delete',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        _this.map.pm.toggleGlobalRemovalMode();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      tool: 'edit',
       actions: ['cancel']
     };
 
@@ -5404,9 +5484,11 @@ var Toolbar = L.Class.extend({
 
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
 
-    this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
-
     this._addButton('editMode', new L.Control.PMButton(editButton));
+
+    this._addButton('dragMode', new L.Control.PMButton(dragButton));
+
+    this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
 
     this._addButton('removalMode', new L.Control.PMButton(deleteButton));
   },
@@ -5442,7 +5524,7 @@ var PMButton = L.Control.extend({
   },
   onAdd: function onAdd(map) {
     this._map = map;
-    this._container = this._map.pm.Toolbar.container;
+    this._container = this._button.tool === 'edit' ? this._map.pm.Toolbar.editContainer : this._map.pm.Toolbar.drawContainer;
     this.buttonsDomNode = this._makeButton(this._button);
 
     this._container.appendChild(this.buttonsDomNode);
@@ -5513,8 +5595,8 @@ var PMButton = L.Control.extend({
       },
       finish: {
         text: 'Finish',
-        onClick: function onClick() {
-          this._map.pm.Draw[button.jsClass]._finishShape();
+        onClick: function onClick(e) {
+          this._map.pm.Draw[button.jsClass]._finishShape(e);
         }
       }
     };
@@ -5906,19 +5988,28 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
 
 
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection();
+      this._handleSelfIntersection(true, e.latlng);
     }
   },
-  _handleSelfIntersection: function _handleSelfIntersection() {
+  _handleSelfIntersection: function _handleSelfIntersection(addVertex, latlng) {
     // ok we need to check the self intersection here
     // problem: during draw, the marker on the cursor is not yet part
     // of the layer. So we need to clone the layer, add the
     // potential new vertex (cursor markers latlngs) and check the self
     // intersection on the clone. Phew... - let's do it 💪
     // clone layer (polyline is enough, even when it's a polygon)
-    var clone = L.polyline(this._layer.getLatLngs()); // add the vertex
+    var clone = L.polyline(this._layer.getLatLngs());
 
-    clone.addLatLng(this._hintMarker.getLatLng()); // check the self intersection
+    if (addVertex) {
+      // get vertex from param or from hintmarker
+      if (!latlng) {
+        latlng = this._hintMarker.getLatLng();
+      } // add the vertex
+
+
+      clone.addLatLng(latlng);
+    } // check the self intersection
+
 
     var selfIntersection = __WEBPACK_IMPORTED_MODULE_0__turf_kinks___default()(clone.toGeoJSON(15));
     this._doesSelfIntersect = selfIntersection.features.length > 0; // change the style based on self intersection
@@ -5939,6 +6030,7 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
 
     if (coords.length < 1) {
       this.disable();
+      return;
     } // find corresponding marker
 
 
@@ -5960,8 +6052,13 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
     this._syncHintLine();
   },
   _createVertex: function _createVertex(e) {
-    if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-      return;
+    // don't create a vertex if we have a selfIntersection and it is not allowed
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(true, e.latlng);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
     } // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
 
@@ -6002,8 +6099,12 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
   },
   _finishShape: function _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
-    if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-      return;
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(false);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
     } // get coordinates
 
 
@@ -6070,10 +6171,14 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Poly = __WEBPACK_IMP
     this._shape = 'Poly';
     this.toolbarButtonName = 'drawPolygon';
   },
-  _finishShape: function _finishShape(event) {
+  _finishShape: function _finishShape(e) {
     // if self intersection is not allowed, do not finish the shape!
-    if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-      return;
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(false);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
     } // get coordinates
 
 
@@ -6085,7 +6190,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Poly = __WEBPACK_IMP
     } // create the leaflet shape and add it to the map
 
 
-    if (event && event.type === 'dblclick') {
+    if (e && e.type === 'dblclick') {
       // Leaflet creates an extra node with double click
       coords.splice(coords.length - 1, 1);
     }
@@ -6681,6 +6786,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__["a" /* default */].Cut = __WEBPACK_IMPO
       try {
         return !!__WEBPACK_IMPORTED_MODULE_0__turf_intersect___default()(layer.toGeoJSON(15), l.toGeoJSON(15));
       } catch (e) {
+        /* eslint-disable-next-line no-console */
         console.error('You cant cut polygons with self-intersections');
         return false;
       }
@@ -6714,12 +6820,22 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__["a" /* default */].Cut = __WEBPACK_IMPO
 
       l.remove();
       layer.remove();
+
+      if (resultingLayer.getLayers().length === 0) {
+        _this._map.pm.removeLayer({
+          target: resultingLayer
+        });
+      }
     });
   },
   _finishShape: function _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
-    if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-      return;
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(false);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
     }
 
     var coords = this._layer.getLatLngs();
@@ -7079,8 +7195,14 @@ function rad(num) {
 
 "use strict";
 var DragMixin = {
-  _initDraggableLayer: function _initDraggableLayer() {
-    // temporary coord variable for delta calculation
+  enableLayerDrag: function enableLayerDrag() {
+    if (this._layer instanceof L.Marker) {
+      this._layer.dragging.enable();
+
+      return;
+    } // temporary coord variable for delta calculation
+
+
     this._tempDragCoord = null; // add CSS class
 
     var el = this._layer._path ? this._layer._path : this._layer._renderer._container;
@@ -7088,9 +7210,24 @@ var DragMixin = {
     this._originalMapDragState = this._layer._map.dragging._enabled; // can we reliably save the map's draggable state?
     // (if the mouse up event happens outside the container, then the map can become undraggable)
 
-    this._safeToCacheDragState = true;
+    this._safeToCacheDragState = true; // add mousedown event to trigger drag
 
     this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
+  },
+  disableLayerDrag: function disableLayerDrag() {
+    if (this._layer instanceof L.Marker) {
+      this._layer.dragging.disable();
+
+      return;
+    } // remove CSS class
+
+
+    var el = this._layer._path ? this._layer._path : this._layer._renderer._container;
+    L.DomUtil.removeClass(el, 'leaflet-pm-draggable'); // no longer save the drag state
+
+    this._safeToCacheDragState = false; // disable mousedown event
+
+    this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
   },
   _dragMixinOnMouseUp: function _dragMixinOnMouseUp() {
     var _this = this;
@@ -7112,10 +7249,7 @@ var DragMixin = {
 
     if (!this._dragging) {
       return false;
-    } // show markers again
-
-
-    this._initMarkers(); // timeout to prevent click event after drag :-/
+    } // timeout to prevent click event after drag :-/
     // TODO: do it better as soon as leaflet has a way to do it better :-)
 
 
@@ -7144,10 +7278,7 @@ var DragMixin = {
 
       if (this._originalMapDragState) {
         this._layer._map.dragging.disable();
-      } // hide markers
-
-
-      this._markerGroup.clearLayers(); // fire pm:dragstart event
+      } // fire pm:dragstart event
 
 
       this._layer.fire('pm:dragstart');
@@ -7204,12 +7335,27 @@ var DragMixin = {
           };
         })
       );
-    }; // create the new coordinates array
+    };
+
+    var moveCoord = function moveCoord(coord) {
+      return {
+        lat: coord.lat + deltaLatLng.lat,
+        lng: coord.lng + deltaLatLng.lng
+      };
+    };
+
+    if (this._layer instanceof L.CircleMarker) {
+      // create the new coordinates array
+      var newCoords = moveCoord(this._layer.getLatLng()); // set new coordinates and redraw
+
+      this._layer.setLatLng(newCoords).redraw();
+    } else {
+      // create the new coordinates array
+      var _newCoords = moveCoords(this._layer.getLatLngs()); // set new coordinates and redraw
 
 
-    var newCoords = moveCoords(this._layer._latlngs); // set new coordinates and redraw
-
-    this._layer.setLatLngs(newCoords).redraw(); // save current latlng for next delta calculation
+      this._layer.setLatLngs(_newCoords).redraw();
+    } // save current latlng for next delta calculation
 
 
     this._tempDragCoord = latlng; // fire pm:dragstart event
@@ -7486,11 +7632,13 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       this._layer.on('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval, this);
     }
 
-    if (this.options.draggable) {
-      this._initDraggableLayer();
-    }
-
     if (!this.options.allowSelfIntersection) {
+      if (!this.cachedColor) {
+        this.cachedColor = this._layer.options.color;
+      }
+
+      this.isRed = false;
+
       this._handleLayerStyle();
     }
   },
@@ -7521,7 +7669,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     poly.off('mousedown');
     poly.off('mouseup'); // remove onRemove listener
 
-    this._layer.off('remove', this._onLayerRemove);
+    this._layer.off('remove', this._onLayerRemove, this);
 
     if (!this.options.allowSelfIntersection) {
       this._layer.off('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval);
@@ -7561,21 +7709,32 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     }
   },
   _handleLayerStyle: function _handleLayerStyle(flash) {
-    var el = this._layer._path ? this._layer._path : this._layer._renderer._container;
+    var _this = this;
+
+    var layer = this._layer;
 
     if (this.hasSelfIntersection()) {
-      if (L.DomUtil.hasClass(el, 'leaflet-pm-invalid')) {
+      if (this.isRed) {
         return;
       } // if it does self-intersect, mark or flash it red
 
 
       if (flash) {
-        L.DomUtil.addClass(el, 'leaflet-pm-invalid');
+        layer.setStyle({
+          color: 'red'
+        });
+        this.isRed = true;
         window.setTimeout(function () {
-          L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+          layer.setStyle({
+            color: _this.cachedColor
+          });
+          _this.isRed = false;
         }, 200);
       } else {
-        L.DomUtil.addClass(el, 'leaflet-pm-invalid');
+        layer.setStyle({
+          color: 'red'
+        });
+        this.isRed = true;
       } // fire intersect event
 
 
@@ -7584,11 +7743,14 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       });
     } else {
       // if not, reset the style to the default color
-      L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+      layer.setStyle({
+        color: this.cachedColor
+      });
+      this.isRed = false;
     }
   },
   _initMarkers: function _initMarkers() {
-    var _this = this;
+    var _this2 = this;
 
     var map = this._map;
 
@@ -7607,17 +7769,17 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     var handleRing = function handleRing(coordsArr) {
       // if there is another coords ring, go a level deep and do this again
       if (Array.isArray(coordsArr[0])) {
-        return coordsArr.map(handleRing, _this);
+        return coordsArr.map(handleRing, _this2);
       } // the marker array, it includes only the markers of vertexes (no middle markers)
 
 
-      var ringArr = coordsArr.map(_this._createMarker, _this); // create small markers in the middle of the regular markers
+      var ringArr = coordsArr.map(_this2._createMarker, _this2); // create small markers in the middle of the regular markers
 
       coordsArr.map(function (v, k) {
         // find the next index fist
-        var nextIndex = _this.isPolygon() ? (k + 1) % coordsArr.length : k + 1; // create the marker
+        var nextIndex = _this2.isPolygon() ? (k + 1) % coordsArr.length : k + 1; // create the marker
 
-        return _this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
+        return _this2._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
       });
       return ringArr;
     }; // create markers
@@ -7632,7 +7794,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
   // creates initial markers for coordinates
   _createMarker: function _createMarker(latlng) {
     var marker = new L.Marker(latlng, {
-      draggable: !this.options.preventVertexEdit,
+      draggable: true,
       icon: L.divIcon({
         className: 'marker-icon'
       })
@@ -7652,7 +7814,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
   },
   // creates the middle markes between coordinates
   _createMiddleMarker: function _createMiddleMarker(leftM, rightM) {
-    var _this2 = this;
+    var _this3 = this;
 
     // cancel if there are no two markers
     if (!leftM || !rightM) {
@@ -7679,7 +7841,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       });
       middleMarker.setIcon(icon);
 
-      _this2._addMarker(middleMarker, leftM, rightM);
+      _this3._addMarker(middleMarker, leftM, rightM);
     });
     middleMarker.on('movestart', function () {
       // TODO: This is a workaround. Remove the moveend listener and
@@ -7693,7 +7855,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
         middleMarker.off('moveend');
       });
 
-      _this2._addMarker(middleMarker, leftM, rightM);
+      _this3._addMarker(middleMarker, leftM, rightM);
     });
     return middleMarker;
   },
@@ -9354,6 +9516,14 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Poly = __WEBPACK_IMP
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(1);
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 // Corner detection based on Leaflet Draw's Edit.Rectangle.js Class:
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
 
@@ -9378,7 +9548,9 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
 
     this._markers[0] = corners.map(this._createMarker, this); // convenience alias, for better readability
 
-    this._cornerMarkers = this._markers[0];
+    var _this$_markers = _slicedToArray(this._markers, 1);
+
+    this._cornerMarkers = _this$_markers[0];
 
     if (this.options.snappable) {
       this._initSnappableMarkers();
@@ -9387,7 +9559,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
   // creates initial markers for coordinates
   _createMarker: function _createMarker(latlng, index) {
     var marker = new L.Marker(latlng, {
-      draggable: !this.options.preventVertexEdit,
+      draggable: true,
       icon: L.divIcon({
         className: 'marker-icon'
       })
@@ -9496,7 +9668,8 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
   // adjusts the position of all Markers
   // params: markerLatLngs -- an array of exactly LatLng objects
   _adjustAllMarkers: function _adjustAllMarkers(markerLatLngs) {
-    if (!markerLatLngs.length || markerLatLngs.length != 4) {
+    if (!markerLatLngs.length || markerLatLngs.length !== 4) {
+      /* eslint-disable-next-line no-console */
       console.error('_adjustAllMarkers() requires an array of EXACTLY 4 LatLng coordinates');
       return;
     }
@@ -9509,6 +9682,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
   // params: anchorMarker -- the Marker object used to determine adjacent Markers
   _adjustAdjacentMarkers: function _adjustAdjacentMarkers(anchorMarker) {
     if (!anchorMarker || !anchorMarker.getLatLng || !anchorMarker._oppositeCornerLatLng) {
+      /* eslint-disable-next-line no-console */
       console.error('_adjustAdjacentMarkers() requires a valid Marker object');
       return;
     }
@@ -9528,7 +9702,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
 
     var unmarkedCornerIndex = 0;
 
-    if (unmarkedCorners.length == 2) {
+    if (unmarkedCorners.length === 2) {
       this._cornerMarkers.forEach(function (marker) {
         var markerLatLng = marker.getLatLng();
 
@@ -9635,7 +9809,11 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Circle = __WEBPACK_I
     } // add markerGroup to map, markerGroup includes regular and middle markers
 
 
-    this._helperLayers = new L.LayerGroup().addTo(map); // create marker for each coordinate
+    this._helperLayers = new L.LayerGroup();
+    this._helperLayers._pmTempLayer = true;
+
+    this._helperLayers.addTo(map); // create marker for each coordinate
+
 
     var center = this._layer.getLatLng();
 
@@ -9724,20 +9902,17 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Circle = __WEBPACK_I
   _createCenterMarker: function _createCenterMarker(latlng) {
     var marker = this._createMarker(latlng);
 
-    L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
-    marker.on('move', this._moveCircle, this); // marker.on('contextmenu', this._removeMarker, this);
+    L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable'); // TODO: switch back to move event once this leaflet issue is solved:
+    // https://github.com/Leaflet/Leaflet/issues/6492
+
+    marker.on('drag', this._moveCircle, this); // marker.on('contextmenu', this._removeMarker, this);
 
     return marker;
   },
   _createOuterMarker: function _createOuterMarker(latlng) {
     var marker = this._createMarker(latlng);
 
-    if (this.options.preventVertexEdit) {
-      marker.dragging.disable();
-    }
-
-    marker.on('move', this._resizeCircle, this); // marker.on('contextmenu', this._removeMarker, this);
-
+    marker.on('move', this._resizeCircle, this);
     return marker;
   },
   _createMarker: function _createMarker(latlng) {
