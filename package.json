@@ -1,6 +1,6 @@
 {
   "name": "leaflet.pm",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -56,7 +56,7 @@
     "prepare": "npm run build",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
     "eslint": "eslint src/ --fix",
-    "prettier": "prettier --write 'src/**/*.{js, css}'",
+    "prettier": "prettier --write '{src,cypress}/**/*.{js,css}'",
     "lint": "npm run eslint && npm run prettier"
   },
   "repository": {

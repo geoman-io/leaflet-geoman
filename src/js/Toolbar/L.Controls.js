@@ -93,8 +93,8 @@ const PMButton = L.Control.extend({
       },
       finish: {
         text: 'Finish',
-        onClick() {
-          this._map.pm.Draw[button.jsClass]._finishShape();
+        onClick(e) {
+          this._map.pm.Draw[button.jsClass]._finishShape(e);
         },
       },
     };

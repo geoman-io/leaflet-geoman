@@ -59,7 +59,10 @@ Edit.Line = Edit.extend({
     }
 
     if (!this.options.allowSelfIntersection) {
-      this.cachedColor = this._layer.options.color;
+      if (!this.cachedColor) {
+        this.cachedColor = this._layer.options.color;
+      }
+
       this.isRed = false;
       this._handleLayerStyle();
     }

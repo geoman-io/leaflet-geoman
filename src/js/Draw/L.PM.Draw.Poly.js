@@ -9,7 +9,7 @@ Draw.Poly = Draw.Line.extend({
   _finishShape(e) {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(e.latlng);
+      this._handleSelfIntersection(false);
 
       if (this._doesSelfIntersect) {
         return;
