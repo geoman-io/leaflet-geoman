@@ -140,7 +140,9 @@ const Map = L.Class.extend({
   },
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
-      layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval);
+      layer.pm &&
+      !(layer.pm.options && layer.pm.options.preventMarkerRemoval) &&
+      !(layer instanceof L.LayerGroup);
 
     this._globalRemovalMode = true;
     // handle existing layers
