@@ -57,6 +57,14 @@ Cypress.Commands.add('drawShape', shape => {
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
+    } else if (shape === 'Geojson') {
+      cy.fixture('MultiPolyGeojson')
+        .as('geojson')
+        .then(json => {
+          const layer = L.geoJson(json).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
     }
 
     if (shape === 'FeatureCollectionWithCircles') {

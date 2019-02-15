@@ -56,6 +56,27 @@ describe('Draw & Edit Poly', () => {
       .click(90, 150);
   });
 
+  it.only('should cut geojson mutlipolygons fine', () => {
+    cy.drawShape('Geojson');
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(16);
+
+    cy.toolbarButton('cut').click();
+
+    cy.get(mapSelector)
+      .click(100, 300)
+      .click(700, 300)
+      .click(700, 310)
+      .click(100, 310)
+      .click(100, 300);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(20);
+  });
+
   it('prevents self intersections', () => {
     cy.window().then(({ map }) => {
       map.pm.enableDraw('Polygon', {
