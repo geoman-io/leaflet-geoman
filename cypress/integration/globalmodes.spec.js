@@ -48,14 +48,14 @@ describe('Removal Mode', () => {
       .click(320, 150);
 
     cy.toolbarButton('delete').click();
-    cy.get(mapSelector).click(330, 170);
+    cy.get(mapSelector).click(330, 130);
 
     cy.window().then(({ L, map }) => {
       const layers = map._layers;
 
       expect(
         Object.entries(layers).filter(l => l[1] instanceof L.Polygon).length
-      ).to.equal(0);
+      ).to.equal(1);
     });
   });
 
