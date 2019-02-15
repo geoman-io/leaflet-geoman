@@ -140,7 +140,7 @@ const Toolbar = L.Class.extend({
     return this.buttons[name].toggle(status);
   },
   _defineButtons() {
-    // some buttons are still in their respective classes, like L.PM.Draw.Poly
+    // some buttons are still in their respective classes, like L.PM.Draw.Polygon
     const drawMarkerButton = {
       className: 'control-icon leaflet-pm-icon-marker',
       title: 'Draw Marker',
@@ -160,11 +160,11 @@ const Toolbar = L.Class.extend({
     const drawPolyButton = {
       title: 'Draw Polygon',
       className: 'control-icon leaflet-pm-icon-polygon',
-      jsClass: 'Poly',
+      jsClass: 'Polygon',
       onClick: () => {},
       afterClick: () => {
         // toggle drawing mode
-        this.map.pm.Draw.Poly.toggle();
+        this.map.pm.Draw.Polygon.toggle();
       },
       doToggle: true,
       toggleStatus: false,

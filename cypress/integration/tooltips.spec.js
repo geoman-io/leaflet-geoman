@@ -127,7 +127,7 @@ describe('Shows Tooltips', () => {
 
   it('Properly disables tooltips', () => {
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Poly', {
+      map.pm.enableDraw('Polygon', {
         tooltips: false,
       });
     });
@@ -142,13 +142,13 @@ describe('Shows Tooltips', () => {
     cy.get('.active .action-cancel').click();
 
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Poly');
+      map.pm.enableDraw('Polygon');
     });
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
     cy.get('.active .action-cancel').click();
 
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Poly', {
+      map.pm.enableDraw('Polygon', {
         tooltips: true,
       });
     });

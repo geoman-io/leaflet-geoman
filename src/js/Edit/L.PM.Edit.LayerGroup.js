@@ -1,6 +1,6 @@
 import Edit from './L.PM.Edit';
 
-// LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Poly
+// LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Polygon
 // (which inherits from L.PM.Edit) for each layer,
 // so it's not really a parent class
 Edit.LayerGroup = L.Class.extend({

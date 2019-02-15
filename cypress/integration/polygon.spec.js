@@ -58,7 +58,7 @@ describe('Draw & Edit Poly', () => {
 
   it('prevents self intersections', () => {
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Poly', {
+      map.pm.enableDraw('Polygon', {
         allowSelfIntersection: false,
       });
 
@@ -95,7 +95,7 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(5);
 
     cy.window().then(({ map }) => {
-      map.pm.Draw.Poly._removeLastVertex();
+      map.pm.Draw.Polygon._removeLastVertex();
     });
 
     cy.hasVertexMarkers(4);
