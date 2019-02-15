@@ -21,7 +21,7 @@ describe('Removal Mode', () => {
     cy.toolbarButton('delete').click();
   });
 
-  it.only('unable to remove layer with pmIgnore:true', () => {
+  it('unable to remove layer with pmIgnore:true', () => {
     cy.window().then(({ L, map }) => {
       const testLayer = new L.FeatureGroup();
       map.addLayer(testLayer);
