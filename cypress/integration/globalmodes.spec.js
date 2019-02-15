@@ -21,6 +21,44 @@ describe('Removal Mode', () => {
     cy.toolbarButton('delete').click();
   });
 
+  it.only('unable to remove layer with pmIgnore:true', () => {
+    cy.window().then(({ L, map }) => {
+      const testLayer = new L.FeatureGroup();
+      map.addLayer(testLayer);
+
+      Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
+        const poly = event.layer;
+
+        const coords = poly.getLatLngs();
+
+        const newPoly = L.polygon(coords, { pmIgnore: true }).addTo(testLayer);
+        poly.remove();
+
+        return newPoly;
+      });
+    });
+
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(320, 150)
+      .click(320, 100)
+      .click(400, 100)
+      .click(400, 200)
+      .click(320, 150);
+
+    cy.toolbarButton('delete').click();
+    cy.get(mapSelector).click(330, 170);
+
+    cy.window().then(({ L, map }) => {
+      const layers = map._layers;
+
+      expect(
+        Object.entries(layers).filter(l => l[1] instanceof L.Polygon).length
+      ).to.equal(0);
+    });
+  });
+
   it('re-applies edit mode onAdd', () => {
     cy.toolbarButton('polygon').click();
 
