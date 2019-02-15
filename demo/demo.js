@@ -97,14 +97,14 @@ map2.pm.addControls({
   deleteLayer: true,
 });
 
-// map2.pm.disableDraw('Poly');
+// map2.pm.disableDraw('Polygon');
 // map2.pm.enableDraw('Circle', {
 //     snappable: true,
 //     cursorMarker: true
 // });
 
 // map2.pm.enableDraw('Line', { allowSelfIntersection: false });
-// map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
+// map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
 
 map2.on('pm:globaleditmodetoggled', function(e) {
   // console.log(e);
@@ -249,7 +249,7 @@ const markerStyle = {
   draggable: false,
 };
 
-map3.pm.enableDraw('Poly', {
+map3.pm.enableDraw('Polygon', {
   snappable: true,
   templineStyle: {
     color: 'blue',
@@ -333,8 +333,8 @@ polygonLayer.on('pm:intersect', function(e) {
 // });
 // map2.pm.disableGlobalEditMode();
 
-map2.pm.enableDraw('Poly', { allowSelfIntersection: false });
-map2.pm.disableDraw('Poly');
+map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
+map2.pm.disableDraw('Polygon');
 map2.pm.enableDraw('Line', { allowSelfIntersection: false });
 map2.pm.disableDraw('Line');
 
@@ -435,10 +435,10 @@ map4.pm.addControls({
   position: 'topright',
 });
 
-map4.pm.enableDraw('Poly', {
+map4.pm.enableDraw('Polygon', {
   finishOn: 'mouseout',
 });
-map4.pm.disableDraw('Poly');
+map4.pm.disableDraw('Polygon');
 
 map4.pm.enableDraw('Marker', {
   snappable: false,
