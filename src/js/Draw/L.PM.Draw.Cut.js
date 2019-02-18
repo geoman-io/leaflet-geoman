@@ -2,7 +2,7 @@ import intersect from '@turf/intersect';
 import difference from '@turf/difference';
 import Draw from './L.PM.Draw';
 
-Draw.Cut = Draw.Poly.extend({
+Draw.Cut = Draw.Polygon.extend({
   initialize(map) {
     this._map = map;
     this._shape = 'Cut';

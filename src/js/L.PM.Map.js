@@ -18,10 +18,20 @@ const Map = L.Class.extend({
   controlsVisible() {
     return this.Toolbar.isVisible;
   },
-  enableDraw(shape = 'Poly', options) {
+  enableDraw(shape = 'Polygon', options) {
+    // backwards compatible, remove after 3.0
+    if (shape === 'Poly') {
+      shape = 'Polygon';
+    }
+
     this.Draw.enable(shape, options);
   },
-  disableDraw(shape = 'Poly') {
+  disableDraw(shape = 'Polygon') {
+    // backwards compatible, remove after 3.0
+    if (shape === 'Poly') {
+      shape = 'Polygon';
+    }
+
     this.Draw.disable(shape);
   },
   setPathOptions(options) {
@@ -140,7 +150,9 @@ const Map = L.Class.extend({
   },
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
-      layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval);
+      layer.pm &&
+      !(layer.pm.options && layer.pm.options.preventMarkerRemoval) &&
+      !(layer instanceof L.LayerGroup);
 
     this._globalRemovalMode = true;
     // handle existing layers

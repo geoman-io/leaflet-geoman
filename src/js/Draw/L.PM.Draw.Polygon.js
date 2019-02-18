@@ -1,9 +1,9 @@
 import Draw from './L.PM.Draw';
 
-Draw.Poly = Draw.Line.extend({
+Draw.Polygon = Draw.Line.extend({
   initialize(map) {
     this._map = map;
-    this._shape = 'Poly';
+    this._shape = 'Polygon';
     this.toolbarButtonName = 'drawPolygon';
   },
   _finishShape(e) {
