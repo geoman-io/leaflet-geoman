@@ -218,13 +218,12 @@ const SnapMixin = {
               layers.push(layer);
           }
 
-
         // this is for debugging
         const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
         debugIndicatorLines.push(debugLine);
 
         // uncomment 👇 this line to show helper lines for debugging
-         //debugLine.addTo(map);
+        // debugLine.addTo(map);
       }
     });
 
