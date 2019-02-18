@@ -217,6 +217,16 @@ Here's a list of layer events you can listen to:
 | pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               |
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
 
+For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
+```js
+L.geoJSON(data,{
+  style : this.style,
+  snapIgnore : true,
+})
+//This layer will be ignored by the snapping engine during drawing
+```
+
+
 ### Edit Mode
 
 Let's you edit vertices of layers. Use it like this:
