@@ -52,7 +52,7 @@ Draw.Marker = Draw.extend({
 
     // enable edit mode for existing markers
     this._map.eachLayer(layer => {
-      if (layer instanceof L.Marker && layer.pm) {
+      if (this.isRelevantMarker(layer)) {
         layer.pm.enable();
       }
     });
@@ -74,7 +74,7 @@ Draw.Marker = Draw.extend({
 
     // disable dragging and removing for all markers
     this._map.eachLayer(layer => {
-      if (layer instanceof L.Marker && layer.pm && !layer._pmTempLayer) {
+      if (this.isRelevantMarker(layer)) {
         layer.pm.disable();
       }
     });
@@ -87,6 +87,9 @@ Draw.Marker = Draw.extend({
 
     // change enabled state
     this._enabled = false;
+  },
+  isRelevantMarker(layer) {
+    return layer instanceof L.Marker && layer.pm && !layer._pmTempLayer;
   },
   enabled() {
     return this._enabled;
