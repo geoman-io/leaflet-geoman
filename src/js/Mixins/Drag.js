@@ -166,13 +166,13 @@ const DragMixin = {
       const newCoords = moveCoord(this._layer.getLatLng());
 
       // set new coordinates and redraw
-      this._layer.setLatLng(newCoords).redraw();
+      this._layer.setLatLng(newCoords);
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
 
       // set new coordinates and redraw
-      this._layer.setLatLngs(newCoords).redraw();
+      this._layer.setLatLngs(newCoords);
     }
 
     // save current latlng for next delta calculation
