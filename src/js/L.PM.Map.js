@@ -157,6 +157,8 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+
+    _fireRemovalModeEvent(false);
   },
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
@@ -177,6 +179,14 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+
+    _fireRemovalModeEvent(true);
+  },
+  _fireRemovalModeEvent(enabled) {
+    this.map.fire('pm:globaldragmodetoggled', {
+        enabled,
+        map: this.map,
+      });
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode
