@@ -183,7 +183,7 @@ const Map = L.Class.extend({
     this._fireRemovalModeEvent(true);
   },
   _fireRemovalModeEvent(enabled) {
-    this.map.fire('pm:globalremovemodetoggled', {
+    this.map.fire('pm:globalremovalmodetoggled', {
         enabled,
         map: this.map,
       });
