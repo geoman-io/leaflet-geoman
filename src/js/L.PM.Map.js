@@ -86,6 +86,8 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+    
+    _fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
     const layers = this.findLayers();
@@ -101,6 +103,14 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+
+    _fireDragModeEvent(false);
+  },
+  _fireDragModeEvent(enabled) {
+    this.map.fire('pm:globaldragmodetoggled', {
+      enabled,
+      map: this.map,
+    });
   },
   toggleGlobalDragMode() {
     if (this.globalDragModeEnabled()) {
