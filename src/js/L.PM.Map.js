@@ -87,7 +87,7 @@ const Map = L.Class.extend({
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
     
-    _fireDragModeEvent(true);
+    this._fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
     const layers = this.findLayers();
@@ -104,7 +104,7 @@ const Map = L.Class.extend({
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
 
-    _fireDragModeEvent(false);
+    this._fireDragModeEvent(false);
   },
   _fireDragModeEvent(enabled) {
     this.map.fire('pm:globaldragmodetoggled', {
@@ -158,7 +158,7 @@ const Map = L.Class.extend({
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
 
-    _fireRemovalModeEvent(false);
+    this._fireRemovalModeEvent(false);
   },
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
@@ -180,10 +180,10 @@ const Map = L.Class.extend({
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
 
-    _fireRemovalModeEvent(true);
+    this._fireRemovalModeEvent(true);
   },
   _fireRemovalModeEvent(enabled) {
-    this.map.fire('pm:globaldragmodetoggled', {
+    this.map.fire('pm:globalremovemodetoggled', {
         enabled,
         map: this.map,
       });
