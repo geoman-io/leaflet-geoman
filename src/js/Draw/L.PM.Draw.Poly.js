@@ -76,12 +76,12 @@ Draw.Poly = Draw.Line.extend({
 
     // handle tooltip text
     if (first) {
-      this._hintMarker.setTooltipContent('Click to continue drawing');
+      this._hintMarker.setTooltipContent(this.options.textHintContinueDrawing || 'Click to continue drawing');
     }
     const third = this._layer.getLatLngs().length === 3;
 
     if (third) {
-      this._hintMarker.setTooltipContent('Click first marker to finish');
+      this._hintMarker.setTooltipContent(this.options.textHintFirstMarkerToFinish || 'Click first marker to finish');
     }
 
     return marker;

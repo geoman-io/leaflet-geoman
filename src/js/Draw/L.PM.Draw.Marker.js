@@ -28,7 +28,7 @@ Draw.Marker = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip('Click to place marker', {
+        .bindTooltip(this.options.textHintPlaceMarker || 'Click to place marker', {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',

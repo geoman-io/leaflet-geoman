@@ -44,7 +44,7 @@ Draw.Rectangle = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip('Click to place first vertex', {
+        .bindTooltip(this.options.textHintFirstVertex || 'Click to place first vertex', {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
@@ -165,7 +165,7 @@ Draw.Rectangle = Draw.extend({
     this._map.on('click', this._finishShape, this);
 
     // change tooltip text
-    this._hintMarker.setTooltipContent('Click to finish');
+    this._hintMarker.setTooltipContent(this.options.textHintFinish || 'Click to finish');
 
     this._setRectangleOrigin();
   },
