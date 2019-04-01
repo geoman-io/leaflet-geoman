@@ -1,3 +1,4 @@
+import union from '@turf/union';
 const Map = L.Class.extend({
   initialize(map) {
     this.map = map;
@@ -5,6 +6,7 @@ const Map = L.Class.extend({
     this.Toolbar = new L.PM.Toolbar(map);
 
     this._globalRemovalMode = false;
+    this._globalUnionMode = false;
   },
   addControls(options) {
     this.Toolbar.addControls(options);
@@ -57,6 +59,33 @@ const Map = L.Class.extend({
     if (removeable) {
       layer.remove();
       this.map.fire('pm:remove', { layer });
+    }
+  },
+  uniteLayer(e) {
+    const layer = e.target;
+    // only remove layer, if it's handled by leaflet.pm,
+    // not a tempLayer and not currently being dragged
+    const unitable =
+      !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging()) && layer instanceof L.Polygon;
+    if (unitable) {
+			let l = this._unionLayer;
+			if(this._unionLayer) {
+				this._unionLayer = union(layer.toGeoJSON(), l.toGeoJSON());
+
+	      // the resulting layer after the cut
+	      let resultingLayer = L.geoJSON(this._unionLayer, l.options).addTo(this.map);
+	      resultingLayer.addTo(this.map);
+
+	      // give the new layer the original options
+	      resultingLayer.pm.enable(this.options);
+	      resultingLayer.pm.disable();
+
+				l.remove();
+				layer.remove();
+				this.map.fire('pm:union', { resultingLayer });
+			} else {
+				this._unionLayer = layer;
+			}
     }
   },
   globalDragModeEnabled() {
@@ -125,6 +154,12 @@ const Map = L.Class.extend({
       this.disableGlobalDragMode();
       this.enableGlobalDragMode();
     }
+
+    // re-enable global union mode if it's enabled already
+    if (this.globalUnionEnabled()) {
+      this.disableGlobalUnionMode();
+      this.enableGlobalUnionMode();
+    }
   },
   disableGlobalRemovalMode() {
     this._globalRemovalMode = false;
@@ -167,6 +202,48 @@ const Map = L.Class.extend({
   globalRemovalEnabled() {
     return !!this._globalRemovalMode;
   },
+	disableGlobalUnionMode() {
+    this._globalUnionMode = false;
+		this._unionLayer = undefined;
+    this.map.eachLayer(layer => {
+      layer.off('click', this.uniteLayer, this);
+    });
+
+    // remove map handler
+    this.map.off('layeradd', this.layerAddHandler, this);
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('unionMode', this._globalUnionMode);
+  },
+	enableGlobalUnionMode() {
+    const isRelevant = layer =>
+      layer.pm;
+    this._globalUnionMode = true;
+		this._unionLayer = undefined;
+    // handle existing layers
+    this.map.eachLayer(layer => {
+      if (isRelevant(layer)) {
+        layer.on('click', this.uniteLayer, this);
+      }
+    });
+
+    // handle layers that are added while in removal  xmode
+    this.map.on('layeradd', this.layerAddHandler, this);
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('unionMode', this._globalUnionMode);
+  },
+  toggleGlobalUnionMode() {
+    // toggle global edit mode
+    if (this.globalUnionEnabled()) {
+      this.disableGlobalUnionMode();
+    } else {
+      this.enableGlobalUnionMode();
+    }
+  },
+  globalUnionEnabled() {
+    return !!this._globalUnionMode;
+  },
   globalEditEnabled() {
     return this._globalEditMode;
   },
@@ -177,7 +254,6 @@ const Map = L.Class.extend({
     this._globalEditMode = true;
 
     layers.forEach(layer => {
-      // console.log(layer);
       layer.pm.enable(options);
     });
 

@@ -50,7 +50,7 @@ Draw.Line = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip('Click to place first vertex', {
+        .bindTooltip(this.options.textHintFirstVertex || 'Click to place first vertex', {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
@@ -339,12 +339,12 @@ Draw.Line = Draw.extend({
 
     // handle tooltip text
     if (first) {
-      this._hintMarker.setTooltipContent('Click to continue drawing');
+      this._hintMarker.setTooltipContent(this.options.textHintContinueDrawing || 'Click to continue drawing');
     }
     const second = this._layer.getLatLngs().length === 2;
 
     if (second) {
-      this._hintMarker.setTooltipContent('Click any existing marker to finish');
+      this._hintMarker.setTooltipContent(this.options.textHintExistingMarkerToFinish || 'Click any existing marker to finish');
     }
 
     return marker;

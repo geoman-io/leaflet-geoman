@@ -49,7 +49,7 @@ Draw.Circle = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip('Click to place circle center', {
+        .bindTooltip(this.options.textHintCircleCenter || 'Click to place circle center', {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
@@ -180,7 +180,7 @@ Draw.Circle = Draw.extend({
       this._hintMarker.on('move', this._syncHintLine, this);
       this._hintMarker.on('move', this._syncCircleRadius, this);
 
-      this._hintMarker.setTooltipContent('Click to finish circle');
+      this._hintMarker.setTooltipContent(this.options.textHintFinish || 'Click to finish circle');
 
       this._layer.fire('pm:centerplaced', {
         shape: this._shape,

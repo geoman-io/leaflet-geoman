@@ -77,22 +77,21 @@ const PMButton = L.Control.extend({
     );
 
     const activeActions = button.actions;
-
     const actions = {
       cancel: {
-        text: 'Cancel',
+        text:  button.actionsText.cancel || 'Cancel',
         onClick() {
           this._triggerClick();
         },
       },
       removeLastVertex: {
-        text: 'Remove Last Vertex',
+        text:  button.actionsText.removeLastVertex || 'Remove Last Vertex',
         onClick() {
           this._map.pm.Draw[button.jsClass]._removeLastVertex();
         },
       },
       finish: {
-        text: 'Finish',
+        text:  button.actionsText.finish || 'Finish',
         onClick(e) {
           this._map.pm.Draw[button.jsClass]._finishShape(e);
         },

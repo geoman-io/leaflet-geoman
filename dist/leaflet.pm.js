@@ -68,7 +68,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Mixins_Snapping__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Mixins_Snapping__ = __webpack_require__(12);
 
 var Draw = L.Class.extend({
   includes: [__WEBPACK_IMPORTED_MODULE_0__Mixins_Snapping__["a" /* default */]],
@@ -144,8 +144,8 @@ var Draw = L.Class.extend({
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Mixins_Snapping__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Mixins_Drag__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Mixins_Snapping__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Mixins_Drag__ = __webpack_require__(36);
 
 
 var Edit = L.Class.extend({
@@ -919,7 +919,7 @@ module.exports = nativeCreate;
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var eq = __webpack_require__(68);
+var eq = __webpack_require__(69);
 
 /**
  * Gets the index at which the `key` is found in `array` of key-value pairs.
@@ -946,7 +946,7 @@ module.exports = assocIndexOf;
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isKeyable = __webpack_require__(74);
+var isKeyable = __webpack_require__(75);
 
 /**
  * Gets the data for `map`.
@@ -968,834 +968,6 @@ module.exports = getMapData;
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is classified as an `Array` object.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an array, else `false`.
- * @example
- *
- * _.isArray([1, 2, 3]);
- * // => true
- *
- * _.isArray(document.body.children);
- * // => false
- *
- * _.isArray('abc');
- * // => false
- *
- * _.isArray(_.noop);
- * // => false
- */
-var isArray = Array.isArray;
-
-module.exports = isArray;
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var baseGetTag = __webpack_require__(16),
-    isObjectLike = __webpack_require__(47);
-
-/** `Object#toString` result references. */
-var symbolTag = '[object Symbol]';
-
-/**
- * Checks if `value` is classified as a `Symbol` primitive or object.
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
- * @example
- *
- * _.isSymbol(Symbol.iterator);
- * // => true
- *
- * _.isSymbol('abc');
- * // => false
- */
-function isSymbol(value) {
-  return typeof value == 'symbol' ||
-    (isObjectLike(value) && baseGetTag(value) == symbolTag);
-}
-
-module.exports = isSymbol;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var root = __webpack_require__(9);
-
-/** Built-in value references. */
-var Symbol = root.Symbol;
-
-module.exports = Symbol;
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var freeGlobal = __webpack_require__(43);
-
-/** Detect free variable `self`. */
-var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
-
-/** Used as a reference to the global object. */
-var root = freeGlobal || freeSelf || Function('return this')();
-
-module.exports = root;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Utils__ = __webpack_require__(11);
-
-var SnapMixin = {
-  _initSnappableMarkers: function _initSnappableMarkers() {
-    this.options.snapDistance = this.options.snapDistance || 30;
-
-    this._assignEvents(this._markers);
-
-    this._layer.off('pm:dragstart', this._unsnap, this);
-
-    this._layer.on('pm:dragstart', this._unsnap, this);
-  },
-  _assignEvents: function _assignEvents(markerArr) {
-    var _this = this;
-
-    // loop through marker array and assign events to the markers
-    markerArr.forEach(function (marker) {
-      // if the marker is another array (Multipolygon stuff), recursively do this again
-      if (Array.isArray(marker)) {
-        _this._assignEvents(marker);
-
-        return;
-      } // add handleSnapping event on drag
-
-
-      marker.off('drag', _this._handleSnapping, _this);
-      marker.on('drag', _this._handleSnapping, _this); // cleanup event on dragend
-
-      marker.off('dragend', _this._cleanupSnapping, _this);
-      marker.on('dragend', _this._cleanupSnapping, _this);
-    });
-  },
-  _unsnap: function _unsnap() {
-    // delete the last snap
-    delete this._snapLatLng;
-  },
-  _cleanupSnapping: function _cleanupSnapping() {
-    // delete it, we need to refresh this with each start of a drag because
-    // meanwhile, new layers could've been added to the map
-    delete this._snapList; // remove map event
-
-    this._map.off('pm:remove', this._handleSnapLayerRemoval, this);
-
-    if (this.debugIndicatorLines) {
-      this.debugIndicatorLines.forEach(function (line) {
-        line.remove();
-      });
-    }
-  },
-  _handleSnapLayerRemoval: function _handleSnapLayerRemoval(_ref) {
-    var layer = _ref.layer;
-
-    // find the layers index in snaplist
-    var index = this._snapList.findIndex(function (e) {
-      return e._leaflet_id === layer._leaflet_id;
-    }); // remove it from the snaplist
-
-
-    this._snapList.splice(index, 1);
-  },
-  _handleSnapping: function _handleSnapping(e) {
-    var _this2 = this;
-
-    // if snapping is disabled via holding ALT during drag, stop right here
-    if (e.originalEvent.altKey) {
-      return false;
-    } // create a list of polygons that the marker could snap to
-    // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
-    // after dragstart/movestart so it wouldn't fire for them
-
-
-    if (this._snapList === undefined) {
-      this._createSnapList(e);
-    } // if there are no layers to snap to, stop here
-
-
-    if (this._snapList.length <= 0) {
-      return false;
-    }
-
-    var marker = e.target; // get the closest layer, it's closest latlng, segment and the distance
-
-    var closestLayer = this._calcClosestLayer(marker.getLatLng(), this._snapList);
-
-    var isMarker = closestLayer.layer instanceof L.Marker || closestLayer.layer instanceof L.CircleMarker; // find the final latlng that we want to snap to
-
-    var snapLatLng;
-
-    if (!isMarker) {
-      snapLatLng = this._checkPrioritiySnapping(closestLayer);
-    } else {
-      snapLatLng = closestLayer.latlng;
-    } // minimal distance before marker snaps (in pixels)
-
-
-    var minDistance = this.options.snapDistance; // event info for pm:snap and pm:unsnap
-
-    var eventInfo = {
-      marker: marker,
-      snapLatLng: snapLatLng,
-      segment: closestLayer.segment,
-      layer: this._layer,
-      layerInteractedWith: closestLayer.layer,
-      // for lack of a better property name
-      distance: closestLayer.distance
-    };
-    eventInfo.marker.fire('pm:snapdrag', eventInfo);
-
-    this._layer.fire('pm:snapdrag', eventInfo);
-
-    if (closestLayer.distance < minDistance) {
-      // snap the marker
-      marker.setLatLng(snapLatLng);
-      marker._snapped = true;
-
-      var triggerSnap = function triggerSnap() {
-        _this2._snapLatLng = snapLatLng;
-        marker.fire('pm:snap', eventInfo);
-
-        _this2._layer.fire('pm:snap', eventInfo);
-      }; // check if the snapping position differs from the last snap
-      // Thanks Max & car2go Team
-
-
-      var a = this._snapLatLng || {};
-      var b = snapLatLng || {};
-
-      if (a.lat !== b.lat || a.lng !== b.lng) {
-        triggerSnap();
-      }
-    } else if (this._snapLatLng) {
-      // no more snapping
-      // if it was previously snapped...
-      // ...unsnap
-      this._unsnap(eventInfo);
-
-      marker._snapped = false; // and fire unsnap event
-
-      eventInfo.marker.fire('pm:unsnap', eventInfo);
-
-      this._layer.fire('pm:unsnap', eventInfo);
-    }
-
-    return true;
-  },
-  // we got the point we want to snap to (C), but we need to check if a coord of the polygon
-  // receives priority over C as the snapping point. Let's check this here
-  _checkPrioritiySnapping: function _checkPrioritiySnapping(closestLayer) {
-    var map = this._map; // A and B are the points of the closest segment to P (the marker position we want to snap)
-
-    var A = closestLayer.segment[0];
-    var B = closestLayer.segment[1]; // C is the point we would snap to on the segment.
-    // The closest point on the closest segment of the closest polygon to P. That's right.
-
-    var C = closestLayer.latlng; // distances from A to C and B to C to check which one is closer to C
-
-    var distanceAC = this._getDistance(map, A, C);
-
-    var distanceBC = this._getDistance(map, B, C); // closest latlng of A and B to C
-
-
-    var closestVertexLatLng = distanceAC < distanceBC ? A : B; // distance between closestVertexLatLng and C
-
-    var shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC; // snap to middle (M) of segment if option is enabled
-
-    if (this.options.snapMiddle) {
-      var M = __WEBPACK_IMPORTED_MODULE_0__L_PM_Utils__["a" /* default */].calcMiddleLatLng(map, A, B);
-
-      var distanceMC = this._getDistance(map, M, C);
-
-      if (distanceMC < distanceAC && distanceMC < distanceBC) {
-        // M is the nearest vertex
-        closestVertexLatLng = M;
-        shortestDistance = distanceMC;
-      }
-    } // the distance that needs to be undercut to trigger priority
-
-
-    var priorityDistance = this.options.snapDistance; // the latlng we ultemately want to snap to
-
-    var snapLatlng; // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
-    // the closestVertexLatLng has priority over C as the snapping point.
-
-    if (shortestDistance < priorityDistance) {
-      snapLatlng = closestVertexLatLng;
-    } else {
-      snapLatlng = C;
-    } // return the copy of snapping point
-
-
-    return Object.assign({}, snapLatlng);
-  },
-  _createSnapList: function _createSnapList() {
-    var _this3 = this;
-
-    var layers = [];
-    var debugIndicatorLines = [];
-    var map = this._map;
-    map.off('pm:remove', this._handleSnapLayerRemoval, this);
-    map.on('pm:remove', this._handleSnapLayerRemoval, this); // find all layers that are or inherit from Polylines... and markers that are not
-    // temporary markers of polygon-edits
-
-    map.eachLayer(function (layer) {
-      if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.CircleMarker) {
-        layers.push(layer); // this is for debugging
-
-        var debugLine = L.polyline([], {
-          color: 'red',
-          pmIgnore: true
-        });
-        debugIndicatorLines.push(debugLine); // uncomment 👇 this line to show helper lines for debugging
-        // debugLine.addTo(map);
-      }
-    }); // ...except myself
-
-    layers = layers.filter(function (layer) {
-      return _this3._layer !== layer;
-    }); // also remove everything that has no coordinates yet
-
-    layers = layers.filter(function (layer) {
-      return layer._latlng || layer._latlngs && layer._latlngs.length > 0;
-    }); // finally remove everything that's leaflet.pm specific temporary stuff
-
-    layers = layers.filter(function (layer) {
-      return !layer._pmTempLayer;
-    }); // save snaplist from layers and the other snap layers added from other classes/scripts
-
-    if (this._otherSnapLayers) {
-      this._snapList = layers.concat(this._otherSnapLayers);
-    } else {
-      this._snapList = layers;
-    }
-
-    this.debugIndicatorLines = debugIndicatorLines;
-  },
-  _calcClosestLayer: function _calcClosestLayer(latlng, layers) {
-    var _this4 = this;
-
-    // the closest polygon to our dragged marker latlng
-    var closestLayer = {}; // loop through the layers
-
-    layers.forEach(function (layer, index) {
-      // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
-      var results = _this4._calcLayerDistances(latlng, layer); // show indicator lines, it's for debugging
-
-
-      _this4.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]); // save the info if it doesn't exist or if the distance is smaller than the previous one
-
-
-      if (closestLayer.distance === undefined || results.distance < closestLayer.distance) {
-        closestLayer = results;
-        closestLayer.layer = layer;
-      }
-    }); // return the closest layer and it's data
-    // if there is no closest layer, return undefined
-
-    return closestLayer;
-  },
-  _calcLayerDistances: function _calcLayerDistances(latlng, layer) {
-    var _this5 = this;
-
-    var map = this._map; // is this a marker?
-
-    var isMarker = layer instanceof L.Marker || layer instanceof L.CircleMarker; // is it a polygon?
-
-    var isPolygon = layer instanceof L.Polygon; // the point P which we want to snap (probpably the marker that is dragged)
-
-    var P = latlng; // the coords of the layer
-
-    var latlngs = isMarker ? layer.getLatLng() : layer.getLatLngs();
-
-    if (isMarker) {
-      // return the info for the marker, no more calculations needed
-      return {
-        latlng: Object.assign({}, latlngs),
-        distance: this._getDistance(map, latlngs, P)
-      };
-    } // the closest segment (line between two points) of the layer
-
-
-    var closestSegment; // the shortest distance from P to closestSegment
-
-    var shortestDistance; // loop through the coords of the layer
-
-    var loopThroughCoords = function loopThroughCoords(coords) {
-      coords.forEach(function (coord, index) {
-        if (Array.isArray(coord)) {
-          loopThroughCoords(coord);
-          return;
-        } // take this coord (A)...
-
-
-        var A = coord;
-        var nextIndex; // and the next coord (B) as points
-
-        if (isPolygon) {
-          nextIndex = index + 1 === coords.length ? 0 : index + 1;
-        } else {
-          nextIndex = index + 1 === coords.length ? undefined : index + 1;
-        }
-
-        var B = coords[nextIndex];
-
-        if (B) {
-          // calc the distance between P and AB-segment
-          var distance = _this5._getDistanceToSegment(map, P, A, B); // is the distance shorter than the previous one? Save it and the segment
-
-
-          if (shortestDistance === undefined || distance < shortestDistance) {
-            shortestDistance = distance;
-            closestSegment = [A, B];
-          }
-        }
-      });
-    };
-
-    loopThroughCoords(latlngs); // now, take the closest segment (closestSegment) and calc the closest point to P on it.
-
-    var C = this._getClosestPointOnSegment(map, latlng, closestSegment[0], closestSegment[1]); // return the latlng of that sucker
-
-
-    return {
-      latlng: Object.assign({}, C),
-      segment: closestSegment,
-      distance: shortestDistance
-    };
-  },
-  _getClosestPointOnSegment: function _getClosestPointOnSegment(map, latlng, latlngA, latlngB) {
-    var maxzoom = map.getMaxZoom();
-
-    if (maxzoom === Infinity) {
-      maxzoom = map.getZoom();
-    }
-
-    var P = map.project(latlng, maxzoom);
-    var A = map.project(latlngA, maxzoom);
-    var B = map.project(latlngB, maxzoom);
-    var closest = L.LineUtil.closestPointOnSegment(P, A, B);
-    return map.unproject(closest, maxzoom);
-  },
-  _getDistanceToSegment: function _getDistanceToSegment(map, latlng, latlngA, latlngB) {
-    var P = map.latLngToLayerPoint(latlng);
-    var A = map.latLngToLayerPoint(latlngA);
-    var B = map.latLngToLayerPoint(latlngB);
-    return L.LineUtil.pointToSegmentDistance(P, A, B);
-  },
-  _getDistance: function _getDistance(map, latlngA, latlngB) {
-    return map.latLngToLayerPoint(latlngA).distanceTo(map.latLngToLayerPoint(latlngB));
-  }
-};
-/* harmony default export */ __webpack_exports__["a"] = (SnapMixin);
-
-/***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var Utils = {
-  calcMiddleLatLng: function calcMiddleLatLng(map, latlng1, latlng2) {
-    // calculate the middle coordinates between two markers
-    var p1 = map.project(latlng1);
-    var p2 = map.project(latlng2);
-    return map.unproject(p1._add(p2)._divideBy(2));
-  }
-};
-/* harmony default export */ __webpack_exports__["a"] = (Utils);
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var helpers_1 = __webpack_require__(2);
-/**
- * Takes a {@link LineString|linestring}, {@link MultiLineString|multi-linestring},
- * {@link MultiPolygon|multi-polygon} or {@link Polygon|polygon} and
- * returns {@link Point|points} at all self-intersections.
- *
- * @name kinks
- * @param {Feature<LineString|MultiLineString|MultiPolygon|Polygon>} featureIn input feature
- * @returns {FeatureCollection<Point>} self-intersections
- * @example
- * var poly = turf.polygon([[
- *   [-12.034835, 8.901183],
- *   [-12.060413, 8.899826],
- *   [-12.03638, 8.873199],
- *   [-12.059383, 8.871418],
- *   [-12.034835, 8.901183]
- * ]]);
- *
- * var kinks = turf.kinks(poly);
- *
- * //addToMap
- * var addToMap = [poly, kinks]
- */
-function kinks(featureIn) {
-    var coordinates;
-    var feature;
-    var results = {
-        type: "FeatureCollection",
-        features: [],
-    };
-    if (featureIn.type === "Feature") {
-        feature = featureIn.geometry;
-    }
-    else {
-        feature = featureIn;
-    }
-    if (feature.type === "LineString") {
-        coordinates = [feature.coordinates];
-    }
-    else if (feature.type === "MultiLineString") {
-        coordinates = feature.coordinates;
-    }
-    else if (feature.type === "MultiPolygon") {
-        coordinates = [].concat.apply([], feature.coordinates);
-    }
-    else if (feature.type === "Polygon") {
-        coordinates = feature.coordinates;
-    }
-    else {
-        throw new Error("Input must be a LineString, MultiLineString, " +
-            "Polygon, or MultiPolygon Feature or Geometry");
-    }
-    coordinates.forEach(function (line1) {
-        coordinates.forEach(function (line2) {
-            for (var i = 0; i < line1.length - 1; i++) {
-                // start iteration at i, intersections for k < i have already
-                // been checked in previous outer loop iterations
-                for (var k = i; k < line2.length - 1; k++) {
-                    if (line1 === line2) {
-                        // segments are adjacent and always share a vertex, not a kink
-                        if (Math.abs(i - k) === 1) {
-                            continue;
-                        }
-                        // first and last segment in a closed lineString or ring always share a vertex, not a kink
-                        if (
-                        // segments are first and last segment of lineString
-                        i === 0 &&
-                            k === line1.length - 2 &&
-                            // lineString is closed
-                            line1[i][0] === line1[line1.length - 1][0] &&
-                            line1[i][1] === line1[line1.length - 1][1]) {
-                            continue;
-                        }
-                    }
-                    var intersection = lineIntersects(line1[i][0], line1[i][1], line1[i + 1][0], line1[i + 1][1], line2[k][0], line2[k][1], line2[k + 1][0], line2[k + 1][1]);
-                    if (intersection) {
-                        results.features.push(helpers_1.point([intersection[0], intersection[1]]));
-                    }
-                }
-            }
-        });
-    });
-    return results;
-}
-exports.default = kinks;
-// modified from http://jsfiddle.net/justin_c_rounds/Gd2S2/light/
-function lineIntersects(line1StartX, line1StartY, line1EndX, line1EndY, line2StartX, line2StartY, line2EndX, line2EndY) {
-    // if the lines intersect, the result contains the x and y of the
-    // intersection (treating the lines as infinite) and booleans for whether
-    // line segment 1 or line segment 2 contain the point
-    var denominator;
-    var a;
-    var b;
-    var numerator1;
-    var numerator2;
-    var result = {
-        x: null,
-        y: null,
-        onLine1: false,
-        onLine2: false,
-    };
-    denominator = ((line2EndY - line2StartY) * (line1EndX - line1StartX)) - ((line2EndX - line2StartX) * (line1EndY - line1StartY));
-    if (denominator === 0) {
-        if (result.x !== null && result.y !== null) {
-            return result;
-        }
-        else {
-            return false;
-        }
-    }
-    a = line1StartY - line2StartY;
-    b = line1StartX - line2StartX;
-    numerator1 = ((line2EndX - line2StartX) * a) - ((line2EndY - line2StartY) * b);
-    numerator2 = ((line1EndX - line1StartX) * a) - ((line1EndY - line1StartY) * b);
-    a = numerator1 / denominator;
-    b = numerator2 / denominator;
-    // if we cast these lines infinitely in both directions, they intersect here:
-    result.x = line1StartX + (a * (line1EndX - line1StartX));
-    result.y = line1StartY + (a * (line1EndY - line1StartY));
-    // if line1 is a segment and line2 is infinite, they intersect if:
-    if (a >= 0 && a <= 1) {
-        result.onLine1 = true;
-    }
-    // if line2 is a segment and line1 is infinite, they intersect if:
-    if (b >= 0 && b <= 1) {
-        result.onLine2 = true;
-    }
-    // if line1 and line2 are segments, they intersect if both of the above are true
-    if (result.onLine1 && result.onLine2) {
-        return [result.x, result.y];
-    }
-    else {
-        return false;
-    }
-}
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var helpers_1 = __webpack_require__(2);
-/**
- * Unwrap a coordinate from a Point Feature, Geometry or a single coordinate.
- *
- * @name getCoord
- * @param {Array<number>|Geometry<Point>|Feature<Point>} coord GeoJSON Point or an Array of numbers
- * @returns {Array<number>} coordinates
- * @example
- * var pt = turf.point([10, 10]);
- *
- * var coord = turf.getCoord(pt);
- * //= [10, 10]
- */
-function getCoord(coord) {
-    if (!coord) {
-        throw new Error("coord is required");
-    }
-    if (!Array.isArray(coord)) {
-        if (coord.type === "Feature" && coord.geometry !== null && coord.geometry.type === "Point") {
-            return coord.geometry.coordinates;
-        }
-        if (coord.type === "Point") {
-            return coord.coordinates;
-        }
-    }
-    if (Array.isArray(coord) && coord.length >= 2 && !Array.isArray(coord[0]) && !Array.isArray(coord[1])) {
-        return coord;
-    }
-    throw new Error("coord must be GeoJSON Point or an Array of numbers");
-}
-exports.getCoord = getCoord;
-/**
- * Unwrap coordinates from a Feature, Geometry Object or an Array
- *
- * @name getCoords
- * @param {Array<any>|Geometry|Feature} coords Feature, Geometry Object or an Array
- * @returns {Array<any>} coordinates
- * @example
- * var poly = turf.polygon([[[119.32, -8.7], [119.55, -8.69], [119.51, -8.54], [119.32, -8.7]]]);
- *
- * var coords = turf.getCoords(poly);
- * //= [[[119.32, -8.7], [119.55, -8.69], [119.51, -8.54], [119.32, -8.7]]]
- */
-function getCoords(coords) {
-    if (Array.isArray(coords)) {
-        return coords;
-    }
-    // Feature
-    if (coords.type === "Feature") {
-        if (coords.geometry !== null) {
-            return coords.geometry.coordinates;
-        }
-    }
-    else {
-        // Geometry
-        if (coords.coordinates) {
-            return coords.coordinates;
-        }
-    }
-    throw new Error("coords must be GeoJSON Feature, Geometry Object or an Array");
-}
-exports.getCoords = getCoords;
-/**
- * Checks if coordinates contains a number
- *
- * @name containsNumber
- * @param {Array<any>} coordinates GeoJSON Coordinates
- * @returns {boolean} true if Array contains a number
- */
-function containsNumber(coordinates) {
-    if (coordinates.length > 1 && helpers_1.isNumber(coordinates[0]) && helpers_1.isNumber(coordinates[1])) {
-        return true;
-    }
-    if (Array.isArray(coordinates[0]) && coordinates[0].length) {
-        return containsNumber(coordinates[0]);
-    }
-    throw new Error("coordinates must only contain numbers");
-}
-exports.containsNumber = containsNumber;
-/**
- * Enforce expectations about types of GeoJSON objects for Turf.
- *
- * @name geojsonType
- * @param {GeoJSON} value any GeoJSON object
- * @param {string} type expected GeoJSON type
- * @param {string} name name of calling function
- * @throws {Error} if value is not the expected type.
- */
-function geojsonType(value, type, name) {
-    if (!type || !name) {
-        throw new Error("type and name required");
-    }
-    if (!value || value.type !== type) {
-        throw new Error("Invalid input to " + name + ": must be a " + type + ", given " + value.type);
-    }
-}
-exports.geojsonType = geojsonType;
-/**
- * Enforce expectations about types of {@link Feature} inputs for Turf.
- * Internally this uses {@link geojsonType} to judge geometry types.
- *
- * @name featureOf
- * @param {Feature} feature a feature with an expected geometry type
- * @param {string} type expected GeoJSON type
- * @param {string} name name of calling function
- * @throws {Error} error if value is not the expected type.
- */
-function featureOf(feature, type, name) {
-    if (!feature) {
-        throw new Error("No feature passed");
-    }
-    if (!name) {
-        throw new Error(".featureOf() requires a name");
-    }
-    if (!feature || feature.type !== "Feature" || !feature.geometry) {
-        throw new Error("Invalid input to " + name + ", Feature with geometry required");
-    }
-    if (!feature.geometry || feature.geometry.type !== type) {
-        throw new Error("Invalid input to " + name + ": must be a " + type + ", given " + feature.geometry.type);
-    }
-}
-exports.featureOf = featureOf;
-/**
- * Enforce expectations about types of {@link FeatureCollection} inputs for Turf.
- * Internally this uses {@link geojsonType} to judge geometry types.
- *
- * @name collectionOf
- * @param {FeatureCollection} featureCollection a FeatureCollection for which features will be judged
- * @param {string} type expected GeoJSON type
- * @param {string} name name of calling function
- * @throws {Error} if value is not the expected type.
- */
-function collectionOf(featureCollection, type, name) {
-    if (!featureCollection) {
-        throw new Error("No featureCollection passed");
-    }
-    if (!name) {
-        throw new Error(".collectionOf() requires a name");
-    }
-    if (!featureCollection || featureCollection.type !== "FeatureCollection") {
-        throw new Error("Invalid input to " + name + ", FeatureCollection required");
-    }
-    for (var _i = 0, _a = featureCollection.features; _i < _a.length; _i++) {
-        var feature = _a[_i];
-        if (!feature || feature.type !== "Feature" || !feature.geometry) {
-            throw new Error("Invalid input to " + name + ", Feature with geometry required");
-        }
-        if (!feature.geometry || feature.geometry.type !== type) {
-            throw new Error("Invalid input to " + name + ": must be a " + type + ", given " + feature.geometry.type);
-        }
-    }
-}
-exports.collectionOf = collectionOf;
-/**
- * Get Geometry from Feature or Geometry Object
- *
- * @param {Feature|Geometry} geojson GeoJSON Feature or Geometry Object
- * @returns {Geometry|null} GeoJSON Geometry Object
- * @throws {Error} if geojson is not a Feature or Geometry Object
- * @example
- * var point = {
- *   "type": "Feature",
- *   "properties": {},
- *   "geometry": {
- *     "type": "Point",
- *     "coordinates": [110, 40]
- *   }
- * }
- * var geom = turf.getGeom(point)
- * //={"type": "Point", "coordinates": [110, 40]}
- */
-function getGeom(geojson) {
-    if (geojson.type === "Feature") {
-        return geojson.geometry;
-    }
-    return geojson;
-}
-exports.getGeom = getGeom;
-/**
- * Get GeoJSON object's type, Geometry type is prioritize.
- *
- * @param {GeoJSON} geojson GeoJSON object
- * @param {string} [name="geojson"] name of the variable to display in error message
- * @returns {string} GeoJSON type
- * @example
- * var point = {
- *   "type": "Feature",
- *   "properties": {},
- *   "geometry": {
- *     "type": "Point",
- *     "coordinates": [110, 40]
- *   }
- * }
- * var geom = turf.getType(point)
- * //="Point"
- */
-function getType(geojson, name) {
-    if (geojson.type === "FeatureCollection") {
-        return "FeatureCollection";
-    }
-    if (geojson.type === "GeometryCollection") {
-        return "GeometryCollection";
-    }
-    if (geojson.type === "Feature" && geojson.geometry !== null) {
-        return geojson.geometry.type;
-    }
-    return geojson.type;
-}
-exports.getType = getType;
-
-
-/***/ }),
-/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -3517,6 +2689,834 @@ exports.getType = getType;
 
 
 /***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var helpers_1 = __webpack_require__(2);
+/**
+ * Unwrap a coordinate from a Point Feature, Geometry or a single coordinate.
+ *
+ * @name getCoord
+ * @param {Array<number>|Geometry<Point>|Feature<Point>} coord GeoJSON Point or an Array of numbers
+ * @returns {Array<number>} coordinates
+ * @example
+ * var pt = turf.point([10, 10]);
+ *
+ * var coord = turf.getCoord(pt);
+ * //= [10, 10]
+ */
+function getCoord(coord) {
+    if (!coord) {
+        throw new Error("coord is required");
+    }
+    if (!Array.isArray(coord)) {
+        if (coord.type === "Feature" && coord.geometry !== null && coord.geometry.type === "Point") {
+            return coord.geometry.coordinates;
+        }
+        if (coord.type === "Point") {
+            return coord.coordinates;
+        }
+    }
+    if (Array.isArray(coord) && coord.length >= 2 && !Array.isArray(coord[0]) && !Array.isArray(coord[1])) {
+        return coord;
+    }
+    throw new Error("coord must be GeoJSON Point or an Array of numbers");
+}
+exports.getCoord = getCoord;
+/**
+ * Unwrap coordinates from a Feature, Geometry Object or an Array
+ *
+ * @name getCoords
+ * @param {Array<any>|Geometry|Feature} coords Feature, Geometry Object or an Array
+ * @returns {Array<any>} coordinates
+ * @example
+ * var poly = turf.polygon([[[119.32, -8.7], [119.55, -8.69], [119.51, -8.54], [119.32, -8.7]]]);
+ *
+ * var coords = turf.getCoords(poly);
+ * //= [[[119.32, -8.7], [119.55, -8.69], [119.51, -8.54], [119.32, -8.7]]]
+ */
+function getCoords(coords) {
+    if (Array.isArray(coords)) {
+        return coords;
+    }
+    // Feature
+    if (coords.type === "Feature") {
+        if (coords.geometry !== null) {
+            return coords.geometry.coordinates;
+        }
+    }
+    else {
+        // Geometry
+        if (coords.coordinates) {
+            return coords.coordinates;
+        }
+    }
+    throw new Error("coords must be GeoJSON Feature, Geometry Object or an Array");
+}
+exports.getCoords = getCoords;
+/**
+ * Checks if coordinates contains a number
+ *
+ * @name containsNumber
+ * @param {Array<any>} coordinates GeoJSON Coordinates
+ * @returns {boolean} true if Array contains a number
+ */
+function containsNumber(coordinates) {
+    if (coordinates.length > 1 && helpers_1.isNumber(coordinates[0]) && helpers_1.isNumber(coordinates[1])) {
+        return true;
+    }
+    if (Array.isArray(coordinates[0]) && coordinates[0].length) {
+        return containsNumber(coordinates[0]);
+    }
+    throw new Error("coordinates must only contain numbers");
+}
+exports.containsNumber = containsNumber;
+/**
+ * Enforce expectations about types of GeoJSON objects for Turf.
+ *
+ * @name geojsonType
+ * @param {GeoJSON} value any GeoJSON object
+ * @param {string} type expected GeoJSON type
+ * @param {string} name name of calling function
+ * @throws {Error} if value is not the expected type.
+ */
+function geojsonType(value, type, name) {
+    if (!type || !name) {
+        throw new Error("type and name required");
+    }
+    if (!value || value.type !== type) {
+        throw new Error("Invalid input to " + name + ": must be a " + type + ", given " + value.type);
+    }
+}
+exports.geojsonType = geojsonType;
+/**
+ * Enforce expectations about types of {@link Feature} inputs for Turf.
+ * Internally this uses {@link geojsonType} to judge geometry types.
+ *
+ * @name featureOf
+ * @param {Feature} feature a feature with an expected geometry type
+ * @param {string} type expected GeoJSON type
+ * @param {string} name name of calling function
+ * @throws {Error} error if value is not the expected type.
+ */
+function featureOf(feature, type, name) {
+    if (!feature) {
+        throw new Error("No feature passed");
+    }
+    if (!name) {
+        throw new Error(".featureOf() requires a name");
+    }
+    if (!feature || feature.type !== "Feature" || !feature.geometry) {
+        throw new Error("Invalid input to " + name + ", Feature with geometry required");
+    }
+    if (!feature.geometry || feature.geometry.type !== type) {
+        throw new Error("Invalid input to " + name + ": must be a " + type + ", given " + feature.geometry.type);
+    }
+}
+exports.featureOf = featureOf;
+/**
+ * Enforce expectations about types of {@link FeatureCollection} inputs for Turf.
+ * Internally this uses {@link geojsonType} to judge geometry types.
+ *
+ * @name collectionOf
+ * @param {FeatureCollection} featureCollection a FeatureCollection for which features will be judged
+ * @param {string} type expected GeoJSON type
+ * @param {string} name name of calling function
+ * @throws {Error} if value is not the expected type.
+ */
+function collectionOf(featureCollection, type, name) {
+    if (!featureCollection) {
+        throw new Error("No featureCollection passed");
+    }
+    if (!name) {
+        throw new Error(".collectionOf() requires a name");
+    }
+    if (!featureCollection || featureCollection.type !== "FeatureCollection") {
+        throw new Error("Invalid input to " + name + ", FeatureCollection required");
+    }
+    for (var _i = 0, _a = featureCollection.features; _i < _a.length; _i++) {
+        var feature = _a[_i];
+        if (!feature || feature.type !== "Feature" || !feature.geometry) {
+            throw new Error("Invalid input to " + name + ", Feature with geometry required");
+        }
+        if (!feature.geometry || feature.geometry.type !== type) {
+            throw new Error("Invalid input to " + name + ": must be a " + type + ", given " + feature.geometry.type);
+        }
+    }
+}
+exports.collectionOf = collectionOf;
+/**
+ * Get Geometry from Feature or Geometry Object
+ *
+ * @param {Feature|Geometry} geojson GeoJSON Feature or Geometry Object
+ * @returns {Geometry|null} GeoJSON Geometry Object
+ * @throws {Error} if geojson is not a Feature or Geometry Object
+ * @example
+ * var point = {
+ *   "type": "Feature",
+ *   "properties": {},
+ *   "geometry": {
+ *     "type": "Point",
+ *     "coordinates": [110, 40]
+ *   }
+ * }
+ * var geom = turf.getGeom(point)
+ * //={"type": "Point", "coordinates": [110, 40]}
+ */
+function getGeom(geojson) {
+    if (geojson.type === "Feature") {
+        return geojson.geometry;
+    }
+    return geojson;
+}
+exports.getGeom = getGeom;
+/**
+ * Get GeoJSON object's type, Geometry type is prioritize.
+ *
+ * @param {GeoJSON} geojson GeoJSON object
+ * @param {string} [name="geojson"] name of the variable to display in error message
+ * @returns {string} GeoJSON type
+ * @example
+ * var point = {
+ *   "type": "Feature",
+ *   "properties": {},
+ *   "geometry": {
+ *     "type": "Point",
+ *     "coordinates": [110, 40]
+ *   }
+ * }
+ * var geom = turf.getType(point)
+ * //="Point"
+ */
+function getType(geojson, name) {
+    if (geojson.type === "FeatureCollection") {
+        return "FeatureCollection";
+    }
+    if (geojson.type === "GeometryCollection") {
+        return "GeometryCollection";
+    }
+    if (geojson.type === "Feature" && geojson.geometry !== null) {
+        return geojson.geometry.type;
+    }
+    return geojson.type;
+}
+exports.getType = getType;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+module.exports = isArray;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var baseGetTag = __webpack_require__(16),
+    isObjectLike = __webpack_require__(48);
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && baseGetTag(value) == symbolTag);
+}
+
+module.exports = isSymbol;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var root = __webpack_require__(11);
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var freeGlobal = __webpack_require__(44);
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Utils__ = __webpack_require__(13);
+
+var SnapMixin = {
+  _initSnappableMarkers: function _initSnappableMarkers() {
+    this.options.snapDistance = this.options.snapDistance || 30;
+
+    this._assignEvents(this._markers);
+
+    this._layer.off('pm:dragstart', this._unsnap, this);
+
+    this._layer.on('pm:dragstart', this._unsnap, this);
+  },
+  _assignEvents: function _assignEvents(markerArr) {
+    var _this = this;
+
+    // loop through marker array and assign events to the markers
+    markerArr.forEach(function (marker) {
+      // if the marker is another array (Multipolygon stuff), recursively do this again
+      if (Array.isArray(marker)) {
+        _this._assignEvents(marker);
+
+        return;
+      } // add handleSnapping event on drag
+
+
+      marker.off('drag', _this._handleSnapping, _this);
+      marker.on('drag', _this._handleSnapping, _this); // cleanup event on dragend
+
+      marker.off('dragend', _this._cleanupSnapping, _this);
+      marker.on('dragend', _this._cleanupSnapping, _this);
+    });
+  },
+  _unsnap: function _unsnap() {
+    // delete the last snap
+    delete this._snapLatLng;
+  },
+  _cleanupSnapping: function _cleanupSnapping() {
+    // delete it, we need to refresh this with each start of a drag because
+    // meanwhile, new layers could've been added to the map
+    delete this._snapList; // remove map event
+
+    this._map.off('pm:remove', this._handleSnapLayerRemoval, this);
+
+    if (this.debugIndicatorLines) {
+      this.debugIndicatorLines.forEach(function (line) {
+        line.remove();
+      });
+    }
+  },
+  _handleSnapLayerRemoval: function _handleSnapLayerRemoval(_ref) {
+    var layer = _ref.layer;
+
+    // find the layers index in snaplist
+    var index = this._snapList.findIndex(function (e) {
+      return e._leaflet_id === layer._leaflet_id;
+    }); // remove it from the snaplist
+
+
+    this._snapList.splice(index, 1);
+  },
+  _handleSnapping: function _handleSnapping(e) {
+    var _this2 = this;
+
+    // if snapping is disabled via holding ALT during drag, stop right here
+    if (e.originalEvent.altKey) {
+      return false;
+    } // create a list of polygons that the marker could snap to
+    // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
+    // after dragstart/movestart so it wouldn't fire for them
+
+
+    if (this._snapList === undefined) {
+      this._createSnapList(e);
+    } // if there are no layers to snap to, stop here
+
+
+    if (this._snapList.length <= 0) {
+      return false;
+    }
+
+    var marker = e.target; // get the closest layer, it's closest latlng, segment and the distance
+
+    var closestLayer = this._calcClosestLayer(marker.getLatLng(), this._snapList);
+
+    var isMarker = closestLayer.layer instanceof L.Marker || closestLayer.layer instanceof L.CircleMarker; // find the final latlng that we want to snap to
+
+    var snapLatLng;
+
+    if (!isMarker) {
+      snapLatLng = this._checkPrioritiySnapping(closestLayer);
+    } else {
+      snapLatLng = closestLayer.latlng;
+    } // minimal distance before marker snaps (in pixels)
+
+
+    var minDistance = this.options.snapDistance; // event info for pm:snap and pm:unsnap
+
+    var eventInfo = {
+      marker: marker,
+      snapLatLng: snapLatLng,
+      segment: closestLayer.segment,
+      layer: this._layer,
+      layerInteractedWith: closestLayer.layer,
+      // for lack of a better property name
+      distance: closestLayer.distance
+    };
+    eventInfo.marker.fire('pm:snapdrag', eventInfo);
+
+    this._layer.fire('pm:snapdrag', eventInfo);
+
+    if (closestLayer.distance < minDistance) {
+      // snap the marker
+      marker.setLatLng(snapLatLng);
+      marker._snapped = true;
+
+      var triggerSnap = function triggerSnap() {
+        _this2._snapLatLng = snapLatLng;
+        marker.fire('pm:snap', eventInfo);
+
+        _this2._layer.fire('pm:snap', eventInfo);
+      }; // check if the snapping position differs from the last snap
+      // Thanks Max & car2go Team
+
+
+      var a = this._snapLatLng || {};
+      var b = snapLatLng || {};
+
+      if (a.lat !== b.lat || a.lng !== b.lng) {
+        triggerSnap();
+      }
+    } else if (this._snapLatLng) {
+      // no more snapping
+      // if it was previously snapped...
+      // ...unsnap
+      this._unsnap(eventInfo);
+
+      marker._snapped = false; // and fire unsnap event
+
+      eventInfo.marker.fire('pm:unsnap', eventInfo);
+
+      this._layer.fire('pm:unsnap', eventInfo);
+    }
+
+    return true;
+  },
+  // we got the point we want to snap to (C), but we need to check if a coord of the polygon
+  // receives priority over C as the snapping point. Let's check this here
+  _checkPrioritiySnapping: function _checkPrioritiySnapping(closestLayer) {
+    var map = this._map; // A and B are the points of the closest segment to P (the marker position we want to snap)
+
+    var A = closestLayer.segment[0];
+    var B = closestLayer.segment[1]; // C is the point we would snap to on the segment.
+    // The closest point on the closest segment of the closest polygon to P. That's right.
+
+    var C = closestLayer.latlng; // distances from A to C and B to C to check which one is closer to C
+
+    var distanceAC = this._getDistance(map, A, C);
+
+    var distanceBC = this._getDistance(map, B, C); // closest latlng of A and B to C
+
+
+    var closestVertexLatLng = distanceAC < distanceBC ? A : B; // distance between closestVertexLatLng and C
+
+    var shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC; // snap to middle (M) of segment if option is enabled
+
+    if (this.options.snapMiddle) {
+      var M = __WEBPACK_IMPORTED_MODULE_0__L_PM_Utils__["a" /* default */].calcMiddleLatLng(map, A, B);
+
+      var distanceMC = this._getDistance(map, M, C);
+
+      if (distanceMC < distanceAC && distanceMC < distanceBC) {
+        // M is the nearest vertex
+        closestVertexLatLng = M;
+        shortestDistance = distanceMC;
+      }
+    } // the distance that needs to be undercut to trigger priority
+
+
+    var priorityDistance = this.options.snapDistance; // the latlng we ultemately want to snap to
+
+    var snapLatlng; // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
+    // the closestVertexLatLng has priority over C as the snapping point.
+
+    if (shortestDistance < priorityDistance) {
+      snapLatlng = closestVertexLatLng;
+    } else {
+      snapLatlng = C;
+    } // return the copy of snapping point
+
+
+    return Object.assign({}, snapLatlng);
+  },
+  _createSnapList: function _createSnapList() {
+    var _this3 = this;
+
+    var layers = [];
+    var debugIndicatorLines = [];
+    var map = this._map;
+    map.off('pm:remove', this._handleSnapLayerRemoval, this);
+    map.on('pm:remove', this._handleSnapLayerRemoval, this); // find all layers that are or inherit from Polylines... and markers that are not
+    // temporary markers of polygon-edits
+
+    map.eachLayer(function (layer) {
+      if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+        layers.push(layer); // this is for debugging
+
+        var debugLine = L.polyline([], {
+          color: 'red',
+          pmIgnore: true
+        });
+        debugIndicatorLines.push(debugLine); // uncomment 👇 this line to show helper lines for debugging
+        // debugLine.addTo(map);
+      }
+    }); // ...except myself
+
+    layers = layers.filter(function (layer) {
+      return _this3._layer !== layer;
+    }); // also remove everything that has no coordinates yet
+
+    layers = layers.filter(function (layer) {
+      return layer._latlng || layer._latlngs && layer._latlngs.length > 0;
+    }); // finally remove everything that's leaflet.pm specific temporary stuff
+
+    layers = layers.filter(function (layer) {
+      return !layer._pmTempLayer;
+    }); // save snaplist from layers and the other snap layers added from other classes/scripts
+
+    if (this._otherSnapLayers) {
+      this._snapList = layers.concat(this._otherSnapLayers);
+    } else {
+      this._snapList = layers;
+    }
+
+    this.debugIndicatorLines = debugIndicatorLines;
+  },
+  _calcClosestLayer: function _calcClosestLayer(latlng, layers) {
+    var _this4 = this;
+
+    // the closest polygon to our dragged marker latlng
+    var closestLayer = {}; // loop through the layers
+
+    layers.forEach(function (layer, index) {
+      // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
+      var results = _this4._calcLayerDistances(latlng, layer); // show indicator lines, it's for debugging
+
+
+      _this4.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]); // save the info if it doesn't exist or if the distance is smaller than the previous one
+
+
+      if (closestLayer.distance === undefined || results.distance < closestLayer.distance) {
+        closestLayer = results;
+        closestLayer.layer = layer;
+      }
+    }); // return the closest layer and it's data
+    // if there is no closest layer, return undefined
+
+    return closestLayer;
+  },
+  _calcLayerDistances: function _calcLayerDistances(latlng, layer) {
+    var _this5 = this;
+
+    var map = this._map; // is this a marker?
+
+    var isMarker = layer instanceof L.Marker || layer instanceof L.CircleMarker; // is it a polygon?
+
+    var isPolygon = layer instanceof L.Polygon; // the point P which we want to snap (probpably the marker that is dragged)
+
+    var P = latlng; // the coords of the layer
+
+    var latlngs = isMarker ? layer.getLatLng() : layer.getLatLngs();
+
+    if (isMarker) {
+      // return the info for the marker, no more calculations needed
+      return {
+        latlng: Object.assign({}, latlngs),
+        distance: this._getDistance(map, latlngs, P)
+      };
+    } // the closest segment (line between two points) of the layer
+
+
+    var closestSegment; // the shortest distance from P to closestSegment
+
+    var shortestDistance; // loop through the coords of the layer
+
+    var loopThroughCoords = function loopThroughCoords(coords) {
+      coords.forEach(function (coord, index) {
+        if (Array.isArray(coord)) {
+          loopThroughCoords(coord);
+          return;
+        } // take this coord (A)...
+
+
+        var A = coord;
+        var nextIndex; // and the next coord (B) as points
+
+        if (isPolygon) {
+          nextIndex = index + 1 === coords.length ? 0 : index + 1;
+        } else {
+          nextIndex = index + 1 === coords.length ? undefined : index + 1;
+        }
+
+        var B = coords[nextIndex];
+
+        if (B) {
+          // calc the distance between P and AB-segment
+          var distance = _this5._getDistanceToSegment(map, P, A, B); // is the distance shorter than the previous one? Save it and the segment
+
+
+          if (shortestDistance === undefined || distance < shortestDistance) {
+            shortestDistance = distance;
+            closestSegment = [A, B];
+          }
+        }
+      });
+    };
+
+    loopThroughCoords(latlngs); // now, take the closest segment (closestSegment) and calc the closest point to P on it.
+
+    var C = this._getClosestPointOnSegment(map, latlng, closestSegment[0], closestSegment[1]); // return the latlng of that sucker
+
+
+    return {
+      latlng: Object.assign({}, C),
+      segment: closestSegment,
+      distance: shortestDistance
+    };
+  },
+  _getClosestPointOnSegment: function _getClosestPointOnSegment(map, latlng, latlngA, latlngB) {
+    var maxzoom = map.getMaxZoom();
+
+    if (maxzoom === Infinity) {
+      maxzoom = map.getZoom();
+    }
+
+    var P = map.project(latlng, maxzoom);
+    var A = map.project(latlngA, maxzoom);
+    var B = map.project(latlngB, maxzoom);
+    var closest = L.LineUtil.closestPointOnSegment(P, A, B);
+    return map.unproject(closest, maxzoom);
+  },
+  _getDistanceToSegment: function _getDistanceToSegment(map, latlng, latlngA, latlngB) {
+    var P = map.latLngToLayerPoint(latlng);
+    var A = map.latLngToLayerPoint(latlngA);
+    var B = map.latLngToLayerPoint(latlngB);
+    return L.LineUtil.pointToSegmentDistance(P, A, B);
+  },
+  _getDistance: function _getDistance(map, latlngA, latlngB) {
+    return map.latLngToLayerPoint(latlngA).distanceTo(map.latLngToLayerPoint(latlngB));
+  }
+};
+/* harmony default export */ __webpack_exports__["a"] = (SnapMixin);
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var Utils = {
+  calcMiddleLatLng: function calcMiddleLatLng(map, latlng1, latlng2) {
+    // calculate the middle coordinates between two markers
+    var p1 = map.project(latlng1);
+    var p2 = map.project(latlng2);
+    return map.unproject(p1._add(p2)._divideBy(2));
+  }
+};
+/* harmony default export */ __webpack_exports__["a"] = (Utils);
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var helpers_1 = __webpack_require__(2);
+/**
+ * Takes a {@link LineString|linestring}, {@link MultiLineString|multi-linestring},
+ * {@link MultiPolygon|multi-polygon} or {@link Polygon|polygon} and
+ * returns {@link Point|points} at all self-intersections.
+ *
+ * @name kinks
+ * @param {Feature<LineString|MultiLineString|MultiPolygon|Polygon>} featureIn input feature
+ * @returns {FeatureCollection<Point>} self-intersections
+ * @example
+ * var poly = turf.polygon([[
+ *   [-12.034835, 8.901183],
+ *   [-12.060413, 8.899826],
+ *   [-12.03638, 8.873199],
+ *   [-12.059383, 8.871418],
+ *   [-12.034835, 8.901183]
+ * ]]);
+ *
+ * var kinks = turf.kinks(poly);
+ *
+ * //addToMap
+ * var addToMap = [poly, kinks]
+ */
+function kinks(featureIn) {
+    var coordinates;
+    var feature;
+    var results = {
+        type: "FeatureCollection",
+        features: [],
+    };
+    if (featureIn.type === "Feature") {
+        feature = featureIn.geometry;
+    }
+    else {
+        feature = featureIn;
+    }
+    if (feature.type === "LineString") {
+        coordinates = [feature.coordinates];
+    }
+    else if (feature.type === "MultiLineString") {
+        coordinates = feature.coordinates;
+    }
+    else if (feature.type === "MultiPolygon") {
+        coordinates = [].concat.apply([], feature.coordinates);
+    }
+    else if (feature.type === "Polygon") {
+        coordinates = feature.coordinates;
+    }
+    else {
+        throw new Error("Input must be a LineString, MultiLineString, " +
+            "Polygon, or MultiPolygon Feature or Geometry");
+    }
+    coordinates.forEach(function (line1) {
+        coordinates.forEach(function (line2) {
+            for (var i = 0; i < line1.length - 1; i++) {
+                // start iteration at i, intersections for k < i have already
+                // been checked in previous outer loop iterations
+                for (var k = i; k < line2.length - 1; k++) {
+                    if (line1 === line2) {
+                        // segments are adjacent and always share a vertex, not a kink
+                        if (Math.abs(i - k) === 1) {
+                            continue;
+                        }
+                        // first and last segment in a closed lineString or ring always share a vertex, not a kink
+                        if (
+                        // segments are first and last segment of lineString
+                        i === 0 &&
+                            k === line1.length - 2 &&
+                            // lineString is closed
+                            line1[i][0] === line1[line1.length - 1][0] &&
+                            line1[i][1] === line1[line1.length - 1][1]) {
+                            continue;
+                        }
+                    }
+                    var intersection = lineIntersects(line1[i][0], line1[i][1], line1[i + 1][0], line1[i + 1][1], line2[k][0], line2[k][1], line2[k + 1][0], line2[k + 1][1]);
+                    if (intersection) {
+                        results.features.push(helpers_1.point([intersection[0], intersection[1]]));
+                    }
+                }
+            }
+        });
+    });
+    return results;
+}
+exports.default = kinks;
+// modified from http://jsfiddle.net/justin_c_rounds/Gd2S2/light/
+function lineIntersects(line1StartX, line1StartY, line1EndX, line1EndY, line2StartX, line2StartY, line2EndX, line2EndY) {
+    // if the lines intersect, the result contains the x and y of the
+    // intersection (treating the lines as infinite) and booleans for whether
+    // line segment 1 or line segment 2 contain the point
+    var denominator;
+    var a;
+    var b;
+    var numerator1;
+    var numerator2;
+    var result = {
+        x: null,
+        y: null,
+        onLine1: false,
+        onLine2: false,
+    };
+    denominator = ((line2EndY - line2StartY) * (line1EndX - line1StartX)) - ((line2EndX - line2StartX) * (line1EndY - line1StartY));
+    if (denominator === 0) {
+        if (result.x !== null && result.y !== null) {
+            return result;
+        }
+        else {
+            return false;
+        }
+    }
+    a = line1StartY - line2StartY;
+    b = line1StartX - line2StartX;
+    numerator1 = ((line2EndX - line2StartX) * a) - ((line2EndY - line2StartY) * b);
+    numerator2 = ((line1EndX - line1StartX) * a) - ((line1EndY - line1StartY) * b);
+    a = numerator1 / denominator;
+    b = numerator2 / denominator;
+    // if we cast these lines infinitely in both directions, they intersect here:
+    result.x = line1StartX + (a * (line1EndX - line1StartX));
+    result.y = line1StartY + (a * (line1EndY - line1StartY));
+    // if line1 is a segment and line2 is infinite, they intersect if:
+    if (a >= 0 && a <= 1) {
+        result.onLine1 = true;
+    }
+    // if line2 is a segment and line1 is infinite, they intersect if:
+    if (b >= 0 && b <= 1) {
+        result.onLine2 = true;
+    }
+    // if line1 and line2 are segments, they intersect if both of the above are true
+    if (result.onLine1 && result.onLine2) {
+        return [result.x, result.y];
+    }
+    else {
+        return false;
+    }
+}
+
+
+/***/ }),
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4659,9 +4659,9 @@ exports.findPoint = findPoint;
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(8),
-    getRawTag = __webpack_require__(45),
-    objectToString = __webpack_require__(46);
+var Symbol = __webpack_require__(10),
+    getRawTag = __webpack_require__(46),
+    objectToString = __webpack_require__(47);
 
 /** `Object#toString` result references. */
 var nullTag = '[object Null]',
@@ -4693,8 +4693,8 @@ module.exports = baseGetTag;
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseIsNative = __webpack_require__(55),
-    getValue = __webpack_require__(60);
+var baseIsNative = __webpack_require__(56),
+    getValue = __webpack_require__(61);
 
 /**
  * Gets the native function at `key` of `object`.
@@ -4767,24 +4767,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__package_json__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__package_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__package_json__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__L_PM_Map__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Toolbar_L_PM_Toolbar__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Toolbar_L_PM_Toolbar__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Draw_L_PM_Draw__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Draw_L_PM_Draw_Marker__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Draw_L_PM_Draw_Line__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Draw_L_PM_Draw_Poly__ = __webpack_require__(28);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Draw_L_PM_Draw_Rectangle__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__Draw_L_PM_Draw_Circle__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Draw_L_PM_Draw_Cut__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Draw_L_PM_Draw_Marker__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Draw_L_PM_Draw_Line__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Draw_L_PM_Draw_Poly__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Draw_L_PM_Draw_Rectangle__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__Draw_L_PM_Draw_Circle__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Draw_L_PM_Draw_Cut__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__Edit_L_PM_Edit__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__Edit_L_PM_Edit_LayerGroup__ = __webpack_require__(36);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__Edit_L_PM_Edit_Marker__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__Edit_L_PM_Edit_Line__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__Edit_L_PM_Edit_Poly__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__Edit_L_PM_Edit_Rectangle__ = __webpack_require__(83);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__Edit_L_PM_Edit_Circle__ = __webpack_require__(84);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__css_layers_css__ = __webpack_require__(85);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__Edit_L_PM_Edit_LayerGroup__ = __webpack_require__(37);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__Edit_L_PM_Edit_Marker__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__Edit_L_PM_Edit_Line__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__Edit_L_PM_Edit_Poly__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__Edit_L_PM_Edit_Rectangle__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__Edit_L_PM_Edit_Circle__ = __webpack_require__(85);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__css_layers_css__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__css_layers_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_18__css_layers_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__css_controls_css__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__css_controls_css__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__css_controls_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_19__css_controls_css__);
 /**
  *
@@ -4981,26 +4981,23 @@ if (typeof Object.assign != 'function') {
 /* 22 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"leaflet.pm","version":"1.2.2","description":"A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0","keywords":["leaflet","polygon management","geometry editing","map data","map overlay","polygon","geojson","leaflet-draw","data-field-geojson","ui-leaflet-draw"],"files":["dist"],"main":"dist/leaflet.pm.min.js","dependencies":{"@turf/difference":"^6.0.2","@turf/intersect":"^6.1.3","@turf/kinks":"6.x","lodash":"^4.17.11"},"devDependencies":{"@babel/core":"^7.1.2","@babel/preset-env":"^7.1.0","babel-loader":"^8.0.4","css-loader":"^0.28.11","cypress":"^3.1.0","eslint":"^4.18.2","eslint-config-airbnb-base":"^12.1.0","eslint-plugin-cypress":"^2.0.1","eslint-plugin-import":"^2.9.0","extract-text-webpack-plugin":"^3.0.2","file-loader":"^0.11.1","leaflet":"^1.3.4","style-loader":"^0.19.0","uglifyjs-webpack-plugin":"^1.3.0","url-loader":"^0.6.2","webpack":"^3.12.0"},"peerDependencies":{"leaflet":"^1.2.0"},"scripts":{"start":"npm run dev","dev":"./node_modules/.bin/webpack --config=webpack.dev.js","test":"$(npm bin)/cypress run","cypress":"$(npm bin)/cypress open","build":"./node_modules/.bin/webpack --config=webpack.build.js","prepare":"npm run build"},"repository":{"type":"git","url":"git+https://github.com/codeofsumit/leaflet.pm.git"},"author":{"name":"Sumit Kumar","email":"sk@outlook.com","url":"http://twitter.com/TweetsOfSumit"},"license":"MIT","bugs":{"url":"https://github.com/codeofsumit/leaflet.pm/issues"},"homepage":"https://leafletpm.now.sh"}
+module.exports = {"name":"leaflet.pm","version":"2.0.3","description":"A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0","keywords":["leaflet","polygon management","geometry editing","map data","map overlay","polygon","geojson","leaflet-draw","data-field-geojson","ui-leaflet-draw"],"files":["dist"],"main":"dist/leaflet.pm.min.js","dependencies":{"@turf/difference":"^6.0.2","@turf/intersect":"^6.1.3","@turf/kinks":"6.x","@turf/union":"^6.0.3","lodash":"^4.17.11"},"devDependencies":{"@babel/core":"^7.2.2","@babel/preset-env":"^7.3.1","babel-loader":"^8.0.5","css-loader":"^0.28.11","cypress":"^3.1.4","eslint":"^4.19.1","eslint-config-airbnb-base":"^12.1.0","eslint-config-prettier":"^3.6.0","eslint-plugin-cypress":"^2.2.0","eslint-plugin-import":"^2.15.0","extract-text-webpack-plugin":"^3.0.2","file-loader":"^0.11.1","leaflet":"^1.4.0","prettier":"1.16.1","style-loader":"^0.19.0","uglifyjs-webpack-plugin":"^1.3.0","url-loader":"^0.6.2","webpack":"^3.12.0"},"peerDependencies":{"leaflet":"^1.2.0"},"scripts":{"start":"npm run dev","dev":"./node_modules/.bin/webpack --config=webpack.dev.js","test":"$(npm bin)/cypress run","cypress":"$(npm bin)/cypress open","build":"./node_modules/.bin/webpack --config=webpack.build.js","prepare":"npm run build","eslint-check":"eslint --print-config . | eslint-config-prettier-check","eslint":"eslint src/ --fix","prettier":"prettier --write '{src,cypress}/**/*.{js,css}'","lint":"npm run eslint && npm run prettier"},"repository":{"type":"git","url":"git+https://github.com/codeofsumit/leaflet.pm.git"},"author":{"name":"Sumit Kumar","email":"sk@outlook.com","url":"http://twitter.com/TweetsOfSumit"},"license":"MIT","bugs":{"url":"https://github.com/codeofsumit/leaflet.pm/issues"},"homepage":"https://leafletpm.now.sh","prettier":{"trailingComma":"es5","tabWidth":2,"semi":true,"singleQuote":true}}
 
 /***/ }),
 /* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_union__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_union___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__turf_union__);
+
 var Map = L.Class.extend({
   initialize: function initialize(map) {
-    var _this = this;
-
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
-    this.map.on('layerremove', function (e) {
-      if (e.layer.pm && !e.layer._pmTempLayer) {
-        _this.map.fire('pm:remove', e);
-      }
-    });
     this._globalRemovalMode = false;
+    this._globalUnionMode = false;
   },
   addControls: function addControls(options) {
     this.Toolbar.addControls(options);
@@ -5026,42 +5023,7 @@ var Map = L.Class.extend({
   setPathOptions: function setPathOptions(options) {
     this.Draw.setPathOptions(options);
   },
-  removeLayer: function removeLayer(e) {
-    var layer = e.target;
-
-    if (!layer._layers && (!layer.pm || !layer.pm.dragging())) {
-      e.target.remove();
-    }
-  },
-  toggleGlobalRemovalMode: function toggleGlobalRemovalMode() {
-    var _this2 = this;
-
-    // toggle global edit mode
-    if (this.globalRemovalEnabled()) {
-      this._globalRemovalMode = false;
-      this.map.eachLayer(function (layer) {
-        layer.off('click', _this2.removeLayer);
-      });
-    } else {
-      this._globalRemovalMode = true;
-      this.map.eachLayer(function (layer) {
-        if (layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval)) {
-          layer.on('click', _this2.removeLayer);
-        }
-      });
-    } // toogle the button in the toolbar
-
-
-    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
-  },
-  globalRemovalEnabled: function globalRemovalEnabled() {
-    return this._globalRemovalMode;
-  },
-  globalEditEnabled: function globalEditEnabled() {
-    return this._globalEditMode;
-  },
-  enableGlobalEditMode: function enableGlobalEditMode(options) {
-    // find all layers handled by leaflet.pm
+  findLayers: function findLayers() {
     var layers = [];
     this.map.eachLayer(function (layer) {
       if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
@@ -5076,11 +5038,212 @@ var Map = L.Class.extend({
     layers = layers.filter(function (layer) {
       return !layer._pmTempLayer;
     });
+    return layers;
+  },
+  removeLayer: function removeLayer(e) {
+    var layer = e.target; // only remove layer, if it's handled by leaflet.pm,
+    // not a tempLayer and not currently being dragged
+
+    var removeable = !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
+
+    if (removeable) {
+      layer.remove();
+      this.map.fire('pm:remove', {
+        layer: layer
+      });
+    }
+  },
+  uniteLayer: function uniteLayer(e) {
+    var layer = e.target; // only remove layer, if it's handled by leaflet.pm,
+    // not a tempLayer and not currently being dragged
+
+    var unitable = !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging()) && layer instanceof L.Polygon;
+
+    if (unitable) {
+      var l = this._unionLayer;
+
+      if (this._unionLayer) {
+        this._unionLayer = __WEBPACK_IMPORTED_MODULE_0__turf_union___default()(layer.toGeoJSON(), l.toGeoJSON()); // the resulting layer after the cut
+
+        var resultingLayer = L.geoJSON(this._unionLayer, l.options).addTo(this.map);
+        resultingLayer.addTo(this.map); // give the new layer the original options
+
+        resultingLayer.pm.enable(this.options);
+        resultingLayer.pm.disable();
+        l.remove();
+        layer.remove();
+        this.map.fire('pm:union', {
+          resultingLayer: resultingLayer
+        });
+      } else {
+        this._unionLayer = layer;
+      }
+    }
+  },
+  globalDragModeEnabled: function globalDragModeEnabled() {
+    return !!this._globalDragMode;
+  },
+  enableGlobalDragMode: function enableGlobalDragMode() {
+    var layers = this.findLayers();
+    this._globalDragMode = true;
+    layers.forEach(function (layer) {
+      layer.pm.enableLayerDrag();
+    }); // remove map handler
+
+    this.map.on('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+  },
+  disableGlobalDragMode: function disableGlobalDragMode() {
+    var layers = this.findLayers();
+    this._globalDragMode = false;
+    layers.forEach(function (layer) {
+      layer.pm.disableLayerDrag();
+    }); // remove map handler
+
+    this.map.off('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+  },
+  toggleGlobalDragMode: function toggleGlobalDragMode() {
+    if (this.globalDragModeEnabled()) {
+      this.disableGlobalDragMode();
+    } else {
+      this.enableGlobalDragMode();
+    }
+  },
+  layerAddHandler: function layerAddHandler(_ref) {
+    var layer = _ref.layer;
+    // is this layer handled by leaflet.pm?
+    var isRelevant = !!layer.pm && !layer._pmTempLayer; // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
+
+    if (!isRelevant) {
+      return;
+    } // re-enable global removal mode if it's enabled already
+
+
+    if (this.globalRemovalEnabled()) {
+      this.disableGlobalRemovalMode();
+      this.enableGlobalRemovalMode();
+    } // re-enable global edit mode if it's enabled already
+
+
+    if (this.globalEditEnabled()) {
+      this.disableGlobalEditMode();
+      this.enableGlobalEditMode();
+    } // re-enable global drag mode if it's enabled already
+
+
+    if (this.globalDragModeEnabled()) {
+      this.disableGlobalDragMode();
+      this.enableGlobalDragMode();
+    } // re-enable global union mode if it's enabled already
+
+
+    if (this.globalUnionEnabled()) {
+      this.disableGlobalUnionMode();
+      this.enableGlobalUnionMode();
+    }
+  },
+  disableGlobalRemovalMode: function disableGlobalRemovalMode() {
+    var _this = this;
+
+    this._globalRemovalMode = false;
+    this.map.eachLayer(function (layer) {
+      layer.off('click', _this.removeLayer, _this);
+    }); // remove map handler
+
+    this.map.off('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+  },
+  enableGlobalRemovalMode: function enableGlobalRemovalMode() {
+    var _this2 = this;
+
+    var isRelevant = function isRelevant(layer) {
+      return layer.pm && !(layer.pm.options && layer.pm.options.preventMarkerRemoval);
+    };
+
+    this._globalRemovalMode = true; // handle existing layers
+
+    this.map.eachLayer(function (layer) {
+      if (isRelevant(layer)) {
+        layer.on('click', _this2.removeLayer, _this2);
+      }
+    }); // handle layers that are added while in removal  xmode
+
+    this.map.on('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+  },
+  toggleGlobalRemovalMode: function toggleGlobalRemovalMode() {
+    // toggle global edit mode
+    if (this.globalRemovalEnabled()) {
+      this.disableGlobalRemovalMode();
+    } else {
+      this.enableGlobalRemovalMode();
+    }
+  },
+  globalRemovalEnabled: function globalRemovalEnabled() {
+    return !!this._globalRemovalMode;
+  },
+  disableGlobalUnionMode: function disableGlobalUnionMode() {
+    var _this3 = this;
+
+    this._globalUnionMode = false;
+    this._unionLayer = undefined;
+    this.map.eachLayer(function (layer) {
+      layer.off('click', _this3.uniteLayer, _this3);
+    }); // remove map handler
+
+    this.map.off('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('unionMode', this._globalUnionMode);
+  },
+  enableGlobalUnionMode: function enableGlobalUnionMode() {
+    var _this4 = this;
+
+    var isRelevant = function isRelevant(layer) {
+      return layer.pm;
+    };
+
+    this._globalUnionMode = true;
+    this._unionLayer = undefined; // handle existing layers
+
+    this.map.eachLayer(function (layer) {
+      if (isRelevant(layer)) {
+        layer.on('click', _this4.uniteLayer, _this4);
+      }
+    }); // handle layers that are added while in removal  xmode
+
+    this.map.on('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
+
+    this.Toolbar.toggleButton('unionMode', this._globalUnionMode);
+  },
+  toggleGlobalUnionMode: function toggleGlobalUnionMode() {
+    // toggle global edit mode
+    if (this.globalUnionEnabled()) {
+      this.disableGlobalUnionMode();
+    } else {
+      this.enableGlobalUnionMode();
+    }
+  },
+  globalUnionEnabled: function globalUnionEnabled() {
+    return !!this._globalUnionMode;
+  },
+  globalEditEnabled: function globalEditEnabled() {
+    return this._globalEditMode;
+  },
+  enableGlobalEditMode: function enableGlobalEditMode(options) {
+    // find all layers handled by leaflet.pm
+    var layers = this.findLayers();
     this._globalEditMode = true;
     layers.forEach(function (layer) {
       // console.log(layer);
       layer.pm.enable(options);
-    }); // toggle the button in the toolbar
+    }); // handle layers that are added while in removal  xmode
+
+    this.map.on('layeradd', this.layerAddHandler, this); // toggle the button in the toolbar
 
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode); // fire event
 
@@ -5088,24 +5251,13 @@ var Map = L.Class.extend({
   },
   disableGlobalEditMode: function disableGlobalEditMode() {
     // find all layers handles by leaflet.pm
-    var layers = [];
-    this.map.eachLayer(function (layer) {
-      if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
-        layers.push(layer);
-      }
-    }); // filter out layers that don't have the leaflet.pm instance
-
-    layers = layers.filter(function (layer) {
-      return !!layer.pm;
-    }); // filter out everything that's leaflet.pm specific temporary stuff
-
-    layers = layers.filter(function (layer) {
-      return !layer._pmTempLayer;
-    });
+    var layers = this.findLayers();
     this._globalEditMode = false;
     layers.forEach(function (layer) {
       layer.pm.disable();
-    }); // toggle the button in the toolbar
+    }); // handle layers that are added while in removal  xmode
+
+    this.map.on('layeroff', this.layerAddHandler, this); // toggle the button in the toolbar
 
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode); // fire event
 
@@ -5132,41 +5284,109 @@ var Map = L.Class.extend({
 
 /***/ }),
 /* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var martinez = __webpack_require__(6);
+var invariant_1 = __webpack_require__(7);
+var helpers_1 = __webpack_require__(2);
+/**
+ * Takes two {@link (Multi)Polygon(s)} and returns a combined polygon. If the input polygons are not contiguous, this function returns a {@link MultiPolygon} feature.
+ *
+ * @name union
+ * @param {Feature<Polygon|MultiPolygon>} polygon1 input Polygon feature
+ * @param {Feature<Polygon|MultiPolygon>} polygon2 Polygon feature to difference from polygon1
+ * @param {Object} [options={}] Optional Parameters
+ * @param {Object} [options.properties={}] Translate Properties to output Feature
+ * @returns {Feature<(Polygon|MultiPolygon)>} a combined {@link Polygon} or {@link MultiPolygon} feature
+ * @example
+ * var poly1 = turf.polygon([[
+ *     [-82.574787, 35.594087],
+ *     [-82.574787, 35.615581],
+ *     [-82.545261, 35.615581],
+ *     [-82.545261, 35.594087],
+ *     [-82.574787, 35.594087]
+ * ]], {"fill": "#0f0"});
+ * var poly2 = turf.polygon([[
+ *     [-82.560024, 35.585153],
+ *     [-82.560024, 35.602602],
+ *     [-82.52964, 35.602602],
+ *     [-82.52964, 35.585153],
+ *     [-82.560024, 35.585153]
+ * ]], {"fill": "#00f"});
+ *
+ * var union = turf.union(poly1, poly2);
+ *
+ * //addToMap
+ * var addToMap = [poly1, poly2, union];
+ */
+function union(polygon1, polygon2, options) {
+    if (options === void 0) { options = {}; }
+    var coords1 = invariant_1.getGeom(polygon1).coordinates;
+    var coords2 = invariant_1.getGeom(polygon2).coordinates;
+    var unioned = martinez.union(coords1, coords2);
+    if (unioned.length === 0)
+        return null;
+    if (unioned.length === 1)
+        return helpers_1.polygon(unioned[0], options.properties);
+    else
+        return helpers_1.multiPolygon(unioned, options.properties);
+}
+exports.default = union;
+
+
+/***/ }),
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_Controls__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_Controls__ = __webpack_require__(26);
 
 L.Control.PMButton = __WEBPACK_IMPORTED_MODULE_0__L_Controls__["a" /* default */];
 var Toolbar = L.Class.extend({
   options: {
     drawMarker: true,
-    drawPolygon: true,
-    drawPolyline: true,
-    drawCircle: true,
     drawRectangle: true,
+    drawPolyline: true,
+    drawPolygon: true,
+    drawCircle: true,
     editMode: true,
+    dragMode: true,
     cutPolygon: true,
-    dragPolygon: false,
+    unionMode: true,
     removalMode: true,
-    position: 'topleft'
+    position: 'topleft',
+    textCancel: 'Cancel',
+    textRemoveLastVertex: 'Remove Last Vertex',
+    textFinish: 'Finish',
+    textDrawMaker: 'Draw Marker',
+    textDrawPolygon: 'Draw Polygon',
+    textDrawPolyline: 'Draw Polyline',
+    textDrawCircle: 'Draw Circle',
+    textDrawRectangle: 'Draw Rectangle',
+    textEditLayers: 'Edit Layers',
+    textDragLayers: 'Drag Layers',
+    textCutLayers: 'Cut Layers',
+    textUnionMode: 'Union Mode',
+    textRemovalMode: 'Removal Mode'
   },
   initialize: function initialize(map) {
     this.map = map;
     this.buttons = {};
     this.isVisible = false;
-    this.container = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-bar leaflet-control');
-
-    this._defineButtons();
+    this.drawContainer = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-pm-draw leaflet-bar leaflet-control');
+    this.editContainer = L.DomUtil.create('div', 'leaflet-pm-toolbar leaflet-pm-edit leaflet-bar leaflet-control'); // this._defineButtons();
   },
   getButtons: function getButtons() {
     return this.buttons;
   },
   addControls: function addControls() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.options;
-
     // adds all buttons to the map specified inside options
-    // make button renaming backwards compatible
+    console.log('add', options); // make button renaming backwards compatible
+
     if (typeof options.editPolygon !== 'undefined') {
       options.editMode = options.editPolygon;
     }
@@ -5177,33 +5397,29 @@ var Toolbar = L.Class.extend({
 
 
     L.Util.setOptions(this, options);
-    this.applyIconStyle(this.options.useFontAwesome); // now show the specified buttons
+    console.log('setOptions', this);
+
+    this._defineButtons();
+
+    this.applyIconStyle(); // now show the specified buttons
 
     this._showHideButtons();
 
     this.isVisible = true;
   },
-  applyIconStyle: function applyIconStyle(fa) {
+  applyIconStyle: function applyIconStyle() {
     var buttons = this.getButtons();
     var iconClasses = {
-      fontawesome: {
-        drawMarker: 'control-fa-icon fas fa-map-marker-alt',
-        drawPolyline: 'control-fa-icon far fa-ellipsis-v',
-        drawRectangle: 'control-fa-icon far fa-draw-square',
-        drawPolygon: 'control-fa-icon far fa-draw-polygon',
-        drawCircle: 'control-fa-icon far fa-draw-circle',
-        cutPolygon: 'control-fa-icon far fa-cut',
-        editMode: 'control-fa-icon fas fa-pencil-alt',
-        removalMode: 'control-fa-icon far fa-trash-alt'
-      },
       geomanIcons: {
         drawMarker: 'control-icon leaflet-pm-icon-marker',
         drawPolyline: 'control-icon leaflet-pm-icon-polyline',
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
-        cutPolygon: 'control-icon leaflet-pm-icon-cut',
         editMode: 'control-icon leaflet-pm-icon-edit',
+        dragMode: 'control-icon leaflet-pm-icon-drag',
+        cutPolygon: 'control-icon leaflet-pm-icon-cut',
+        unionMode: 'control-icon leaflet-pm-icon-union',
         removalMode: 'control-icon leaflet-pm-icon-delete'
       }
     };
@@ -5211,7 +5427,7 @@ var Toolbar = L.Class.extend({
     for (var name in buttons) {
       var button = buttons[name];
       L.Util.setOptions(button, {
-        className: fa ? iconClasses.fontawesome[name] : iconClasses.geomanIcons[name]
+        className: iconClasses.geomanIcons[name]
       });
     }
   },
@@ -5272,10 +5488,11 @@ var Toolbar = L.Class.extend({
   _defineButtons: function _defineButtons() {
     var _this = this;
 
-    // some buttons are still in their respective classes, like L.PM.Draw.Poly
+    console.log('_defineButtons', this); // some buttons are still in their respective classes, like L.PM.Draw.Poly
+
     var drawMarkerButton = {
       className: 'control-icon leaflet-pm-icon-marker',
-      title: 'Draw Marker',
+      title: this.options.textDrawMaker,
       jsClass: 'Marker',
       onClick: function onClick() {},
       afterClick: function afterClick() {
@@ -5286,23 +5503,13 @@ var Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['cancel']
-    };
-    var deleteButton = {
-      title: 'Removal Mode',
-      className: 'control-icon leaflet-pm-icon-delete',
-      onClick: function onClick() {},
-      afterClick: function afterClick() {
-        _this.map.pm.toggleGlobalRemovalMode();
-      },
-      doToggle: true,
-      toggleStatus: false,
-      disableOtherButtons: true,
-      position: this.options.position,
-      actions: ['cancel']
+      actions: ['cancel'],
+      actionsTitle: {
+        cancel: this.options.textCancel
+      }
     };
     var drawPolyButton = {
-      title: 'Draw Polygon',
+      title: this.options.textDrawPolygon,
       className: 'control-icon leaflet-pm-icon-polygon',
       jsClass: 'Poly',
       onClick: function onClick() {},
@@ -5314,10 +5521,105 @@ var Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['finish', 'removeLastVertex', 'cancel']
+      actions: ['finish', 'removeLastVertex', 'cancel'],
+      actionsTitle: {
+        finish: this.options.textFinish,
+        cancel: this.options.textCancel,
+        removeLastVertex: this.options.textRemoveLastVertex
+      }
+    };
+    var drawLineButton = {
+      className: 'control-icon leaflet-pm-icon-polyline',
+      title: this.options.textDrawPolyline,
+      jsClass: 'Line',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        // toggle drawing mode
+        _this.map.pm.Draw.Line.toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['finish', 'removeLastVertex', 'cancel'],
+      actionsTitle: {
+        finish: this.options.textFinish,
+        cancel: this.options.textCancel,
+        removeLastVertex: this.options.textRemoveLastVertex
+      }
+    };
+    var drawCircleButton = {
+      title: this.options.textDrawCircle,
+      className: 'control-icon leaflet-pm-icon-circle',
+      jsClass: 'Circle',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        // toggle drawing mode
+        _this.map.pm.Draw.Circle.toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['cancel'],
+      actionsTitle: {
+        cancel: this.options.textCancel
+      }
+    };
+    var drawRectButton = {
+      title: this.options.textDrawRectangle,
+      className: 'control-icon leaflet-pm-icon-rectangle',
+      jsClass: 'Rectangle',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        // toggle drawing mode
+        _this.map.pm.Draw.Rectangle.toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['cancel'],
+      actionsTitle: {
+        cancel: this.options.textCancel
+      }
+    };
+    var editButton = {
+      title: this.options.textEditLayers,
+      className: 'control-icon leaflet-pm-icon-edit',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        _this.map.pm.toggleGlobalEditMode();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      tool: 'edit',
+      actions: ['cancel'],
+      actionsTitle: {
+        cancel: this.options.textCancel
+      }
+    };
+    var dragButton = {
+      title: this.options.textDragLayers,
+      className: 'control-icon leaflet-pm-icon-drag',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        _this.map.pm.toggleGlobalDragMode();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      tool: 'edit',
+      actions: ['cancel'],
+      actionsTitle: {
+        cancel: this.options.textCancel
+      }
     };
     var cutButton = {
-      title: 'Cut Layers',
+      title: this.options.textCutLayers,
       className: 'control-icon leaflet-pm-icon-cut',
       jsClass: 'Cut',
       onClick: function onClick() {},
@@ -5333,65 +5635,49 @@ var Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['finish', 'removeLastVertex', 'cancel']
+      tool: 'edit',
+      actions: ['finish', 'removeLastVertex', 'cancel'],
+      actionsTitle: {
+        finish: this.options.textFinish,
+        cancel: this.options.textCancel,
+        removeLastVertex: this.options.textRemoveLastVertex
+      }
     };
-    var drawLineButton = {
-      className: 'control-icon leaflet-pm-icon-polyline',
-      title: 'Draw Polyline',
-      jsClass: 'Line',
+    var unionButton = {
+      title: this.options.textUnionMode,
+      className: 'control-icon leaflet-pm-icon-union',
+      jsClass: 'Union',
       onClick: function onClick() {},
       afterClick: function afterClick() {
-        // toggle drawing mode
-        _this.map.pm.Draw.Line.toggle();
+        // enable polygon drawing mode without snap
+        _this.map.pm.toggleGlobalUnionMode();
       },
       doToggle: true,
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['finish', 'removeLastVertex', 'cancel']
+      tool: 'edit',
+      actions: ['cancel'],
+      actionsTitle: {
+        cancel: this.options.textCancel
+      }
     };
-    var drawCircleButton = {
-      title: 'Draw Circle',
-      className: 'control-icon leaflet-pm-icon-circle',
-      jsClass: 'Circle',
+    var deleteButton = {
+      title: this.options.textRemovalMode,
+      className: 'control-icon leaflet-pm-icon-delete',
       onClick: function onClick() {},
       afterClick: function afterClick() {
-        // toggle drawing mode
-        _this.map.pm.Draw.Circle.toggle();
+        _this.map.pm.toggleGlobalRemovalMode();
       },
       doToggle: true,
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['cancel']
-    };
-    var drawRectButton = {
-      title: 'Draw Rectangle',
-      className: 'control-icon leaflet-pm-icon-rectangle',
-      jsClass: 'Rectangle',
-      onClick: function onClick() {},
-      afterClick: function afterClick() {
-        // toggle drawing mode
-        _this.map.pm.Draw.Rectangle.toggle();
-      },
-      doToggle: true,
-      toggleStatus: false,
-      disableOtherButtons: true,
-      position: this.options.position,
-      actions: ['cancel']
-    };
-    var editButton = {
-      title: 'Edit Layers',
-      className: 'control-icon leaflet-pm-icon-edit',
-      onClick: function onClick() {},
-      afterClick: function afterClick() {
-        _this.map.pm.toggleGlobalEditMode();
-      },
-      doToggle: true,
-      toggleStatus: false,
-      disableOtherButtons: true,
-      position: this.options.position,
-      actions: ['cancel']
+      tool: 'edit',
+      actions: ['cancel'],
+      actionsTitle: {
+        cancel: this.options.textCancel
+      }
     };
 
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
@@ -5404,9 +5690,13 @@ var Toolbar = L.Class.extend({
 
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
 
+    this._addButton('editMode', new L.Control.PMButton(editButton));
+
+    this._addButton('dragMode', new L.Control.PMButton(dragButton));
+
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
 
-    this._addButton('editMode', new L.Control.PMButton(editButton));
+    this._addButton('unionMode', new L.Control.PMButton(unionButton));
 
     this._addButton('removalMode', new L.Control.PMButton(deleteButton));
   },
@@ -5428,7 +5718,7 @@ var Toolbar = L.Class.extend({
 /* harmony default export */ __webpack_exports__["a"] = (Toolbar);
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5442,7 +5732,7 @@ var PMButton = L.Control.extend({
   },
   onAdd: function onAdd(map) {
     this._map = map;
-    this._container = this._map.pm.Toolbar.container;
+    this._container = this._button.tool === 'edit' ? this._map.pm.Toolbar.editContainer : this._map.pm.Toolbar.drawContainer;
     this.buttonsDomNode = this._makeButton(this._button);
 
     this._container.appendChild(this.buttonsDomNode);
@@ -5500,27 +5790,28 @@ var PMButton = L.Control.extend({
     var activeActions = button.actions;
     var actions = {
       cancel: {
-        text: 'Cancel',
+        text: button.actionsTitle.cancel || 'Cancel',
         onClick: function onClick() {
           this._triggerClick();
         }
       },
       removeLastVertex: {
-        text: 'Remove Last Vertex',
+        text: button.actionsTitle.removeLastVertex || 'Remove Last Vertex',
         onClick: function onClick() {
           this._map.pm.Draw[button.jsClass]._removeLastVertex();
         }
       },
       finish: {
-        text: 'Finish',
-        onClick: function onClick() {
-          this._map.pm.Draw[button.jsClass]._finishShape();
+        text: button.actionsTitle.finish || 'Finish',
+        onClick: function onClick(e) {
+          this._map.pm.Draw[button.jsClass]._finishShape(e);
         }
       }
     };
     activeActions.forEach(function (name) {
       var action = actions[name];
       var actionNode = L.DomUtil.create('a', "leaflet-pm-action action-".concat(name), actionContainer);
+      console.log(action.text);
       actionNode.innerHTML = action.text;
       L.DomEvent.addListener(actionNode, 'click', action.onClick, _this);
       L.DomEvent.disableClickPropagation(actionNode);
@@ -5575,7 +5866,7 @@ var PMButton = L.Control.extend({
 /* harmony default export */ __webpack_exports__["a"] = (PMButton);
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -5607,7 +5898,9 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Marker = __WEBPACK_I
 
 
     if (this.options.tooltips) {
-      this._hintMarker.bindTooltip('Click to place marker', {
+      console.log(this.options);
+
+      this._hintMarker.bindTooltip(this.options.textHintPlaceMarker || 'Click to place marker', {
         permanent: true,
         offset: L.point(0, 10),
         direction: 'bottom',
@@ -5721,11 +6014,11 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Marker = __WEBPACK_I
 });
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__turf_kinks__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__ = __webpack_require__(0);
 
@@ -5782,7 +6075,7 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
 
 
     if (this.options.tooltips) {
-      this._hintMarker.bindTooltip('Click to place first vertex', {
+      this._hintMarker.bindTooltip(this.options.textHintFirstVertex || 'Click to place first vertex', {
         permanent: true,
         offset: L.point(0, 10),
         direction: 'bottom',
@@ -5906,19 +6199,28 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
 
 
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection();
+      this._handleSelfIntersection(true, e.latlng);
     }
   },
-  _handleSelfIntersection: function _handleSelfIntersection() {
+  _handleSelfIntersection: function _handleSelfIntersection(addVertex, latlng) {
     // ok we need to check the self intersection here
     // problem: during draw, the marker on the cursor is not yet part
     // of the layer. So we need to clone the layer, add the
     // potential new vertex (cursor markers latlngs) and check the self
     // intersection on the clone. Phew... - let's do it 💪
     // clone layer (polyline is enough, even when it's a polygon)
-    var clone = L.polyline(this._layer.getLatLngs()); // add the vertex
+    var clone = L.polyline(this._layer.getLatLngs());
 
-    clone.addLatLng(this._hintMarker.getLatLng()); // check the self intersection
+    if (addVertex) {
+      // get vertex from param or from hintmarker
+      if (!latlng) {
+        latlng = this._hintMarker.getLatLng();
+      } // add the vertex
+
+
+      clone.addLatLng(latlng);
+    } // check the self intersection
+
 
     var selfIntersection = __WEBPACK_IMPORTED_MODULE_0__turf_kinks___default()(clone.toGeoJSON(15));
     this._doesSelfIntersect = selfIntersection.features.length > 0; // change the style based on self intersection
@@ -5939,6 +6241,7 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
 
     if (coords.length < 1) {
       this.disable();
+      return;
     } // find corresponding marker
 
 
@@ -5960,8 +6263,13 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
     this._syncHintLine();
   },
   _createVertex: function _createVertex(e) {
-    if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-      return;
+    // don't create a vertex if we have a selfIntersection and it is not allowed
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(true, e.latlng);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
     } // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
 
@@ -6002,8 +6310,12 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
   },
   _finishShape: function _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
-    if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-      return;
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(false);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
     } // get coordinates
 
 
@@ -6044,13 +6356,13 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
     marker.on('click', this._finishShape, this); // handle tooltip text
 
     if (first) {
-      this._hintMarker.setTooltipContent('Click to continue drawing');
+      this._hintMarker.setTooltipContent(this.options.textHintContinueDrawing || 'Click to continue drawing');
     }
 
     var second = this._layer.getLatLngs().length === 2;
 
     if (second) {
-      this._hintMarker.setTooltipContent('Click any existing marker to finish');
+      this._hintMarker.setTooltipContent(this.options.textHintExistingMarkerToFinish || 'Click any existing marker to finish');
     }
 
     return marker;
@@ -6058,7 +6370,7 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
 });
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6070,10 +6382,14 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Poly = __WEBPACK_IMP
     this._shape = 'Poly';
     this.toolbarButtonName = 'drawPolygon';
   },
-  _finishShape: function _finishShape(event) {
+  _finishShape: function _finishShape(e) {
     // if self intersection is not allowed, do not finish the shape!
-    if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-      return;
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(false);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
     } // get coordinates
 
 
@@ -6085,7 +6401,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Poly = __WEBPACK_IMP
     } // create the leaflet shape and add it to the map
 
 
-    if (event && event.type === 'dblclick') {
+    if (e && e.type === 'dblclick') {
       // Leaflet creates an extra node with double click
       coords.splice(coords.length - 1, 1);
     }
@@ -6133,13 +6449,13 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Poly = __WEBPACK_IMP
 
 
     if (first) {
-      this._hintMarker.setTooltipContent('Click to continue drawing');
+      this._hintMarker.setTooltipContent(this.options.textHintContinueDrawing || 'Click to continue drawing');
     }
 
     var third = this._layer.getLatLngs().length === 3;
 
     if (third) {
-      this._hintMarker.setTooltipContent('Click first marker to finish');
+      this._hintMarker.setTooltipContent(this.options.textHintFirstMarkerToFinish || 'Click first marker to finish');
     }
 
     return marker;
@@ -6147,7 +6463,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Poly = __WEBPACK_IMP
 });
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6162,7 +6478,8 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Rectangle = __WEBPAC
   enable: function enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
-    L.Util.setOptions(this, options); // enable draw mode
+    L.Util.setOptions(this, options);
+    console.log(this.options); // enable draw mode
 
     this._enabled = true; // create a new layergroup
 
@@ -6200,7 +6517,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Rectangle = __WEBPAC
 
 
     if (this.options.tooltips) {
-      this._hintMarker.bindTooltip('Click to place first vertex', {
+      this._hintMarker.bindTooltip(this.options.textHintFirstVertex || 'Click to place first vertex', {
         permanent: true,
         offset: L.point(0, 10),
         direction: 'bottom',
@@ -6322,7 +6639,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Rectangle = __WEBPAC
     this._map.on('click', this._finishShape, this); // change tooltip text
 
 
-    this._hintMarker.setTooltipContent('Click to finish');
+    this._hintMarker.setTooltipContent(this.options.textHintFinish || 'Click to finish');
 
     this._setRectangleOrigin();
   },
@@ -6403,7 +6720,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Rectangle = __WEBPAC
 });
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6463,7 +6780,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Circle = __WEBPACK_I
 
 
     if (this.options.tooltips) {
-      this._hintMarker.bindTooltip('Click to place circle center', {
+      this._hintMarker.bindTooltip(this.options.textHintCircleCenter || 'Click to place circle center', {
         permanent: true,
         offset: L.point(0, 10),
         direction: 'bottom',
@@ -6597,7 +6914,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Circle = __WEBPACK_I
 
       this._hintMarker.on('move', this._syncCircleRadius, this);
 
-      this._hintMarker.setTooltipContent('Click to finish circle');
+      this._hintMarker.setTooltipContent(this.options.textHintFinish || 'Click to finish circle');
 
       this._layer.fire('pm:centerplaced', {
         shape: this._shape,
@@ -6642,13 +6959,13 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Circle = __WEBPACK_I
 });
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_intersect__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_intersect__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_intersect___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__turf_intersect__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_difference__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_difference__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__ = __webpack_require__(0);
 
 
@@ -6681,6 +6998,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__["a" /* default */].Cut = __WEBPACK_IMPO
       try {
         return !!__WEBPACK_IMPORTED_MODULE_0__turf_intersect___default()(layer.toGeoJSON(15), l.toGeoJSON(15));
       } catch (e) {
+        /* eslint-disable-next-line no-console */
         console.error('You cant cut polygons with self-intersections');
         return false;
       }
@@ -6714,12 +7032,22 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__["a" /* default */].Cut = __WEBPACK_IMPO
 
       l.remove();
       layer.remove();
+
+      if (resultingLayer.getLayers().length === 0) {
+        _this._map.pm.removeLayer({
+          target: resultingLayer
+        });
+      }
     });
   },
   _finishShape: function _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
-    if (!this.options.allowSelfIntersection && this._doesSelfIntersect) {
-      return;
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(false);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
     }
 
     var coords = this._layer.getLatLngs();
@@ -6741,7 +7069,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__["a" /* default */].Cut = __WEBPACK_IMPO
 });
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6755,8 +7083,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var helpers_1 = __webpack_require__(2);
-var invariant_1 = __webpack_require__(13);
-var martinez = __importStar(__webpack_require__(14));
+var invariant_1 = __webpack_require__(7);
+var martinez = __importStar(__webpack_require__(6));
 /**
  * Takes two {@link Polygon|polygon} or {@link MultiPolygon|multi-polygon} geometries and
  * finds their polygonal intersection. If they don't intersect, returns null.
@@ -6857,17 +7185,17 @@ exports.default = intersect;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_martinez_polygon_clipping__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_martinez_polygon_clipping__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_martinez_polygon_clipping___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_martinez_polygon_clipping__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_area__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_area__ = __webpack_require__(35);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_area___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__turf_area__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__turf_helpers__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__turf_helpers___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__turf_helpers__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__turf_invariant__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__turf_invariant__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__turf_invariant___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__turf_invariant__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__turf_meta__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__turf_meta___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__turf_meta__);
@@ -6953,7 +7281,7 @@ function removeEmptyPolygon(geom) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7074,13 +7402,19 @@ function rad(num) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 var DragMixin = {
-  _initDraggableLayer: function _initDraggableLayer() {
-    // temporary coord variable for delta calculation
+  enableLayerDrag: function enableLayerDrag() {
+    if (this._layer instanceof L.Marker) {
+      this._layer.dragging.enable();
+
+      return;
+    } // temporary coord variable for delta calculation
+
+
     this._tempDragCoord = null; // add CSS class
 
     var el = this._layer._path ? this._layer._path : this._layer._renderer._container;
@@ -7088,9 +7422,24 @@ var DragMixin = {
     this._originalMapDragState = this._layer._map.dragging._enabled; // can we reliably save the map's draggable state?
     // (if the mouse up event happens outside the container, then the map can become undraggable)
 
-    this._safeToCacheDragState = true;
+    this._safeToCacheDragState = true; // add mousedown event to trigger drag
 
     this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
+  },
+  disableLayerDrag: function disableLayerDrag() {
+    if (this._layer instanceof L.Marker) {
+      this._layer.dragging.disable();
+
+      return;
+    } // remove CSS class
+
+
+    var el = this._layer._path ? this._layer._path : this._layer._renderer._container;
+    L.DomUtil.removeClass(el, 'leaflet-pm-draggable'); // no longer save the drag state
+
+    this._safeToCacheDragState = false; // disable mousedown event
+
+    this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
   },
   _dragMixinOnMouseUp: function _dragMixinOnMouseUp() {
     var _this = this;
@@ -7112,10 +7461,7 @@ var DragMixin = {
 
     if (!this._dragging) {
       return false;
-    } // show markers again
-
-
-    this._initMarkers(); // timeout to prevent click event after drag :-/
+    } // timeout to prevent click event after drag :-/
     // TODO: do it better as soon as leaflet has a way to do it better :-)
 
 
@@ -7144,10 +7490,7 @@ var DragMixin = {
 
       if (this._originalMapDragState) {
         this._layer._map.dragging.disable();
-      } // hide markers
-
-
-      this._markerGroup.clearLayers(); // fire pm:dragstart event
+      } // fire pm:dragstart event
 
 
       this._layer.fire('pm:dragstart');
@@ -7204,12 +7547,27 @@ var DragMixin = {
           };
         })
       );
-    }; // create the new coordinates array
+    };
+
+    var moveCoord = function moveCoord(coord) {
+      return {
+        lat: coord.lat + deltaLatLng.lat,
+        lng: coord.lng + deltaLatLng.lng
+      };
+    };
+
+    if (this._layer instanceof L.CircleMarker) {
+      // create the new coordinates array
+      var newCoords = moveCoord(this._layer.getLatLng()); // set new coordinates and redraw
+
+      this._layer.setLatLng(newCoords).redraw();
+    } else {
+      // create the new coordinates array
+      var _newCoords = moveCoords(this._layer.getLatLngs()); // set new coordinates and redraw
 
 
-    var newCoords = moveCoords(this._layer._latlngs); // set new coordinates and redraw
-
-    this._layer.setLatLngs(newCoords).redraw(); // save current latlng for next delta calculation
+      this._layer.setLatLngs(_newCoords).redraw();
+    } // save current latlng for next delta calculation
 
 
     this._tempDragCoord = latlng; // fire pm:dragstart event
@@ -7220,7 +7578,7 @@ var DragMixin = {
 /* harmony default export */ __webpack_exports__["a"] = (DragMixin);
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7334,7 +7692,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].LayerGroup = L.Class
 });
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7427,16 +7785,16 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Marker = __WEBPACK_I
 });
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__turf_kinks__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_get__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_get__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_get___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash_get__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__L_PM_Utils__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__L_PM_Utils__ = __webpack_require__(13);
 
 
 
@@ -7486,11 +7844,13 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       this._layer.on('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval, this);
     }
 
-    if (this.options.draggable) {
-      this._initDraggableLayer();
-    }
-
     if (!this.options.allowSelfIntersection) {
+      if (!this.cachedColor) {
+        this.cachedColor = this._layer.options.color;
+      }
+
+      this.isRed = false;
+
       this._handleLayerStyle();
     }
   },
@@ -7521,7 +7881,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     poly.off('mousedown');
     poly.off('mouseup'); // remove onRemove listener
 
-    this._layer.off('remove', this._onLayerRemove);
+    this._layer.off('remove', this._onLayerRemove, this);
 
     if (!this.options.allowSelfIntersection) {
       this._layer.off('pm:vertexremoved', this._handleSelfIntersectionOnVertexRemoval);
@@ -7561,21 +7921,32 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     }
   },
   _handleLayerStyle: function _handleLayerStyle(flash) {
-    var el = this._layer._path ? this._layer._path : this._layer._renderer._container;
+    var _this = this;
+
+    var layer = this._layer;
 
     if (this.hasSelfIntersection()) {
-      if (L.DomUtil.hasClass(el, 'leaflet-pm-invalid')) {
+      if (this.isRed) {
         return;
       } // if it does self-intersect, mark or flash it red
 
 
       if (flash) {
-        L.DomUtil.addClass(el, 'leaflet-pm-invalid');
+        layer.setStyle({
+          color: 'red'
+        });
+        this.isRed = true;
         window.setTimeout(function () {
-          L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+          layer.setStyle({
+            color: _this.cachedColor
+          });
+          _this.isRed = false;
         }, 200);
       } else {
-        L.DomUtil.addClass(el, 'leaflet-pm-invalid');
+        layer.setStyle({
+          color: 'red'
+        });
+        this.isRed = true;
       } // fire intersect event
 
 
@@ -7584,11 +7955,14 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       });
     } else {
       // if not, reset the style to the default color
-      L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
+      layer.setStyle({
+        color: this.cachedColor
+      });
+      this.isRed = false;
     }
   },
   _initMarkers: function _initMarkers() {
-    var _this = this;
+    var _this2 = this;
 
     var map = this._map;
 
@@ -7607,17 +7981,17 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     var handleRing = function handleRing(coordsArr) {
       // if there is another coords ring, go a level deep and do this again
       if (Array.isArray(coordsArr[0])) {
-        return coordsArr.map(handleRing, _this);
+        return coordsArr.map(handleRing, _this2);
       } // the marker array, it includes only the markers of vertexes (no middle markers)
 
 
-      var ringArr = coordsArr.map(_this._createMarker, _this); // create small markers in the middle of the regular markers
+      var ringArr = coordsArr.map(_this2._createMarker, _this2); // create small markers in the middle of the regular markers
 
       coordsArr.map(function (v, k) {
         // find the next index fist
-        var nextIndex = _this.isPolygon() ? (k + 1) % coordsArr.length : k + 1; // create the marker
+        var nextIndex = _this2.isPolygon() ? (k + 1) % coordsArr.length : k + 1; // create the marker
 
-        return _this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
+        return _this2._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
       });
       return ringArr;
     }; // create markers
@@ -7632,7 +8006,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
   // creates initial markers for coordinates
   _createMarker: function _createMarker(latlng) {
     var marker = new L.Marker(latlng, {
-      draggable: !this.options.preventVertexEdit,
+      draggable: true,
       icon: L.divIcon({
         className: 'marker-icon'
       })
@@ -7652,7 +8026,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
   },
   // creates the middle markes between coordinates
   _createMiddleMarker: function _createMiddleMarker(leftM, rightM) {
-    var _this2 = this;
+    var _this3 = this;
 
     // cancel if there are no two markers
     if (!leftM || !rightM) {
@@ -7679,7 +8053,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       });
       middleMarker.setIcon(icon);
 
-      _this2._addMarker(middleMarker, leftM, rightM);
+      _this3._addMarker(middleMarker, leftM, rightM);
     });
     middleMarker.on('movestart', function () {
       // TODO: This is a workaround. Remove the moveend listener and
@@ -7693,7 +8067,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
         middleMarker.off('moveend');
       });
 
-      _this2._addMarker(middleMarker, leftM, rightM);
+      _this3._addMarker(middleMarker, leftM, rightM);
     });
     return middleMarker;
   },
@@ -8003,10 +8377,10 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
 });
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGet = __webpack_require__(40);
+var baseGet = __webpack_require__(41);
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is
@@ -8042,11 +8416,11 @@ module.exports = get;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var castPath = __webpack_require__(41),
-    toKey = __webpack_require__(81);
+var castPath = __webpack_require__(42),
+    toKey = __webpack_require__(82);
 
 /**
  * The base implementation of `_.get` without support for default values.
@@ -8072,13 +8446,13 @@ module.exports = baseGet;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(6),
-    isKey = __webpack_require__(42),
-    stringToPath = __webpack_require__(48),
-    toString = __webpack_require__(78);
+var isArray = __webpack_require__(8),
+    isKey = __webpack_require__(43),
+    stringToPath = __webpack_require__(49),
+    toString = __webpack_require__(79);
 
 /**
  * Casts `value` to a path array if it's not one.
@@ -8099,11 +8473,11 @@ module.exports = castPath;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(6),
-    isSymbol = __webpack_require__(7);
+var isArray = __webpack_require__(8),
+    isSymbol = __webpack_require__(9);
 
 /** Used to match property names within property paths. */
 var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
@@ -8134,7 +8508,7 @@ module.exports = isKey;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
@@ -8142,10 +8516,10 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 
 module.exports = freeGlobal;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(44)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports) {
 
 var g;
@@ -8172,10 +8546,10 @@ module.exports = g;
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(8);
+var Symbol = __webpack_require__(10);
 
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
@@ -8224,7 +8598,7 @@ module.exports = getRawTag;
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -8252,7 +8626,7 @@ module.exports = objectToString;
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports) {
 
 /**
@@ -8287,10 +8661,10 @@ module.exports = isObjectLike;
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var memoizeCapped = __webpack_require__(49);
+var memoizeCapped = __webpack_require__(50);
 
 /** Used to match property names within property paths. */
 var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
@@ -8320,10 +8694,10 @@ module.exports = stringToPath;
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var memoize = __webpack_require__(50);
+var memoize = __webpack_require__(51);
 
 /** Used as the maximum memoize cache size. */
 var MAX_MEMOIZE_SIZE = 500;
@@ -8352,10 +8726,10 @@ module.exports = memoizeCapped;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var MapCache = __webpack_require__(51);
+var MapCache = __webpack_require__(52);
 
 /** Error message constants. */
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -8431,14 +8805,14 @@ module.exports = memoize;
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var mapCacheClear = __webpack_require__(52),
-    mapCacheDelete = __webpack_require__(73),
-    mapCacheGet = __webpack_require__(75),
-    mapCacheHas = __webpack_require__(76),
-    mapCacheSet = __webpack_require__(77);
+var mapCacheClear = __webpack_require__(53),
+    mapCacheDelete = __webpack_require__(74),
+    mapCacheGet = __webpack_require__(76),
+    mapCacheHas = __webpack_require__(77),
+    mapCacheSet = __webpack_require__(78);
 
 /**
  * Creates a map cache object to store key-value pairs.
@@ -8469,12 +8843,12 @@ module.exports = MapCache;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Hash = __webpack_require__(53),
-    ListCache = __webpack_require__(65),
-    Map = __webpack_require__(72);
+var Hash = __webpack_require__(54),
+    ListCache = __webpack_require__(66),
+    Map = __webpack_require__(73);
 
 /**
  * Removes all key-value entries from the map.
@@ -8496,14 +8870,14 @@ module.exports = mapCacheClear;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var hashClear = __webpack_require__(54),
-    hashDelete = __webpack_require__(61),
-    hashGet = __webpack_require__(62),
-    hashHas = __webpack_require__(63),
-    hashSet = __webpack_require__(64);
+var hashClear = __webpack_require__(55),
+    hashDelete = __webpack_require__(62),
+    hashGet = __webpack_require__(63),
+    hashHas = __webpack_require__(64),
+    hashSet = __webpack_require__(65);
 
 /**
  * Creates a hash object.
@@ -8534,7 +8908,7 @@ module.exports = Hash;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(3);
@@ -8555,13 +8929,13 @@ module.exports = hashClear;
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isFunction = __webpack_require__(56),
-    isMasked = __webpack_require__(57),
+var isFunction = __webpack_require__(57),
+    isMasked = __webpack_require__(58),
     isObject = __webpack_require__(18),
-    toSource = __webpack_require__(59);
+    toSource = __webpack_require__(60);
 
 /**
  * Used to match `RegExp`
@@ -8608,7 +8982,7 @@ module.exports = baseIsNative;
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(16),
@@ -8651,10 +9025,10 @@ module.exports = isFunction;
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var coreJsData = __webpack_require__(58);
+var coreJsData = __webpack_require__(59);
 
 /** Used to detect methods masquerading as native. */
 var maskSrcKey = (function() {
@@ -8677,10 +9051,10 @@ module.exports = isMasked;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var root = __webpack_require__(9);
+var root = __webpack_require__(11);
 
 /** Used to detect overreaching core-js shims. */
 var coreJsData = root['__core-js_shared__'];
@@ -8689,7 +9063,7 @@ module.exports = coreJsData;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -8721,7 +9095,7 @@ module.exports = toSource;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 /**
@@ -8740,7 +9114,7 @@ module.exports = getValue;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports) {
 
 /**
@@ -8763,7 +9137,7 @@ module.exports = hashDelete;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(3);
@@ -8799,7 +9173,7 @@ module.exports = hashGet;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(3);
@@ -8828,7 +9202,7 @@ module.exports = hashHas;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var nativeCreate = __webpack_require__(3);
@@ -8857,14 +9231,14 @@ module.exports = hashSet;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var listCacheClear = __webpack_require__(66),
-    listCacheDelete = __webpack_require__(67),
-    listCacheGet = __webpack_require__(69),
-    listCacheHas = __webpack_require__(70),
-    listCacheSet = __webpack_require__(71);
+var listCacheClear = __webpack_require__(67),
+    listCacheDelete = __webpack_require__(68),
+    listCacheGet = __webpack_require__(70),
+    listCacheHas = __webpack_require__(71),
+    listCacheSet = __webpack_require__(72);
 
 /**
  * Creates an list cache object.
@@ -8895,7 +9269,7 @@ module.exports = ListCache;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 /**
@@ -8914,7 +9288,7 @@ module.exports = listCacheClear;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(4);
@@ -8955,7 +9329,7 @@ module.exports = listCacheDelete;
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports) {
 
 /**
@@ -8998,7 +9372,7 @@ module.exports = eq;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(4);
@@ -9023,7 +9397,7 @@ module.exports = listCacheGet;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(4);
@@ -9045,7 +9419,7 @@ module.exports = listCacheHas;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var assocIndexOf = __webpack_require__(4);
@@ -9077,11 +9451,11 @@ module.exports = listCacheSet;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getNative = __webpack_require__(17),
-    root = __webpack_require__(9);
+    root = __webpack_require__(11);
 
 /* Built-in method references that are verified to be native. */
 var Map = getNative(root, 'Map');
@@ -9090,7 +9464,7 @@ module.exports = Map;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(5);
@@ -9114,7 +9488,7 @@ module.exports = mapCacheDelete;
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 /**
@@ -9135,7 +9509,7 @@ module.exports = isKeyable;
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(5);
@@ -9157,7 +9531,7 @@ module.exports = mapCacheGet;
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(5);
@@ -9179,7 +9553,7 @@ module.exports = mapCacheHas;
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var getMapData = __webpack_require__(5);
@@ -9207,10 +9581,10 @@ module.exports = mapCacheSet;
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseToString = __webpack_require__(79);
+var baseToString = __webpack_require__(80);
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`
@@ -9241,13 +9615,13 @@ module.exports = toString;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Symbol = __webpack_require__(8),
-    arrayMap = __webpack_require__(80),
-    isArray = __webpack_require__(6),
-    isSymbol = __webpack_require__(7);
+var Symbol = __webpack_require__(10),
+    arrayMap = __webpack_require__(81),
+    isArray = __webpack_require__(8),
+    isSymbol = __webpack_require__(9);
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;
@@ -9284,7 +9658,7 @@ module.exports = baseToString;
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports) {
 
 /**
@@ -9311,10 +9685,10 @@ module.exports = arrayMap;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isSymbol = __webpack_require__(7);
+var isSymbol = __webpack_require__(9);
 
 /** Used as references for various `Number` constants. */
 var INFINITY = 1 / 0;
@@ -9338,7 +9712,7 @@ module.exports = toKey;
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9349,11 +9723,19 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Poly = __WEBPACK_IMP
 });
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(1);
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 // Corner detection based on Leaflet Draw's Edit.Rectangle.js Class:
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
 
@@ -9378,7 +9760,9 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
 
     this._markers[0] = corners.map(this._createMarker, this); // convenience alias, for better readability
 
-    this._cornerMarkers = this._markers[0];
+    var _this$_markers = _slicedToArray(this._markers, 1);
+
+    this._cornerMarkers = _this$_markers[0];
 
     if (this.options.snappable) {
       this._initSnappableMarkers();
@@ -9387,7 +9771,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
   // creates initial markers for coordinates
   _createMarker: function _createMarker(latlng, index) {
     var marker = new L.Marker(latlng, {
-      draggable: !this.options.preventVertexEdit,
+      draggable: true,
       icon: L.divIcon({
         className: 'marker-icon'
       })
@@ -9496,7 +9880,8 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
   // adjusts the position of all Markers
   // params: markerLatLngs -- an array of exactly LatLng objects
   _adjustAllMarkers: function _adjustAllMarkers(markerLatLngs) {
-    if (!markerLatLngs.length || markerLatLngs.length != 4) {
+    if (!markerLatLngs.length || markerLatLngs.length !== 4) {
+      /* eslint-disable-next-line no-console */
       console.error('_adjustAllMarkers() requires an array of EXACTLY 4 LatLng coordinates');
       return;
     }
@@ -9509,6 +9894,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
   // params: anchorMarker -- the Marker object used to determine adjacent Markers
   _adjustAdjacentMarkers: function _adjustAdjacentMarkers(anchorMarker) {
     if (!anchorMarker || !anchorMarker.getLatLng || !anchorMarker._oppositeCornerLatLng) {
+      /* eslint-disable-next-line no-console */
       console.error('_adjustAdjacentMarkers() requires a valid Marker object');
       return;
     }
@@ -9528,7 +9914,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
 
     var unmarkedCornerIndex = 0;
 
-    if (unmarkedCorners.length == 2) {
+    if (unmarkedCorners.length === 2) {
       this._cornerMarkers.forEach(function (marker) {
         var markerLatLng = marker.getLatLng();
 
@@ -9553,7 +9939,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
 });
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9635,7 +10021,11 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Circle = __WEBPACK_I
     } // add markerGroup to map, markerGroup includes regular and middle markers
 
 
-    this._helperLayers = new L.LayerGroup().addTo(map); // create marker for each coordinate
+    this._helperLayers = new L.LayerGroup();
+    this._helperLayers._pmTempLayer = true;
+
+    this._helperLayers.addTo(map); // create marker for each coordinate
+
 
     var center = this._layer.getLatLng();
 
@@ -9724,20 +10114,17 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Circle = __WEBPACK_I
   _createCenterMarker: function _createCenterMarker(latlng) {
     var marker = this._createMarker(latlng);
 
-    L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
-    marker.on('move', this._moveCircle, this); // marker.on('contextmenu', this._removeMarker, this);
+    L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable'); // TODO: switch back to move event once this leaflet issue is solved:
+    // https://github.com/Leaflet/Leaflet/issues/6492
+
+    marker.on('drag', this._moveCircle, this); // marker.on('contextmenu', this._removeMarker, this);
 
     return marker;
   },
   _createOuterMarker: function _createOuterMarker(latlng) {
     var marker = this._createMarker(latlng);
 
-    if (this.options.preventVertexEdit) {
-      marker.dragging.disable();
-    }
-
-    marker.on('move', this._resizeCircle, this); // marker.on('contextmenu', this._removeMarker, this);
-
+    marker.on('move', this._resizeCircle, this);
     return marker;
   },
   _createMarker: function _createMarker(latlng) {
@@ -9765,13 +10152,13 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Circle = __WEBPACK_I
 });
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
