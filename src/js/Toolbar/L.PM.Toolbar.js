@@ -9,7 +9,7 @@ const Toolbar = L.Class.extend({
     drawPolyline: true,
     drawPolygon: true,
     drawCircle: true,
-    drawCircleMarker: false,
+    drawCircleMarker: true,
     editMode: true,
     dragMode: true,
     cutPolygon: true,
@@ -66,6 +66,7 @@ const Toolbar = L.Class.extend({
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
+        drawCircleMarker: 'control-icon leaflet-pm-icon-circle-marker',
         editMode: 'control-icon leaflet-pm-icon-edit',
         dragMode: 'control-icon leaflet-pm-icon-drag',
         cutPolygon: 'control-icon leaflet-pm-icon-cut',
@@ -207,7 +208,9 @@ const Toolbar = L.Class.extend({
     };
 
     const drawCircleMarkerButton = {
-      className: 'leaflet-pm-icon-circle',
+      title: 'Draw Circle Marker',
+      className: 'control-icon leaflet-pm-icon-circle-marker',
+      jsClass: 'CircleMarker',
       onClick: () => {},
       afterClick: () => {
         // toggle drawing mode
@@ -217,6 +220,7 @@ const Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
+      actions: ['cancel'],
     };
 
     const drawRectButton = {

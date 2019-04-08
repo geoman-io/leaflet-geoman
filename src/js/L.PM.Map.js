@@ -59,6 +59,7 @@ const Map = L.Class.extend({
     return layers;
   },
   removeLayer(e) {
+
     const layer = e.target;
     // only remove layer, if it's handled by leaflet.pm,
     // not a tempLayer and not currently being dragged
