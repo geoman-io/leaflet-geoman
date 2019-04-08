@@ -24,36 +24,64 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('hasLayers', (map, count) => {
+Cypress.Commands.add('hasLayers', count => {
+  cy.window().then(({ map }) => {
     const layerCount = Object.keys(map._layers).length;
-
     cy.wrap(layerCount).should('eq', count);
+  });
 });
 
-Cypress.Commands.add('hasMiddleMarkers', (count) => {
-    cy.get('.marker-icon-middle').should(($p) => {
-        expect($p).to.have.length(count);
-    });
+Cypress.Commands.add('hasMiddleMarkers', count => {
+  cy.get('.marker-icon-middle').should($p => {
+    expect($p).to.have.length(count);
+  });
 });
 
-Cypress.Commands.add('hasVertexMarkers', (count) => {
-    cy.get('.marker-icon:not(.marker-icon-middle)').should(($p) => {
-        expect($p).to.have.length(count);
-    });
+Cypress.Commands.add('hasVertexMarkers', count => {
+  cy.get('.marker-icon:not(.marker-icon-middle)').should($p => {
+    expect($p).to.have.length(count);
+  });
 });
 
-Cypress.Commands.add('toolbarButton', name => cy.get(`.leaflet-pm-icon-${name}`));
+Cypress.Commands.add('toolbarButton', name =>
+  cy.get(`.leaflet-pm-icon-${name}`)
+);
 
-Cypress.Commands.add('drawShape', (shape) => {
-    cy.window().then(({ map, L }) => {
-        if (shape === 'MultiPolygon') {
-            cy.fixture(shape)
-                .as('poly')
-                .then((json) => {
-                    const layer = L.geoJson(json).addTo(map);
-                    const bounds = layer.getBounds();
-                    map.fitBounds(bounds);
-                });
-        }
-    });
+Cypress.Commands.add('drawShape', shape => {
+  cy.window().then(({ map, L }) => {
+    if (shape === 'MultiPolygon') {
+      cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          const layer = L.geoJson(json).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
+
+    if (shape === 'FeatureCollectionWithCircles') {
+      cy.fixture(shape)
+        .then(json => {
+          const layer = L.geoJson(json, {
+            pointToLayer: (feature, latlng) => {
+              if (feature.properties.customGeometry) {
+                return new L.Circle(
+                  latlng,
+                  feature.properties.customGeometry.radius
+                );
+              }
+              return new L.Marker(latlng);
+            },
+          });
+
+          layer.addTo(map);
+
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+
+          return layer;
+        })
+        .as('featurecol');
+    }
+  });
 });
