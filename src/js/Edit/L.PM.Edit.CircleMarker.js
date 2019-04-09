@@ -41,33 +41,13 @@ Edit.CircleMarker = Edit.extend({
 
     // // init markers
     this._initMarkers();
-
-    // enable snapping
-    if (this.options.snappable) {
-      this._initSnappableMarkers();
-    }
   },
   _initMarkers() {
     const map = this._map;
 
-    // cleanup old ones first
-    if (this._markerGroup) {
-      this._markerGroup.clearLayers();
-    }
-
-    // add markerGroup to map, markerGroup includes regular and middle markers
-    this._markerGroup = new L.LayerGroup();
-    this._markerGroup._pmTempLayer = true;
-    map.addLayer(this._markerGroup);
-
     // create marker for each coordinate
     const center = this._layer.getLatLng();
-    this._hintMarker = this._createHintMarker(center);
-    this._markers = [this._hintMarker];
-
-    if (this.options.snappable) {
-      this._initSnappableMarkers();
-    }
+    this._hintMarker = this._createHintMarker(center).addTo(map);
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -80,14 +60,12 @@ Edit.CircleMarker = Edit.extend({
       return false;
     }
     layer.pm._enabled = false;
-    layer.pm._markerGroup.clearLayers();
-
 
     // clean up events
     this._hintMarker.off('move', this._moveMarker, this);
     this._hintMarker.off('dragend', this._onMarkerDragEnd, this);
     this._hintMarker.off('contextmenu', this._removeMarker, this);
-    this._map.removeLayer(this._layerGroup);
+    this._hintMarker.remove();
 
     // remove draggable class
     if (layer._path) {
@@ -119,13 +97,15 @@ Edit.CircleMarker = Edit.extend({
     marker.on('dragend', this._onMarkerDragEnd, this);
     marker.on('contextmenu', this._removeMarker, this);
 
-    this._markerGroup.addLayer(marker);
-
     return marker;
   },
   _removeMarker() {
     this._layer.fire('pm:remove');
     this._layer.remove();
+
+    if (this._hintMarker) {
+      this._hintMarker.remove();
+    }
   },
   _fireEdit() {
     // fire edit event
