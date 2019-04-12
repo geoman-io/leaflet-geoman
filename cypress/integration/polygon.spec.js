@@ -15,7 +15,7 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
   });
 
-  it.only('doesnt finish two point polys', () => {
+  it('doesnt finish two point polys', () => {
     cy.toolbarButton('polygon').click();
 
     cy.get(mapSelector)
