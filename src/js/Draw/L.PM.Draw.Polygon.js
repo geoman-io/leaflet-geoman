@@ -20,7 +20,7 @@ Draw.Polygon = Draw.Line.extend({
     const coords = this._layer.getLatLngs();
 
     // if there is only one coords, don't finish the shape!
-    if (coords.length <= 1) {
+    if (coords.length <= 2) {
       return;
     }
 
