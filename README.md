@@ -30,8 +30,8 @@
 
 ![Demo](https://file-gmeileqfmg.now.sh/)
 
-Need advanced features like GeoJSON Export, storing meta data and more?\
-Check out **[Geoman](https://geoman.io)**.
+Are you using leaflet.pm for commercial projects?\
+Check out **[Geoman](https://geoman.io)** and consider subscribing to the **Leaflet.PM Supporter Plan** to support development of advanced leaflet.pm features. You will also get prioritized support and consultation.
 
 ## Documentation
 
