@@ -15,6 +15,22 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
   });
 
+  it('doesnt finish two point polys', () => {
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 350);
+
+    cy.get('.active .action-finish').click();
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(0);
+
+    cy.toolbarButton('edit').click();
+  });
+
   it('removes layer when cut completely', () => {
     cy.window().then(({ map }) => {
       Cypress.$(map).on('pm:create', ({ originalEvent }) => {
