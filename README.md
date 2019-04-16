@@ -31,7 +31,7 @@
 ![Demo](https://file-gmeileqfmg.now.sh/)
 
 Are you using leaflet.pm for commercial projects?\
-Check out **[Geoman](https://geoman.io)** and consider subscribing to the **Leaflet.PM Supporter Plan** to support development of advanced leaflet.pm features. You will also get prioritized support and consultation.
+Check out **[Geoman](https://geoman.io/#pricing)** and consider subscribing to the **Leaflet.PM Supporter Plan** to support development of advanced leaflet.pm features. You will also get prioritized support and consultation.
 
 ## Documentation
 
