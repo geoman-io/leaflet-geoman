@@ -6,6 +6,10 @@ const Map = L.Class.extend({
 
     this._globalRemovalMode = false;
   },
+  setLang(lang = 'en') {
+    L.PM.activeLang = lang;
+    this.map.pm.Toolbar.reinit();
+  },
   addControls(options) {
     this.Toolbar.addControls(options);
   },

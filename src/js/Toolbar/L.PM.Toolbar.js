@@ -18,6 +18,19 @@ const Toolbar = L.Class.extend({
     position: 'topleft',
   },
   initialize(map) {
+    this.init(map);
+  },
+  reinit() {
+    const addControls = this.isVisible;
+
+    this.removeControls();
+    this._defineButtons();
+
+    if (addControls) {
+      this.addControls();
+    }
+  },
+  init(map) {
     this.map = map;
 
     this.buttons = {};

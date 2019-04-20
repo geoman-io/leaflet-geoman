@@ -3,9 +3,9 @@ describe('Shows Tooltips', () => {
 
   const mapSelector = '#map';
 
-  it('Has Working Translations', () => {
-    cy.window().then(({ L }) => {
-      L.PM.activeLang = 'de';
+  it.only('Has Working Translations', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setLang('de');
     });
 
     cy.toolbarButton('polygon').click();

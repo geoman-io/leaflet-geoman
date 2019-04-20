@@ -46,7 +46,7 @@ Draw.Rectangle = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip('Click to place first vertex', {
+        .bindTooltip(getTranslation('tooltips.firstVertex'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',

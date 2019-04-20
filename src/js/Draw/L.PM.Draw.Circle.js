@@ -51,7 +51,7 @@ Draw.Circle = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip('Click to place circle center', {
+        .bindTooltip(getTranslation('tooltips.startCircle'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
