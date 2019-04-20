@@ -42,7 +42,7 @@ Check out **[Geoman](https://geoman.io/#pricing)** and consider subscribing to t
 - [Drag Mode](#drag-mode)
 - [Removal Mode](#removal-mode)
 - [Cutting Mode](#cutting-mode)
-- [Style Customization](#customize-style)
+- [Customization](#customize)
 - [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
 ### Installation
@@ -379,7 +379,20 @@ The following events are available on a map instance:
 | :----- | :----- | :-------------------------------- |
 | pm:cut | `e`    | Fired when any layer is being cut |
 
-### Customize Style
+### Customize
+
+##### Customize Language
+
+Change the language of user-facing copy in leaflet.pm
+
+```js
+map.pm.setLang('de');
+```
+
+Currently available languages are `de` and `en`.
+To add translations to the plugin, you can add [a translation file](https://github.com/codeofsumit/leaflet.pm/src/assets/translations) via Pull Request.
+
+##### Customize Style
 
 In order to change the style of the lines during draw, pass these options to the
 `enableDraw()` function.
