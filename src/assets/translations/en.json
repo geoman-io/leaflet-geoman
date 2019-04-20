@@ -1,7 +1,26 @@
 {
   "tooltips": {
-    "firstVertex": "Click to place the first vertex"
+    "firstVertex": "Click to place first vertex",
+    "continueLine": "Click to continue drawing",
+    "finishLine": "Click any existing marker to finish",
+    "finishPoly": "Click first marker to finish",
+    "finishRect": "Click to finish",
+    "finishCircle": "Click to finish circle"
   },
-  "actions": {},
-  "buttonTitles": {}
+  "actions": {
+    "finish": "Finish",
+    "cancel": "Cancel",
+    "removeLastVertex": "Remove Last Vertex"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Draw Marker",
+    "drawPolyButton": "Draw Polygons",
+    "drawLineButton": "Draw Polyline",
+    "drawCircleButton": "Draw Circle",
+    "drawRectButton": "Draw Rectangle",
+    "editButton": "Edit Layers",
+    "dragButton": "Drag Layers",
+    "cutButton": "Cut Layers",
+    "deleteButton": "Remove Layers"
+  }
 }

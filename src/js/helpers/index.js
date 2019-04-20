@@ -1,8 +1,15 @@
 import get from 'lodash/get';
+import has from 'lodash/has';
 import translations from '../../assets/translations';
 
 export function getTranslation(path) {
-  return get(translations[L.PM.activeLang], path);
+  let lang = L.PM.activeLang;
+
+  if (!has(translations, lang)) {
+    console.log('lang not found', lang);
+    lang = 'en';
+  }
+  return get(translations[lang], path);
 }
 
 export function isEmptyDeep(l) {

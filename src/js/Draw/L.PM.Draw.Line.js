@@ -341,12 +341,14 @@ Draw.Line = Draw.extend({
 
     // handle tooltip text
     if (first) {
-      this._hintMarker.setTooltipContent('Click to continue drawing');
+      this._hintMarker.setTooltipContent(
+        getTranslation('tooltips.continueLine')
+      );
     }
     const second = this._layer.getLatLngs().length === 2;
 
     if (second) {
-      this._hintMarker.setTooltipContent('Click any existing marker to finish');
+      this._hintMarker.setTooltipContent(getTranslation('tooltips.finishLine'));
     }
 
     return marker;

@@ -3,6 +3,17 @@ describe('Shows Tooltips', () => {
 
   const mapSelector = '#map';
 
+  it('Has Working Translations', () => {
+    cy.window().then(({ L }) => {
+      L.PM.activeLang = 'de';
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Platziere den ersten Marker mit Klick');
+    });
+  });
+
   it('Has Marker Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
     cy.toolbarButton('marker').click();

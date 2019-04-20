@@ -1,5 +1,7 @@
 import Draw from './L.PM.Draw';
 
+import { getTranslation } from '../helpers';
+
 Draw.Rectangle = Draw.extend({
   initialize(map) {
     this._map = map;
@@ -165,7 +167,7 @@ Draw.Rectangle = Draw.extend({
     this._map.on('click', this._finishShape, this);
 
     // change tooltip text
-    this._hintMarker.setTooltipContent('Click to finish');
+    this._hintMarker.setTooltipContent(getTranslation('tooltips.finishRect'));
 
     this._setRectangleOrigin();
   },
