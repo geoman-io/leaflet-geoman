@@ -390,7 +390,7 @@ map.pm.setLang('de');
 ```
 
 Currently available languages are `de` and `en`.
-To add translations to the plugin, you can add [a translation file](https://github.com/codeofsumit/leaflet.pm/src/assets/translations) via Pull Request.
+To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.
 
@@ -405,7 +405,7 @@ map.pm.setLang('customName', customTranslation, 'en');
 ```
 
 The 3rd parameter is the fallback language in case you only want to override a few Strings.
-See the english translation file for all available strings.
+See the [english translation file](src/assets/translations/en.json) for all available strings.
 
 ##### Customize Style
 
