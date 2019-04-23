@@ -15,15 +15,13 @@ describe('Shows Tooltips', () => {
   });
   it('Supports Custom Translations', () => {
     cy.window().then(({ map }) => {
-      map.pm.setLang(
-        'custom',
-        {
-          tooltips: {
-            placeMarker: 'Custom Marker Translation',
-          },
+      const customTranslation = {
+        tooltips: {
+          placeMarker: 'Custom Marker Translation',
         },
-        'en'
-      );
+      };
+
+      map.pm.setLang('customName', customTranslation, 'en');
     });
 
     cy.toolbarButton('marker').click();

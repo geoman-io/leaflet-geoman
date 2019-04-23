@@ -395,15 +395,13 @@ To add translations to the plugin, you can add [a translation file](https://gith
 You can also provide your own custom translations.
 
 ```js
-map.pm.setLang(
-  'custom',
-  {
-    tooltips: {
-      placeMarker: 'Custom Marker Translation',
-    },
+const customTranslation = {
+  tooltips: {
+    placeMarker: 'Custom Marker Translation',
   },
-  'en'
-);
+};
+
+map.pm.setLang('customName', customTranslation, 'en');
 ```
 
 The 3rd parameter is the fallback language in case you only want to override a few Strings.

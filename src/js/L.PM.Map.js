@@ -1,3 +1,4 @@
+import merge from 'lodash/merge';
 import translations from '../assets/translations';
 
 const Map = L.Class.extend({
@@ -10,10 +11,7 @@ const Map = L.Class.extend({
   },
   setLang(lang = 'en', t, fallback = 'en') {
     if (t) {
-      translations[lang] = {
-        ...translations[fallback],
-        ...t,
-      };
+      translations[lang] = merge(translations[fallback], t);
     }
 
     L.PM.activeLang = lang;
