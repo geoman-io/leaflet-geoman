@@ -1,3 +1,5 @@
+import translations from '../assets/translations';
+
 const Map = L.Class.extend({
   initialize(map) {
     this.map = map;
@@ -6,7 +8,14 @@ const Map = L.Class.extend({
 
     this._globalRemovalMode = false;
   },
-  setLang(lang = 'en') {
+  setLang(lang = 'en', t, fallback = 'en') {
+    if (t) {
+      translations[lang] = {
+        ...translations[fallback],
+        ...t,
+      };
+    }
+
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
   },

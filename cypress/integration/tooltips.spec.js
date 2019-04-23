@@ -3,7 +3,7 @@ describe('Shows Tooltips', () => {
 
   const mapSelector = '#map';
 
-  it.only('Has Working Translations', () => {
+  it('Has Working Translations', () => {
     cy.window().then(({ map }) => {
       map.pm.setLang('de');
     });
@@ -11,6 +11,24 @@ describe('Shows Tooltips', () => {
     cy.toolbarButton('polygon').click();
     cy.get('.leaflet-tooltip-bottom').then(el => {
       expect(el).to.have.text('Platziere den ersten Marker mit Klick');
+    });
+  });
+  it('Supports Custom Translations', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setLang(
+        'custom',
+        {
+          tooltips: {
+            placeMarker: 'Custom Marker Translation',
+          },
+        },
+        'en'
+      );
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Custom Marker Translation');
     });
   });
 

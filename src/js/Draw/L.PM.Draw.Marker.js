@@ -30,7 +30,7 @@ Draw.Marker = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip(getTranslation('tooltips.firstVertex'), {
+        .bindTooltip(getTranslation('tooltips.placeMarker'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',

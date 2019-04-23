@@ -6,9 +6,9 @@ export function getTranslation(path) {
   let lang = L.PM.activeLang;
 
   if (!has(translations, lang)) {
-    console.log('lang not found', lang);
     lang = 'en';
   }
+
   return get(translations[lang], path);
 }
 
