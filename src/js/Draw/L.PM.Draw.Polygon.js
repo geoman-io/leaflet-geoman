@@ -1,5 +1,7 @@
 import Draw from './L.PM.Draw';
 
+import { getTranslation } from '../helpers';
+
 Draw.Polygon = Draw.Line.extend({
   initialize(map) {
     this._map = map;
@@ -76,12 +78,14 @@ Draw.Polygon = Draw.Line.extend({
 
     // handle tooltip text
     if (first) {
-      this._hintMarker.setTooltipContent('Click to continue drawing');
+      this._hintMarker.setTooltipContent(
+        getTranslation('tooltips.continueLine')
+      );
     }
     const third = this._layer.getLatLngs().length === 3;
 
     if (third) {
-      this._hintMarker.setTooltipContent('Click first marker to finish');
+      this._hintMarker.setTooltipContent(getTranslation('tooltips.finishPoly'));
     }
 
     return marker;

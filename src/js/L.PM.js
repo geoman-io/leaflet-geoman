@@ -31,11 +31,12 @@ import '../css/layers.css';
 import '../css/controls.css';
 
 L.PM = L.PM || {
+  version,
   Map,
   Toolbar,
   Draw,
   Edit,
-  version,
+  activeLang: 'en',
   initialize() {
     this.addInitHooks();
   },
