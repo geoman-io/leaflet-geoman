@@ -1,3 +1,6 @@
+import merge from 'lodash/merge';
+import translations from '../assets/translations';
+
 const Map = L.Class.extend({
   initialize(map) {
     this.map = map;
@@ -5,6 +8,14 @@ const Map = L.Class.extend({
     this.Toolbar = new L.PM.Toolbar(map);
 
     this._globalRemovalMode = false;
+  },
+  setLang(lang = 'en', t, fallback = 'en') {
+    if (t) {
+      translations[lang] = merge(translations[fallback], t);
+    }
+
+    L.PM.activeLang = lang;
+    this.map.pm.Toolbar.reinit();
   },
   addControls(options) {
     this.Toolbar.addControls(options);

@@ -47,7 +47,7 @@ Cypress.Commands.add('toolbarButton', name =>
   cy.get(`.leaflet-pm-icon-${name}`)
 );
 
-Cypress.Commands.add('drawShape', shape => {
+Cypress.Commands.add('drawShape', (shape, ignore) => {
   cy.window().then(({ map, L }) => {
     if (shape === 'MultiPolygon') {
       cy.fixture(shape)
@@ -59,18 +59,30 @@ Cypress.Commands.add('drawShape', shape => {
         });
     }
 
-    if (shape === 'FeatureCollectionWithCircles') {
+    if (shape === 'LineString') {
       cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
+
+    if (shape === 'FeatureCollectionWithCircles') {
+      cy.fixture(shape, ignore)
         .then(json => {
           const layer = L.geoJson(json, {
+            pmIgnore: ignore,
             pointToLayer: (feature, latlng) => {
               if (feature.properties.customGeometry) {
                 return new L.Circle(
                   latlng,
-                  feature.properties.customGeometry.radius
+                  feature.properties.customGeometry.radius,
+                  { pmIgnore: ignore }
                 );
               }
-              return new L.Marker(latlng);
+              return new L.Marker(latlng, { pmIgnore: ignore });
             },
           });
 
