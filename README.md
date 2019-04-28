@@ -220,8 +220,7 @@ Here's a list of layer events you can listen to:
 For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
 ```js
 L.geoJSON(data,{
-  style : this.style,
-  snapIgnore : true,
+  snapIgnore : true
 })
 //This layer will be ignored by the snapping engine during drawing
 ```

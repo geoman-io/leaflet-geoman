@@ -211,12 +211,11 @@ const SnapMixin = {
       if (
         layer instanceof L.Polyline ||
         layer instanceof L.Marker ||
-        layer instanceof L.CircleMarker
+        layer instanceof L.CircleMarker &&
+        layer.options.snapIgnore !== true
 
       ) {
-          if(layer.options.snapIgnore !== true){
-              layers.push(layer);
-          }
+        layers.push(layer);
 
         // this is for debugging
         const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
