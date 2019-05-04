@@ -1,18 +1,18 @@
 {
   "tooltips": {
-    "placeMarker": "Klicke, um den Marker zu platzieren",
-    "firstVertex": "Klicke, um den ersten Punkt zu platzieren",
+    "placeMarker": "Platziere den Marker mit Klick",
+    "firstVertex": "Platziere den ersten Marker mit Klick",
     "continueLine": "Klicke, um weiter zu zeichnen",
-    "finishLine": "Klicke auf einen existierenden Punkt um zu beenden",
-    "finishPoly": "Klicke auf den ersten Punkt um zu beenden",
-    "finishRect": "Klicke, um zu beenden",
-    "startCircle": "Klicke, um den Kreismittelpunkt zu platzieren",
-    "finishCircle": "Klicke, um den Kreis zu erstellen"
+    "finishLine": "Beende mit Klick auf existierenden Marker",
+    "finishPoly": "Beende mit Klick auf ersten Marker",
+    "finishRect": "Beende mit Klick",
+    "startCircle": "Platziere das Kreiszentrum mit Klick",
+    "finishCircle": "Beende den Kreis mit Klick"
   },
   "actions": {
     "finish": "Beenden",
     "cancel": "Abbrechen",
-    "removeLastVertex": "Letzter Punkt löschen"
+    "removeLastVertex": "Letzten Vertex löschen"
   },
   "buttonTitles": {
     "drawMarkerButton": "Marker zeichnen",
