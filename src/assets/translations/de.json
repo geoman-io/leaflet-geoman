@@ -1,28 +1,28 @@
 {
   "tooltips": {
-    "placeMarker": "Platziere den Marker mit Klick",
-    "firstVertex": "Platziere den ersten Marker mit Klick",
-    "continueLine": "Klicke, um weiter zu malen",
-    "finishLine": "Beende mit Klick auf existierenden Marker",
-    "finishPoly": "Beende mit Klick auf ersten Marker",
-    "finishRect": "Beende mit Klick",
-    "startCircle": "Platziere das Kreiszentrum mit Klick",
-    "finishCircle": "Beende den Kreis mit Klick"
+    "placeMarker": "Klicke, um den Marker zu platzieren",
+    "firstVertex": "Klicke, um den ersten Punkt zu platzieren",
+    "continueLine": "Klicke, um weiter zu zeichnen",
+    "finishLine": "Klicke auf einen existierenden Punkt um zu beenden",
+    "finishPoly": "Klicke auf den ersten Punkt um zu beenden",
+    "finishRect": "Klicke, um zu beenden",
+    "startCircle": "Klicke, um den Kreismittelpunkt zu platzieren",
+    "finishCircle": "Klicke, um den Kreis zu erstellen"
   },
   "actions": {
     "finish": "Beenden",
     "cancel": "Abbrechen",
-    "removeLastVertex": "Letzten Vertex löschen"
+    "removeLastVertex": "Letzter Punkt löschen"
   },
   "buttonTitles": {
-    "drawMarkerButton": "Marker malen",
-    "drawPolyButton": "Polygons malen",
-    "drawLineButton": "Polyline malen",
-    "drawCircleButton": "Kreis malen",
-    "drawRectButton": "Rechteck malen",
-    "editButton": "Layers editieren",
-    "dragButton": "Layers bewegen",
-    "cutButton": "Layers schneiden",
-    "deleteButton": "Layers löschen"
+    "drawMarkerButton": "Marker zeichnen",
+    "drawPolyButton": "Polygon zeichnen",
+    "drawLineButton": "Polyline zeichnen",
+    "drawCircleButton": "Kreis zeichnen",
+    "drawRectButton": "Rechteck zeichnen",
+    "editButton": "Layer editieren",
+    "dragButton": "Layer bewegen",
+    "cutButton": "Layer schneiden",
+    "deleteButton": "Layer löschen"
   }
 }
