@@ -19,9 +19,12 @@
   ],
   "main": "dist/leaflet.pm.min.js",
   "dependencies": {
+    "@turf/destination": "^6.0.1",
     "@turf/difference": "^6.0.2",
+    "@turf/helpers": "^6.1.4",
     "@turf/intersect": "^6.1.3",
     "@turf/kinks": "6.x",
+    "@turf/rhumb-bearing": "^6.0.1",
     "lodash": "^4.17.11"
   },
   "devDependencies": {

@@ -1,4 +1,7 @@
 import kinks from '@turf/kinks';
+import destination from '@turf/destination';
+import rhumbBearing from '@turf/rhumb-bearing';
+import * as turf from '@turf/helpers';
 import Draw from './L.PM.Draw';
 
 import { getTranslation } from '../helpers';
@@ -89,6 +92,18 @@ Draw.Line = Draw.extend({
     // sync the hintline with hint marker
     this._hintMarker.on('move', this._syncHintLine, this);
 
+    if(this.options.allowShift) {
+      //Because "this" not working in the listener
+      window.pm = {
+        _map:  this._map,
+        _shiftpressed: false,
+        _defaultBox: this._map.boxZoom.enabled(),
+      };
+      //Not working in IE, problem?
+      document.addEventListener('keydown', this._keyDownFunction);
+      document.addEventListener('keyup', this._keyDownFunction);
+    }
+
     // fire drawstart event
     this._map.fire('pm:drawstart', {
       shape: this._shape,
@@ -126,6 +141,12 @@ Draw.Line = Draw.extend({
       this._map.doubleClickZoom.enable();
     }
 
+    document.removeEventListener('keydown', this._keyDownFunction);
+    document.removeEventListener('keyup', this._keyDownFunction);
+    //Reset to default boxZoom
+    if(this.options.allowShift && window.pm._defaultBox) {
+      window.pm._defaultBox === true ? window.pm._map.boxZoom.enable() : window.pm._map.boxZoom.disable();
+    }
     // remove layer
     this._map.removeLayer(this._layerGroup);
 
@@ -169,8 +190,19 @@ Draw.Line = Draw.extend({
     }
   },
   _syncHintMarker(e) {
-    // move the cursor marker
-    this._hintMarker.setLatLng(e.latlng);
+    const polyPoints = this._layer.getLatLngs();
+    if (polyPoints.length > 0 && window.pm._shiftpressed && this.options.allowShift) {
+      const lastPolygonPoint = polyPoints[polyPoints.length - 1];
+      var latlng_mouse = e.latlng;
+
+      var pt = this._getPointofAngle(lastPolygonPoint,latlng_mouse);
+
+      this._hintMarker.setLatLng(pt);
+      e.latlng = pt; //Because of intersection
+    }else {
+      // move the cursor marker
+      this._hintMarker.setLatLng(e.latlng);
+    }
 
     // if snapping is enabled, do it
     if (this.options.snappable) {
@@ -245,6 +277,15 @@ Draw.Line = Draw.extend({
     this._syncHintLine();
   },
   _createVertex(e) {
+    //Save mouse latlng bevor overwritten
+    var latlng_mouse = e.latlng;
+    const polyPoints = this._layer.getLatLngs();
+    if (polyPoints.length > 0 && window.pm._shiftpressed && this.options.allowShift) {
+      const lastPolygonPoint = polyPoints[polyPoints.length - 1];
+      var pt = this._getPointofAngle(lastPolygonPoint,e.latlng);
+      e.latlng = pt; //Because of Intersection
+    }
+
     // don't create a vertex if we have a selfIntersection and it is not allowed
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(true, e.latlng);
@@ -254,10 +295,12 @@ Draw.Line = Draw.extend({
       }
     }
 
+
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
-      this._hintMarker.setLatLng(e.latlng);
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
     }
 
     // get coordinate for new vertex by hintMarker (cursor marker)
@@ -280,7 +323,10 @@ Draw.Line = Draw.extend({
     this._layer.addLatLng(latlng);
     const newMarker = this._createMarker(latlng, first);
 
-    this._hintline.setLatLngs([latlng, latlng]);
+    //Draw new Line to mouse after creating
+    var pt2 = this._getPointofAngle(latlng,latlng_mouse);
+    this._hintline.setLatLngs([latlng, pt2]);
+    this._hintMarker.setLatLng(pt2);
 
     this._layer.fire('pm:vertexadded', {
       shape: this._shape,
@@ -352,5 +398,47 @@ Draw.Line = Draw.extend({
     }
 
     return marker;
+  },
+  _keyDownFunction(e) {
+   // this._shiftpressed = e.shiftKey; //not working
+    window.pm._shiftpressed = e.shiftKey;
+
+    //Reset to default boxZoom
+    if(window.pm._defaultBox) {
+      e.shiftKey === true ? window.pm._map.boxZoom.disable() : window.pm._map.boxZoom.enable();
+    }
+  },
+  _getPointofAngle(latlng_p1,latlng_p2) {
+    var point_p1 = turf.point([latlng_p1.lng, latlng_p1.lat]);
+    var point_p2 = turf.point([latlng_p2.lng, latlng_p2.lat]);
+    var distance = this._map.distance(latlng_p1, latlng_p2) / 1000;
+
+    //Get bearing between the two points
+    var bearing = rhumbBearing(point_p1, point_p2);
+
+    var angle = 0;
+    //45° steps
+    if(bearing <= 22.5 && bearing > -22.5){
+      angle = 0;
+    }else if(bearing <= 67.5 && bearing > 22.5){
+      angle = 45;
+    }else if(bearing <= 112.5 && bearing > 67.5){
+      angle = 90;
+    }else if(bearing <= 157.5 && bearing > 112.5){
+      angle = 135;
+    }else if(bearing <= 180 && bearing > 157.5){
+      angle = 180;
+    }else if(bearing <= -157.5 && bearing > -180){
+      angle = -180;
+    }else if(bearing <= -112.5 && bearing > -157.5 ){
+      angle = -135;
+    }else if(bearing <= -67.5 && bearing > -112.5 ){
+      angle = -90;
+    }else if(bearing <= -22.5 && bearing > -67.5 ){
+      angle = -45;
+    }
+
+    var point_result = destination(point_p1, distance, angle);
+    return new L.latLng([point_result.geometry.coordinates[1], point_result.geometry.coordinates[0]])
   },
 });

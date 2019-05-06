@@ -1,4 +1,6 @@
 import Draw from './L.PM.Draw';
+import destination from "@turf/destination"
+import * as turf from '@turf/helpers';
 
 import { getTranslation } from '../helpers';
 
@@ -62,7 +64,7 @@ Draw.Rectangle = Draw.extend({
 
       // Add two more matching style markers, if cursor marker is rendered
       this._styleMarkers = [];
-      for (let i = 0; i < 2; i += 1) {
+      for (let i = 0; i < 4; i += 1) {
         const styleMarker = L.marker([0, 0], {
           icon: L.divIcon({
             className: 'marker-icon rect-style-marker',
@@ -85,6 +87,19 @@ Draw.Rectangle = Draw.extend({
 
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
+
+    if(this.options.allowShift) {
+      //Because "this" not working in the listener
+      window.pm = {
+        _map:  this._map,
+        _shiftpressed: false,
+        _defaultBox: this._map.boxZoom.enabled(),
+      };
+
+      //Not working in IE, problem?
+      document.addEventListener('keydown', this._keyDownFunction);
+      document.addEventListener('keyup', this._keyDownFunction);
+    }
 
     // fire drawstart event
     this._map.fire('pm:drawstart', {
@@ -116,6 +131,13 @@ Draw.Rectangle = Draw.extend({
     this._map.off('click', this._finishShape, this);
     this._map.off('click', this._placeStartingMarkers, this);
     this._map.off('mousemove', this._syncHintMarker, this);
+
+    document.removeEventListener('keydown', this._keyDownFunction);
+    document.removeEventListener('keyup', this._keyDownFunction);
+    //Reset to default boxZoom
+    if(this.options.allowShift && window.pm._defaultBox) {
+      window.pm._defaultBox === true ? window.pm._map.boxZoom.enable() : window.pm._map.boxZoom.disable();
+    }
 
     // remove helping layers
     this._map.removeLayer(this._layerGroup);
@@ -198,8 +220,29 @@ Draw.Rectangle = Draw.extend({
     // Create a box using corners A & B (A = Starting Position, B = Current Mouse Position)
     const A = this._startMarker.getLatLng();
     const B = this._hintMarker.getLatLng();
-
     this._layer.setBounds([A, B]);
+
+    if(this.options.allowShift && window.pm._shiftpressed) {
+      //Needed because distance is always positiv
+      var rectangleWidth = this._map.latLngToLayerPoint(A).x - this._map.latLngToLayerPoint(B).x;
+      var rectangleHeight = this._map.latLngToLayerPoint(A).y - this._map.latLngToLayerPoint(B).y;
+      var w = this._map.distance(this._layer.getBounds().getNorthEast(), this._layer.getBounds().getNorthWest());
+      var h = this._map.distance(this._layer.getBounds().getNorthEast(), this._layer.getBounds().getSouthEast());
+
+      if (w > h) {
+        const pt = turf.point([B.lng, A.lat]);
+        const angle = rectangleHeight < 0 ? 180 : 0;
+        var d = destination(pt, w / 1000, angle);
+      } else {
+        const pt = turf.point([A.lng, B.lat]);
+        const angle = rectangleWidth < 0 ? 90 : -90;
+        var d = destination(pt, h / 1000, angle);
+      }
+      this._cornerPoint = L.latLng([d.geometry.coordinates[1], d.geometry.coordinates[0]]);
+      this._layer.setBounds([A, this._cornerPoint]);
+    }else{
+      this._cornerPoint = null;
+    }
 
     // Add matching style markers, if cursor marker is shown
     if (this.options.cursorMarker && this._styleMarkers) {
@@ -209,10 +252,13 @@ Draw.Rectangle = Draw.extend({
       // Find two corners not currently occupied by starting marker and hint marker
       corners.forEach(corner => {
         if (
-          !corner.equals(this._startMarker.getLatLng()) &&
-          !corner.equals(this._hintMarker.getLatLng())
+            (!corner.equals(this._startMarker.getLatLng()) &&
+          !corner.equals(this._hintMarker.getLatLng()) ||
+            (window.pm._shiftpressed && this.options.allowShift) )
         ) {
           unmarkedCorners.push(corner);
+        }else{
+          unmarkedCorners.push(L.latLng([0,0]));
         }
       });
 
@@ -225,7 +271,7 @@ Draw.Rectangle = Draw.extend({
   _finishShape(e) {
     // create the final rectangle layer, based on opposite corners A & B
     const A = this._startMarker.getLatLng();
-    const B = e.latlng;
+    const B = this._cornerPoint || e.latlng;
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(
       this._map
     );
@@ -248,5 +294,14 @@ Draw.Rectangle = Draw.extend({
     const southwest = corners.getSouthWest();
 
     return [northwest, northeast, southeast, southwest];
+  },
+  _keyDownFunction(e) {
+    // this._shiftpressed = e.shiftKey; //not working
+    window.pm._shiftpressed = e.shiftKey;
+
+    //Reset to default boxZoom
+    if(window.pm._defaultBox) {
+      e.shiftKey === true ? window.pm._map.boxZoom.disable() : window.pm._map.boxZoom.enable();
+    }
   },
 });
