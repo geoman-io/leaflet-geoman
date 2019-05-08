@@ -29,7 +29,7 @@
     "@babel/preset-env": "^7.3.1",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
-    "cypress": "^3.2.0",
+    "cypress": "3.1.4",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^3.6.0",
@@ -50,7 +50,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
-    "test": "set NODE_OPTIONS= && $(npm bin)/cypress run",
+    "test": "$(npm bin)/cypress run",
     "cypress": "$(npm bin)/cypress open",
     "build": "./node_modules/.bin/webpack --config=webpack.build.js",
     "prepare": "npm run build",
