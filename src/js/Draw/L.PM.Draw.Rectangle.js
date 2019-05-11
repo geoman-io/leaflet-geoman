@@ -1,6 +1,4 @@
 import Draw from './L.PM.Draw';
-import destination from "@turf/destination"
-import * as turf from '@turf/helpers';
 
 import { getTranslation } from '../helpers';
 
@@ -224,21 +222,25 @@ Draw.Rectangle = Draw.extend({
 
     if(this.options.allowShift && window.pm._shiftpressed) {
       //Needed because distance is always positiv
-      var rectangleWidth = this._map.latLngToLayerPoint(A).x - this._map.latLngToLayerPoint(B).x;
-      var rectangleHeight = this._map.latLngToLayerPoint(A).y - this._map.latLngToLayerPoint(B).y;
-      var w = this._map.distance(this._layer.getBounds().getNorthEast(), this._layer.getBounds().getNorthWest());
-      var h = this._map.distance(this._layer.getBounds().getNorthEast(), this._layer.getBounds().getSouthEast());
+      var rectangleWidth = this._map.latLngToContainerPoint(A).x - this._map.latLngToContainerPoint(B).x;
+      var rectangleHeight = this._map.latLngToContainerPoint(A).y - this._map.latLngToContainerPoint(B).y;
+      var w = this._distance(this._map.latLngToContainerPoint(this._layer.getBounds().getNorthEast()), this._map.latLngToContainerPoint(this._layer.getBounds().getNorthWest()));
+      var h = this._distance(this._map.latLngToContainerPoint(this._layer.getBounds().getNorthEast()), this._map.latLngToContainerPoint(this._layer.getBounds().getSouthEast()));
 
+      var pt_A = this._map.latLngToContainerPoint(A);
+      var pt_B = this._map.latLngToContainerPoint(B);
+
+      var d;
       if (w > h) {
-        const pt = turf.point([B.lng, A.lat]);
+        const p = {x: pt_B.x, y: pt_A.y};
         const angle = rectangleHeight < 0 ? 180 : 0;
-        var d = destination(pt, w / 1000, angle);
+        d = this._findDestinationPoint(p, w , angle);
       } else {
-        const pt = turf.point([A.lng, B.lat]);
+        const p = {x: pt_A.x, y: pt_B.y};
         const angle = rectangleWidth < 0 ? 90 : -90;
-        var d = destination(pt, h / 1000, angle);
+        d = this._findDestinationPoint(p, h, angle);
       }
-      this._cornerPoint = L.latLng([d.geometry.coordinates[1], d.geometry.coordinates[0]]);
+      this._cornerPoint = this._map.containerPointToLatLng(d);
       this._layer.setBounds([A, this._cornerPoint]);
     }else{
       this._cornerPoint = null;
@@ -247,23 +249,10 @@ Draw.Rectangle = Draw.extend({
     // Add matching style markers, if cursor marker is shown
     if (this.options.cursorMarker && this._styleMarkers) {
       const corners = this._findCorners();
-      const unmarkedCorners = [];
 
-      // Find two corners not currently occupied by starting marker and hint marker
-      corners.forEach(corner => {
-        if (
-            (!corner.equals(this._startMarker.getLatLng()) &&
-          !corner.equals(this._hintMarker.getLatLng()) ||
-            (window.pm._shiftpressed && this.options.allowShift) )
-        ) {
-          unmarkedCorners.push(corner);
-        }else{
-          unmarkedCorners.push(L.latLng([0,0]));
-        }
-      });
-
+      //unmarkedCorners are redundant - all markes must be updated
       // Reposition style markers
-      unmarkedCorners.forEach((unmarkedCorner, index) => {
+      corners.forEach((unmarkedCorner, index) => {
         this._styleMarkers[index].setLatLng(unmarkedCorner);
       });
     }
@@ -304,4 +293,25 @@ Draw.Rectangle = Draw.extend({
       e.shiftKey === true ? window.pm._map.boxZoom.disable() : window.pm._map.boxZoom.enable();
     }
   },
+  _findDestinationPoint(point, distance, angle) {
+    var result = {};
+
+    angle = angle - 90;
+
+    result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + point.x);
+    result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + point.y);
+
+    return result;
+  },
+  _distance(p1,p2){
+    var x = p1.x - p2.x;
+    var y = p1.y - p2.y;
+    return Math.sqrt( x*x + y*y );
+  },
+  _bearing(p1,p2){
+    var x = p1.x - p2.x;
+    var y = p1.y - p2.y;
+    var _angle = ((Math.atan2(y, x) * 180 / Math.PI) * (-1) - 90)* (-1);
+    return _angle < 0 ? _angle + 180 : _angle - 180;
+  }
 });

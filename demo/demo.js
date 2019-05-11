@@ -27,7 +27,7 @@ const mapboxTiles3 = L.tileLayer(
 );
 
 const map2 = L.map('example2')
-  .setView([51.505, -0.09], 13)
+  .setView([51.505, -0.09], 10)
   .addLayer(mapboxTiles1);
 const map3 = L.map('example3')
   .setView([51.505, -0.09], 13)

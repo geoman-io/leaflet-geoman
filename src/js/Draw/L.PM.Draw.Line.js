@@ -1,7 +1,4 @@
 import kinks from '@turf/kinks';
-import destination from '@turf/destination';
-import rhumbBearing from '@turf/rhumb-bearing';
-import * as turf from '@turf/helpers';
 import Draw from './L.PM.Draw';
 
 import { getTranslation } from '../helpers';
@@ -74,6 +71,7 @@ Draw.Line = Draw.extend({
     // finish on layer event
     // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
     if (this.options.finishOn) {
+      console.log(this.options.finishOn);
       this._map.on(this.options.finishOn, this._finishShape, this);
     }
 
@@ -282,8 +280,7 @@ Draw.Line = Draw.extend({
     const polyPoints = this._layer.getLatLngs();
     if (polyPoints.length > 0 && window.pm._shiftpressed && this.options.allowShift) {
       const lastPolygonPoint = polyPoints[polyPoints.length - 1];
-      var pt = this._getPointofAngle(lastPolygonPoint,e.latlng);
-      e.latlng = pt; //Because of Intersection
+      e.latlng = this._getPointofAngle(lastPolygonPoint,e.latlng); //Because of Intersection
     }
 
     // don't create a vertex if we have a selfIntersection and it is not allowed
@@ -409,12 +406,13 @@ Draw.Line = Draw.extend({
     }
   },
   _getPointofAngle(latlng_p1,latlng_p2) {
-    var point_p1 = turf.point([latlng_p1.lng, latlng_p1.lat]);
-    var point_p2 = turf.point([latlng_p2.lng, latlng_p2.lat]);
-    var distance = this._map.distance(latlng_p1, latlng_p2) / 1000;
+    var p1 = this._map.latLngToContainerPoint(latlng_p1);
+    var p2 = this._map.latLngToContainerPoint(latlng_p2);
+
+    var distance2 = this._distance(p1, p2);
 
     //Get bearing between the two points
-    var bearing = rhumbBearing(point_p1, point_p2);
+    var bearing = this._bearing(p1, p2);
 
     var angle = 0;
     //45° steps
@@ -438,7 +436,29 @@ Draw.Line = Draw.extend({
       angle = -45;
     }
 
-    var point_result = destination(point_p1, distance, angle);
-    return new L.latLng([point_result.geometry.coordinates[1], point_result.geometry.coordinates[0]])
+    var point_result2 = this._findDestinationPoint(p1, distance2, angle);
+    return this._map.containerPointToLatLng(point_result2);
   },
+
+  _findDestinationPoint(point, distance, angle) {
+    var result = {};
+
+    angle = angle - 90;
+
+    result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + point.x);
+    result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + point.y);
+
+    return result;
+  },
+  _distance(p1,p2){
+    var x = p1.x - p2.x;
+    var y = p1.y - p2.y;
+    return Math.sqrt( x*x + y*y );
+  },
+  _bearing(p1,p2){
+    var x = p1.x - p2.x;
+    var y = p1.y - p2.y;
+    var _angle = ((Math.atan2(y, x) * 180 / Math.PI) * (-1) - 90)* (-1);
+    return _angle < 0 ? _angle + 180 : _angle - 180;
+  }
 });
