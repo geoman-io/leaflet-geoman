@@ -18,7 +18,6 @@ const Draw = L.Class.extend({
     markerStyle: {
       draggable: true,
     },
-    allowShift: true,
   },
   initialize(map) {
     // save the map
