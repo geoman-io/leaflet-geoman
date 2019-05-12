@@ -17,6 +17,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Disegna Marker",
     "drawPolyButton": "Disegna Poligoni",
+    "drawTriangleButton": "Disegna Triangolo",
     "drawLineButton": "Disegna Polilinea",
     "drawCircleButton": "Disegna Cerchio",
     "drawRectButton": "Disegna Rettangolo",

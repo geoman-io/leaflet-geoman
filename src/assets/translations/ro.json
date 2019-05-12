@@ -17,6 +17,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Adaugă o bulină",
     "drawPolyButton": "Desenează un poligon",
+    "drawTriangleButton": "Desenează un triunghi",
     "drawLineButton": "Desenează o linie",
     "drawCircleButton": "Desenează un cerc",
     "drawRectButton": "Desenează un dreptunghi",
