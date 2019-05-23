@@ -58,7 +58,7 @@ const DragMixin = {
     this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
 
     // clear up mouseup event
-    this._layer.off('mouseup', this._dragMixinOnMouseUp, this);
+    this._layer._map.off('mouseup', this._dragMixinOnMouseUp, this);
 
     // if no drag happened, don't do anything
     if (!this._dragging) {
@@ -121,7 +121,7 @@ const DragMixin = {
     // save for delta calculation
     this._tempDragCoord = e.latlng;
 
-    this._layer.on('mouseup', this._dragMixinOnMouseUp, this);
+    this._layer._map.on('mouseup', this._dragMixinOnMouseUp, this);
 
     // listen to mousemove on map (instead of polygon),
     // otherwise fast mouse movements stop the drag
@@ -156,17 +156,9 @@ const DragMixin = {
         };
       });
 
-    const moveCoord = coord => ({
-      lat: coord.lat + deltaLatLng.lat,
-      lng: coord.lng + deltaLatLng.lng,
-    });
-
     if (this._layer instanceof L.CircleMarker) {
-      // create the new coordinates array
-      const newCoords = moveCoord(this._layer.getLatLng());
-
       // set new coordinates and redraw
-      this._layer.setLatLng(newCoords);
+      this._layer.setLatLng(latlng);
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());

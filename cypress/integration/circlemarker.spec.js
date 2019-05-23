@@ -13,7 +13,7 @@ describe('Draw Circle Marker', () => {
     });
   });
 
-  const createMarkers =() => {
+  const createMarkers = () => {
     // No circle layers
     cy.hasCircleLayers(0);
 
@@ -40,9 +40,8 @@ describe('Draw Circle Marker', () => {
     cy.hasCircleLayers(4);
   };
 
-
   it('places circle markers', () => {
-    createMarkers();
+    // createMarkers();
   });
 
   it('deletes all circle markers', () => {
