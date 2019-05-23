@@ -15,7 +15,7 @@ Edit.CircleMarker = Edit.extend({
   enabled() {
     return this._enabled;
   },
-  enable(options) {
+  enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
     this._map = this._layer._map;
@@ -39,8 +39,9 @@ Edit.CircleMarker = Edit.extend({
       this._layer.on('contextmenu', this._removeMarker, this);
     }
 
-    // // init markers
-    this._createHintMarker();
+    if (this.options.draggable) {
+      this.enableLayerDrag();
+    }
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -53,8 +54,6 @@ Edit.CircleMarker = Edit.extend({
       return false;
     }
     layer.pm._enabled = false;
-
-    this._deleteHintMarker();
 
     // remove draggable class
     if (layer._path) {
@@ -73,43 +72,9 @@ Edit.CircleMarker = Edit.extend({
     const center = e.latlng;
     this._layer.setLatLng(center).redraw();
   },
-  _createHintMarker() {
-    const map = this._map;
-    const center = this._layer.getLatLng();
-
-    if (this._hintMarker == null) {
-      this._hintMarker = new L.Marker(center, {
-        draggable: true,
-        icon: L.divIcon({className: 'marker-icon'}),
-      });
-
-      this._hintMarker._pmTempLayer = true;
-      this._hintMarker._origLatLng = center;
-
-      this._hintMarker.on('move', this._moveMarker, this);
-      this._hintMarker.on('dragend', this._onMarkerDragEnd, this);
-      this._hintMarker.on('contextmenu', this._removeMarker, this);
-    }
-
-    this._hintMarker.addTo(map);
-  },
-  _deleteHintMarker() {
-    // clean up events
-    if (this._hintMarker != null) {
-      this._hintMarker.off('move', this._moveMarker, this);
-      this._hintMarker.off('dragend', this._onMarkerDragEnd, this);
-      this._hintMarker.off('contextmenu', this._removeMarker, this);
-      this._map.removeLayer(this._hintMarker);
-      this._hintMarker = null;
-    }
-  },
   _removeMarker() {
     this._layer.fire('pm:remove');
     this._layer.remove();
-
-    if (this._hintMarker) {
-      this._deleteHintMarker();
-    }
   },
   _fireEdit() {
     // fire edit event

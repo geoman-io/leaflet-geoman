@@ -179,7 +179,7 @@ const DragMixin = {
     this._tempDragCoord = latlng;
 
     // fire pm:dragstart event
-    this._layer.fire('pm:drag');
+    this._layer.fire('pm:drag', e);
   },
 };
 
