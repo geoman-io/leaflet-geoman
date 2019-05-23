@@ -41,7 +41,7 @@ describe('Draw Circle Marker', () => {
   };
 
   it('places circle markers', () => {
-    // createMarkers();
+    createMarkers();
   });
 
   it('deletes all circle markers', () => {
