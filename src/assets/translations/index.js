@@ -3,6 +3,7 @@ import de from './de.json';
 import it from './it.json';
 import ro from './ro.json';
 import ru from './ru.json';
+import es from './es.json';
 
 export default {
   en,
@@ -10,4 +11,5 @@ export default {
   it,
   ro,
   ru,
+  es,
 };
