@@ -1,5 +1,7 @@
 import Draw from './L.PM.Draw';
 
+import { getTranslation } from '../helpers';
+
 Draw.Circle = Draw.extend({
   initialize(map) {
     this._map = map;
@@ -49,7 +51,7 @@ Draw.Circle = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip('Click to place circle center', {
+        .bindTooltip(getTranslation('tooltips.startCircle'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
@@ -180,7 +182,9 @@ Draw.Circle = Draw.extend({
       this._hintMarker.on('move', this._syncHintLine, this);
       this._hintMarker.on('move', this._syncCircleRadius, this);
 
-      this._hintMarker.setTooltipContent('Click to finish circle');
+      this._hintMarker.setTooltipContent(
+        getTranslation('tooltips.finishCircle')
+      );
 
       this._layer.fire('pm:centerplaced', {
         shape: this._shape,
