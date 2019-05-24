@@ -8,7 +8,7 @@
     "finishRect": "Apasă pentru a finisa",
     "startCircle": "Apasă pentru a desena un cerc",
     "finishCircle": "Apasă pentru a finisa un cerc",
-    "placeCircleMarker": "Click to place circle marker"
+    "placeCircleMarker": "Adaugă un punct"
   },
   "actions": {
     "finish": "Termină",
@@ -25,6 +25,6 @@
     "dragButton": "Mută straturile",
     "cutButton": "Taie straturile",
     "deleteButton": "Șterge straturile",
-    "placeCircleMarker": "Click to place circle marker"
+    "placeCircleMarker": "Adaugă o bulină"
   }
 }
