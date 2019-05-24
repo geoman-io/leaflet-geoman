@@ -223,7 +223,7 @@ const Toolbar = L.Class.extend({
     };
 
     const drawCircleMarkerButton = {
-      title: 'Draw Circle Marker',
+      title: getTranslation('buttonTitles.drawCircleMarkerButton'),
       className: 'control-icon leaflet-pm-icon-circle-marker',
       jsClass: 'CircleMarker',
       onClick: () => {},

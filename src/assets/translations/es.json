@@ -23,6 +23,7 @@
         "editButton": "Editar Capas",
         "dragButton": "Arrastrar Capas",
         "cutButton": "Cortar Capas",
-        "deleteButton": "Remover Capas"
+        "deleteButton": "Remover Capas",
+        "drawCircleMarkerButton": "Dibujar Marcador de Circulo"
     }
 }

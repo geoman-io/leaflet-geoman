@@ -23,6 +23,7 @@
     "editButton": "Modifica Livelli",
     "dragButton": "Sposta Livelli",
     "cutButton": "Ritaglia Livelli",
-    "deleteButton": "Elimina Livelli"
+    "deleteButton": "Elimina Livelli",
+    "drawCircleMarkerButton": "Disegna Marker del Cherchio"
   }
 }

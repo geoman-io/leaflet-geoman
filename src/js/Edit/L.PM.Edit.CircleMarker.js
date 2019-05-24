@@ -46,6 +46,8 @@ Edit.CircleMarker = Edit.extend({
     if (this.options.snappable) {
       this._initSnappableMarkers();
     }
+
+    this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -84,11 +86,6 @@ Edit.CircleMarker = Edit.extend({
     // fire edit event
     this._layer.fire('pm:edit');
     this._layerEdited = true;
-  },
-  _onMarkerDragStart(e) {
-    this._layer.fire('pm:markerdragstart', {
-      markerEvent: e,
-    });
   },
   _onMarkerDragEnd(e) {
     this._layer.fire('pm:markerdragend', {

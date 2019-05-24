@@ -23,6 +23,7 @@
     "editButton": "Layer editieren",
     "dragButton": "Layer bewegen",
     "cutButton": "Layer schneiden",
-    "deleteButton": "Layer löschen"
+    "deleteButton": "Layer löschen",
+    "drawCircleMarkerButton": "Kreismarker zeichnen"
   }
 }

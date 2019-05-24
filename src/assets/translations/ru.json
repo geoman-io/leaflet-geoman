@@ -23,6 +23,7 @@
     "editButton": "Редактировать слой",
     "dragButton": "Перетаскивать слой",
     "cutButton": "Вырезать слой",
-    "deleteButton": "Удалить слой"
+    "deleteButton": "Удалить слой",
+    "drawCircleMarkerButton": "Маркер круга"
   }
 }

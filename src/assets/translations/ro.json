@@ -23,6 +23,7 @@
     "editButton": "Editează straturile",
     "dragButton": "Mută straturile",
     "cutButton": "Taie straturile",
-    "deleteButton": "Șterge straturile"
+    "deleteButton": "Șterge straturile",
+    "drawCircleMarkerButton": "Adaugă o bulină de cercuri"
   }
 }
