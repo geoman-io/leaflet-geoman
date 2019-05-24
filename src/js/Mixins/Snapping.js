@@ -211,7 +211,9 @@ const SnapMixin = {
       if (
         layer instanceof L.Polyline ||
         layer instanceof L.Marker ||
-        layer instanceof L.CircleMarker
+        layer instanceof L.CircleMarker &&
+        layer.options.snapIgnore !== true
+
       ) {
         layers.push(layer);
 
