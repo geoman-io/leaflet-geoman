@@ -42,6 +42,10 @@ Edit.CircleMarker = Edit.extend({
     if (this.options.draggable) {
       this.enableLayerDrag();
     }
+
+    if (this.options.snappable) {
+      this._initSnappableMarkers();
+    }
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -92,5 +96,20 @@ Edit.CircleMarker = Edit.extend({
     });
 
     this._fireEdit();
+  },
+  // overwrite initSnappableMarkers from Snapping.js Mixin
+  _initSnappableMarkers() {
+    const marker = this._layer;
+
+    this.options.snapDistance = this.options.snapDistance || 30;
+
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.on('pm:drag', this._handleSnapping, this);
+
+    marker.off('pm:dragend', this._cleanupSnapping, this);
+    marker.on('pm:dragend', this._cleanupSnapping, this);
+
+    marker.off('pm:dragstart', this._unsnap, this);
+    marker.on('pm:dragstart', this._unsnap, this);
   },
 });

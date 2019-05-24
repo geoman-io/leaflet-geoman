@@ -13,7 +13,7 @@ describe('Draw Circle Marker', () => {
     });
   });
 
-  const createMarkers =() => {
+  const createMarkers = () => {
     // No circle layers
     cy.hasCircleLayers(0);
 
@@ -39,7 +39,6 @@ describe('Draw Circle Marker', () => {
     // Should have 4 circle markers, no hint markers
     cy.hasCircleLayers(4);
   };
-
 
   it('places circle markers', () => {
     createMarkers();

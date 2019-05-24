@@ -59,7 +59,7 @@ const SnapMixin = {
       return false;
     }
 
-    // create a list of polygons that the marker could snap to
+    // create a list of layers that the marker could snap to
     // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
     // after dragstart/movestart so it wouldn't fire for them
     if (this._snapList === undefined) {
@@ -219,6 +219,7 @@ const SnapMixin = {
 
         // this is for debugging
         const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
 
         // uncomment 👇 this line to show helper lines for debugging

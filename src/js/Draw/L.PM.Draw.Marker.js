@@ -87,6 +87,11 @@ Draw.Marker = Draw.extend({
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
+    // cleanup snapping
+    if (this.options.snappable) {
+      this._cleanupSnapping();
+    }
+
     // change enabled state
     this._enabled = false;
   },
