@@ -1,5 +1,7 @@
 import PMButton from './L.Controls';
 
+import { getTranslation } from '../helpers';
+
 L.Control.PMButton = PMButton;
 
 const Toolbar = L.Class.extend({
@@ -16,6 +18,19 @@ const Toolbar = L.Class.extend({
     position: 'topleft',
   },
   initialize(map) {
+    this.init(map);
+  },
+  reinit() {
+    const addControls = this.isVisible;
+
+    this.removeControls();
+    this._defineButtons();
+
+    if (addControls) {
+      this.addControls();
+    }
+  },
+  init(map) {
     this.map = map;
 
     this.buttons = {};
@@ -143,7 +158,7 @@ const Toolbar = L.Class.extend({
     // some buttons are still in their respective classes, like L.PM.Draw.Polygon
     const drawMarkerButton = {
       className: 'control-icon leaflet-pm-icon-marker',
-      title: 'Draw Marker',
+      title: getTranslation('buttonTitles.drawMarkerButton'),
       jsClass: 'Marker',
       onClick: () => {},
       afterClick: () => {
@@ -158,7 +173,7 @@ const Toolbar = L.Class.extend({
     };
 
     const drawPolyButton = {
-      title: 'Draw Polygon',
+      title: getTranslation('buttonTitles.drawPolyButton'),
       className: 'control-icon leaflet-pm-icon-polygon',
       jsClass: 'Polygon',
       onClick: () => {},
@@ -175,7 +190,7 @@ const Toolbar = L.Class.extend({
 
     const drawLineButton = {
       className: 'control-icon leaflet-pm-icon-polyline',
-      title: 'Draw Polyline',
+      title: getTranslation('buttonTitles.drawLineButton'),
       jsClass: 'Line',
       onClick: () => {},
       afterClick: () => {
@@ -190,7 +205,7 @@ const Toolbar = L.Class.extend({
     };
 
     const drawCircleButton = {
-      title: 'Draw Circle',
+      title: getTranslation('buttonTitles.drawCircleButton'),
       className: 'control-icon leaflet-pm-icon-circle',
       jsClass: 'Circle',
       onClick: () => {},
@@ -206,7 +221,7 @@ const Toolbar = L.Class.extend({
     };
 
     const drawRectButton = {
-      title: 'Draw Rectangle',
+      title: getTranslation('buttonTitles.drawRectButton'),
       className: 'control-icon leaflet-pm-icon-rectangle',
       jsClass: 'Rectangle',
       onClick: () => {},
@@ -222,7 +237,7 @@ const Toolbar = L.Class.extend({
     };
 
     const editButton = {
-      title: 'Edit Layers',
+      title: getTranslation('buttonTitles.editButton'),
       className: 'control-icon leaflet-pm-icon-edit',
       onClick: () => {},
       afterClick: () => {
@@ -237,7 +252,7 @@ const Toolbar = L.Class.extend({
     };
 
     const dragButton = {
-      title: 'Drag Layers',
+      title: getTranslation('buttonTitles.dragButton'),
       className: 'control-icon leaflet-pm-icon-drag',
       onClick: () => {},
       afterClick: () => {
@@ -252,7 +267,7 @@ const Toolbar = L.Class.extend({
     };
 
     const cutButton = {
-      title: 'Cut Layers',
+      title: getTranslation('buttonTitles.cutButton'),
       className: 'control-icon leaflet-pm-icon-cut',
       jsClass: 'Cut',
       onClick: () => {},
@@ -273,7 +288,7 @@ const Toolbar = L.Class.extend({
     };
 
     const deleteButton = {
-      title: 'Removal Mode',
+      title: getTranslation('buttonTitles.deleteButton'),
       className: 'control-icon leaflet-pm-icon-delete',
       onClick: () => {},
       afterClick: () => {

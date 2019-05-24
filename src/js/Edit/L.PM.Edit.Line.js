@@ -494,7 +494,7 @@ Edit.Line = Edit.extend({
     parent.splice(index, 1, latlng);
 
     // set new coords on layer
-    this._layer.setLatLngs(coords).redraw();
+    this._layer.setLatLngs(coords);
   },
 
   _onMarkerDrag(e) {

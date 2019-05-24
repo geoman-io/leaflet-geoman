@@ -10,6 +10,13 @@ describe('Edit LayerGroup', () => {
     cy.hasVertexMarkers(0);
   });
 
+  it('respects pmIgnore', () => {
+    cy.drawShape('LineString', true);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(0);
+  });
+
   it('enables all layers of layerGroup', () => {
     cy.drawShape('FeatureCollectionWithCircles');
 
