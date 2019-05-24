@@ -7,7 +7,8 @@
     "finishPoly": "Выберите первую точку, чтобы закончить",
     "finishRect": "Нажмите, чтобы закончить",
     "startCircle": "Нажмите чтобы добавить круг",
-    "finishCircle": "Нажмите чтобы закончить круг"
+    "finishCircle": "Нажмите чтобы закончить круг",
+    "placeCircleMarker": "Click to place circle marker"
   },
   "actions": {
     "finish": "Заканчивать",
@@ -24,6 +25,6 @@
     "dragButton": "Перетаскивать слой",
     "cutButton": "Вырезать слой",
     "deleteButton": "Удалить слой",
-    "drawCircleMarkerButton": "Маркер круга"
+    "placeCircleMarker": "Click to place circle marker"
   }
 }

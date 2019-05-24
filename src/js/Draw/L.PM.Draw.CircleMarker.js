@@ -1,5 +1,7 @@
 import Draw from './L.PM.Draw';
 
+import { getTranslation } from '../helpers';
+
 Draw.CircleMarker = Draw.Marker.extend({
   initialize(map) {
     this._map = map;
@@ -28,7 +30,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip('Click to place circle marker', {
+        .bindTooltip(getTranslation('tooltips.placeCircleMarker'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
