@@ -4,6 +4,7 @@ import it from './it.json';
 import ro from './ro.json';
 import ru from './ru.json';
 import es from './es.json';
+import nl from './nl.json';
 
 export default {
   en,
@@ -12,4 +13,5 @@ export default {
   ro,
   ru,
   es,
+  nl,
 };
