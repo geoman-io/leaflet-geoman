@@ -50,7 +50,7 @@ Check out **[Geoman](https://geoman.io/#pricing)** and consider subscribing to t
 #### Install via npm
 
 ```
-npm install leaflet.pm --save
+npm i leaflet.pm
 ```
 
 #### Install Manually
