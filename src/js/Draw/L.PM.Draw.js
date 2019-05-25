@@ -18,13 +18,21 @@ const Draw = L.Class.extend({
     markerStyle: {
       draggable: true,
     },
+    allowShift: true,
+
   },
   initialize(map) {
+    window.pm = {
+      _map:  map,
+      _shiftpressed: false,
+      _defaultBox: map.boxZoom.enabled(),
+    };
+
     // save the map
     this._map = map;
 
     // define all possible shapes that can be drawn
-    this.shapes = ['Marker', 'Line', 'Polygon', 'Rectangle', 'Circle', 'Cut'];
+    this.shapes = ['Marker', 'Line', 'Polygon', 'Triangle', 'Rectangle', 'Circle', 'Cut'];
 
     // initiate drawing class for our shapes
     this.shapes.forEach(shape => {

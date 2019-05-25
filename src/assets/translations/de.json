@@ -17,6 +17,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Marker zeichnen",
     "drawPolyButton": "Polygon zeichnen",
+    "drawTriangleButton": "Dreieck zeichnen",
     "drawLineButton": "Polyline zeichnen",
     "drawCircleButton": "Kreis zeichnen",
     "drawRectButton": "Rechteck zeichnen",

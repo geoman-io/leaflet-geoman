@@ -62,7 +62,7 @@ Draw.Rectangle = Draw.extend({
 
       // Add two more matching style markers, if cursor marker is rendered
       this._styleMarkers = [];
-      for (let i = 0; i < 2; i += 1) {
+      for (let i = 0; i < 4; i += 1) {
         const styleMarker = L.marker([0, 0], {
           icon: L.divIcon({
             className: 'marker-icon rect-style-marker',
@@ -85,6 +85,19 @@ Draw.Rectangle = Draw.extend({
 
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
+
+    if(this.options.allowShift) {
+      //Because "this" not working in the listener
+      window.pm = {
+        _map:  this._map,
+        _shiftpressed: false,
+        _defaultBox: this._map.boxZoom.enabled(),
+      };
+
+      //Not working in IE, problem?
+      document.addEventListener('keydown', this._keyDownFunction);
+      document.addEventListener('keyup', this._keyDownFunction);
+    }
 
     // fire drawstart event
     this._map.fire('pm:drawstart', {
@@ -116,6 +129,13 @@ Draw.Rectangle = Draw.extend({
     this._map.off('click', this._finishShape, this);
     this._map.off('click', this._placeStartingMarkers, this);
     this._map.off('mousemove', this._syncHintMarker, this);
+
+    document.removeEventListener('keydown', this._keyDownFunction);
+    document.removeEventListener('keyup', this._keyDownFunction);
+    //Reset to default boxZoom
+    if(this.options.allowShift && window.pm._defaultBox) {
+      window.pm._defaultBox === true ? window.pm._map.boxZoom.enable() : window.pm._map.boxZoom.disable();
+    }
 
     // remove helping layers
     this._map.removeLayer(this._layerGroup);
@@ -198,26 +218,41 @@ Draw.Rectangle = Draw.extend({
     // Create a box using corners A & B (A = Starting Position, B = Current Mouse Position)
     const A = this._startMarker.getLatLng();
     const B = this._hintMarker.getLatLng();
-
     this._layer.setBounds([A, B]);
+
+    if(this.options.allowShift && window.pm._shiftpressed) {
+      //Needed because distance is always positiv
+      var rectangleWidth = this._map.latLngToContainerPoint(A).x - this._map.latLngToContainerPoint(B).x;
+      var rectangleHeight = this._map.latLngToContainerPoint(A).y - this._map.latLngToContainerPoint(B).y;
+      var w = this._distance(this._map.latLngToContainerPoint(this._layer.getBounds().getNorthEast()), this._map.latLngToContainerPoint(this._layer.getBounds().getNorthWest()));
+      var h = this._distance(this._map.latLngToContainerPoint(this._layer.getBounds().getNorthEast()), this._map.latLngToContainerPoint(this._layer.getBounds().getSouthEast()));
+
+      var pt_A = this._map.latLngToContainerPoint(A);
+      var pt_B = this._map.latLngToContainerPoint(B);
+
+      var d;
+      if (w > h) {
+        const p = {x: pt_B.x, y: pt_A.y};
+        const angle = rectangleHeight < 0 ? 180 : 0;
+        d = this._findDestinationPoint(p, w , angle);
+      } else {
+        const p = {x: pt_A.x, y: pt_B.y};
+        const angle = rectangleWidth < 0 ? 90 : -90;
+        d = this._findDestinationPoint(p, h, angle);
+      }
+      this._cornerPoint = this._map.containerPointToLatLng(d);
+      this._layer.setBounds([A, this._cornerPoint]);
+    }else{
+      this._cornerPoint = null;
+    }
 
     // Add matching style markers, if cursor marker is shown
     if (this.options.cursorMarker && this._styleMarkers) {
       const corners = this._findCorners();
-      const unmarkedCorners = [];
 
-      // Find two corners not currently occupied by starting marker and hint marker
-      corners.forEach(corner => {
-        if (
-          !corner.equals(this._startMarker.getLatLng()) &&
-          !corner.equals(this._hintMarker.getLatLng())
-        ) {
-          unmarkedCorners.push(corner);
-        }
-      });
-
+      //unmarkedCorners are redundant - all markes must be updated
       // Reposition style markers
-      unmarkedCorners.forEach((unmarkedCorner, index) => {
+      corners.forEach((unmarkedCorner, index) => {
         this._styleMarkers[index].setLatLng(unmarkedCorner);
       });
     }
@@ -225,7 +260,7 @@ Draw.Rectangle = Draw.extend({
   _finishShape(e) {
     // create the final rectangle layer, based on opposite corners A & B
     const A = this._startMarker.getLatLng();
-    const B = e.latlng;
+    const B = this._cornerPoint || e.latlng;
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(
       this._map
     );
@@ -249,4 +284,34 @@ Draw.Rectangle = Draw.extend({
 
     return [northwest, northeast, southeast, southwest];
   },
+  _keyDownFunction(e) {
+    // this._shiftpressed = e.shiftKey; //not working
+    window.pm._shiftpressed = e.shiftKey;
+
+    //Reset to default boxZoom
+    if(window.pm._defaultBox) {
+      e.shiftKey === true ? window.pm._map.boxZoom.disable() : window.pm._map.boxZoom.enable();
+    }
+  },
+  _findDestinationPoint(point, distance, angle) {
+    var result = {};
+
+    angle = angle - 90;
+
+    result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + point.x);
+    result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + point.y);
+
+    return result;
+  },
+  _distance(p1,p2){
+    var x = p1.x - p2.x;
+    var y = p1.y - p2.y;
+    return Math.sqrt( x*x + y*y );
+  },
+  _bearing(p1,p2){
+    var x = p1.x - p2.x;
+    var y = p1.y - p2.y;
+    var _angle = ((Math.atan2(y, x) * 180 / Math.PI) * (-1) - 90)* (-1);
+    return _angle < 0 ? _angle + 180 : _angle - 180;
+  }
 });

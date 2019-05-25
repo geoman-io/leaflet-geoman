@@ -17,6 +17,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Добавить маркер",
     "drawPolyButton": "Рисовать полигон",
+    "drawTriangleButton": "Рисовать треугольник",
     "drawLineButton": "Рисовать Полилинию",
     "drawCircleButton": "Рисовать круг",
     "drawRectButton": "Рисовать Прямоугольник",

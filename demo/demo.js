@@ -337,6 +337,8 @@ map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
 map2.pm.disableDraw('Polygon');
 map2.pm.enableDraw('Line', { allowSelfIntersection: false });
 map2.pm.disableDraw('Line');
+map2.pm.enableDraw('Circle',{circleType: '2point'}); //'circle' || '3point'
+map2.pm.disableDraw('Circle');
 
 map2.on('pm:create', function(e) {
   e.layer.pm.enable({ allowSelfIntersection: false });
