@@ -222,10 +222,10 @@ Draw.Rectangle = Draw.extend({
       });
     }
   },
-  _finishShape(e) {
+  _finishShape() {
     // create the final rectangle layer, based on opposite corners A & B
     const A = this._startMarker.getLatLng();
-    const B = e.latlng;
+    const B = this._hintMarker.getLatLng();
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(
       this._map
     );
