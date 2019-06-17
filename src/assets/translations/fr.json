@@ -1,0 +1,28 @@
+{
+  "tooltips": {
+    "placeMarker": "Cliquez pour placer un marqueur",
+    "firstVertex": "Cliquez pour placer le premier sommet",
+    "continueLine": "Cliquez pour continuer à dessiner",
+    "finishLine": "Cliquez sur n'importe quel marqueur pour terminer",
+    "finishPoly": "Cliquez sur le premier marqueur pour terminer",
+    "finishRect": "Cliquez pour terminer",
+    "startCircle": "Cliquez pour placer le centre du cercle",
+    "finishCircle": "Cliquez pour finir le cercle"
+  },
+  "actions": {
+    "finish": "Terminer",
+    "cancel": "Annuler",
+    "removeLastVertex": "Retirer le dernier sommet"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Placer des marqueurs",
+    "drawPolyButton": "Dessiner des polygones",
+    "drawLineButton": "Dessiner des polylignes",
+    "drawCircleButton": "Dessiner un cercle",
+    "drawRectButton": "Dessiner un rectangle",
+    "editButton": "Éditer des calques",
+    "dragButton": "Déplacer des calques",
+    "cutButton": "Couper des calques",
+    "deleteButton": "Supprimer des calques"
+  }
+}

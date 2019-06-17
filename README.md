@@ -398,7 +398,7 @@ Change the language of user-facing copy in leaflet.pm
 map.pm.setLang('de');
 ```
 
-Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es` and `nl`.
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr` and `nl`.
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.
