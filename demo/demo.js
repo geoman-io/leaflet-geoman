@@ -340,8 +340,14 @@ map2.pm.disableDraw('Line');
 map2.pm.enableDraw('Circle',{circleType: '2point'}); //'circle' || '3point'
 map2.pm.disableDraw('Circle');
 
+//Lock the Layer
+map2.pm.enableDraw('Rectangle', { pathOptions:{ pmLock: true }});
+map2.pm.disableDraw('Rectangle');
+map2.pm.enableDraw('Marker', { markerStyle: { pmLock: true }});
+map2.pm.disableDraw('Marker');
+
 map2.on('pm:create', function(e) {
-  e.layer.pm.enable({ allowSelfIntersection: false });
+  //e.layer.pm.enable({ allowSelfIntersection: false });
   // e.layer.pm.disable();
   // console.log(e.layer.pm.hasSelfIntersection());
 

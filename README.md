@@ -178,7 +178,8 @@ See the available options in the table below.
 | hintlineStyle         | `{ color: 'red', dashArray: [5, 5] }` | [leaflet path options](https://leafletjs.com/reference-1.4.0.html#path) for the helper line between last drawn vertex and the cursor.                 |
 | cursorMarker          | `true`                                | show a marker at the cursor                                                                                                                           |
 | finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.2.0.html#interactive-layer-click). |
-| markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
+| pathOptions           | `pmLock: false`                       | [leaflet path options](https://leafletjs.com/reference-1.4.0.html#path) (only for drawing path layers). `pmLock:true` lock the layer.                |
+| markerStyle           | `{ draggable: true, pmLock: false}`   | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers). `pmLock:true` lock the marker.          |
 
 You can listen to map events to hook into the drawing procedure like this:
 

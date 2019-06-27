@@ -84,7 +84,7 @@ const Map = L.Class.extend({
     return !!this._globalDragMode;
   },
   enableGlobalDragMode() {
-    const layers = this.findLayers();
+    const layers = this.findLayers().filter(l => l.options.pmLock !== true);
 
     this._globalDragMode = true;
 
@@ -163,7 +163,8 @@ const Map = L.Class.extend({
     const isRelevant = layer =>
       layer.pm &&
       !(layer.pm.options && layer.pm.options.preventMarkerRemoval) &&
-      !(layer instanceof L.LayerGroup);
+      !(layer instanceof L.LayerGroup) &&
+        !layer.options.pmLock;
 
     this._globalRemovalMode = true;
     // handle existing layers
@@ -195,7 +196,7 @@ const Map = L.Class.extend({
   },
   enableGlobalEditMode(options) {
     // find all layers handled by leaflet.pm
-    const layers = this.findLayers();
+    const layers = this.findLayers().filter(l => l.options.pmLock !== true);
 
     this._globalEditMode = true;
 
