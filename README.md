@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://leaflet.pm.now.sh">
+  <a href="https://leafletpm.now.sh">
     <img width="130" alt="Geoman Logo" src="https://file-jxzyjgqwut.now.sh/" />
   </a>
 </p>
@@ -30,27 +30,27 @@
 
 ![Demo](https://file-gmeileqfmg.now.sh/)
 
-Need advanced features like GeoJSON Export, storing meta data and more?\
-Check out **[Geoman](https://geoman.io)**.
+Are you using leaflet.pm for commercial projects?\
+Check out **[Geoman](https://geoman.io/#pricing)** and consider subscribing to the **Leaflet.PM Supporter Plan** to support development of advanced leaflet.pm features. You will also get prioritized support and consultation.
 
 ## Documentation
 
--   [Installation](#installation)
--   [Getting Started](#getting-started)
--   [Drawing Mode](#drawing-mode)
--   [Editing Mode](#edit-mode)
--   [Drag Mode](#drag-mode)
--   [Removal Mode](#removal-mode)
--   [Cutting Mode](#cutting-mode)
--   [Style Customization](#customize-style)
--   [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Drawing Mode](#drawing-mode)
+- [Editing Mode](#edit-mode)
+- [Drag Mode](#drag-mode)
+- [Removal Mode](#removal-mode)
+- [Cutting Mode](#cutting-mode)
+- [Customization](#customize)
+- [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
 ### Installation
 
 #### Install via npm
 
 ```
-npm install leaflet.pm --save
+npm i leaflet.pm
 ```
 
 #### Install Manually
@@ -64,7 +64,9 @@ and include them in your project.
 
 CSS
 
+<!-- prettier-ignore -->
 ```html
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css" />
 ```
 
@@ -102,8 +104,8 @@ You can add a toolbar to the map to use leaflet.pm features via a user interface
 ```js
 // add leaflet.pm controls with some options to the map
 map.pm.addControls({
-    position: 'topleft',
-    drawCircle: false,
+  position: 'topleft',
+  drawCircle: false,
 });
 ```
 
@@ -135,8 +137,8 @@ map.pm.enableDraw('Marker', { snappable: false });
 map.pm.disableDraw('Marker');
 
 // let polygons finish their shape on double click
-map.pm.enableDraw('Poly', { finishOn: 'dblclick' });
-map.pm.disableDraw('Poly');
+map.pm.enableDraw('Polygon', { finishOn: 'dblclick' });
+map.pm.disableDraw('Polygon');
 ```
 
 All available options are specified in the Drawing Mode Section below.
@@ -147,16 +149,16 @@ Use Drawing Mode on a map like this
 
 ```js
 // enable polygon drawing mode
-map.pm.enableDraw('Poly', {
-    snappable: true,
-    snapDistance: 20,
+map.pm.enableDraw('Polygon', {
+  snappable: true,
+  snapDistance: 20,
 });
 
 // disable drawing mode
-map.pm.disableDraw('Poly');
+map.pm.disableDraw('Polygon');
 ```
 
-Currently available shapes are `Line`, `Rectangle`, `Poly`, `Marker`, `Circle`.
+Currently available shapes are `Marker`, `Circle`, `Line`, `Rectangle`, `Polygon` and `Cut`.
 You can get an array of all available shapes with:
 
 ```js
@@ -181,8 +183,8 @@ See the available options in the table below.
 You can listen to map events to hook into the drawing procedure like this:
 
 ```js
-map.on('pm:drawstart', (e) => {
-    console.log(e);
+map.on('pm:drawstart', e => {
+  console.log(e);
 });
 ```
 
@@ -199,9 +201,9 @@ There are also several events for layers during draw. Register an event like thi
 ```js
 // listen to vertexes being added to currently drawn layer (called workingLayer)
 map.on('pm:drawstart', ({ workingLayer }) => {
-    workingLayer.on('pm:vertexadded', (e) => {
-        console.log(e);
-    });
+  workingLayer.on('pm:vertexadded', e => {
+    console.log(e);
+  });
 });
 ```
 
@@ -215,6 +217,15 @@ Here's a list of layer events you can listen to:
 | pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               |
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
 
+For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
+```js
+L.geoJSON(data,{
+  snapIgnore : true
+})
+//This layer will be ignored by the snapping engine during drawing
+```
+
+
 ### Edit Mode
 
 Let's you edit vertices of layers. Use it like this:
@@ -222,7 +233,7 @@ Let's you edit vertices of layers. Use it like this:
 ```js
 // enable edit mode
 layer.pm.enable({
-    allowSelfIntersection: false,
+  allowSelfIntersection: false,
 });
 ```
 
@@ -249,8 +260,8 @@ You can listen to events related to editing on events like this:
 
 ```js
 // listen to when a layer is changed in edit mode
-layer.on('pm:edit', (e) => {
-    console.log(e);
+layer.on('pm:edit', e => {
+  console.log(e);
 });
 ```
 
@@ -287,8 +298,8 @@ The following methods are available on `map.pm`:
 You can also listen to specific edit mode events on the map instance like this:
 
 ```js
-map.on('pm:globaleditmodetoggled', (e) => {
-    console.log(e);
+map.on('pm:globaleditmodetoggled', e => {
+  console.log(e);
 });
 ```
 
@@ -351,7 +362,7 @@ layer(s) that is/are added to the map as a Polygon or MultiPolygon.
 ```js
 // enable cutting mode
 map.pm.Draw.Cut.enable({
-    allowSelfIntersection: false,
+  allowSelfIntersection: false,
 });
 ```
 
@@ -377,7 +388,35 @@ The following events are available on a map instance:
 | :----- | :----- | :-------------------------------- |
 | pm:cut | `e`    | Fired when any layer is being cut |
 
-### Customize Style
+### Customize
+
+##### Customize Language
+
+Change the language of user-facing copy in leaflet.pm
+
+```js
+map.pm.setLang('de');
+```
+
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr` and `nl`.
+To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
+
+You can also provide your own custom translations.
+
+```js
+const customTranslation = {
+  tooltips: {
+    placeMarker: 'Custom Marker Translation',
+  },
+};
+
+map.pm.setLang('customName', customTranslation, 'en');
+```
+
+The 3rd parameter is the fallback language in case you only want to override a few Strings.
+See the [english translation file](src/assets/translations/en.json) for all available strings.
+
+##### Customize Style
 
 In order to change the style of the lines during draw, pass these options to the
 `enableDraw()` function.
@@ -385,20 +424,20 @@ In order to change the style of the lines during draw, pass these options to the
 ```js
 // optional options for line style during draw. These are the defaults
 var options = {
-    // the lines between coordinates/markers
-    templineStyle: {
-        color: 'red',
-    },
+  // the lines between coordinates/markers
+  templineStyle: {
+    color: 'red',
+  },
 
-    // the line from the last marker to the mouse cursor
-    hintlineStyle: {
-        color: 'red',
-        dashArray: [5, 5],
-    },
+  // the line from the last marker to the mouse cursor
+  hintlineStyle: {
+    color: 'red',
+    dashArray: [5, 5],
+  },
 };
 
 // enable drawing mode for shape - e.g. Poly, Line, Circle, etc
-map.pm.enableDraw('Poly', options);
+map.pm.enableDraw('Polygon', options);
 ```
 
 To customize the style of the drawn layer with leaflet options, you can either
@@ -407,26 +446,26 @@ pass the options to `enableDraw`:
 ```js
 // optional options for line style during draw. These are the defaults
 var options = {
-    templineStyle: {},
-    hintlineStyle: {},
-    pathOptions: {
-        // add leaflet options for polylines/polygons
-        color: 'orange',
-        fillColor: 'green',
-    },
+  templineStyle: {},
+  hintlineStyle: {},
+  pathOptions: {
+    // add leaflet options for polylines/polygons
+    color: 'orange',
+    fillColor: 'green',
+  },
 };
 
 // enable drawing mode for shape - e.g. Poly or Line
-map.pm.enableDraw('Poly', options);
+map.pm.enableDraw('Polygon', options);
 ```
 
 or set the options generally:
 
 ```js
 map.pm.setPathOptions({
-    color: 'orange',
-    fillColor: 'green',
-    fillOpacity: 0.4,
+  color: 'orange',
+  fillColor: 'green',
+  fillOpacity: 0.4,
 });
 ```
 

@@ -3,7 +3,7 @@
 
 import Edit from './L.PM.Edit';
 
-Edit.Rectangle = Edit.Poly.extend({
+Edit.Rectangle = Edit.Polygon.extend({
   // initializes Rectangle Markers
   _initMarkers() {
     const map = this._map;
@@ -109,9 +109,6 @@ Edit.Rectangle = Edit.Poly.extend({
 
     // Update bounding box
     this._layer.setLatLngs(corners);
-
-    // Redraw the shape a final time
-    this._layer.redraw();
 
     this._layer.fire('pm:markerdragend', {
       markerEvent: e,

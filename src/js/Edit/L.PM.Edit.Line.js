@@ -2,6 +2,7 @@ import kinks from '@turf/kinks';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
+import { isEmptyDeep } from '../helpers';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
@@ -23,6 +24,8 @@ Edit.Line = Edit.extend({
     } else {
       this.disable();
     }
+
+    return this.enabled();
   },
 
   enable(options) {
@@ -395,7 +398,7 @@ Edit.Line = Edit.extend({
     // TODO: we may should remove all empty coord-rings here as well.
 
     // if no coords are left, remove the layer
-    if (this.isEmptyDeep(coords)) {
+    if (isEmptyDeep(coords)) {
       this._layer.remove();
     }
 
@@ -445,15 +448,6 @@ Edit.Line = Edit.extend({
       // TODO: maybe add latlng as well?
     });
   },
-  isEmptyDeep(l) {
-    // thanks for the function, Felix Heck
-    const flatten = list =>
-      list
-        .filter(x => ![null, '', undefined].includes(x))
-        .reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
-
-    return !flatten(l).length;
-  },
   findDeepMarkerIndex(arr, marker) {
     // thanks for the function, Felix Heck
     let result;
@@ -500,7 +494,7 @@ Edit.Line = Edit.extend({
     parent.splice(index, 1, latlng);
 
     // set new coords on layer
-    this._layer.setLatLngs(coords).redraw();
+    this._layer.setLatLngs(coords);
   },
 
   _onMarkerDrag(e) {

@@ -3,6 +3,33 @@ describe('Shows Tooltips', () => {
 
   const mapSelector = '#map';
 
+  it('Has Working Translations', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setLang('de');
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Platziere den ersten Marker mit Klick');
+    });
+  });
+  it('Supports Custom Translations', () => {
+    cy.window().then(({ map }) => {
+      const customTranslation = {
+        tooltips: {
+          placeMarker: 'Custom Marker Translation',
+        },
+      };
+
+      map.pm.setLang('customName', customTranslation, 'en');
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Custom Marker Translation');
+    });
+  });
+
   it('Has Marker Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
     cy.toolbarButton('marker').click();
@@ -127,7 +154,7 @@ describe('Shows Tooltips', () => {
 
   it('Properly disables tooltips', () => {
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Poly', {
+      map.pm.enableDraw('Polygon', {
         tooltips: false,
       });
     });
@@ -142,13 +169,13 @@ describe('Shows Tooltips', () => {
     cy.get('.active .action-cancel').click();
 
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Poly');
+      map.pm.enableDraw('Polygon');
     });
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
     cy.get('.active .action-cancel').click();
 
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Poly', {
+      map.pm.enableDraw('Polygon', {
         tooltips: true,
       });
     });

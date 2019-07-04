@@ -168,7 +168,7 @@ Edit.Circle = Edit.extend({
   _createOuterMarker(latlng) {
     const marker = this._createMarker(latlng);
 
-    marker.on('move', this._resizeCircle, this);
+    marker.on('drag', this._resizeCircle, this);
 
     return marker;
   },
