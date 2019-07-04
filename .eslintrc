@@ -2,6 +2,7 @@
   "extends": ["airbnb-base", "prettier"],
   "rules": {
     "no-underscore-dangle": 0,
+    "import/prefer-default-export": 0,
     "keyword-spacing": 0,
     "no-param-reassign": 0,
     "no-restricted-syntax": 0,
