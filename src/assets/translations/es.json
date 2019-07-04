@@ -23,6 +23,7 @@
         "editButton": "Editar Capas",
         "dragButton": "Arrastrar Capas",
         "cutButton": "Cortar Capas",
+        "unionButton": "Juntar Capas",
         "deleteButton": "Remover Capas"
     }
 }

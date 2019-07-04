@@ -1,0 +1,29 @@
+{
+    "tooltips": {
+        "placeMarker": "Clique para adicionar um marcador",
+        "firstVertex": "Clique para adicionar o primeiro vértice",
+        "continueLine": "Clique para continuar desenhando",
+        "finishLine": "Clique qualquer marcador existente para finalizar",
+        "finishPoly": "Clique o primeiro marcador para finalizar",
+        "finishRect": "Clique para finalizar",
+        "startCircle": "Clique para colocar o centro do círculo",
+        "finishCircle": "Clique para finalizar o círculo"
+    },
+    "actions": {
+        "finish": "Finalizar",
+        "cancel": "Cancelar",
+        "removeLastVertex": "Remover último vértice"
+    },
+    "buttonTitles": {
+        "drawMarkerButton": "Desenhar Marcador",
+        "drawPolyButton": "Desenhar Polígono",
+        "drawLineButton": "Desenhar Linha",
+        "drawCircleButton": "Desenhar Círculo",
+        "drawRectButton": "Desenhar Retângulo",
+        "editButton": "Editar Camadas",
+        "dragButton": "Arrastrar Camadas",
+        "cutButton": "Cortar Camadas",
+				"unionButton": "Juntar Camadas",
+        "deleteButton": "Remover Camadas"
+    }
+}

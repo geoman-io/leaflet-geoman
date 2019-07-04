@@ -23,6 +23,7 @@
     "editButton": "Edit Layers",
     "dragButton": "Drag Layers",
     "cutButton": "Cut Layers",
+    "unionButton": "Merge Layers",
     "deleteButton": "Remove Layers"
   }
 }

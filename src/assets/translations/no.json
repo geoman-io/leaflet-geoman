@@ -1,0 +1,29 @@
+{
+  "tooltips": {
+    "placeMarker": "Klikk for å plassere markøren",
+    "firstVertex": "Klikk for å plassere første vertex",
+    "continueLine": "Klikk for å fortsette tegningen",
+    "finishLine": "Klikk på en eksisterende markør for å fullføre",
+    "finishPoly": "Klikk på første markør for å fullføre",
+    "finishRect": "Klikk for å fullføre",
+    "startCircle": "Klikk for å plassere sirkelsenteret",
+    "finishCircle": "Klikk for å fullføre sirkelen"
+  },
+  "actions": {
+    "finish": "Ferdig",
+    "cancel": "Avbryt",
+    "removeLastVertex": "Fjern siste vertex"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Tegn markør",
+    "drawPolyButton": "Tegn polygoner",
+    "drawLineButton": "Tegn polylin",
+    "drawCircleButton": "Tegn sirkel",
+    "drawRectButton": "Tegn rektangel",
+    "editButton": "Rediger lag",
+    "dragButton": "Dra lag",
+    "cutButton": "Skjær lag",
+    "unionButton": "Slå lag sammen",
+    "deleteButton": "Fjern lag"
+  }
+}
