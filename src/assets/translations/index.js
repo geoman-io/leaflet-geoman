@@ -6,6 +6,7 @@ import ru from './ru.json';
 import es from './es.json';
 import nl from './nl.json';
 import fr from './fr.json';
+import zh from './zh.json';
 
 export default {
   en,
@@ -16,4 +17,5 @@ export default {
   es,
   nl,
   fr,
+  zh
 };
