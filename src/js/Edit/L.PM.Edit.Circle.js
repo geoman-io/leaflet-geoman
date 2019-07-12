@@ -132,6 +132,12 @@ Edit.Circle = Edit.extend({
       markerEvent: e,
     });
   },
+  _onMarkerDrag(e) {
+    // fire markerdrag event
+    this._layer.fire('pm:markerdrag', {
+      markerEvent: e,
+    });
+  },
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
     const B = this._outerMarker.getLatLng();
@@ -183,6 +189,7 @@ Edit.Circle = Edit.extend({
 
     marker.on('dragstart', this._onMarkerDragStart, this);
     marker.on('dragend', this._onMarkerDragEnd, this);
+    marker.on('drag', this._onMarkerDrag, this);
 
     this._helperLayers.addLayer(marker);
 

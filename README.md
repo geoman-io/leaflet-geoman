@@ -273,6 +273,7 @@ The following events are available on a layer instance:
 | pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         |
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       |
 | pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 |
+| pm:markerdrag   | `e`    | Fired continuously while dragging a vertex-marker
 | pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          |
 | pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            |
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              |

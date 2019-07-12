@@ -54,6 +54,11 @@ const SnapMixin = {
     this._snapList.splice(index, 1);
   },
   _handleSnapping(e) {
+    // fire an event continuously while marker is being dragged
+    this._layer.fire('pm:markerdrag', {
+      markerEvent: e,
+    });
+
     // if snapping is disabled via holding ALT during drag, stop right here
     if (e.originalEvent.altKey) {
       return false;
