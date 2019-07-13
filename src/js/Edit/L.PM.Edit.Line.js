@@ -551,11 +551,6 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._handleLayerStyle();
     }
-
-    // fire markerdrag event
-    this._layer.fire('pm:markerdrag', {
-      markerEvent: e,
-    });
   },
 
   _onMarkerDragEnd(e) {

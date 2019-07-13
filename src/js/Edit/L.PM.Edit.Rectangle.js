@@ -94,10 +94,6 @@ Edit.Rectangle = Edit.Polygon.extend({
     if (!draggedMarker._snapped) {
       this._adjustRectangleForMarkerMove(draggedMarker);
     }
-
-    this._layer.fire('pm:markerdrag', {
-      markerEvent: e,
-    });
   },
 
   _onMarkerDragEnd(e) {
