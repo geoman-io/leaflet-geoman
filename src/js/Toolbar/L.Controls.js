@@ -21,6 +21,14 @@ const PMButton = L.Control.extend({
     return this._container;
   },
   onRemove() {
+    //Disable all modes, else Toolbar Button need dbl click
+    this._map.pm.disableGlobalDragMode();
+    this._map.pm.disableGlobalEditMode();
+    this._map.pm.disableGlobalRemovalMode();
+    this._map.pm.Draw.Cut.disable();
+
+    this.toggle(false); //Disable button container
+
     this.buttonsDomNode.remove();
 
     return this._container;
@@ -99,9 +107,27 @@ const PMButton = L.Control.extend({
           this._map.pm.Draw[button.jsClass]._finishShape(e);
         },
       },
+      layer: {
+        text: getTranslation('actions.layer'),
+        onClick(e) {
+          this._map.pm.changeDragMode(0);
+        },
+      },
+      layergroup: {
+        text: getTranslation('actions.layergroup'),
+        onClick(e) {
+          this._map.pm.changeDragMode(1);
+        },
+      },
     };
 
     activeActions.forEach(name => {
+
+      if(!this._map.pm._layerGroupDragMenu && (name === 'layer' || name === 'layergroup')){
+        this._map.pm._dragMode = 0;
+        return;
+      }
+
       const action = actions[name];
       const actionNode = L.DomUtil.create(
         'a',

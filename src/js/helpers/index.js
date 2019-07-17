@@ -9,7 +9,12 @@ export function getTranslation(path) {
     lang = 'en';
   }
 
-  return get(translations[lang], path);
+  let text = get(translations[lang], path);
+  if(text){ //Fallback to en
+    return text;
+  }else{
+    return get(translations['en'], path);
+  }
 }
 
 export function isEmptyDeep(l) {

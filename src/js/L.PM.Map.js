@@ -7,6 +7,8 @@ const Map = L.Class.extend({
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
 
+    this._dragMode = 1; //0 Layer, 1 Layergroup
+    this._layerGroupDragMenu = true;
     this._globalRemovalMode = false;
   },
   setLang(lang = 'en', t, fallback = 'en') {
@@ -54,7 +56,9 @@ const Map = L.Class.extend({
       if (
         layer instanceof L.Polyline ||
         layer instanceof L.Marker ||
-        layer instanceof L.Circle
+        layer instanceof L.Circle ||
+        layer instanceof L.LayerGroup && layer.options && layer.options.pmDrag
+
       ) {
         layers.push(layer);
       }
@@ -83,10 +87,23 @@ const Map = L.Class.extend({
   globalDragModeEnabled() {
     return !!this._globalDragMode;
   },
+  toggleLayerGroupDragMenu(){
+    this._layerGroupDragMenu = !this._layerGroupDragMenu;
+    this.Toolbar.reinit();
+  },
+  changeDragMode(mode){
+    this._dragMode = mode;
+    this.disableGlobalDragMode();
+    this.enableGlobalDragMode();
+  },
   enableGlobalDragMode() {
-    const layers = this.findLayers();
+    var layers = this.findLayers();
 
     this._globalDragMode = true;
+
+    if(this._dragMode === 0){
+      layers = layers.filter(l => !(l instanceof L.LayerGroup));
+    }
 
     layers.forEach(layer => {
       layer.pm.enableLayerDrag();

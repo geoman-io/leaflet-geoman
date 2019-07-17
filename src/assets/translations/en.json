@@ -12,7 +12,9 @@
   "actions": {
     "finish": "Finish",
     "cancel": "Cancel",
-    "removeLastVertex": "Remove Last Vertex"
+    "removeLastVertex": "Remove Last Vertex",
+    "layer": "Layer",
+    "layergroup": "Layergroup"
   },
   "buttonTitles": {
     "drawMarkerButton": "Draw Marker",
