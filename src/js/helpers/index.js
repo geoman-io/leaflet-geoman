@@ -10,7 +10,7 @@ export function getTranslation(path) {
   }
 
   let text = get(translations[lang], path);
-  if(text){ //Fallback to en
+  if(text){ //Fallback to english
     return text;
   }else{
     return get(translations['en'], path);
