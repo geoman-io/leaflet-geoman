@@ -26,6 +26,7 @@ Draw.Polygon = Draw.Line.extend({
       return;
     }
 
+
     // create the leaflet shape and add it to the map
     if (e && e.type === 'dblclick') {
       // Leaflet creates an extra node with double click

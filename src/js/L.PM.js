@@ -15,6 +15,7 @@ import Draw from './Draw/L.PM.Draw';
 import './Draw/L.PM.Draw.Marker';
 import './Draw/L.PM.Draw.Line';
 import './Draw/L.PM.Draw.Polygon';
+import './Draw/L.PM.Draw.Triangle';
 import './Draw/L.PM.Draw.Rectangle';
 import './Draw/L.PM.Draw.Circle';
 import './Draw/L.PM.Draw.Cut';
@@ -24,6 +25,7 @@ import './Edit/L.PM.Edit.LayerGroup';
 import './Edit/L.PM.Edit.Marker';
 import './Edit/L.PM.Edit.Line';
 import './Edit/L.PM.Edit.Polygon';
+import './Edit/L.PM.Edit.Triangle';
 import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Circle';
 
@@ -78,6 +80,14 @@ L.PM = L.PM || {
     }
 
     L.Polygon.addInitHook(initPolygon);
+
+    function initTriangle() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.Triangle(this);
+      }
+    }
+
+    L.Triangle.addInitHook(initTriangle);
 
     function initRectangle() {
       if (!this.options.pmIgnore) {

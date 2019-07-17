@@ -21,6 +21,8 @@ Draw.Cut = Draw.Polygon.extend({
       .filter(l => l instanceof L.Polygon)
       // exclude the drawn one
       .filter(l => l !== layer)
+      // exclude pmIgnore
+      .filter(l => l.options.pmLock !== true)
       // only layers with intersections
       .filter(l => {
         try {

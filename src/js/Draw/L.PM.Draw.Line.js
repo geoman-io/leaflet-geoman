@@ -71,6 +71,7 @@ Draw.Line = Draw.extend({
     // finish on layer event
     // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
     if (this.options.finishOn) {
+      console.log(this.options.finishOn);
       this._map.on(this.options.finishOn, this._finishShape, this);
     }
 
@@ -88,6 +89,18 @@ Draw.Line = Draw.extend({
 
     // sync the hintline with hint marker
     this._hintMarker.on('move', this._syncHintLine, this);
+
+    if(this.options.allowShift) {
+      //Because "this" not working in the listener
+      window.pm = {
+        _map:  this._map,
+        _shiftpressed: false,
+        _defaultBox: this._map.boxZoom.enabled(),
+      };
+      //Not working in IE, problem?
+      document.addEventListener('keydown', this._keyDownFunction);
+      document.addEventListener('keyup', this._keyDownFunction);
+    }
 
     // fire drawstart event
     this._map.fire('pm:drawstart', {
@@ -126,6 +139,12 @@ Draw.Line = Draw.extend({
       this._map.doubleClickZoom.enable();
     }
 
+    document.removeEventListener('keydown', this._keyDownFunction);
+    document.removeEventListener('keyup', this._keyDownFunction);
+    //Reset to default boxZoom
+    if(this.options.allowShift && window.pm._defaultBox) {
+      window.pm._defaultBox === true ? window.pm._map.boxZoom.enable() : window.pm._map.boxZoom.disable();
+    }
     // remove layer
     this._map.removeLayer(this._layerGroup);
 
@@ -169,8 +188,19 @@ Draw.Line = Draw.extend({
     }
   },
   _syncHintMarker(e) {
-    // move the cursor marker
-    this._hintMarker.setLatLng(e.latlng);
+    const polyPoints = this._layer.getLatLngs();
+    if (polyPoints.length > 0 && window.pm._shiftpressed && this.options.allowShift) {
+      const lastPolygonPoint = polyPoints[polyPoints.length - 1];
+      var latlng_mouse = e.latlng;
+
+      var pt = this._getPointofAngle(lastPolygonPoint,latlng_mouse);
+
+      this._hintMarker.setLatLng(pt);
+      e.latlng = pt; //Because of intersection
+    }else {
+      // move the cursor marker
+      this._hintMarker.setLatLng(e.latlng);
+    }
 
     // if snapping is enabled, do it
     if (this.options.snappable) {
@@ -245,6 +275,14 @@ Draw.Line = Draw.extend({
     this._syncHintLine();
   },
   _createVertex(e) {
+    //Save mouse latlng bevor overwritten
+    var latlng_mouse = e.latlng;
+    const polyPoints = this._layer.getLatLngs();
+    if (polyPoints.length > 0 && window.pm._shiftpressed && this.options.allowShift) {
+      const lastPolygonPoint = polyPoints[polyPoints.length - 1];
+      e.latlng = this._getPointofAngle(lastPolygonPoint,e.latlng); //Because of Intersection
+    }
+
     // don't create a vertex if we have a selfIntersection and it is not allowed
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(true, e.latlng);
@@ -254,10 +292,12 @@ Draw.Line = Draw.extend({
       }
     }
 
+
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
-      this._hintMarker.setLatLng(e.latlng);
+        // move the cursor marker
+        this._hintMarker.setLatLng(e.latlng);
     }
 
     // get coordinate for new vertex by hintMarker (cursor marker)
@@ -280,7 +320,10 @@ Draw.Line = Draw.extend({
     this._layer.addLatLng(latlng);
     const newMarker = this._createMarker(latlng, first);
 
-    this._hintline.setLatLngs([latlng, latlng]);
+    //Draw new Line to mouse after creating
+    var pt2 = this._getPointofAngle(latlng,latlng_mouse);
+    this._hintline.setLatLngs([latlng, pt2]);
+    this._hintMarker.setLatLng(pt2);
 
     this._layer.fire('pm:vertexadded', {
       shape: this._shape,
@@ -353,4 +396,69 @@ Draw.Line = Draw.extend({
 
     return marker;
   },
+  _keyDownFunction(e) {
+   // this._shiftpressed = e.shiftKey; //not working
+    window.pm._shiftpressed = e.shiftKey;
+
+    //Reset to default boxZoom
+    if(window.pm._defaultBox) {
+      e.shiftKey === true ? window.pm._map.boxZoom.disable() : window.pm._map.boxZoom.enable();
+    }
+  },
+  _getPointofAngle(latlng_p1,latlng_p2) {
+    var p1 = this._map.latLngToContainerPoint(latlng_p1);
+    var p2 = this._map.latLngToContainerPoint(latlng_p2);
+
+    var distance2 = this._distance(p1, p2);
+
+    //Get bearing between the two points
+    var bearing = this._bearing(p1, p2);
+
+    var angle = 0;
+    //45° steps
+    if(bearing <= 22.5 && bearing > -22.5){
+      angle = 0;
+    }else if(bearing <= 67.5 && bearing > 22.5){
+      angle = 45;
+    }else if(bearing <= 112.5 && bearing > 67.5){
+      angle = 90;
+    }else if(bearing <= 157.5 && bearing > 112.5){
+      angle = 135;
+    }else if(bearing <= 180 && bearing > 157.5){
+      angle = 180;
+    }else if(bearing <= -157.5 && bearing > -180){
+      angle = -180;
+    }else if(bearing <= -112.5 && bearing > -157.5 ){
+      angle = -135;
+    }else if(bearing <= -67.5 && bearing > -112.5 ){
+      angle = -90;
+    }else if(bearing <= -22.5 && bearing > -67.5 ){
+      angle = -45;
+    }
+
+    var point_result2 = this._findDestinationPoint(p1, distance2, angle);
+    return this._map.containerPointToLatLng(point_result2);
+  },
+
+  _findDestinationPoint(point, distance, angle) {
+    var result = {};
+
+    angle = angle - 90;
+
+    result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + point.x);
+    result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + point.y);
+
+    return result;
+  },
+  _distance(p1,p2){
+    var x = p1.x - p2.x;
+    var y = p1.y - p2.y;
+    return Math.sqrt( x*x + y*y );
+  },
+  _bearing(p1,p2){
+    var x = p1.x - p2.x;
+    var y = p1.y - p2.y;
+    var _angle = ((Math.atan2(y, x) * 180 / Math.PI) * (-1) - 90)* (-1);
+    return _angle < 0 ? _angle + 180 : _angle - 180;
+  }
 });

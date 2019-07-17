@@ -10,6 +10,7 @@ const Toolbar = L.Class.extend({
     drawRectangle: true,
     drawPolyline: true,
     drawPolygon: true,
+    drawTriangle: true,
     drawCircle: true,
     editMode: true,
     dragMode: true,
@@ -79,6 +80,7 @@ const Toolbar = L.Class.extend({
         drawPolyline: 'control-icon leaflet-pm-icon-polyline',
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
+        drawTriangle: 'control-icon leaflet-pm-icon-triangle',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
         editMode: 'control-icon leaflet-pm-icon-edit',
         dragMode: 'control-icon leaflet-pm-icon-drag',
@@ -186,6 +188,22 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       actions: ['finish', 'removeLastVertex', 'cancel'],
+    };
+
+    const drawTriangleButton = {
+      title: getTranslation('buttonTitles.drawTriangleButton'),
+      className: 'control-icon leaflet-pm-icon-triangle',
+      jsClass: 'Polygon',
+      onClick: () => {},
+      afterClick: () => {
+        // toggle drawing mode
+        this.map.pm.Draw.Triangle.toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['cancel'],
     };
 
     const drawLineButton = {
@@ -306,6 +324,7 @@ const Toolbar = L.Class.extend({
     this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
     this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
+    this._addButton('drawTriangle', new L.Control.PMButton(drawTriangleButton));
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
     this._addButton('editMode', new L.Control.PMButton(editButton));
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
