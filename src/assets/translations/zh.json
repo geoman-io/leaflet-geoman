@@ -1,0 +1,28 @@
+{
+  "tooltips": {
+    "placeMarker": "点击添加标记",
+    "firstVertex": "点击添加第一个顶点",
+    "continueLine": "点击继续画线",
+    "finishLine": "点击任一顶点结束标记",
+    "finishPoly": "点击第一个顶点结束标记",
+    "finishRect": "点击结束标记",
+    "startCircle": "点击确定圆心",
+    "finishCircle": "点击结束标记"
+  },
+  "actions": {
+    "finish": "完成",
+    "cancel": "取消",
+    "removeLastVertex": "移除上一个顶点"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "标记点",
+    "drawPolyButton": "标记多边形",
+    "drawLineButton": "绘制折线",
+    "drawCircleButton": "画圆",
+    "drawRectButton": "绘制矩形",
+    "editButton": "编辑图层",
+    "dragButton": "拖拽图层",
+    "cutButton": "剪切图层",
+    "deleteButton": "移除图层"
+  }
+}
