@@ -187,4 +187,29 @@ describe('Shows Tooltips', () => {
     cy.toolbarButton('polygon').click();
     cy.get('.leaflet-tooltip-bottom').should('exist');
   });
+
+  it('Has Working translation for circle marker tooltip', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setLang('es');
+    });
+
+    cy.get('.leaflet-tooltip-bottom').should('not.exist');
+    cy.toolbarButton('circle-marker').click();
+
+    cy.get('.leaflet-tooltip-bottom').should('exist');
+
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Presiona para colocar un marcador de circulo');
+    });
+
+    cy.get(mapSelector).click(290, 250);
+
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Presiona para colocar un marcador de circulo');
+    });
+
+    cy.toolbarButton('circle-marker').click();
+
+    cy.get('.leaflet-tooltip-bottom').should('not.exist');
+  });
 });

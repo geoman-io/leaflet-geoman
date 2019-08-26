@@ -9,7 +9,7 @@
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
   Draw, Edit, Drag, Cut and Snap Layers<br>
-  Supports Markers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
+  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
   <a href="https://badge.fury.io/js/leaflet.pm">
@@ -115,10 +115,11 @@ See the available options in the table below.
 | :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
 | position      | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
 | drawMarker    | `true`      | adds button to draw markers                                                                      |
+| drawCircleMarker    | `true`      | adds button to draw circle markers                                                                      |
 | drawPolyline  | `true`      | adds button to draw rectangle                                                                    |
 | drawRectangle | `true`      | adds button to draw rectangle                                                                    |
 | drawPolygon   | `true`      | adds button to draw polygon                                                                      |
-| drawCircle    | `true`      | adds button to draw cricle                                                                       |
+| drawCircle    | `true`      | adds button to draw circle                                                                       |
 | editMode      | `true`      | adds button to toggle edit mode for all layers                                                   |
 | dragMode      | `true`      | adds button to toggle drag mode for all layers                                                   |
 | cutPolygon    | `true`      | adds button to cut a hole in a polygon                                                           |

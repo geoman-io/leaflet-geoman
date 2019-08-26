@@ -54,7 +54,8 @@ const Map = L.Class.extend({
       if (
         layer instanceof L.Polyline ||
         layer instanceof L.Marker ||
-        layer instanceof L.Circle
+        layer instanceof L.Circle ||
+        layer instanceof L.CircleMarker
       ) {
         layers.push(layer);
       }
@@ -69,6 +70,7 @@ const Map = L.Class.extend({
     return layers;
   },
   removeLayer(e) {
+
     const layer = e.target;
     // only remove layer, if it's handled by leaflet.pm,
     // not a tempLayer and not currently being dragged
