@@ -50,7 +50,7 @@ Check out **[Geoman](https://geoman.io/#pricing)** and consider subscribing to t
 #### Install via npm
 
 ```
-npm install leaflet.pm --save
+npm i leaflet.pm
 ```
 
 #### Install Manually
@@ -216,6 +216,15 @@ Here's a list of layer events you can listen to:
 | pm:snap         | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`                                                 |
 | pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               |
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
+
+For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
+```js
+L.geoJSON(data,{
+  snapIgnore : true
+})
+//This layer will be ignored by the snapping engine during drawing
+```
+
 
 ### Edit Mode
 
@@ -408,7 +417,7 @@ Change the language of user-facing copy in leaflet.pm
 map.pm.setLang('de');
 ```
 
-Currently available languages are `en`, `de`, `it`, `ru` and `ro`.
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br` and `nl`.
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.
