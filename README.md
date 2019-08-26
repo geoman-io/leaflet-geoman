@@ -303,6 +303,7 @@ map.on('pm:globaleditmodetoggled', e => {
   console.log(e);
 });
 ```
+The event has an object with an enabled boolean and a reference to the map.
 
 ### Drag Mode
 
@@ -326,6 +327,15 @@ The following events are available on a layer instance:
 | pm:drag      | `e`    | Fired when a layer is dragged.           |
 | pm:dragend   | `e`    | Fired when a layer stops being dragged.  |
 
+You can also listen to specific drag mode events on the map instance like this:
+
+```js
+map.on('pm:globaldrawmodetoggled', e => {
+  console.log(e);
+});
+```
+The event has an object with an enabled boolean and a reference to the map.
+
 ### Removal Mode
 
 ```js
@@ -346,6 +356,15 @@ The following events are available on a map instance:
 | :---------- | :----- | :------------------------------------------------------- |
 | pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           |
 | layerremove | `e`    | Standard Leaflet event. Fired when any layer is removed. |
+
+You can also listen to specific removal mode events on the map instance like this:
+
+```js
+map.on('pm:globalremovalmodetoggled', e => {
+  console.log(e);
+});
+```
+The event has an object with an enabled boolean and a reference to the map.
 
 ### Cutting Mode
 
