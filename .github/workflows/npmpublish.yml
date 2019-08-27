@@ -1,9 +1,6 @@
 name: Node.js Package
 
-on:
-  push:
-    branches:
-    - release/*
+on: release
 
 jobs:
   build:
