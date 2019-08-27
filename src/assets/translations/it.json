@@ -7,7 +7,8 @@
     "finishPoly": "Clicca il primo marker per terminare",
     "finishRect": "Clicca per terminare",
     "startCircle": "Clicca per posizionare il punto centrale del cerchio",
-    "finishCircle": "Clicca per terminare il cerchio"
+    "finishCircle": "Clicca per terminare il cerchio",
+    "placeCircleMarker": "Clicca per posizionare un Marker del cherchio"
   },
   "actions": {
     "finish": "Termina",
@@ -23,6 +24,7 @@
     "editButton": "Modifica Livelli",
     "dragButton": "Sposta Livelli",
     "cutButton": "Ritaglia Livelli",
-    "deleteButton": "Elimina Livelli"
+    "deleteButton": "Elimina Livelli",
+    "drawCircleMarkerButton": "Disegna Marker del Cherchio"
   }
 }

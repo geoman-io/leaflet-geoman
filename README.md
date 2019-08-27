@@ -9,7 +9,7 @@
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
   Draw, Edit, Drag, Cut and Snap Layers<br>
-  Supports Markers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
+  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
   <a href="https://badge.fury.io/js/leaflet.pm">
@@ -115,10 +115,11 @@ See the available options in the table below.
 | :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
 | position      | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
 | drawMarker    | `true`      | adds button to draw markers                                                                      |
+| drawCircleMarker    | `true`      | adds button to draw circle markers                                                                      |
 | drawPolyline  | `true`      | adds button to draw rectangle                                                                    |
 | drawRectangle | `true`      | adds button to draw rectangle                                                                    |
 | drawPolygon   | `true`      | adds button to draw polygon                                                                      |
-| drawCircle    | `true`      | adds button to draw cricle                                                                       |
+| drawCircle    | `true`      | adds button to draw circle                                                                       |
 | editMode      | `true`      | adds button to toggle edit mode for all layers                                                   |
 | dragMode      | `true`      | adds button to toggle drag mode for all layers                                                   |
 | cutPolygon    | `true`      | adds button to cut a hole in a polygon                                                           |
@@ -303,6 +304,7 @@ map.on('pm:globaleditmodetoggled', e => {
   console.log(e);
 });
 ```
+The event has an object with an enabled boolean and a reference to the map.
 
 ### Drag Mode
 
@@ -326,6 +328,15 @@ The following events are available on a layer instance:
 | pm:drag      | `e`    | Fired when a layer is dragged.           |
 | pm:dragend   | `e`    | Fired when a layer stops being dragged.  |
 
+You can also listen to specific drag mode events on the map instance like this:
+
+```js
+map.on('pm:globaldrawmodetoggled', e => {
+  console.log(e);
+});
+```
+The event has an object with an enabled boolean and a reference to the map.
+
 ### Removal Mode
 
 ```js
@@ -346,6 +357,15 @@ The following events are available on a map instance:
 | :---------- | :----- | :------------------------------------------------------- |
 | pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           |
 | layerremove | `e`    | Standard Leaflet event. Fired when any layer is removed. |
+
+You can also listen to specific removal mode events on the map instance like this:
+
+```js
+map.on('pm:globalremovalmodetoggled', e => {
+  console.log(e);
+});
+```
+The event has an object with an enabled boolean and a reference to the map.
 
 ### Cutting Mode
 
@@ -399,7 +419,7 @@ Change the language of user-facing copy in leaflet.pm
 map.pm.setLang('de');
 ```
 
-Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr` and `nl`.
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br` and `nl`.
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.
