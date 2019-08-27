@@ -1,6 +1,6 @@
 {
-  "name": "leaflet.pm",
-  "version": "2.1.0",
+  "name": "@codeofsumit/leaflet.pm",
+  "version": "2.1.0-beta.0",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -61,7 +61,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codeofsumit/leaflet.pm.git"
+    "url": "git://github.com/codeofsumit/leaflet.pm.git"
   },
   "author": {
     "name": "Sumit Kumar",
@@ -78,5 +78,8 @@
     "tabWidth": 2,
     "semi": true,
     "singleQuote": true
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
