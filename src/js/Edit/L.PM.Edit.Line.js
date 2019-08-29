@@ -16,6 +16,8 @@ Edit.Line = Edit.extend({
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
+    this._isDragging = false;
+    this._markerDistances = [];
   },
 
   toggleEdit(options) {
@@ -48,7 +50,11 @@ Edit.Line = Edit.extend({
     this._enabled = true;
 
     // init markers
-    this._initMarkers();
+    if(this.options.showMarkersOnHover) {
+      this._layer.on('mouseover', this._initMarkers, this);
+    }else{
+      this._initMarkers();
+    }
 
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
@@ -90,11 +96,16 @@ Edit.Line = Edit.extend({
       return false;
     }
     poly.pm._enabled = false;
-    poly.pm._markerGroup.clearLayers();
+    if (poly.pm._markerGroup) {
+      poly.pm._markerGroup.clearLayers();
+    }
 
     // clean up draggable
     poly.off('mousedown');
     poly.off('mouseup');
+
+    // clean up showMarkersOnHover
+    poly.off('mouseover');
 
     // remove onRemove listener
     this._layer.off('remove', this._onLayerRemove, this);
@@ -176,7 +187,9 @@ Edit.Line = Edit.extend({
     }
   },
 
-  _initMarkers() {
+  _initMarkers(e) {
+    if(this._isDragging) return false;
+
     const map = this._map;
     const coords = this._layer.getLatLngs();
 
@@ -197,15 +210,61 @@ Edit.Line = Edit.extend({
         return coordsArr.map(handleRing, this);
       }
 
-      // the marker array, it includes only the markers of vertexes (no middle markers)
-      const ringArr = coordsArr.map(this._createMarker, this);
+      let ringArr = [];
+      this._markerDistances = [];
+      if(this.options.showMarkersOnHover) {
+        for (var n in coordsArr) {
+          if(typeof coordsArr[n] === "undefined") continue;
+          let distance = Math.sqrt(Math.pow(coordsArr[n].lat - e.latlng.lat, 2) + Math.pow(coordsArr[n].lng - e.latlng.lng, 2));
+          this._markerDistances.push({n: parseInt(n), distance: distance});
+        }
+        this._markerDistances = this._markerDistances.sort((a, b) => a.distance - b.distance);
+
+        let coordsArrSlice = [];
+        for (var n = 0; n < this.options.markersOnHoverCount; n++) {
+          if(typeof coordsArr[n] === "undefined") continue;
+          coordsArrSlice.push(coordsArr[this._markerDistances[n].n]);
+        }
+        coordsArr = coordsArrSlice;
+
+        ringArr = coordsArr.map((v, k) => {
+          return this._createMarker(v, this._markerDistances[k].n);
+        });
+      }else{
+        // the marker array, it includes only the markers of vertexes (no middle markers)
+        ringArr = coordsArr.map((v, k) => {
+          return this._createMarker(v, k);
+        });
+      }
+
+
 
       // create small markers in the middle of the regular markers
       coordsArr.map((v, k) => {
         // find the next index fist
-        const nextIndex = this.isPolygon() ? (k + 1) % coordsArr.length : k + 1;
-        // create the marker
-        return this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
+        let isCreatedMarker = {current: false, next: false};
+        let nextIndex = null;
+
+        if(this.options.showMarkersOnHover) {
+          let fullK = this._markerDistances[k].n;
+          const fullNextIndex = this.isPolygon() ? (fullK + 1) % this._markerDistances.length : fullK + 1;
+          
+          for (var n = 0; n < this.options.markersOnHoverCount; n++) {
+            if(typeof this._markerDistances[n] === "undefined") continue;
+            if (this._markerDistances[n].n == fullK) isCreatedMarker.current = true;
+            if (this._markerDistances[n].n == fullNextIndex) {
+                isCreatedMarker.next = true;
+                nextIndex = n;
+            }
+          }
+        }else{
+          nextIndex = this.isPolygon() ? (k + 1) % coordsArr.length : k + 1;
+        }
+
+        if(!this.options.showMarkersOnHover || isCreatedMarker.current && isCreatedMarker.next) {
+          // create the marker
+          return this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
+        }
       });
 
       return ringArr;
@@ -220,13 +279,14 @@ Edit.Line = Edit.extend({
   },
 
   // creates initial markers for coordinates
-  _createMarker(latlng) {
+  _createMarker(latlng, index) {
     const marker = new L.Marker(latlng, {
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
 
     marker._pmTempLayer = true;
+    marker._index = index;
 
     marker.on('dragstart', this._onMarkerDragStart, this);
     marker.on('move', this._onMarkerDrag, this);
@@ -314,6 +374,24 @@ Edit.Line = Edit.extend({
     // define the markers array that is edited
     const markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
+
+    // recalculate marker indexes
+    if(this.options.showMarkersOnHover) {
+      for (var n = 0; n < this._markerDistances.length; n++) {
+        if (typeof markerArr[n] === "undefined") continue;
+        let indexOrigin = this._markerDistances[n].n;
+        if(indexOrigin >= index+1){
+          markerArr[n]._index++;
+          this._markerDistances[n].n++;
+        }
+      }
+    }else{
+      for (var n = index+1; n < markerArr.length; n++) {
+        if (typeof markerArr[n] === "undefined") continue;
+        markerArr[n]._index++;
+      }
+    }
+    newM._index = leftM._index + 1;
 
     // add coordinate to coordinate array
     coordsRing.splice(index + 1, 0, latlng);
@@ -449,31 +527,41 @@ Edit.Line = Edit.extend({
     });
   },
   findDeepMarkerIndex(arr, marker) {
-    // thanks for the function, Felix Heck
-    let result;
-
-    const run = path => (v, i) => {
-      const iRes = path.concat(i);
-
-      if (v._leaflet_id === marker._leaflet_id) {
-        result = iRes;
-        return true;
-      }
-
-      return Array.isArray(v) && v.some(run(iRes));
-    };
-    arr.some(run([]));
-
     let returnVal = {};
+    if(this.options.showMarkersOnHover) {
+      if (typeof marker._index !== "undefined") {
+        returnVal = {
+          indexPath: this._layer instanceof L.Polygon ? [0, marker._index] : [marker._index],
+          index: marker._index,
+          parentPath: this._layer instanceof L.Polygon ? [0] : [],
+        };
+      }
+    }else {
+      // thanks for the function, Felix Heck
+      let result;
 
-    if (result) {
-      returnVal = {
-        indexPath: result,
-        index: result[result.length - 1],
-        parentPath: result.slice(0, result.length - 1),
+      const run = path => (v, i) => {
+        const iRes = path.concat(i);
+
+        if (v._leaflet_id === marker._leaflet_id) {
+          result = iRes;
+          return true;
+        }
+
+        return Array.isArray(v) && v.some(run(iRes));
       };
-    }
+      arr.some(run([]));
 
+      returnVal = {};
+
+      if (result) {
+        returnVal = {
+          indexPath: result,
+          index: result[result.length - 1],
+          parentPath: result.slice(0, result.length - 1),
+        };
+      }
+    }
     return returnVal;
   },
   updatePolygonCoordsFromMarkerDrag(marker) {
@@ -518,33 +606,48 @@ Edit.Line = Edit.extend({
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
     // find the indizes of next and previous markers
-    const nextMarkerIndex = (index + 1) % markerArr.length;
-    const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+    let nextMarkerIndex = null;
+    let prevMarkerIndex = null;
+    if(!this.options.showMarkersOnHover) {
+      nextMarkerIndex = (index + 1) % markerArr.length;
+      prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+    }else{
+      let nextMarkerIndexOrigin = (marker._index + 1) % this._markerDistances.length;
+      let prevMarkerIndexOrigin = (marker._index + (this._markerDistances.length - 1)) % this._markerDistances.length;
+
+      for (var n = 0; n < this.options.markersOnHoverCount; n++) {
+        if (typeof this._markerDistances[n] === "undefined") continue;
+        if (this._markerDistances[n].n == nextMarkerIndexOrigin) nextMarkerIndex = n;
+        if (this._markerDistances[n].n == prevMarkerIndexOrigin) prevMarkerIndex = n;
+      }
+    }
 
     // update middle markers on the left and right
     // be aware that "next" and "prev" might be interchanged, depending on the geojson array
     const markerLatLng = marker.getLatLng();
 
     // get latlng of prev and next marker
-    const prevMarkerLatLng = markerArr[prevMarkerIndex].getLatLng();
-    const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
-
-    if (marker._middleMarkerNext) {
-      const middleMarkerNextLatLng = Utils.calcMiddleLatLng(
-        this._map,
-        markerLatLng,
-        nextMarkerLatLng
-      );
-      marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
+    if( nextMarkerIndex !== null ) {
+      const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
+      if (marker._middleMarkerNext) {
+        const middleMarkerNextLatLng = Utils.calcMiddleLatLng(
+          this._map,
+          markerLatLng,
+          nextMarkerLatLng
+        );
+        marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
+      }
     }
-
-    if (marker._middleMarkerPrev) {
-      const middleMarkerPrevLatLng = Utils.calcMiddleLatLng(
-        this._map,
-        markerLatLng,
-        prevMarkerLatLng
-      );
-      marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
+    if( prevMarkerIndex !== null ) {
+      const prevMarkerLatLng = markerArr[prevMarkerIndex].getLatLng();
+      if (marker._middleMarkerPrev) {
+        const middleMarkerPrevLatLng = Utils.calcMiddleLatLng(
+          this._map,
+          markerLatLng,
+          prevMarkerLatLng
+        );
+        marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
+      }
     }
 
     // if self intersection is not allowed, handle it
@@ -554,6 +657,7 @@ Edit.Line = Edit.extend({
   },
 
   _onMarkerDragEnd(e) {
+    this._isDragging = false;
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
@@ -581,6 +685,7 @@ Edit.Line = Edit.extend({
     this._fireEdit();
   },
   _onMarkerDragStart(e) {
+    this._isDragging = true;
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 

@@ -8,6 +8,7 @@
             href="https://unpkg.com/leaflet@latest/dist/leaflet.css"
         />
         <link rel="stylesheet" href="dist/leaflet.pm.css" />
+
         <script src="https://unpkg.com/leaflet@latest/dist/leaflet.js"></script>
         <!--
             <script src="../../leaflet-measure-path/leaflet-measure-path.js"></script>
@@ -40,9 +41,26 @@
 
     <body>
         <div class="wrapper"><div id="map"></div></div>
-        <!--
-            <script src="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.min.js"></script>
-        -->
+
         <script src="dist/leaflet.pm.min.js"></script>
+        <script>
+            var map = L.map('map', {
+                worldCopyJump: true,
+                zoomControl: false
+            });
+
+            map.pm.addControls({
+                position: 'topleft'
+            });
+
+            L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+                minZoom: 2,
+                subdomains:['mt0','mt1','mt2','mt3']
+            }).addTo(map);
+
+
+
+            map.setView([50, 25], 4);
+        </script>
     </body>
 </html>

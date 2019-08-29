@@ -8,6 +8,8 @@ const Edit = L.Class.extend({
     snapDistance: 20,
     allowSelfIntersection: true,
     draggable: true,
+    showMarkersOnHover: true,
+    markersOnHoverCount: 40
   },
   isPolygon() {
     // if it's a polygon, it means the coordinates array is multi dimensional
