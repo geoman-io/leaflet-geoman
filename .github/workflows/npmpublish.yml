@@ -1,4 +1,4 @@
-name: Publish Package
+name: Publish Package Test
 
 on: release
 
