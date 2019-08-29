@@ -1,4 +1,4 @@
-name: Node.js Package
+name: Publish Package
 
 on: release
 
@@ -25,7 +25,7 @@ jobs:
       - run: npm ci
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM}}
 
   publish-gpr:
     needs: build
