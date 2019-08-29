@@ -1,6 +1,7 @@
 name: Publish Package Test
 
 on: release
+  type: published
 
 jobs:
   build:
