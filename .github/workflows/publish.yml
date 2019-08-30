@@ -40,4 +40,4 @@ jobs:
       - run: npm ci
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GPR}}
+          GITHUB_TOKEN: ${{secrets.GPR}}
