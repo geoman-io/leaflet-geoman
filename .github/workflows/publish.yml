@@ -1,4 +1,4 @@
-name: Publish leaflet.pm
+name: publish-package
 
 on: release
   type: published
