@@ -1,7 +1,7 @@
 name: Publish leaflet.pm
 
 on: release
-  type: [published, prereleased]
+  type: published
 
 jobs:
   build:
