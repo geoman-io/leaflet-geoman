@@ -1,7 +1,7 @@
 name: Publish Package Test
 
 on: release
-  type: ['published', 'prereleased']
+  type: [published, prereleased]
 
 jobs:
   build:
