@@ -178,4 +178,13 @@ describe('Testing the Toolbar', () => {
 
     cy.hasVertexMarkers(0);
   });
+
+  it('Has Working translation for circle marker toolbar button', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setLang('es');
+    });
+
+    cy.get('.leaflet-buttons-control-button .leaflet-pm-icon-circle-marker')
+      .should('have.attr', 'title').and('include', 'Dibujar Marcador de Circulo');
+  });
 });

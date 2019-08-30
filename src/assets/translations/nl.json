@@ -7,7 +7,8 @@
     "finishPoly": "Klik op het eerst punt om te beëindigen",
     "finishRect": "Klik om te beëindigen",
     "startCircle": "Klik om het middelpunt te plaatsen",
-    "finishCircle": "Klik om de cirkel te beëindigen"
+    "finishCircle": "Klik om de cirkel te beëindigen",
+    "placeCircleMarker": "Klik om een marker te plaatsen"
   },
   "actions": {
     "finish": "Bewaar",
@@ -23,6 +24,7 @@
     "editButton": "Bewerk",
     "dragButton": "Verplaats",
     "cutButton": "Knip",
-    "deleteButton": "Verwijder"
+    "deleteButton": "Verwijder",
+    "drawCircleMarkerButton": "Plaats Marker"
   }
 }
