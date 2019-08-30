@@ -1,82 +1,80 @@
 {
-  "name": "leaflet.pm",
-  "version": "2.1.0-beta.12",
-  "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
-  "keywords": [
-    "leaflet",
-    "polygon management",
-    "geometry editing",
-    "map data",
-    "map overlay",
-    "polygon",
-    "geojson",
-    "leaflet-draw",
-    "data-field-geojson",
-    "ui-leaflet-draw"
-  ],
-  "files": [
-    "dist"
-  ],
-  "main": "dist/leaflet.pm.min.js",
-  "dependencies": {
-    "@turf/difference": "^6.0.2",
-    "@turf/intersect": "^6.1.3",
-    "@turf/kinks": "6.x",
-    "lodash": "^4.17.15"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "babel-loader": "^8.0.6",
-    "css-loader": "^2.1.1",
-    "cypress": "^3.4.1",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-config-prettier": "^3.6.0",
-    "eslint-plugin-cypress": "^2.6.1",
-    "eslint-plugin-import": "^2.18.2",
-    "extract-text-webpack-plugin": "^3.0.2",
-    "file-loader": "^0.11.1",
-    "leaflet": "^1.5.1",
-    "prettier": "1.16.1",
-    "style-loader": "^0.19.0",
-    "uglifyjs-webpack-plugin": "^1.3.0",
-    "url-loader": "^0.6.2",
-    "webpack": "^3.12.0"
-  },
-  "peerDependencies": {
-    "leaflet": "^1.2.0"
-  },
-  "scripts": {
-    "start": "npm run dev",
-    "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
-    "test": "$(npm bin)/cypress run",
-    "cypress": "$(npm bin)/cypress open",
-    "build": "./node_modules/.bin/webpack --config=webpack.build.js",
-    "prepare": "npm run build",
-    "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
-    "eslint": "eslint src/ --fix",
-    "prettier": "prettier --write '{src,cypress}/**/*.{js,css}'",
-    "lint": "npm run eslint && npm run prettier"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/codeofsumit/leaflet.pm.git"
-  },
-  "author": {
-    "name": "Sumit Kumar",
-    "email": "sk@outlook.com",
-    "url": "http://twitter.com/TweetsOfSumit"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/codeofsumit/leaflet.pm/issues"
-  },
-  "homepage": "https://leafletpm.now.sh",
-  "prettier": {
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": true,
-    "singleQuote": true
-  }
+	"name": "@codeofsumit/leaflet.pm",
+	"version": "2.1.0-beta.12",
+	"description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
+	"keywords": [
+		"leaflet",
+		"polygon management",
+		"geometry editing",
+		"map data",
+		"map overlay",
+		"polygon",
+		"geojson",
+		"leaflet-draw",
+		"data-field-geojson",
+		"ui-leaflet-draw"
+	],
+	"files": [ "dist" ],
+	"main": "dist/leaflet.pm.min.js",
+	"dependencies": {
+		"@turf/difference": "^6.0.2",
+		"@turf/intersect": "^6.1.3",
+		"@turf/kinks": "6.x",
+		"lodash": "^4.17.15"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.5.5",
+		"@babel/preset-env": "^7.5.5",
+		"babel-loader": "^8.0.6",
+		"css-loader": "^2.1.1",
+		"cypress": "^3.4.1",
+		"eslint": "^4.19.1",
+		"eslint-config-airbnb-base": "^12.1.0",
+		"eslint-config-prettier": "^3.6.0",
+		"eslint-plugin-cypress": "^2.6.1",
+		"eslint-plugin-import": "^2.18.2",
+		"extract-text-webpack-plugin": "^3.0.2",
+		"file-loader": "^0.11.1",
+		"leaflet": "^1.5.1",
+		"prettier": "1.16.1",
+		"style-loader": "^0.19.0",
+		"uglifyjs-webpack-plugin": "^1.3.0",
+		"url-loader": "^0.6.2",
+		"webpack": "^3.12.0"
+	},
+	"peerDependencies": {
+		"leaflet": "^1.2.0"
+	},
+	"scripts": {
+		"start": "npm run dev",
+		"dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
+		"test": "$(npm bin)/cypress run",
+		"cypress": "$(npm bin)/cypress open",
+		"build": "./node_modules/.bin/webpack --config=webpack.build.js",
+		"prepare": "npm run build",
+		"eslint-check": "eslint --print-config . | eslint-config-prettier-check",
+		"eslint": "eslint src/ --fix",
+		"prettier": "prettier --write '{src,cypress}/**/*.{js,css}'",
+		"lint": "npm run eslint && npm run prettier"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/codeofsumit/leaflet.pm.git"
+	},
+	"author": {
+		"name": "Sumit Kumar",
+		"email": "sk@outlook.com",
+		"url": "http://twitter.com/TweetsOfSumit"
+	},
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/codeofsumit/leaflet.pm/issues"
+	},
+	"homepage": "https://leafletpm.now.sh",
+	"prettier": {
+		"trailingComma": "es5",
+		"tabWidth": 2,
+		"semi": true,
+		"singleQuote": true
+	}
 }
