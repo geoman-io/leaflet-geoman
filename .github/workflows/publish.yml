@@ -1,4 +1,4 @@
-name: Publish Package Test
+name: Publish leaflet.pm
 
 on: release
   type: [published, prereleased]
