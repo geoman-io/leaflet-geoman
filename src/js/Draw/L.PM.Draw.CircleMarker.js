@@ -2,11 +2,11 @@ import Draw from './L.PM.Draw';
 
 import { getTranslation } from '../helpers';
 
-Draw.Marker = Draw.extend({
+Draw.CircleMarker = Draw.Marker.extend({
   initialize(map) {
     this._map = map;
-    this._shape = 'Marker';
-    this.toolbarButtonName = 'drawMarker';
+    this._shape = 'CircleMarker';
+    this.toolbarButtonName = 'drawCircleMarker';
   },
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
@@ -23,14 +23,14 @@ Draw.Marker = Draw.extend({
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker([0, 0], this.options.markerStyle);
+    this._hintMarker = L.circleMarker([0, 0], this.options.templineStyle);
     this._hintMarker._pmTempLayer = true;
     this._hintMarker.addTo(this._map);
 
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip(getTranslation('tooltips.placeMarker'), {
+        .bindTooltip(getTranslation('tooltips.placeCircleMarker'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
@@ -59,54 +59,8 @@ Draw.Marker = Draw.extend({
       }
     });
   },
-  disable() {
-    // cancel, if drawing mode isn't even enabled
-    if (!this._enabled) {
-      return;
-    }
-
-    // undbind click event, don't create a marker on click anymore
-    this._map.off('click', this._createMarker, this);
-
-    // remove hint marker
-    this._hintMarker.remove();
-
-    // remove event listener to sync hint marker
-    this._map.off('mousemove', this._syncHintMarker, this);
-
-    // disable dragging and removing for all markers
-    this._map.eachLayer(layer => {
-      if (this.isRelevantMarker(layer)) {
-        layer.pm.disable();
-      }
-    });
-
-    // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
-
-    // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
-
-    // cleanup snapping
-    if (this.options.snappable) {
-      this._cleanupSnapping();
-    }
-
-    // change enabled state
-    this._enabled = false;
-  },
   isRelevantMarker(layer) {
-    return layer instanceof L.Marker && layer.pm && !layer._pmTempLayer;
-  },
-  enabled() {
-    return this._enabled;
-  },
-  toggle(options) {
-    if (this.enabled()) {
-      this.disable();
-    } else {
-      this.enable(options);
-    }
+    return layer instanceof L.CircleMarker && !(layer instanceof L.Circle) && layer.pm && !layer._pmTempLayer;
   },
   _createMarker(e) {
     if (!e.latlng) {
@@ -123,7 +77,7 @@ Draw.Marker = Draw.extend({
     const latlng = this._hintMarker.getLatLng();
 
     // create marker
-    const marker = new L.Marker(latlng, this.options.markerStyle);
+    const marker = L.circleMarker(latlng, this.options.pathOptions);
 
     // add marker to the map
     marker.addTo(this._map);
@@ -139,16 +93,5 @@ Draw.Marker = Draw.extend({
     });
 
     this._cleanupSnapping();
-  },
-  _syncHintMarker(e) {
-    // move the cursor marker
-    this._hintMarker.setLatLng(e.latlng);
-
-    // if snapping is enabled, do it
-    if (this.options.snappable) {
-      const fakeDragEvent = e;
-      fakeDragEvent.target = this._hintMarker;
-      this._handleSnapping(fakeDragEvent);
-    }
   },
 });
