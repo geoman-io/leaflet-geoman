@@ -59,9 +59,7 @@ Edit.Line = Edit.extend({
         this._handleSelfIntersectionOnVertexRemoval,
         this
       );
-    }
 
-    if (!this.options.allowSelfIntersection) {
       if (!this.cachedColor) {
         this.cachedColor = this._layer.options.color;
       }
@@ -192,7 +190,7 @@ Edit.Line = Edit.extend({
 
     // handle coord-rings (outer, inner, etc)
     const handleRing = coordsArr => {
-      // if there is another coords ring, go a level deep and do this again
+      // if there is another coords ring, descend a level deeper and do this again
       if (Array.isArray(coordsArr[0])) {
         return coordsArr.map(handleRing, this);
       }
@@ -517,7 +515,7 @@ Edit.Line = Edit.extend({
     const markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // find the indizes of next and previous markers
+    // find the indices of next and previous markers
     const nextMarkerIndex = (index + 1) % markerArr.length;
     const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
 
@@ -551,6 +549,11 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._handleLayerStyle();
     }
+
+    this._layer.fire('pm:markerdrag', {
+      markerEvent: e,
+      indexPath,
+    });
   },
 
   _onMarkerDragEnd(e) {
@@ -587,6 +590,7 @@ Edit.Line = Edit.extend({
     this._layer.fire('pm:markerdragstart', {
       markerEvent: e,
       indexPath,
+      workingLayer: this._layer,
     });
 
     // if self intersection isn't allowed, save the coords upon dragstart

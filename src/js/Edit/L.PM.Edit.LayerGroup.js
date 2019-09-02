@@ -62,6 +62,7 @@ Edit.LayerGroup = L.Class.extend({
       'pm:intersect',
       'pm:raiseMarkers',
       'pm:markerdragend',
+      'pm:markerdrag',
       'pm:markerdragstart',
       'pm:vertexadded',
       'pm:vertexremoved',
