@@ -7,7 +7,8 @@
         "finishPoly": "Presiona el primer marcador para finalizar",
         "finishRect": "Presiona para finalizar",
         "startCircle": "Presiona para colocar el centro del circulo",
-        "finishCircle": "Presiona para finalizar el circulo"
+        "finishCircle": "Presiona para finalizar el circulo",
+        "placeCircleMarker": "Presiona para colocar un marcador de circulo"
     },
     "actions": {
         "finish": "Finalizar",
@@ -24,6 +25,7 @@
         "dragButton": "Arrastrar Capas",
         "cutButton": "Cortar Capas",
         "unionButton": "Juntar Capas",
-        "deleteButton": "Remover Capas"
+        "deleteButton": "Remover Capas",
+        "drawCircleMarkerButton": "Dibujar Marcador de Circulo"
     }
 }

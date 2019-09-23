@@ -23,7 +23,7 @@
         "editButton": "Editar Camadas",
         "dragButton": "Arrastrar Camadas",
         "cutButton": "Cortar Camadas",
-				"unionButton": "Juntar Camadas",
+        "unionButton": "Juntar Camadas",
         "deleteButton": "Remover Camadas"
     }
 }

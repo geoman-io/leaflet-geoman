@@ -59,7 +59,7 @@ const SnapMixin = {
       return false;
     }
 
-    // create a list of polygons that the marker could snap to
+    // create a list of layers that the marker could snap to
     // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
     // after dragstart/movestart so it wouldn't fire for them
     if (this._snapList === undefined) {
@@ -209,16 +209,16 @@ const SnapMixin = {
     // temporary markers of polygon-edits
     map.eachLayer(layer => {
       if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.CircleMarker &&
+        (layer instanceof L.Polyline ||
+          layer instanceof L.Marker ||
+          layer instanceof L.CircleMarker) &&
         layer.options.snapIgnore !== true
-
       ) {
         layers.push(layer);
 
         // this is for debugging
         const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
 
         // uncomment 👇 this line to show helper lines for debugging

@@ -55,7 +55,8 @@ const Map = L.Class.extend({
       if (
         layer instanceof L.Polyline ||
         layer instanceof L.Marker ||
-        layer instanceof L.Circle
+        layer instanceof L.Circle ||
+        layer instanceof L.CircleMarker
       ) {
         layers.push(layer);
       }
@@ -70,6 +71,7 @@ const Map = L.Class.extend({
     return layers;
   },
   removeLayer(e) {
+
     const layer = e.target;
     // only remove layer, if it's handled by leaflet.pm,
     // not a tempLayer and not currently being dragged
@@ -125,6 +127,8 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+    
+    this._fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
     const layers = this.findLayers();
@@ -140,6 +144,14 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+
+    this._fireDragModeEvent(false);
+  },
+  _fireDragModeEvent(enabled) {
+    this.map.fire('pm:globaldragmodetoggled', {
+      enabled,
+      map: this.map,
+    });
   },
   toggleGlobalDragMode() {
     if (this.globalDragModeEnabled()) {
@@ -192,6 +204,8 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+
+    this._fireRemovalModeEvent(false);
   },
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
@@ -212,6 +226,14 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+
+    this._fireRemovalModeEvent(true);
+  },
+  _fireRemovalModeEvent(enabled) {
+    this.map.fire('pm:globalremovalmodetoggled', {
+        enabled,
+        map: this.map,
+      });
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode

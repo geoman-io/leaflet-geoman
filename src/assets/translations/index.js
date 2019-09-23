@@ -8,6 +8,8 @@ import nl from './nl.json';
 import fr from './fr.json';
 import no from './no.json';
 import pt from './pt.json';
+import zh from './zh.json';
+import pt_br from './pt_br.json';
 
 export default {
   en,
@@ -20,4 +22,6 @@ export default {
   fr,
   no,
   pt,
+  pt_br,
+  zh
 };
