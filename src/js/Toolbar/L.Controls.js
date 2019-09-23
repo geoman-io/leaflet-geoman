@@ -116,7 +116,7 @@ const PMButton = L.Control.extend({
     });
 
     if (button.toggleStatus) {
-      L.DomUtil.addClass(newButton, 'active');
+      L.DomUtil.addClass(buttonContainer, 'active');
     }
 
     const image = L.DomUtil.create('div', 'control-icon', newButton);
