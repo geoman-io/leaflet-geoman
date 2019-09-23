@@ -23,8 +23,8 @@
       "editButton": "Editar camada(s)",
       "dragButton": "Mover camada(s)",
       "cutButton": "Recortar camada(s)",
-      "deleteButton": "Remover camada(s)"
-      "unionButton": "Juntar camada (s)",
+      "deleteButton": "Remover camada(s)",
+      "unionButton": "Juntar camada (s)"
     }
   }
   

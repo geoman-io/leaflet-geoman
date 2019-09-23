@@ -72,7 +72,7 @@
 /* harmony export (immutable) */ __webpack_exports__["b"] = isEmptyDeep;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_get__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_get___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash_get__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_has__ = __webpack_require__(139);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_has__ = __webpack_require__(141);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_has___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash_has__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__assets_translations__ = __webpack_require__(38);
 
@@ -102,43 +102,6 @@ function isEmptyDeep(l) {
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-/**
- * Checks if `value` is the
- * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
- * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is an object, else `false`.
- * @example
- *
- * _.isObject({});
- * // => true
- *
- * _.isObject([1, 2, 3]);
- * // => true
- *
- * _.isObject(_.noop);
- * // => true
- *
- * _.isObject(null);
- * // => false
- */
-function isObject(value) {
-  var type = typeof value;
-  return value != null && (type == 'object' || type == 'function');
-}
-
-module.exports = isObject;
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -169,7 +132,7 @@ var Draw = L.Class.extend({
     // save the map
     this._map = map; // define all possible shapes that can be drawn
 
-    this.shapes = ['Marker', 'Line', 'Polygon', 'Rectangle', 'Circle', 'Cut']; // initiate drawing class for our shapes
+    this.shapes = ['Marker', 'CircleMarker', 'Line', 'Polygon', 'Rectangle', 'Circle', 'Cut']; // initiate drawing class for our shapes
 
     this.shapes.forEach(function (shape) {
       _this[shape] = new L.PM.Draw[shape](_this._map);
@@ -214,12 +177,12 @@ var Draw = L.Class.extend({
 /* harmony default export */ __webpack_exports__["a"] = (Draw);
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Mixins_Snapping__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Mixins_Drag__ = __webpack_require__(151);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__Mixins_Drag__ = __webpack_require__(154);
 
 
 var Edit = L.Class.extend({
@@ -228,7 +191,9 @@ var Edit = L.Class.extend({
     snappable: true,
     snapDistance: 20,
     allowSelfIntersection: true,
-    draggable: true
+    draggable: true,
+    showMarkersOnHover: true,
+    markersOnHoverCount: 40
   },
   isPolygon: function isPolygon() {
     // if it's a polygon, it means the coordinates array is multi dimensional
@@ -236,6 +201,43 @@ var Edit = L.Class.extend({
   }
 });
 /* harmony default export */ __webpack_exports__["a"] = (Edit);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+}
+
+module.exports = isObject;
+
 
 /***/ }),
 /* 4 */
@@ -1265,7 +1267,7 @@ module.exports = getNative;
 /***/ (function(module, exports, __webpack_require__) {
 
 var baseGetTag = __webpack_require__(8),
-    isObject = __webpack_require__(1);
+    isObject = __webpack_require__(3);
 
 /** `Object#toString` result references. */
 var asyncTag = '[object AsyncFunction]',
@@ -3834,6 +3836,12 @@ module.exports = identity;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__no_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__no_json__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pt_json__ = __webpack_require__(127);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pt_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9__pt_json__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__zh_json__ = __webpack_require__(128);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__zh_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10__zh_json__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pt_br_json__ = __webpack_require__(129);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pt_br_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_11__pt_br_json__);
+
+
 
 
 
@@ -3854,14 +3862,16 @@ module.exports = identity;
   nl: __WEBPACK_IMPORTED_MODULE_6__nl_json___default.a,
   fr: __WEBPACK_IMPORTED_MODULE_7__fr_json___default.a,
   no: __WEBPACK_IMPORTED_MODULE_8__no_json___default.a,
-  pt: __WEBPACK_IMPORTED_MODULE_9__pt_json___default.a
+  pt: __WEBPACK_IMPORTED_MODULE_9__pt_json___default.a,
+  pt_br: __WEBPACK_IMPORTED_MODULE_11__pt_br_json___default.a,
+  zh: __WEBPACK_IMPORTED_MODULE_10__zh_json___default.a
 });
 
 /***/ }),
 /* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseGet = __webpack_require__(131);
+var baseGet = __webpack_require__(133);
 
 /**
  * Gets the value at `path` of `object`. If the resolved value is
@@ -3901,9 +3911,9 @@ module.exports = get;
 /***/ (function(module, exports, __webpack_require__) {
 
 var isArray = __webpack_require__(6),
-    isKey = __webpack_require__(132),
-    stringToPath = __webpack_require__(133),
-    toString = __webpack_require__(136);
+    isKey = __webpack_require__(134),
+    stringToPath = __webpack_require__(135),
+    toString = __webpack_require__(138);
 
 /**
  * Casts `value` to a path array if it's not one.
@@ -4021,7 +4031,7 @@ var SnapMixin = {
     // if snapping is disabled via holding ALT during drag, stop right here
     if (e.originalEvent.altKey) {
       return false;
-    } // create a list of polygons that the marker could snap to
+    } // create a list of layers that the marker could snap to
     // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
     // after dragstart/movestart so it wouldn't fire for them
 
@@ -4158,13 +4168,14 @@ var SnapMixin = {
     // temporary markers of polygon-edits
 
     map.eachLayer(function (layer) {
-      if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.CircleMarker && layer.options.snapIgnore !== true) {
+      if ((layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.CircleMarker) && layer.options.snapIgnore !== true) {
         layers.push(layer); // this is for debugging
 
         var debugLine = L.polyline([], {
           color: 'red',
           pmIgnore: true
         });
+        debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine); // uncomment 👇 this line to show helper lines for debugging
         // debugLine.addTo(map);
       }
@@ -5623,25 +5634,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__package_json__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__package_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__package_json__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__L_PM_Map__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Toolbar_L_PM_Toolbar__ = __webpack_require__(129);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Draw_L_PM_Draw__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Draw_L_PM_Draw_Marker__ = __webpack_require__(142);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Draw_L_PM_Draw_Line__ = __webpack_require__(143);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Draw_L_PM_Draw_Polygon__ = __webpack_require__(144);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Draw_L_PM_Draw_Rectangle__ = __webpack_require__(145);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__Draw_L_PM_Draw_Circle__ = __webpack_require__(146);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Draw_L_PM_Draw_Cut__ = __webpack_require__(147);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__Edit_L_PM_Edit__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__Edit_L_PM_Edit_LayerGroup__ = __webpack_require__(152);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__Edit_L_PM_Edit_Marker__ = __webpack_require__(153);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__Edit_L_PM_Edit_Line__ = __webpack_require__(154);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__Edit_L_PM_Edit_Polygon__ = __webpack_require__(155);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__Edit_L_PM_Edit_Rectangle__ = __webpack_require__(156);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__Edit_L_PM_Edit_Circle__ = __webpack_require__(157);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__css_layers_css__ = __webpack_require__(158);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__css_layers_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_18__css_layers_css__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__css_controls_css__ = __webpack_require__(159);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__css_controls_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_19__css_controls_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__Toolbar_L_PM_Toolbar__ = __webpack_require__(131);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Draw_L_PM_Draw__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Draw_L_PM_Draw_Marker__ = __webpack_require__(144);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__Draw_L_PM_Draw_Line__ = __webpack_require__(145);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__Draw_L_PM_Draw_Polygon__ = __webpack_require__(146);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Draw_L_PM_Draw_Rectangle__ = __webpack_require__(147);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__Draw_L_PM_Draw_Circle__ = __webpack_require__(148);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Draw_L_PM_Draw_CircleMarker__ = __webpack_require__(149);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__Draw_L_PM_Draw_Cut__ = __webpack_require__(150);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__Edit_L_PM_Edit__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__Edit_L_PM_Edit_LayerGroup__ = __webpack_require__(155);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__Edit_L_PM_Edit_Marker__ = __webpack_require__(156);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__Edit_L_PM_Edit_Line__ = __webpack_require__(157);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__Edit_L_PM_Edit_Polygon__ = __webpack_require__(158);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__Edit_L_PM_Edit_Rectangle__ = __webpack_require__(159);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__Edit_L_PM_Edit_Circle__ = __webpack_require__(160);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__Edit_L_PM_Edit_CircleMarker__ = __webpack_require__(161);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__css_layers_css__ = __webpack_require__(162);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__css_layers_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_20__css_layers_css__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__css_controls_css__ = __webpack_require__(163);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__css_controls_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_21__css_controls_css__);
 /**
  *
  * A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
@@ -5668,12 +5681,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+
+
 L.PM = L.PM || {
   version: __WEBPACK_IMPORTED_MODULE_1__package_json__["version"],
   Map: __WEBPACK_IMPORTED_MODULE_2__L_PM_Map__["a" /* default */],
   Toolbar: __WEBPACK_IMPORTED_MODULE_3__Toolbar_L_PM_Toolbar__["a" /* default */],
   Draw: __WEBPACK_IMPORTED_MODULE_4__Draw_L_PM_Draw__["a" /* default */],
-  Edit: __WEBPACK_IMPORTED_MODULE_11__Edit_L_PM_Edit__["a" /* default */],
+  Edit: __WEBPACK_IMPORTED_MODULE_12__Edit_L_PM_Edit__["a" /* default */],
   activeLang: 'en',
   initialize: function initialize() {
     this.addInitHooks();
@@ -5700,6 +5715,14 @@ L.PM = L.PM || {
     }
 
     L.Marker.addInitHook(initMarker);
+
+    function initCircleMarker() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.CircleMarker(this);
+      }
+    }
+
+    L.CircleMarker.addInitHook(initCircleMarker);
 
     function initPolyline() {
       if (!this.options.pmIgnore) {
@@ -5838,7 +5861,7 @@ if (typeof Object.assign != 'function') {
 /* 49 */
 /***/ (function(module, exports) {
 
-module.exports = {"name":"leaflet.pm","version":"2.1.0","description":"A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0","keywords":["leaflet","polygon management","geometry editing","map data","map overlay","polygon","geojson","leaflet-draw","data-field-geojson","ui-leaflet-draw"],"files":["dist"],"main":"dist/leaflet.pm.min.js","dependencies":{"@turf/difference":"^6.0.2","@turf/intersect":"^6.1.3","@turf/kinks":"6.x","@turf/union":"^6.0.3","lodash":"^4.17.11"},"devDependencies":{"@babel/core":"^7.2.2","@babel/preset-env":"^7.3.1","babel-loader":"^8.0.5","css-loader":"^2.1.1","cypress":"^3.3.1","eslint":"^4.19.1","eslint-config-airbnb-base":"^12.1.0","eslint-config-prettier":"^3.6.0","eslint-plugin-cypress":"^2.2.0","eslint-plugin-import":"^2.15.0","extract-text-webpack-plugin":"^3.0.2","file-loader":"^0.11.1","leaflet":"^1.4.0","prettier":"1.16.1","style-loader":"^0.19.0","uglifyjs-webpack-plugin":"^1.3.0","url-loader":"^0.6.2","webpack":"^3.12.0"},"peerDependencies":{"leaflet":"^1.2.0"},"scripts":{"start":"npm run dev","dev":"./node_modules/.bin/webpack --config=webpack.dev.js","test":"$(npm bin)/cypress run","cypress":"$(npm bin)/cypress open","build":"./node_modules/.bin/webpack --config=webpack.build.js","prepare":"npm run build","eslint-check":"eslint --print-config . | eslint-config-prettier-check","eslint":"eslint src/ --fix","prettier":"prettier --write '{src,cypress}/**/*.{js,css}'","lint":"npm run eslint && npm run prettier"},"repository":{"type":"git","url":"git+https://github.com/codeofsumit/leaflet.pm.git"},"author":{"name":"Sumit Kumar","email":"sk@outlook.com","url":"http://twitter.com/TweetsOfSumit"},"license":"MIT","bugs":{"url":"https://github.com/codeofsumit/leaflet.pm/issues"},"homepage":"https://leafletpm.now.sh","prettier":{"trailingComma":"es5","tabWidth":2,"semi":true,"singleQuote":true}}
+module.exports = {"name":"leaflet.pm","version":"2.2.0","description":"A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0","keywords":["leaflet","polygon management","geometry editing","map data","map overlay","polygon","geojson","leaflet-draw","data-field-geojson","ui-leaflet-draw"],"files":["dist"],"main":"dist/leaflet.pm.min.js","dependencies":{"@turf/difference":"^6.0.2","@turf/intersect":"^6.1.3","@turf/kinks":"6.x","@turf/union":"^6.0.3","lodash":"^4.17.15"},"devDependencies":{"@babel/core":"^7.6.0","@babel/preset-env":"^7.6.0","babel-loader":"^8.0.6","css-loader":"^2.1.1","cypress":"^3.4.1","eslint":"^4.19.1","eslint-config-airbnb-base":"^12.1.0","eslint-config-prettier":"^3.6.0","eslint-plugin-cypress":"^2.6.1","eslint-plugin-import":"^2.18.2","extract-text-webpack-plugin":"^3.0.2","file-loader":"^0.11.1","leaflet":"^1.5.1","prettier":"1.16.1","style-loader":"^0.19.0","uglifyjs-webpack-plugin":"^1.3.0","url-loader":"^0.6.2","webpack":"^3.12.0"},"peerDependencies":{"leaflet":"^1.2.0"},"scripts":{"start":"npm run dev","dev":"./node_modules/.bin/webpack --config=webpack.dev.js","test":"$(npm bin)/cypress run","cypress":"$(npm bin)/cypress open","build":"./node_modules/.bin/webpack --config=webpack.build.js","prepare":"npm run build","eslint-check":"eslint --print-config . | eslint-config-prettier-check","eslint":"eslint src/ --fix","prettier":"prettier --write '{src,cypress}/**/*.{js,css}'","lint":"npm run eslint && npm run prettier"},"repository":{"type":"git","url":"git://github.com/codeofsumit/leaflet.pm.git"},"author":{"name":"Sumit Kumar","email":"sk@outlook.com","url":"http://twitter.com/TweetsOfSumit"},"license":"MIT","bugs":{"url":"https://github.com/codeofsumit/leaflet.pm/issues"},"homepage":"https://leafletpm.now.sh","prettier":{"trailingComma":"es5","tabWidth":2,"semi":true,"singleQuote":true}}
 
 /***/ }),
 /* 50 */
@@ -5848,7 +5871,7 @@ module.exports = {"name":"leaflet.pm","version":"2.1.0","description":"A Leaflet
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_merge__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash_merge___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash_merge__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__assets_translations__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__turf_union__ = __webpack_require__(128);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__turf_union__ = __webpack_require__(130);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__turf_union___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__turf_union__);
 
 
@@ -5912,7 +5935,7 @@ var Map = L.Class.extend({
   findLayers: function findLayers() {
     var layers = [];
     this.map.eachLayer(function (layer) {
-      if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle) {
+      if (layer instanceof L.Polyline || layer instanceof L.Marker || layer instanceof L.Circle || layer instanceof L.CircleMarker) {
         layers.push(layer);
       }
     }); // filter out layers that don't have the leaflet.pm instance
@@ -5979,6 +6002,8 @@ var Map = L.Class.extend({
     this.map.on('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
 
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+
+    this._fireDragModeEvent(true);
   },
   disableGlobalDragMode: function disableGlobalDragMode() {
     var layers = this.findLayers();
@@ -5990,6 +6015,14 @@ var Map = L.Class.extend({
     this.map.off('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
 
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+
+    this._fireDragModeEvent(false);
+  },
+  _fireDragModeEvent: function _fireDragModeEvent(enabled) {
+    this.map.fire('pm:globaldragmodetoggled', {
+      enabled: enabled,
+      map: this.map
+    });
   },
   toggleGlobalDragMode: function toggleGlobalDragMode() {
     if (this.globalDragModeEnabled()) {
@@ -6042,6 +6075,8 @@ var Map = L.Class.extend({
     this.map.off('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
 
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+
+    this._fireRemovalModeEvent(false);
   },
   enableGlobalRemovalMode: function enableGlobalRemovalMode() {
     var _this2 = this;
@@ -6061,6 +6096,14 @@ var Map = L.Class.extend({
     this.map.on('layeradd', this.layerAddHandler, this); // toogle the button in the toolbar if this is called programatically
 
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+
+    this._fireRemovalModeEvent(true);
+  },
+  _fireRemovalModeEvent: function _fireRemovalModeEvent(enabled) {
+    this.map.fire('pm:globalremovalmodetoggled', {
+      enabled: enabled,
+      map: this.map
+    });
   },
   toggleGlobalRemovalMode: function toggleGlobalRemovalMode() {
     // toggle global edit mode
@@ -6220,7 +6263,7 @@ var Stack = __webpack_require__(53),
     assignMergeValue = __webpack_require__(29),
     baseFor = __webpack_require__(84),
     baseMergeDeep = __webpack_require__(86),
-    isObject = __webpack_require__(1),
+    isObject = __webpack_require__(3),
     keysIn = __webpack_require__(36),
     safeGet = __webpack_require__(35);
 
@@ -6563,7 +6606,7 @@ module.exports = stackSet;
 
 var isFunction = __webpack_require__(15),
     isMasked = __webpack_require__(68),
-    isObject = __webpack_require__(1),
+    isObject = __webpack_require__(3),
     toSource = __webpack_require__(70);
 
 /**
@@ -7193,7 +7236,7 @@ var assignMergeValue = __webpack_require__(29),
     isArrayLikeObject = __webpack_require__(96),
     isBuffer = __webpack_require__(33),
     isFunction = __webpack_require__(15),
-    isObject = __webpack_require__(1),
+    isObject = __webpack_require__(3),
     isPlainObject = __webpack_require__(98),
     isTypedArray = __webpack_require__(34),
     safeGet = __webpack_require__(35),
@@ -7431,7 +7474,7 @@ module.exports = initCloneObject;
 /* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(1);
+var isObject = __webpack_require__(3);
 
 /** Built-in value references. */
 var objectCreate = Object.create;
@@ -7965,7 +8008,7 @@ module.exports = baseTimes;
 /* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(1),
+var isObject = __webpack_require__(3),
     isPrototype = __webpack_require__(32),
     nativeKeysIn = __webpack_require__(108);
 
@@ -8291,7 +8334,7 @@ module.exports = shortOut;
 var eq = __webpack_require__(11),
     isArrayLike = __webpack_require__(20),
     isIndex = __webpack_require__(22),
-    isObject = __webpack_require__(1);
+    isObject = __webpack_require__(3);
 
 /**
  * Checks if the given arguments are from an iteratee call.
@@ -8324,43 +8367,43 @@ module.exports = isIterateeCall;
 /* 118 */
 /***/ (function(module, exports) {
 
-module.exports = {"tooltips":{"placeMarker":"Click to place marker","firstVertex":"Click to place first vertex","continueLine":"Click to continue drawing","finishLine":"Click any existing marker to finish","finishPoly":"Click first marker to finish","finishRect":"Click to finish","startCircle":"Click to place circle center","finishCircle":"Click to finish circle"},"actions":{"finish":"Finish","cancel":"Cancel","removeLastVertex":"Remove Last Vertex"},"buttonTitles":{"drawMarkerButton":"Draw Marker","drawPolyButton":"Draw Polygons","drawLineButton":"Draw Polyline","drawCircleButton":"Draw Circle","drawRectButton":"Draw Rectangle","editButton":"Edit Layers","dragButton":"Drag Layers","cutButton":"Cut Layers","unionButton":"Merge Layers","deleteButton":"Remove Layers"}}
+module.exports = {"tooltips":{"placeMarker":"Click to place marker","firstVertex":"Click to place first vertex","continueLine":"Click to continue drawing","finishLine":"Click any existing marker to finish","finishPoly":"Click first marker to finish","finishRect":"Click to finish","startCircle":"Click to place circle center","finishCircle":"Click to finish circle","placeCircleMarker":"Click to place circle marker"},"actions":{"finish":"Finish","cancel":"Cancel","removeLastVertex":"Remove Last Vertex"},"buttonTitles":{"drawMarkerButton":"Draw Marker","drawPolyButton":"Draw Polygons","drawLineButton":"Draw Polyline","drawCircleButton":"Draw Circle","drawRectButton":"Draw Rectangle","editButton":"Edit Layers","dragButton":"Drag Layers","cutButton":"Cut Layers","unionButton":"Merge Layers","deleteButton":"Remove Layers","drawCircleMarkerButton":"Draw Circle Marker"}}
 
 /***/ }),
 /* 119 */
 /***/ (function(module, exports) {
 
-module.exports = {"tooltips":{"placeMarker":"Platziere den Marker mit Klick","firstVertex":"Platziere den ersten Marker mit Klick","continueLine":"Klicke, um weiter zu zeichnen","finishLine":"Beende mit Klick auf existierenden Marker","finishPoly":"Beende mit Klick auf ersten Marker","finishRect":"Beende mit Klick","startCircle":"Platziere das Kreiszentrum mit Klick","finishCircle":"Beende den Kreis mit Klick"},"actions":{"finish":"Beenden","cancel":"Abbrechen","removeLastVertex":"Letzten Vertex löschen"},"buttonTitles":{"drawMarkerButton":"Marker zeichnen","drawPolyButton":"Polygon zeichnen","drawLineButton":"Polyline zeichnen","drawCircleButton":"Kreis zeichnen","drawRectButton":"Rechteck zeichnen","editButton":"Layer editieren","dragButton":"Layer bewegen","cutButton":"Layer schneiden","deleteButton":"Layer löschen"}}
+module.exports = {"tooltips":{"placeMarker":"Platziere den Marker mit Klick","firstVertex":"Platziere den ersten Marker mit Klick","continueLine":"Klicke, um weiter zu zeichnen","finishLine":"Beende mit Klick auf existierenden Marker","finishPoly":"Beende mit Klick auf ersten Marker","finishRect":"Beende mit Klick","startCircle":"Platziere das Kreiszentrum mit Klick","finishCircle":"Beende den Kreis mit Klick","placeCircleMarker":"Platziere den Kreismarker mit Klick"},"actions":{"finish":"Beenden","cancel":"Abbrechen","removeLastVertex":"Letzten Vertex löschen"},"buttonTitles":{"drawMarkerButton":"Marker zeichnen","drawPolyButton":"Polygon zeichnen","drawLineButton":"Polyline zeichnen","drawCircleButton":"Kreis zeichnen","drawRectButton":"Rechteck zeichnen","editButton":"Layer editieren","dragButton":"Layer bewegen","cutButton":"Layer schneiden","deleteButton":"Layer löschen","drawCircleMarkerButton":"Kreismarker zeichnen"}}
 
 /***/ }),
 /* 120 */
 /***/ (function(module, exports) {
 
-module.exports = {"tooltips":{"placeMarker":"Clicca per posizionare un Marker","firstVertex":"Clicca per posizionare il primo vertice","continueLine":"Clicca per continuare a disegnare","finishLine":"Clicca qualsiasi marker esistente per terminare","finishPoly":"Clicca il primo marker per terminare","finishRect":"Clicca per terminare","startCircle":"Clicca per posizionare il punto centrale del cerchio","finishCircle":"Clicca per terminare il cerchio"},"actions":{"finish":"Termina","cancel":"Annulla","removeLastVertex":"Rimuovi l'ultimo vertice"},"buttonTitles":{"drawMarkerButton":"Disegna Marker","drawPolyButton":"Disegna Poligoni","drawLineButton":"Disegna Polilinea","drawCircleButton":"Disegna Cerchio","drawRectButton":"Disegna Rettangolo","editButton":"Modifica Livelli","dragButton":"Sposta Livelli","cutButton":"Ritaglia Livelli","deleteButton":"Elimina Livelli"}}
+module.exports = {"tooltips":{"placeMarker":"Clicca per posizionare un Marker","firstVertex":"Clicca per posizionare il primo vertice","continueLine":"Clicca per continuare a disegnare","finishLine":"Clicca qualsiasi marker esistente per terminare","finishPoly":"Clicca il primo marker per terminare","finishRect":"Clicca per terminare","startCircle":"Clicca per posizionare il punto centrale del cerchio","finishCircle":"Clicca per terminare il cerchio","placeCircleMarker":"Clicca per posizionare un Marker del cherchio"},"actions":{"finish":"Termina","cancel":"Annulla","removeLastVertex":"Rimuovi l'ultimo vertice"},"buttonTitles":{"drawMarkerButton":"Disegna Marker","drawPolyButton":"Disegna Poligoni","drawLineButton":"Disegna Polilinea","drawCircleButton":"Disegna Cerchio","drawRectButton":"Disegna Rettangolo","editButton":"Modifica Livelli","dragButton":"Sposta Livelli","cutButton":"Ritaglia Livelli","deleteButton":"Elimina Livelli","drawCircleMarkerButton":"Disegna Marker del Cherchio"}}
 
 /***/ }),
 /* 121 */
 /***/ (function(module, exports) {
 
-module.exports = {"tooltips":{"placeMarker":"Adaugă un punct","firstVertex":"Apasă aici pentru a adăuga primul Vertex","continueLine":"Apasă aici pentru a continua desenul","finishLine":"Apasă pe orice obiect pentru a finisa desenul","finishPoly":"Apasă pe primul obiect pentru a finisa","finishRect":"Apasă pentru a finisa","startCircle":"Apasă pentru a desena un cerc","finishCircle":"Apasă pentru a finisa un cerc"},"actions":{"finish":"Termină","cancel":"Anulează","removeLastVertex":"Șterge ultimul Vertex"},"buttonTitles":{"drawMarkerButton":"Adaugă o bulină","drawPolyButton":"Desenează un poligon","drawLineButton":"Desenează o linie","drawCircleButton":"Desenează un cerc","drawRectButton":"Desenează un dreptunghi","editButton":"Editează straturile","dragButton":"Mută straturile","cutButton":"Taie straturile","deleteButton":"Șterge straturile"}}
+module.exports = {"tooltips":{"placeMarker":"Adaugă un punct","firstVertex":"Apasă aici pentru a adăuga primul Vertex","continueLine":"Apasă aici pentru a continua desenul","finishLine":"Apasă pe orice obiect pentru a finisa desenul","finishPoly":"Apasă pe primul obiect pentru a finisa","finishRect":"Apasă pentru a finisa","startCircle":"Apasă pentru a desena un cerc","finishCircle":"Apasă pentru a finisa un cerc","placeCircleMarker":"Adaugă un punct"},"actions":{"finish":"Termină","cancel":"Anulează","removeLastVertex":"Șterge ultimul Vertex"},"buttonTitles":{"drawMarkerButton":"Adaugă o bulină","drawPolyButton":"Desenează un poligon","drawLineButton":"Desenează o linie","drawCircleButton":"Desenează un cerc","drawRectButton":"Desenează un dreptunghi","editButton":"Editează straturile","dragButton":"Mută straturile","cutButton":"Taie straturile","deleteButton":"Șterge straturile","placeCircleMarker":"Adaugă o bulină"}}
 
 /***/ }),
 /* 122 */
 /***/ (function(module, exports) {
 
-module.exports = {"tooltips":{"placeMarker":"Щелкните, чтобы поместить маркер","firstVertex":"Нажмите, чтобы поместить первый объект","continueLine":"Нажмите, чтобы продолжить рисование","finishLine":"Щелкните любой существующий маркер для завершения","finishPoly":"Выберите первую точку, чтобы закончить","finishRect":"Нажмите, чтобы закончить","startCircle":"Нажмите чтобы добавить круг","finishCircle":"Нажмите чтобы закончить круг"},"actions":{"finish":"Заканчивать","cancel":"Отмена","removeLastVertex":"Удалить последний объект на карте"},"buttonTitles":{"drawMarkerButton":"Добавить маркер","drawPolyButton":"Рисовать полигон","drawLineButton":"Рисовать Полилинию","drawCircleButton":"Рисовать круг","drawRectButton":"Рисовать Прямоугольник","editButton":"Редактировать слой","dragButton":"Перетаскивать слой","cutButton":"Вырезать слой","deleteButton":"Удалить слой"}}
+module.exports = {"tooltips":{"placeMarker":"Щелкните, чтобы поместить маркер","firstVertex":"Нажмите, чтобы поместить первый объект","continueLine":"Нажмите, чтобы продолжить рисование","finishLine":"Щелкните любой существующий маркер для завершения","finishPoly":"Выберите первую точку, чтобы закончить","finishRect":"Нажмите, чтобы закончить","startCircle":"Нажмите чтобы добавить круг","finishCircle":"Нажмите чтобы закончить круг","placeCircleMarker":"Click to place circle marker"},"actions":{"finish":"Заканчивать","cancel":"Отмена","removeLastVertex":"Удалить последний объект на карте"},"buttonTitles":{"drawMarkerButton":"Добавить маркер","drawPolyButton":"Рисовать полигон","drawLineButton":"Рисовать Полилинию","drawCircleButton":"Рисовать круг","drawRectButton":"Рисовать Прямоугольник","editButton":"Редактировать слой","dragButton":"Перетаскивать слой","cutButton":"Вырезать слой","deleteButton":"Удалить слой","placeCircleMarker":"Щелкните, чтобы поместить маркер"}}
 
 /***/ }),
 /* 123 */
 /***/ (function(module, exports) {
 
-module.exports = {"tooltips":{"placeMarker":"Presiona para colocar un marcador","firstVertex":"Presiona para colocar el primer vértice","continueLine":"Presiona para continuar dibujando","finishLine":"Presiona cualquier marcador existente para finalizar","finishPoly":"Presiona el primer marcador para finalizar","finishRect":"Presiona para finalizar","startCircle":"Presiona para colocar el centro del circulo","finishCircle":"Presiona para finalizar el circulo"},"actions":{"finish":"Finalizar","cancel":"Cancelar","removeLastVertex":"Remover ultimo vértice"},"buttonTitles":{"drawMarkerButton":"Dibujar Marcador","drawPolyButton":"Dibujar Polígono","drawLineButton":"Dibujar Línea","drawCircleButton":"Dibujar Circulo","drawRectButton":"Dibujar Rectángulo","editButton":"Editar Capas","dragButton":"Arrastrar Capas","cutButton":"Cortar Capas","unionButton":"Juntar Capas","deleteButton":"Remover Capas"}}
+module.exports = {"tooltips":{"placeMarker":"Presiona para colocar un marcador","firstVertex":"Presiona para colocar el primer vértice","continueLine":"Presiona para continuar dibujando","finishLine":"Presiona cualquier marcador existente para finalizar","finishPoly":"Presiona el primer marcador para finalizar","finishRect":"Presiona para finalizar","startCircle":"Presiona para colocar el centro del circulo","finishCircle":"Presiona para finalizar el circulo","placeCircleMarker":"Presiona para colocar un marcador de circulo"},"actions":{"finish":"Finalizar","cancel":"Cancelar","removeLastVertex":"Remover ultimo vértice"},"buttonTitles":{"drawMarkerButton":"Dibujar Marcador","drawPolyButton":"Dibujar Polígono","drawLineButton":"Dibujar Línea","drawCircleButton":"Dibujar Circulo","drawRectButton":"Dibujar Rectángulo","editButton":"Editar Capas","dragButton":"Arrastrar Capas","cutButton":"Cortar Capas","unionButton":"Juntar Capas","deleteButton":"Remover Capas","drawCircleMarkerButton":"Dibujar Marcador de Circulo"}}
 
 /***/ }),
 /* 124 */
 /***/ (function(module, exports) {
 
-module.exports = {"tooltips":{"placeMarker":"Klik om een marker te plaatsen","firstVertex":"Klik om het eerste punt te plaatsen","continueLine":"Klik om te blijven tekenen","finishLine":"Klik op een bestaand punt om te beëindigen","finishPoly":"Klik op het eerst punt om te beëindigen","finishRect":"Klik om te beëindigen","startCircle":"Klik om het middelpunt te plaatsen","finishCircle":"Klik om de cirkel te beëindigen"},"actions":{"finish":"Bewaar","cancel":"Annuleer","removeLastVertex":"Verwijder laatste punt"},"buttonTitles":{"drawMarkerButton":"Plaats Marker","drawPolyButton":"Teken een vlak","drawLineButton":"Teken een lijn","drawCircleButton":"Teken een cirkel","drawRectButton":"Teken een vierkant","editButton":"Bewerk","dragButton":"Verplaats","cutButton":"Knip","deleteButton":"Verwijder"}}
+module.exports = {"tooltips":{"placeMarker":"Klik om een marker te plaatsen","firstVertex":"Klik om het eerste punt te plaatsen","continueLine":"Klik om te blijven tekenen","finishLine":"Klik op een bestaand punt om te beëindigen","finishPoly":"Klik op het eerst punt om te beëindigen","finishRect":"Klik om te beëindigen","startCircle":"Klik om het middelpunt te plaatsen","finishCircle":"Klik om de cirkel te beëindigen","placeCircleMarker":"Klik om een marker te plaatsen"},"actions":{"finish":"Bewaar","cancel":"Annuleer","removeLastVertex":"Verwijder laatste punt"},"buttonTitles":{"drawMarkerButton":"Plaats Marker","drawPolyButton":"Teken een vlak","drawLineButton":"Teken een lijn","drawCircleButton":"Teken een cirkel","drawRectButton":"Teken een vierkant","editButton":"Bewerk","dragButton":"Verplaats","cutButton":"Knip","deleteButton":"Verwijder","drawCircleMarkerButton":"Plaats Marker"}}
 
 /***/ }),
 /* 125 */
@@ -8382,6 +8425,18 @@ module.exports = {"tooltips":{"placeMarker":"Clique para adicionar um marcador",
 
 /***/ }),
 /* 128 */
+/***/ (function(module, exports) {
+
+module.exports = {"tooltips":{"placeMarker":"单击放置标记","firstVertex":"单击放置首个顶点","continueLine":"单击继续绘制","finishLine":"单击任何存在的标记以完成","finishPoly":"单击第一个标记以完成","finishRect":"单击完成","startCircle":"单击放置圆心","finishCircle":"单击完成圆形"},"actions":{"finish":"完成","cancel":"取消","removeLastVertex":"移除最后的顶点"},"buttonTitles":{"drawMarkerButton":"绘制标记","drawPolyButton":"绘制多边形","drawLineButton":"绘制线段","drawCircleButton":"绘制圆形","drawRectButton":"绘制长方形","editButton":"编辑图层","dragButton":"拖拽图层","cutButton":"剪切图层","deleteButton":"删除图层"}}
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports) {
+
+module.exports = {"tooltips":{"placeMarker":"Clique para posicionar o marcador","firstVertex":"Clique para posicionar o primeiro vértice","continueLine":"Clique para continuar desenhando","finishLine":"Clique em qualquer marcador existente para finalizar","finishPoly":"Clique no primeiro ponto para fechar o polígono","finishRect":"Clique para finalizar","startCircle":"Clique para posicionar o centro do círculo","finishCircle":"Clique para fechar o círculo"},"actions":{"finish":"Finalizar","cancel":"Cancelar","removeLastVertex":"Remover último vértice"},"buttonTitles":{"drawMarkerButton":"Desenhar um marcador","drawPolyButton":"Desenhar um polígono","drawLineButton":"Desenhar uma polilinha","drawCircleButton":"Desenhar um círculo","drawRectButton":"Desenhar um retângulo","editButton":"Editar camada(s)","dragButton":"Mover camada(s)","cutButton":"Recortar camada(s)","deleteButton":"Remover camada(s)","unionButton":"Juntar camada (s)"}}
+
+/***/ }),
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8436,11 +8491,11 @@ exports.default = union;
 
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_Controls__ = __webpack_require__(130);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_Controls__ = __webpack_require__(132);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helpers__ = __webpack_require__(0);
 
 
@@ -8452,6 +8507,7 @@ var Toolbar = L.Class.extend({
     drawPolyline: true,
     drawPolygon: true,
     drawCircle: true,
+    drawCircleMarker: true,
     editMode: true,
     dragMode: true,
     cutPolygon: true,
@@ -8514,6 +8570,7 @@ var Toolbar = L.Class.extend({
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
+        drawCircleMarker: 'control-icon leaflet-pm-icon-circle-marker',
         editMode: 'control-icon leaflet-pm-icon-edit',
         dragMode: 'control-icon leaflet-pm-icon-drag',
         cutPolygon: 'control-icon leaflet-pm-icon-cut',
@@ -8647,6 +8704,21 @@ var Toolbar = L.Class.extend({
       position: this.options.position,
       actions: ['cancel']
     };
+    var drawCircleMarkerButton = {
+      title: Object(__WEBPACK_IMPORTED_MODULE_1__helpers__["a" /* getTranslation */])('buttonTitles.drawCircleMarkerButton'),
+      className: 'control-icon leaflet-pm-icon-circle-marker',
+      jsClass: 'CircleMarker',
+      onClick: function onClick() {},
+      afterClick: function afterClick() {
+        // toggle drawing mode
+        _this.map.pm.Draw.CircleMarker.toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['cancel']
+    };
     var drawRectButton = {
       title: Object(__WEBPACK_IMPORTED_MODULE_1__helpers__["a" /* getTranslation */])('buttonTitles.drawRectButton'),
       className: 'control-icon leaflet-pm-icon-rectangle',
@@ -8754,6 +8826,8 @@ var Toolbar = L.Class.extend({
 
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
 
+    this._addButton('drawCircleMarker', new L.Control.PMButton(drawCircleMarkerButton));
+
     this._addButton('editMode', new L.Control.PMButton(editButton));
 
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
@@ -8782,7 +8856,7 @@ var Toolbar = L.Class.extend({
 /* harmony default export */ __webpack_exports__["a"] = (Toolbar);
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8931,7 +9005,7 @@ var PMButton = L.Control.extend({
 /* harmony default export */ __webpack_exports__["a"] = (PMButton);
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var castPath = __webpack_require__(40),
@@ -8961,7 +9035,7 @@ module.exports = baseGet;
 
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isArray = __webpack_require__(6),
@@ -8996,10 +9070,10 @@ module.exports = isKey;
 
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var memoizeCapped = __webpack_require__(134);
+var memoizeCapped = __webpack_require__(136);
 
 /** Used to match property names within property paths. */
 var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
@@ -9029,10 +9103,10 @@ module.exports = stringToPath;
 
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var memoize = __webpack_require__(135);
+var memoize = __webpack_require__(137);
 
 /** Used as the maximum memoize cache size. */
 var MAX_MEMOIZE_SIZE = 500;
@@ -9061,7 +9135,7 @@ module.exports = memoizeCapped;
 
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var MapCache = __webpack_require__(28);
@@ -9140,10 +9214,10 @@ module.exports = memoize;
 
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseToString = __webpack_require__(137);
+var baseToString = __webpack_require__(139);
 
 /**
  * Converts `value` to a string. An empty string is returned for `null`
@@ -9174,11 +9248,11 @@ module.exports = toString;
 
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Symbol = __webpack_require__(16),
-    arrayMap = __webpack_require__(138),
+    arrayMap = __webpack_require__(140),
     isArray = __webpack_require__(6),
     isSymbol = __webpack_require__(25);
 
@@ -9217,7 +9291,7 @@ module.exports = baseToString;
 
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports) {
 
 /**
@@ -9244,11 +9318,11 @@ module.exports = arrayMap;
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var baseHas = __webpack_require__(140),
-    hasPath = __webpack_require__(141);
+var baseHas = __webpack_require__(142),
+    hasPath = __webpack_require__(143);
 
 /**
  * Checks if `path` is a direct property of `object`.
@@ -9285,7 +9359,7 @@ module.exports = has;
 
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports) {
 
 /** Used for built-in method references. */
@@ -9310,7 +9384,7 @@ module.exports = baseHas;
 
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var castPath = __webpack_require__(40),
@@ -9355,11 +9429,11 @@ module.exports = hasPath;
 
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helpers__ = __webpack_require__(0);
 
 
@@ -9447,7 +9521,12 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Marker = __WEBPACK_I
     }); // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
 
 
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false); // change enabled state
+    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false); // cleanup snapping
+
+
+    if (this.options.snappable) {
+      this._cleanupSnapping();
+    } // change enabled state
 
 
     this._enabled = false;
@@ -9510,13 +9589,13 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Marker = __WEBPACK_I
 });
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__turf_kinks__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers__ = __webpack_require__(0);
 
 
@@ -9868,11 +9947,11 @@ __WEBPACK_IMPORTED_MODULE_1__L_PM_Draw__["a" /* default */].Line = __WEBPACK_IMP
 });
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helpers__ = __webpack_require__(0);
 
 
@@ -9893,8 +9972,10 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Polygon = __WEBPACK_
     } // get coordinates
 
 
-    var coords = this._layer.getLatLngs(); // if there is only one coords, don't finish the shape!
+    var coords = this._layer.getLatLngs(); // only finish the shape if there are 3 or more vertices
 
+
+    console.log(coords);
 
     if (coords.length <= 2) {
       return;
@@ -9963,11 +10044,11 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Polygon = __WEBPACK_
 });
 
 /***/ }),
-/* 145 */
+/* 147 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helpers__ = __webpack_require__(0);
 
 
@@ -10221,11 +10302,11 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Rectangle = __WEBPAC
 });
 
 /***/ }),
-/* 146 */
+/* 148 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helpers__ = __webpack_require__(0);
 
 
@@ -10462,14 +10543,112 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Circle = __WEBPACK_I
 });
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_intersect__ = __webpack_require__(148);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__helpers__ = __webpack_require__(0);
+
+
+__WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].CircleMarker = __WEBPACK_IMPORTED_MODULE_0__L_PM_Draw__["a" /* default */].Marker.extend({
+  initialize: function initialize(map) {
+    this._map = map;
+    this._shape = 'CircleMarker';
+    this.toolbarButtonName = 'drawCircleMarker';
+  },
+  enable: function enable(options) {
+    var _this = this;
+
+    // TODO: Think about if these options could be passed globally for all
+    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+    L.Util.setOptions(this, options); // change enabled state
+
+    this._enabled = true; // create a marker on click on the map
+
+    this._map.on('click', this._createMarker, this); // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
+
+
+    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true); // this is the hintmarker on the mouse cursor
+
+
+    this._hintMarker = L.circleMarker([0, 0], this.options.templineStyle);
+    this._hintMarker._pmTempLayer = true;
+
+    this._hintMarker.addTo(this._map); // add tooltip to hintmarker
+
+
+    if (this.options.tooltips) {
+      this._hintMarker.bindTooltip(Object(__WEBPACK_IMPORTED_MODULE_1__helpers__["a" /* getTranslation */])('tooltips.placeCircleMarker'), {
+        permanent: true,
+        offset: L.point(0, 10),
+        direction: 'bottom',
+        opacity: 0.8
+      }).openTooltip();
+    } // this is just to keep the snappable mixin happy
+
+
+    this._layer = this._hintMarker; // sync hint marker with mouse cursor
+
+    this._map.on('mousemove', this._syncHintMarker, this); // fire drawstart event
+
+
+    this._map.fire('pm:drawstart', {
+      shape: this._shape,
+      workingLayer: this._layer
+    }); // enable edit mode for existing markers
+
+
+    this._map.eachLayer(function (layer) {
+      if (_this.isRelevantMarker(layer)) {
+        layer.pm.enable();
+      }
+    });
+  },
+  isRelevantMarker: function isRelevantMarker(layer) {
+    return layer instanceof L.CircleMarker && !(layer instanceof L.Circle) && layer.pm && !layer._pmTempLayer;
+  },
+  _createMarker: function _createMarker(e) {
+    if (!e.latlng) {
+      return;
+    } // assign the coordinate of the click to the hintMarker, that's necessary for
+    // mobile where the marker can't follow a cursor
+
+
+    if (!this._hintMarker._snapped) {
+      this._hintMarker.setLatLng(e.latlng);
+    } // get coordinate for new vertex by hintMarker (cursor marker)
+
+
+    var latlng = this._hintMarker.getLatLng(); // create marker
+
+
+    var marker = L.circleMarker(latlng, this.options.pathOptions); // add marker to the map
+
+    marker.addTo(this._map); // enable editing for the marker
+
+    marker.pm.enable(); // fire the pm:create event and pass shape and marker
+
+    this._map.fire('pm:create', {
+      shape: this._shape,
+      marker: marker,
+      // DEPRECATED
+      layer: marker
+    });
+
+    this._cleanupSnapping();
+  }
+});
+
+/***/ }),
+/* 150 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_intersect__ = __webpack_require__(151);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_intersect___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__turf_intersect__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_difference__ = __webpack_require__(149);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_difference__ = __webpack_require__(152);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__ = __webpack_require__(1);
 
 
 
@@ -10572,7 +10751,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Draw__["a" /* default */].Cut = __WEBPACK_IMPO
 });
 
 /***/ }),
-/* 148 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10688,13 +10867,13 @@ exports.default = intersect;
 
 
 /***/ }),
-/* 149 */
+/* 152 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_martinez_polygon_clipping__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_martinez_polygon_clipping___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_martinez_polygon_clipping__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_area__ = __webpack_require__(150);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_area__ = __webpack_require__(153);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__turf_area___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__turf_area__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__turf_helpers__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__turf_helpers___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__turf_helpers__);
@@ -10784,7 +10963,7 @@ function removeEmptyPolygon(geom) {
 
 
 /***/ }),
-/* 150 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10905,7 +11084,7 @@ function rad(num) {
 
 
 /***/ }),
-/* 151 */
+/* 154 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10959,7 +11138,7 @@ var DragMixin = {
     this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this); // clear up mouseup event
 
 
-    this._layer.off('mouseup', this._dragMixinOnMouseUp, this); // if no drag happened, don't do anything
+    this._layer._map.off('mouseup', this._dragMixinOnMouseUp, this); // if no drag happened, don't do anything
 
 
     if (!this._dragging) {
@@ -11017,7 +11196,7 @@ var DragMixin = {
 
     this._tempDragCoord = e.latlng;
 
-    this._layer.on('mouseup', this._dragMixinOnMouseUp, this); // listen to mousemove on map (instead of polygon),
+    this._layer._map.on('mouseup', this._dragMixinOnMouseUp, this); // listen to mousemove on map (instead of polygon),
     // otherwise fast mouse movements stop the drag
 
 
@@ -11052,40 +11231,30 @@ var DragMixin = {
       );
     };
 
-    var moveCoord = function moveCoord(coord) {
-      return {
-        lat: coord.lat + deltaLatLng.lat,
-        lng: coord.lng + deltaLatLng.lng
-      };
-    };
-
     if (this._layer instanceof L.CircleMarker) {
-      // create the new coordinates array
-      var newCoords = moveCoord(this._layer.getLatLng()); // set new coordinates and redraw
-
-      this._layer.setLatLng(newCoords);
+      // set new coordinates and redraw
+      this._layer.setLatLng(latlng);
     } else {
       // create the new coordinates array
-      var _newCoords = moveCoords(this._layer.getLatLngs()); // set new coordinates and redraw
+      var newCoords = moveCoords(this._layer.getLatLngs()); // set new coordinates and redraw
 
-
-      this._layer.setLatLngs(_newCoords);
+      this._layer.setLatLngs(newCoords);
     } // save current latlng for next delta calculation
 
 
     this._tempDragCoord = latlng; // fire pm:dragstart event
 
-    this._layer.fire('pm:drag');
+    this._layer.fire('pm:drag', e);
   }
 };
 /* harmony default export */ __webpack_exports__["a"] = (DragMixin);
 
 /***/ }),
-/* 152 */
+/* 155 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(2);
  // LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Polygon
 // (which inherits from L.PM.Edit) for each layer,
 // so it's not really a parent class
@@ -11195,11 +11364,11 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].LayerGroup = L.Class
 });
 
 /***/ }),
-/* 153 */
+/* 156 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(2);
 
 __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Marker = __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].extend({
   initialize: function initialize(layer) {
@@ -11288,7 +11457,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Marker = __WEBPACK_I
 });
 
 /***/ }),
-/* 154 */
+/* 157 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11296,7 +11465,7 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Marker = __WEBPACK_I
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__turf_kinks___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__turf_kinks__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_get__ = __webpack_require__(39);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash_get___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash_get__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__L_PM_Utils__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__helpers__ = __webpack_require__(0);
 
@@ -11315,6 +11484,8 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
   initialize: function initialize(layer) {
     this._layer = layer;
     this._enabled = false;
+    this._isDragging = false;
+    this._markerDistances = [];
   },
   toggleEdit: function toggleEdit(options) {
     if (!this.enabled()) {
@@ -11342,7 +11513,11 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
 
     this._enabled = true; // init markers
 
-    this._initMarkers(); // if polygon gets removed from map, disable edit mode
+    if (this.options.showMarkersOnHover) {
+      this._layer.on('mouseover', this._initMarkers, this);
+    } else {
+      this._initMarkers();
+    } // if polygon gets removed from map, disable edit mode
 
 
     this._layer.on('remove', this._onLayerRemove, this);
@@ -11382,11 +11557,15 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
 
     poly.pm._enabled = false;
 
-    poly.pm._markerGroup.clearLayers(); // clean up draggable
+    if (poly.pm._markerGroup) {
+      poly.pm._markerGroup.clearLayers();
+    } // clean up draggable
 
 
     poly.off('mousedown');
-    poly.off('mouseup'); // remove onRemove listener
+    poly.off('mouseup'); // clean up showMarkersOnHover
+
+    poly.off('mouseover'); // remove onRemove listener
 
     this._layer.off('remove', this._onLayerRemove, this);
 
@@ -11468,9 +11647,10 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       this.isRed = false;
     }
   },
-  _initMarkers: function _initMarkers() {
+  _initMarkers: function _initMarkers(e) {
     var _this2 = this;
 
+    if (this._isDragging) return false;
     var map = this._map;
 
     var coords = this._layer.getLatLngs(); // cleanup old ones first
@@ -11489,16 +11669,73 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       // if there is another coords ring, go a level deep and do this again
       if (Array.isArray(coordsArr[0])) {
         return coordsArr.map(handleRing, _this2);
-      } // the marker array, it includes only the markers of vertexes (no middle markers)
+      }
 
+      var ringArr = [];
+      _this2._markerDistances = [];
 
-      var ringArr = coordsArr.map(_this2._createMarker, _this2); // create small markers in the middle of the regular markers
+      if (_this2.options.showMarkersOnHover) {
+        for (var n in coordsArr) {
+          if (typeof coordsArr[n] === "undefined") continue;
+          var distance = Math.sqrt(Math.pow(coordsArr[n].lat - e.latlng.lat, 2) + Math.pow(coordsArr[n].lng - e.latlng.lng, 2));
+
+          _this2._markerDistances.push({
+            n: parseInt(n),
+            distance: distance
+          });
+        }
+
+        _this2._markerDistances = _this2._markerDistances.sort(function (a, b) {
+          return a.distance - b.distance;
+        });
+        var coordsArrSlice = [];
+
+        for (var n = 0; n < _this2.options.markersOnHoverCount; n++) {
+          if (typeof coordsArr[n] === "undefined") continue;
+          coordsArrSlice.push(coordsArr[_this2._markerDistances[n].n]);
+        }
+
+        coordsArr = coordsArrSlice;
+        ringArr = coordsArr.map(function (v, k) {
+          return _this2._createMarker(v, _this2._markerDistances[k].n);
+        });
+      } else {
+        // the marker array, it includes only the markers of vertexes (no middle markers)
+        ringArr = coordsArr.map(function (v, k) {
+          return _this2._createMarker(v, k);
+        });
+      } // create small markers in the middle of the regular markers
+
 
       coordsArr.map(function (v, k) {
         // find the next index fist
-        var nextIndex = _this2.isPolygon() ? (k + 1) % coordsArr.length : k + 1; // create the marker
+        var isCreatedMarker = {
+          current: false,
+          next: false
+        };
+        var nextIndex = null;
 
-        return _this2._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
+        if (_this2.options.showMarkersOnHover) {
+          var fullK = _this2._markerDistances[k].n;
+          var fullNextIndex = _this2.isPolygon() ? (fullK + 1) % _this2._markerDistances.length : fullK + 1;
+
+          for (var n = 0; n < _this2.options.markersOnHoverCount; n++) {
+            if (typeof _this2._markerDistances[n] === "undefined") continue;
+            if (_this2._markerDistances[n].n == fullK) isCreatedMarker.current = true;
+
+            if (_this2._markerDistances[n].n == fullNextIndex) {
+              isCreatedMarker.next = true;
+              nextIndex = n;
+            }
+          }
+        } else {
+          nextIndex = _this2.isPolygon() ? (k + 1) % coordsArr.length : k + 1;
+        }
+
+        if (!_this2.options.showMarkersOnHover || isCreatedMarker.current && isCreatedMarker.next) {
+          // create the marker
+          return _this2._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
+        }
       });
       return ringArr;
     }; // create markers
@@ -11511,7 +11748,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     }
   },
   // creates initial markers for coordinates
-  _createMarker: function _createMarker(latlng) {
+  _createMarker: function _createMarker(latlng, index) {
     var marker = new L.Marker(latlng, {
       draggable: true,
       icon: L.divIcon({
@@ -11519,6 +11756,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
       })
     });
     marker._pmTempLayer = true;
+    marker._index = index;
     marker.on('dragstart', this._onMarkerDragStart, this);
     marker.on('move', this._onMarkerDrag, this);
     marker.on('dragend', this._onMarkerDragEnd, this);
@@ -11597,7 +11835,26 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
 
     var coordsRing = indexPath.length > 1 ? __WEBPACK_IMPORTED_MODULE_1_lodash_get___default()(coords, parentPath) : coords; // define the markers array that is edited
 
-    var markerArr = indexPath.length > 1 ? __WEBPACK_IMPORTED_MODULE_1_lodash_get___default()(this._markers, parentPath) : this._markers; // add coordinate to coordinate array
+    var markerArr = indexPath.length > 1 ? __WEBPACK_IMPORTED_MODULE_1_lodash_get___default()(this._markers, parentPath) : this._markers; // recalculate marker indexes
+
+    if (this.options.showMarkersOnHover) {
+      for (var n = 0; n < this._markerDistances.length; n++) {
+        if (typeof markerArr[n] === "undefined") continue;
+        var indexOrigin = this._markerDistances[n].n;
+
+        if (indexOrigin >= index + 1) {
+          markerArr[n]._index++;
+          this._markerDistances[n].n++;
+        }
+      }
+    } else {
+      for (var n = index + 1; n < markerArr.length; n++) {
+        if (typeof markerArr[n] === "undefined") continue;
+        markerArr[n]._index++;
+      }
+    }
+
+    newM._index = leftM._index + 1; // add coordinate to coordinate array
 
     coordsRing.splice(index + 1, 0, latlng); // add marker to marker array
 
@@ -11725,31 +11982,43 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     });
   },
   findDeepMarkerIndex: function findDeepMarkerIndex(arr, marker) {
-    // thanks for the function, Felix Heck
-    var result;
-
-    var run = function run(path) {
-      return function (v, i) {
-        var iRes = path.concat(i);
-
-        if (v._leaflet_id === marker._leaflet_id) {
-          result = iRes;
-          return true;
-        }
-
-        return Array.isArray(v) && v.some(run(iRes));
-      };
-    };
-
-    arr.some(run([]));
     var returnVal = {};
 
-    if (result) {
-      returnVal = {
-        indexPath: result,
-        index: result[result.length - 1],
-        parentPath: result.slice(0, result.length - 1)
+    if (this.options.showMarkersOnHover) {
+      if (typeof marker._index !== "undefined") {
+        returnVal = {
+          indexPath: this._layer instanceof L.Polygon ? [0, marker._index] : [marker._index],
+          index: marker._index,
+          parentPath: this._layer instanceof L.Polygon ? [0] : []
+        };
+      }
+    } else {
+      // thanks for the function, Felix Heck
+      var result;
+
+      var run = function run(path) {
+        return function (v, i) {
+          var iRes = path.concat(i);
+
+          if (v._leaflet_id === marker._leaflet_id) {
+            result = iRes;
+            return true;
+          }
+
+          return Array.isArray(v) && v.some(run(iRes));
+        };
       };
+
+      arr.some(run([]));
+      returnVal = {};
+
+      if (result) {
+        returnVal = {
+          indexPath: result,
+          index: result[result.length - 1],
+          parentPath: result.slice(0, result.length - 1)
+        };
+      }
     }
 
     return returnVal;
@@ -11790,25 +12059,45 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
 
     var markerArr = indexPath.length > 1 ? __WEBPACK_IMPORTED_MODULE_1_lodash_get___default()(this._markers, parentPath) : this._markers; // find the indizes of next and previous markers
 
-    var nextMarkerIndex = (index + 1) % markerArr.length;
-    var prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length; // update middle markers on the left and right
+    var nextMarkerIndex = null;
+    var prevMarkerIndex = null;
+
+    if (!this.options.showMarkersOnHover) {
+      nextMarkerIndex = (index + 1) % markerArr.length;
+      prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+    } else {
+      var nextMarkerIndexOrigin = (marker._index + 1) % this._markerDistances.length;
+      var prevMarkerIndexOrigin = (marker._index + (this._markerDistances.length - 1)) % this._markerDistances.length;
+
+      for (var n = 0; n < this.options.markersOnHoverCount; n++) {
+        if (typeof this._markerDistances[n] === "undefined") continue;
+        if (this._markerDistances[n].n == nextMarkerIndexOrigin) nextMarkerIndex = n;
+        if (this._markerDistances[n].n == prevMarkerIndexOrigin) prevMarkerIndex = n;
+      }
+    } // update middle markers on the left and right
     // be aware that "next" and "prev" might be interchanged, depending on the geojson array
+
 
     var markerLatLng = marker.getLatLng(); // get latlng of prev and next marker
 
-    var prevMarkerLatLng = markerArr[prevMarkerIndex].getLatLng();
-    var nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
+    if (nextMarkerIndex !== null) {
+      var nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
 
-    if (marker._middleMarkerNext) {
-      var middleMarkerNextLatLng = __WEBPACK_IMPORTED_MODULE_3__L_PM_Utils__["a" /* default */].calcMiddleLatLng(this._map, markerLatLng, nextMarkerLatLng);
+      if (marker._middleMarkerNext) {
+        var middleMarkerNextLatLng = __WEBPACK_IMPORTED_MODULE_3__L_PM_Utils__["a" /* default */].calcMiddleLatLng(this._map, markerLatLng, nextMarkerLatLng);
 
-      marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
+        marker._middleMarkerNext.setLatLng(middleMarkerNextLatLng);
+      }
     }
 
-    if (marker._middleMarkerPrev) {
-      var middleMarkerPrevLatLng = __WEBPACK_IMPORTED_MODULE_3__L_PM_Utils__["a" /* default */].calcMiddleLatLng(this._map, markerLatLng, prevMarkerLatLng);
+    if (prevMarkerIndex !== null) {
+      var prevMarkerLatLng = markerArr[prevMarkerIndex].getLatLng();
 
-      marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
+      if (marker._middleMarkerPrev) {
+        var middleMarkerPrevLatLng = __WEBPACK_IMPORTED_MODULE_3__L_PM_Utils__["a" /* default */].calcMiddleLatLng(this._map, markerLatLng, prevMarkerLatLng);
+
+        marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
+      }
     } // if self intersection is not allowed, handle it
 
 
@@ -11817,6 +12106,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     }
   },
   _onMarkerDragEnd: function _onMarkerDragEnd(e) {
+    this._isDragging = false;
     var marker = e.target;
 
     var _this$findDeepMarkerI5 = this.findDeepMarkerIndex(this._markers, marker),
@@ -11847,6 +12137,7 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
     this._fireEdit();
   },
   _onMarkerDragStart: function _onMarkerDragStart(e) {
+    this._isDragging = true;
     var marker = e.target;
 
     var _this$findDeepMarkerI6 = this.findDeepMarkerIndex(this._markers, marker),
@@ -11872,22 +12163,22 @@ __WEBPACK_IMPORTED_MODULE_2__L_PM_Edit__["a" /* default */].Line = __WEBPACK_IMP
 });
 
 /***/ }),
-/* 155 */
+/* 158 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(2);
 
 __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Polygon = __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Line.extend({// this is a bit weird but... Polygons are completely supported by L.PM.Edit.Line now 😲.
   // I'll keep this class in case there is something Polygon-specific that we'd need in the future.
 });
 
 /***/ }),
-/* 156 */
+/* 159 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(2);
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -12096,11 +12387,11 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Rectangle = __WEBPAC
 });
 
 /***/ }),
-/* 157 */
+/* 160 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(2);
 
 __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Circle = __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].extend({
   initialize: function initialize(layer) {
@@ -12309,13 +12600,133 @@ __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].Circle = __WEBPACK_I
 });
 
 /***/ }),
-/* 158 */
+/* 161 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__ = __webpack_require__(2);
+
+__WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].CircleMarker = __WEBPACK_IMPORTED_MODULE_0__L_PM_Edit__["a" /* default */].extend({
+  initialize: function initialize(layer) {
+    this._layer = layer;
+    this._enabled = false;
+  },
+  toggleEdit: function toggleEdit(options) {
+    if (!this.enabled()) {
+      this.enable(options);
+    } else {
+      this.disable();
+    }
+  },
+  enabled: function enabled() {
+    return this._enabled;
+  },
+  enable: function enable() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      draggable: true,
+      snappable: true
+    };
+    L.Util.setOptions(this, options);
+    this._map = this._layer._map; // cancel when map isn't available, this happens when the polygon is removed before this fires
+
+    if (!this._map) {
+      return;
+    }
+
+    if (!this.enabled()) {
+      // if it was already enabled, disable first
+      // we don't block enabling again because new options might be passed
+      this.disable();
+    } // change state
+
+
+    this._enabled = true; // enable removal for the marker
+
+    if (!this.options.preventMarkerRemoval) {
+      this._layer.on('contextmenu', this._removeMarker, this);
+    }
+
+    if (this.options.draggable) {
+      this.enableLayerDrag();
+    }
+
+    if (this.options.snappable) {
+      this._initSnappableMarkers();
+    }
+
+    this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
+  },
+  disable: function disable() {
+    var layer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._layer;
+
+    // if it's not enabled, it doesn't need to be disabled
+    if (!this.enabled()) {
+      return false;
+    } // prevent disabling if layer is being dragged
+
+
+    if (layer.pm._dragging) {
+      return false;
+    }
+
+    layer.pm._enabled = false; // remove draggable class
+
+    if (layer._path) {
+      var el = layer._path;
+      L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    }
+
+    if (this._layerEdited) {
+      this._layer.fire('pm:update', {});
+    }
+
+    this._layerEdited = false;
+    return true;
+  },
+  _moveMarker: function _moveMarker(e) {
+    var center = e.latlng;
+
+    this._layer.setLatLng(center).redraw();
+  },
+  _removeMarker: function _removeMarker() {
+    this._layer.fire('pm:remove');
+
+    this._layer.remove();
+  },
+  _fireEdit: function _fireEdit() {
+    // fire edit event
+    this._layer.fire('pm:edit');
+
+    this._layerEdited = true;
+  },
+  _onMarkerDragEnd: function _onMarkerDragEnd(e) {
+    this._layer.fire('pm:markerdragend', {
+      markerEvent: e
+    });
+
+    this._fireEdit();
+  },
+  // overwrite initSnappableMarkers from Snapping.js Mixin
+  _initSnappableMarkers: function _initSnappableMarkers() {
+    var marker = this._layer;
+    this.options.snapDistance = this.options.snapDistance || 30;
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.on('pm:drag', this._handleSnapping, this);
+    marker.off('pm:dragend', this._cleanupSnapping, this);
+    marker.on('pm:dragend', this._cleanupSnapping, this);
+    marker.off('pm:dragstart', this._unsnap, this);
+    marker.on('pm:dragstart', this._unsnap, this);
+  }
+});
+
+/***/ }),
+/* 162 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 159 */
+/* 163 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
