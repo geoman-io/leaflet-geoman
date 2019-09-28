@@ -1,4 +1,4 @@
-name: Node.js Package
+name: publish-package
 
 on: release
 
@@ -25,19 +25,19 @@ jobs:
       - run: npm ci
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM}}
 
-  publish-gpr:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-          registry-url: https://npm.pkg.github.com/
-          scope: '@codeofsumit'
-      - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GPR}}
+  # publish-gpr:
+    # needs: build
+    # runs-on: ubuntu-latest
+    # steps:
+    #   - uses: actions/checkout@v1
+    #   - uses: actions/setup-node@v1
+    #     with:
+    #       node-version: 12
+    #       registry-url: https://npm.pkg.github.com/
+    #       scope: '@codeofsumit'
+    #   - run: npm ci
+    #   - run: npm publish
+    #     env:
+    #       NODE_AUTH_TOKEN: ${{secrets.GPR}}
