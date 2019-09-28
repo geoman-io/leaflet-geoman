@@ -8,12 +8,18 @@ module.exports = {
     watch: false,
     // devtool: 'cheap-source-map',
     entry: ['./src/js/L.PM.js'],
+    mode: 'production',
     output: {
         filename: 'leaflet.pm.min.js',
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
         rules: [
+            {
+                test: /\.mjs$/,
+                include: /node_modules/,
+                type: "javascript/auto",
+            },
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
@@ -46,12 +52,6 @@ module.exports = {
                 output: {
                     comments: false,
                 },
-            },
-        }),
-        new webpack.DefinePlugin({
-            'process.env': {
-                // This has effect on the react lib size
-                NODE_ENV: JSON.stringify('production'),
             },
         }),
     ],

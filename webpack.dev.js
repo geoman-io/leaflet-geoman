@@ -6,6 +6,7 @@ const path = require('path');
 module.exports = {
     watch: true,
     devtool: 'cheap-eval-source-map',
+    mode: 'development',
     entry: ['./src/js/L.PM.js'],
     output: {
         filename: 'leaflet.pm.min.js',
@@ -13,6 +14,11 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.mjs$/,
+                include: /node_modules/,
+                type: "javascript/auto",
+            },
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
