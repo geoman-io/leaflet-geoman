@@ -1,3 +1,5 @@
+import { getTranslation } from '../helpers';
+
 const PMButton = L.Control.extend({
   options: {
     position: 'topleft',
@@ -80,19 +82,19 @@ const PMButton = L.Control.extend({
 
     const actions = {
       cancel: {
-        text: 'Cancel',
+        text: getTranslation('actions.cancel'),
         onClick() {
           this._triggerClick();
         },
       },
       removeLastVertex: {
-        text: 'Remove Last Vertex',
+        text: getTranslation('actions.removeLastVertex'),
         onClick() {
           this._map.pm.Draw[button.jsClass]._removeLastVertex();
         },
       },
       finish: {
-        text: 'Finish',
+        text: getTranslation('actions.finish'),
         onClick(e) {
           this._map.pm.Draw[button.jsClass]._finishShape(e);
         },

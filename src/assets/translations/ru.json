@@ -1,0 +1,30 @@
+{
+  "tooltips": {
+    "placeMarker": "Щелкните, чтобы поместить маркер",
+    "firstVertex": "Нажмите, чтобы поместить первый объект",
+    "continueLine": "Нажмите, чтобы продолжить рисование",
+    "finishLine": "Щелкните любой существующий маркер для завершения",
+    "finishPoly": "Выберите первую точку, чтобы закончить",
+    "finishRect": "Нажмите, чтобы закончить",
+    "startCircle": "Нажмите чтобы добавить круг",
+    "finishCircle": "Нажмите чтобы закончить круг",
+    "placeCircleMarker": "Click to place circle marker"
+  },
+  "actions": {
+    "finish": "Заканчивать",
+    "cancel": "Отмена",
+    "removeLastVertex": "Удалить последний объект на карте"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Добавить маркер",
+    "drawPolyButton": "Рисовать полигон",
+    "drawLineButton": "Рисовать Полилинию",
+    "drawCircleButton": "Рисовать круг",
+    "drawRectButton": "Рисовать Прямоугольник",
+    "editButton": "Редактировать слой",
+    "dragButton": "Перетаскивать слой",
+    "cutButton": "Вырезать слой",
+    "deleteButton": "Удалить слой",
+    "placeCircleMarker": "Щелкните, чтобы поместить маркер"
+  }
+}

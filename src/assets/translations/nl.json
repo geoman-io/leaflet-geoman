@@ -1,0 +1,30 @@
+{
+  "tooltips": {
+    "placeMarker": "Klik om een marker te plaatsen",
+    "firstVertex": "Klik om het eerste punt te plaatsen",
+    "continueLine": "Klik om te blijven tekenen",
+    "finishLine": "Klik op een bestaand punt om te beëindigen",
+    "finishPoly": "Klik op het eerst punt om te beëindigen",
+    "finishRect": "Klik om te beëindigen",
+    "startCircle": "Klik om het middelpunt te plaatsen",
+    "finishCircle": "Klik om de cirkel te beëindigen",
+    "placeCircleMarker": "Klik om een marker te plaatsen"
+  },
+  "actions": {
+    "finish": "Bewaar",
+    "cancel": "Annuleer",
+    "removeLastVertex": "Verwijder laatste punt"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Plaats Marker",
+    "drawPolyButton": "Teken een vlak",
+    "drawLineButton": "Teken een lijn",
+    "drawCircleButton": "Teken een cirkel",
+    "drawRectButton": "Teken een vierkant",
+    "editButton": "Bewerk",
+    "dragButton": "Verplaats",
+    "cutButton": "Knip",
+    "deleteButton": "Verwijder",
+    "drawCircleMarkerButton": "Plaats Marker"
+  }
+}

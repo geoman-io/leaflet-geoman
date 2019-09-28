@@ -339,7 +339,7 @@ map2.pm.enableDraw('Line', { allowSelfIntersection: false });
 map2.pm.disableDraw('Line');
 
 map2.on('pm:create', function(e) {
-  e.layer.pm.enable({ allowSelfIntersection: false });
+  // e.layer.pm.enable({ allowSelfIntersection: false });
   // e.layer.pm.disable();
   // console.log(e.layer.pm.hasSelfIntersection());
 

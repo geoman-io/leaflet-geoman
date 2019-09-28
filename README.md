@@ -9,7 +9,7 @@
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
   Draw, Edit, Drag, Cut and Snap Layers<br>
-  Supports Markers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
+  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
   <a href="https://badge.fury.io/js/leaflet.pm">
@@ -30,8 +30,8 @@
 
 ![Demo](https://file-gmeileqfmg.now.sh/)
 
-Need advanced features like GeoJSON Export, storing meta data and more?\
-Check out **[Geoman](https://geoman.io)**.
+Are you using leaflet.pm for commercial projects?\
+Check out **[Geoman](https://geoman.io/#pricing)** and consider subscribing to the **Leaflet.PM Supporter Plan** to support development of advanced leaflet.pm features. You will also get prioritized support and consultation.
 
 ## Documentation
 
@@ -42,7 +42,7 @@ Check out **[Geoman](https://geoman.io)**.
 - [Drag Mode](#drag-mode)
 - [Removal Mode](#removal-mode)
 - [Cutting Mode](#cutting-mode)
-- [Style Customization](#customize-style)
+- [Customization](#customize)
 - [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
 ### Installation
@@ -50,7 +50,7 @@ Check out **[Geoman](https://geoman.io)**.
 #### Install via npm
 
 ```
-npm install leaflet.pm --save
+npm i leaflet.pm
 ```
 
 #### Install Manually
@@ -115,10 +115,11 @@ See the available options in the table below.
 | :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
 | position      | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
 | drawMarker    | `true`      | adds button to draw markers                                                                      |
+| drawCircleMarker    | `true`      | adds button to draw circle markers                                                                      |
 | drawPolyline  | `true`      | adds button to draw rectangle                                                                    |
 | drawRectangle | `true`      | adds button to draw rectangle                                                                    |
 | drawPolygon   | `true`      | adds button to draw polygon                                                                      |
-| drawCircle    | `true`      | adds button to draw cricle                                                                       |
+| drawCircle    | `true`      | adds button to draw circle                                                                       |
 | editMode      | `true`      | adds button to toggle edit mode for all layers                                                   |
 | dragMode      | `true`      | adds button to toggle drag mode for all layers                                                   |
 | cutPolygon    | `true`      | adds button to cut a hole in a polygon                                                           |
@@ -217,6 +218,15 @@ Here's a list of layer events you can listen to:
 | pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               |
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
 
+For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
+```js
+L.geoJSON(data,{
+  snapIgnore : true
+})
+//This layer will be ignored by the snapping engine during drawing
+```
+
+
 ### Edit Mode
 
 Let's you edit vertices of layers. Use it like this:
@@ -293,6 +303,7 @@ map.on('pm:globaleditmodetoggled', e => {
   console.log(e);
 });
 ```
+The event has an object with an enabled boolean and a reference to the map.
 
 ### Drag Mode
 
@@ -316,6 +327,15 @@ The following events are available on a layer instance:
 | pm:drag      | `e`    | Fired when a layer is dragged.           |
 | pm:dragend   | `e`    | Fired when a layer stops being dragged.  |
 
+You can also listen to specific drag mode events on the map instance like this:
+
+```js
+map.on('pm:globaldrawmodetoggled', e => {
+  console.log(e);
+});
+```
+The event has an object with an enabled boolean and a reference to the map.
+
 ### Removal Mode
 
 ```js
@@ -336,6 +356,15 @@ The following events are available on a map instance:
 | :---------- | :----- | :------------------------------------------------------- |
 | pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           |
 | layerremove | `e`    | Standard Leaflet event. Fired when any layer is removed. |
+
+You can also listen to specific removal mode events on the map instance like this:
+
+```js
+map.on('pm:globalremovalmodetoggled', e => {
+  console.log(e);
+});
+```
+The event has an object with an enabled boolean and a reference to the map.
 
 ### Cutting Mode
 
@@ -379,7 +408,35 @@ The following events are available on a map instance:
 | :----- | :----- | :-------------------------------- |
 | pm:cut | `e`    | Fired when any layer is being cut |
 
-### Customize Style
+### Customize
+
+##### Customize Language
+
+Change the language of user-facing copy in leaflet.pm
+
+```js
+map.pm.setLang('de');
+```
+
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `zh` and `nl`.
+To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
+
+You can also provide your own custom translations.
+
+```js
+const customTranslation = {
+  tooltips: {
+    placeMarker: 'Custom Marker Translation',
+  },
+};
+
+map.pm.setLang('customName', customTranslation, 'en');
+```
+
+The 3rd parameter is the fallback language in case you only want to override a few Strings.
+See the [english translation file](src/assets/translations/en.json) for all available strings.
+
+##### Customize Style
 
 In order to change the style of the lines during draw, pass these options to the
 `enableDraw()` function.

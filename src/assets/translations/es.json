@@ -1,0 +1,30 @@
+{
+    "tooltips": {
+        "placeMarker": "Presiona para colocar un marcador",
+        "firstVertex": "Presiona para colocar el primer vértice",
+        "continueLine": "Presiona para continuar dibujando",
+        "finishLine": "Presiona cualquier marcador existente para finalizar",
+        "finishPoly": "Presiona el primer marcador para finalizar",
+        "finishRect": "Presiona para finalizar",
+        "startCircle": "Presiona para colocar el centro del circulo",
+        "finishCircle": "Presiona para finalizar el circulo",
+        "placeCircleMarker": "Presiona para colocar un marcador de circulo"
+    },
+    "actions": {
+        "finish": "Finalizar",
+        "cancel": "Cancelar",
+        "removeLastVertex": "Remover ultimo vértice"
+    },
+    "buttonTitles": {
+        "drawMarkerButton": "Dibujar Marcador",
+        "drawPolyButton": "Dibujar Polígono",
+        "drawLineButton": "Dibujar Línea",
+        "drawCircleButton": "Dibujar Circulo",
+        "drawRectButton": "Dibujar Rectángulo",
+        "editButton": "Editar Capas",
+        "dragButton": "Arrastrar Capas",
+        "cutButton": "Cortar Capas",
+        "deleteButton": "Remover Capas",
+        "drawCircleMarkerButton": "Dibujar Marcador de Circulo"
+    }
+}

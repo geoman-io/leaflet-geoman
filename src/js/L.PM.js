@@ -17,6 +17,7 @@ import './Draw/L.PM.Draw.Line';
 import './Draw/L.PM.Draw.Polygon';
 import './Draw/L.PM.Draw.Rectangle';
 import './Draw/L.PM.Draw.Circle';
+import './Draw/L.PM.Draw.CircleMarker';
 import './Draw/L.PM.Draw.Cut';
 
 import Edit from './Edit/L.PM.Edit';
@@ -26,16 +27,18 @@ import './Edit/L.PM.Edit.Line';
 import './Edit/L.PM.Edit.Polygon';
 import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Circle';
+import './Edit/L.PM.Edit.CircleMarker';
 
 import '../css/layers.css';
 import '../css/controls.css';
 
 L.PM = L.PM || {
+  version,
   Map,
   Toolbar,
   Draw,
   Edit,
-  version,
+  activeLang: 'en',
   initialize() {
     this.addInitHooks();
   },
@@ -61,6 +64,14 @@ L.PM = L.PM || {
     }
 
     L.Marker.addInitHook(initMarker);
+
+    function initCircleMarker() {
+      if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.CircleMarker(this);
+      }
+    }
+    L.CircleMarker.addInitHook(initCircleMarker);
+
 
     function initPolyline() {
       if (!this.options.pmIgnore) {

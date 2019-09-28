@@ -15,6 +15,22 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
   });
 
+  it('doesnt finish two point polys', () => {
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 350);
+
+    cy.get('.active .action-finish').click();
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(0);
+
+    cy.toolbarButton('edit').click();
+  });
+
   it('removes layer when cut completely', () => {
     cy.window().then(({ map }) => {
       Cypress.$(map).on('pm:create', ({ originalEvent }) => {
@@ -312,12 +328,12 @@ describe('Draw & Edit Poly', () => {
 
     // draw a polygon to cut
     cy.get(mapSelector)
-      .click(160, 100)
-      .click(270, 100)
-      .click(400, 130)
-      .click(350, 280)
-      .click(200, 150)
-      .click(160, 100);
+      .click(450, 100)
+      .click(450, 150)
+      .click(400, 150)
+      .click(390, 140)
+      .click(390, 100)
+      .click(450, 100);
 
     // enable global edit mode
     cy.toolbarButton('edit')

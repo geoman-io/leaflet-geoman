@@ -110,9 +110,6 @@ Edit.Rectangle = Edit.Polygon.extend({
     // Update bounding box
     this._layer.setLatLngs(corners);
 
-    // Redraw the shape a final time
-    this._layer.redraw();
-
     this._layer.fire('pm:markerdragend', {
       markerEvent: e,
     });

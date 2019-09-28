@@ -1,0 +1,30 @@
+{
+  "tooltips": {
+    "placeMarker": "Platziere den Marker mit Klick",
+    "firstVertex": "Platziere den ersten Marker mit Klick",
+    "continueLine": "Klicke, um weiter zu zeichnen",
+    "finishLine": "Beende mit Klick auf existierenden Marker",
+    "finishPoly": "Beende mit Klick auf ersten Marker",
+    "finishRect": "Beende mit Klick",
+    "startCircle": "Platziere das Kreiszentrum mit Klick",
+    "finishCircle": "Beende den Kreis mit Klick",
+    "placeCircleMarker": "Platziere den Kreismarker mit Klick"
+  },
+  "actions": {
+    "finish": "Beenden",
+    "cancel": "Abbrechen",
+    "removeLastVertex": "Letzten Vertex löschen"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Marker zeichnen",
+    "drawPolyButton": "Polygon zeichnen",
+    "drawLineButton": "Polyline zeichnen",
+    "drawCircleButton": "Kreis zeichnen",
+    "drawRectButton": "Rechteck zeichnen",
+    "editButton": "Layer editieren",
+    "dragButton": "Layer bewegen",
+    "cutButton": "Layer schneiden",
+    "deleteButton": "Layer löschen",
+    "drawCircleMarkerButton": "Kreismarker zeichnen"
+  }
+}
