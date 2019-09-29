@@ -53,8 +53,8 @@ npm i leaflet-geoman-free
 #### Install Manually
 
 Download
-[`leaflet-geoman.css`](https://unpkg.com/@geoman/leaflet-geoman-free@latest/dist/leaflet-geoman-free.css) and
-[`leaflet-geoman.min.js`](https://unpkg.com/@geoman/leaflet-geoman-free@latest/dist/leaflet-geoman-free.min.js)
+[`leaflet-geoman.css`](https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman-free.css) and
+[`leaflet-geoman.min.js`](https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman-free.min.js)
 and include them in your project.
 
 #### Include via CDN
@@ -64,13 +64,13 @@ CSS
 <!-- prettier-ignore -->
 ```html
 
-<link rel="stylesheet" href="https://unpkg.com/@geoman/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
 ```
 
 JS
 
 ```html
-<script src="https://unpkg.com/@geoman/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
 ```
 
 #### Include as ES6 Module
