@@ -12,8 +12,8 @@
   Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
-  <a href="https://badge.fury.io/js/%40geoman%2Fleaflet-geoman-free">
-    <img src="https://badge.fury.io/js/%40geoman%2Fleaflet-geoman-free.svg" alt="npm version" height="18">
+  <a href="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free">
+    <img src="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free.svg" alt="npm version" height="18">
   </a>
   <a href="#">
     <img src="https://travis-ci.com/geoman-io/leaflet-geoman.svg?branch=develop" alt="" />
