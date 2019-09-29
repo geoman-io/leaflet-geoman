@@ -21,8 +21,8 @@
   <a href="https://github.com/codeofsumit/leaflet-geoman">
     <img src="http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet-geoman&style=default" alt="star this repo" />
   </a>
-  <a href="https://www.npmjs.com/package/leaflet-geoman">
-    <img src="https://img.shields.io/npm/dt/leaflet-geoman.svg" alt="NPM Downloads" />
+  <a href="https://www.npmjs.com/package/leaflet.pm">
+    <img src="https://img.shields.io/npm/dt/leaflet.pm.svg" alt="NPM Downloads" />
   </a>
 </p>
 
