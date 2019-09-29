@@ -2,7 +2,7 @@
  *
  * A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
  * by Sumit Kumar (@TweetsOfSumit)
- * Github Repo: https://github.com/codeofsumit/leaflet.pm
+ * Github Repo: https://github.com/geoman-io/leaflet-geoman
  */
 
 import './polyfills';
@@ -107,5 +107,5 @@ L.PM = L.PM || {
   },
 };
 
-// initialize leaflet.pm
+// initialize leaflet-geoman
 L.PM.initialize();

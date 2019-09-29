@@ -1,6 +1,6 @@
 ## Contributing
 
-Thank you for considering contributing to leaflet.pm.
+Thank you for considering contributing to Leaflet-Geoman.
 
 Follow these steps to get up and running:
 

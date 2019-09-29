@@ -61,10 +61,10 @@ const Map = L.Class.extend({
       }
     });
 
-    // filter out layers that don't have the leaflet.pm instance
+    // filter out layers that don't have the leaflet-geoman instance
     layers = layers.filter(layer => !!layer.pm);
 
-    // filter out everything that's leaflet.pm specific temporary stuff
+    // filter out everything that's leaflet-geoman specific temporary stuff
     layers = layers.filter(layer => !layer._pmTempLayer);
 
     return layers;
@@ -72,7 +72,7 @@ const Map = L.Class.extend({
   removeLayer(e) {
 
     const layer = e.target;
-    // only remove layer, if it's handled by leaflet.pm,
+    // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
     const removeable =
       !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
@@ -133,7 +133,7 @@ const Map = L.Class.extend({
     }
   },
   layerAddHandler({ layer }) {
-    // is this layer handled by leaflet.pm?
+    // is this layer handled by leaflet-geoman?
     const isRelevant = !!layer.pm && !layer._pmTempLayer;
 
     // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
@@ -216,7 +216,7 @@ const Map = L.Class.extend({
     return this._globalEditMode;
   },
   enableGlobalEditMode(options) {
-    // find all layers handled by leaflet.pm
+    // find all layers handled by leaflet-geoman
     const layers = this.findLayers();
 
     this._globalEditMode = true;
@@ -236,7 +236,7 @@ const Map = L.Class.extend({
     this._fireEditModeEvent(true);
   },
   disableGlobalEditMode() {
-    // find all layers handles by leaflet.pm
+    // find all layers handles by leaflet-geoman
     const layers = this.findLayers();
 
     this._globalEditMode = false;

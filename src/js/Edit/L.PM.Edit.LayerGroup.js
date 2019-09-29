@@ -38,10 +38,10 @@ Edit.LayerGroup = L.Class.extend({
     // filter out layers that are no layerGroup
     layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
 
-    // filter out layers that don't have leaflet.pm
+    // filter out layers that don't have leaflet-geoman
     layers = layers.filter(layer => !!layer.pm);
 
-    // filter out everything that's leaflet.pm specific temporary stuff
+    // filter out everything that's leaflet-geoman specific temporary stuff
     layers = layers.filter(layer => !layer._pmTempLayer);
 
     // return them
