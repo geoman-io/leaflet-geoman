@@ -12,14 +12,14 @@
   Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
-  <a href="https://badge.fury.io/js/leaflet-geoman">
-    <img src="https://badge.fury.io/js/leaflet-geoman.svg" alt="npm version" />
+  <a href="https://badge.fury.io/js/%40geoman%2Fleaflet-geoman-free">
+    <img src="https://badge.fury.io/js/%40geoman%2Fleaflet-geoman-free.svg" alt="npm version" height="18">
   </a>
   <a href="#">
-    <img src="https://travis-ci.com/codeofsumit/leaflet-geoman.svg?branch=develop" alt="" />
+    <img src="https://travis-ci.com/geoman-io/leaflet-geoman.svg?branch=develop" alt="" />
   </a>
-  <a href="https://github.com/codeofsumit/leaflet-geoman">
-    <img src="http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet-geoman&style=default" alt="star this repo" />
+  <a href="https://github.com/geoman-io/leaflet-geoman">
+    <img src="http://githubbadges.com/star.svg?user=geoman-io&repo=leaflet-geoman&style=default" alt="star this repo" />
   </a>
   <a href="https://www.npmjs.com/package/leaflet.pm">
     <img src="https://img.shields.io/npm/dt/leaflet.pm.svg" alt="NPM Downloads" />
