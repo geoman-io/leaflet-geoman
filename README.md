@@ -76,8 +76,8 @@ JS
 #### Include as ES6 Module
 
 ```js
-import 'leaflet-geoman';
-import 'leaflet-geoman/dist/leaflet-geoman.css';
+import 'leaflet-geoman-free';
+import 'leaflet-geoman-free/dist/leaflet-geoman.css';
 ```
 
 ### Getting Started
