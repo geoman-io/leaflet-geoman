@@ -15,7 +15,7 @@ Draw.Cut = Draw.Polygon.extend({
     const layers = Object.keys(all)
       // convert object to array
       .map(l => all[l])
-      // only layers handled by leaflet.pm
+      // only layers handled by leaflet-geoman
       .filter(l => l.pm)
       // only polygons
       .filter(l => l instanceof L.Polygon)

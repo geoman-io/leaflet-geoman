@@ -8,7 +8,7 @@ module.exports = {
     devtool: 'cheap-eval-source-map',
     entry: ['./src/js/L.PM.js'],
     output: {
-        filename: 'leaflet.pm.min.js',
+        filename: 'leaflet-geoman.min.js',
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
@@ -36,5 +36,5 @@ module.exports = {
             },
         ],
     },
-    plugins: [new ExtractTextPlugin('leaflet.pm.css')],
+    plugins: [new ExtractTextPlugin('leaflet-geoman.css')],
 };

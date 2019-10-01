@@ -45,7 +45,7 @@ beforeEach(() => {
 
 			contentWindow.map = map;
 
-			// add leaflet.pm toolbar
+			// add leaflet-geoman toolbar
 			map.pm.addControls();
 		}
 	});

@@ -1,10 +1,10 @@
 <p align="center">
-  <a href="https://leafletpm.now.sh">
+  <a href="https://geoman.io/leaflet-geoman">
     <img width="130" alt="Geoman Logo" src="https://file-jxzyjgqwut.now.sh/" />
   </a>
 </p>
 <h1 align="center">
-  Leaflet.PM
+  Leaflet-Geoman
 </h1>
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
@@ -12,26 +12,23 @@
   Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
-  <a href="https://badge.fury.io/js/leaflet.pm">
-    <img src="https://badge.fury.io/js/leaflet.pm.svg" alt="npm version" />
+  <a href="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free">
+    <img src="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free.svg" alt="npm version" height="18">
   </a>
   <a href="#">
-    <img src="https://travis-ci.com/codeofsumit/leaflet.pm.svg?branch=develop" alt="" />
+    <img src="https://travis-ci.com/geoman-io/leaflet-geoman.svg?branch=develop" alt="" />
   </a>
-  <a href="https://github.com/codeofsumit/leaflet.pm">
-    <img src="http://githubbadges.com/star.svg?user=codeofsumit&repo=leaflet.pm&style=default" alt="star this repo" />
+  <a href="https://github.com/geoman-io/leaflet-geoman">
+    <img src="http://githubbadges.com/star.svg?user=geoman-io&repo=leaflet-geoman&style=default" alt="star this repo" />
   </a>
   <a href="https://www.npmjs.com/package/leaflet.pm">
     <img src="https://img.shields.io/npm/dt/leaflet.pm.svg" alt="NPM Downloads" />
   </a>
 </p>
 
-## [Demo (click here)](https://leafletpm.now.sh)
+## [👉 Live Demo 👈](https://geoman.io/leaflet-geoman)
 
 ![Demo](https://file-gmeileqfmg.now.sh/)
-
-Are you using leaflet.pm for commercial projects?\
-Check out **[Geoman](https://geoman.io/#pricing)** and consider subscribing to the **Leaflet.PM Supporter Plan** to support development of advanced leaflet.pm features. You will also get prioritized support and consultation.
 
 ## Documentation
 
@@ -43,21 +40,21 @@ Check out **[Geoman](https://geoman.io/#pricing)** and consider subscribing to t
 - [Removal Mode](#removal-mode)
 - [Cutting Mode](#cutting-mode)
 - [Customization](#customize)
-- [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
+- [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/geoman-io/leaflet-geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
 ### Installation
 
 #### Install via npm
 
 ```
-npm i leaflet.pm
+npm i leaflet-geoman-free
 ```
 
 #### Install Manually
 
 Download
-[`leaflet.pm.css`](https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css) and
-[`leaflet.pm.min.js`](https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.min.js)
+[`leaflet-geoman.css`](https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css) and
+[`leaflet-geoman.min.js`](https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js)
 and include them in your project.
 
 #### Include via CDN
@@ -67,42 +64,42 @@ CSS
 <!-- prettier-ignore -->
 ```html
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css" />
+<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
 ```
 
 JS
 
 ```html
-<script src="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.min.js"></script>
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
 ```
 
 #### Include as ES6 Module
 
 ```js
-import 'leaflet.pm';
-import 'leaflet.pm/dist/leaflet.pm.css';
+import 'leaflet-geoman-free';
+import 'leaflet-geoman-free/dist/leaflet-geoman.css';
 ```
 
 ### Getting Started
 
-#### Init Leaflet.PM
+#### Init leaflet-geoman
 
-Just include `leaflet.pm.min.js` right after Leaflet. It initializes itself. If
-you want certain layers to be ignored by leaflet.pm, pass `pmIgnore: true` to
+Just include `leaflet-geoman.min.js` right after Leaflet. It initializes itself. If
+you want certain layers to be ignored by leaflet-geoman, pass `pmIgnore: true` to
 their options when creating them. Example:
 
 ```js
 L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 ```
 
-#### Leaflet.PM Toolbar
+#### leaflet-geoman Toolbar
 
-<img align="left" height="200" src="https://file-ffrjxxowri.now.sh/" alt="Leaflet.PM Toolbar">
+<img align="left" height="200" src="https://file-ffrjxxowri.now.sh/" alt="leaflet-geoman Toolbar">
 
-You can add a toolbar to the map to use leaflet.pm features via a user interface.
+You can add a toolbar to the map to use leaflet-geoman features via a user interface.
 
 ```js
-// add leaflet.pm controls with some options to the map
+// add leaflet-geoman controls with some options to the map
 map.pm.addControls({
   position: 'topleft',
   drawCircle: false,
@@ -386,7 +383,7 @@ map.pm.Draw.Cut.enable({
 });
 ```
 
-Available options are the [same as in drawing mode](https://github.com/codeofsumit/leaflet.pm/tree/new-docs#drawing-mode).
+Available options are the [same as in drawing mode](https://github.com/geoman-io/leaflet-geoman/tree/new-docs#drawing-mode).
 
 You can use these methods on `map.pm.Draw.Cut` to handle Cutting mode:
 
@@ -412,7 +409,7 @@ The following events are available on a map instance:
 
 ##### Customize Language
 
-Change the language of user-facing copy in leaflet.pm
+Change the language of user-facing copy in leaflet-geoman
 
 ```js
 map.pm.setLang('de');
@@ -493,7 +490,7 @@ map.pm.setPathOptions({
 
 I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.
 You can upvote existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
-Please see the existing [Feature Requests here](https://github.com/codeofsumit/leaflet.pm/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc) and upvote if you want them to be implemented.
+Please see the existing [Feature Requests here](https://github.com/geoman-io/leaflet-geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc) and upvote if you want them to be implemented.
 
 ### Credit
 
@@ -505,4 +502,4 @@ I also took a hard look at the great
 [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some
 of my helper functions.
 
-If you want to support the development of leaflet.pm, consider subscribing to the services of [Geoman](https://geoman.io).
+If you want to support the development of leaflet-geoman, consider subscribing to the services of [Geoman](https://geoman.io).
