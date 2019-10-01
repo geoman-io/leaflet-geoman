@@ -45,7 +45,7 @@
 
 ### Installation
 
-### Migrate from Leaflet.PM
+#### Migrate from Leaflet.PM
 
 ```
 npm uninstall leaflet.pm
