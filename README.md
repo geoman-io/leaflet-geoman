@@ -47,7 +47,7 @@
 #### Install via npm
 
 ```
-npm i leaflet-geoman-free
+npm i @geoman-io/leaflet-geoman-free
 ```
 
 #### Install Manually
@@ -76,8 +76,8 @@ JS
 #### Include as ES6 Module
 
 ```js
-import 'leaflet-geoman-free';
-import 'leaflet-geoman-free/dist/leaflet-geoman.css';
+import '@geoman-io/leaflet-geoman-free';
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 ```
 
 ### Getting Started
