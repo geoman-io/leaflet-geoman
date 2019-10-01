@@ -42,7 +42,16 @@
 - [Customization](#customize)
 - [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/geoman-io/leaflet-geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
+
 ### Installation
+
+### Migrate from Leaflet.PM
+
+```
+npm uninstall leaflet.pm
+npm i @geoman-io/leaflet-geoman-free
+```
+That's it.
 
 #### Install via npm
 
