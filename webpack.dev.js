@@ -1,6 +1,6 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
 
 module.exports = {
@@ -31,10 +31,9 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader',
-                }),
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                }, 'css-loader',],
             },
             {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
@@ -42,5 +41,5 @@ module.exports = {
             },
         ],
     },
-    plugins: [new ExtractTextPlugin('leaflet-geoman.css')],
+    plugins: [new MiniCssExtractPlugin({ filename: 'leaflet-geoman.css' }),],
 };
