@@ -234,7 +234,7 @@ const SnapMixin = {
       layer => layer._latlng || (layer._latlngs && layer._latlngs.length > 0)
     );
 
-    // finally remove everything that's leaflet.pm specific temporary stuff
+    // finally remove everything that's leaflet-geoman specific temporary stuff
     layers = layers.filter(layer => !layer._pmTempLayer);
 
     // save snaplist from layers and the other snap layers added from other classes/scripts

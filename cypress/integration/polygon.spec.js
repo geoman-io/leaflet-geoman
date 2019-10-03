@@ -128,7 +128,7 @@ describe('Draw & Edit Poly', () => {
   it('adds new vertex to end of array', () => {
     // when adding a vertex between the first and last current vertex,
     // the new coord should be added to the end, not the beginning of the coord array
-    // https://github.com/codeofsumit/leaflet.pm/issues/312
+    // https://github.com/geoman-io/leaflet-geoman/issues/312
 
     cy.toolbarButton('polygon')
       .click()

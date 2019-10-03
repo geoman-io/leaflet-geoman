@@ -10,7 +10,7 @@ module.exports = {
     entry: ['./src/js/L.PM.js'],
     mode: 'production',
     output: {
-        filename: 'leaflet.pm.min.js',
+        filename: 'leaflet-geoman.min.js',
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
@@ -44,7 +44,7 @@ module.exports = {
         ],
     },
     plugins: [
-        new ExtractTextPlugin('leaflet.pm.css'),
+        new ExtractTextPlugin('leaflet-geoman.css'),
         new UglifyJsPlugin({
             uglifyOptions: {
                 ie8: true,

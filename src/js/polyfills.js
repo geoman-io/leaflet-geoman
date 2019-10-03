@@ -24,7 +24,7 @@ Array.prototype.findIndex =
   };
 
 // Array.find Polyfill for IE<12.
-// Requested here: https://github.com/codeofsumit/leaflet.pm/issues/173
+// Requested here: https://github.com/geoman-io/leaflet-geoman/issues/173
 Array.prototype.find =
   Array.prototype.find ||
   function(callback) {
