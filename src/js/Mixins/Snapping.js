@@ -63,7 +63,11 @@ const SnapMixin = {
     // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
     // after dragstart/movestart so it wouldn't fire for them
     if (this._snapList === undefined) {
-      this._createSnapList(e);
+      this._createSnapList();
+
+      // re-create the snaplist again when a layer is added during draw
+      this._map.off('layeradd', this._createSnapList, this);
+      this._map.on('layeradd', this._createSnapList, this);
     }
 
     // if there are no layers to snap to, stop here

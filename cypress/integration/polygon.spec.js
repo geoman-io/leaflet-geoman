@@ -15,6 +15,18 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
   });
 
+  it('handles polygon additions mid-drawing', () => {
+    // for manual testing
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(90, 250);
+
+    cy.wait(2000)
+    cy.drawShape('LineString', true);
+
+    // manual test if snapping works here
+  });
+
   it('doesnt finish two point polys', () => {
     cy.toolbarButton('polygon').click();
 
