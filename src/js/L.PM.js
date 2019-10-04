@@ -39,12 +39,19 @@ L.PM = L.PM || {
   Draw,
   Edit,
   activeLang: 'en',
-  initialize() {
-    this.addInitHooks();
+  initialize(options) {
+    this.addInitHooks(options);
   },
-  addInitHooks() {
+  addInitHooks(options = {}) {
+
     function initMap() {
-      if (!this.options.pmIgnore) {
+      this.pm = undefined;
+
+      if (options.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Map(this);
+        }
+      } else if (!this.options.pmIgnore) {
         this.pm = new L.PM.Map(this);
       }
     }
@@ -52,13 +59,20 @@ L.PM = L.PM || {
     L.Map.addInitHook(initMap);
 
     function initLayerGroup() {
+      // doesn't need pmIgnore condition as the init hook of the individual layers will check it
       this.pm = new L.PM.Edit.LayerGroup(this);
     }
 
     L.LayerGroup.addInitHook(initLayerGroup);
 
     function initMarker() {
-      if (!this.options.pmIgnore) {
+      this.pm = undefined;
+
+      if (options.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.Marker(this);
+        }
+      } else if (!this.options.pmIgnore) {
         this.pm = new L.PM.Edit.Marker(this);
       }
     }
@@ -66,7 +80,13 @@ L.PM = L.PM || {
     L.Marker.addInitHook(initMarker);
 
     function initCircleMarker() {
-      if (!this.options.pmIgnore) {
+      this.pm = undefined;
+
+      if (options.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.CircleMarker(this);
+        }
+      } else if (!this.options.pmIgnore) {
         this.pm = new L.PM.Edit.CircleMarker(this);
       }
     }
@@ -74,7 +94,13 @@ L.PM = L.PM || {
 
 
     function initPolyline() {
-      if (!this.options.pmIgnore) {
+      this.pm = undefined;
+
+      if (options.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.Line(this);
+        }
+      } else if (!this.options.pmIgnore) {
         this.pm = new L.PM.Edit.Line(this);
       }
     }
@@ -82,15 +108,28 @@ L.PM = L.PM || {
     L.Polyline.addInitHook(initPolyline);
 
     function initPolygon() {
-      if (!this.options.pmIgnore) {
+      this.pm = undefined;
+
+      if (options.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.Polygon(this);
+        }
+      } else if (!this.options.pmIgnore) {
         this.pm = new L.PM.Edit.Polygon(this);
       }
+
     }
 
     L.Polygon.addInitHook(initPolygon);
 
     function initRectangle() {
-      if (!this.options.pmIgnore) {
+      this.pm = undefined;
+
+      if (options.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.Rectangle(this);
+        }
+      } else if (!this.options.pmIgnore) {
         this.pm = new L.PM.Edit.Rectangle(this);
       }
     }
@@ -98,7 +137,13 @@ L.PM = L.PM || {
     L.Rectangle.addInitHook(initRectangle);
 
     function initCircle() {
-      if (!this.options.pmIgnore) {
+      this.pm = undefined;
+
+      if (options.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.Circle(this);
+        }
+      } else if (!this.options.pmIgnore) {
         this.pm = new L.PM.Edit.Circle(this);
       }
     }

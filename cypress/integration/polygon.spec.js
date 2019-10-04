@@ -1,6 +1,50 @@
 describe('Draw & Edit Poly', () => {
   const mapSelector = '#map';
 
+  it('works without pmIgnore', () => {
+    cy.window().then(({ L }) => {
+      L.PM.initialize({ optIn: false });
+      cy.drawShape('MultiPolygon');
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(8);
+  });
+
+  it('respects pmIgnore', () => {
+    cy.window().then(({ L }) => {
+      L.PM.initialize({ optIn: false });
+      cy.drawShape('MultiPolygon', true);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(0);
+  });
+
+  it('respects optIn', () => {
+    cy.window().then(({ L }) => {
+      L.PM.initialize({ optIn: true });
+      cy.drawShape('MultiPolygon');
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(0);
+  });
+
+  it('respects pmIgnore with optIn', () => {
+    cy.window().then(({ L }) => {
+      L.PM.initialize({ optIn: true });
+      cy.drawShape('MultiPolygon', false);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(8);
+  });
+
   it('doesnt finish single point polys', () => {
     cy.toolbarButton('polygon').click();
 

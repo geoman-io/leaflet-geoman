@@ -101,6 +101,21 @@ their options when creating them. Example:
 L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 ```
 
+##### Opt-In
+
+If you want to use leaflet-geoman as opt-in, call the following function right after importing:
+
+```js
+L.PM.initialize({ optIn: false });
+```
+
+All layers will be ignored by leaflet-geoman, unless you specify `pmIgnore: false` on a layer:
+
+```js
+L.marker([51.50915, -0.096112], { pmIgnore: false }).addTo(map);
+```
+
+
 #### leaflet-geoman Toolbar
 
 <img align="left" height="200" src="https://file-ffrjxxowri.now.sh/" alt="leaflet-geoman Toolbar">
