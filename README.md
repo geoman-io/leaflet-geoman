@@ -106,7 +106,7 @@ L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 If you want to use leaflet-geoman as opt-in, call the following function right after importing:
 
 ```js
-L.PM.initialize({ optIn: false });
+L.PM.initialize({ optIn: true });
 ```
 
 All layers will be ignored by leaflet-geoman, unless you specify `pmIgnore: false` on a layer:
