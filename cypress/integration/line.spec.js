@@ -35,6 +35,72 @@ describe('Draw & Edit Line', () => {
     cy.hasVertexMarkers(3);
   });
 
+  it('respects custom style', () => {
+
+    cy.window().then(({ map }) => {
+      map.on('pm:create', (e) => {
+        e.layer.pm.enable({
+          allowSelfIntersection: false,
+          snappable: false,
+          snapDistance: 20
+        });
+
+        e.layer.setStyle({ color: 'black' });
+      })
+
+      map.pm.enableDraw('Polygon', {
+        snappable: false,
+        snapDistance: 20,
+        allowSelfIntersection: true,
+        finishOn: 'dblclick',
+        templineStyle: {
+          color: 'orange',
+          dashArray: [10, 10],
+          weight: 5
+        },
+        hintlineStyle: {
+          color: 'orange',
+          dashArray: [10, 10],
+        },
+        pathOptions: {
+          color: 'orange',
+          fillColor: 'yellow',
+          dashArray: [10, 10],
+          weight: 5,
+          fillOpacity: 1,
+          opacity: 1
+        }
+      });
+    });
+
+    cy.get(mapSelector)
+      .click(120, 150)
+      .click(120, 100)
+      .click(300, 100)
+      .click(300, 200)
+      .click(120, 150);
+
+    cy.toolbarButton('polygon').click()
+
+    cy.get(mapSelector)
+      .click(320, 150)
+      .click(320, 100)
+      .click(400, 100)
+      .click(400, 200)
+      .click(320, 150);
+
+    cy.toolbarButton('edit').click()
+
+    cy.window().then(({ map, L }) => {
+      map.eachLayer((l) => {
+        if (l instanceof L.Polygon)
+          expect(l.options.color).to.equal('black');
+      })
+    });
+  });
+
+
+
   it('draws and edits a line', () => {
     cy.hasLayers(1);
 
