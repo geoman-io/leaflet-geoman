@@ -62,9 +62,7 @@ Edit.Line = Edit.extend({
     }
 
     if (!this.options.allowSelfIntersection) {
-      if (!this.cachedColor) {
-        this.cachedColor = this._layer.options.color;
-      }
+      this.cachedColor = this._layer.options.color;
 
       this.isRed = false;
       this._handleLayerStyle();
@@ -594,6 +592,8 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._coordsBeforeEdit = this._layer.getLatLngs();
     }
+
+    this.cachedColor = this._layer.options.color;
   },
 
   _fireEdit() {
