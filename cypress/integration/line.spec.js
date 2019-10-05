@@ -35,7 +35,7 @@ describe('Draw & Edit Line', () => {
     cy.hasVertexMarkers(3);
   });
 
-  it.only('manual: respects custom style', () => {
+  it('manual: respects custom style', () => {
 
     cy.window().then(({ map }) => {
       map.on('pm:create', (e) => {
