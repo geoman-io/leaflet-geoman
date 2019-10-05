@@ -35,7 +35,7 @@ describe('Draw & Edit Line', () => {
     cy.hasVertexMarkers(3);
   });
 
-  it('manual: respects custom style', () => {
+  it('respects custom style', () => {
 
     cy.window().then(({ map }) => {
       map.on('pm:create', (e) => {
@@ -79,9 +79,6 @@ describe('Draw & Edit Line', () => {
       .click(300, 100)
       .click(300, 200)
       .click(120, 150);
-
-
-    // manually test if the black border stays even when editing the layer
 
     cy.toolbarButton('polygon').click()
 
