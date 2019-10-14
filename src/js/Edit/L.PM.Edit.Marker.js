@@ -8,6 +8,7 @@ Edit.Marker = Edit.extend({
 
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
+    this._layer.on('move', this._onDrag, this);
   },
 
   toggleEdit(options) {
@@ -73,6 +74,14 @@ Edit.Marker = Edit.extend({
     marker.remove();
     // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
     marker.fire('pm:remove');
+  },
+  _onDrag(e) {
+    const marker = e.target;
+
+    // fire the pm:markerdrag event and pass the event
+    marker.fire('pm:markerdrag', {
+      markerEvent: e,
+    });
   },
   _onDragEnd(e) {
     const marker = e.target;

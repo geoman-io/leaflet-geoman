@@ -47,6 +47,7 @@ Edit.CircleMarker = Edit.extend({
       this._initSnappableMarkers();
     }
 
+    this._layer.on('pm:drag', this._onMarkerDrag, this);
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
   },
   disable(layer = this._layer) {
@@ -86,6 +87,11 @@ Edit.CircleMarker = Edit.extend({
     // fire edit event
     this._layer.fire('pm:edit');
     this._layerEdited = true;
+  },
+  _onMarkerDrag(e) {
+    this._layer.fire('pm:markerdrag', {
+      markerEvent: e,
+    });
   },
   _onMarkerDragEnd(e) {
     this._layer.fire('pm:markerdragend', {

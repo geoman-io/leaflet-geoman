@@ -123,6 +123,12 @@ Edit.Circle = Edit.extend({
       markerEvent: e,
     });
   },
+  _onMarkerDrag(e) {
+    // fire markerdrag event
+    this._layer.fire('pm:markerdrag', {
+      markerEvent: e,
+});
+  },
   _onMarkerDragEnd(e) {
     // fire edit event
     this._fireEdit();
@@ -182,6 +188,7 @@ Edit.Circle = Edit.extend({
     marker._pmTempLayer = true;
 
     marker.on('dragstart', this._onMarkerDragStart, this);
+    marker.on('drag', this._onMarkerDrag, this);
     marker.on('dragend', this._onMarkerDragEnd, this);
 
     this._helperLayers.addLayer(marker);
