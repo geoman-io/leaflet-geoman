@@ -70,7 +70,6 @@ const Map = L.Class.extend({
     return layers;
   },
   removeLayer(e) {
-
     const layer = e.target;
     // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
@@ -99,7 +98,7 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
-    
+
     this._fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
@@ -197,9 +196,9 @@ const Map = L.Class.extend({
   },
   _fireRemovalModeEvent(enabled) {
     this.map.fire('pm:globalremovalmodetoggled', {
-        enabled,
-        map: this.map,
-      });
+      enabled,
+      map: this.map,
+    });
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode

@@ -42,8 +42,15 @@ Draw.Cut = Draw.Polygon.extend({
       resultingLayer.addTo(this._map);
 
       // give the new layer the original options
-      resultingLayer.pm.enable(this.options);
-      resultingLayer.pm.disable();
+      // resultingLayer.pm =
+      //   resultingLayer.pm || new L.PM.Edit[this._shape](resultingLayer);
+      console.log('resulting layer');
+      console.log(resultingLayer);
+      if (resultingLayer.pm) {
+        console.log('resulting layer already has pm object');
+        resultingLayer.pm.enable(this.options);
+        resultingLayer.pm.disable();
+      }
 
       // fire pm:cut on the cutted layer
       l.fire('pm:cut', {

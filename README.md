@@ -42,7 +42,6 @@
 - [Customization](#customize)
 - [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/geoman-io/leaflet-geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
-
 ### Installation
 
 #### Migrate from Leaflet.PM
@@ -51,6 +50,7 @@
 npm uninstall leaflet.pm
 npm i @geoman-io/leaflet-geoman-free
 ```
+
 That's it.
 
 #### Install via npm
@@ -93,8 +93,13 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 
 #### Init leaflet-geoman
 
-Just include `leaflet-geoman.min.js` right after Leaflet. It initializes itself. If
-you want certain layers to be ignored by leaflet-geoman, pass `pmIgnore: true` to
+Just include `leaflet-geoman.min.js` right after Leaflet and initialize it with:
+
+```js
+L.PM.initialize();
+```
+
+If you want certain layers to be ignored by leaflet-geoman, pass `pmIgnore: true` to
 their options when creating them. Example:
 
 ```js
@@ -115,7 +120,6 @@ All layers will be ignored by leaflet-geoman, unless you specify `pmIgnore: fals
 L.marker([51.50915, -0.096112], { pmIgnore: false }).addTo(map);
 ```
 
-
 #### leaflet-geoman Toolbar
 
 <img align="left" height="200" src="https://file-ffrjxxowri.now.sh/" alt="leaflet-geoman Toolbar">
@@ -132,19 +136,19 @@ map.pm.addControls({
 
 See the available options in the table below.
 
-| Option        | Default     | Description                                                                                      |
-| :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
-| position      | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
-| drawMarker    | `true`      | adds button to draw markers                                                                      |
-| drawCircleMarker    | `true`      | adds button to draw circle markers                                                                      |
-| drawPolyline  | `true`      | adds button to draw rectangle                                                                    |
-| drawRectangle | `true`      | adds button to draw rectangle                                                                    |
-| drawPolygon   | `true`      | adds button to draw polygon                                                                      |
-| drawCircle    | `true`      | adds button to draw circle                                                                       |
-| editMode      | `true`      | adds button to toggle edit mode for all layers                                                   |
-| dragMode      | `true`      | adds button to toggle drag mode for all layers                                                   |
-| cutPolygon    | `true`      | adds button to cut a hole in a polygon                                                           |
-| removalMode   | `true`      | adds a button to remove layers                                                                   |
+| Option           | Default     | Description                                                                                      |
+| :--------------- | :---------- | :----------------------------------------------------------------------------------------------- |
+| position         | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
+| drawMarker       | `true`      | adds button to draw markers                                                                      |
+| drawCircleMarker | `true`      | adds button to draw circle markers                                                               |
+| drawPolyline     | `true`      | adds button to draw rectangle                                                                    |
+| drawRectangle    | `true`      | adds button to draw rectangle                                                                    |
+| drawPolygon      | `true`      | adds button to draw polygon                                                                      |
+| drawCircle       | `true`      | adds button to draw circle                                                                       |
+| editMode         | `true`      | adds button to toggle edit mode for all layers                                                   |
+| dragMode         | `true`      | adds button to toggle drag mode for all layers                                                   |
+| cutPolygon       | `true`      | adds button to cut a hole in a polygon                                                           |
+| removalMode      | `true`      | adds a button to remove layers                                                                   |
 
 If you are wondering how e.g. the `drawPolygon` button will enable drawing mode
 with specific options, here it is: Simply enable drawing mode programatically,
@@ -240,13 +244,13 @@ Here's a list of layer events you can listen to:
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  |
 
 For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
+
 ```js
-L.geoJSON(data,{
-  snapIgnore : true
-})
+L.geoJSON(data, {
+  snapIgnore: true,
+});
 //This layer will be ignored by the snapping engine during drawing
 ```
-
 
 ### Edit Mode
 
@@ -324,6 +328,7 @@ map.on('pm:globaleditmodetoggled', e => {
   console.log(e);
 });
 ```
+
 The event has an object with an enabled boolean and a reference to the map.
 
 ### Drag Mode
@@ -355,6 +360,7 @@ map.on('pm:globaldrawmodetoggled', e => {
   console.log(e);
 });
 ```
+
 The event has an object with an enabled boolean and a reference to the map.
 
 ### Removal Mode
@@ -385,6 +391,7 @@ map.on('pm:globalremovalmodetoggled', e => {
   console.log(e);
 });
 ```
+
 The event has an object with an enabled boolean and a reference to the map.
 
 ### Cutting Mode

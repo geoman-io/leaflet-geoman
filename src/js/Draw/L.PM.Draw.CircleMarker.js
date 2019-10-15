@@ -60,7 +60,12 @@ Draw.CircleMarker = Draw.Marker.extend({
     });
   },
   isRelevantMarker(layer) {
-    return layer instanceof L.CircleMarker && !(layer instanceof L.Circle) && layer.pm && !layer._pmTempLayer;
+    return (
+      layer instanceof L.CircleMarker &&
+      !(layer instanceof L.Circle) &&
+      layer.pm &&
+      !layer._pmTempLayer
+    );
   },
   _createMarker(e) {
     if (!e.latlng) {
@@ -83,6 +88,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     marker.addTo(this._map);
 
     // enable editing for the marker
+    marker.pm = marker.pm || new L.PM.Edit.CircleMarker(marker);
     marker.pm.enable();
 
     // fire the pm:create event and pass shape and marker

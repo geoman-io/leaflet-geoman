@@ -129,6 +129,7 @@ Draw.Marker = Draw.extend({
     marker.addTo(this._map);
 
     // enable editing for the marker
+    marker.pm = marker.pm || new L.PM.Edit.Marker(marker);
     marker.pm.enable();
 
     // fire the pm:create event and pass shape and marker

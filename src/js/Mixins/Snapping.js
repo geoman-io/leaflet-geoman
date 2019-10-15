@@ -221,7 +221,7 @@ const SnapMixin = {
         layers.push(layer);
 
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        const debugLine = L.polyline([], { color: 'red' });
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
 

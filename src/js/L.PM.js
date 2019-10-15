@@ -32,6 +32,11 @@ import './Edit/L.PM.Edit.CircleMarker';
 import '../css/layers.css';
 import '../css/controls.css';
 
+const useTypes = {
+  ALL_LEAFLET_LAYERS: 'ALL_LEAFLET_LAYERS',
+  GEOMAN_LAYERS_ONLY: 'GEOMAN_LAYERS_ONLY',
+};
+
 L.PM = L.PM || {
   version,
   Map,
@@ -42,115 +47,51 @@ L.PM = L.PM || {
   initialize(options) {
     this.addInitHooks(options);
   },
-  addInitHooks(options = {}) {
+  addInitHooks(options) {
+    // eslint-disable-next-line func-names
+    L.Map.addInitHook(function() {
+      this.pm = new L.PM.Map(this);
+    });
 
-    function initMap() {
-      this.pm = undefined;
+    console.log(options);
 
-      if (options.optIn) {
-        if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Map(this);
-        }
-      } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Map(this);
-      }
+    if (options.useType === useTypes.GEOMAN_LAYERS_ONLY) {
+      return;
     }
 
-    L.Map.addInitHook(initMap);
-
-    function initLayerGroup() {
-      // doesn't need pmIgnore condition as the init hook of the individual layers will check it
+    // eslint-disable-next-line func-names
+    L.LayerGroup.addInitHook(function() {
       this.pm = new L.PM.Edit.LayerGroup(this);
-    }
+    });
 
-    L.LayerGroup.addInitHook(initLayerGroup);
+    // eslint-disable-next-line func-names
+    L.Marker.addInitHook(function() {
+      this.pm = new L.PM.Edit.Marker(this);
+    });
 
-    function initMarker() {
-      this.pm = undefined;
+    // eslint-disable-next-line func-names
+    L.CircleMarker.addInitHook(function() {
+      this.pm = new L.PM.Edit.CircleMarker(this);
+    });
 
-      if (options.optIn) {
-        if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Marker(this);
-        }
-      } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Marker(this);
-      }
-    }
+    // eslint-disable-next-line func-names
+    L.Polyline.addInitHook(function() {
+      this.pm = new L.PM.Edit.Line(this);
+    });
 
-    L.Marker.addInitHook(initMarker);
+    // eslint-disable-next-line func-names
+    L.Polygon.addInitHook(function() {
+      this.pm = new L.PM.Edit.Polygon(this);
+    });
 
-    function initCircleMarker() {
-      this.pm = undefined;
+    // eslint-disable-next-line func-names
+    L.Rectangle.addInitHook(function() {
+      this.pm = new L.PM.Edit.Rectangle(this);
+    });
 
-      if (options.optIn) {
-        if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.CircleMarker(this);
-        }
-      } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.CircleMarker(this);
-      }
-    }
-    L.CircleMarker.addInitHook(initCircleMarker);
-
-
-    function initPolyline() {
-      this.pm = undefined;
-
-      if (options.optIn) {
-        if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Line(this);
-        }
-      } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Line(this);
-      }
-    }
-
-    L.Polyline.addInitHook(initPolyline);
-
-    function initPolygon() {
-      this.pm = undefined;
-
-      if (options.optIn) {
-        if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Polygon(this);
-        }
-      } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Polygon(this);
-      }
-
-    }
-
-    L.Polygon.addInitHook(initPolygon);
-
-    function initRectangle() {
-      this.pm = undefined;
-
-      if (options.optIn) {
-        if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Rectangle(this);
-        }
-      } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Rectangle(this);
-      }
-    }
-
-    L.Rectangle.addInitHook(initRectangle);
-
-    function initCircle() {
-      this.pm = undefined;
-
-      if (options.optIn) {
-        if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Circle(this);
-        }
-      } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Circle(this);
-      }
-    }
-
-    L.Circle.addInitHook(initCircle);
+    // eslint-disable-next-line func-names
+    L.Circle.addInitHook(function() {
+      this.pm = new L.PM.Edit.Circle(this);
+    });
   },
 };
-
-// initialize leaflet-geoman
-L.PM.initialize();
