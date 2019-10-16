@@ -53,8 +53,6 @@ L.PM = L.PM || {
       this.pm = new L.PM.Map(this);
     });
 
-    console.log(options);
-
     if (options.useType === useTypes.GEOMAN_LAYERS_ONLY) {
       return;
     }
