@@ -45,13 +45,13 @@
     "webpack-cli": "^3.3.9"
   },
   "peerDependencies": {
-    "leaflet": "^1.2.0"
+    "leaflet": "^1.6.0"
   },
   "scripts": {
     "start": "npm run dev",
     "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
-    "test": "$(npm bin)/cypress run",
-    "cypress": "$(npm bin)/cypress open",
+    "test": "./node_modules/.bin/cypress run",
+    "cypress": "./node_modules/.bin/cypress open",
     "build": "./node_modules/.bin/webpack --config=webpack.build.js",
     "prepare": "npm run build",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
