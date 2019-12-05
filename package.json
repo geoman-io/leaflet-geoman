@@ -45,7 +45,7 @@
     "webpack-cli": "^3.3.9"
   },
   "peerDependencies": {
-    "leaflet": "^1.6.0"
+    "leaflet": "^1.2.0"
   },
   "scripts": {
     "start": "npm run dev",
