@@ -294,7 +294,6 @@ const Toolbar = L.Class.extend({
         this.map.pm.Draw.Cut.toggle({
           snappable: true,
           cursorMarker: true,
-          allowSelfIntersection: false,
         });
       },
       doToggle: true,

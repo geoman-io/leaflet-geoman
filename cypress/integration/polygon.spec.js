@@ -130,15 +130,11 @@ describe('Draw & Edit Poly', () => {
 
   it('prevents self intersections', () => {
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Polygon', {
-        allowSelfIntersection: false,
-      });
+      map.pm.enableDraw('Polygon');
 
       Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
         const poly = event.layer;
-        poly.pm.enable({
-          allowSelfIntersection: false,
-        });
+        poly.pm.enable();
       });
     });
 
@@ -275,8 +271,14 @@ describe('Draw & Edit Poly', () => {
     cy.hasLayers(1);
 
     // activate polygon drawing
+    cy.window().then(({ map }) => {
+      map.pm.enableDraw('Polygon', {
+        allowSelfIntersection: true,
+      });
+    });
+
+    // check button activity
     cy.toolbarButton('polygon')
-      .click()
       .closest('.button-container')
       .should('have.class', 'active');
 
@@ -297,7 +299,11 @@ describe('Draw & Edit Poly', () => {
     cy.hasLayers(3);
 
     // enable global edit mode
-    cy.toolbarButton('edit').click();
+    cy.window().then(({ map }) => {
+      map.pm.enableGlobalEditMode({
+        allowSelfIntersection: true,
+      });
+    });
 
     cy.hasVertexMarkers(5);
     cy.hasMiddleMarkers(5);

@@ -195,7 +195,7 @@ See the available options in the table below.
 | snapDistance          | `20`                                  | the distance to another vertex when a snap should happen                                                                                              |
 | snapMiddle            | `false`                               | allow snapping to the middle of a layers segments (between two vertexes)                                                                              |
 | tooltips              | `true`                                | show helpful tooltips for your user                                                                                                                   |
-| allowSelfIntersection | `true`                                | allow self intersections                                                                                                                              |
+| allowSelfIntersection | `false`                               | allow self intersections                                                                                                                              |
 | templineStyle         | `{ color: 'red' },`                   | [leaflet path options](https://leafletjs.com/reference-1.4.0.html#path) for the lines between drawn vertices/markers.                                 |
 | hintlineStyle         | `{ color: 'red', dashArray: [5, 5] }` | [leaflet path options](https://leafletjs.com/reference-1.4.0.html#path) for the helper line between last drawn vertex and the cursor.                 |
 | cursorMarker          | `true`                                | show a marker at the cursor                                                                                                                           |
@@ -255,7 +255,7 @@ Let's you edit vertices of layers. Use it like this:
 ```js
 // enable edit mode
 layer.pm.enable({
-  allowSelfIntersection: false,
+  allowSelfIntersection: true,
 });
 ```
 
@@ -265,7 +265,7 @@ See the available options in the table below.
 | :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |
 | snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
 | snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
-| allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
+| allowSelfIntersection | `false` | Allow/Disallow self-intersections on polygons and polylines.                                              |
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
 
 The following methods are available for layers under `layer.pm`:

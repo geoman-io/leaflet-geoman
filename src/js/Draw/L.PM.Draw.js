@@ -9,7 +9,7 @@ const Draw = L.Class.extend({
     cursorMarker: true,
     finishOnDoubleClick: false,
     finishOn: null,
-    allowSelfIntersection: true,
+    allowSelfIntersection: false,
     templineStyle: {},
     hintlineStyle: {
       color: '#3388ff',
