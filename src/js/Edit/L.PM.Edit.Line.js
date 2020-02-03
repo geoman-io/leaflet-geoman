@@ -217,6 +217,34 @@ Edit.Line = Edit.extend({
     }
   },
 
+  // Search in other layers in order to find markers snapped with a target marker, and keep them
+  // in a list of [layer, marker] pairs, internal to the target marker.
+  _findAndSetSnappedMarkersInOtherLayers(marker) {
+    let layersAndMarkers = []; // pairs of [layer, marker]'s
+
+    const findSnappedMarkersInLayer = (layer, markers = null) => {
+      if (!markers) {
+        markers = layer.pm._markers;
+      }
+      if (Array.isArray(markers[0])) {
+        markers.forEach(ms => findSnappedMarkersInLayer(layer, ms));
+      } else {
+        const snappedMarker = markers.find(m => m.getLatLng().equals(marker.getLatLng()));
+        if (snappedMarker) {
+          layersAndMarkers.push([layer, snappedMarker]);
+        }
+      }
+    };
+
+    this._map.pm.findLayers().forEach(layer => {
+      if (this._layer._leaflet_id != layer._leaflet_id) {
+        findSnappedMarkersInLayer(layer);
+      }
+    });
+
+    marker._snappedMarkersInOtherLayers = layersAndMarkers;
+  },
+
   // creates initial markers for coordinates
   _createMarker(latlng) {
     const marker = new L.Marker(latlng, {
@@ -474,12 +502,12 @@ Edit.Line = Edit.extend({
 
     return returnVal;
   },
-  updatePolygonCoordsFromMarkerDrag(marker) {
+  updatePolygonCoordsFromMarkerDrag(marker, referenceMarker = null) {
     // update polygon coords
     const coords = this._layer.getLatLngs();
 
     // get marker latlng
-    const latlng = marker.getLatLng();
+    const latlng = referenceMarker ? referenceMarker.getLatLng() : marker.getLatLng();
 
     // get indexPath of Marker
     const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
@@ -510,6 +538,25 @@ Edit.Line = Edit.extend({
     }
 
     this.updatePolygonCoordsFromMarkerDrag(marker);
+
+    this._updateMiddleMarkers(marker);
+
+    if (this._map.pm.globalEditKeepVerticesSnappedModeEnabled()) {
+      (marker._snappedMarkersInOtherLayers || []).forEach(
+        ([otherLayer, otherMarker]) => {
+          otherLayer.pm.updatePolygonCoordsFromMarkerDrag(otherMarker, marker);
+          otherMarker.setLatLng(marker.getLatLng());
+          otherLayer.pm._updateMiddleMarkers(otherMarker);
+        }
+      );
+    }
+  },
+
+  _updateMiddleMarkers(marker) {
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+      this._markers,
+      marker
+    );
 
     // the dragged markers neighbors
     const markerArr =
@@ -580,6 +627,11 @@ Edit.Line = Edit.extend({
   },
   _onMarkerDragStart(e) {
     const marker = e.target;
+
+    if (this._map.pm.globalEditKeepVerticesSnappedModeEnabled()) {
+      this._findAndSetSnappedMarkersInOtherLayers(marker);
+    }
+
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
     this._layer.fire('pm:markerdragstart', {

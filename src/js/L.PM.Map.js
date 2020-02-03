@@ -8,6 +8,7 @@ const Map = L.Class.extend({
     this.Toolbar = new L.PM.Toolbar(map);
 
     this._globalRemovalMode = false;
+    this._globalEditKeepVerticesSnappedMode = false;
   },
   setLang(lang = 'en', t, fallback = 'en') {
     if (t) {
@@ -269,6 +270,13 @@ const Map = L.Class.extend({
       // enable
       this.enableGlobalEditMode(options);
     }
+  },
+  toggleGlobalEditKeepVerticesSnappedMode() {
+    this._globalEditKeepVerticesSnappedMode = !this._globalEditKeepVerticesSnappedMode;
+    return this._globalEditKeepVerticesSnappedMode;
+  },
+  globalEditKeepVerticesSnappedModeEnabled() {
+    return this._globalEditKeepVerticesSnappedMode;
   },
 });
 

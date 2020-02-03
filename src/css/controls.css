@@ -104,6 +104,10 @@
   user-select: none;
 }
 
+.leaflet-pm-action-selected {
+  background-color: #2a2a2a ! important;
+}
+
 .button-container .leaflet-pm-actions-container .leaflet-pm-action:hover {
   cursor: pointer;
   background-color: #777;

@@ -13,7 +13,8 @@
   "actions": {
     "finish": "Finish",
     "cancel": "Cancel",
-    "removeLastVertex": "Remove Last Vertex"
+    "removeLastVertex": "Remove Last Vertex",
+    "keepVerticesSnapped": "Keep Snapped Vertices Together"
   },
   "buttonTitles": {
     "drawMarkerButton": "Draw Marker",

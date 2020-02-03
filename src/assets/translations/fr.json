@@ -12,7 +12,8 @@
   "actions": {
     "finish": "Terminer",
     "cancel": "Annuler",
-    "removeLastVertex": "Retirer le dernier sommet"
+    "removeLastVertex": "Retirer le dernier sommet",
+    "keepVerticesSnapped": "Garder les sommets rassemblés ensemble"
   },
   "buttonTitles": {
     "drawMarkerButton": "Placer des marqueurs",

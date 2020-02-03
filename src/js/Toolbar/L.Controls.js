@@ -99,6 +99,16 @@ const PMButton = L.Control.extend({
           this._map.pm.Draw[button.jsClass]._finishShape(e);
         },
       },
+      keepVerticesSnapped: {
+        text: getTranslation('actions.keepVerticesSnapped'),
+        onClick(e) {
+          if (this._map.pm.toggleGlobalEditKeepVerticesSnappedMode()) {
+            L.DomUtil.addClass(e.target, 'leaflet-pm-action-selected');
+          } else {
+            L.DomUtil.removeClass(e.target, 'leaflet-pm-action-selected');
+          }
+        },
+      },
     };
 
     activeActions.forEach(name => {
