@@ -24,6 +24,9 @@
   <a href="https://www.npmjs.com/package/leaflet.pm">
     <img src="https://img.shields.io/npm/dt/leaflet.pm.svg" alt="NPM Downloads" />
   </a>
+  <a href="https://www.npmjs.com/package/@geoman-io/leaflet-geoman-free">
+    <img src="https://img.shields.io/npm/dt/@geoman-io/leaflet-geoman-free.svg" alt="NPM Downloads" />
+  </a>
 </p>
 
 ## [👉 Live Demo 👈](https://geoman.io/leaflet-geoman)
