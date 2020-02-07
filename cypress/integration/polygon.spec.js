@@ -282,12 +282,12 @@ describe('Draw & Edit Poly', () => {
 
     // draw a polygon
     cy.get(mapSelector)
-      .click(90, 250)
+      .click(120, 250)
       .click(100, 50)
       .click(150, 50)
       .click(150, 150)
       .click(200, 150)
-      .click(90, 250);
+      .click(120, 250);
 
     // button should be disabled after successful draw
     cy.toolbarButton('polygon')
