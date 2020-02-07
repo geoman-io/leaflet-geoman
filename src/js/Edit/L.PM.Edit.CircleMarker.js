@@ -61,11 +61,8 @@ Edit.CircleMarker = Edit.extend({
     }
     layer.pm._enabled = false;
 
-    // remove draggable class
-    if (layer._path) {
-      const el = layer._path;
-      L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
-    }
+    // disable dragging
+    this.disableLayerDrag();
 
     if (this._layerEdited) {
       this._layer.fire('pm:update', {});
