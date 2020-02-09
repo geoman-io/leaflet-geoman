@@ -23,8 +23,8 @@ const Draw = L.Class.extend({
     // save the map
     this._map = map;
 
-        // define all possible shapes that can be drawn
-        this.shapes = ['Marker', 'CircleMarker', 'Line', 'Polygon', 'Rectangle', 'Circle', 'Cut'];
+    // define all possible shapes that can be drawn
+    this.shapes = ['Marker', 'CircleMarker', 'Line', 'Polygon', 'Rectangle', 'Circle', 'Cut'];
 
     // initiate drawing class for our shapes
     this.shapes.forEach(shape => {

@@ -99,7 +99,7 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
-    
+
     this._fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
@@ -197,9 +197,9 @@ const Map = L.Class.extend({
   },
   _fireRemovalModeEvent(enabled) {
     this.map.fire('pm:globalremovalmodetoggled', {
-        enabled,
-        map: this.map,
-      });
+      enabled,
+      map: this.map,
+    });
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode
@@ -221,19 +221,21 @@ const Map = L.Class.extend({
 
     this._globalEditMode = true;
 
+    // toggle the button in the toolbar
+    this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
+
     layers.forEach(layer => {
       // console.log(layer);
       layer.pm.enable(options);
     });
 
-    // handle layers that are added while in removal  xmode
+    // handle layers that are added while in removal mode
     this.map.on('layeradd', this.layerAddHandler, this);
 
-    // toggle the button in the toolbar
-    this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
 
     // fire event
     this._fireEditModeEvent(true);
+
   },
   disableGlobalEditMode() {
     // find all layers handles by leaflet-geoman
