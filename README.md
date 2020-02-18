@@ -354,7 +354,7 @@ The following events are available on a layer instance:
 You can also listen to specific drag mode events on the map instance like this:
 
 ```js
-map.on('pm:globaldrawmodetoggled', e => {
+map.on('pm:globaldragmodetoggled', e => {
   console.log(e);
 });
 ```
