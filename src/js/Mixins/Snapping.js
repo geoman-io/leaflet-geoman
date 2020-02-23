@@ -9,6 +9,9 @@ const SnapMixin = {
     this._layer.off('pm:dragstart', this._unsnap, this);
     this._layer.on('pm:dragstart', this._unsnap, this);
   },
+  _disableSnapping() {
+    this._layer.off('pm:dragstart', this._unsnap, this);
+  },
   _assignEvents(markerArr) {
     // loop through marker array and assign events to the markers
     markerArr.forEach(marker => {

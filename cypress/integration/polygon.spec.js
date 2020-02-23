@@ -1,6 +1,25 @@
 describe('Draw & Edit Poly', () => {
   const mapSelector = '#map';
 
+  it('drages shared vertices when pinned', () => {
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(120, 150)
+      .click(120, 100)
+      .click(300, 100)
+      .click(300, 200)
+      .click(120, 150);
+
+    cy.toolbarButton('marker').click();
+
+    cy.get(mapSelector)
+      .click(300, 100)
+
+    cy.toolbarButton('edit').click();
+
+  });
+
   it('works without pmIgnore', () => {
     cy.window().then(({ L }) => {
       L.PM.initialize({ optIn: false });

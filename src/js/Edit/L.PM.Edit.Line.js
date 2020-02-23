@@ -18,6 +18,14 @@ Edit.Line = Edit.extend({
     this._enabled = false;
   },
 
+  applyOptions() {
+    if (this.options.snappable) {
+      this._initSnappableMarkers();
+    } else {
+      this._disableSnapping();
+    }
+  },
+
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
@@ -49,6 +57,8 @@ Edit.Line = Edit.extend({
 
     // init markers
     this._initMarkers();
+
+    this.applyOptions();
 
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
@@ -211,10 +221,6 @@ Edit.Line = Edit.extend({
 
     // create markers
     this._markers = handleRing(coords);
-
-    if (this.options.snappable) {
-      this._initSnappableMarkers();
-    }
   },
 
   // creates initial markers for coordinates

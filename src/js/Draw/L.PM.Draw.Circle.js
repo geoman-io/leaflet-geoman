@@ -194,10 +194,16 @@ Draw.Circle = Draw.extend({
     }
   },
   _finishShape(e) {
+    // assign the coordinate of the click to the hintMarker, that's necessary for
+    // mobile where the marker can't follow a cursor
+    if (!this._hintMarker._snapped) {
+      this._hintMarker.setLatLng(e.latlng);
+    }
+
     // calc the radius
     const center = this._centerMarker.getLatLng();
-    const cursor = e.latlng;
-    const radius = center.distanceTo(cursor);
+    const latlng = this._hintMarker.getLatLng();
+    const radius = center.distanceTo(latlng);
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
