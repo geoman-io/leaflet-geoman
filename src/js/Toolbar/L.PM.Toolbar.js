@@ -279,7 +279,7 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['cancel'],
+      actions: ['finishMode'],
     };
 
     const dragButton = {
@@ -294,7 +294,7 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['cancel'],
+      actions: ['finishMode'],
     };
 
     const cutButton = {
@@ -330,7 +330,7 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['cancel'],
+      actions: ['finishMode'],
     };
 
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));

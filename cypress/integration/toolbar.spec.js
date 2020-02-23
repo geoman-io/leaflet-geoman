@@ -146,6 +146,15 @@ describe('Testing the Toolbar', () => {
     cy.toolbarButton('marker').click();
   });
 
+  it('Has Working translation for circle marker toolbar button', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setLang('es');
+    });
+
+    cy.get('.leaflet-buttons-control-button .leaflet-pm-icon-circle-marker')
+      .should('have.attr', 'title').and('include', 'Dibujar Marcador de Circulo');
+  });
+
   it('has functioning actions', () => {
     cy.toolbarButton('polygon').click();
 
@@ -177,14 +186,5 @@ describe('Testing the Toolbar', () => {
     cy.get('.button-container.active .action-cancel').click();
 
     cy.hasVertexMarkers(0);
-  });
-
-  it('Has Working translation for circle marker toolbar button', () => {
-    cy.window().then(({ map }) => {
-      map.pm.setLang('es');
-    });
-
-    cy.get('.leaflet-buttons-control-button .leaflet-pm-icon-circle-marker')
-      .should('have.attr', 'title').and('include', 'Dibujar Marcador de Circulo');
   });
 });

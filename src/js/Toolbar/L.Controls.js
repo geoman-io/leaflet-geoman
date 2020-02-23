@@ -91,6 +91,12 @@ const PMButton = L.Control.extend({
           this._triggerClick();
         },
       },
+      finishMode: {
+        text: getTranslation('actions.finish'),
+        onClick() {
+          this._triggerClick();
+        },
+      },
       removeLastVertex: {
         text: getTranslation('actions.removeLastVertex'),
         onClick() {
