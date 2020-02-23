@@ -11,10 +11,12 @@ const Toolbar = L.Class.extend({
     drawPolyline: true,
     drawPolygon: true,
     drawCircle: true,
+    drawCircleMarker: true,
     editMode: true,
     dragMode: true,
     cutPolygon: true,
     removalMode: true,
+    snappingOption: true,
     position: 'topleft',
   },
   initialize(map) {
@@ -42,6 +44,10 @@ const Toolbar = L.Class.extend({
     this.editContainer = L.DomUtil.create(
       'div',
       'leaflet-pm-toolbar leaflet-pm-edit leaflet-bar leaflet-control'
+    );
+    this.optionsContainer = L.DomUtil.create(
+      'div',
+      'leaflet-pm-toolbar leaflet-pm-options leaflet-bar leaflet-control'
     );
 
     this._defineButtons();
@@ -80,6 +86,7 @@ const Toolbar = L.Class.extend({
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
+        drawCircleMarker: 'control-icon leaflet-pm-icon-circle-marker',
         editMode: 'control-icon leaflet-pm-icon-edit',
         dragMode: 'control-icon leaflet-pm-icon-drag',
         cutPolygon: 'control-icon leaflet-pm-icon-cut',
@@ -125,8 +132,14 @@ const Toolbar = L.Class.extend({
     // we can't have two active modes because of possible event conflicts
     // so, we trigger a click on all currently active (toggled) buttons
 
+    // the options toolbar should not be disabled during the different modes
+    // TODO: probably need to abstract this a bit so different options are automatically
+    // disabled for different modes, like pinning for circles
+    const exceptOptionButtons = ['snappingOption']
+
     for (const name in this.buttons) {
       if (
+        !exceptOptionButtons.includes(name) &&
         this.buttons[name] !== exceptThisButton &&
         this.buttons[name].toggled()
       ) {
@@ -134,7 +147,7 @@ const Toolbar = L.Class.extend({
       }
     }
   },
-  toggleButton(name, status) {
+  toggleButton(name, status, disableOthers = true) {
     // does not fire the events/functionality of the button
     // this just changes the state and is used if a functionality (like Draw)
     // is enabled manually via script
@@ -149,7 +162,9 @@ const Toolbar = L.Class.extend({
 
     // as some mode got enabled, we still have to trigger the click on the other buttons
     // to disable their mode
-    this.triggerClickOnToggledButtons(this.buttons[name]);
+    if (disableOthers) {
+      this.triggerClickOnToggledButtons(this.buttons[name]);
+    }
 
     // now toggle the state of the button
     return this.buttons[name].toggle(status);
@@ -160,7 +175,7 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-marker',
       title: getTranslation('buttonTitles.drawMarkerButton'),
       jsClass: 'Marker',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         // toggle drawing mode
         this.map.pm.Draw.Marker.toggle();
@@ -176,7 +191,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawPolyButton'),
       className: 'control-icon leaflet-pm-icon-polygon',
       jsClass: 'Polygon',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         // toggle drawing mode
         this.map.pm.Draw.Polygon.toggle();
@@ -192,7 +207,7 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-polyline',
       title: getTranslation('buttonTitles.drawLineButton'),
       jsClass: 'Line',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         // toggle drawing mode
         this.map.pm.Draw.Line.toggle();
@@ -208,10 +223,26 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawCircleButton'),
       className: 'control-icon leaflet-pm-icon-circle',
       jsClass: 'Circle',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         // toggle drawing mode
         this.map.pm.Draw.Circle.toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['cancel'],
+    };
+
+    const drawCircleMarkerButton = {
+      title: getTranslation('buttonTitles.drawCircleMarkerButton'),
+      className: 'control-icon leaflet-pm-icon-circle-marker',
+      jsClass: 'CircleMarker',
+      onClick: () => { },
+      afterClick: () => {
+        // toggle drawing mode
+        this.map.pm.Draw.CircleMarker.toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -224,7 +255,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawRectButton'),
       className: 'control-icon leaflet-pm-icon-rectangle',
       jsClass: 'Rectangle',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         // toggle drawing mode
         this.map.pm.Draw.Rectangle.toggle();
@@ -239,7 +270,7 @@ const Toolbar = L.Class.extend({
     const editButton = {
       title: getTranslation('buttonTitles.editButton'),
       className: 'control-icon leaflet-pm-icon-edit',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         this.map.pm.toggleGlobalEditMode();
       },
@@ -254,7 +285,7 @@ const Toolbar = L.Class.extend({
     const dragButton = {
       title: getTranslation('buttonTitles.dragButton'),
       className: 'control-icon leaflet-pm-icon-drag',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         this.map.pm.toggleGlobalDragMode();
       },
@@ -270,7 +301,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.cutButton'),
       className: 'control-icon leaflet-pm-icon-cut',
       jsClass: 'Cut',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         // enable polygon drawing mode without snap
         this.map.pm.Draw.Cut.toggle({
@@ -290,7 +321,7 @@ const Toolbar = L.Class.extend({
     const deleteButton = {
       title: getTranslation('buttonTitles.deleteButton'),
       className: 'control-icon leaflet-pm-icon-delete',
-      onClick: () => {},
+      onClick: () => { },
       afterClick: () => {
         this.map.pm.toggleGlobalRemovalMode();
       },
@@ -307,6 +338,7 @@ const Toolbar = L.Class.extend({
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
     this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
+    this._addButton('drawCircleMarker', new L.Control.PMButton(drawCircleMarkerButton));
     this._addButton('editMode', new L.Control.PMButton(editButton));
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));

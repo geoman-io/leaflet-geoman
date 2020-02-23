@@ -7,7 +7,8 @@
     "finishPoly": "Click first marker to finish",
     "finishRect": "Click to finish",
     "startCircle": "Click to place circle center",
-    "finishCircle": "Click to finish circle"
+    "finishCircle": "Click to finish circle",
+    "placeCircleMarker": "Click to place circle marker"
   },
   "actions": {
     "finish": "Finish",
@@ -23,6 +24,9 @@
     "editButton": "Edit Layers",
     "dragButton": "Drag Layers",
     "cutButton": "Cut Layers",
-    "deleteButton": "Remove Layers"
+    "deleteButton": "Remove Layers",
+    "drawCircleMarkerButton": "Draw Circle Marker",
+    "snappingButton": "Snap dragged marker to other layers and vertices",
+    "pinningButton": "Pin shared vertices together"
   }
 }

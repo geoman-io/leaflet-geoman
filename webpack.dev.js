@@ -1,18 +1,24 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
 
 module.exports = {
     watch: true,
     devtool: 'cheap-eval-source-map',
+    mode: 'development',
     entry: ['./src/js/L.PM.js'],
     output: {
-        filename: 'leaflet.pm.min.js',
+        filename: 'leaflet-geoman.min.js',
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
         rules: [
+            {
+                test: /\.mjs$/,
+                include: /node_modules/,
+                type: "javascript/auto",
+            },
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
@@ -25,10 +31,9 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader',
-                }),
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                }, 'css-loader',],
             },
             {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
@@ -36,5 +41,5 @@ module.exports = {
             },
         ],
     },
-    plugins: [new ExtractTextPlugin('leaflet.pm.css')],
+    plugins: [new MiniCssExtractPlugin({ filename: 'leaflet-geoman.css' }),],
 };

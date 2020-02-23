@@ -19,35 +19,34 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-const accessToken =
-  'pk.eyJ1IjoibWFwc29mc3VtaXQiLCJhIjoiY2l1ZDF3dHE5MDAxZDMwbjA0cTR3dG50eSJ9.63Xci-GKFikhAobboF0DVQ';
+const accessToken = 'pk.eyJ1IjoibWFwc29mc3VtaXQiLCJhIjoiY2p4bHJvZzczMDNkMzN4bzM0OWkyNjJiMiJ9.OeORcEVrnlz4Ig-WnQNb6g';
 
 beforeEach(() => {
-  // create the map
-  cy.visit('/index.html', {
-    onLoad: contentWindow => {
-      const { L } = contentWindow;
+	// create the map
+	cy.visit('/index.html', {
+		onLoad: (contentWindow) => {
+			const { L } = contentWindow;
 
-      // mapbox tiles
-      const mapboxTiles = L.tileLayer(
-        `https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`,
-        {
-          attribution:
-            '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        }
-      );
+			// mapbox tiles
+			const mapboxTiles = L.tileLayer(
+				`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`,
+				{
+					attribution:
+						'&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+				}
+			);
 
-      // create the map
-      const map = L.map('map', {
-        preferCanvas: false,
-      })
-        .setView([51.505, -0.09], 13)
-        .addLayer(mapboxTiles);
+			// create the map
+			const map = L.map('map', {
+				preferCanvas: false
+			})
+				.setView([51.505, -0.09], 13)
+				.addLayer(mapboxTiles);
 
-      contentWindow.map = map;
+			contentWindow.map = map;
 
-      // add leaflet.pm toolbar
-      map.pm.addControls();
-    },
-  });
+			// add leaflet-geoman toolbar
+			map.pm.addControls();
+		}
+	});
 });

@@ -7,7 +7,8 @@
     "finishPoly": "Beende mit Klick auf ersten Marker",
     "finishRect": "Beende mit Klick",
     "startCircle": "Platziere das Kreiszentrum mit Klick",
-    "finishCircle": "Beende den Kreis mit Klick"
+    "finishCircle": "Beende den Kreis mit Klick",
+    "placeCircleMarker": "Platziere den Kreismarker mit Klick"
   },
   "actions": {
     "finish": "Beenden",
@@ -23,6 +24,7 @@
     "editButton": "Layer editieren",
     "dragButton": "Layer bewegen",
     "cutButton": "Layer schneiden",
-    "deleteButton": "Layer löschen"
+    "deleteButton": "Layer löschen",
+    "drawCircleMarkerButton": "Kreismarker zeichnen"
   }
 }

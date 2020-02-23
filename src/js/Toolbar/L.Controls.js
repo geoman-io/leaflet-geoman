@@ -6,15 +6,19 @@ const PMButton = L.Control.extend({
   },
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
-    this._button = L.Util.setOptions(this, options);
+    // replaced setOptions with this because classNames returned undefined 🤔
+    this._button = Object.assign({}, this.options, options);
   },
   onAdd(map) {
     this._map = map;
 
-    this._container =
-      this._button.tool === 'edit'
-        ? this._map.pm.Toolbar.editContainer
-        : this._map.pm.Toolbar.drawContainer;
+    if (this._button.tool === 'edit') {
+      this._container = this._map.pm.Toolbar.editContainer;
+    } else if (this._button.tool === 'options') {
+      this._container = this._map.pm.Toolbar.optionsContainer;
+    } else {
+      this._container = this._map.pm.Toolbar.drawContainer;
+    }
     this.buttonsDomNode = this._makeButton(this._button);
     this._container.appendChild(this.buttonsDomNode);
 
@@ -116,7 +120,7 @@ const PMButton = L.Control.extend({
     });
 
     if (button.toggleStatus) {
-      L.DomUtil.addClass(newButton, 'active');
+      L.DomUtil.addClass(buttonContainer, 'active');
     }
 
     const image = L.DomUtil.create('div', 'control-icon', newButton);

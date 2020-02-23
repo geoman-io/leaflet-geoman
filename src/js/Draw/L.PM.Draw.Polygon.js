@@ -21,7 +21,7 @@ Draw.Polygon = Draw.Line.extend({
     // get coordinates
     const coords = this._layer.getLatLngs();
 
-    // if there is only one coords, don't finish the shape!
+    // only finish the shape if there are 3 or more vertices
     if (coords.length <= 2) {
       return;
     }

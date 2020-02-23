@@ -1,6 +1,6 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
@@ -8,12 +8,18 @@ module.exports = {
     watch: false,
     // devtool: 'cheap-source-map',
     entry: ['./src/js/L.PM.js'],
+    mode: 'production',
     output: {
-        filename: 'leaflet.pm.min.js',
+        filename: 'leaflet-geoman.min.js',
         path: path.resolve(__dirname, 'dist'),
     },
     module: {
         rules: [
+            {
+                test: /\.mjs$/,
+                include: /node_modules/,
+                type: "javascript/auto",
+            },
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
@@ -26,10 +32,9 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader',
-                }),
+                use: [{
+                    loader: MiniCssExtractPlugin.loader,
+                }, 'css-loader',],
             },
             {
                 test: /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/,
@@ -38,7 +43,7 @@ module.exports = {
         ],
     },
     plugins: [
-        new ExtractTextPlugin('leaflet.pm.css'),
+        new MiniCssExtractPlugin({ filename: 'leaflet-geoman.css' }),
         new UglifyJsPlugin({
             uglifyOptions: {
                 ie8: true,
@@ -46,12 +51,6 @@ module.exports = {
                 output: {
                     comments: false,
                 },
-            },
-        }),
-        new webpack.DefinePlugin({
-            'process.env': {
-                // This has effect on the react lib size
-                NODE_ENV: JSON.stringify('production'),
             },
         }),
     ],
