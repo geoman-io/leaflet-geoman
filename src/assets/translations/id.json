@@ -1,0 +1,28 @@
+{
+  "tooltips": {
+    "placeMarker": "Klik untuk menempatkan marker",
+    "firstVertex": "Klik untuk menempatkan vertex pertama",
+    "continueLine": "Klik untuk meneruskan digitasi",
+    "finishLine": "Klik pada sembarang marker yang ada untuk mengakhiri",
+    "finishPoly": "Klik marker pertama untuk mengakhiri",
+    "finishRect": "Klik untuk mengakhiri",
+    "startCircle": "Klik untuk menempatkan titik pusat lingkaran",
+    "finishCircle": "Klik untuk mengakhiri lingkaran"
+  },
+  "actions": {
+    "finish": "Selesai",
+    "cancel": "Batal",
+    "removeLastVertex": "Hilangkan Vertex Terakhir"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Digitasi Marker",
+    "drawPolyButton": "Digitasi Polygon",
+    "drawLineButton": "Digitasi Polyline",
+    "drawCircleButton": "Digitasi Lingkaran",
+    "drawRectButton": "Digitasi Segi Empat",
+    "editButton": "Edit Layer",
+    "dragButton": "Geser Layer",
+    "cutButton": "Potong Layer",
+    "deleteButton": "Hilangkan Layer"
+  }
+}
