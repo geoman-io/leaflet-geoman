@@ -10,6 +10,7 @@ import fr from './fr.json';
 import zh from './zh.json';
 import pt_br from './pt_br.json';
 import pl from './pl.json';
+import sv from './sv.json';
 
 export default {
   en,
@@ -23,5 +24,6 @@ export default {
   fr,
   pt_br,
   zh,
-  pl
+  pl,
+  sv
 };
