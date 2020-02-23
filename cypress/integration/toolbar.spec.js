@@ -183,7 +183,7 @@ describe('Testing the Toolbar', () => {
 
     cy.hasVertexMarkers(5);
 
-    cy.get('.button-container.active .action-cancel').click();
+    cy.get('.button-container.active .action-finishMode').click();
 
     cy.hasVertexMarkers(0);
   });
