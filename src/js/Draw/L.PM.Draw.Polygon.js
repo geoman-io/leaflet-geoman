@@ -11,7 +11,7 @@ Draw.Polygon = Draw.Line.extend({
   _finishShape(e) {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(false);
+      this._handleSelfIntersection(true);
 
       if (this._doesSelfIntersect) {
         return;
