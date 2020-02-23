@@ -1,0 +1,30 @@
+{
+  "tooltips": {
+    "placeMarker": "Klicka för att placera punkt",
+    "firstVertex": "Klicka för att placera första vertex",
+    "continueLine": "Klicka för att fortsätta rita",
+    "finishLine": "Klicka på en existerande punkt för att slutföra",
+    "finishPoly": "Klicka på den första punkten för att slutföra",
+    "finishRect": "Klicka för att slutföra",
+    "startCircle": "Klicka för att placera cirkelns centrum",
+    "finishCircle": "Klicka för att slutföra cirkeln",
+    "placeCircleMarker": "Klicka för att placera cirkelmakör"
+  },
+  "actions": {
+    "finish": "Slutför",
+    "cancel": "Avbryt",
+    "removeLastVertex": "Ta bort sista vertex"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Rita Punkt",
+    "drawPolyButton": "Rita Rolygoner",
+    "drawLineButton": "Rita Polyline",
+    "drawCircleButton": "Rta Cirkel",
+    "drawRectButton": "Rita Rectangle",
+    "editButton": "Redigera Lager",
+    "dragButton": "Dra Lager",
+    "cutButton": "Klipp i Lager",
+    "deleteButton": "Ta bort Lager",
+    "drawCircleMarkerButton": "Rita Cirkelmakör"
+  }
+}
