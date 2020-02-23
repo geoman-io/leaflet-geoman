@@ -358,6 +358,49 @@ describe('Draw & Edit Poly', () => {
       .should('have.not.class', 'active');
   });
 
+  it('fire pm:cut AFTER the actual cut is visible on the map', () => {
+    cy.window().then(({ map, L }) => {
+
+      Cypress.$(map).on('pm:cut', () => {
+        const layers = [];
+
+        map.eachLayer((layer) => {
+          if (layer instanceof L.Polygon) {
+            layers.push(layer)
+          }
+        })
+
+        expect(layers).to.have.lengthOf(1);
+      });
+    });
+
+    cy.toolbarButton('polygon')
+      .click()
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(150, 50)
+      .click(500, 50)
+      .click(500, 300)
+      .click(300, 350)
+      .click(90, 250);
+
+
+    cy.toolbarButton('cut')
+      .click();
+
+    // draw a polygon to cut
+    cy.get(mapSelector)
+      .click(450, 100)
+      .click(450, 150)
+      .click(400, 150)
+      .click(390, 140)
+      .click(390, 100)
+      .click(450, 100);
+
+
+  })
+
   it('draws a polygon with a hole', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon')
