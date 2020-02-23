@@ -90,7 +90,7 @@
   z-index: 2;
   position: absolute;
   top: 0;
-  left: 31px;
+  left: 100%;
   display: none;
   white-space: nowrap;
 }
