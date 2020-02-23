@@ -22,7 +22,6 @@ Draw.Polygon = Draw.Line.extend({
     const coords = this._layer.getLatLngs();
 
     // only finish the shape if there are 3 or more vertices
-    console.log(coords)
     if (coords.length <= 2) {
       return;
     }

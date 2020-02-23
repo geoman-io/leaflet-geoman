@@ -5,6 +5,27 @@ Edit.Circle = Edit.extend({
     this._layer = layer;
     this._enabled = false;
   },
+  applyOptions() {
+    if (this.options.snappable) {
+      this._initSnappableMarkers();
+      // sync the hintline with hint marker
+      this._outerMarker.on('move', this._syncHintLine, this);
+      this._outerMarker.on('move', this._syncCircleRadius, this);
+      this._centerMarker.on('move', this._moveCircle, this);
+    } else {
+      this._disableSnapping();
+    }
+  },
+  _disableSnapping() {
+    this._markers.forEach(marker => {
+      marker.off('move', this._syncHintLine, this);
+      marker.off('move', this._syncCircleRadius, this);
+      marker.off('drag', this._handleSnapping, this);
+      marker.off('dragend', this._cleanupSnapping, this);
+    });
+
+    this._layer.off('pm:dragstart', this._unsnap, this);
+  },
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
@@ -29,8 +50,10 @@ Edit.Circle = Edit.extend({
     // change state
     this._enabled = true;
 
-    // // init markers
+    // init markers
     this._initMarkers();
+
+    this.applyOptions();
 
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', e => {
@@ -89,9 +112,7 @@ Edit.Circle = Edit.extend({
     this._markers = [this._centerMarker, this._outerMarker];
     this._createHintLine(this._centerMarker, this._outerMarker);
 
-    if (this.options.snappable) {
-      this._initSnappableMarkers();
-    }
+
   },
   _getLatLngOnCircle(center, radius) {
     const pointA = this._map.project(center);

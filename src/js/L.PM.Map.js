@@ -8,6 +8,10 @@ const Map = L.Class.extend({
     this.Toolbar = new L.PM.Toolbar(map);
 
     this._globalRemovalMode = false;
+
+    this.globalOptions = {
+      snappable: true,
+    };
   },
   setLang(lang = 'en', t, fallback = 'en') {
     if (t) {
@@ -61,10 +65,10 @@ const Map = L.Class.extend({
       }
     });
 
-    // filter out layers that don't have the leaflet.pm instance
+    // filter out layers that don't have the leaflet-geoman instance
     layers = layers.filter(layer => !!layer.pm);
 
-    // filter out everything that's leaflet.pm specific temporary stuff
+    // filter out everything that's leaflet-geoman specific temporary stuff
     layers = layers.filter(layer => !layer._pmTempLayer);
 
     return layers;
@@ -72,7 +76,7 @@ const Map = L.Class.extend({
   removeLayer(e) {
 
     const layer = e.target;
-    // only remove layer, if it's handled by leaflet.pm,
+    // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
     const removeable =
       !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
@@ -99,7 +103,7 @@ const Map = L.Class.extend({
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this._globalDragMode);
-    
+
     this._fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
@@ -133,7 +137,7 @@ const Map = L.Class.extend({
     }
   },
   layerAddHandler({ layer }) {
-    // is this layer handled by leaflet.pm?
+    // is this layer handled by leaflet-geoman?
     const isRelevant = !!layer.pm && !layer._pmTempLayer;
 
     // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
@@ -197,9 +201,9 @@ const Map = L.Class.extend({
   },
   _fireRemovalModeEvent(enabled) {
     this.map.fire('pm:globalremovalmodetoggled', {
-        enabled,
-        map: this.map,
-      });
+      enabled,
+      map: this.map,
+    });
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode
@@ -212,31 +216,73 @@ const Map = L.Class.extend({
   globalRemovalEnabled() {
     return !!this._globalRemovalMode;
   },
+  getGlobalOptions() {
+    return this.globalOptions;
+  },
+  setGlobalOptions(o) {
+    // merge passed and existing options
+    const options = {
+      ...this.globalOptions,
+      ...o
+    };
+
+    // enable options for Drawing Shapes
+    this.map.pm.Draw.shapes.forEach(shape => {
+      this.map.pm.Draw[shape].setOptions(options)
+    })
+
+    // enable options for Editing
+    const layers = this.findLayers();
+    layers.forEach(layer => {
+      layer.pm.setOptions(options);
+    });
+
+    // apply the options (actually trigger the functionality)
+    this.applyGlobalOptions();
+
+    // store options
+    this.globalOptions = options;
+  },
+  applyGlobalOptions() {
+    const layers = this.findLayers();
+    layers.forEach(layer => {
+      if (layer.pm.enabled()) {
+        layer.pm.applyOptions();
+      }
+    });
+  },
   globalEditEnabled() {
     return this._globalEditMode;
   },
-  enableGlobalEditMode(options) {
-    // find all layers handled by leaflet.pm
+  enableGlobalEditMode(o) {
+    const options = {
+      snappable: this._globalSnappingEnabled,
+      ...o
+    }
+
+    // find all layers handled by leaflet-geoman
     const layers = this.findLayers();
 
     this._globalEditMode = true;
+
+    // toggle the button in the toolbar
+    this.Toolbar.toggleButton('editMode', this._globalEditMode);
 
     layers.forEach(layer => {
       // console.log(layer);
       layer.pm.enable(options);
     });
 
-    // handle layers that are added while in removal  xmode
+    // handle layers that are added while in removal mode
     this.map.on('layeradd', this.layerAddHandler, this);
 
-    // toggle the button in the toolbar
-    this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
 
     // fire event
     this._fireEditModeEvent(true);
+
   },
   disableGlobalEditMode() {
-    // find all layers handles by leaflet.pm
+    // find all layers handles by leaflet-geoman
     const layers = this.findLayers();
 
     this._globalEditMode = false;
@@ -260,7 +306,7 @@ const Map = L.Class.extend({
       map: this.map,
     });
   },
-  toggleGlobalEditMode(options) {
+  toggleGlobalEditMode(options = this.globalOptions) {
     // console.log('toggle global edit mode', options);
     if (this.globalEditEnabled()) {
       // disable

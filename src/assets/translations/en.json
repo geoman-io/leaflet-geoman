@@ -25,6 +25,8 @@
     "dragButton": "Drag Layers",
     "cutButton": "Cut Layers",
     "deleteButton": "Remove Layers",
-    "drawCircleMarkerButton": "Draw Circle Marker"
+    "drawCircleMarkerButton": "Draw Circle Marker",
+    "snappingButton": "Snap dragged marker to other layers and vertices",
+    "pinningButton": "Pin shared vertices together"
   }
 }

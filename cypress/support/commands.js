@@ -53,7 +53,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then(json => {
-          const layer = L.geoJson(json).addTo(map);
+          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
