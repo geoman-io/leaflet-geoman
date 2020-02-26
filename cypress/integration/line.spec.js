@@ -113,11 +113,11 @@ describe('Draw & Edit Line', () => {
 
     // draw a line
     cy.get(mapSelector)
-      .click(120, 250)
-      .click(130, 50)
-      .click(180, 50)
-      .click(180, 150)
-      .click(180, 150);
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(250, 250)
+      .click(250, 250);
 
     // button should be disabled after successful draw
     cy.toolbarButton('polyline')

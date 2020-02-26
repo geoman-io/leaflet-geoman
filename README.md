@@ -8,7 +8,7 @@
 </h1>
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
-  Draw, Edit, Drag, Cut and Snap Layers<br>
+  Draw, Edit, Drag, Cut, Snap and Pin Layers<br>
   Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
@@ -16,7 +16,7 @@
     <img src="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free.svg" alt="npm version" height="18">
   </a>
   <a href="#">
-    <img src="https://travis-ci.org/geoman-io/leaflet-geoman.svg?branch=develop" alt="" />
+    <img src="https://github.com/geoman-io/leaflet-geoman/workflows/Tests/badge.svg" alt="" />
   </a>
   <a href="https://github.com/geoman-io/leaflet-geoman">
     <img src="http://githubbadges.com/star.svg?user=geoman-io&repo=leaflet-geoman&style=default" alt="star this repo" />
@@ -24,11 +24,19 @@
   <a href="https://www.npmjs.com/package/leaflet.pm">
     <img src="https://img.shields.io/npm/dt/leaflet.pm.svg" alt="NPM Downloads" />
   </a>
+  <a href="https://www.npmjs.com/package/@geoman-io/leaflet-geoman-free">
+    <img src="https://img.shields.io/npm/dt/@geoman-io/leaflet-geoman-free.svg" alt="NPM Downloads" />
+  </a>
 </p>
 
 ## [👉 Live Demo 👈](https://geoman.io/leaflet-geoman)
 
 ![Demo](https://file-gmeileqfmg.now.sh/)
+
+#### Leaflet-Geoman Pro ⭐
+Companies need more advanced features, reliability and support. In our Pro version, we offer everything from the open source version and add many advanced features for big scale projects.
+Features marked with ⭐ in this documentation are only available in the Pro version.
+[Become a Sponsor](https://github.com/sponsors/codeofsumit) go get Pro, or [contact me](mailto:sumit@geoman.io)
 
 ## Documentation
 
@@ -39,6 +47,7 @@
 - [Drag Mode](#drag-mode)
 - [Removal Mode](#removal-mode)
 - [Cutting Mode](#cutting-mode)
+- [Options](#options)
 - [Customization](#customize)
 - [Need a feature?](#feature-request) | [Existing Feature Requests](https://github.com/geoman-io/leaflet-geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
 
@@ -145,22 +154,18 @@ See the available options in the table below.
 | dragMode      | `true`      | adds button to toggle drag mode for all layers                                                   |
 | cutPolygon    | `true`      | adds button to cut a hole in a polygon                                                           |
 | removalMode   | `true`      | adds a button to remove layers                                                                   |
+| pinningOption   | `true`      | adds a button to toggle the Pinning Option ⭐                                                                   |
+| snappingOption   | `true`      | adds a button to toggle the Snapping Option ⭐                                                                   |
 
 If you are wondering how e.g. the `drawPolygon` button will enable drawing mode
-with specific options, here it is: Simply enable drawing mode programatically,
-pass it your options and disable it again. The options will persist, even when
+with specific options, here it is: Simply set the options for the layer. The options will persist, even when
 the mode is enabled/disabled via the toolbar.
 
 Example:
 
 ```js
 // make markers not snappable during marker draw
-map.pm.enableDraw('Marker', { snappable: false });
-map.pm.disableDraw('Marker');
-
-// let polygons finish their shape on double click
-map.pm.enableDraw('Polygon', { finishOn: 'dblclick' });
-map.pm.disableDraw('Polygon');
+map.pm.setGlobalOptions({ snappable: false, });
 ```
 
 All available options are specified in the Drawing Mode Section below.
@@ -265,6 +270,7 @@ See the available options in the table below.
 | :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |
 | snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
 | snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
+| pinning               | `false` | Pin shared vertices/markers together during edit. [Details](#pinning)                                     |
 | allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
 
@@ -351,7 +357,7 @@ The following events are available on a layer instance:
 You can also listen to specific drag mode events on the map instance like this:
 
 ```js
-map.on('pm:globaldrawmodetoggled', e => {
+map.on('pm:globaldragmodetoggled', e => {
   console.log(e);
 });
 ```
@@ -429,6 +435,35 @@ The following events are available on a map instance:
 | :----- | :----- | :-------------------------------- |
 | pm:cut | `e`    | Fired when any layer is being cut |
 
+### Options
+
+You have the following powerful options available when drawing and editing your layers.
+Set options per layer or through global options.
+
+Examples:
+
+```js
+layer.pm.enable({ pinning: true, snappable: false })
+```
+```js
+map.pm.setGlobalOptions({ pinning: true })
+```
+
+
+##### Snapping
+
+Snap the dragged marker/vertex to other layers for precision drawing.
+
+![Snapping Options](https://files-r7ezk18qq.now.sh/snapping.gif)
+
+
+##### Pinning ⭐
+
+When dragging a vertex/marker, you can pin all other Markers/Vertices that have the same latlng to the dragged marker. Exclusive for Leaflet-Geoman Pro ⭐
+
+![Pinning Option](https://user-images.githubusercontent.com/2399810/65375984-288ece80-dc9b-11e9-930e-bca03ad7cb56.gif)
+
+
 ### Customize
 
 ##### Customize Language
@@ -439,7 +474,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');
 ```
 
-Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `zh` and `nl`.
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `nl`, `pl` and `sv`.
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.
@@ -525,5 +560,3 @@ familiar code.
 I also took a hard look at the great
 [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some
 of my helper functions.
-
-If you want to support the development of leaflet-geoman, consider subscribing to the services of [Geoman](https://geoman.io).

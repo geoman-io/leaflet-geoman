@@ -30,6 +30,15 @@ Edit.LayerGroup = L.Class.extend({
         this.enable(this.getOptions());
       }
     });
+
+    // if a layer is removed from the group, calc the layers list again
+    this._layerGroup.on('layerremove', e => {
+      if (e.target._pmTempLayer) {
+        return;
+      }
+
+      this._layers = this.findLayers();
+    })
   },
   findLayers() {
     // get all layers of the layer group

@@ -5,6 +5,24 @@ Edit.CircleMarker = Edit.extend({
     this._layer = layer;
     this._enabled = false;
   },
+  applyOptions() {
+    if (this.options.draggable) {
+      this.enableLayerDrag();
+    } else {
+      this.disableLayerDrag();
+    }
+
+    if (this.options.snappable) {
+      this._initSnappableMarkers();
+    } else {
+      this._disableSnapping();
+    }
+
+    // enable removal for the marker
+    if (!this.options.preventMarkerRemoval) {
+      this._layer.on('contextmenu', this._removeMarker, this);
+    }
+  },
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
@@ -34,18 +52,7 @@ Edit.CircleMarker = Edit.extend({
     // change state
     this._enabled = true;
 
-    // enable removal for the marker
-    if (!this.options.preventMarkerRemoval) {
-      this._layer.on('contextmenu', this._removeMarker, this);
-    }
-
-    if (this.options.draggable) {
-      this.enableLayerDrag();
-    }
-
-    if (this.options.snappable) {
-      this._initSnappableMarkers();
-    }
+    this.applyOptions();
 
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
   },
@@ -61,11 +68,8 @@ Edit.CircleMarker = Edit.extend({
     }
     layer.pm._enabled = false;
 
-    // remove draggable class
-    if (layer._path) {
-      const el = layer._path;
-      L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
-    }
+    // disable dragging
+    this.disableLayerDrag();
 
     if (this._layerEdited) {
       this._layer.fire('pm:update', {});
@@ -109,4 +113,11 @@ Edit.CircleMarker = Edit.extend({
     marker.off('pm:dragstart', this._unsnap, this);
     marker.on('pm:dragstart', this._unsnap, this);
   },
+  _disableSnapping() {
+    const marker = this._layer;
+
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.off('pm:dragend', this._cleanupSnapping, this);
+    marker.off('pm:dragstart', this._unsnap, this);
+  }
 });

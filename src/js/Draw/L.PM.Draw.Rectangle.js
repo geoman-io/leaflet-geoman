@@ -29,7 +29,7 @@ Draw.Rectangle = Draw.extend({
     // this needs to be present, for tracking purposes, but we'll make it invisible if a user doesn't want to see it!
     this._startMarker = L.marker([0, 0], {
       icon: L.divIcon({ className: 'marker-icon rect-start-marker' }),
-      draggable: true,
+      draggable: false,
       zIndexOffset: 100,
       opacity: this.options.cursorMarker ? 1 : 0,
     });
@@ -67,7 +67,7 @@ Draw.Rectangle = Draw.extend({
           icon: L.divIcon({
             className: 'marker-icon rect-style-marker',
           }),
-          draggable: true,
+          draggable: false,
           zIndexOffset: 100,
         });
         styleMarker._pmTempLayer = true;
