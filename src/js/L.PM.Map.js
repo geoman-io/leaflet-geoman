@@ -291,8 +291,8 @@ const Map = L.Class.extend({
       layer.pm.disable();
     });
 
-    // handle layers that are added while in removal  xmode
-    this.map.on('layeroff', this.layerAddHandler, this);
+    // cleanup layer off event
+    this.map.off('layeroff', this.layerAddHandler, this);
 
     // toggle the button in the toolbar
     this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
