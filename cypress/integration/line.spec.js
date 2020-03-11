@@ -61,6 +61,7 @@ describe('Draw & Edit Line', () => {
         hintlineStyle: {
           color: 'orange',
           dashArray: [10, 10],
+          weight: 1,
         },
         pathOptions: {
           color: 'orange',
