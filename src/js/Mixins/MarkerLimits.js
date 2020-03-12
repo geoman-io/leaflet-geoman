@@ -1,4 +1,4 @@
-const Maximum = {
+const MarkerLimits = {
   filterMarkerGroup() {
     this.markerCache = [];
 
@@ -48,4 +48,4 @@ const Maximum = {
   }
 }
 
-export default Maximum
+export default MarkerLimits

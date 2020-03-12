@@ -440,8 +440,8 @@ The following events are available on a map instance:
 
 ### Options
 
-You have the following powerful options available when drawing and editing your layers.
-Set options per layer or through global options.
+You have many options available when drawing and editing your layers (described above).
+You can set the options per layer as described above, or you can set them globally for all layers. This is especially useful when you use the toolbar and can't change the options programatically.
 
 Examples:
 
@@ -452,6 +452,7 @@ layer.pm.enable({ pinning: true, snappable: false })
 map.pm.setGlobalOptions({ pinning: true })
 ```
 
+Some details about a few more powerful options:
 
 ##### Snapping
 

@@ -4,7 +4,7 @@ import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
 import { isEmptyDeep } from '../helpers';
 
-import Maximum from '../Mixins/EditLimits/Maximum';
+import MarkerLimits from '../Mixins/MarkerLimits';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
@@ -15,7 +15,7 @@ import Maximum from '../Mixins/EditLimits/Maximum';
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
 Edit.Line = Edit.extend({
-  includes: [Maximum],
+  includes: [MarkerLimits],
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
