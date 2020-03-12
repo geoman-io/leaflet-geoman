@@ -97,7 +97,7 @@ describe('Draw Circle Marker', () => {
     cy.window().then(() => {
       const t1 = performance.now();
       const delta = Math.abs(t1 - t0);
-      console.log(`Call to doSomething took ${delta} milliseconds.`);
+      console.log(`Rendering 6k CircleMarkers took ${delta} milliseconds.`);
 
       expect(delta).to.lessThan(1000);
     });
