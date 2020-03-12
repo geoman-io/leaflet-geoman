@@ -11,6 +11,8 @@ const MarkerLimits = {
       this._map.off('mousemove', this._filterClosestMarkers, this);
     });
 
+    console.log(this.options.limitMarkers)
+
     if (this.options.limitMarkers > -1) {
       this.refreshMarkerCache();
     }
@@ -37,7 +39,7 @@ const MarkerLimits = {
     })
 
     this.markerCache.forEach((l, i) => {
-      if (i > this.options.limitMarkers) {
+      if (i >= this.options.limitMarkers) {
         this._markerGroup.removeLayer(l)
       } else {
         this._markerGroup.addLayer(l)

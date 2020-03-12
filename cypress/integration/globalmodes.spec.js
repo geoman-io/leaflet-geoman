@@ -1,17 +1,19 @@
-describe('Removal Mode', () => {
+describe('Modes', () => {
   const mapSelector = '#map';
-  it.only('enables and disables global edit mode', () => {
+  it('limits markers in edit mode', () => {
 
     cy.drawShape('MonsterPolygon');
 
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({
-        limitMarkers: 50
+        limitMarkers: 0
       })
     })
 
 
     cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(0);
+
   });
 
   it('properly removes layers', () => {
