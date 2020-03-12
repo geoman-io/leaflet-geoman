@@ -18,12 +18,6 @@ const Map = L.Class.extend({
 
     this.globalOptions = {
       snappable: true,
-      editModeLimits: {
-        maximum: 200,
-        // viewport: false,
-        // zoom: 16,
-        // hover: true
-      }
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {

@@ -110,6 +110,8 @@ Edit.Line = Edit.extend({
     // remove onRemove listener
     this._layer.off('remove', this._onLayerRemove, this);
 
+
+
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
         'pm:vertexremoved',
@@ -125,6 +127,8 @@ Edit.Line = Edit.extend({
     if (this.hasSelfIntersection()) {
       L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
     }
+
+    this._layer.fire('pm:disable');
 
     if (this._layerEdited) {
       this._layer.fire('pm:update', {});
@@ -225,7 +229,7 @@ Edit.Line = Edit.extend({
     this._markers = handleRing(coords);
 
     // handle possible limitation: maximum number of markers
-    this.handleMaximumLimit();
+    this.filterMarkerGroup();
 
     // add markerGroup to map
     map.addLayer(this._markerGroup);

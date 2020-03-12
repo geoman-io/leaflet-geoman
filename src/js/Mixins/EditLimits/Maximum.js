@@ -1,14 +1,22 @@
 const Maximum = {
-  handleMaximumLimit() {
+  filterMarkerGroup() {
     this.markerCache = [];
-    this.refreshMarkerCache();
-
-    this.markerCache.forEach((l) => {
-      this._markerGroup.removeLayer(l)
-    })
 
     this._layer.on('pm:edit', () => {
       this.refreshMarkerCache();
+    })
+
+    this._layer.on('pm:disable', () => {
+      // remove markerFilter mousemove event
+      this._map.off('mousemove', this._filterClosestMarkers, this);
+    });
+
+    if (this.options.limitMarkers > -1) {
+      this.refreshMarkerCache();
+    }
+
+    this.markerCache.forEach((l) => {
+      this._markerGroup.removeLayer(l)
     })
 
   },
@@ -29,7 +37,7 @@ const Maximum = {
     })
 
     this.markerCache.forEach((l, i) => {
-      if (i > 50) {
+      if (i > this.options.limitMarkers) {
         this._markerGroup.removeLayer(l)
       } else {
         this._markerGroup.addLayer(l)

@@ -4,8 +4,14 @@ describe('Removal Mode', () => {
 
     cy.drawShape('MonsterPolygon');
 
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        limitMarkers: 50
+      })
+    })
 
-    // cy.toolbarButton('edit').click();
+
+    cy.toolbarButton('edit').click();
   });
 
   it('properly removes layers', () => {

@@ -270,9 +270,10 @@ See the available options in the table below.
 | :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |
 | snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
 | snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
-| pinning               | `false` | Pin shared vertices/markers together during edit. [Details](#pinning)                                     |
+| pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                  |
 | allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
+| limitMarkers          | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |
 
 The following methods are available for layers under `layer.pm`:
 
@@ -298,6 +299,8 @@ The following events are available on a layer instance:
 | Event              | Params | Description                                                                                          |
 | :----------------- | :----- | :--------------------------------------------------------------------------------------------------- |
 | pm:edit            | `e`    | Fired when a layer is edited.                                                                        |
+| pm:update          | `e`    | Fired when a layer is edited and its coordinates have changed.                                       |
+| pm:disable     | `e`    | Fired when edit mode on a layer is disabled                                                          |
 | pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         |
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       |
 | pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 |

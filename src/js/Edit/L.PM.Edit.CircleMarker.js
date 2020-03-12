@@ -71,6 +71,8 @@ Edit.CircleMarker = Edit.extend({
     // disable dragging
     this.disableLayerDrag();
 
+    this._layer.fire('pm:disable');
+
     if (this._layerEdited) {
       this._layer.fire('pm:update', {});
     }
