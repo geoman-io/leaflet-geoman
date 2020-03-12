@@ -1,8 +1,14 @@
 const MarkerLimits = {
   filterMarkerGroup() {
+    // don't do it if the option is disabled
+    if (this.options.limitMarkers === -1) {
+      return;
+    }
+
     this.markerCache = [];
 
     this._layer.on('pm:edit', () => {
+      console.log('layer edited')
       this.refreshMarkerCache();
     })
 
@@ -10,12 +16,6 @@ const MarkerLimits = {
       // remove markerFilter mousemove event
       this._map.off('mousemove', this._filterClosestMarkers, this);
     });
-
-    console.log(this.options.limitMarkers)
-
-    if (this.options.limitMarkers > -1) {
-      this.refreshMarkerCache();
-    }
 
     this.markerCache.forEach((l) => {
       this._markerGroup.removeLayer(l)
