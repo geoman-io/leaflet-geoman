@@ -1,7 +1,14 @@
+
 import merge from 'lodash/merge';
 import translations from '../assets/translations';
+import Utils from './L.PM.Utils'
+
+import GlobalEditMode from './Mixins/Modes/Mode.Edit';
+
+const { findLayers } = Utils
 
 const Map = L.Class.extend({
+  includes: [GlobalEditMode],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);
@@ -11,6 +18,12 @@ const Map = L.Class.extend({
 
     this.globalOptions = {
       snappable: true,
+      editModeLimits: {
+        maximum: 200,
+        // viewport: false,
+        // zoom: 16,
+        // hover: true
+      }
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {
@@ -52,27 +65,6 @@ const Map = L.Class.extend({
   setPathOptions(options) {
     this.Draw.setPathOptions(options);
   },
-  findLayers() {
-    let layers = [];
-    this.map.eachLayer(layer => {
-      if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle ||
-        layer instanceof L.CircleMarker
-      ) {
-        layers.push(layer);
-      }
-    });
-
-    // filter out layers that don't have the leaflet-geoman instance
-    layers = layers.filter(layer => !!layer.pm);
-
-    // filter out everything that's leaflet-geoman specific temporary stuff
-    layers = layers.filter(layer => !layer._pmTempLayer);
-
-    return layers;
-  },
   removeLayer(e) {
 
     const layer = e.target;
@@ -90,7 +82,7 @@ const Map = L.Class.extend({
     return !!this._globalDragMode;
   },
   enableGlobalDragMode() {
-    const layers = this.findLayers();
+    const layers = findLayers(this.map);
 
     this._globalDragMode = true;
 
@@ -107,7 +99,7 @@ const Map = L.Class.extend({
     this._fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
-    const layers = this.findLayers();
+    const layers = findLayers(this.map);
 
     this._globalDragMode = false;
 
@@ -232,7 +224,7 @@ const Map = L.Class.extend({
     })
 
     // enable options for Editing
-    const layers = this.findLayers();
+    const layers = findLayers(this.map);
     layers.forEach(layer => {
       layer.pm.setOptions(options);
     });
@@ -244,77 +236,12 @@ const Map = L.Class.extend({
     this.globalOptions = options;
   },
   applyGlobalOptions() {
-    const layers = this.findLayers();
+    const layers = findLayers(this.map);
     layers.forEach(layer => {
       if (layer.pm.enabled()) {
         layer.pm.applyOptions();
       }
     });
-  },
-  globalEditEnabled() {
-    return this._globalEditMode;
-  },
-  enableGlobalEditMode(o) {
-    const options = {
-      snappable: this._globalSnappingEnabled,
-      ...o
-    }
-
-    // find all layers handled by leaflet-geoman
-    const layers = this.findLayers();
-
-    this._globalEditMode = true;
-
-    // toggle the button in the toolbar
-    this.Toolbar.toggleButton('editMode', this._globalEditMode);
-
-    layers.forEach(layer => {
-      // console.log(layer);
-      layer.pm.enable(options);
-    });
-
-    // handle layers that are added while in removal mode
-    this.map.on('layeradd', this.layerAddHandler, this);
-
-
-    // fire event
-    this._fireEditModeEvent(true);
-
-  },
-  disableGlobalEditMode() {
-    // find all layers handles by leaflet-geoman
-    const layers = this.findLayers();
-
-    this._globalEditMode = false;
-
-    layers.forEach(layer => {
-      layer.pm.disable();
-    });
-
-    // cleanup layer off event
-    this.map.off('layeroff', this.layerAddHandler, this);
-
-    // toggle the button in the toolbar
-    this.Toolbar.toggleButton('editPolygon', this._globalEditMode);
-
-    // fire event
-    this._fireEditModeEvent(false);
-  },
-  _fireEditModeEvent(enabled) {
-    this.map.fire('pm:globaleditmodetoggled', {
-      enabled,
-      map: this.map,
-    });
-  },
-  toggleGlobalEditMode(options = this.globalOptions) {
-    // console.log('toggle global edit mode', options);
-    if (this.globalEditEnabled()) {
-      // disable
-      this.disableGlobalEditMode();
-    } else {
-      // enable
-      this.enableGlobalEditMode(options);
-    }
   },
 });
 

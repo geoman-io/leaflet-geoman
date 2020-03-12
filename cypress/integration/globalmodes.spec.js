@@ -1,5 +1,12 @@
 describe('Removal Mode', () => {
   const mapSelector = '#map';
+  it.only('enables and disables global edit mode', () => {
+
+    cy.drawShape('MonsterPolygon');
+
+
+    // cy.toolbarButton('edit').click();
+  });
 
   it('properly removes layers', () => {
     cy.toolbarButton('marker').click();

@@ -4,6 +4,8 @@ import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
 import { isEmptyDeep } from '../helpers';
 
+import Maximum from '../Mixins/EditLimits/Maximum';
+
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
 // In order to find a value inside such an array you need a path to adress it directly.
@@ -13,6 +15,7 @@ import { isEmptyDeep } from '../helpers';
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
 Edit.Line = Edit.extend({
+  includes: [Maximum],
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
@@ -196,7 +199,6 @@ Edit.Line = Edit.extend({
     // add markerGroup to map, markerGroup includes regular and middle markers
     this._markerGroup = new L.LayerGroup();
     this._markerGroup._pmTempLayer = true;
-    map.addLayer(this._markerGroup);
 
     // handle coord-rings (outer, inner, etc)
     const handleRing = coordsArr => {
@@ -221,6 +223,12 @@ Edit.Line = Edit.extend({
 
     // create markers
     this._markers = handleRing(coords);
+
+    // handle possible limitation: maximum number of markers
+    this.handleMaximumLimit();
+
+    // add markerGroup to map
+    map.addLayer(this._markerGroup);
   },
 
   // creates initial markers for coordinates
@@ -340,7 +348,6 @@ Edit.Line = Edit.extend({
       marker: newM,
       indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
       latlng,
-      // TODO: maybe add latlng as well?
     });
 
     if (this.options.snappable) {
