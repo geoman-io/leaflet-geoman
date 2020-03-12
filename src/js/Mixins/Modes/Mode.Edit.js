@@ -12,9 +12,6 @@ const GlobalEditMode = {
     // set status
     this._globalEditMode = status;
 
-    // Set toolbar button to currect status
-    this.Toolbar.toggleButton('editMode', this._globalEditMode);
-
     // fire event
     this._fireEditModeEvent(this._globalEditMode);
   },
@@ -23,6 +20,11 @@ const GlobalEditMode = {
       snappable: this._globalSnappingEnabled,
       ...o
     }
+
+    const status = true;
+
+    // Set toolbar button to currect status
+    this.Toolbar.toggleButton('editMode', status);
 
     // find all layers handled by leaflet-geoman
     const layers = findLayers(this.map);
@@ -35,9 +37,11 @@ const GlobalEditMode = {
     // handle layers that are added while in removal mode
     this.map.on('layeradd', this.layerAddHandler, this);
 
-    this.setGlobalEditStatus(true);
+    this.setGlobalEditStatus(status);
   },
   disableGlobalEditMode() {
+    const status = false;
+
     // find all layers handles by leaflet-geoman
     const layers = findLayers(this.map);
 
@@ -49,7 +53,10 @@ const GlobalEditMode = {
     // cleanup layer off event
     this.map.off('layeroff', this.layerAddHandler, this);
 
-    this.setGlobalEditStatus(false);
+    // Set toolbar button to currect status
+    this.Toolbar.toggleButton('editMode', status);
+
+    this.setGlobalEditStatus(status);
   },
 
   _fireEditModeEvent(enabled) {

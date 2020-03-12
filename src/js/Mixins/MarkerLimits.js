@@ -6,9 +6,9 @@ const MarkerLimits = {
     }
 
     this.markerCache = [];
+    this.refreshMarkerCache();
 
     this._layer.on('pm:edit', () => {
-      console.log('layer edited')
       this.refreshMarkerCache();
     })
 

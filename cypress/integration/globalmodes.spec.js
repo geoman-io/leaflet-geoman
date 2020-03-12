@@ -6,6 +6,20 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({
+        limitMarkers: -1
+      })
+    })
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(2487);
+
+
+    cy.toolbarButton('edit').click();
+
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
         limitMarkers: 0
       })
     })
