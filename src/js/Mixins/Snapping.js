@@ -70,7 +70,7 @@ const SnapMixin = {
 
       // re-create the snaplist again when a layer is added during draw
       this._map.off('layeradd', this._createSnapList, this);
-      this._map.on('layeradd', this._createSnapList, this);
+      this._map.on('layeradd', L.Util.throttle(this._createSnapList, 100, this), this);
     }
 
     // if there are no layers to snap to, stop here
