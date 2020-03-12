@@ -57,6 +57,10 @@ const SnapMixin = {
     this._snapList.splice(index, 1);
   },
   _handleSnapping(e) {
+    function throttledList() {
+      return L.Util.throttle(this._createSnapList, 100, this);
+    }
+
     // if snapping is disabled via holding ALT during drag, stop right here
     if (e.originalEvent.altKey) {
       return false;
@@ -69,8 +73,8 @@ const SnapMixin = {
       this._createSnapList();
 
       // re-create the snaplist again when a layer is added during draw
-      this._map.off('layeradd', this._createSnapList, this);
-      this._map.on('layeradd', L.Util.throttle(this._createSnapList, 100, this), this);
+      this._map.off('layeradd', throttledList, this);
+      this._map.on('layeradd', throttledList, this);
     }
 
     // if there are no layers to snap to, stop here
