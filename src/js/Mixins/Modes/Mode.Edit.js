@@ -34,8 +34,12 @@ const GlobalEditMode = {
       layer.pm.enable(options);
     });
 
+    if (!this.throttledReInitEdit) {
+      this.throttledReInitEdit = L.Util.throttle(this.reinitGlobalEditMode, 100, this)
+    }
+
     // handle layers that are added while in removal mode
-    this.map.on('layeradd', this.layerAddHandler, this);
+    this.map.on('layeradd', this.throttledReInitEdit, this);
 
     this.setGlobalEditStatus(status);
   },
@@ -51,19 +55,12 @@ const GlobalEditMode = {
     });
 
     // cleanup layer off event
-    this.map.off('layeroff', this.layerAddHandler, this);
+    this.map.off('layeroff', this.throttledReInitEdit, this);
 
     // Set toolbar button to currect status
     this.Toolbar.toggleButton('editMode', status);
 
     this.setGlobalEditStatus(status);
-  },
-
-  _fireEditModeEvent(enabled) {
-    this.map.fire('pm:globaleditmodetoggled', {
-      enabled,
-      map: this.map,
-    });
   },
   toggleGlobalEditMode(options = this.globalOptions) {
     // console.log('toggle global edit mode', options);
@@ -76,6 +73,20 @@ const GlobalEditMode = {
       this.enableGlobalEditMode(options);
     }
   },
+  reinitGlobalEditMode() {
+    // re-enable global edit mode if it's enabled already
+    if (this.globalEditEnabled()) {
+      this.disableGlobalEditMode();
+      this.enableGlobalEditMode();
+    }
+  },
+  _fireEditModeEvent(enabled) {
+    this.map.fire('pm:globaleditmodetoggled', {
+      enabled,
+      map: this.map,
+    });
+  },
+
 }
 
 export default GlobalEditMode

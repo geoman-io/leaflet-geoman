@@ -88,6 +88,34 @@ describe('Modes', () => {
     });
   });
 
+  it('drag mode enables drag for all layers', () => {
+    cy.toolbarButton('marker').click();
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(120, 250);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map, L }) => {
+
+      map.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+          assert.isTrue(layer.dragging._enabled)
+        }
+      })
+    });
+  });
+  it('reenables drag mode with acceptable performance', () => {
+
+
+    cy.toolbarButton('circle-marker').click()
+    cy.get(mapSelector).click(150, 250)
+    cy.toolbarButton('drag').click()
+
+    cy.testLayerAdditionPerformance();
+  });
+
   it('re-applies edit mode onAdd', () => {
     cy.toolbarButton('polygon').click();
 
@@ -113,6 +141,23 @@ describe('Modes', () => {
     cy.hasVertexMarkers(8);
 
     cy.toolbarButton('edit').click();
+  });
+
+  it('reenables edit mode with acceptable performance', () => {
+
+    cy.toolbarButton('circle-marker').click()
+    cy.get(mapSelector).click(150, 250)
+    cy.toolbarButton('edit').click()
+
+    cy.window().then(({ map, L }) => {
+      map.eachLayer((layer) => {
+        if (layer instanceof L.CircleMarker) {
+          assert.isTrue(layer.pm.enabled())
+        }
+      })
+    });
+
+    cy.testLayerAdditionPerformance();
   });
 
   it('re-applies removal mode onAdd', () => {
@@ -147,5 +192,14 @@ describe('Modes', () => {
     cy.get(mapSelector).click(90, 245);
 
     cy.hasLayers(3);
+  });
+
+  it('reenables removal mode with acceptable performance', () => {
+
+    cy.toolbarButton('circle-marker').click()
+    cy.get(mapSelector).click(150, 250)
+    cy.toolbarButton('delete').click()
+
+    cy.testLayerAdditionPerformance();
   });
 });
