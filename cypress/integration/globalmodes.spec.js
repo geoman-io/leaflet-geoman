@@ -106,6 +106,34 @@ describe('Modes', () => {
       })
     });
   });
+
+  it('drag mode properly disables layers in edit mode', () => {
+    // activate polygon drawing
+    cy.toolbarButton('polygon')
+      .click();
+
+    // draw a polygon - triggers the event pm:create
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 50)
+      .click(150, 50)
+      .click(150, 150)
+      .click(90, 250);
+
+    cy.window().then(({ map, L }) => {
+      map.eachLayer((l) => {
+        if (l instanceof L.Polygon) {
+          l.pm.enable()
+        }
+      })
+
+      map.pm.enableGlobalDragMode();
+
+      cy.hasVertexMarkers(0);
+
+    });
+  });
+
   it('reenables drag mode with acceptable performance', () => {
 
 
