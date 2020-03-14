@@ -73,7 +73,13 @@ const GlobalEditMode = {
       this.enableGlobalEditMode(options);
     }
   },
-  reinitGlobalEditMode() {
+  reinitGlobalEditMode({ layer }) {
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily	
+    const isRelevant = !!layer.pm && !layer._pmTempLayer;
+    if (!isRelevant) {
+      return;
+    }
+
     // re-enable global edit mode if it's enabled already
     if (this.globalEditEnabled()) {
       this.disableGlobalEditMode();

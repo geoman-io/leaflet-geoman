@@ -69,7 +69,13 @@ const GlobalRemovalMode = {
       this.map.fire('pm:remove', { layer });
     }
   },
-  reinitGlobalRemovalMode() {
+  reinitGlobalRemovalMode({ layer }) {
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily	
+    const isRelevant = !!layer.pm && !layer._pmTempLayer;
+    if (!isRelevant) {
+      return;
+    }
+
     // re-enable global removal mode if it's enabled already
     if (this.globalRemovalEnabled()) {
       this.disableGlobalRemovalMode();
