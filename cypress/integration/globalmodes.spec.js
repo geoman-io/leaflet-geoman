@@ -6,7 +6,7 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({
-        limitMarkers: -1
+        limitMarkersToCount: -1
       })
     })
 
@@ -20,7 +20,7 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({
-        limitMarkers: 0
+        limitMarkersToCount: 0
       })
     })
 

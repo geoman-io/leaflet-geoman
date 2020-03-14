@@ -273,7 +273,7 @@ See the available options in the table below.
 | pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                  |
 | allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
-| limitMarkers          | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |
+| limitMarkersToCount          | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |
 
 The following methods are available for layers under `layer.pm`:
 

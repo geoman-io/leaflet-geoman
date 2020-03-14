@@ -1,7 +1,7 @@
 const MarkerLimits = {
   filterMarkerGroup() {
     // don't do it if the option is disabled
-    if (this.options.limitMarkers === -1) {
+    if (this.options.limitMarkersToCount === -1) {
       return;
     }
 
@@ -39,7 +39,7 @@ const MarkerLimits = {
     })
 
     this.markerCache.forEach((l, i) => {
-      if (i >= this.options.limitMarkers) {
+      if (i >= this.options.limitMarkersToCount) {
         this._markerGroup.removeLayer(l)
       } else {
         this._markerGroup.addLayer(l)
