@@ -44,6 +44,20 @@ describe('Draw Circle Marker', () => {
     createMarkers();
   });
 
+
+  it('handles 6k circle markers in under 1 sec', () => {
+
+    cy.toolbarButton('circle-marker')
+      .click()
+
+    cy.get(mapSelector)
+      .click(150, 250)
+
+    cy.testLayerAdditionPerformance();
+  });
+
+
+
   it('correctly disables drag', () => {
 
     createMarkers();

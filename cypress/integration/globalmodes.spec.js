@@ -1,5 +1,34 @@
-describe('Removal Mode', () => {
+describe('Modes', () => {
   const mapSelector = '#map';
+  it('limits markers in edit mode', () => {
+
+    cy.drawShape('MonsterPolygon');
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        limitMarkers: -1
+      })
+    })
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(2487);
+
+
+    cy.toolbarButton('edit').click();
+
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        limitMarkers: 0
+      })
+    })
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(0);
+
+  });
 
   it('properly removes layers', () => {
     cy.toolbarButton('marker').click();
@@ -59,6 +88,62 @@ describe('Removal Mode', () => {
     });
   });
 
+  it('drag mode enables drag for all layers', () => {
+    cy.toolbarButton('marker').click();
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(120, 250);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map, L }) => {
+
+      map.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+          assert.isTrue(layer.dragging._enabled)
+        }
+      })
+    });
+  });
+
+  it('drag mode properly disables layers in edit mode', () => {
+    // activate polygon drawing
+    cy.toolbarButton('polygon')
+      .click();
+
+    // draw a polygon - triggers the event pm:create
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 50)
+      .click(150, 50)
+      .click(150, 150)
+      .click(90, 250);
+
+    cy.window().then(({ map, L }) => {
+      map.eachLayer((l) => {
+        if (l instanceof L.Polygon) {
+          l.pm.enable()
+        }
+      })
+
+      map.pm.enableGlobalDragMode();
+
+      cy.hasVertexMarkers(0);
+
+    });
+  });
+
+  it('reenables drag mode with acceptable performance', () => {
+
+
+    cy.toolbarButton('circle-marker').click()
+    cy.get(mapSelector).click(150, 250)
+    cy.toolbarButton('drag').click()
+
+    cy.testLayerAdditionPerformance();
+  });
+
   it('re-applies edit mode onAdd', () => {
     cy.toolbarButton('polygon').click();
 
@@ -84,6 +169,23 @@ describe('Removal Mode', () => {
     cy.hasVertexMarkers(8);
 
     cy.toolbarButton('edit').click();
+  });
+
+  it('reenables edit mode with acceptable performance', () => {
+
+    cy.toolbarButton('circle-marker').click()
+    cy.get(mapSelector).click(150, 250)
+    cy.toolbarButton('edit').click()
+
+    cy.window().then(({ map, L }) => {
+      map.eachLayer((layer) => {
+        if (layer instanceof L.CircleMarker) {
+          assert.isTrue(layer.pm.enabled())
+        }
+      })
+    });
+
+    cy.testLayerAdditionPerformance();
   });
 
   it('re-applies removal mode onAdd', () => {
@@ -118,5 +220,14 @@ describe('Removal Mode', () => {
     cy.get(mapSelector).click(90, 245);
 
     cy.hasLayers(3);
+  });
+
+  it('reenables removal mode with acceptable performance', () => {
+
+    cy.toolbarButton('circle-marker').click()
+    cy.get(mapSelector).click(150, 250)
+    cy.toolbarButton('delete').click()
+
+    cy.testLayerAdditionPerformance();
   });
 });
