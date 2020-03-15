@@ -4,59 +4,70 @@ const MarkerLimits = {
 
     // define cache
     this.markerCache = [];
-    this.refreshMarkerCache();
+    this.createCache();
 
     // refresh cache when layer was edited (e.g. when a vertex was added or removed)
     this._layer.on('pm:edit', () => {
-      this.refreshMarkerCache();
+      this.createCache();
     })
+
+    // apply filter for the first time
+    this.applyLimitFilters({});
 
     // remove events when edit mode is disabled
     this._layer.on('pm:disable', () => {
-      this._map.off('mousemove', this._filterClosestMarkers, this);
+      this._map.off('mousemove', this.applyLimitFilters, this);
     });
 
 
-
-  },
-  refreshMarkerCache() {
-    // get all markers
-    const allMarkers = [...this._markerGroup.getLayers(), ...this.markerCache];
-
-    // remove duplicates
-    this.markerCache = allMarkers.filter((v, i, s) => s.indexOf(v) === i);
-
-    // When an option is set, remove all markers now
-    if (this.options.limitMarkersToCount > -1) {
-      this.markerCache.forEach((l) => {
-        this._markerGroup.removeLayer(l)
-      })
-    }
-
     // add markers closest to the mouse
     if (this.options.limitMarkersToCount > -1) {
-      this._map.off('mousemove', this._filterClosestMarkers, this);
-      this._map.on('mousemove', this._filterClosestMarkers, this);
+      this._map.off('mousemove', this.applyLimitFilters, this);
+      this._map.on('mousemove', this.applyLimitFilters, this);
     }
   },
+  createCache() {
+    const allMarkers = [...this._markerGroup.getLayers(), ...this.markerCache];
+    this.markerCache = allMarkers.filter((v, i, s) => s.indexOf(v) === i);
+  },
+  renderLimits(markers) {
+    this.markerCache.forEach((l) => {
+      if (markers.includes(l)) {
+        this._markerGroup.addLayer(l)
+      } else {
+        this._markerGroup.removeLayer(l)
+      }
+    })
+  },
+  applyLimitFilters({ latlng = { lat: 0, lng: 0 } }) {
+    // find markers near the cursor
+    const makersNearCursor = this._filterClosestMarkers(latlng)
 
-  _filterClosestMarkers({ latlng }) {
-    this.markerCache.sort((l, t) => {
+    // all markers that we want to show
+    const markersToAdd = [...makersNearCursor];
+
+    if (markersToAdd.length < this.markerCache.length) {
+      // render the limited markers
+      this.renderLimits(markersToAdd);
+    }
+
+  },
+  _filterClosestMarkers(latlng) {
+    const markers = [...this.markerCache];
+    const limit = this.options.limitMarkersToCount;
+
+    // sort markers by distance to cursor
+    markers.sort((l, t) => {
       const distanceA = l._latlng.distanceTo(latlng);
       const distanceB = t._latlng.distanceTo(latlng);
 
       return distanceA - distanceB;
     })
 
-    this.markerCache.forEach((l, i) => {
-      if (i >= this.options.limitMarkersToCount) {
-        this._markerGroup.removeLayer(l)
-      } else {
-        this._markerGroup.addLayer(l)
-      }
-    })
+    // reduce markers to number of limit
+    const closest = markers.filter((l, i) => limit > -1 ? i < limit : true)
 
-
+    return closest;
   }
 }
 

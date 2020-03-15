@@ -95,6 +95,12 @@ Cypress.Commands.add('hasVertexMarkers', count => {
   });
 });
 
+Cypress.Commands.add('hasTotalVertexMarkers', count => {
+  cy.get('.marker-icon').should($p => {
+    expect($p).to.have.length(count);
+  });
+});
+
 Cypress.Commands.add('toolbarButton', name =>
   cy.get(`.leaflet-pm-icon-${name}`)
 );

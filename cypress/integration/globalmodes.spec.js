@@ -20,13 +20,13 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({
-        limitMarkersToCount: 0
+        limitMarkersToCount: 20
       })
     })
 
 
     cy.toolbarButton('edit').click();
-    cy.hasVertexMarkers(0);
+    cy.hasTotalVertexMarkers(20);
 
   });
 
