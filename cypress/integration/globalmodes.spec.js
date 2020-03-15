@@ -197,19 +197,24 @@ describe('Modes', () => {
 
     cy.toolbarButton('delete').click();
 
-    cy.get(mapSelector).click(90, 245);
+    cy.get(mapSelector).click(90, 248);
 
     cy.hasLayers(2);
 
     cy.window().then(({ map, L }) => {
-      const m1 = L.marker([51.505, -0.09]).addTo(map);
-      const m2 = L.marker([51.505, -0.08]).addTo(map);
-
-      cy.wrap(m1._icon).click();
-      cy.wrap(m2._icon).click();
+      L.marker([51.505, -0.09]).addTo(map);
+      L.marker([51.505, -0.08]).addTo(map);
     });
 
-    cy.hasLayers(2);
+    cy.window().then(({ map, L }) => {
+      map.eachLayer((l) => {
+        if (l instanceof L.Marker) {
+          cy.wrap(l._icon).click();
+        }
+      })
+    });
+
+    cy.hasLayers(1);
 
     cy.toolbarButton('marker').click();
 
@@ -219,7 +224,7 @@ describe('Modes', () => {
 
     cy.get(mapSelector).click(90, 245);
 
-    cy.hasLayers(3);
+    cy.hasLayers(2);
   });
 
   it('reenables removal mode with acceptable performance', () => {
