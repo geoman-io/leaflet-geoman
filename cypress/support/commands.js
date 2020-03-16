@@ -107,6 +107,24 @@ Cypress.Commands.add('toolbarButton', name =>
 
 Cypress.Commands.add('drawShape', (shape, ignore) => {
   cy.window().then(({ map, L }) => {
+    if (shape === 'PolygonPart1') {
+      cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
+    if (shape === 'PolygonPart2') {
+      cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
     if (shape === 'MultiPolygon') {
       cy.fixture(shape)
         .as('poly')

@@ -35,7 +35,7 @@ const GlobalEditMode = {
     });
 
     if (!this.throttledReInitEdit) {
-      this.throttledReInitEdit = L.Util.throttle(this.reinitGlobalEditMode, 100, this)
+      this.throttledReInitEdit = L.Util.throttle(this.handleLayerAdditionInGlobalEditMode, 100, this)
     }
 
     // handle layers that are added while in removal mode
@@ -73,17 +73,18 @@ const GlobalEditMode = {
       this.enableGlobalEditMode(options);
     }
   },
-  reinitGlobalEditMode({ layer }) {
+  handleLayerAdditionInGlobalEditMode({ layer }) {
+    // when global edit mode is enabled and a layer is added to the map,
+    // enable edit for that layer if it's relevant
+
     // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily	
     const isRelevant = !!layer.pm && !layer._pmTempLayer;
     if (!isRelevant) {
       return;
     }
 
-    // re-enable global edit mode if it's enabled already
     if (this.globalEditEnabled()) {
-      this.disableGlobalEditMode();
-      this.enableGlobalEditMode();
+      layer.pm.enable({ ...this.globalOptions, snappable: this._globalSnappingEnabled });
     }
   },
   _fireEditModeEvent(enabled) {

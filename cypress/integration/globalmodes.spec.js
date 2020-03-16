@@ -30,6 +30,25 @@ describe('Modes', () => {
 
   });
 
+  it('respect limits when adding layers mid-edit', () => {
+    cy.drawShape('PolygonPart1');
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        limitMarkersToCount: 3,
+        limitMarkersToViewport: true,
+      })
+    })
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasTotalVertexMarkers(3);
+
+    cy.drawShape('PolygonPart2');
+
+    cy.hasTotalVertexMarkers(6);
+  })
+
   it('properly removes layers', () => {
     cy.toolbarButton('marker').click();
 
