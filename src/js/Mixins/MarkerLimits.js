@@ -53,11 +53,7 @@ const MarkerLimits = {
     // all markers that we want to show
     const markersToAdd = [...makersNearCursor];
 
-    if (markersToAdd.length < this.markerCache.length) {
-      // render the limited markers
-      this.renderLimits(markersToAdd);
-    }
-
+    this.renderLimits(markersToAdd);
   },
   _filterClosestMarkers(latlng) {
     const markers = [...this.markerCache];
