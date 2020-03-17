@@ -30,6 +30,27 @@ describe('Modes', () => {
 
   });
 
+  it('properly changes markers on vertex removal', () => {
+    cy.drawShape('PolygonPart1');
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        limitMarkersToCount: 3,
+        limitMarkersToViewport: true,
+      })
+    })
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasTotalVertexMarkers(3);
+
+    cy.get('.marker-icon:not(.marker-icon-middle)')
+      .first()
+      .trigger('contextmenu');
+
+    cy.hasTotalVertexMarkers(3);
+  })
+
   it('respect limits when adding layers mid-edit', () => {
     cy.drawShape('PolygonPart1');
 

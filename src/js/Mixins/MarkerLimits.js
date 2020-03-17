@@ -7,24 +7,29 @@ const MarkerLimits = {
     this.createCache();
 
     // refresh cache when layer was edited (e.g. when a vertex was added or removed)
-    this._layer.on('pm:edit', () => {
-      this.createCache();
-    })
+    this._layer.on('pm:edit', this.createCache, this)
+
+    // re-init markers when a vertex is removed. 
+    // The reason is that syncing this cache with a removed marker was impossible to do
+    this._layer.on('pm:vertexremoved', this._initMarkers, this)
 
     // apply filter for the first time
     this.applyLimitFilters({});
 
     // remove events when edit mode is disabled
-    this._layer.on('pm:disable', () => {
-      this._map.off('mousemove', this.applyLimitFilters, this);
-    });
+    this._layer.on('pm:disable', this._removeMarkerLimitEvents, this);
 
 
     // add markers closest to the mouse
     if (this.options.limitMarkersToCount > -1) {
-      this._map.off('mousemove', this.applyLimitFilters, this);
       this._map.on('mousemove', this.applyLimitFilters, this);
     }
+  },
+  _removeMarkerLimitEvents() {
+    this._map.off('mousemove', this.applyLimitFilters, this);
+    this._layer.off('pm:edit', this.createCache, this)
+    this._layer.off('pm:disable', this._removeMarkerLimitEvents, this);
+    this._layer.off('pm:vertexremoved', this._initMarkers, this)
   },
   createCache() {
     const allMarkers = [...this._markerGroup.getLayers(), ...this.markerCache];
