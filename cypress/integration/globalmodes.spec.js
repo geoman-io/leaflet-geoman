@@ -211,6 +211,30 @@ describe('Modes', () => {
     cy.toolbarButton('edit').click();
   });
 
+  it.only('properly re-enables edit mode for layers to layergroup', () => {
+    cy.drawShape('PolygonPart1');
+
+    cy.toolbarButton('edit').click();
+
+    cy.fixture('PolygonPart2').as('poly1');
+    cy.fixture('PolygonPart3').as('poly2');
+
+    cy.get('@poly1').then(poly1 => {
+      cy.get('@poly2').then(poly2 => {
+        cy.window().then(({ map, L }) => {
+          const group = L.layerGroup().addTo(map);
+
+          L.geoJson(poly1).addTo(group);
+          L.geoJson(poly2).addTo(group);
+        })
+      });
+    });
+
+
+
+    cy.hasTotalVertexMarkers(150);
+  })
+
   it('reenables edit mode with acceptable performance', () => {
 
     cy.toolbarButton('circle-marker').click()

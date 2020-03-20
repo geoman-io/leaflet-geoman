@@ -84,6 +84,7 @@ const GlobalEditMode = {
     }
 
     if (this.globalEditEnabled()) {
+      console.log(layer)
       layer.pm.enable({ ...this.globalOptions, snappable: this._globalSnappingEnabled });
     }
   },
