@@ -1,7 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Klicka för att placera punkt",
-    "firstVertex": "Klicka för att placera första vertex",
+    "firstVertex": "Klicka för att placera första hörnet",
     "continueLine": "Klicka för att fortsätta rita",
     "finishLine": "Klicka på en existerande punkt för att slutföra",
     "finishPoly": "Klicka på den första punkten för att slutföra",
@@ -13,14 +13,14 @@
   "actions": {
     "finish": "Slutför",
     "cancel": "Avbryt",
-    "removeLastVertex": "Ta bort sista vertex"
+    "removeLastVertex": "Ta bort sista hörnet"
   },
   "buttonTitles": {
     "drawMarkerButton": "Rita Punkt",
     "drawPolyButton": "Rita Polygoner",
-    "drawLineButton": "Rita Polyline",
+    "drawLineButton": "Rita Polylinje",
     "drawCircleButton": "Rita Cirkel",
-    "drawRectButton": "Rita Rectangle",
+    "drawRectButton": "Rita Rektangel",
     "editButton": "Redigera Lager",
     "dragButton": "Dra Lager",
     "cutButton": "Klipp i Lager",
