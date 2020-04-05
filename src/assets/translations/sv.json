@@ -1,6 +1,6 @@
 {
   "tooltips": {
-    "placeMarker": "Klicka för att placera punkt",
+    "placeMarker": "Klicka för att placera markör",
     "firstVertex": "Klicka för att placera första hörnet",
     "continueLine": "Klicka för att fortsätta rita",
     "finishLine": "Klicka på en existerande punkt för att slutföra",
@@ -16,7 +16,7 @@
     "removeLastVertex": "Ta bort sista hörnet"
   },
   "buttonTitles": {
-    "drawMarkerButton": "Rita Punkt",
+    "drawMarkerButton": "Rita Markör",
     "drawPolyButton": "Rita Polygoner",
     "drawLineButton": "Rita Polylinje",
     "drawCircleButton": "Rita Cirkel",
