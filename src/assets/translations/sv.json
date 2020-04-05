@@ -8,7 +8,7 @@
     "finishRect": "Klicka för att slutföra",
     "startCircle": "Klicka för att placera cirkelns centrum",
     "finishCircle": "Klicka för att slutföra cirkeln",
-    "placeCircleMarker": "Klicka för att placera cirkelmakör"
+    "placeCircleMarker": "Klicka för att placera cirkelmarkör"
   },
   "actions": {
     "finish": "Slutför",
@@ -17,14 +17,14 @@
   },
   "buttonTitles": {
     "drawMarkerButton": "Rita Punkt",
-    "drawPolyButton": "Rita Rolygoner",
+    "drawPolyButton": "Rita Polygoner",
     "drawLineButton": "Rita Polyline",
-    "drawCircleButton": "Rta Cirkel",
+    "drawCircleButton": "Rita Cirkel",
     "drawRectButton": "Rita Rectangle",
     "editButton": "Redigera Lager",
     "dragButton": "Dra Lager",
     "cutButton": "Klipp i Lager",
     "deleteButton": "Ta bort Lager",
-    "drawCircleMarkerButton": "Rita Cirkelmakör"
+    "drawCircleMarkerButton": "Rita Cirkelmarkör"
   }
 }
