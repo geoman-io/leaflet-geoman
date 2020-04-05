@@ -39,11 +39,24 @@ Draw.Cut = Draw.Polygon.extend({
 
       // the resulting layer after the cut
       const resultingLayer = L.geoJSON(diff, l.options).addTo(this._map);
-      resultingLayer.addTo(this._map);
 
       // give the new layer the original options
       resultingLayer.pm.enable(this.options);
       resultingLayer.pm.disable();
+
+
+
+      // add templayer prop so pm:remove isn't fired
+      l._pmTempLayer = true;
+      layer._pmTempLayer = true;
+
+      // remove old layer and cutting layer
+      l.remove();
+      layer.remove();
+
+      if (resultingLayer.getLayers().length === 0) {
+        this._map.pm.removeLayer({ target: resultingLayer });
+      }
 
       // fire pm:cut on the cutted layer
       l.fire('pm:cut', {
@@ -59,17 +72,7 @@ Draw.Cut = Draw.Polygon.extend({
         originalLayer: l,
       });
 
-      // add templayer prop so pm:remove isn't fired
-      l._pmTempLayer = true;
-      layer._pmTempLayer = true;
 
-      // remove old layer and cutting layer
-      l.remove();
-      layer.remove();
-
-      if (resultingLayer.getLayers().length === 0) {
-        this._map.pm.removeLayer({ target: resultingLayer });
-      }
     });
   },
   _finishShape() {

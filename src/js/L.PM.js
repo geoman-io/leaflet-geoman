@@ -1,8 +1,11 @@
-/**
- *
- * A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
- * by Sumit Kumar (@TweetsOfSumit)
- * Github Repo: https://github.com/geoman-io/leaflet-geoman
+/* A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0
+ * Copyright (C) Geoman.io and Sumit Kumar - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Sumit Kumar <sumit@geoman.io>, January 2020
+ * Twitter: @TweetsOfSumit
+ * OSS Repo: https://github.com/geoman-io/leaflet-geoman
+ * Get Pro: https://geoman.io/leaflet-geoman#pro
  */
 
 import './polyfills';

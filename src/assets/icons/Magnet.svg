@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 57.1 (83088) - https://sketch.com -->
+    <title>Atoms/Icons/Tools/Magnet</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M21.9994759,10.9428183 L21.9999985,16.3710417 C22,16.6872007 22,17.0058278 22,17.3269411 C22,21.5646545 18.6421356,25 14.5,25 C10.3578644,25 7,21.5646545 7,17.3269411 L7.00087508,10.9907507 L11.0022808,10.9984125 C11.0017033,11.6980114 11.001247,12.4168248 11.0008992,13.1554887 L11,17.3269411 C11,19.3756809 12.5876841,21 14.5,21 C16.4123159,21 18,19.3756809 18,17.3269411 C18,15.0702032 17.9995696,12.9619668 17.998539,10.9910032 L21.9994759,10.9428183 Z M10,7 C10.5522847,7 11,7.44771525 11,8 L11,10 L7,10 L7,8 C7,7.44771525 7.44771525,7 8,7 L10,7 Z M21,7 C21.5522847,7 22,7.44771525 22,8 L22,10 L18,10 L18,8 C18,7.44771525 18.4477153,7 19,7 L21,7 Z" id="path-1"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Atoms/Icons/Tools/Magnet" transform="translate(-3.000000, -3.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Mask" fill="#5B5B5B" fill-rule="nonzero" transform="translate(14.500000, 16.000000) rotate(45.000000) translate(-14.500000, -16.000000) " xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>

@@ -1,5 +1,8 @@
 const DragMixin = {
   enableLayerDrag() {
+    // before enabling layer drag, disable layer editing
+    this.disable();
+
     if (this._layer instanceof L.Marker) {
       this._layer.dragging.enable();
       return;

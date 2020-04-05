@@ -66,6 +66,9 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-cut {
   background-image: url('../assets/icons/Scissors.svg');
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-snapping {
+  background-image: url('../assets/icons/Magnet.svg');
+}
 
 .leaflet-buttons-control-button:hover {
   cursor: pointer;
@@ -87,7 +90,7 @@
   z-index: 2;
   position: absolute;
   top: 0;
-  left: 31px;
+  left: 100%;
   display: none;
   white-space: nowrap;
 }

@@ -1,6 +1,25 @@
 describe('Draw & Edit Poly', () => {
   const mapSelector = '#map';
 
+  it('drages shared vertices when pinned', () => {
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(120, 150)
+      .click(120, 100)
+      .click(300, 100)
+      .click(300, 200)
+      .click(120, 150);
+
+    cy.toolbarButton('marker').click();
+
+    cy.get(mapSelector)
+      .click(300, 100)
+
+    cy.toolbarButton('edit').click();
+
+  });
+
   it('works without pmIgnore', () => {
     cy.window().then(({ L }) => {
       L.PM.initialize({ optIn: false });
@@ -338,6 +357,49 @@ describe('Draw & Edit Poly', () => {
       .closest('.button-container')
       .should('have.not.class', 'active');
   });
+
+  it('fire pm:cut AFTER the actual cut is visible on the map', () => {
+    cy.window().then(({ map, L }) => {
+
+      Cypress.$(map).on('pm:cut', () => {
+        const layers = [];
+
+        map.eachLayer((layer) => {
+          if (layer instanceof L.Polygon) {
+            layers.push(layer)
+          }
+        })
+
+        expect(layers).to.have.lengthOf(1);
+      });
+    });
+
+    cy.toolbarButton('polygon')
+      .click()
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(150, 50)
+      .click(500, 50)
+      .click(500, 300)
+      .click(300, 350)
+      .click(90, 250);
+
+
+    cy.toolbarButton('cut')
+      .click();
+
+    // draw a polygon to cut
+    cy.get(mapSelector)
+      .click(450, 100)
+      .click(450, 150)
+      .click(400, 150)
+      .click(390, 140)
+      .click(390, 100)
+      .click(450, 100);
+
+
+  })
 
   it('draws a polygon with a hole', () => {
     // activate polygon drawing

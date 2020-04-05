@@ -1,0 +1,30 @@
+{
+  "tooltips": {
+    "placeMarker": "Kliknij, aby ustawić znacznik",
+    "firstVertex": "Kliknij, aby ustawić pierwszy punkt",
+    "continueLine": "Kliknij, aby kontynuować rysowanie",
+    "finishLine": "Kliknij dowolny punkt, aby zakończyć",
+    "finishPoly": "Kliknij pierwszy punkt, aby zakończyć",
+    "finishRect": "Kliknij, aby zakończyć",
+    "startCircle": "Kliknij, aby ustawić środek koła",
+    "finishCircle": "Kliknij, aby zakończyć rysowanie koła",
+    "placeCircleMarker": "Kliknij, aby ustawić okrągły znacznik"
+  },
+  "actions": {
+    "finish": "Zakończ",
+    "cancel": "Anuluj",
+    "removeLastVertex": "Usuń ostatni punkt"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Narysuj znacznik",
+    "drawPolyButton": "Narysuj wielokąt",
+    "drawLineButton": "Narysuj ścieżkę",
+    "drawCircleButton": "Narysuj koło",
+    "drawRectButton": "Narysuj prostokąt",
+    "editButton": "Edytuj",
+    "dragButton": "Przesuń",
+    "cutButton": "Wytnij",
+    "deleteButton": "Usuń",
+    "drawCircleMarkerButton": "Narysuj okrągły znacznik"
+  }
+}

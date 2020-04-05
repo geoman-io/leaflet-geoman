@@ -19,6 +19,9 @@ const Draw = L.Class.extend({
       draggable: true,
     },
   },
+  setOptions(options) {
+    L.Util.setOptions(this, options);
+  },
   initialize(map) {
     // save the map
     this._map = map;

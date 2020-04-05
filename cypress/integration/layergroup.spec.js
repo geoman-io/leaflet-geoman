@@ -41,4 +41,17 @@ describe('Edit LayerGroup', () => {
     });
     cy.hasVertexMarkers(0);
   });
+
+  it('supports clearLayers', () => {
+
+    cy.window().then(({ L, map }) => {
+      const featureGroup = new L.FeatureGroup();
+      featureGroup.addTo(map)
+      featureGroup.addLayer(new L.Marker([19.04469, 72.9258]));
+      map.fitBounds(featureGroup.getBounds())
+      featureGroup.clearLayers();
+
+      expect(featureGroup.pm._layers).to.have.lengthOf(0);
+    });
+  })
 });
