@@ -25,8 +25,8 @@
     "dragButton": "Μεταφορά Επιπέδων",
     "cutButton": "Αποκοπή Επιπέδων",
     "deleteButton": "Κατάργηση Επιπέδων",
-    "drawCircleMarkerButton": "Σχεδιάστε Κυκλικό Δείκτη",
+    "drawCircleMarkerButton": "Σχεδίαση Κυκλικού Δείκτη",
     "snappingButton": "Προσκόλληση του Δείκτη μεταφοράς σε άλλα Επίπεδα και Κορυφές",
     "pinningButton": "Περικοπή κοινών κορυφών μαζί"
-  }}
-}}
+  }
+}
