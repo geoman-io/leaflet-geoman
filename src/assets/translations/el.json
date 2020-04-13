@@ -17,8 +17,8 @@
   },
   "buttonTitles": {
     "drawMarkerButton": "Σχεδίαση Δείκτη",
-    "drawPolyButton": "Σχεδίαση Πολυγώνου
-    "drawLineButton": "Σχεδίαση Γραμμής
+    "drawPolyButton": "Σχεδίαση Πολυγώνου",
+    "drawLineButton": "Σχεδίαση Γραμμής",
     "drawCircleButton": "Σχεδίαση Κύκλου",
     "drawRectButton": "Σχεδίαση Ορθογωνίου",
     "editButton": "Επεξεργασία Επιπέδων",
