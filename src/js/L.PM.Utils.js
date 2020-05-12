@@ -1,3 +1,5 @@
+import {createGeodesicPolygon} from "./helpers";
+
 const Utils = {
   calcMiddleLatLng(map, latlng1, latlng2) {
     // calculate the middle coordinates between two markers
@@ -28,6 +30,17 @@ const Utils = {
 
     return layers;
   },
+  circleToPolygon(circle,sides = 60) {
+    var origin = circle.getLatLng();
+    var radius = circle.getRadius();
+    var polys = createGeodesicPolygon(origin, radius, sides, 0); //these are the points that make up the circle
+    var polygon = [];
+    for (var i = 0; i < polys.length; i++) {
+      var geometry = [polys[i].lat, polys[i].lng];
+      polygon.push(geometry);
+    }
+    return L.polygon(polygon, circle.options);
+  }
 };
 
 export default Utils;
