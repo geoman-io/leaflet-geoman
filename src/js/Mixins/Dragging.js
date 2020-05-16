@@ -4,6 +4,9 @@ const DragMixin = {
     this.disable();
 
     if (this._layer instanceof L.Marker) {
+      this._layer.on('dragstart',this._fireDragStart,this);
+      this._layer.on('drag',this._fireDrag,this);
+      this._layer.on('dragend',this._fireDragEnd,this);
       this._layer.dragging.enable();
       return;
     }
@@ -28,6 +31,9 @@ const DragMixin = {
   },
   disableLayerDrag() {
     if (this._layer instanceof L.Marker) {
+      this._layer.off('dragstart',this._fireDragStart,this);
+      this._layer.off('drag',this._fireDrag,this);
+      this._layer.off('dragend',this._fireDragEnd,this);
       this._layer.dragging.disable();
       return;
     }
@@ -76,7 +82,7 @@ const DragMixin = {
       L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
       // fire pm:dragend event
-      this._layer.fire('pm:dragend');
+      this._fireDragEnd();
 
       // fire edit
       this._fireEdit();
@@ -103,7 +109,7 @@ const DragMixin = {
       }
 
       // fire pm:dragstart event
-      this._layer.fire('pm:dragstart');
+      this._fireDragStart();
     }
 
     this._onLayerDrag(e);
@@ -174,8 +180,17 @@ const DragMixin = {
     this._tempDragCoord = latlng;
 
     // fire pm:dragstart event
-    this._layer.fire('pm:drag', e);
+    this._fireDrag(e);
   },
+  _fireDragStart(){
+    this._layer.fire('pm:dragstart');
+  },
+  _fireDrag(e){
+    this._layer.fire('pm:drag',e);
+  },
+  _fireDragEnd(){
+    this._layer.fire('pm:dragend');
+  }
 };
 
 export default DragMixin;
