@@ -96,8 +96,6 @@ Edit.CircleMarker = Edit.extend({
     this._layer.fire('pm:markerdragend', {
       markerEvent: e,
     });
-
-    this._fireEdit();
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin
   _initSnappableMarkers() {
