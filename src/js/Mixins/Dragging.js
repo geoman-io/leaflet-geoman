@@ -34,7 +34,9 @@ const DragMixin = {
       this._layer.off('dragstart',this._fireDragStart,this);
       this._layer.off('drag',this._fireDrag,this);
       this._layer.off('dragend',this._fireDragEnd,this);
-      this._layer.dragging.disable();
+      if(this._layer.dragging) {
+        this._layer.dragging.disable();
+      }
       return;
     }
 
