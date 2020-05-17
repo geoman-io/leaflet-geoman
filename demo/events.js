@@ -52,6 +52,9 @@ map.on('pm:create',function (e) {
 
     //Cut event
     layer.on('pm:cut',logEvent);
+
+    //Remove event
+    layer.on('pm:remove',logEvent);
 });
 
 //Toggle mode events

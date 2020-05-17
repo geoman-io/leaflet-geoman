@@ -399,6 +399,12 @@ The following methods are available on `map.pm`:
 | toggleGlobalRemovalMode() | -         | Toggles global removal mode.                                             |
 | globalRemovalEnabled()    | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
 
+The following events are available on a layer instance:
+
+| Event       | Params | Description                                              | Output                                                       |
+| :---------- | :----- | :------------------------------------------------------- | :----------------------------------------------------------- |
+| pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           | `type`, `layer`, `target`, `sourceTarget`                    |
+
 The following events are available on a map instance:
 
 | Event       | Params | Description                                              | Output                                                       |

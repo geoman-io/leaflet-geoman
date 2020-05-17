@@ -79,7 +79,8 @@ Edit.Marker = Edit.extend({
     const marker = e.target;
     marker.remove();
     // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
-    marker.fire('pm:remove');
+    marker.fire('pm:remove',{layer: marker});
+    this._map.fire('pm:remove', { layer: marker });
   },
   _onDragEnd(e) {
     const marker = e.target;

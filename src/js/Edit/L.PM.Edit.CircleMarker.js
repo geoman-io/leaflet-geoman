@@ -85,8 +85,9 @@ Edit.CircleMarker = Edit.extend({
     this._layer.setLatLng(center).redraw();
   },
   _removeMarker() {
-    this._layer.fire('pm:remove');
     this._layer.remove();
+    this._layer.fire('pm:remove',{ layer: this._layer });
+    this._map.fire('pm:remove', { layer: this._layer });
   },
   _fireEdit() {
     // fire edit event

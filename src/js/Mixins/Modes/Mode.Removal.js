@@ -66,6 +66,7 @@ const GlobalRemovalMode = {
 
     if (removeable) {
       layer.remove();
+      layer.fire('pm:remove', { layer });
       this.map.fire('pm:remove', { layer });
     }
   },
