@@ -108,9 +108,11 @@ const SnapMixin = {
     // event info for pm:snap and pm:unsnap
     const eventInfo = {
       marker,
+      shape: this._shape,
       snapLatLng,
       segment: closestLayer.segment,
       layer: this._layer,
+      workingLayer: this._layer,
       layerInteractedWith: closestLayer.layer, // for lack of a better property name
       distance: closestLayer.distance,
     };

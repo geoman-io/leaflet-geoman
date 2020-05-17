@@ -232,7 +232,7 @@ Here's a list of map events you can listen to:
 
 | Event                    | Params | Description                                                                            | Output                                                    |
 | :----------------------- | :----- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
-| pm:globaldrawmodetoggled | `e`    | Fired when Drawing Mode is toggled                                                     | `type`, `enabled`, `map`, `target`, `sourceTarget`        | 
+| pm:globaldrawmodetoggled | `e`    | Fired when Drawing Mode is toggled                                                     | `type`, `enabled`, `shape`, `map`, `target`, `sourceTarget`        | 
 | pm:drawstart             | `e`    | Called when drawing mode is enabled. Payload includes the shape type and working layer | `type`, `shape`, `workingLayer`, `target`, `sourceTarget` | 
 | pm:drawend               | `e`    | Called when drawing mode is disabled. Payload includes the shape type.                 | `type`, `shape`, `target`, `sourceTarget`                 |
 | pm:create                | `e`    | Called when a shape is drawn/finished. Payload includes shape type and the drawn layer | `type`, `shape`, `layer`, `target`, `sourceTarget`        |
@@ -253,9 +253,9 @@ Here's a list of layer events you can listen to:
 | Event           | Params | Description                                                                                                          | Output                                                    |
 | :-------------- | :----- | :------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
 | pm:vertexadded  | `e`    | Called when a new vertex is added. Payload includes the new vertex, it's marker, index, working layer and shape type | `type`, `shape`, `workingLayer`, `marker`, `latlng`, `target`, `sourceTarget` |
-| pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation.               | `type`, `distance`, `layer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:snap         | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`                                                 | `type`, `distance`, `layer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               | `type`, `distance`, `layer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
+| pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation.               | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
+| pm:snap         | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`                                                 | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
+| pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
 | pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  | `type`, `shape`, `workingLayer`, `latlng`, `target`, `sourceTarget` |
 
 For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
@@ -323,8 +323,9 @@ The following events are available on a layer instance:
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `type`, `indexPath`, `marker`, `layer`, `target`, `sourceTarget` |
 | pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `type`, `indexPath`, `markerEvent`, `target`, `sourceTarget` |
 | pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `type`, `indexPath`, `markerEvent`, `target`, `sourceTarget` |
-| pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `type`, `distance`, `layer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `type`, `distance`, `layer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
+| pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
+| pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
+| pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
 | pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. |  `type`, `intersection`, `target`, `sourceTarget` |
 | pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           |  `type`, `layer`, `latlng`, `target`, `sourceTarget` |
 

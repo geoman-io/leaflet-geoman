@@ -1,6 +1,7 @@
 import Edit from './L.PM.Edit';
 
 Edit.Circle = Edit.extend({
+  _shape: 'Circle',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;

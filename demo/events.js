@@ -42,6 +42,7 @@ map.on('pm:create',function (e) {
     layer.on('pm:markerdragstart', logEvent);
     layer.on('pm:markerdragend', logEvent);
     layer.on('pm:snap', logEvent);
+    layer.on('pm:snapdrag', logEvent);
     layer.on('pm:unsnap', logEvent);
     layer.on('pm:intersect', logEvent);
     layer.on('pm:centerplaced', logEvent);

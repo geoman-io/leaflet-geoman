@@ -16,6 +16,7 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 
 Edit.Line = Edit.extend({
   includes: [MarkerLimits],
+  _shape: 'Line',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;

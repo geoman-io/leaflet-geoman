@@ -1,6 +1,7 @@
 import Edit from './L.PM.Edit';
 
 Edit.CircleMarker = Edit.extend({
+  _shape: 'CircleMarker',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
