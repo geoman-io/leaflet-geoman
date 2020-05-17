@@ -70,7 +70,7 @@ const GlobalRemovalMode = {
     }
   },
   reinitGlobalRemovalMode({ layer }) {
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily	
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
     const isRelevant = !!layer.pm && !layer._pmTempLayer;
     if (!isRelevant) {
       return;
