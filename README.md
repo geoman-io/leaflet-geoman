@@ -185,7 +185,7 @@ map.pm.enableDraw('Polygon', {
 map.pm.disableDraw('Polygon');
 ```
 
-Currently available shapes are `Marker`, `Circle`, `Line`, `Rectangle`, `Polygon` and `Cut`.
+Currently available shapes are `Marker`, `CircleMarker`, `Circle`, `Line`, `Rectangle`, `Polygon` and `Cut`.
 You can get an array of all available shapes with:
 
 ```js
