@@ -23,6 +23,7 @@ const GlobalRemovalMode = {
     // handle existing layers
     this.map.eachLayer(layer => {
       if (isRelevant(layer)) {
+        layer.pm.disable();
         layer.on('click', this.removeLayer, this);
       }
     });
