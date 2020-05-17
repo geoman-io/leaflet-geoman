@@ -192,6 +192,19 @@ You can get an array of all available shapes with:
 map.pm.Draw.getShapes();
 ```
 
+The following methods are available on `map.pm`:
+
+| Method                        | Returns   | Description                                                              |
+| :---------------------------- | :-------- | :----------------------------------------------------------------------- |
+| enableDraw(`shape`,`options`) | -         | Enable Drawing Mode with the passed shape.                               |
+| disableDraw(`shape`)          | -         | Disable Drawing Mode. The passed shape is optional.                      |
+| Draw.getShapes()              | `Array`   | Array of available shapes.                                               |
+| Draw.getActiveShape()         | `String`  | Returns the active shape.                                                |
+| globalDrawModeEnabled()       | `Boolean` | Returns `true` if global draw mode is enabled. `false` when disabled.    |
+| setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                  |
+| setGlobalOptions(`options`)   | -         | Set drawing options.                                                     |
+| getGlobalOptions()            | `Object`  | Returns the global options.                                              |
+
 See the available options in the table below.
 
 | Option                | Default                               | Description                                                                                                                                           |
@@ -217,11 +230,12 @@ map.on('pm:drawstart', e => {
 
 Here's a list of map events you can listen to:
 
-| Event        | Params | Description                                                                            | Output                                                    |
-| :----------- | :----- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
-| pm:drawstart | `e`    | Called when drawing mode is enabled. Payload includes the shape type and working layer | `type`, `shape`, `workingLayer`, `target`, `sourceTarget` | 
-| pm:drawend   | `e`    | Called when drawing mode is disabled. Payload includes the shape type.                 | `type`, `shape`, `target`, `sourceTarget`                 |
-| pm:create    | `e`    | Called when a shape is drawn/finished. Payload includes shape type and the drawn layer | `type`, `shape`, `layer`, `target`, `sourceTarget`        |
+| Event                    | Params | Description                                                                            | Output                                                    |
+| :----------------------- | :----- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
+| pm:globaldrawmodetoggled | `e`    | Fired when Drawing Mode is toggled                                                     | `type`, `enabled`, `map`, `target`, `sourceTarget`        | 
+| pm:drawstart             | `e`    | Called when drawing mode is enabled. Payload includes the shape type and working layer | `type`, `shape`, `workingLayer`, `target`, `sourceTarget` | 
+| pm:drawend               | `e`    | Called when drawing mode is disabled. Payload includes the shape type.                 | `type`, `shape`, `target`, `sourceTarget`                 |
+| pm:create                | `e`    | Called when a shape is drawn/finished. Payload includes shape type and the drawn layer | `type`, `shape`, `layer`, `target`, `sourceTarget`        |
 
 There are also several events for layers during draw. Register an event like this:
 

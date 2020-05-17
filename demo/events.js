@@ -62,6 +62,7 @@ map.on('pm:create',function (e) {
 map.on('pm:globaleditmodetoggled',logEvent);
 map.on('pm:globaldragmodetoggled',logEvent);
 map.on('pm:globalremovalmodetoggled',logEvent);
+map.on('pm:globaldrawmodetoggled',logEvent);
 
 //Remove event
 map.on('pm:remove',logEvent);

@@ -70,6 +70,24 @@ const Draw = L.Class.extend({
       this[shape].addButton();
     });
   },
+  getActiveShape(){
+    // returns the active shape
+    var enabledShape = undefined;
+    this.shapes.forEach(shape => {
+      if(this[shape]._enabled){
+        enabledShape = shape;
+      }
+    });
+    return enabledShape;
+  },
+  _setGlobalDrawMode() {
+    // extended to all PM.Draw shapes
+    this._map.fire('pm:globaldrawmodetoggled', {
+      enabled: this._enabled,
+      shape: this._shape,
+      map: this._map,
+    });
+  },
 });
 
 export default Draw;

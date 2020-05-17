@@ -104,6 +104,9 @@ const Map = L.Class.extend({
       }
     });
   },
+  globalDrawModeEnabled(){
+    return !!this.Draw.getActiveShape();
+  },
 });
 
 export default Map;
