@@ -76,6 +76,8 @@ Edit.CircleMarker = Edit.extend({
       this._layerEdited = false;
     }
 
+    this._layer.off('contextmenu', this._removeMarker, this);
+
     layer.pm._enabled = false;
 
     return true;
