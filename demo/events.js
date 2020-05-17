@@ -34,6 +34,7 @@ map.on('pm:create',function (e) {
     //Edit Event
     layer.on('pm:edit', logEvent);
     layer.on('pm:update', logEvent);
+    layer.on('pm:enable', logEvent);
     layer.on('pm:disable', logEvent);
     layer.on('pm:vertexadded', logEvent);
     layer.on('pm:vertexremoved', logEvent);

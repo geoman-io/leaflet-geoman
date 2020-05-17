@@ -47,6 +47,8 @@ Edit.Marker = Edit.extend({
     }
     this._enabled = true;
 
+    this._layer.fire('pm:enable');
+
     this.applyOptions();
   },
 

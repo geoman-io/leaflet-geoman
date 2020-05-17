@@ -55,6 +55,8 @@ Edit.Circle = Edit.extend({
 
     this.applyOptions();
 
+    this._layer.fire('pm:enable');
+
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', e => {
       this.disable(e.target);

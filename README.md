@@ -303,6 +303,7 @@ The following events are available on a layer instance:
 | :----------------- | :----- | :--------------------------------------------------------------------------------------------------- | :----------------------------------------------------------- |
 | pm:edit            | `e`    | Fired when a layer is edited.                                                                        | `type`, `target`, `sourceTarget`                             |
 | pm:update          | `e`    | Fired when a layer is edited and its coordinates have changed.                                       | `type`, `target`, `sourceTarget`                             |
+| pm:enable          | `e`    | Fired when edit mode on a layer is enabled                                                           | `type`, `target`, `sourceTarget`                             |
 | pm:disable         | `e`    | Fired when edit mode on a layer is disabled                                                          | `type`, `target`, `sourceTarget`                             |
 | pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         | `type`, `indexPath`, `latlng`, `marker`, `layer`, `target`, `sourceTarget` |
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `type`, `indexPath`, `marker`, `layer`, `target`, `sourceTarget` |

@@ -51,6 +51,7 @@ Edit.CircleMarker = Edit.extend({
 
     this.applyOptions();
 
+    this._layer.fire('pm:enable');
     // change state
     this._enabled = true;
 

@@ -63,6 +63,8 @@ Edit.Line = Edit.extend({
 
     this.applyOptions();
 
+    this._layer.fire('pm:enable');
+
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
 
