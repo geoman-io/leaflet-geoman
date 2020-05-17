@@ -372,6 +372,8 @@ The following methods are available on `map.pm`:
 
 | Method                  | Returns   | Description                                                           |
 | :---------------------- | :-------- | :-------------------------------------------------------------------- |
+| enableGlobalDragMode()  | -         | Enables global drag mode.                                             |
+| disableGlobalDragMode() | -         | Disables global drag mode.                                            |
 | toggleGlobalDragMode()  | -         | Toggles global drag mode.                                             |
 | globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled. |
 
@@ -408,10 +410,12 @@ map.pm.toggleGlobalRemovalMode();
 
 The following methods are available on `map.pm`:
 
-| Method                    | Returns   | Description                                                              |
-| :------------------------ | :-------- | :----------------------------------------------------------------------- |
-| toggleGlobalRemovalMode() | -         | Toggles global removal mode.                                             |
-| globalRemovalEnabled()    | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
+| Method                     | Returns   | Description                                                              |
+| :------------------------- | :-------- | :----------------------------------------------------------------------- |
+| enableGlobalRemovalMode()  | -         | Enables global drag mode.                                                |
+| disableGlobalRemovalMode() | -         | Disables global drag mode.                                               |
+| toggleGlobalRemovalMode()  | -         | Toggles global removal mode.                                             |
+| globalRemovalEnabled()     | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
 
 The following events are available on a layer instance:
 
