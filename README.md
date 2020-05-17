@@ -539,6 +539,14 @@ map.pm.setLang('customName', customTranslation, 'en');
 The 3rd parameter is the fallback language in case you only want to override a few Strings.
 See the [english translation file](src/assets/translations/en.json) for all available strings.
 
+
+The following events are available on a map instance:
+
+| Event          | Params | Description                       | Output                                                                                |
+| :------------- | :----- | :-------------------------------- | :------------------------------------------------------------------------------------ |
+| pm:langchanged | `e`    | Fired when language is changed    | `type`, `activeLang`, `oldLang`, `fallback`, `translations`, `target`, `sourceTarget` |
+
+
 ##### Customize Style
 
 In order to change the style of the lines during draw, pass these options to the

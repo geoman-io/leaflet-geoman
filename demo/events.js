@@ -1,6 +1,7 @@
 var map = L.map('map').setView([39.74739, -105], 13);
 
 map.pm.addControls();
+map.pm.setLang("de");
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -68,3 +69,8 @@ map.on('layerremove',logEvent);
 
 //Cut event
 map.on('pm:cut',logEvent);
+
+//Language changed
+map.on('pm:langchanged',logEvent);
+
+map.pm.setLang("en");

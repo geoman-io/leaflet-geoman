@@ -23,12 +23,19 @@ const Map = L.Class.extend({
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {
+    const oldLang = L.PM.activeLang;
     if (t) {
       translations[lang] = merge(translations[fallback], t);
     }
 
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
+    this.map.fire("pm:langchanged", {
+      oldLang: oldLang,
+      activeLang: lang,
+      fallback: fallback,
+      translations: translations[lang]
+    });
   },
   addControls(options) {
     this.Toolbar.addControls(options);
