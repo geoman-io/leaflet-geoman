@@ -69,7 +69,6 @@ Edit.LayerGroup = L.Class.extend({
       'pm:unsnap',
       'pm:cut',
       'pm:intersect',
-      'pm:raiseMarkers',
       'pm:markerdragend',
       'pm:markerdragstart',
       'pm:vertexadded',
