@@ -563,7 +563,7 @@ The following events are available on a map instance:
 
 | Event          | Params | Description                       | Output                                               |
 | :------------- | :----- | :-------------------------------- | :--------------------------------------------------- |
-| pm:langchanged | `e`    | Fired when language is changed    | `activeLang`, `oldLang`, `fallback`, `translations`  |
+| pm:langchange | `e`    | Fired when language is changed    | `activeLang`, `oldLang`, `fallback`, `translations`  |
 
 
 ##### Customize Style

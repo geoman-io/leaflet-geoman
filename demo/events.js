@@ -28,6 +28,8 @@ map.on('pm:create',function (e) {
     logEvent(e);
     var layer = e.layer;
 
+    map.pm.disableDraw();
+
     layer.pm.enable({
         allowSelfIntersection: false,
     });
@@ -73,6 +75,6 @@ map.on('layerremove',logEvent);
 map.on('pm:cut',logEvent);
 
 //Language changed
-map.on('pm:langchanged',logEvent);
+map.on('pm:langchange',logEvent);
 
 map.pm.setLang("en");

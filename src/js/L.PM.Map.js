@@ -30,7 +30,7 @@ const Map = L.Class.extend({
 
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
-    this.map.fire("pm:langchanged", {
+    this.map.fire("pm:langchange", {
       oldLang: oldLang,
       activeLang: lang,
       fallback: fallback,
