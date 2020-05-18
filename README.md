@@ -625,6 +625,46 @@ I'm adopting the Issue Management of lodash which means, feature requests get th
 You can upvote existing feature requests (or create new ones). Upvotes make me see how much a feature is requested and prioritize their implementation.
 Please see the existing [Feature Requests here](https://github.com/geoman-io/leaflet-geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc) and upvote if you want them to be implemented.
 
+### Developing
+
+Clone the repository and then install all npm packages:
+
+```
+npm install
+```
+
+
+Compile and run `dev` watch version:
+```
+npm run start
+```
+
+Compile and run `build` version:
+
+```
+npm run prepare
+```
+
+Run cypress test:
+
+```
+npm run test
+```
+
+Open cypress window:
+
+```
+npm run cypress
+```
+
+Open eslint check:
+
+```
+npm run lint
+```
+
+Take a look into [CONTRIBUTING](./CONTRIBUTING.md)
+
 ### Credit
 
 As I never built a leaflet plugin before, I looked heavily into the code of
