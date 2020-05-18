@@ -141,21 +141,21 @@ map.pm.addControls({
 
 See the available options in the table below.
 
-| Option        | Default     | Description                                                                                      |
-| :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
-| position      | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
-| drawMarker    | `true`      | adds button to draw markers                                                                      |
-| drawCircleMarker    | `true`      | adds button to draw circle markers                                                                      |
-| drawPolyline  | `true`      | adds button to draw rectangle                                                                    |
-| drawRectangle | `true`      | adds button to draw rectangle                                                                    |
-| drawPolygon   | `true`      | adds button to draw polygon                                                                      |
-| drawCircle    | `true`      | adds button to draw circle                                                                       |
-| editMode      | `true`      | adds button to toggle edit mode for all layers                                                   |
-| dragMode      | `true`      | adds button to toggle drag mode for all layers                                                   |
-| cutPolygon    | `true`      | adds button to cut a hole in a polygon                                                           |
-| removalMode   | `true`      | adds a button to remove layers                                                                   |
-| pinningOption   | `true`      | adds a button to toggle the Pinning Option ⭐                                                                   |
-| snappingOption   | `true`      | adds a button to toggle the Snapping Option ⭐                                                                   |
+| Option             | Default     | Description                                                                                      |
+| :----------------- | :---------- | :----------------------------------------------------------------------------------------------- |
+| position           | `'topleft'` | toolbar position, possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'` |
+| drawMarker         | `true`      | adds button to draw markers                                                                      |
+| drawCircleMarker   | `true`      | adds button to draw circle markers                                                               |
+| drawPolyline       | `true`      | adds button to draw rectangle                                                                    |
+| drawRectangle      | `true`      | adds button to draw rectangle                                                                    |
+| drawPolygon        | `true`      | adds button to draw polygon                                                                      |
+| drawCircle         | `true`      | adds button to draw circle                                                                       |
+| editMode           | `true`      | adds button to toggle edit mode for all layers                                                   |
+| dragMode           | `true`      | adds button to toggle drag mode for all layers                                                   |
+| cutPolygon         | `true`      | adds button to cut a hole in a polygon                                                           |
+| removalMode        | `true`      | adds a button to remove layers                                                                   |
+| pinningOption      | `true`      | adds a button to toggle the Pinning Option ⭐                                                     |
+| snappingOption     | `true`      | adds a button to toggle the Snapping Option ⭐                                                    |
 
 If you are wondering how e.g. the `drawPolygon` button will enable drawing mode
 with specific options, here it is: Simply set the options for the layer. The options will persist, even when
@@ -230,12 +230,12 @@ map.on('pm:drawstart', e => {
 
 Here's a list of map events you can listen to:
 
-| Event                    | Params | Description                                                                            | Output                                                    |
-| :----------------------- | :----- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
-| pm:globaldrawmodetoggled | `e`    | Fired when Drawing Mode is toggled                                                     | `type`, `enabled`, `shape`, `map`, `target`, `sourceTarget`        | 
-| pm:drawstart             | `e`    | Called when drawing mode is enabled. Payload includes the shape type and working layer | `type`, `shape`, `workingLayer`, `target`, `sourceTarget` | 
-| pm:drawend               | `e`    | Called when drawing mode is disabled. Payload includes the shape type.                 | `type`, `shape`, `target`, `sourceTarget`                 |
-| pm:create                | `e`    | Called when a shape is drawn/finished. Payload includes shape type and the drawn layer | `type`, `shape`, `layer`, `target`, `sourceTarget`        |
+| Event                    | Params | Description                                                                            | Output                      |
+| :----------------------- | :----- | :------------------------------------------------------------------------------------- | :-------------------------- |
+| pm:globaldrawmodetoggled | `e`    | Fired when Drawing Mode is toggled                                                     | `enabled`, `shape`, `map`   | 
+| pm:drawstart             | `e`    | Called when drawing mode is enabled. Payload includes the shape type and working layer | `shape`, `workingLayer`     | 
+| pm:drawend               | `e`    | Called when drawing mode is disabled. Payload includes the shape type.                 | `shape`                     |
+| pm:create                | `e`    | Called when a shape is drawn/finished. Payload includes shape type and the drawn layer | `shape`, `layer`            |
 
 There are also several events for layers during draw. Register an event like this:
 
@@ -250,13 +250,13 @@ map.on('pm:drawstart', ({ workingLayer }) => {
 
 Here's a list of layer events you can listen to:
 
-| Event           | Params | Description                                                                                                          | Output                                                    |
-| :-------------- | :----- | :------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------- |
-| pm:vertexadded  | `e`    | Called when a new vertex is added. Payload includes the new vertex, it's marker, index, working layer and shape type | `type`, `shape`, `workingLayer`, `marker`, `latlng`, `target`, `sourceTarget` |
-| pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation.               | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:snap         | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`                                                 | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  | `type`, `shape`, `workingLayer`, `latlng`, `target`, `sourceTarget` |
+| Event           | Params | Description                                                                                                          | Output                                                                                                  |
+| :-------------- | :----- | :------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| pm:vertexadded  | `e`    | Called when a new vertex is added. Payload includes the new vertex, it's marker, index, working layer and shape type | `shape`, `workingLayer`, `marker`, `latlng`                                                             |
+| pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation.               | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:snap         | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`                                                 | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`                                               | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                  | `shape`, `workingLayer`, `latlng`                                                                       |
 
 For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
 ```js
@@ -284,13 +284,13 @@ See the available options in the table below.
 | :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |
 | snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
 | snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
-| pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                  |
+| pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                   |
 | allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
 | limitMarkersToCount   | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |
-| limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                          |
-| limitMarkersToViewport| `false`    | Shows only markers in the viewport ⭐                                                                  |
-| limitMarkersToClick   | `false`    | Shows markers only after the layer was clicked ⭐                                                      |
+| limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                           |
+| limitMarkersToViewport| `false` | Shows only markers in the viewport ⭐                                                                      |
+| limitMarkersToClick   | `false` | Shows markers only after the layer was clicked ⭐                                                          |
 
 The following methods are available for layers under `layer.pm`:
 
@@ -313,21 +313,21 @@ layer.on('pm:edit', e => {
 
 The following events are available on a layer instance:
 
-| Event              | Params | Description                                                                                          | Output                                                       |
-| :----------------- | :----- | :--------------------------------------------------------------------------------------------------- | :----------------------------------------------------------- |
-| pm:edit            | `e`    | Fired when a layer is edited.                                                                        | `type`, `target`, `sourceTarget`                             |
-| pm:update          | `e`    | Fired when a layer is edited and its coordinates have changed.                                       | `type`, `target`, `sourceTarget`                             |
-| pm:enable          | `e`    | Fired when edit mode on a layer is enabled                                                           | `type`, `target`, `sourceTarget`                             |
-| pm:disable         | `e`    | Fired when edit mode on a layer is disabled                                                          | `type`, `target`, `sourceTarget`                             |
-| pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         | `type`, `indexPath`, `latlng`, `marker`, `layer`, `target`, `sourceTarget` |
-| pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `type`, `indexPath`, `marker`, `layer`, `target`, `sourceTarget` |
-| pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `type`, `indexPath`, `markerEvent`, `target`, `sourceTarget` |
-| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `type`, `indexPath`, `markerEvent`, `target`, `sourceTarget` |
-| pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `type`, `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng`, `target`, `sourceTarget` |
-| pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. |  `type`, `intersection`, `target`, `sourceTarget` |
-| pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           |  `type`, `layer`, `latlng`, `target`, `sourceTarget` |
+| Event              | Params | Description                                                                                          | Output                                                                                                  |
+| :----------------- | :----- | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| pm:edit            | `e`    | Fired when a layer is edited.                                                                        | `layer`                                                                                                 |
+| pm:update          | `e`    | Fired when edit mode is disabled and a layer is edited and its coordinates have changed.             | `layer`                                                                                                 |
+| pm:enable          | `e`    | Fired when edit mode on a layer is enabled                                                           | `layer`                                                                                                 |
+| pm:disable         | `e`    | Fired when edit mode on a layer is disabled                                                          | `layer`                                                                                                 |
+| pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         | `layer`, `indexPath`, `latlng`, `marker`                                                                |
+| pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `layer`, `indexPath`, `marker`                                                                          |
+| pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `layer`, `indexPath`, `markerEvent`                                                                     |
+| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`                                                                     |
+| pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. | `layer`, `intersection`                                                                                 |
+| pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           | `layer`, `latlng`                                                                                       |
 
 You can enable Edit Mode for all layers on a map like this:
 
@@ -348,9 +348,9 @@ The following methods are available on `map.pm`:
 
 The following events are available on a map instance:
 
-| Event                    | Params | Description                                              | Output                                                       |
-| :----------------------- | :----- | :------------------------------------------------------- | :----------------------------------------------------------- |
-| pm:globaleditmodetoggled | `e`    | Fired when Edit Mode is toggled.                         | `type`, `enabled`, `map`, `target`, `sourceTarget`           |
+| Event                    | Params | Description                                              | Output           |
+| :----------------------- | :----- | :------------------------------------------------------- | :--------------- |
+| pm:globaleditmodetoggled | `e`    | Fired when Edit Mode is toggled.                         | `enabled`, `map` |
 
 
 You can also listen to specific edit mode events on the map instance like this:
@@ -380,18 +380,18 @@ The following methods are available on `map.pm`:
 
 The following events are available on a layer instance:
 
-| Event        | Params | Description                              | Output                                                       |
-| :----------- | :----- | :--------------------------------------- | :----------------------------------------------------------- |
-| pm:dragstart | `e`    | Fired when a layer starts being dragged. | `type`, `target`, `sourceTarget`                             |
-| pm:drag      | `e`    | Fired when a layer is dragged.           | `type`, `containerPoint`,`latlng`, `layerPoint`,`originalEvent`, `target`, `sourceTarget` |
-| pm:dragend   | `e`    | Fired when a layer stops being dragged.  | `type`, `target`, `sourceTarget`                             |
+| Event        | Params | Description                              | Output                                                           |
+| :----------- | :----- | :--------------------------------------- | :--------------------------------------------------------------- |
+| pm:dragstart | `e`    | Fired when a layer starts being dragged. | `layer`                                                          |
+| pm:drag      | `e`    | Fired when a layer is dragged.           | `layer`, `containerPoint`,`latlng`, `layerPoint`,`originalEvent` |
+| pm:dragend   | `e`    | Fired when a layer stops being dragged.  | `layer`                                                          |
 
 
 The following events are available on a map instance:
 
-| Event                    | Params | Description                                              | Output                                                       |
-| :----------------------- | :----- | :------------------------------------------------------- | :----------------------------------------------------------- |
-| pm:globaldragmodetoggled | `e`    | Fired when Drag Mode is toggled.                         | `type`, `enabled`, `map`, `target`, `sourceTarget`           |
+| Event                    | Params | Description                                              | Output            |
+| :----------------------- | :----- | :------------------------------------------------------- | :---------------- |
+| pm:globaldragmodetoggled | `e`    | Fired when Drag Mode is toggled.                         | `enabled`, `map`  |
 
 You can also listen to specific drag mode events on the map instance like this:
 
@@ -420,17 +420,17 @@ The following methods are available on `map.pm`:
 
 The following events are available on a layer instance:
 
-| Event       | Params | Description                                              | Output                                                       |
-| :---------- | :----- | :------------------------------------------------------- | :----------------------------------------------------------- |
-| pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           | `type`, `layer`, `target`, `sourceTarget`                    |
+| Event       | Params | Description                                              | Output  |
+| :---------- | :----- | :------------------------------------------------------- | :------ |
+| pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           | `layer` |
 
 The following events are available on a map instance:
 
-| Event       | Params | Description                                              | Output                                                       |
-| :---------- | :----- | :------------------------------------------------------- | :----------------------------------------------------------- |
-| pm:globalremovalmodetoggled   | `e`    | Fired when Removal Mode is toggled     | `type`, `enabled`, `map`, `target`, `sourceTarget`           |
-| pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           | `type`, `layer`, `target`, `sourceTarget`                    |
-| layerremove | `e`    | Standard Leaflet event. Fired when any layer is removed. | `type`, `layer`, `target`, `sourceTarget`                    |
+| Event                         | Params | Description                                              | Output            |
+| :---------------------------- | :----- | :------------------------------------------------------- | :---------------- |
+| pm:globalremovalmodetoggled   | `e`    | Fired when Removal Mode is toggled                       | `enabled`, `map`  |
+| pm:remove                     | `e`    | Fired when a layer is removed via Removal Mode           | `layer`           |
+| layerremove                   | `e`    | Standard Leaflet event. Fired when any layer is removed. | `layer`           |
 
 You can also listen to specific removal mode events on the map instance like this:
 
@@ -473,15 +473,15 @@ You can use these methods on `map.pm.Draw.Cut` to handle Cutting mode:
 
 The following events are available on a layer instance:
 
-| Event  | Params | Description                    | Output                                                              |
-| :----- | :----- | :----------------------------- | :------------------------------------------------------------------ |
-| pm:cut | `e`    | Fired when the layer being cut | `type`, `shape`, `layer`, `originalLayer`, `target`, `sourceTarget` |
+| Event  | Params | Description                    | Output                              |
+| :----- | :----- | :----------------------------- | :---------------------------------- |
+| pm:cut | `e`    | Fired when the layer being cut | `shape`, `layer`, `originalLayer`   |
 
 The following events are available on a map instance:
 
-| Event  | Params | Description                       | Output                                                              |
-| :----- | :----- | :-------------------------------- | :------------------------------------------------------------------ |
-| pm:cut | `e`    | Fired when any layer is being cut | `type`, `shape`, `layer`, `originalLayer`, `target`, `sourceTarget` |
+| Event  | Params | Description                       | Output                            |
+| :----- | :----- | :-------------------------------- | :-------------------------------- |
+| pm:cut | `e`    | Fired when any layer is being cut | `shape`, `layer`, `originalLayer` |
 
 ### Options
 
@@ -499,18 +499,18 @@ map.pm.setGlobalOptions({ pinning: true, limitMarkersToCount: 15, limitMarkersCo
 
 The following options are available globally and apply when going into global edit mode.
 
-| Option                | Default | Description                                                                                               |
-| :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |
-| snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
-| snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
-| pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                  |
-| allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
-| preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
-| limitMarkersToCount   | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                                       |
-| limitMarkersCountGlobally             | `false`  | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐
-| limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                          |
-| limitMarkersToViewport| `false`    | Shows only markers in the viewport ⭐                                                                  |
-| limitMarkersToClick   | `false`    | Shows markers only after the layer was clicked ⭐                                                      |
+| Option                    | Default | Description                                                                                               |
+| :------------------------ | :------ | :-------------------------------------------------------------------------------------------------------- |
+| snappable                 | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
+| snapDistance              | `20`    | The distance to another vertex when a snap should happen.                                                 |
+| pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                   |
+| allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
+| preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                  |
+| limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                             |
+| limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                     |
+| limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                           |
+| limitMarkersToViewport    | `false` | Shows only markers in the viewport ⭐                                                                      |
+| limitMarkersToClick       | `false` | Shows markers only after the layer was clicked ⭐                                                          |
 
 
 Some details about a few more powerful options:
@@ -561,9 +561,9 @@ See the [english translation file](src/assets/translations/en.json) for all avai
 
 The following events are available on a map instance:
 
-| Event          | Params | Description                       | Output                                                                                |
-| :------------- | :----- | :-------------------------------- | :------------------------------------------------------------------------------------ |
-| pm:langchanged | `e`    | Fired when language is changed    | `type`, `activeLang`, `oldLang`, `fallback`, `translations`, `target`, `sourceTarget` |
+| Event          | Params | Description                       | Output                                               |
+| :------------- | :----- | :-------------------------------- | :--------------------------------------------------- |
+| pm:langchanged | `e`    | Fired when language is changed    | `activeLang`, `oldLang`, `fallback`, `translations`  |
 
 
 ##### Customize Style

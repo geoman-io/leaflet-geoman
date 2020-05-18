@@ -189,7 +189,6 @@ Draw.Circle = Draw.extend({
       );
 
       this._layer.fire('pm:centerplaced', {
-        shape: this._shape,
         workingLayer: this._layer,
         latlng,
       });

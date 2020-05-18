@@ -48,7 +48,7 @@ Edit.Marker = Edit.extend({
     }
     this._enabled = true;
 
-    this._layer.fire('pm:enable');
+    this._layer.fire('pm:enable', {layer: this._layer});
 
     this.applyOptions();
   },
@@ -69,10 +69,10 @@ Edit.Marker = Edit.extend({
 
     this._layer.off('dragstart', this._onPinnedMarkerDragStart, this);
 
-    this._layer.fire('pm:disable');
+    this._layer.fire('pm:disable', {layer: this._layer});
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', {});
+      this._layer.fire('pm:update', {layer: this._layer});
     }
     this._layerEdited = false;
   },
@@ -87,7 +87,7 @@ Edit.Marker = Edit.extend({
     const marker = e.target;
 
     // fire the pm:edit event and pass shape and marker
-    marker.fire('pm:edit');
+    marker.fire('pm:edit', {layer: this._layer});
     this._layerEdited = true;
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin
