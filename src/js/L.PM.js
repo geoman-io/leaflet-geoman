@@ -153,6 +153,33 @@ L.PM = L.PM || {
 
     L.Circle.addInitHook(initCircle);
   },
+  reInitLayer(layer, options = {}){
+    if(layer instanceof L.LayerGroup){
+      layer.eachLayer((_layer)=>{
+        this.reInitLayer(_layer, options);
+      })
+    }else if(layer.pm){
+      // PM is already added to the layer
+    }else if(options.optIn && layer.options.pmIgnore !== false){
+      // Opt-In and pmIgnore is not false
+    }else if(layer.options.pmIgnore){
+      // pmIgnore is true
+    }else if(layer instanceof L.Map){
+      layer.pm = new L.PM.Map(layer);
+    }else if(layer instanceof L.Marker){
+      layer.pm = new L.PM.Edit.Marker(layer);
+    }else if(layer instanceof L.Circle){
+      layer.pm = new L.PM.Edit.Circle(layer);
+    }else if(layer instanceof L.CircleMarker){
+      layer.pm = new L.PM.Edit.CircleMarker(layer);
+    }else if(layer instanceof L.Rectangle){
+      layer.pm = new L.PM.Edit.Rectangle(layer);
+    }else if(layer instanceof L.Polygon){
+      layer.pm = new L.PM.Edit.Polygon(layer);
+    }else if(layer instanceof L.Polyline){
+      layer.pm = new L.PM.Edit.Line(layer);
+    }
+  }
 };
 
 // initialize leaflet-geoman
