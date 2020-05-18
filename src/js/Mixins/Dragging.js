@@ -2,9 +2,10 @@ const DragMixin = {
   enableLayerDrag() {
     // before enabling layer drag, disable layer editing
     this.disable();
-
     if (this._layer instanceof L.Marker) {
-      this._layer.dragging.enable();
+      if(this._layer.dragging){
+        this._layer.dragging.enable();
+      }
       return;
     }
 
@@ -28,7 +29,9 @@ const DragMixin = {
   },
   disableLayerDrag() {
     if (this._layer instanceof L.Marker) {
-      this._layer.dragging.disable();
+      if(this._layer.dragging) {
+        this._layer.dragging.disable();
+      }
       return;
     }
 
