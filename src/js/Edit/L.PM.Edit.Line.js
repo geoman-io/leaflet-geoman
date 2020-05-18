@@ -576,6 +576,12 @@ Edit.Line = Edit.extend({
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
+    this._layer.fire('pm:markerdragend', {
+      layer: this._layer,
+      markerEvent: e,
+      indexPath,
+    });
+
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
     if (!this.options.allowSelfIntersection && this.hasSelfIntersection()) {
@@ -590,12 +596,6 @@ Edit.Line = Edit.extend({
       this._handleLayerStyle();
       return;
     }
-
-    this._layer.fire('pm:markerdragend', {
-      layer: this._layer,
-      markerEvent: e,
-      indexPath,
-    });
 
     // fire edit event
     this._fireEdit();
