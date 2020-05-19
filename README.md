@@ -116,17 +116,20 @@ layer.options.pmIgnore = false;
 L.PM.reInitLayer(layer);
 ```
 
-You can also pass the `optIn` option, so that on a layer `pmIgnore` must set to `false`
-```js
-L.PM.reInitLayer(layer, {optIn: true});
-```
+If `Opt-In` (look below) is set, the layer needs to specified `pmIgnore: false`.
+
 
 ##### Opt-In
 
 If you want to use leaflet-geoman as opt-in, call the following function right after importing:
 
 ```js
-L.PM.initialize({ optIn: true });
+L.PM.setOptIn(true);
+```
+
+And to disable it:
+```js
+L.PM.setOptIn(false);
 ```
 
 All layers will be ignored by leaflet-geoman, unless you specify `pmIgnore: false` on a layer:

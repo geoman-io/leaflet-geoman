@@ -42,15 +42,19 @@ L.PM = L.PM || {
   Draw,
   Edit,
   activeLang: 'en',
+  optIn: false,
   initialize(options) {
     this.addInitHooks(options);
+  },
+  setOptIn(value){
+    this.optIn = !!value;
   },
   addInitHooks(options = {}) {
 
     function initMap() {
       this.pm = undefined;
 
-      if (options.optIn) {
+      if (L.PM.optIn) {
         if (this.options.pmIgnore === false) {
           this.pm = new L.PM.Map(this);
         }
@@ -62,8 +66,14 @@ L.PM = L.PM || {
     L.Map.addInitHook(initMap);
 
     function initLayerGroup() {
-      // doesn't need pmIgnore condition as the init hook of the individual layers will check it
-      this.pm = new L.PM.Edit.LayerGroup(this);
+      this.pm = undefined;
+      if (L.PM.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.LayerGroup(this);
+        }
+      } else if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.LayerGroup(this);
+      }
     }
 
     L.LayerGroup.addInitHook(initLayerGroup);
@@ -71,7 +81,7 @@ L.PM = L.PM || {
     function initMarker() {
       this.pm = undefined;
 
-      if (options.optIn) {
+      if (L.PM.optIn) {
         if (this.options.pmIgnore === false) {
           this.pm = new L.PM.Edit.Marker(this);
         }
@@ -79,13 +89,12 @@ L.PM = L.PM || {
         this.pm = new L.PM.Edit.Marker(this);
       }
     }
-
     L.Marker.addInitHook(initMarker);
 
     function initCircleMarker() {
       this.pm = undefined;
 
-      if (options.optIn) {
+      if (L.PM.optIn) {
         if (this.options.pmIgnore === false) {
           this.pm = new L.PM.Edit.CircleMarker(this);
         }
@@ -99,7 +108,7 @@ L.PM = L.PM || {
     function initPolyline() {
       this.pm = undefined;
 
-      if (options.optIn) {
+      if (L.PM.optIn) {
         if (this.options.pmIgnore === false) {
           this.pm = new L.PM.Edit.Line(this);
         }
@@ -113,7 +122,7 @@ L.PM = L.PM || {
     function initPolygon() {
       this.pm = undefined;
 
-      if (options.optIn) {
+      if (L.PM.optIn) {
         if (this.options.pmIgnore === false) {
           this.pm = new L.PM.Edit.Polygon(this);
         }
@@ -128,7 +137,7 @@ L.PM = L.PM || {
     function initRectangle() {
       this.pm = undefined;
 
-      if (options.optIn) {
+      if (L.PM.optIn) {
         if (this.options.pmIgnore === false) {
           this.pm = new L.PM.Edit.Rectangle(this);
         }
@@ -142,7 +151,7 @@ L.PM = L.PM || {
     function initCircle() {
       this.pm = undefined;
 
-      if (options.optIn) {
+      if (L.PM.optIn) {
         if (this.options.pmIgnore === false) {
           this.pm = new L.PM.Edit.Circle(this);
         }
@@ -153,15 +162,15 @@ L.PM = L.PM || {
 
     L.Circle.addInitHook(initCircle);
   },
-  reInitLayer(layer, options = {}){
+  reInitLayer(layer){
     if(layer instanceof L.LayerGroup){
       layer.eachLayer((_layer)=>{
-        this.reInitLayer(_layer, options);
+        this.reInitLayer(_layer);
       })
     }else if(layer.pm){
       // PM is already added to the layer
-    }else if(options.optIn && layer.options.pmIgnore !== false){
-      // Opt-In and pmIgnore is not false
+    }else if(L.PM.optIn && layer.options.pmIgnore !== false){
+      // Opt-In is true and pmIgnore is not false
     }else if(layer.options.pmIgnore){
       // pmIgnore is true
     }else if(layer instanceof L.Map){
