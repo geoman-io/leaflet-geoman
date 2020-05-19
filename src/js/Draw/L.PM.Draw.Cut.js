@@ -38,13 +38,15 @@ Draw.Cut = Draw.Polygon.extend({
       const diff = difference(l.toGeoJSON(15), layer.toGeoJSON(15));
 
       // the resulting layer after the cut
-      const resultingLayer = L.geoJSON(diff, l.options).addTo(this._map);
+      var resultLayer = L.geoJSON(diff, l.options);
+      if(resultLayer.getLayers().length === 1){
+        resultLayer = resultLayer.getLayers()[0]; //prevent that a unnecessary layergroup is created
+      }
+      const resultingLayer = resultLayer.addTo(this._map);
 
       // give the new layer the original options
       resultingLayer.pm.enable(this.options);
       resultingLayer.pm.disable();
-
-
 
       // add templayer prop so pm:remove isn't fired
       l._pmTempLayer = true;
@@ -54,7 +56,8 @@ Draw.Cut = Draw.Polygon.extend({
       l.remove();
       layer.remove();
 
-      if (resultingLayer.getLayers().length === 0) {
+      //Remove it only if it is a layergroup. It can be only not a layergroup if a layer exists
+      if (resultingLayer.getLayers && resultingLayer.getLayers().length === 0) {
         this._map.pm.removeLayer({ target: resultingLayer });
       }
 
@@ -71,7 +74,6 @@ Draw.Cut = Draw.Polygon.extend({
         layer: resultingLayer,
         originalLayer: l,
       });
-
 
     });
   },
