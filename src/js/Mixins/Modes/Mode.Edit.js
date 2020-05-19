@@ -34,12 +34,8 @@ const GlobalEditMode = {
       layer.pm.enable(options);
     });
 
-    if (!this.throttledReInitEdit) {
-      this.throttledReInitEdit = L.Util.throttle(this.handleLayerAdditionInGlobalEditMode, 100, this)
-    }
-
     // handle layers that are added while in removal mode
-    this.map.on('layeradd', this.throttledReInitEdit, this);
+    this.map.on('layeradd', this.handleLayerAdditionInGlobalEditMode, this);
 
     this.setGlobalEditStatus(status);
   },
@@ -55,7 +51,7 @@ const GlobalEditMode = {
     });
 
     // cleanup layer off event
-    this.map.off('layeroff', this.throttledReInitEdit, this);
+    this.map.off('layeroff', this.handleLayerAdditionInGlobalEditMode, this);
 
     // Set toolbar button to currect status
     this.Toolbar.toggleButton('editMode', status);
@@ -77,7 +73,7 @@ const GlobalEditMode = {
     // when global edit mode is enabled and a layer is added to the map,
     // enable edit for that layer if it's relevant
 
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily	
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
     const isRelevant = !!layer.pm && !layer._pmTempLayer;
     if (!isRelevant) {
       return;
