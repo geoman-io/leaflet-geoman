@@ -225,12 +225,19 @@ const SnapMixin = {
           layer instanceof L.CircleMarker) &&
         layer.options.snapIgnore !== true
       ) {
+
+        if(layer instanceof L.Circle){
+            layers.push(Utils.circleToPolygon(layer,100));
+        }
         layers.push(layer);
 
         // this is for debugging
         const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
+        if(layer instanceof L.Circle){
+            debugIndicatorLines.push(debugLine);
+        }
 
         // uncomment 👇 this line to show helper lines for debugging
         // debugLine.addTo(map);
