@@ -4,6 +4,11 @@ const DragMixin = {
     this.disable();
 
     if (this._layer instanceof L.Marker) {
+      if(this.options.snappable) {
+        this._initSnappableMarkers();
+      }else{
+        this._disableSnapping();
+      }
       this._layer.dragging.enable();
       return;
     }
