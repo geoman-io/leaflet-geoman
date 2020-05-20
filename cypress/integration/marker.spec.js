@@ -78,4 +78,23 @@ describe('Draw Marker', () => {
       expect($p).to.have.length(4);
     });
   });
+
+
+  it('add interactive:false marker to the map and enable edit', () => {
+
+    cy.window().then(({ map, L }) => {
+      const marker = L.marker([51.505, -0.09], { interactive: false }).addTo(map);
+      return marker;
+    }).as('marker');
+
+    cy.toolbarButton('edit').click();
+
+    cy.wait(100);
+
+    cy.toolbarButton('edit').click();
+
+    cy.get('@marker').then( marker  => {
+        marker.removeFrom(marker._map);
+    });
+  });
 });
