@@ -115,8 +115,7 @@ Enable leaflet-geoman on an ignored layer:
 layer.options.pmIgnore = false;
 L.PM.reInitLayer(layer);
 ```
-
-If `Opt-In` (look below) is set, the layer needs to specified `pmIgnore: false`.
+If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.
 
 
 ##### Opt-In
