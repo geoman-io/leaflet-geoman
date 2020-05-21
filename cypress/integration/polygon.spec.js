@@ -500,7 +500,7 @@ describe('Draw & Edit Poly', () => {
   });
 
 
-  it.only('allowSelfIntersectionEdit on polygon', () => {
+  it('allowSelfIntersectionEdit on polygon', () => {
 
     cy.window().then(({ map, L,Hand }) => {
       cy.fixture("PolygonIntersects")
