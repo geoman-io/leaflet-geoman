@@ -48,13 +48,17 @@ const GlobalRemovalMode = {
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode
-    if (this.globalRemovalEnabled()) {
+    if (this.globalRemovalModeEnabled()) {
       this.disableGlobalRemovalMode();
     } else {
       this.enableGlobalRemovalMode();
     }
   },
+  // TODO: Remove in the next major release
   globalRemovalEnabled() {
+    return this.globalRemovalModeEnabled();
+  },
+  globalRemovalModeEnabled() {
     return !!this._globalRemovalMode;
   },
   removeLayer(e) {
@@ -79,7 +83,7 @@ const GlobalRemovalMode = {
     }
 
     // re-enable global removal mode if it's enabled already
-    if (this.globalRemovalEnabled()) {
+    if (this.globalRemovalModeEnabled()) {
       this.disableGlobalRemovalMode();
       this.enableGlobalRemovalMode();
     }

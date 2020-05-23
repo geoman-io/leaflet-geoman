@@ -5,7 +5,11 @@ const { findLayers } = Utils
 
 const GlobalEditMode = {
   _globalEditMode: false,
+  // TODO: Remove in the next major release
   globalEditEnabled() {
+    return this.globalEditModeEnabled();
+  },
+  globalEditModeEnabled() {
     return this._globalEditMode;
   },
   setGlobalEditStatus(status) {
@@ -65,7 +69,7 @@ const GlobalEditMode = {
   toggleGlobalEditMode(options = this.globalOptions) {
     // console.log('toggle global edit mode', options);
 
-    if (this.globalEditEnabled()) {
+    if (this.globalEditModeEnabled()) {
       // disable
       this.disableGlobalEditMode();
     } else {
@@ -77,13 +81,13 @@ const GlobalEditMode = {
     // when global edit mode is enabled and a layer is added to the map,
     // enable edit for that layer if it's relevant
 
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily	
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
     const isRelevant = !!layer.pm && !layer._pmTempLayer;
     if (!isRelevant) {
       return;
     }
 
-    if (this.globalEditEnabled()) {
+    if (this.globalEditModeEnabled()) {
       layer.pm.enable({ ...this.globalOptions, snappable: this._globalSnappingEnabled });
     }
   },

@@ -343,7 +343,7 @@ The following methods are available on `map.pm`:
 | enableGlobalEditMode(`options`) | -         | Enables global edit mode.                                             |
 | disableGlobalEditMode()         | -         | Disables global edit mode.                                            |
 | toggleGlobalEditMode(`options`) | -         | Toggles global edit mode.                                             |
-| globalEditEnabled()             | `Boolean` | Returns `true` if global edit mode is enabled. `false` when disabled. |
+| globalEditModeEnabled()             | `Boolean` | Returns `true` if global edit mode is enabled. `false` when disabled. |
 
 
 The following events are available on a map instance:
@@ -416,7 +416,7 @@ The following methods are available on `map.pm`:
 | enableGlobalRemovalMode()  | -         | Enables global drag mode.                                                |
 | disableGlobalRemovalMode() | -         | Disables global drag mode.                                               |
 | toggleGlobalRemovalMode()  | -         | Toggles global removal mode.                                             |
-| globalRemovalEnabled()     | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
+| globalRemovalModeEnabled()     | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
 
 The following events are available on a layer instance:
 
@@ -463,13 +463,14 @@ map.pm.Draw.Cut.enable({
 
 Available options are the [same as in drawing mode](https://github.com/geoman-io/leaflet-geoman/tree/new-docs#drawing-mode).
 
-You can use these methods on `map.pm.Draw.Cut` to handle Cutting mode:
+The following methods are available on `map.pm`:
 
-| Method            | Returns | Description          |
-| :---------------- | :------ | :------------------- |
-| enable(`options`) | -       | Enable Cutting Mode. |
-| disable()         | -       | Disable Cutting Mode |
-| toggle(`options`) | -       | Toggle Cutting Mode  |
+| Method                         | Returns | Description          |
+| :----------------------------- | :------ | :------------------- |
+| enableGlobalCutMode(`options`) | -       | Enable Cutting Mode. |
+| disableGlobalCutMode()         | -       | Disable Cutting Mode |
+| toggleGlobalCutMode(`options`) | -       | Toggle Cutting Mode  |
+| globalCutModeEnabled()         | `Boolean` | Returns `true` if global draw mode is enabled. `false` when disabled.    |
 
 The following events are available on a layer instance:
 
@@ -479,9 +480,10 @@ The following events are available on a layer instance:
 
 The following events are available on a map instance:
 
-| Event  | Params | Description                       | Output                            |
-| :----- | :----- | :-------------------------------- | :-------------------------------- |
-| pm:cut | `e`    | Fired when any layer is being cut | `shape`, `layer`, `originalLayer` |
+| Event                    | Params | Description                        | Output                            |
+| :----------------------- | :----- | :--------------------------------- | :-------------------------------- |
+| pm:globaldrawmodetoggled | `e`    | Fired when Drawing Mode is toggled | `enabled`, `map`                  | 
+| pm:cut                   | `e`    | Fired when any layer is being cut  | `shape`, `layer`, `originalLayer` |
 
 ### Options
 

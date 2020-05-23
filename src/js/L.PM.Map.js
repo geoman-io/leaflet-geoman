@@ -107,6 +107,18 @@ const Map = L.Class.extend({
   globalDrawModeEnabled(){
     return !!this.Draw.getActiveShape();
   },
+  globalCutModeEnabled(){
+    return !!this.Draw.Cut.enabled();
+  },
+  enableGlobalCutMode(options){
+    return this.Draw.Cut.enable(options);
+  },
+  toggleGlobalCutMode(options){
+    return this.Draw.Cut.toggle(options);
+  },
+  disableGlobalCutMode(){
+    return this.Draw.Cut.disable();
+  }
 });
 
 export default Map;

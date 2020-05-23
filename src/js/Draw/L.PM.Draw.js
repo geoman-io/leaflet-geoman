@@ -82,11 +82,18 @@ const Draw = L.Class.extend({
   },
   _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
-    this._map.fire('pm:globaldrawmodetoggled', {
-      enabled: this._enabled,
-      shape: this._shape,
-      map: this._map,
-    });
+    if(this._shape === "Cut"){
+      this._map.fire('pm:globalcutmodetoggled', {
+        enabled: !!this._enabled,
+        map: this._map,
+      });
+    }else {
+      this._map.fire('pm:globaldrawmodetoggled', {
+        enabled: this._enabled,
+        shape: this._shape,
+        map: this._map,
+      });
+    }
   },
 });
 
