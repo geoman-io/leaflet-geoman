@@ -3,6 +3,11 @@ const DragMixin = {
     // before enabling layer drag, disable layer editing
     this.disable();
 
+    // if layer never enabled and _map is not set (for snapping)
+    if(!this._map){
+      this._map = this._layer._map;
+    }
+
     if (this._layer instanceof L.Marker) {
       if(this.options.snappable) {
         this._initSnappableMarkers();
