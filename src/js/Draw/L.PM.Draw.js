@@ -95,6 +95,7 @@ const Draw = L.Class.extend({
       });
     }
   },
+
 });
 
 export default Draw;
