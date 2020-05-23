@@ -264,7 +264,6 @@ describe('Events', () => {
   });
   it('Events while drawing: pm:vertexadded, pm:snapdrag, pm:snap, pm:unsnap, pm:centerplaced', () => {
     var calledevent = "";
-    var layer;
 
     cy.window().then(({ map, L }) => {
 
@@ -273,7 +272,7 @@ describe('Events', () => {
       }
 
       map.on("pm:drawstart",function (e) {
-        layer = e.workingLayer;
+        var layer = e.workingLayer;
         layer.on('pm:vertexadded', logEvent);
         layer.on('pm:snapdrag', logEvent);
         layer.on('pm:snap', logEvent);
@@ -317,10 +316,21 @@ describe('Events', () => {
       expect(calledevent).to.equal("pm:snapdrag");
       calledevent = "";
     });
+  });
+
+
+  it(' pm:centerplaced event while drawing', () => {
+    var calledevent = "";
 
     cy.window().then(({ map, L }) => {
-      layer.removeFrom(map);
-      map.pm.disableDraw();
+      function logEvent(e){
+        calledevent = e.type;
+      }
+
+      map.on("pm:drawstart",function (e) {
+        var layer = e.workingLayer;
+        layer.on('pm:centerplaced', logEvent);
+      });
       map.pm.enableDraw("Circle");
       cy.get(mapSelector)
         .click(200, 385)
@@ -331,6 +341,7 @@ describe('Events', () => {
       calledevent = "";
     });
   });
+
 
   it('Events while editing: pm:edit,pm:update,pm:enable,pm:disable,pm:vertexadded,pm:vertexremoved', () => {
     var calledevent = "";
