@@ -70,6 +70,21 @@ const Draw = L.Class.extend({
       this[shape].addButton();
     });
   },
+  createNewDrawInstance(name,jsClass) {
+    if(this[name]){
+      throw "Draw Type already exists";
+    }
+    if(!L.PM.Draw[jsClass]){
+      throw "There is no class L.PM.Draw."+jsClass;
+    }
+
+    this[name] = new L.PM.Draw[jsClass](this._map);
+    this[name].toolbarButtonName  = name;
+    this.shapes.push(name);
+    // Re-init the options, so it is not referenced with the default Draw class
+    this[name].setOptions(this[name].options);
+    return this[name];
+  }
 });
 
 export default Draw;

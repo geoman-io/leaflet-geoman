@@ -12,11 +12,17 @@ const PMButton = L.Control.extend({
   onAdd(map) {
     this._map = map;
 
-    if (this._button.tool === 'edit') {
-      this._container = this._map.pm.Toolbar.editContainer;
-    } else if (this._button.tool === 'options') {
-      this._container = this._map.pm.Toolbar.optionsContainer;
-    } else {
+    if(!this._map.pm.Toolbar.options.oneBlock) {
+      if (this._button.tool === 'edit') {
+        this._container = this._map.pm.Toolbar.editContainer;
+      } else if (this._button.tool === 'options') {
+        this._container = this._map.pm.Toolbar.optionsContainer;
+      } else if (this._button.tool === 'custom') {
+        this._container = this._map.pm.Toolbar.customContainer;
+      } else {
+        this._container = this._map.pm.Toolbar.drawContainer;
+      }
+    }else{
       this._container = this._map.pm.Toolbar.drawContainer;
     }
     this.buttonsDomNode = this._makeButton(this._button);
@@ -112,7 +118,13 @@ const PMButton = L.Control.extend({
     };
 
     activeActions.forEach(name => {
-      const action = actions[name];
+      if(actions[name]) {
+        var action = actions[name];
+      }else if(name.text){
+        var action = name;
+      }else{
+        return;
+      }
       const actionNode = L.DomUtil.create(
         'a',
         `leaflet-pm-action action-${name}`,
@@ -121,7 +133,9 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
-      L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+      if(action.onClick) {
+        L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+      }
       L.DomEvent.disableClickPropagation(actionNode);
     });
 
@@ -159,10 +173,12 @@ const PMButton = L.Control.extend({
       return;
     }
 
-    if (!this._button.toggleStatus) {
+    if (!this._button.toggleStatus || this._button.cssToggle === false) {
       L.DomUtil.removeClass(this.buttonsDomNode, 'active');
+      L.DomUtil.removeClass(this._container, 'activeChild');
     } else {
       L.DomUtil.addClass(this.buttonsDomNode, 'active');
+      L.DomUtil.addClass(this._container, 'activeChild');
     }
   },
 

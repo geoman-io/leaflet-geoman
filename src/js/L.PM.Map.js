@@ -58,8 +58,12 @@ const Map = L.Class.extend({
 
     this.Draw.disable(shape);
   },
-  setPathOptions(options) {
-    this.Draw.setPathOptions(options);
+  setPathOptions(options, ignore = []) {
+    this.map.pm.Draw.shapes.forEach(shape => {
+      if(ignore.indexOf(shape) == -1) {
+        this.map.pm.Draw[shape].setPathOptions(options)
+      }
+    })
   },
 
   getGlobalOptions() {
@@ -97,6 +101,7 @@ const Map = L.Class.extend({
       }
     });
   },
+
 });
 
 export default Map;

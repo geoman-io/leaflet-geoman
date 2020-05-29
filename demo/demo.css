@@ -40,3 +40,20 @@ h3 {
 .map {
     height: 500px;
 }
+
+
+.leaflet-control-container > div.leaflet-top.leaflet-left {
+    height: 500px;
+    display: flex;
+    flex-flow: column wrap;
+}
+
+.leaflet-bar{
+    width: 30px;
+}
+
+
+.leaflet-pm-toolbar.activeChild{
+    z-index: 801;
+}
+
