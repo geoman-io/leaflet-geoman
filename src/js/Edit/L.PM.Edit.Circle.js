@@ -81,6 +81,8 @@ Edit.Circle = Edit.extend({
     const el = layer._path ? layer._path : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
+    this._layer.fire('pm:disable');
+
     if (this._layerEdited) {
       this._layer.fire('pm:update', {});
     }

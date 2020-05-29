@@ -36,7 +36,7 @@
 #### Leaflet-Geoman Pro ⭐
 Companies need more advanced features, reliability and support. In our Pro version, we offer everything from the open source version and add many advanced features for big scale projects.
 Features marked with ⭐ in this documentation are only available in the Pro version.
-[Become a Sponsor](https://github.com/sponsors/codeofsumit) go get Pro, or [contact me](mailto:sumit@geoman.io)
+[Purchase Pro](https://geoman.io/leaflet-geoman#pro) or [contact me](mailto:sumit@geoman.io)
 
 ## Documentation
 
@@ -165,7 +165,7 @@ Example:
 
 ```js
 // make markers not snappable during marker draw
-map.pm.setGlobalOptions({ snappable: false, });
+map.pm.setGlobalOptions({ snappable: false });
 ```
 
 All available options are specified in the Drawing Mode Section below.
@@ -270,9 +270,13 @@ See the available options in the table below.
 | :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |
 | snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
 | snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
-| pinning               | `false` | Pin shared vertices/markers together during edit. [Details](#pinning)                                     |
+| pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                  |
 | allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
+| limitMarkersToCount   | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |
+| limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                          |
+| limitMarkersToViewport| `false`    | Shows only markers in the viewport ⭐                                                                  |
+| limitMarkersToClick   | `false`    | Shows markers only after the layer was clicked ⭐                                                      |
 
 The following methods are available for layers under `layer.pm`:
 
@@ -298,6 +302,8 @@ The following events are available on a layer instance:
 | Event              | Params | Description                                                                                          |
 | :----------------- | :----- | :--------------------------------------------------------------------------------------------------- |
 | pm:edit            | `e`    | Fired when a layer is edited.                                                                        |
+| pm:update          | `e`    | Fired when a layer is edited and its coordinates have changed.                                       |
+| pm:disable     | `e`    | Fired when edit mode on a layer is disabled                                                          |
 | pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         |
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       |
 | pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 |
@@ -437,8 +443,8 @@ The following events are available on a map instance:
 
 ### Options
 
-You have the following powerful options available when drawing and editing your layers.
-Set options per layer or through global options.
+You have many options available when drawing and editing your layers (described above).
+You can set the options per layer as described above, or you can set them globally for all layers. This is especially useful when you use the toolbar and can't change the options programatically.
 
 Examples:
 
@@ -446,8 +452,26 @@ Examples:
 layer.pm.enable({ pinning: true, snappable: false })
 ```
 ```js
-map.pm.setGlobalOptions({ pinning: true })
+map.pm.setGlobalOptions({ pinning: true, limitMarkersToCount: 15, limitMarkersCountGlobally: true })
 ```
+
+The following options are available globally and apply when going into global edit mode.
+
+| Option                | Default | Description                                                                                               |
+| :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |
+| snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
+| snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
+| pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                  |
+| allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
+| preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
+| limitMarkersToCount   | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                                       |
+| limitMarkersCountGlobally             | `false`  | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐
+| limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                          |
+| limitMarkersToViewport| `false`    | Shows only markers in the viewport ⭐                                                                  |
+| limitMarkersToClick   | `false`    | Shows markers only after the layer was clicked ⭐                                                      |
+
+
+Some details about a few more powerful options:
 
 
 ##### Snapping

@@ -1,6 +1,6 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
-  "version": "2.3.0",
+  "version": "2.5.0",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -50,8 +50,8 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
-    "test": "$(npm bin)/cypress run",
-    "cypress": "$(npm bin)/cypress open",
+    "test": "./node_modules/.bin/cypress run",
+    "cypress": "./node_modules/.bin/cypress open",
     "build": "./node_modules/.bin/webpack --config=webpack.build.js",
     "prepare": "npm run build",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",

@@ -31,6 +31,58 @@ Cypress.Commands.add('hasLayers', count => {
   });
 });
 
+Cypress.Commands.add('testLayerAdditionPerformance', () => {
+  let t0;
+
+  cy.window().then(({ map, L }) => {
+    t0 = performance.now();
+
+    function getRandomLatLng() {
+      const bounds = map.getBounds()
+      const southWest = bounds.getSouthWest()
+      const northEast = bounds.getNorthEast()
+      const lngSpan = northEast.lng - southWest.lng
+      const latSpan = northEast.lat - southWest.lat;
+
+      return new L.LatLng(
+        southWest.lat + latSpan * Math.random(),
+        southWest.lng + lngSpan * Math.random());
+    }
+
+    const terminals = [];
+    const locations = [];
+
+    for (let i = 0; i < 3500; i += 1) {
+      locations.push(L.circleMarker(getRandomLatLng(map)));
+
+    }
+
+    for (let i = 0; i < 2500; i += 1) {
+      terminals.push(L.circleMarker(getRandomLatLng(map)));
+    }
+
+    const t = L.layerGroup(terminals).addTo(map)
+    const l = L.layerGroup(locations).addTo(map)
+
+    const base = {}
+
+    const overlays = {
+      "Locations": t,
+      "Terminals": l
+    }
+
+    L.control.layers(base, overlays).addTo(map)
+  });
+
+  cy.window().then(() => {
+    const t1 = performance.now();
+    const delta = Math.abs(t1 - t0);
+    console.log(`Rendering 6k CircleMarkers took ${delta} milliseconds.`);
+
+    expect(delta).to.lessThan(1000);
+  });
+});
+
 Cypress.Commands.add('hasMiddleMarkers', count => {
   cy.get('.marker-icon-middle').should($p => {
     expect($p).to.have.length(count);
@@ -43,12 +95,36 @@ Cypress.Commands.add('hasVertexMarkers', count => {
   });
 });
 
+Cypress.Commands.add('hasTotalVertexMarkers', count => {
+  cy.get('.marker-icon').should($p => {
+    expect($p).to.have.length(count);
+  });
+});
+
 Cypress.Commands.add('toolbarButton', name =>
   cy.get(`.leaflet-pm-icon-${name}`)
 );
 
 Cypress.Commands.add('drawShape', (shape, ignore) => {
   cy.window().then(({ map, L }) => {
+    if (shape === 'PolygonPart1') {
+      cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
+    if (shape === 'PolygonPart2') {
+      cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
     if (shape === 'MultiPolygon') {
       cy.fixture(shape)
         .as('poly')
@@ -64,6 +140,16 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
         .as('poly')
         .then(json => {
           const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
+
+    if (shape === 'MonsterPolygon') {
+      cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          const layer = L.polygon(json.data.points, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });

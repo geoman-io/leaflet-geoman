@@ -213,7 +213,7 @@ Draw.Line = Draw.extend({
       this._hintline.setStyle({
         color: 'red',
       });
-    } else {
+    } else if (!this._hintline.isEmpty()) {
       this._hintline.setStyle(this.options.hintlineStyle);
     }
   },

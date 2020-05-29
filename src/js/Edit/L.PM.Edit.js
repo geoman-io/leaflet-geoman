@@ -8,6 +8,7 @@ const Edit = L.Class.extend({
     snapDistance: 20,
     allowSelfIntersection: true,
     draggable: true,
+    limitMarkersToCount: -1
   },
   setOptions(options) {
     L.Util.setOptions(this, options);

@@ -66,6 +66,8 @@ Edit.Marker = Edit.extend({
 
     this._layer.off('dragstart', this._onPinnedMarkerDragStart, this);
 
+    this._layer.fire('pm:disable');
+
     if (this._layerEdited) {
       this._layer.fire('pm:update', {});
     }

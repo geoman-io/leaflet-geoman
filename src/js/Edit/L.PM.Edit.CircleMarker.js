@@ -49,32 +49,33 @@ Edit.CircleMarker = Edit.extend({
       this.disable();
     }
 
+    this.applyOptions();
+
     // change state
     this._enabled = true;
-
-    this.applyOptions();
 
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
   },
   disable(layer = this._layer) {
-    // if it's not enabled, it doesn't need to be disabled
-    if (!this.enabled()) {
-      return false;
-    }
-
     // prevent disabling if layer is being dragged
     if (layer.pm._dragging) {
       return false;
     }
-    layer.pm._enabled = false;
 
-    // disable dragging
+    // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
 
-    if (this._layerEdited) {
-      this._layer.fire('pm:update', {});
+    // only fire events if it was enabled before
+    if (!this.enabled()) {
+      this._layer.fire('pm:disable');
+
+      if (this._layerEdited) {
+        this._layer.fire('pm:update', {});
+      }
+      this._layerEdited = false;
     }
-    this._layerEdited = false;
+
+    layer.pm._enabled = false;
 
     return true;
   },

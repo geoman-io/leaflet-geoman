@@ -57,6 +57,10 @@ const SnapMixin = {
     this._snapList.splice(index, 1);
   },
   _handleSnapping(e) {
+    function throttledList() {
+      return L.Util.throttle(this._createSnapList, 100, this);
+    }
+
     // if snapping is disabled via holding ALT during drag, stop right here
     if (e.originalEvent.altKey) {
       return false;
@@ -69,8 +73,8 @@ const SnapMixin = {
       this._createSnapList();
 
       // re-create the snaplist again when a layer is added during draw
-      this._map.off('layeradd', this._createSnapList, this);
-      this._map.on('layeradd', this._createSnapList, this);
+      this._map.off('layeradd', throttledList, this);
+      this._map.on('layeradd', throttledList, this);
     }
 
     // if there are no layers to snap to, stop here
@@ -221,12 +225,19 @@ const SnapMixin = {
           layer instanceof L.CircleMarker) &&
         layer.options.snapIgnore !== true
       ) {
+
+        if(layer instanceof L.Circle){
+            layers.push(Utils.circleToPolygon(layer,100));
+        }
         layers.push(layer);
 
         // this is for debugging
         const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
+        if(layer instanceof L.Circle){
+            debugIndicatorLines.push(debugLine);
+        }
 
         // uncomment 👇 this line to show helper lines for debugging
         // debugLine.addTo(map);

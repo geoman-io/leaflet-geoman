@@ -35,12 +35,15 @@ import './Edit/L.PM.Edit.CircleMarker';
 import '../css/layers.css';
 import '../css/controls.css';
 
+import Utils from './L.PM.Utils';
+
 L.PM = L.PM || {
   version,
   Map,
   Toolbar,
   Draw,
   Edit,
+  Utils,
   activeLang: 'en',
   initialize(options) {
     this.addInitHooks(options);
