@@ -2,10 +2,10 @@ describe('Events', () => {
   const mapSelector = '#map';
 
   it('pm:langchange', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:langchange",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:langchange",(e) => {
         calledevent = e.type;
       });
 
@@ -19,10 +19,10 @@ describe('Events', () => {
   });
 
   it('pm:globaleditmodetoggled', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globaleditmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globaleditmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.enableGlobalEditMode();
@@ -32,8 +32,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globaleditmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globaleditmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.disableGlobalEditMode();
@@ -43,8 +43,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globaleditmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globaleditmodetoggled",(e) => {
         calledevent = e.type;
       });
 
@@ -57,10 +57,10 @@ describe('Events', () => {
   });
 
   it('pm:globaldragmodetoggled', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globaldragmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globaldragmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.enableGlobalDragMode();
@@ -70,8 +70,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globaldragmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globaldragmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.disableGlobalDragMode();
@@ -81,8 +81,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globaldragmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globaldragmodetoggled",(e) => {
         calledevent = e.type;
       });
 
@@ -95,10 +95,10 @@ describe('Events', () => {
   });
 
   it('pm:globalremovalmodetoggled', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globalremovalmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globalremovalmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.enableGlobalRemovalMode();
@@ -108,8 +108,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globalremovalmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globalremovalmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.disableGlobalRemovalMode();
@@ -119,8 +119,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globalremovalmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globalremovalmodetoggled",(e) => {
         calledevent = e.type;
       });
 
@@ -133,10 +133,10 @@ describe('Events', () => {
   });
 
   it('pm:globaldrawmodetoggled', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globaldrawmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globaldrawmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.enableDraw("Polygon");
@@ -146,8 +146,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globaldrawmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globaldrawmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.disableDraw("Polygon");
@@ -159,10 +159,10 @@ describe('Events', () => {
   });
 
   it('pm:globalcutmodetoggled', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globalcutmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globalcutmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.enableDraw("Cut");
@@ -172,8 +172,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globalcutmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globalcutmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.disableDraw("Cut");
@@ -183,8 +183,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globalcutmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globalcutmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.enableGlobalCutMode();
@@ -194,8 +194,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globalcutmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globalcutmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.disableGlobalCutMode();
@@ -205,8 +205,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:globalcutmodetoggled",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:globalcutmodetoggled",(e) => {
         calledevent = e.type;
       });
       map.pm.toggleGlobalCutMode();
@@ -218,10 +218,10 @@ describe('Events', () => {
   });
 
   it('pm:drawstart & pm:drawend', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:drawstart",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:drawstart",(e) => {
         calledevent = e.type;
       });
       map.pm.enableDraw("Polygon");
@@ -231,8 +231,8 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:drawend",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:drawend",(e) => {
         calledevent = e.type;
       });
       map.pm.disableDraw("Polygon");
@@ -244,10 +244,10 @@ describe('Events', () => {
   });
 
   it('pm:create', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
-      map.on("pm:create",function (e) {
+    cy.window().then(({ map}) => {
+      map.on("pm:create",(e) => {
         calledevent = e.type;
       });
       map.pm.enableDraw("Circle");
@@ -263,16 +263,16 @@ describe('Events', () => {
     });
   });
   it('Events while drawing: pm:vertexadded, pm:snapdrag, pm:snap, pm:unsnap, pm:centerplaced', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({ map}) => {
 
       function logEvent(e){
         calledevent = e.type;
       }
 
-      map.on("pm:drawstart",function (e) {
-        var layer = e.workingLayer;
+      map.on("pm:drawstart",(e) => {
+        const layer = e.workingLayer;
         layer.on('pm:vertexadded', logEvent);
         layer.on('pm:snapdrag', logEvent);
         layer.on('pm:snap', logEvent);
@@ -289,7 +289,7 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(() => {
       cy.get(mapSelector)
         .click(200, 300)
         .trigger('mousemove', { clientX: 200, clientY: 205 })
@@ -299,7 +299,7 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(() => {
       cy.get(mapSelector)
         .trigger('mousemove', { clientX: 300, clientY: 355 })
     }).then(()=>{
@@ -308,7 +308,7 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(() => {
       cy.get(mapSelector)
         .trigger('mousemove', { clientX: 300, clientY: 385 })
     }).then(()=>{
@@ -320,15 +320,15 @@ describe('Events', () => {
 
 
   it(' pm:centerplaced event while drawing', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map}) => {
       function logEvent(e){
         calledevent = e.type;
       }
 
-      map.on("pm:drawstart",function (e) {
-        var layer = e.workingLayer;
+      map.on("pm:drawstart",(e) => {
+        const layer = e.workingLayer;
         layer.on('pm:centerplaced', logEvent);
       });
       map.pm.enableDraw("Circle");
@@ -344,17 +344,16 @@ describe('Events', () => {
 
 
   it('Events while editing: pm:edit,pm:update,pm:enable,pm:disable,pm:vertexadded,pm:vertexremoved', () => {
-    var calledevent = "";
+    let calledevent = "";
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map}) => {
 
       function logEvent(e){
         calledevent = e.type;
       }
 
-      map.on("pm:create",function (e) {
+      map.on("pm:create",({layer}) => {
         map.pm.disableDraw();
-        var layer = e.layer;
 
         layer.on('pm:edit', logEvent);
         layer.on('pm:update', logEvent);
@@ -391,7 +390,7 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(() => {
       cy.get(mapSelector)
         .click(200, 250);
     }).then(()=>{
@@ -400,7 +399,7 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(() => {
       cy.get(mapSelector)
         .rightclick(200, 250);
     }).then(()=>{
@@ -409,7 +408,7 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map}) => {
       map.pm.disableGlobalEditMode();
     }).then(()=>{
       cy.wait(100);
@@ -417,7 +416,7 @@ describe('Events', () => {
       calledevent = "";
     });
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map}) => {
       map.pm.toggleGlobalEditMode();
       map.pm.toggleGlobalEditMode();
     }).then(()=>{
@@ -429,19 +428,18 @@ describe('Events', () => {
 
 
   it('pm:cut', () => {
-    var calledevent = "";
-    var calledevent2 = "";
+    let calledevent = "";
+    let calledevent2 = "";
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map}) => {
 
-      map.on("pm:create",function (e) {
-        var layer = e.layer;
-        layer.on('pm:cut', function (e) {
+      map.on("pm:create",({layer }) => {
+        layer.on('pm:cut', (e) => {
           calledevent = e.type;
         });
       });
 
-      map.on('pm:cut',function (e) {
+      map.on('pm:cut',(e) => {
         calledevent2 = e.type;
       });
 
@@ -475,23 +473,22 @@ describe('Events', () => {
   });
 
   it('pm:remove', () => {
-    var calledevent = "";
-    var calledevent2 = "";
-    var calledevent3 = "";
+    let calledevent = "";
+    let calledevent2 = "";
+    let calledevent3 = "";
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map}) => {
 
-      map.on("pm:create",function (e) {
-        var layer = e.layer;
-        layer.on('pm:remove', function (e) {
+      map.on("pm:create",({layer}) => {
+        layer.on('pm:remove', (e) => {
           calledevent = e.type;
         });
       });
 
-      map.on('pm:remove',function (e) {
+      map.on('pm:remove',(e) => {
         calledevent2 = e.type;
       });
-      map.on('layerremove',function (e) {
+      map.on('layerremove',(e) => {
         calledevent3 = e.type;
       });
 
