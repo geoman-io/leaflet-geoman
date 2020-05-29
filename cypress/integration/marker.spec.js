@@ -81,10 +81,9 @@ describe('Draw Marker', () => {
 
 
   it('add interactive:false marker to the map and enable edit', () => {
-
+    // Adds a interactive Marker to the map and enable / disable the edit mode to check if a error is thrown because it is not draggable
     cy.window().then(({ map, L }) => {
-      const marker = L.marker([51.505, -0.09], { interactive: false }).addTo(map);
-      return marker;
+      return L.marker([51.505, -0.09], { interactive: false }).addTo(map);
     }).as('marker');
 
     cy.toolbarButton('edit').click();
