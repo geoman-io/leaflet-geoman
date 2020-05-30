@@ -580,18 +580,20 @@ map.pm.addControls({
      editControls: false,
      optionsControls: true,
      customControls: true,
+     oneBlock: false
  })
 ```
 
 To display the Toolbar as one block you can pass in to the `addControls(options)` function `oneBlock: true`. 
 
-If you want to change the order in a section you can use `map.pm.Toolbar.changeControlOrder(['Circle','Rectangle','Removal','Edit'])`.
-You can pass all shape names and `Edit`, `Drag`, `Removal`, `Cut`.
+If you want to change the order in a section you can use `map.pm.Toolbar.changeControlOrder(['Circle','Rectangle','Removal','Edit'])` to sort from Top to Bottom.
+You can pass all shapes and `Edit`, `Drag`, `Removal`, `Cut`.
 
 With `map.pm.Toolbar.getControlOrder()` you get the current order of the controls.
 
 **New Control**
-With `map.pm.Toolbar.createCustomButton(options)` you can create a new control.
+
+With `map.pm.Toolbar.createCustomControl(options)` you can create a new control.
 
 | Option        | Default     | Description                                                                                      |
 | :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
@@ -605,6 +607,7 @@ With `map.pm.Toolbar.createCustomButton(options)` you can create a new control.
 | toggle        | true        | Control can be toggled |
 
 **Actions**
+
 You can use the default actions: `cancel`, `removeLastVertex`, `finish`, `finishMode` (Only for modes `Edit`, `Drag`, `Removal`).
 
 Or you can create actions:
@@ -613,17 +616,37 @@ Or you can create actions:
 var actions = ['cancel', {text: 'Custom text, no click'}, {text: 'Click event', onClick: ()=>{alert('click')}}]
 ```
 
+The following methods are available on `map.pm.Toolbar`:
+
+| Method                         | Returns   | Description                                                                                                   |
+| :----------------------------- | :-------- | :------------------------------------------------------------------------------------------------------------ |
+| createCustomControl(`options`) | -         | To add a custom Control to the Toolbar.                                                                       |
+| changeControlOrder(`shapes`)   | -         | Change the order of the controls in the Toolbar. You can pass all shapes and `Edit`, `Drag`, `Removal`, `Cut` |
+| getControlOrder()              | `Array`   | Get the current order of the controls.                                                                        |
+
+
 **New Draw Instance**
+
 If you want to add more Draw controls you have to create a new Instance `map.pm.Draw.createNewDrawInstance(name,jsClass)`.
 It's important that you use the same name for the new Instance and the custom control:
 ```javascript
 var poly = map.pm.Draw.createNewDrawInstance("Polygon2","Polygon");
 poly.setPathOptions({color :'red'});
+map.pm.enableDraw("Polygon2");
+
+// You can add also the new Instance to the Toolbar
 var afterClick = () => {
     poly.toggle();
 };
-map.pm.Toolbar.createCustomButton({name: "Polygon2", afterClick: afterClick})
+map.pm.Toolbar.createCustomControl({name: "Polygon2", afterClick: afterClick})
 ```
+
+
+The following methods are available on `map.pm.Draw`:
+
+| Method                                  | Returns   | Description                              |
+| :-------------------------------------- | :-------- | :--------------------------------------- |
+| createNewDrawInstance(`name`,`jsClass`) | -         | Creates a new Draw Instance.             |
 
 
 ### Feature Request

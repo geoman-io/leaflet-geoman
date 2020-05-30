@@ -145,7 +145,7 @@ const Toolbar = L.Class.extend({
     // the options toolbar should not be disabled during the different modes
     // TODO: probably need to abstract this a bit so different options are automatically
     // disabled for different modes, like pinning for circles
-    var exceptOptionButtons = ['snappingOption']
+    const exceptOptionButtons = ['snappingOption']
 
     for (const name in this.buttons) {
       if (
@@ -174,6 +174,10 @@ const Toolbar = L.Class.extend({
     // to disable their mode
     if (disableOthers) {
       this.triggerClickOnToggledButtons(this.buttons[name]);
+    }
+
+    if(!this.buttons[name]){
+      return false;
     }
     // now toggle the state of the button
     return this.buttons[name].toggle(status);
@@ -359,8 +363,8 @@ const Toolbar = L.Class.extend({
     // different options so it's basically a reset and add again
     this.removeControls();
 
-    var buttons = this.getButtons();
-    var ignoreBtns = [];
+    const buttons = this.getButtons();
+    let ignoreBtns = [];
 
     if(this.options.drawControls === false){
       ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => !buttons[btn]._button.tool));
@@ -383,8 +387,8 @@ const Toolbar = L.Class.extend({
     }
   },
 
-  //createCustomButton(name,tool,className,title, onClick, afterClick, actions, toggle){
-  createCustomButton(options){
+  // createCustomControl(name,tool,className,title, onClick, afterClick, actions, toggle){
+  createCustomControl(options){
 
     if(!options.name){
       throw "Button has no name";
@@ -406,13 +410,13 @@ const Toolbar = L.Class.extend({
     if(options.tool) {
       options.tool = options.tool.toLowerCase();
     }
-    if (!options.tool || options.tool == "draw") {
+    if (!options.tool || options.tool === "draw") {
       options.tool = "";
     }
 
-    var _options = {
+    const _options = {
       tool: options.tool,
-      className: 'control-icon '+options.className,
+      className: `control-icon ${options.className}`,
       title: options.title || '',
       jsClass: options.name,
       onClick: options.onClick,
@@ -434,10 +438,8 @@ const Toolbar = L.Class.extend({
   },
 
   changeControlOrder(_order = []){
-   // order = ["drawCircle","dragMode","drawMarker","removalMode","xxx","xyz"];
-   // var buttons = ["drawMarker","drawPolyline","drawRectangle","drawPolygon","drawCircle","drawCircleMarker","editMode","dragMode","cutPolygon","removalMode"];
 
-    var shapeMapping = {
+    const shapeMapping = {
       "Marker": "drawMarker",
       "Circle": "drawCircle",
       "Polygon": "drawPolygon",
@@ -450,7 +452,7 @@ const Toolbar = L.Class.extend({
       "Removal": "removalMode"
     };
 
-    var order = [];
+    const order = [];
     _order.forEach((shape)=>{
       if(shapeMapping[shape]){
         order.push(shapeMapping[shape]);
@@ -461,35 +463,35 @@ const Toolbar = L.Class.extend({
 
 
 
-    var buttons = this.getButtons();
+    const buttons = this.getButtons();
 
     // This steps are needed to create a new Object which contains the buttons in the correct sorted order.
-    var newbtnorder = {};
+    const newbtnorder = {};
     order.forEach((control)=>{
       if(buttons[control]) {
         newbtnorder[control] = buttons[control];
       }
     });
 
-    var drawBtns = Object.keys(buttons).filter(btn => !buttons[btn]._button.tool);
+    const drawBtns = Object.keys(buttons).filter(btn => !buttons[btn]._button.tool);
     drawBtns.forEach((btn)=>{
       if(order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
-    var editBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "edit");
+    const editBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "edit");
     editBtns.forEach((btn)=>{
       if(order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
-    var optionsBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "options");
+    const optionsBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "options");
     optionsBtns.forEach((btn)=>{
       if(order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
-    var customBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "custom");
+    const customBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "custom");
     customBtns.forEach((btn)=>{
       if(order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
@@ -506,9 +508,9 @@ const Toolbar = L.Class.extend({
     this._showHideButtons();
   },
   getControlOrder(){
-    var buttons = this.getButtons();
+    const buttons = this.getButtons();
 
-    var shapeMapping = {
+    const shapeMapping = {
       "drawMarker": "Marker",
       "drawCircle": "Circle",
       "drawPolygon": "Polygon",
@@ -520,8 +522,8 @@ const Toolbar = L.Class.extend({
       "removalMode": "Removal"
     };
 
-    var order = [];
-    for(var btn in buttons){
+    const order = [];
+    for(const btn in buttons){
       if(shapeMapping[btn]){
         order.push(shapeMapping[btn])
       }else{
