@@ -370,13 +370,13 @@ const Toolbar = L.Class.extend({
       ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => !buttons[btn]._button.tool));
     }
     if(this.options.editControls === false){
-      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool == 'edit'));
+      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool === 'edit'));
     }
     if(this.options.optionsControls === false){
-      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool == 'options'));
+      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool === 'options'));
     }
     if(this.options.customControls === false){
-      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool == 'custom'));
+      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool === 'custom'));
     }
     for (const btn in buttons) {
       if (this.options[btn] && ignoreBtns.indexOf(btn) === -1) {
@@ -391,11 +391,15 @@ const Toolbar = L.Class.extend({
   createCustomControl(options){
 
     if(!options.name){
-      throw "Button has no name";
+      throw new TypeError(
+        "Button has no name"
+      );
     }
 
     if(this.buttons[options.name]){
-      throw "Button with this name already exists";
+      throw new TypeError(
+        "Button with this name already exists"
+      )
     }
     if(!options.onClick){
       options.onClick = () => {};
@@ -479,19 +483,19 @@ const Toolbar = L.Class.extend({
         newbtnorder[btn] = buttons[btn];
       }
     });
-    const editBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "edit");
+    const editBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "edit");
     editBtns.forEach((btn)=>{
       if(order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
-    const optionsBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "options");
+    const optionsBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "options");
     optionsBtns.forEach((btn)=>{
       if(order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
-    const customBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool == "custom");
+    const customBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "custom");
     customBtns.forEach((btn)=>{
       if(order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];

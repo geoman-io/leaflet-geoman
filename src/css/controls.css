@@ -1,5 +1,5 @@
 .leaflet-pm-toolbar {
-  
+
 }
 
 .leaflet-pm-toolbar .leaflet-buttons-control-button {
@@ -116,3 +116,9 @@
   cursor: pointer;
   background-color: #777;
 }
+
+/* That the active control is always over the other controls */
+.leaflet-pm-toolbar.activeChild{
+  z-index: 801;
+}
+

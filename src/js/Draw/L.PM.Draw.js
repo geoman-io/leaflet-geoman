@@ -72,10 +72,14 @@ const Draw = L.Class.extend({
   },
   createNewDrawInstance(name,jsClass) {
     if(this[name]){
-      throw "Draw Type already exists";
+      throw new TypeError(
+        "Draw Type already exists"
+      );
     }
     if(!L.PM.Draw[jsClass]){
-      throw "There is no class L.PM.Draw."+jsClass;
+      throw new TypeError(
+        `There is no class L.PM.Draw.${jsClass}`
+      );
     }
 
     this[name] = new L.PM.Draw[jsClass](this._map);
