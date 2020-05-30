@@ -569,6 +569,16 @@ map.pm.setPathOptions({
 });
 ```
 
+You can ignore shapes when you add an array with the shape names:
+```javascript
+map.pm.setPathOptions({
+  color: 'orange',
+  fillColor: 'green',
+  fillOpacity: 0.4,
+}, ["Circle","Rectangle"]);
+```
+
+
 ##### Customize Controls
 
 There are 4 control sections / containers. `draw`, `edit`, `options`⭐, `custom`

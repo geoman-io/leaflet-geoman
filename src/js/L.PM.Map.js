@@ -60,7 +60,7 @@ const Map = L.Class.extend({
   },
   setPathOptions(options, ignore = []) {
     this.map.pm.Draw.shapes.forEach(shape => {
-      if(ignore.indexOf(shape) == -1) {
+      if(ignore.indexOf(shape) === -1) {
         this.map.pm.Draw[shape].setPathOptions(options)
       }
     })
