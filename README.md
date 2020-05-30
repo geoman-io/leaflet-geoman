@@ -598,19 +598,19 @@ With `map.pm.Toolbar.createCustomControl(options)` you can create a new control.
 | Option        | Default     | Description                                                                                      |
 | :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
 | name          | Required    | Name of the control |
-| tool          | ''          | Section / container of the control. `` ==  `draw`, `edit`, `options`⭐, `custom` |
+| tool          | ''          | Section / container of the control. ` ` == `draw`, `edit`, `options`⭐, `custom` |
 | title         | ''          | Text showing when you hover the control |
 | className     | ''          | CSS class with the Icon |
 | onClick       | -           | Function fired when clicking the control |
 | afterClick    | -           | Function fired after clicking the control |
-| actions       | []          | Action that appears as tooltip. Look under [actions](#actions) for more information |
+| actions       | [ ]          | Action that appears as tooltip. Look under [actions](#actions) for more information |
 | toggle        | true        | Control can be toggled |
 
 **Actions**
 
 You can use the default actions: `cancel`, `removeLastVertex`, `finish`, `finishMode` (Only for modes `Edit`, `Drag`, `Removal`).
 
-Or you can create actions:
+Or you can create own actions:
 
 ```javascript
 var actions = ['cancel', {text: 'Custom text, no click'}, {text: 'Click event', onClick: ()=>{alert('click')}}]
