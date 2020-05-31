@@ -206,6 +206,7 @@ See the available options in the table below.
 | cursorMarker          | `true`                                | show a marker at the cursor                                                                                                                           |
 | finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.2.0.html#interactive-layer-click). |
 | markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
+| editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
 
 You can listen to map events to hook into the drawing procedure like this:
 
@@ -469,6 +470,7 @@ The following options are available globally and apply when going into global ed
 | limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                          |
 | limitMarkersToViewport| `false`    | Shows only markers in the viewport ⭐                                                                  |
 | limitMarkersToClick   | `false`    | Shows markers only after the layer was clicked ⭐                                                      |
+| editable              | `false`    | Makes a `CircleMarker` editable like a `Circle`                                                       |
 
 
 Some details about a few more powerful options:

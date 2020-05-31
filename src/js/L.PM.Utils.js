@@ -1,4 +1,4 @@
-import {createGeodesicPolygon} from "./helpers";
+import {createGeodesicPolygon, getTranslation} from "./helpers";
 
 const Utils = {
   calcMiddleLatLng(map, latlng1, latlng2) {
@@ -31,16 +31,18 @@ const Utils = {
     return layers;
   },
   circleToPolygon(circle,sides = 60) {
-    var origin = circle.getLatLng();
-    var radius = circle.getRadius();
-    var polys = createGeodesicPolygon(origin, radius, sides, 0); //these are the points that make up the circle
-    var polygon = [];
-    for (var i = 0; i < polys.length; i++) {
-      var geometry = [polys[i].lat, polys[i].lng];
+    const origin = circle.getLatLng();
+    const radius = circle.getRadius();
+    const polys = createGeodesicPolygon(origin, radius, sides, 0); // these are the points that make up the circle
+    const polygon = [];
+    for (let i = 0; i < polys.length; i+=1) {
+      const geometry = [polys[i].lat, polys[i].lng];
       polygon.push(geometry);
     }
     return L.polygon(polygon, circle.options);
-  }
+  },
+  createGeodesicPolygon,
+  getTranslation,
 };
 
 export default Utils;
