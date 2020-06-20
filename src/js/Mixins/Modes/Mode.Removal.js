@@ -22,6 +22,7 @@ const GlobalRemovalMode = {
     // handle existing layers
     this.map.eachLayer(layer => {
       if (isRelevant(layer)) {
+        layer.pm.disable();
         layer.on('click', this.removeLayer, this);
       }
     });
@@ -46,13 +47,17 @@ const GlobalRemovalMode = {
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode
-    if (this.globalRemovalEnabled()) {
+    if (this.globalRemovalModeEnabled()) {
       this.disableGlobalRemovalMode();
     } else {
       this.enableGlobalRemovalMode();
     }
   },
+  // TODO: Remove in the next major release
   globalRemovalEnabled() {
+    return this.globalRemovalModeEnabled();
+  },
+  globalRemovalModeEnabled() {
     return !!this._globalRemovalMode;
   },
   removeLayer(e) {
@@ -65,6 +70,7 @@ const GlobalRemovalMode = {
 
     if (removeable) {
       layer.remove();
+      layer.fire('pm:remove', { layer });
       this.map.fire('pm:remove', { layer });
     }
   },
@@ -76,7 +82,7 @@ const GlobalRemovalMode = {
     }
 
     // re-enable global removal mode if it's enabled already
-    if (this.globalRemovalEnabled()) {
+    if (this.globalRemovalModeEnabled()) {
       this.disableGlobalRemovalMode();
       this.enableGlobalRemovalMode();
     }

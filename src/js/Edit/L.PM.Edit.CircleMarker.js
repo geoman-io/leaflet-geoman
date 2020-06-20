@@ -1,6 +1,7 @@
 import Edit from './L.PM.Edit';
 
 Edit.CircleMarker = Edit.extend({
+  _shape: 'CircleMarker',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
@@ -51,6 +52,7 @@ Edit.CircleMarker = Edit.extend({
 
     this.applyOptions();
 
+    this._layer.fire('pm:enable', {layer: this._layer});
     // change state
     this._enabled = true;
 
@@ -67,13 +69,15 @@ Edit.CircleMarker = Edit.extend({
 
     // only fire events if it was enabled before
     if (!this.enabled()) {
-      this._layer.fire('pm:disable');
+      this._layer.fire('pm:disable', {layer: this._layer});
 
       if (this._layerEdited) {
-        this._layer.fire('pm:update', {});
+        this._layer.fire('pm:update', {layer: this._layer});
       }
       this._layerEdited = false;
     }
+
+    this._layer.off('contextmenu', this._removeMarker, this);
 
     layer.pm._enabled = false;
 
@@ -84,16 +88,18 @@ Edit.CircleMarker = Edit.extend({
     this._layer.setLatLng(center).redraw();
   },
   _removeMarker() {
-    this._layer.fire('pm:remove');
     this._layer.remove();
+    this._layer.fire('pm:remove',{ layer: this._layer });
+    this._map.fire('pm:remove', { layer: this._layer });
   },
   _fireEdit() {
     // fire edit event
-    this._layer.fire('pm:edit');
+    this._layer.fire('pm:edit', {layer: this._layer});
     this._layerEdited = true;
   },
   _onMarkerDragEnd(e) {
     this._layer.fire('pm:markerdragend', {
+      layer: this._layer,
       markerEvent: e,
     });
 

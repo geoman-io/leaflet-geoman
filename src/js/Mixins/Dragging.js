@@ -84,7 +84,9 @@ const DragMixin = {
       L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
       // fire pm:dragend event
-      this._layer.fire('pm:dragend');
+      this._layer.fire('pm:dragend',{
+        layer: this._layer,
+      });
 
       // fire edit
       this._fireEdit();
@@ -110,8 +112,11 @@ const DragMixin = {
         this._layer._map.dragging.disable();
       }
 
+
       // fire pm:dragstart event
-      this._layer.fire('pm:dragstart');
+      this._layer.fire('pm:dragstart',{
+        layer: this._layer,
+      });
     }
 
     this._onLayerDrag(e);
@@ -181,6 +186,7 @@ const DragMixin = {
     // save current latlng for next delta calculation
     this._tempDragCoord = latlng;
 
+    e.layer = this._layer;
     // fire pm:dragstart event
     this._layer.fire('pm:drag', e);
   },
