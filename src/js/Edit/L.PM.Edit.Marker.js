@@ -20,7 +20,7 @@ Edit.Marker = Edit.extend({
       this._disableSnapping();
     }
 
-    if (this.options.draggable) {
+    if (this.options.draggable && this._layer.dragging) {
       this._layer.dragging.enable();
     }
 
