@@ -70,6 +70,32 @@ const Draw = L.Class.extend({
       this[shape].addButton();
     });
   },
+  getActiveShape(){
+    // returns the active shape
+    var enabledShape = undefined;
+    this.shapes.forEach(shape => {
+      if(this[shape]._enabled){
+        enabledShape = shape;
+      }
+    });
+    return enabledShape;
+  },
+  _setGlobalDrawMode() {
+    // extended to all PM.Draw shapes
+    if(this._shape === "Cut"){
+      this._map.fire('pm:globalcutmodetoggled', {
+        enabled: !!this._enabled,
+        map: this._map,
+      });
+    }else {
+      this._map.fire('pm:globaldrawmodetoggled', {
+        enabled: this._enabled,
+        shape: this._shape,
+        map: this._map,
+      });
+    }
+  },
+
   createNewDrawInstance(name,jsClass) {
     if(this[name]){
       throw new TypeError(

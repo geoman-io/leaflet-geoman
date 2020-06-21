@@ -3,13 +3,20 @@ const DragMixin = {
     // before enabling layer drag, disable layer editing
     this.disable();
 
+    // if layer never enabled and _map is not set (for snapping)
+    if(!this._map){
+      this._map = this._layer._map;
+    }
+
     if (this._layer instanceof L.Marker) {
       if(this.options.snappable) {
         this._initSnappableMarkers();
       }else{
         this._disableSnapping();
       }
-      this._layer.dragging.enable();
+      if(this._layer.dragging){
+        this._layer.dragging.enable();
+      }
       return;
     }
 
@@ -84,7 +91,9 @@ const DragMixin = {
       L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
       // fire pm:dragend event
-      this._layer.fire('pm:dragend');
+      this._layer.fire('pm:dragend',{
+        layer: this._layer,
+      });
 
       // fire edit
       this._fireEdit();
@@ -110,8 +119,11 @@ const DragMixin = {
         this._layer._map.dragging.disable();
       }
 
+
       // fire pm:dragstart event
-      this._layer.fire('pm:dragstart');
+      this._layer.fire('pm:dragstart',{
+        layer: this._layer,
+      });
     }
 
     this._onLayerDrag(e);
@@ -181,6 +193,7 @@ const DragMixin = {
     // save current latlng for next delta calculation
     this._tempDragCoord = latlng;
 
+    e.layer = this._layer;
     // fire pm:dragstart event
     this._layer.fire('pm:drag', e);
   },

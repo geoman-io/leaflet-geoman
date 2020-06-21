@@ -275,4 +275,40 @@ describe('Modes', () => {
 
     cy.testLayerAdditionPerformance();
   });
+
+
+  it('Test removal when preventMarkerRremoval is passed to global options', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.window().then(({ map }) => {
+      map.pm.toggleGlobalEditMode({
+        preventMarkerRemoval: true
+      });
+    });
+
+    cy.toolbarButton('delete')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 300);
+
+    cy.toolbarButton('delete').click();
+
+    cy.window().then(({ L, map }) => {
+      const layers = map._layers;
+
+      expect(
+        Object.entries(layers).filter(l => l[1] instanceof L.Rectangle).length
+      ).to.equal(0);
+    });
+  });
 });

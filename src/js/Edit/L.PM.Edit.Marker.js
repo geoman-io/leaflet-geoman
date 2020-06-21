@@ -1,6 +1,7 @@
 import Edit from './L.PM.Edit';
 
 Edit.Marker = Edit.extend({
+  _shape: 'Marker',
   initialize(layer) {
     // layer is a marker in this case :-)
     this._layer = layer;
@@ -19,7 +20,7 @@ Edit.Marker = Edit.extend({
       this._disableSnapping();
     }
 
-    if (this.options.draggable) {
+    if (this.options.draggable && this._layer.dragging) {
       this._layer.dragging.enable();
     }
 
@@ -47,6 +48,8 @@ Edit.Marker = Edit.extend({
     }
     this._enabled = true;
 
+    this._layer.fire('pm:enable', {layer: this._layer});
+
     this.applyOptions();
   },
 
@@ -66,10 +69,10 @@ Edit.Marker = Edit.extend({
 
     this._layer.off('dragstart', this._onPinnedMarkerDragStart, this);
 
-    this._layer.fire('pm:disable');
+    this._layer.fire('pm:disable', {layer: this._layer});
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', {});
+      this._layer.fire('pm:update', {layer: this._layer});
     }
     this._layerEdited = false;
   },
@@ -77,13 +80,14 @@ Edit.Marker = Edit.extend({
     const marker = e.target;
     marker.remove();
     // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
-    marker.fire('pm:remove');
+    marker.fire('pm:remove',{layer: marker});
+    this._map.fire('pm:remove', { layer: marker });
   },
   _onDragEnd(e) {
     const marker = e.target;
 
     // fire the pm:edit event and pass shape and marker
-    marker.fire('pm:edit');
+    marker.fire('pm:edit', {layer: this._layer});
     this._layerEdited = true;
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin

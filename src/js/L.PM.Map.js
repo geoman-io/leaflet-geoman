@@ -23,12 +23,19 @@ const Map = L.Class.extend({
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {
+    const oldLang = L.PM.activeLang;
     if (t) {
       translations[lang] = merge(translations[fallback], t);
     }
 
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
+    this.map.fire("pm:langchange", {
+      oldLang,
+      activeLang: lang,
+      fallback,
+      translations: translations[lang]
+    });
   },
   addControls(options) {
     this.Toolbar.addControls(options);
@@ -101,6 +108,21 @@ const Map = L.Class.extend({
       }
     });
   },
+  globalDrawModeEnabled(){
+    return !!this.Draw.getActiveShape();
+  },
+  globalCutModeEnabled(){
+    return !!this.Draw.Cut.enabled();
+  },
+  enableGlobalCutMode(options){
+    return this.Draw.Cut.enable(options);
+  },
+  toggleGlobalCutMode(options){
+    return this.Draw.Cut.toggle(options);
+  },
+  disableGlobalCutMode(){
+    return this.Draw.Cut.disable();
+  }
 
 });
 

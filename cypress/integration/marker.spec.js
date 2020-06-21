@@ -78,4 +78,22 @@ describe('Draw Marker', () => {
       expect($p).to.have.length(4);
     });
   });
+
+
+  it('add interactive:false marker to the map and enable edit', () => {
+    // Adds a interactive Marker to the map and enable / disable the edit mode to check if a error is thrown because it is not draggable
+    cy.window().then(({ map, L }) => {
+      return L.marker([51.505, -0.09], { interactive: false }).addTo(map);
+    }).as('marker');
+
+    cy.toolbarButton('edit').click();
+
+    cy.wait(100);
+
+    cy.toolbarButton('edit').click();
+
+    cy.get('@marker').then( marker  => {
+        marker.removeFrom(marker._map);
+    });
+  });
 });
