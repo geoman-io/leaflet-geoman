@@ -9,7 +9,8 @@ const Edit = L.Class.extend({
     allowSelfIntersection: true,
     allowSelfIntersectionEdit: false,
     draggable: true,
-    limitMarkersToCount: -1
+    limitMarkersToCount: -1,
+    preventMarkerRemoval: false
   },
   setOptions(options) {
     L.Util.setOptions(this, options);

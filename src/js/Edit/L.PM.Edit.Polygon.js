@@ -2,7 +2,8 @@ import Edit from './L.PM.Edit';
 import lineIntersect from "@turf/line-intersect";
 
 Edit.Polygon = Edit.Line.extend({
-    _checkMarkerAllowedToDrag(marker){
+  _shape : 'Polygon',
+  _checkMarkerAllowedToDrag(marker){
         var {prevMarker,nextMarker } = this._getNeighborMarkers(marker);
 
         var prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);

@@ -1,6 +1,7 @@
 import Edit from './L.PM.Edit';
 
 Edit.Circle = Edit.extend({
+  _shape: 'Circle',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
@@ -55,6 +56,8 @@ Edit.Circle = Edit.extend({
 
     this.applyOptions();
 
+    this._layer.fire('pm:enable', {layer: this._layer});
+
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', e => {
       this.disable(e.target);
@@ -81,10 +84,10 @@ Edit.Circle = Edit.extend({
     const el = layer._path ? layer._path : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
-    this._layer.fire('pm:disable');
+    this._layer.fire('pm:disable', {layer: this._layer});
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', {});
+      this._layer.fire('pm:update', {layer: this._layer});
     }
     this._layerEdited = false;
 
@@ -143,6 +146,7 @@ Edit.Circle = Edit.extend({
   },
   _onMarkerDragStart(e) {
     this._layer.fire('pm:markerdragstart', {
+      layer: this._layer,
       markerEvent: e,
     });
   },
@@ -152,6 +156,7 @@ Edit.Circle = Edit.extend({
 
     // fire markerdragend event
     this._layer.fire('pm:markerdragend', {
+      layer: this._layer,
       markerEvent: e,
     });
   },
@@ -213,7 +218,7 @@ Edit.Circle = Edit.extend({
   },
   _fireEdit() {
     // fire edit event
-    this._layer.fire('pm:edit');
+    this._layer.fire('pm:edit', {layer: this._layer});
     this._layerEdited = true;
   },
 });

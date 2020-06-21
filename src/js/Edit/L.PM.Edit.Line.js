@@ -17,6 +17,7 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 
 Edit.Line = Edit.extend({
   includes: [MarkerLimits],
+  _shape: 'Line',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
@@ -63,6 +64,8 @@ Edit.Line = Edit.extend({
     this._initMarkers();
 
     this.applyOptions();
+
+    this._layer.fire('pm:enable', {layer: this._layer});
 
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
@@ -130,10 +133,10 @@ Edit.Line = Edit.extend({
       L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
     }
 
-    this._layer.fire('pm:disable');
+    this._layer.fire('pm:disable', {layer: this._layer});
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', {});
+      this._layer.fire('pm:update', {layer: this._layer});
     }
     this._layerEdited = false;
 
@@ -188,6 +191,7 @@ Edit.Line = Edit.extend({
 
       // fire intersect event
       this._layer.fire('pm:intersect', {
+        layer: this._layer,
         intersection: kinks(this._layer.toGeoJSON(15)),
       });
     } else {
@@ -624,6 +628,13 @@ Edit.Line = Edit.extend({
   _onMarkerDragEnd(e) {
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
+
+    this._layer.fire('pm:markerdragend', {
+      layer: this._layer,
+      markerEvent: e,
+      indexPath,
+    });
+
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
     var intersection = this.hasSelfIntersection();
@@ -648,11 +659,6 @@ Edit.Line = Edit.extend({
     }
 
 
-    this._layer.fire('pm:markerdragend', {
-      markerEvent: e,
-      indexPath,
-    });
-
     // fire edit event
     this._fireEdit();
   },
@@ -661,6 +667,7 @@ Edit.Line = Edit.extend({
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
     this._layer.fire('pm:markerdragstart', {
+      layer: this._layer,
       markerEvent: e,
       indexPath,
     });
@@ -709,6 +716,6 @@ Edit.Line = Edit.extend({
   _fireEdit() {
     // fire edit event
     this._layerEdited = true;
-    this._layer.fire('pm:edit');
+    this._layer.fire('pm:edit', {layer: this._layer});
   },
 });

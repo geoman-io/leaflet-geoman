@@ -4,6 +4,7 @@
 import Edit from './L.PM.Edit';
 
 Edit.Rectangle = Edit.Polygon.extend({
+  _shape : 'Rectangle',
   // initializes Rectangle Markers
   _initMarkers() {
     const map = this._map;
@@ -77,6 +78,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     draggedMarker._snapped = false;
 
     this._layer.fire('pm:markerdragstart', {
+      layer: this._layer,
       markerEvent: e,
     });
   },
@@ -111,6 +113,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     this._layer.setLatLngs(corners);
 
     this._layer.fire('pm:markerdragend', {
+      layer: this._layer,
       markerEvent: e,
     });
 

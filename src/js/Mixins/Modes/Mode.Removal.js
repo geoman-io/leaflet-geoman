@@ -16,13 +16,13 @@ const GlobalRemovalMode = {
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
       layer.pm &&
-      !(layer.pm.options && layer.pm.options.preventMarkerRemoval) &&
       !(layer instanceof L.LayerGroup);
 
     this._globalRemovalMode = true;
     // handle existing layers
     this.map.eachLayer(layer => {
       if (isRelevant(layer)) {
+        layer.pm.disable();
         layer.on('click', this.removeLayer, this);
       }
     });
@@ -47,13 +47,17 @@ const GlobalRemovalMode = {
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode
-    if (this.globalRemovalEnabled()) {
+    if (this.globalRemovalModeEnabled()) {
       this.disableGlobalRemovalMode();
     } else {
       this.enableGlobalRemovalMode();
     }
   },
+  // TODO: Remove in the next major release
   globalRemovalEnabled() {
+    return this.globalRemovalModeEnabled();
+  },
+  globalRemovalModeEnabled() {
     return !!this._globalRemovalMode;
   },
   removeLayer(e) {
@@ -66,18 +70,19 @@ const GlobalRemovalMode = {
 
     if (removeable) {
       layer.remove();
+      layer.fire('pm:remove', { layer });
       this.map.fire('pm:remove', { layer });
     }
   },
   reinitGlobalRemovalMode({ layer }) {
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily	
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
     const isRelevant = !!layer.pm && !layer._pmTempLayer;
     if (!isRelevant) {
       return;
     }
 
     // re-enable global removal mode if it's enabled already
-    if (this.globalRemovalEnabled()) {
+    if (this.globalRemovalModeEnabled()) {
       this.disableGlobalRemovalMode();
       this.enableGlobalRemovalMode();
     }
