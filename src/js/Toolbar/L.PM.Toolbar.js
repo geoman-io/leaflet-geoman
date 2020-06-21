@@ -16,6 +16,7 @@ const Toolbar = L.Class.extend({
     dragMode: true,
     cutPolygon: true,
     removalMode: true,
+    mergeMode: true,
     snappingOption: true,
     position: 'topleft',
   },
@@ -91,6 +92,7 @@ const Toolbar = L.Class.extend({
         dragMode: 'control-icon leaflet-pm-icon-drag',
         cutPolygon: 'control-icon leaflet-pm-icon-cut',
         removalMode: 'control-icon leaflet-pm-icon-delete',
+        mergeMode: 'control-icon leaflet-pm-icon-merge',
       },
     };
 
@@ -333,6 +335,21 @@ const Toolbar = L.Class.extend({
       actions: ['finishMode'],
     };
 
+    const mergeButton = {
+      title: getTranslation('buttonTitles.mergeButton'),
+      className: 'control-icon leaflet-pm-icon-merge',
+      onClick: () => { },
+      afterClick: () => {
+        this.map.pm.toggleGlobalMergeMode();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      tool: 'edit',
+      actions: ['finishMode'],
+    };
+
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
     this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
@@ -343,6 +360,7 @@ const Toolbar = L.Class.extend({
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
     this._addButton('removalMode', new L.Control.PMButton(deleteButton));
+    this._addButton('mergeMode', new L.Control.PMButton(mergeButton));
   },
 
   _showHideButtons() {
