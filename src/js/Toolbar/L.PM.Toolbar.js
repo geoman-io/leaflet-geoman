@@ -441,12 +441,13 @@ const Toolbar = L.Class.extend({
     this.changeControlOrder();
   },
 
-  changeControlOrder(_order = []){
+  changeControlOrder(order = []){
 
     const shapeMapping = {
       "Marker": "drawMarker",
       "Circle": "drawCircle",
       "Polygon": "drawPolygon",
+      "Rectangle": "drawRectangle",
       "Polyline": "drawPolyline",
       "Line": "drawPolyline",
       "CircleMarker": "drawCircleMarker",
@@ -456,12 +457,12 @@ const Toolbar = L.Class.extend({
       "Removal": "removalMode"
     };
 
-    const order = [];
-    _order.forEach((shape)=>{
+    const _order = [];
+    order.forEach((shape)=>{
       if(shapeMapping[shape]){
-        order.push(shapeMapping[shape]);
+        _order.push(shapeMapping[shape]);
       }else{
-        order.push(shape);
+        _order.push(shape);
       }
     });
 
@@ -471,7 +472,7 @@ const Toolbar = L.Class.extend({
 
     // This steps are needed to create a new Object which contains the buttons in the correct sorted order.
     const newbtnorder = {};
-    order.forEach((control)=>{
+    _order.forEach((control)=>{
       if(buttons[control]) {
         newbtnorder[control] = buttons[control];
       }
@@ -479,31 +480,31 @@ const Toolbar = L.Class.extend({
 
     const drawBtns = Object.keys(buttons).filter(btn => !buttons[btn]._button.tool);
     drawBtns.forEach((btn)=>{
-      if(order.indexOf(btn) === -1) {
+      if(_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
     const editBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "edit");
     editBtns.forEach((btn)=>{
-      if(order.indexOf(btn) === -1) {
+      if(_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
     const optionsBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "options");
     optionsBtns.forEach((btn)=>{
-      if(order.indexOf(btn) === -1) {
+      if(_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
     const customBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "custom");
     customBtns.forEach((btn)=>{
-      if(order.indexOf(btn) === -1) {
+      if(_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
     // To add all other buttons they are not in a container from above (maybe added manually by a developer)
     Object.keys(buttons).forEach((btn)=>{
-      if(order.indexOf(btn) === -1) {
+      if(_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
