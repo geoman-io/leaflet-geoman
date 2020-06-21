@@ -286,6 +286,7 @@ See the available options in the table below.
 | snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |
 | pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                   |
 | allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
+| allowSelfIntersectionEdit | `false`  | Allow/Disallow to change vertices they are connected to a intersecting line. Only working if allowSelfIntersection is `true` and the layer is already self-intersecting while enabling edit mode.                                         |
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
 | limitMarkersToCount   | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |
 | limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                           |

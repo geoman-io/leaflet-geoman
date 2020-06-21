@@ -498,4 +498,58 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('edit').click();
   });
+
+
+  it('allowSelfIntersectionEdit on polygon', () => {
+
+    cy.window().then(({ map, L,Hand }) => {
+      cy.fixture("PolygonIntersects")
+        .then(json => {
+          const layer = L.geoJSON(json).getLayers()[0].addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+          console.log(map.getCenter());
+          return layer;
+        })
+        .as('poly');
+
+      cy.get("@poly").then((poly)=>{
+
+        expect(poly.pm.hasSelfIntersection()).to.equal(true);
+        var hand_selfIntersectionTrue = new Hand({
+          timing: 'frame',
+          onStop: function () {
+            expect(poly.pm.hasSelfIntersection()).to.equal(true);
+
+            var toucher_selfIntersectionFalse = hand_selfIntersectionFalse.growFinger('mouse');
+            toucher_selfIntersectionFalse.wait(100).moveTo(504, 337, 100).down().wait(500).moveTo(780, 259, 400).up().wait(100) //allowed
+            //No intersection anymore
+              .moveTo(294, 114, 100).down().wait(500).moveTo(752, 327, 800).up().wait(500) //Not allowed
+          }
+        });
+        var hand_selfIntersectionFalse = new Hand({
+          timing: 'frame',
+          onStop: function () {
+            expect(poly.pm.hasSelfIntersection()).to.equal(false);
+
+            //Map shouldn't be dragged
+            var center = map.getCenter();
+            expect(center.lat).to.equal(48.77492609799526);
+            expect(center.lng).to.equal(4.847301999999988);
+
+          }
+        });
+
+        cy.wait(1000);
+
+        map.pm.enableGlobalEditMode({ allowSelfIntersection: false,  allowSelfIntersectionEdit: true, });
+
+        var toucher_selfIntersectionTrue = hand_selfIntersectionTrue.growFinger('mouse');
+        toucher_selfIntersectionTrue.wait(100).moveTo(294, 114, 100).down().wait(500).moveTo(782, 127, 400).up().wait(100) //Not allowed
+        .moveTo(313, 345, 100).down().wait(500).moveTo(256, 311, 400).up().wait(100) //allowed
+        .moveTo(317, 252, 100).down().wait(500).moveTo(782, 127, 400).up().wait(500); //allowed
+
+      })
+    });
+  });
 });
