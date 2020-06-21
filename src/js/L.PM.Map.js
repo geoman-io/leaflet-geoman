@@ -6,11 +6,12 @@ import Utils from './L.PM.Utils'
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
+import GlobalMergeMode from './Mixins/Modes/Mode.Merge';
 
 const { findLayers } = Utils
 
 const Map = L.Class.extend({
-  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode],
+  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode, GlobalMergeMode],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);
