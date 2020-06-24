@@ -94,7 +94,7 @@
   .leaflet-pm-toolbar
   .button-container
   .leaflet-pm-actions-container {
-  right: 31px;
+  right: 100%;
   left: auto;
 }
 
