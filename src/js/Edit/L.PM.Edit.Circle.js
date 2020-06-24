@@ -1,4 +1,5 @@
 import Edit from './L.PM.Edit';
+import Utils from "../L.PM.Utils";
 
 Edit.Circle = Edit.extend({
   _shape: 'Circle',
@@ -62,6 +63,9 @@ Edit.Circle = Edit.extend({
     this._layer.on('remove', e => {
       this.disable(e.target);
     });
+    // create polygon around the circle border
+    this._updateHiddenPolyCircle();
+
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -80,7 +84,6 @@ Edit.Circle = Edit.extend({
 
     layer.pm._enabled = false;
     layer.pm._helperLayers.clearLayers();
-
     // clean up draggable
     layer.off('mousedown');
     layer.off('mouseup');
@@ -144,6 +147,8 @@ Edit.Circle = Edit.extend({
     this._outerMarker.setLatLng(outer);
     this._syncHintLine();
 
+    this._updateHiddenPolyCircle();
+
     this._layer.fire('pm:centerplaced', {
       layer: this._layer,
       latlng: center,
@@ -172,6 +177,7 @@ Edit.Circle = Edit.extend({
     const distance = A.distanceTo(B);
 
     this._layer.setRadius(distance);
+    this._updateHiddenPolyCircle();
   },
   _syncHintLine() {
     const A = this._centerMarker.getLatLng();
@@ -238,5 +244,16 @@ Edit.Circle = Edit.extend({
   },
   _fireDragEnd(){
     this._layer.fire('pm:dragend');
+  },
+  _updateHiddenPolyCircle(){
+    if(this._hiddenPolyCircle) {
+      this._hiddenPolyCircle.setLatLngs(Utils.circleToPolygon(this._layer, 200).getLatLngs());
+    }else{
+      this._hiddenPolyCircle = Utils.circleToPolygon(this._layer,200);
+    }
+
+    if(!this._hiddenPolyCircle._parentCopy){
+      this._hiddenPolyCircle._parentCopy = this._layer
+    }
   }
 });
