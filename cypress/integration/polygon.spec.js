@@ -174,6 +174,27 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(4);
   });
 
+
+  it('prevent creation while self intersection', () => {
+
+    cy.window().then(({ map }) => {
+      map.pm.enableDraw('Polygon', {
+        allowSelfIntersection: false,
+      });
+    });
+
+    cy.get(mapSelector)
+      .click(470,100)
+      .click(320,220)
+      .click(600,220)
+      .click(470, 350)
+      .click(470,100);
+
+    cy.toolbarButton('polygon').click();
+
+    cy.hasLayers(2);
+  });
+
   it('removes last vertex', () => {
     cy.toolbarButton('polygon').click();
 
