@@ -453,6 +453,8 @@ describe('Draw & Edit Poly', () => {
       .click(390, 100)
       .click(450, 100);
 
+    cy.hasLayers(3);
+
     // enable global edit mode
     cy.toolbarButton('edit')
       .click()
