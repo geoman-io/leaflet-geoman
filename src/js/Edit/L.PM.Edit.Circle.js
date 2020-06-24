@@ -73,6 +73,11 @@ Edit.Circle = Edit.extend({
     if (layer.pm._dragging) {
       return false;
     }
+
+    this._centerMarker.off('dragstart',this._fireDragStart,this);
+    this._centerMarker.off('drag',this._fireDrag,this);
+    this._centerMarker.off('dragend',this._fireDragEnd,this);
+
     layer.pm._enabled = false;
     layer.pm._helperLayers.clearLayers();
 
@@ -189,6 +194,10 @@ Edit.Circle = Edit.extend({
     // TODO: switch back to move event once this leaflet issue is solved:
     // https://github.com/Leaflet/Leaflet/issues/6492
     marker.on('drag', this._moveCircle, this);
+
+    marker.on('dragstart',this._fireDragStart,this);
+    marker.on('drag',this._fireDrag,this);
+    marker.on('dragend',this._fireDragEnd,this);
     // marker.on('contextmenu', this._removeMarker, this);
 
     return marker;
@@ -221,4 +230,13 @@ Edit.Circle = Edit.extend({
     this._layer.fire('pm:edit', {layer: this._layer});
     this._layerEdited = true;
   },
+  _fireDragStart(){
+    this._layer.fire('pm:dragstart');
+  },
+  _fireDrag(e){
+    this._layer.fire('pm:drag',e);
+  },
+  _fireDragEnd(){
+    this._layer.fire('pm:dragend');
+  }
 });
