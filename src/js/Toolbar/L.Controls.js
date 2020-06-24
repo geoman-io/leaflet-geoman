@@ -61,6 +61,8 @@ const PMButton = L.Control.extend({
     this._button.afterClick(e);
   },
   _makeButton(button) {
+    var pos = this.options.position.indexOf("right") > -1 ? "pos-right" : "";
+
     // button container
     const buttonContainer = L.DomUtil.create(
       'div',
@@ -78,7 +80,7 @@ const PMButton = L.Control.extend({
     // the buttons actions
     const actionContainer = L.DomUtil.create(
       'div',
-      'leaflet-pm-actions-container',
+      'leaflet-pm-actions-container '+pos,
       buttonContainer
     );
 
@@ -115,7 +117,7 @@ const PMButton = L.Control.extend({
       const action = actions[name];
       const actionNode = L.DomUtil.create(
         'a',
-        `leaflet-pm-action action-${name}`,
+        `leaflet-pm-action ${pos} action-${name}`,
         actionContainer
       );
 

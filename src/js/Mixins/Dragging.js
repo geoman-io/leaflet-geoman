@@ -3,6 +3,11 @@ const DragMixin = {
     // before enabling layer drag, disable layer editing
     this.disable();
 
+    // if layer never enabled and _map is not set (for snapping)
+    if(!this._map){
+      this._map = this._layer._map;
+    }
+
     if (this._layer instanceof L.Marker) {
       this._layer.on('dragstart',this._fireDragStart,this);
       this._layer.on('drag',this._fireDrag,this);
@@ -13,7 +18,7 @@ const DragMixin = {
       }else{
         this._disableSnapping();
       }
-      if(this._layer.dragging) {
+      if(this._layer.dragging){
         this._layer.dragging.enable();
       }
       return;
@@ -121,6 +126,7 @@ const DragMixin = {
         this._layer._map.dragging.disable();
       }
 
+
       // fire pm:dragstart event
       this._fireDragStart();
     }
@@ -192,17 +198,22 @@ const DragMixin = {
     // save current latlng for next delta calculation
     this._tempDragCoord = latlng;
 
+    e.layer = this._layer;
     // fire pm:dragstart event
     this._fireDrag(e);
   },
   _fireDragStart(){
-    this._layer.fire('pm:dragstart');
+    this._layer.fire('pm:dragstart',{
+      layer: this._layer,
+    });
   },
   _fireDrag(e){
     this._layer.fire('pm:drag',e);
   },
   _fireDragEnd(){
-    this._layer.fire('pm:dragend');
+    this._layer.fire('pm:dragend',{
+      layer: this._layer,
+    });
   },
   addDraggingClass(){
     const el = this._layer._path

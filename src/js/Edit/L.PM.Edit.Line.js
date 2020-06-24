@@ -1,4 +1,5 @@
 import kinks from '@turf/kinks';
+import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
@@ -16,6 +17,7 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 
 Edit.Line = Edit.extend({
   includes: [MarkerLimits],
+  _shape: 'Line',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
@@ -63,6 +65,8 @@ Edit.Line = Edit.extend({
 
     this.applyOptions();
 
+    this._layer.fire('pm:enable', {layer: this._layer});
+
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
 
@@ -74,6 +78,7 @@ Edit.Line = Edit.extend({
       );
     }
 
+    this.cachedColor = undefined;
     if (!this.options.allowSelfIntersection) {
       this.cachedColor = this._layer.options.color;
 
@@ -102,6 +107,7 @@ Edit.Line = Edit.extend({
     }
     poly.pm._enabled = false;
     poly.pm._markerGroup.clearLayers();
+    poly.pm._markerGroup.removeFrom(this._map);
 
     // clean up draggable
     poly.off('mousedown');
@@ -128,10 +134,10 @@ Edit.Line = Edit.extend({
       L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
     }
 
-    this._layer.fire('pm:disable');
+    this._layer.fire('pm:disable', {layer: this._layer});
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', {});
+      this._layer.fire('pm:update', {layer: this._layer});
     }
     this._layerEdited = false;
 
@@ -162,6 +168,10 @@ Edit.Line = Edit.extend({
     const layer = this._layer;
 
     if (this.hasSelfIntersection()) {
+      if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+        this._updateDisabledMarkerStyle(this._markers, true);
+      }
+
       if (this.isRed) {
         return;
       }
@@ -182,13 +192,32 @@ Edit.Line = Edit.extend({
 
       // fire intersect event
       this._layer.fire('pm:intersect', {
+        layer: this._layer,
         intersection: kinks(this._layer.toGeoJSON(15)),
       });
     } else {
       // if not, reset the style to the default color
       layer.setStyle({ color: this.cachedColor });
       this.isRed = false;
+      if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+        this._updateDisabledMarkerStyle(this._markers, false);
+      }
     }
+  },
+  _updateDisabledMarkerStyle(markers, disabled){
+    markers.forEach((marker)=>{
+      if (Array.isArray(marker)) {
+        return this._updateDisabledMarkerStyle(marker, disabled);
+      }
+
+      if(marker._icon){
+        if(disabled && !this._checkMarkerAllowedToDrag(marker)) {
+            L.DomUtil.addClass(marker._icon, "vertexmarker-disabled");
+        }else{
+          L.DomUtil.removeClass(marker._icon, "vertexmarker-disabled");
+        }
+      }
+    });
   },
 
   _initMarkers() {
@@ -512,6 +541,26 @@ Edit.Line = Edit.extend({
     this._layer.setLatLngs(coords);
   },
 
+  _getNeighborMarkers(marker){
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+        this._markers,
+        marker
+    );
+
+    // the markers neighbors
+    const markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
+
+    // find the indizes of next and previous markers
+    const nextMarkerIndex = (index + 1) % markerArr.length;
+    const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+
+
+    // get prev and next marker
+    const prevMarker = markerArr[prevMarkerIndex];
+    const nextMarker = markerArr[nextMarkerIndex];
+
+    return {prevMarker: prevMarker, nextMarker: nextMarker};
+  },
   _onMarkerDrag(e) {
     // dragged marker
     const marker = e.target;
@@ -524,6 +573,15 @@ Edit.Line = Edit.extend({
     // only continue if this is NOT a middle marker
     if (!indexPath) {
       return;
+    }
+
+    if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection() && this._markerAllowedToDrag === false) {
+        this._layer.setLatLngs(this._coordsBeforeEdit);
+        // re-enable markers for the new coords
+        this._initMarkers();
+        // check for selfintersection again (mainly to reset the style)
+        this._handleLayerStyle();
+        return;
     }
 
     this.updatePolygonCoordsFromMarkerDrag(marker);
@@ -572,9 +630,20 @@ Edit.Line = Edit.extend({
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
+    this._layer.fire('pm:markerdragend', {
+      layer: this._layer,
+      markerEvent: e,
+      indexPath,
+    });
+
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
-    if (!this.options.allowSelfIntersection && this.hasSelfIntersection()) {
+    var intersection = this.hasSelfIntersection();
+    if(intersection && this.options.allowSelfIntersectionEdit && this._markerAllowedToDrag) {
+      intersection = false;
+    }
+
+    if (!this.options.allowSelfIntersection && intersection) {
       // reset coordinates
       this._layer.setLatLngs(this._coordsBeforeEdit);
       this._coordsBeforeEdit = null;
@@ -586,11 +655,10 @@ Edit.Line = Edit.extend({
       this._handleLayerStyle();
       return;
     }
+    if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+      this._handleLayerStyle();
+    }
 
-    this._layer.fire('pm:markerdragend', {
-      markerEvent: e,
-      indexPath,
-    });
 
     // fire edit event
     this._fireEdit();
@@ -600,6 +668,7 @@ Edit.Line = Edit.extend({
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
     this._layer.fire('pm:markerdragstart', {
+      layer: this._layer,
       markerEvent: e,
       indexPath,
     });
@@ -610,12 +679,44 @@ Edit.Line = Edit.extend({
       this._coordsBeforeEdit = this._layer.getLatLngs();
     }
 
-    this.cachedColor = this._layer.options.color;
-  },
+    // When intersection is true while calling enable(), the cachedColor is already set
+    if (!this.cachedColor) {
+      this.cachedColor = this._layer.options.color;
+    }
 
+
+    if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
+      this._markerAllowedToDrag = this._checkMarkerAllowedToDrag(marker);
+    }else{
+      this._markerAllowedToDrag = null;
+    }
+  },
+  _checkMarkerAllowedToDrag(marker){
+    var {prevMarker,nextMarker } = this._getNeighborMarkers(marker);
+
+    var prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
+    var nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+
+    var prevLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), prevLine.toGeoJSON(15)).features.length;
+    var nextLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), nextLine.toGeoJSON(15)).features.length;
+
+    //The first and last line has one intersection fewer because they are not connect
+    if(marker.getLatLng() === this._markers[0][0].getLatLng()){
+      nextLineIntersectionLen++;
+    }else if(marker.getLatLng() === this._markers[0][this._markers[0].length-1].getLatLng()){
+      prevLineIntersectionLen++;
+    }
+
+    // <= 2 the start and end point of the line always intersecting because they have the same coords.
+    if (prevLineIntersectionLen <= 2 && nextLineIntersectionLen <= 2) {
+      return false;
+    } else {
+      return true;
+    }
+  },
   _fireEdit() {
     // fire edit event
     this._layerEdited = true;
-    this._layer.fire('pm:edit');
+    this._layer.fire('pm:edit', {layer: this._layer});
   },
 });

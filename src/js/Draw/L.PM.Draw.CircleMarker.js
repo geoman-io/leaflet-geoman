@@ -51,6 +51,7 @@ Draw.CircleMarker = Draw.Marker.extend({
       shape: this._shape,
       workingLayer: this._layer,
     });
+    this._setGlobalDrawMode();
 
     // enable edit mode for existing markers
     this._map.eachLayer(layer => {
