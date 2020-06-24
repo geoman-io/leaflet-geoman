@@ -1,4 +1,5 @@
 import Edit from './L.PM.Edit';
+import Utils from "../L.PM.Utils";
 
 Edit.Circle = Edit.extend({
   _shape: 'Circle',
@@ -62,6 +63,9 @@ Edit.Circle = Edit.extend({
     this._layer.on('remove', e => {
       this.disable(e.target);
     });
+    // create polygon around the circle border
+    this._updateHiddenPolyCircle();
+
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -73,9 +77,13 @@ Edit.Circle = Edit.extend({
     if (layer.pm._dragging) {
       return false;
     }
+
+    this._centerMarker.off('dragstart',this._fireDragStart,this);
+    this._centerMarker.off('drag',this._fireDrag,this);
+    this._centerMarker.off('dragend',this._fireDragEnd,this);
+
     layer.pm._enabled = false;
     layer.pm._helperLayers.clearLayers();
-
     // clean up draggable
     layer.off('mousedown');
     layer.off('mouseup');
@@ -139,6 +147,8 @@ Edit.Circle = Edit.extend({
     this._outerMarker.setLatLng(outer);
     this._syncHintLine();
 
+    this._updateHiddenPolyCircle();
+
     this._layer.fire('pm:centerplaced', {
       layer: this._layer,
       latlng: center,
@@ -167,6 +177,7 @@ Edit.Circle = Edit.extend({
     const distance = A.distanceTo(B);
 
     this._layer.setRadius(distance);
+    this._updateHiddenPolyCircle();
   },
   _syncHintLine() {
     const A = this._centerMarker.getLatLng();
@@ -189,6 +200,10 @@ Edit.Circle = Edit.extend({
     // TODO: switch back to move event once this leaflet issue is solved:
     // https://github.com/Leaflet/Leaflet/issues/6492
     marker.on('drag', this._moveCircle, this);
+
+    marker.on('dragstart',this._fireDragStart,this);
+    marker.on('drag',this._fireDrag,this);
+    marker.on('dragend',this._fireDragEnd,this);
     // marker.on('contextmenu', this._removeMarker, this);
 
     return marker;
@@ -221,4 +236,24 @@ Edit.Circle = Edit.extend({
     this._layer.fire('pm:edit', {layer: this._layer});
     this._layerEdited = true;
   },
+  _fireDragStart(){
+    this._layer.fire('pm:dragstart');
+  },
+  _fireDrag(e){
+    this._layer.fire('pm:drag',e);
+  },
+  _fireDragEnd(){
+    this._layer.fire('pm:dragend');
+  },
+  _updateHiddenPolyCircle(){
+    if(this._hiddenPolyCircle) {
+      this._hiddenPolyCircle.setLatLngs(Utils.circleToPolygon(this._layer, 200).getLatLngs());
+    }else{
+      this._hiddenPolyCircle = Utils.circleToPolygon(this._layer,200);
+    }
+
+    if(!this._hiddenPolyCircle._parentCopy){
+      this._hiddenPolyCircle._parentCopy = this._layer
+    }
+  }
 });

@@ -115,4 +115,30 @@ describe('Draw Circle Marker', () => {
 
     cy.hasCircleLayers(0);
   });
+
+
+  it('draw a CircleMarker like a Circle', () => {
+    cy.window().then(({ map}) => {
+      map.pm.setGlobalOptions({editable: true});
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(250, 250);
+
+    cy.hasCircleLayers(1);
+
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(2);
+  });
 });
