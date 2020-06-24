@@ -107,6 +107,7 @@ Edit.Line = Edit.extend({
     }
     poly.pm._enabled = false;
     poly.pm._markerGroup.clearLayers();
+    poly.pm._markerGroup.removeFrom(this._map);
 
     // clean up draggable
     poly.off('mousedown');
