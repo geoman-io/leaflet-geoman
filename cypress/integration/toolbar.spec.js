@@ -201,7 +201,7 @@ describe('Testing the Toolbar', () => {
       // Click button -> toggle disabled
       map.pm.Toolbar.createCustomControl({
         name: "clickButton",
-        tool: "custom",
+        block: "custom",
         className: "leaflet-pm-icon-marker",
         title: "Count layers",
         onClick: () => {
@@ -229,28 +229,22 @@ describe('Testing the Toolbar', () => {
       let testresult = "";
       let testlayer;
 
-      // New Instance of Polygon Button
-      // It's very important that the name of the instance createNewDrawInstance(name, ...) is the same in createCustomControl(name, ...)
-      const poly = map.pm.Draw.createNewDrawInstance("Polygon2", "Polygon");
-      poly.setPathOptions({color: 'red'});
-      const afterClick = () => {
-        poly.toggle();
-      };
+      // Copy of Polygon Button
       const actions = ['cancel', {text: 'Custom text, no click'}, {
         text: 'Click event', onClick: () => {
           testresult = 'click';
         }
       }];
-      map.pm.Toolbar.createCustomControl({
-        name: "Polygon2",
-        tool: "custom",
+      map.pm.Toolbar.copyDrawControl("Polygon", {
+        name: "PolygonCopy",
+        block: "custom",
         className: "leaflet-pm-icon-polygon",
         title: "Display text on hover button",
-        afterClick,
         actions
       });
+      map.pm.Draw.PolygonCopy.setPathOptions({color :'red'});
 
-      cy.toolbarButtonContainer('Polygon2', map).then((container) => {
+      cy.toolbarButtonContainer('PolygonCopy', map).then((container) => {
         cy.get(container[0].children[0].children[0]).should('have.attr', 'title').and('include', 'Display text on hover button');
         cy.get(container[0].children[0]).click(); // button
         cy.get(container).should('have.class', 'active');
@@ -266,7 +260,7 @@ describe('Testing the Toolbar', () => {
         cy.get(actions[0]).click();
         cy.get(container).should('not.have.class', 'active');
         cy.window().then(({map, L}) => {
-          map.pm.enableDraw('Polygon2');
+          map.pm.enableDraw('PolygonCopy');
           map.on('pm:create', (e) => {
             e.layer.on('click', (l) => testlayer = l.target)
           })
@@ -304,7 +298,7 @@ describe('Testing the Toolbar', () => {
   });
 
 
-  it.only('Custom Controls - One Block', () => {
+  it('Custom Controls - One Block', () => {
     cy.window().then(({map}) => {
       map.pm.addControls({
         oneBlock: true

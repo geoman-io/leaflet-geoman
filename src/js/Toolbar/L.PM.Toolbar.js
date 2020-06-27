@@ -189,9 +189,9 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawMarkerButton'),
       jsClass: 'Marker',
       onClick: () => { },
-      afterClick: () => {
+      afterClick: (e,ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw.Marker.toggle();
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -205,9 +205,9 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-polygon',
       jsClass: 'Polygon',
       onClick: () => { },
-      afterClick: () => {
+      afterClick: (e,ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw.Polygon.toggle();
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -221,9 +221,9 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawLineButton'),
       jsClass: 'Line',
       onClick: () => { },
-      afterClick: () => {
+      afterClick: (e,ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw.Line.toggle();
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -237,9 +237,9 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-circle',
       jsClass: 'Circle',
       onClick: () => { },
-      afterClick: () => {
+      afterClick: (e,ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw.Circle.toggle();
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -253,9 +253,9 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-circle-marker',
       jsClass: 'CircleMarker',
       onClick: () => { },
-      afterClick: () => {
+      afterClick: (e,ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw.CircleMarker.toggle();
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -269,9 +269,9 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-rectangle',
       jsClass: 'Rectangle',
       onClick: () => { },
-      afterClick: () => {
+      afterClick: (e,ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw.Rectangle.toggle();
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -315,9 +315,9 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-cut',
       jsClass: 'Cut',
       onClick: () => { },
-      afterClick: () => {
+      afterClick: (e,ctx) => {
         // enable polygon drawing mode without snap
-        this.map.pm.Draw.Cut.toggle({
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle({
           snappable: true,
           cursorMarker: true,
           allowSelfIntersection: false,
@@ -386,10 +386,51 @@ const Toolbar = L.Class.extend({
       }
     }
   },
+  copyDrawControl(copyInstance, options){
 
-  // createCustomControl(name,tool,className,title, onClick, afterClick, actions, toggle){
+    if(!options){
+      throw new TypeError(
+        "Button has no name"
+      );
+    }else if(typeof options !== 'object') { // if only the name is passed and no options object
+      options = {name: options};
+    }
+
+    const shapeMapping = {
+      "Marker": "drawMarker",
+      "Circle": "drawCircle",
+      "Polygon": "drawPolygon",
+      "Rectangle": "drawRectangle",
+      "Polyline": "drawPolyline",
+      "Line": "drawPolyline",
+      "CircleMarker": "drawCircleMarker",
+      "Edit": "editMode",
+      "Drag": "dragMode",
+      "Cut": "cutPoylgon",
+      "Removal": "removalMode"
+    };
+
+    const instance = shapeMapping[copyInstance] ? shapeMapping[copyInstance] : copyInstance;
+
+    if(!options.name){
+      throw new TypeError(
+        "Button has no name"
+      );
+    }
+
+    if(this.buttons[options.name]){
+      throw new TypeError(
+        "Button with this name already exists"
+      )
+    }
+    const drawInstance = this.map.pm.Draw.createNewDrawInstance(options.name,instance);
+
+    const btn = this.buttons[instance]._button;
+    options = Object.assign({},btn, options);
+    const control = this.createCustomControl(options);
+    return {drawInstance, control};
+  },
   createCustomControl(options){
-
     if(!options.name){
       throw new TypeError(
         "Button has no name"
@@ -411,16 +452,20 @@ const Toolbar = L.Class.extend({
       options.toggle = true;
     }
 
-    if(options.tool) {
-      options.tool = options.tool.toLowerCase();
+    if(options.block) {
+      options.block = options.block.toLowerCase();
     }
-    if (!options.tool || options.tool === "draw") {
-      options.tool = "";
+    if (!options.block || options.block === "draw") {
+      options.block = "";
+    }
+
+    if(options.className.indexOf('control-icon') === -1){
+      options.className = `control-icon ${options.className}`;
     }
 
     const _options = {
-      tool: options.tool,
-      className: `control-icon ${options.className}`,
+      tool: options.block,
+      className: options.className,
       title: options.title || '',
       jsClass: options.name,
       onClick: options.onClick,
@@ -437,12 +482,12 @@ const Toolbar = L.Class.extend({
       this.options[options.name] = true;
     }
 
-    this._addButton(options.name, new L.Control.PMButton(_options));
+    const control = this._addButton(options.name, new L.Control.PMButton(_options));
     this.changeControlOrder();
+    return control;
   },
 
   changeControlOrder(order = []){
-
     const shapeMapping = {
       "Marker": "drawMarker",
       "Circle": "drawCircle",
@@ -465,8 +510,6 @@ const Toolbar = L.Class.extend({
         _order.push(shape);
       }
     });
-
-
 
     const buttons = this.getButtons();
 
@@ -514,28 +557,47 @@ const Toolbar = L.Class.extend({
   },
   getControlOrder(){
     const buttons = this.getButtons();
-
-    const shapeMapping = {
-      "drawMarker": "Marker",
-      "drawCircle": "Circle",
-      "drawPolygon": "Polygon",
-      "drawPolyline": "Line",
-      "drawCircleMarker": "CircleMarker",
-      "editMode": "Edit",
-      "dragMode": "Drag",
-      "cutPoylgon": "Cut",
-      "removalMode": "Removal"
-    };
-
     const order = [];
     for(const btn in buttons){
-      if(shapeMapping[btn]){
-        order.push(shapeMapping[btn])
-      }else{
         order.push(btn);
-      }
     }
     return order;
+  },
+  changeActionsOfControl(name,actions){
+    const shapeMapping = {
+      "Marker": "drawMarker",
+      "Circle": "drawCircle",
+      "Polygon": "drawPolygon",
+      "Rectangle": "drawRectangle",
+      "Polyline": "drawPolyline",
+      "Line": "drawPolyline",
+      "CircleMarker": "drawCircleMarker",
+      "Edit": "editMode",
+      "Drag": "dragMode",
+      "Cut": "cutPoylgon",
+      "Removal": "removalMode"
+    };
+
+    const btnName = shapeMapping[name] ? shapeMapping[name] : name;
+
+    if(!btnName){
+      throw new TypeError(
+        "No name passed"
+      );
+    }
+    if(!actions){
+      throw new TypeError(
+        "No actions passed"
+      );
+    }
+
+    if(!this.buttons[btnName]){
+      throw new TypeError(
+        "Button with this name not exists"
+      )
+    }
+    this.buttons[btnName]._button.actions = actions;
+    this.changeControlOrder();
   }
 });
 

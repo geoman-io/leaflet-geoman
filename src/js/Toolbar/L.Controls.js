@@ -11,7 +11,6 @@ const PMButton = L.Control.extend({
   },
   onAdd(map) {
     this._map = map;
-
     if(!this._map.pm.Toolbar.options.oneBlock) {
       if (this._button.tool === 'edit') {
         this._container = this._map.pm.Toolbar.editContainer;
@@ -62,12 +61,13 @@ const PMButton = L.Control.extend({
     this.toggle(false);
   },
   _triggerClick(e) {
-    this._button.onClick(e);
+    // TODO is this a big change when we change from e to a object with the event and the button? Now it's the second argument
+    this._button.onClick(e,{button: this, event: e});
     this._clicked(e);
-    this._button.afterClick(e);
+    this._button.afterClick(e,{button: this, event: e});
   },
   _makeButton(button) {
-    var pos = this.options.position.indexOf("right") > -1 ? "pos-right" : "";
+    const pos = this.options.position.indexOf("right") > -1 ? "pos-right" : "";
 
     // button container
     const buttonContainer = L.DomUtil.create(
@@ -86,7 +86,7 @@ const PMButton = L.Control.extend({
     // the buttons actions
     const actionContainer = L.DomUtil.create(
       'div',
-      'leaflet-pm-actions-container '+pos,
+      `leaflet-pm-actions-container ${pos}`,
       buttonContainer
     );
 
@@ -120,10 +120,11 @@ const PMButton = L.Control.extend({
     };
 
     activeActions.forEach(name => {
+      let action;
       if(actions[name]) {
-        var action = actions[name];
+        action = actions[name];
       }else if(name.text){
-        var action = name;
+        action = name;
       }else{
         return;
       }
