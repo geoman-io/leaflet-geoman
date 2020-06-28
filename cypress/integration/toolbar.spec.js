@@ -16,7 +16,7 @@ describe('Testing the Toolbar', () => {
 
     cy.get('.leaflet-pm-actions-container')
       .should('have.css', 'right')
-      .and('match', /31px/);
+      .and('match', /100%/);
 
     cy.get('.leaflet-pm-toolbar')
       .parent('.leaflet-top.leaflet-right')

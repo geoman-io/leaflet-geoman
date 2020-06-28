@@ -11,6 +11,7 @@ import zh from './zh.json';
 import pt_br from './pt_br.json';
 import pl from './pl.json';
 import sv from './sv.json';
+import el from './el.json';
 
 export default {
   en,
@@ -25,5 +26,6 @@ export default {
   pt_br,
   zh,
   pl,
-  sv
+  sv,
+  el
 };
