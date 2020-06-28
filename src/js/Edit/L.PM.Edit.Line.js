@@ -402,6 +402,11 @@ Edit.Line = Edit.extend({
     // coords of the layer
     const coords = this._layer.getLatLngs();
 
+    // a polygon has a minimum of 3 points
+    if (this.isPolygon() && coords.flat().length <= 3) {
+      return;
+    }
+
     // the index path to the marker inside the multidimensional marker array
     const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
       this._markers,
@@ -559,7 +564,7 @@ Edit.Line = Edit.extend({
     const prevMarker = markerArr[prevMarkerIndex];
     const nextMarker = markerArr[nextMarkerIndex];
 
-    return {prevMarker: prevMarker, nextMarker: nextMarker};
+    return {prevMarker, nextMarker};
   },
   _onMarkerDrag(e) {
     // dragged marker
@@ -638,7 +643,7 @@ Edit.Line = Edit.extend({
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
-    var intersection = this.hasSelfIntersection();
+    let intersection = this.hasSelfIntersection();
     if(intersection && this.options.allowSelfIntersectionEdit && this._markerAllowedToDrag) {
       intersection = false;
     }
@@ -692,15 +697,15 @@ Edit.Line = Edit.extend({
     }
   },
   _checkMarkerAllowedToDrag(marker){
-    var {prevMarker,nextMarker } = this._getNeighborMarkers(marker);
+    const {prevMarker,nextMarker } = this._getNeighborMarkers(marker);
 
-    var prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
-    var nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
+    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
 
-    var prevLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), prevLine.toGeoJSON(15)).features.length;
-    var nextLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), nextLine.toGeoJSON(15)).features.length;
+    let prevLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), prevLine.toGeoJSON(15)).features.length;
+    let nextLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), nextLine.toGeoJSON(15)).features.length;
 
-    //The first and last line has one intersection fewer because they are not connect
+    // The first and last line has one intersection fewer because they are not connect
     if(marker.getLatLng() === this._markers[0][0].getLatLng()){
       nextLineIntersectionLen++;
     }else if(marker.getLatLng() === this._markers[0][this._markers[0].length-1].getLatLng()){
@@ -710,9 +715,9 @@ Edit.Line = Edit.extend({
     // <= 2 the start and end point of the line always intersecting because they have the same coords.
     if (prevLineIntersectionLen <= 2 && nextLineIntersectionLen <= 2) {
       return false;
-    } else {
-      return true;
     }
+      return true;
+
   },
   _fireEdit() {
     // fire edit event
