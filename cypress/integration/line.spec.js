@@ -159,7 +159,7 @@ describe('Draw & Edit Line', () => {
     cy.hasMiddleMarkers(0);
   });
 
-  it('vanish middle markers', () => {
+  it('hide middle markers', () => {
     // activate line drawing
     cy.toolbarButton('polygon')
       .click()
@@ -175,7 +175,7 @@ describe('Draw & Edit Line', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({vanishMiddleMarkers: true});
+      map.pm.setGlobalOptions({hideMiddleMarkers: true});
     });
 
     cy.toolbarButton('edit')

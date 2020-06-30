@@ -220,7 +220,7 @@ See the available options in the table below.
 | finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.2.0.html#interactive-layer-click). |
 | markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
 | editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
-| vanishMiddleMarkers   | `false`                               | vanish the middle Markers in edit mode from Polyline and Polygon.                                                                                     |
+| hideMiddleMarkers   | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                     |
 
 You can listen to map events to hook into the drawing procedure like this:
 

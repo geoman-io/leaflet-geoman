@@ -243,7 +243,7 @@ Edit.Line = Edit.extend({
       // the marker array, it includes only the markers of vertexes (no middle markers)
       const ringArr = coordsArr.map(this._createMarker, this);
 
-      if(this.options.vanishMiddleMarkers !== true) {
+      if(this.options.hideMiddleMarkers !== true) {
         // create small markers in the middle of the regular markers
         coordsArr.map((v, k) => {
           // find the next index fist
@@ -372,7 +372,7 @@ Edit.Line = Edit.extend({
     this._layer.setLatLngs(coords);
 
     // create the new middlemarkers
-    if(this.options.vanishMiddleMarkers !== true) {
+    if(this.options.hideMiddleMarkers !== true) {
       this._createMiddleMarker(leftM, newM);
       this._createMiddleMarker(newM, rightM);
     }
@@ -479,7 +479,7 @@ Edit.Line = Edit.extend({
     if (rightMarkerIndex !== leftMarkerIndex) {
       const leftM = markerArr[leftMarkerIndex];
       const rightM = markerArr[rightMarkerIndex];
-      if(this.options.vanishMiddleMarkers !== true) {
+      if(this.options.hideMiddleMarkers !== true) {
         this._createMiddleMarker(leftM, rightM);
       }
     }
@@ -716,9 +716,9 @@ Edit.Line = Edit.extend({
     // <= 2 the start and end point of the line always intersecting because they have the same coords.
     if (prevLineIntersectionLen <= 2 && nextLineIntersectionLen <= 2) {
       return false;
-    } 
+    }
       return true;
-    
+
   },
   _fireEdit() {
     // fire edit event
