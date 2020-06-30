@@ -361,17 +361,17 @@ describe('Draw & Edit Poly', () => {
 
     // remove all markers
     cy.get('.marker-icon:not(.marker-icon-middle)').each(($el, index) => {
-      if (index === 4) {
-        // the last 3 markers should not be removed
-        cy.hasVertexMarkers(3);
+      if (index >= 3) {
+        // the last marker should be removed automatically, so it shouldn't exist
+        cy.wrap($el).should('not.exist');
       } else {
         // remove markers
         cy.wrap($el).trigger('contextmenu');
       }
     });
 
-    cy.hasVertexMarkers(3);
-    cy.hasMiddleMarkers(3);
+    cy.hasVertexMarkers(0);
+    cy.hasMiddleMarkers(0);
 
     cy.toolbarButton('edit')
       .click()
