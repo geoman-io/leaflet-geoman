@@ -70,7 +70,7 @@ const Map = L.Class.extend({
     const ignore = optionsModifier.ignoreShapes || [];
 
     this.map.pm.Draw.shapes.forEach(shape => {
-      if(ignore.indexOf(shape) === -1) {
+      if (ignore.indexOf(shape) === -1) {
         this.map.pm.Draw[shape].setPathOptions(options)
       }
     })
@@ -111,19 +111,19 @@ const Map = L.Class.extend({
       }
     });
   },
-  globalDrawModeEnabled(){
+  globalDrawModeEnabled() {
     return !!this.Draw.getActiveShape();
   },
-  globalCutModeEnabled(){
+  globalCutModeEnabled() {
     return !!this.Draw.Cut.enabled();
   },
-  enableGlobalCutMode(options){
+  enableGlobalCutMode(options) {
     return this.Draw.Cut.enable(options);
   },
-  toggleGlobalCutMode(options){
+  toggleGlobalCutMode(options) {
     return this.Draw.Cut.toggle(options);
   },
-  disableGlobalCutMode(){
+  disableGlobalCutMode() {
     return this.Draw.Cut.disable();
   }
 

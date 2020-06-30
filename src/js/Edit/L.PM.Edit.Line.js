@@ -65,7 +65,7 @@ Edit.Line = Edit.extend({
 
     this.applyOptions();
 
-    this._layer.fire('pm:enable', {layer: this._layer});
+    this._layer.fire('pm:enable', { layer: this._layer });
 
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
@@ -134,10 +134,10 @@ Edit.Line = Edit.extend({
       L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
     }
 
-    this._layer.fire('pm:disable', {layer: this._layer});
+    this._layer.fire('pm:disable', { layer: this._layer });
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', {layer: this._layer});
+      this._layer.fire('pm:update', { layer: this._layer });
     }
     this._layerEdited = false;
 
@@ -168,7 +168,7 @@ Edit.Line = Edit.extend({
     const layer = this._layer;
 
     if (this.hasSelfIntersection()) {
-      if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+      if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
         this._updateDisabledMarkerStyle(this._markers, true);
       }
 
@@ -199,21 +199,21 @@ Edit.Line = Edit.extend({
       // if not, reset the style to the default color
       layer.setStyle({ color: this.cachedColor });
       this.isRed = false;
-      if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+      if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
         this._updateDisabledMarkerStyle(this._markers, false);
       }
     }
   },
-  _updateDisabledMarkerStyle(markers, disabled){
-    markers.forEach((marker)=>{
+  _updateDisabledMarkerStyle(markers, disabled) {
+    markers.forEach((marker) => {
       if (Array.isArray(marker)) {
-        return this._updateDisabledMarkerStyle(marker, disabled);
+        this._updateDisabledMarkerStyle(marker, disabled);
       }
 
-      if(marker._icon){
-        if(disabled && !this._checkMarkerAllowedToDrag(marker)) {
-            L.DomUtil.addClass(marker._icon, "vertexmarker-disabled");
-        }else{
+      if (marker._icon) {
+        if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
+          L.DomUtil.addClass(marker._icon, "vertexmarker-disabled");
+        } else {
           L.DomUtil.removeClass(marker._icon, "vertexmarker-disabled");
         }
       }
@@ -243,7 +243,7 @@ Edit.Line = Edit.extend({
       // the marker array, it includes only the markers of vertexes (no middle markers)
       const ringArr = coordsArr.map(this._createMarker, this);
 
-      if(this.options.hideMiddleMarkers !== true) {
+      if (this.options.hideMiddleMarkers !== true) {
         // create small markers in the middle of the regular markers
         coordsArr.map((v, k) => {
           // find the next index fist
@@ -372,7 +372,7 @@ Edit.Line = Edit.extend({
     this._layer.setLatLngs(coords);
 
     // create the new middlemarkers
-    if(this.options.hideMiddleMarkers !== true) {
+    if (this.options.hideMiddleMarkers !== true) {
       this._createMiddleMarker(leftM, newM);
       this._createMiddleMarker(newM, rightM);
     }
@@ -479,7 +479,7 @@ Edit.Line = Edit.extend({
     if (rightMarkerIndex !== leftMarkerIndex) {
       const leftM = markerArr[leftMarkerIndex];
       const rightM = markerArr[rightMarkerIndex];
-      if(this.options.hideMiddleMarkers !== true) {
+      if (this.options.hideMiddleMarkers !== true) {
         this._createMiddleMarker(leftM, rightM);
       }
     }
@@ -547,10 +547,10 @@ Edit.Line = Edit.extend({
     this._layer.setLatLngs(coords);
   },
 
-  _getNeighborMarkers(marker){
+  _getNeighborMarkers(marker) {
     const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
-        this._markers,
-        marker
+      this._markers,
+      marker
     );
 
     // the markers neighbors
@@ -565,7 +565,7 @@ Edit.Line = Edit.extend({
     const prevMarker = markerArr[prevMarkerIndex];
     const nextMarker = markerArr[nextMarkerIndex];
 
-    return {prevMarker, nextMarker};
+    return { prevMarker, nextMarker };
   },
   _onMarkerDrag(e) {
     // dragged marker
@@ -581,13 +581,13 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection() && this._markerAllowedToDrag === false) {
-        this._layer.setLatLngs(this._coordsBeforeEdit);
-        // re-enable markers for the new coords
-        this._initMarkers();
-        // check for selfintersection again (mainly to reset the style)
-        this._handleLayerStyle();
-        return;
+    if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection() && this._markerAllowedToDrag === false) {
+      this._layer.setLatLngs(this._coordsBeforeEdit);
+      // re-enable markers for the new coords
+      this._initMarkers();
+      // check for selfintersection again (mainly to reset the style)
+      this._handleLayerStyle();
+      return;
     }
 
     this.updatePolygonCoordsFromMarkerDrag(marker);
@@ -645,7 +645,7 @@ Edit.Line = Edit.extend({
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
     let intersection = this.hasSelfIntersection();
-    if(intersection && this.options.allowSelfIntersectionEdit && this._markerAllowedToDrag) {
+    if (intersection && this.options.allowSelfIntersectionEdit && this._markerAllowedToDrag) {
       intersection = false;
     }
 
@@ -661,7 +661,7 @@ Edit.Line = Edit.extend({
       this._handleLayerStyle();
       return;
     }
-    if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+    if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
       this._handleLayerStyle();
     }
 
@@ -691,14 +691,14 @@ Edit.Line = Edit.extend({
     }
 
 
-    if(!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
+    if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
       this._markerAllowedToDrag = this._checkMarkerAllowedToDrag(marker);
-    }else{
+    } else {
       this._markerAllowedToDrag = null;
     }
   },
-  _checkMarkerAllowedToDrag(marker){
-    const {prevMarker,nextMarker } = this._getNeighborMarkers(marker);
+  _checkMarkerAllowedToDrag(marker) {
+    const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
     const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
     const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
@@ -706,23 +706,23 @@ Edit.Line = Edit.extend({
     let prevLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), prevLine.toGeoJSON(15)).features.length;
     let nextLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), nextLine.toGeoJSON(15)).features.length;
 
-    // The first and last line has one intersection fewer because they are not connect
-    if(marker.getLatLng() === this._markers[0][0].getLatLng()){
-      nextLineIntersectionLen++;
-    }else if(marker.getLatLng() === this._markers[0][this._markers[0].length-1].getLatLng()){
-      prevLineIntersectionLen++;
+    // The first and last line has one intersection fewer because they are not connected
+    if (marker.getLatLng() === this._markers[0][0].getLatLng()) {
+      nextLineIntersectionLen += 1;
+    } else if (marker.getLatLng() === this._markers[0][this._markers[0].length - 1].getLatLng()) {
+      prevLineIntersectionLen += 1;
     }
 
     // <= 2 the start and end point of the line always intersecting because they have the same coords.
     if (prevLineIntersectionLen <= 2 && nextLineIntersectionLen <= 2) {
       return false;
     }
-      return true;
+    return true;
 
   },
   _fireEdit() {
     // fire edit event
     this._layerEdited = true;
-    this._layer.fire('pm:edit', {layer: this._layer});
+    this._layer.fire('pm:edit', { layer: this._layer });
   },
 });

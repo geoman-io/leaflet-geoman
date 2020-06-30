@@ -8,6 +8,7 @@ import es from './es.json';
 import nl from './nl.json';
 import fr from './fr.json';
 import zh from './zh.json';
+// eslint-disable-next-line camelcase
 import pt_br from './pt_br.json';
 import pl from './pl.json';
 import sv from './sv.json';

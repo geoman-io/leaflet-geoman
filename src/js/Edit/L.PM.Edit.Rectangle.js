@@ -4,7 +4,7 @@
 import Edit from './L.PM.Edit';
 
 Edit.Rectangle = Edit.Polygon.extend({
-  _shape : 'Rectangle',
+  _shape: 'Rectangle',
   // initializes Rectangle Markers
   _initMarkers() {
     const map = this._map;

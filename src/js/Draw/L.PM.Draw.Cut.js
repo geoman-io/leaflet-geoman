@@ -39,8 +39,8 @@ Draw.Cut = Draw.Polygon.extend({
 
       // the resulting layer after the cut
       let resultLayer = L.geoJSON(diff, l.options);
-      if(resultLayer.getLayers().length === 1){
-        resultLayer = resultLayer.getLayers()[0]; // prevent that a unnecessary layergroup is created
+      if (resultLayer.getLayers().length === 1) {
+        [resultLayer] = resultLayer.getLayers(); // prevent that a unnecessary layergroup is created
       }
       const resultingLayer = resultLayer.addTo(this._map);
 

@@ -11,7 +11,7 @@ const PMButton = L.Control.extend({
   },
   onAdd(map) {
     this._map = map;
-    if(!this._map.pm.Toolbar.options.oneBlock) {
+    if (!this._map.pm.Toolbar.options.oneBlock) {
       if (this._button.tool === 'edit') {
         this._container = this._map.pm.Toolbar.editContainer;
       } else if (this._button.tool === 'options') {
@@ -21,7 +21,7 @@ const PMButton = L.Control.extend({
       } else {
         this._container = this._map.pm.Toolbar.drawContainer;
       }
-    }else{
+    } else {
       this._container = this._map.pm.Toolbar.drawContainer;
     }
     this.buttonsDomNode = this._makeButton(this._button);
@@ -62,9 +62,9 @@ const PMButton = L.Control.extend({
   },
   _triggerClick(e) {
     // TODO is this a big change when we change from e to a object with the event and the button? Now it's the second argument
-    this._button.onClick(e,{button: this, event: e});
+    this._button.onClick(e, { button: this, event: e });
     this._clicked(e);
-    this._button.afterClick(e,{button: this, event: e});
+    this._button.afterClick(e, { button: this, event: e });
   },
   _makeButton(button) {
     const pos = this.options.position.indexOf("right") > -1 ? "pos-right" : "";
@@ -121,11 +121,11 @@ const PMButton = L.Control.extend({
 
     activeActions.forEach(name => {
       let action;
-      if(actions[name]) {
+      if (actions[name]) {
         action = actions[name];
-      }else if(name.text){
+      } else if (name.text) {
         action = name;
-      }else{
+      } else {
         return;
       }
       const actionNode = L.DomUtil.create(
@@ -136,7 +136,7 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
-      if(action.onClick) {
+      if (action.onClick) {
         L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
       }
       L.DomEvent.disableClickPropagation(actionNode);

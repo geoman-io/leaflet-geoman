@@ -21,7 +21,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // Draw the CircleMarker like a Circle
-    if(this.options.editable) {
+    if (this.options.editable) {
       // create a new layergroup
       this._layerGroup = new L.LayerGroup();
       this._layerGroup._pmTempLayer = true;
@@ -34,7 +34,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
       // this is the marker in the center of the circle
       this._centerMarker = L.marker([0, 0], {
-        icon: L.divIcon({className: 'marker-icon'}),
+        icon: L.divIcon({ className: 'marker-icon' }),
         draggable: false,
         zIndexOffset: 100,
       });
@@ -74,7 +74,7 @@ Draw.CircleMarker = Draw.Marker.extend({
       this._map.on('click', this._placeCenterMarker, this);
       // change map cursor
       this._map._container.style.cursor = 'crosshair';
-    } else  {
+    } else {
       // create a marker on click on the map
       this._map.on('click', this._createMarker, this);
 
@@ -110,7 +110,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     });
     this._setGlobalDrawMode();
 
-    if(!this.options.editable) {
+    if (!this.options.editable) {
       // enable edit mode for existing markers
       this._map.eachLayer(layer => {
         if (this.isRelevantMarker(layer)) {
@@ -125,7 +125,7 @@ Draw.CircleMarker = Draw.Marker.extend({
       return;
     }
     // disable when drawing like a Circle
-    if(this.options.editable) {
+    if (this.options.editable) {
       // reset cursor
       this._map._container.style.cursor = '';
 
@@ -135,7 +135,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
       // remove helping layers
       this._map.removeLayer(this._layerGroup);
-    }else{
+    } else {
       // undbind click event, don't create a marker on click anymore
       this._map.off('click', this._createMarker, this);
 
