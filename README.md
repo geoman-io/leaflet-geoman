@@ -579,7 +579,7 @@ In order to change the style of the lines during draw, pass these options to the
 
 ```js
 // optional options for line style during draw. These are the defaults
-var options = {
+const options = {
   // the lines between coordinates/markers
   templineStyle: {
     color: 'red',
@@ -601,7 +601,7 @@ pass the options to `enableDraw`:
 
 ```js
 // optional options for line style during draw. These are the defaults
-var options = {
+const options = {
   templineStyle: {},
   hintlineStyle: {},
   pathOptions: {
@@ -624,6 +624,90 @@ map.pm.setPathOptions({
   fillOpacity: 0.4,
 });
 ```
+
+You can ignore shapes when you add an array with the shape names to the second object with `ignoreShapes`:
+```javascript
+map.pm.setPathOptions({
+      color: 'orange',
+      fillColor: 'green',
+      fillOpacity: 0.4,
+    },
+    {
+      ignoreShapes: ["Circle", "Rectangle"]
+    }
+);
+```
+
+
+##### Customize Controls
+
+There are 4 control sections / containers. `draw`, `edit`, `options`⭐, `custom`
+
+You can disable / enable each section with:
+```
+map.pm.addControls({
+     drawControls: true,
+     editControls: false,
+     optionsControls: true,
+     customControls: true,
+     oneBlock: false
+ })
+```
+
+To display the Toolbar as one block you can pass in to the `addControls(options)` function `oneBlock: true`. 
+
+If you want to change the order in a section you can use `map.pm.Toolbar.changeControlOrder(['drawCircle','drawRectangle','removalMode','editMode'])` to sort from Top to Bottom.
+
+With `map.pm.Toolbar.getControlOrder()` you get the current order of the controls.
+
+**New Control**
+
+With `map.pm.Toolbar.createCustomControl(options)` you can create a new control.
+
+| Option        | Default     | Description                                                                                      |
+| :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
+| name          | Required    | Name of the control |
+| block         | ''          | Section / container of the control. ` ` == `draw`, `edit`, `options`⭐, `custom` |
+| title         | ''          | Text showing when you hover the control |
+| className     | ''          | CSS class with the Icon |
+| onClick       | -           | Function fired when clicking the control |
+| afterClick    | -           | Function fired after clicking the control |
+| actions       | [ ]          | Action that appears as tooltip. Look under [actions](#actions) for more information |
+| toggle        | true        | Control can be toggled |
+
+**Copy of Control**
+
+You can copy an available control and add new options to it with `copyDrawControl(instance,options)`:
+
+```javascript
+map.pm.Toolbar.copyDrawControl("Rectangle", {name:"RectangleCopy",block: "custom",title: "Display text on hover button",actions: actions});
+```
+
+
+**Actions**
+
+You can use the default actions: `cancel`, `removeLastVertex`, `finish`, `finishMode` (Only for modes `Edit`, `Drag`, `Removal`).
+
+Or you can create own actions:
+
+```javascript
+const actions = ['cancel', {text: 'Custom text, no click'}, {text: 'Click event', onClick: ()=>{alert('click')}}]
+```
+
+You can change actions of existing buttons with `changeActionsOfControl(name, actions)`:
+```javascript
+map.pm.Toolbar.changeActionsOfControl('Rectangle',["cancel"])
+```
+
+The following methods are available on `map.pm.Toolbar`:
+
+| Method                                      | Returns   | Description                                                                                                   |
+| :------------------------------------------ | :-------- | :------------------------------------------------------------------------------------------------------------ |
+| createCustomControl(`options`)              | -         | To add a custom Control to the Toolbar.                                                                       |
+| copyDrawControl(`instance`,`options`)       | `Object`  | Creates a copy of a draw Control. Returns the `drawInstance` and the `control`.                               |
+| changeActionsOfControl(`name`,`actions`)    | -         | Change the actions of an existing button.                                                                     |
+| changeControlOrder(`shapes`)                | -         | Change the order of the controls in the Toolbar. You can pass all shapes and `Edit`, `Drag`, `Removal`, `Cut` |
+| getControlOrder()                           | `Array`   | Get the current order of the controls.                                                                        |
 
 ### Feature Request
 

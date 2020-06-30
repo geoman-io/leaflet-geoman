@@ -9,12 +9,24 @@
   z-index: 3;
 }
 
-.leaflet-pm-toolbar a:first-child:not(.pos-right) {
+.leaflet-pm-toolbar .leaflet-pm-actions-container a:first-child:not(.pos-right) {
   border-radius: 0 !important;
 }
 
-.leaflet-pm-toolbar a:last-child.pos-right {
+.leaflet-pm-toolbar .leaflet-pm-actions-container a:last-child.pos-right {
   border-radius: 0 !important;
+}
+
+.leaflet-pm-toolbar .button-container .leaflet-buttons-control-button {
+  border-radius: 0 !important;
+}
+
+.leaflet-pm-toolbar .button-container:last-child .leaflet-buttons-control-button {
+  border-radius: 0 0 2px 2px !important;
+}
+
+.leaflet-pm-toolbar .button-container:first-child .leaflet-buttons-control-button {
+  border-radius: 2px 2px 0 0 !important;
 }
 
 .leaflet-pm-toolbar .control-fa-icon {
@@ -126,3 +138,9 @@
   cursor: pointer;
   background-color: #777;
 }
+
+/* That the active control is always over the other controls */
+.leaflet-pm-toolbar.activeChild{
+  z-index: 801;
+}
+

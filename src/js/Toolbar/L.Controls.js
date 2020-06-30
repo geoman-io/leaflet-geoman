@@ -11,12 +11,17 @@ const PMButton = L.Control.extend({
   },
   onAdd(map) {
     this._map = map;
-
-    if (this._button.tool === 'edit') {
-      this._container = this._map.pm.Toolbar.editContainer;
-    } else if (this._button.tool === 'options') {
-      this._container = this._map.pm.Toolbar.optionsContainer;
-    } else {
+    if(!this._map.pm.Toolbar.options.oneBlock) {
+      if (this._button.tool === 'edit') {
+        this._container = this._map.pm.Toolbar.editContainer;
+      } else if (this._button.tool === 'options') {
+        this._container = this._map.pm.Toolbar.optionsContainer;
+      } else if (this._button.tool === 'custom') {
+        this._container = this._map.pm.Toolbar.customContainer;
+      } else {
+        this._container = this._map.pm.Toolbar.drawContainer;
+      }
+    }else{
       this._container = this._map.pm.Toolbar.drawContainer;
     }
     this.buttonsDomNode = this._makeButton(this._button);
@@ -56,12 +61,13 @@ const PMButton = L.Control.extend({
     this.toggle(false);
   },
   _triggerClick(e) {
-    this._button.onClick(e);
+    // TODO is this a big change when we change from e to a object with the event and the button? Now it's the second argument
+    this._button.onClick(e,{button: this, event: e});
     this._clicked(e);
-    this._button.afterClick(e);
+    this._button.afterClick(e,{button: this, event: e});
   },
   _makeButton(button) {
-    var pos = this.options.position.indexOf("right") > -1 ? "pos-right" : "";
+    const pos = this.options.position.indexOf("right") > -1 ? "pos-right" : "";
 
     // button container
     const buttonContainer = L.DomUtil.create(
@@ -80,7 +86,7 @@ const PMButton = L.Control.extend({
     // the buttons actions
     const actionContainer = L.DomUtil.create(
       'div',
-      'leaflet-pm-actions-container '+pos,
+      `leaflet-pm-actions-container ${pos}`,
       buttonContainer
     );
 
@@ -114,7 +120,14 @@ const PMButton = L.Control.extend({
     };
 
     activeActions.forEach(name => {
-      const action = actions[name];
+      let action;
+      if(actions[name]) {
+        action = actions[name];
+      }else if(name.text){
+        action = name;
+      }else{
+        return;
+      }
       const actionNode = L.DomUtil.create(
         'a',
         `leaflet-pm-action ${pos} action-${name}`,
@@ -123,7 +136,9 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
-      L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+      if(action.onClick) {
+        L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+      }
       L.DomEvent.disableClickPropagation(actionNode);
     });
 
@@ -161,10 +176,12 @@ const PMButton = L.Control.extend({
       return;
     }
 
-    if (!this._button.toggleStatus) {
+    if (!this._button.toggleStatus || this._button.cssToggle === false) {
       L.DomUtil.removeClass(this.buttonsDomNode, 'active');
+      L.DomUtil.removeClass(this._container, 'activeChild');
     } else {
       L.DomUtil.addClass(this.buttonsDomNode, 'active');
+      L.DomUtil.addClass(this._container, 'activeChild');
     }
   },
 
