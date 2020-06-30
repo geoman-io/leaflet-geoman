@@ -430,7 +430,12 @@ Edit.Line = Edit.extend({
     // set new latlngs to the polygon
     this._layer.setLatLngs(coords);
 
-    // if the ring of the poly has no coordinates left, remove the last coord too
+    // if a polygon has less than 3 vertices, remove all of them. We will remove only one here, the if-clause after that will handle the rest
+    if (this.isPolygon() && coordsRing.length <= 2) {
+      coordsRing.splice(0, coordsRing.length);
+    }
+
+    // if the ring of the line has no coordinates left, remove the last coord too
     if (coordsRing.length <= 1) {
       coordsRing.splice(0, coordsRing.length);
 
