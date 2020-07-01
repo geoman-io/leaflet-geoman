@@ -33,10 +33,11 @@
 
 ![Demo](https://file-gmeileqfmg.now.sh/)
 
+### Using Leaflet-Geoman in production?
+[Please consider sponsoring its development](https://github.com/sponsors/codeofsumit)
+
 #### Leaflet-Geoman Pro ⭐
-Companies need more advanced features, reliability and support. In our Pro version, we offer everything from the open source version and add many advanced features for big scale projects.
-Features marked with ⭐ in this documentation are only available in the Pro version.
-[Purchase Pro](https://geoman.io/leaflet-geoman#pro) or [contact me](mailto:sumit@geoman.io)
+Features marked with ⭐ in this documentation are available in Leaflet-Geoman Pro. [Purchase Pro](https://geoman.io/leaflet-geoman#pro) or [get in touch](mailto:sumit@geoman.io)
 
 ## Documentation
 
