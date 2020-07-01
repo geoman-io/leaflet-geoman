@@ -207,7 +207,7 @@ Edit.Line = Edit.extend({
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
       if (Array.isArray(marker)) {
-        this._updateDisabledMarkerStyle(marker, disabled);
+        return this._updateDisabledMarkerStyle(marker, disabled);
       }
 
       if (marker._icon) {

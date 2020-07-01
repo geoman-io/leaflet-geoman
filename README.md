@@ -685,7 +685,7 @@ map.pm.Toolbar.createCustomControl(options)
 
 **Inherit from an Existing Control**
 
-This effectively copies and existing control that you can customize.
+This effectively copies an existing control that you can customize.
 
 ```js
 // copy a rectangle and customize its name, block, title and actions
