@@ -108,9 +108,11 @@ const SnapMixin = {
     // event info for pm:snap and pm:unsnap
     const eventInfo = {
       marker,
+      shape: this._shape,
       snapLatLng,
       segment: closestLayer.segment,
       layer: this._layer,
+      workingLayer: this._layer,
       layerInteractedWith: closestLayer.layer, // for lack of a better property name
       distance: closestLayer.distance,
     };
@@ -225,12 +227,20 @@ const SnapMixin = {
           layer instanceof L.CircleMarker) &&
         layer.options.snapIgnore !== true
       ) {
+
+        // adds a hidden polygon which matches the border of the circle
+        if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm._hiddenPolyCircle) {
+          layers.push(layer.pm._hiddenPolyCircle);
+        }
         layers.push(layer);
 
         // this is for debugging
         const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
+        if (layer instanceof L.Circle || layer instanceof L.CircleMarker) {
+          debugIndicatorLines.push(debugLine);
+        }
 
         // uncomment 👇 this line to show helper lines for debugging
         // debugLine.addTo(map);
@@ -263,6 +273,10 @@ const SnapMixin = {
 
     // loop through the layers
     layers.forEach((layer, index) => {
+      // For Circles and CircleMarkers to prevent that they snap to the own borders.
+      if (layer._parentCopy && layer._parentCopy === this._layer) {
+        return;
+      }
       // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
       const results = this._calcLayerDistances(latlng, layer);
 

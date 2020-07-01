@@ -1,5 +1,5 @@
 .leaflet-pm-toolbar {
-  
+
 }
 
 .leaflet-pm-toolbar .leaflet-buttons-control-button {
@@ -9,17 +9,24 @@
   z-index: 3;
 }
 
-.leaflet-pm-toolbar a:first-child {
-  border-radius: 0;
+.leaflet-pm-toolbar .leaflet-pm-actions-container a:first-child:not(.pos-right) {
+  border-radius: 0 !important;
 }
 
-.leaflet-pm-toolbar .button-container:first-child a {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+.leaflet-pm-toolbar .leaflet-pm-actions-container a:last-child.pos-right {
+  border-radius: 0 !important;
 }
-.leaflet-pm-toolbar .button-container:last-child a {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+
+.leaflet-pm-toolbar .button-container .leaflet-buttons-control-button {
+  border-radius: 0 !important;
+}
+
+.leaflet-pm-toolbar .button-container:last-child .leaflet-buttons-control-button {
+  border-radius: 0 0 2px 2px !important;
+}
+
+.leaflet-pm-toolbar .button-container:first-child .leaflet-buttons-control-button {
+  border-radius: 2px 2px 0 0 !important;
 }
 
 .leaflet-pm-toolbar .control-fa-icon {
@@ -99,7 +106,7 @@
   .leaflet-pm-toolbar
   .button-container
   .leaflet-pm-actions-container {
-  right: 31px;
+  right: 100%;
   left: auto;
 }
 
@@ -107,8 +114,14 @@
   display: block;
 }
 
-.button-container .leaflet-pm-actions-container .leaflet-pm-action:last-child {
-  border-radius: 0px 3px 3px 0px;
+.button-container .leaflet-pm-actions-container:not(.pos-right) .leaflet-pm-action:last-child {
+  border-radius: 0px 3px 3px 0px !important;
+  border-right: 0px;
+}
+.button-container .leaflet-pm-actions-container.pos-right .leaflet-pm-action:first-child {
+  border-radius: 3px 0px 0px 3px !important;
+}
+.button-container .leaflet-pm-actions-container.pos-right .leaflet-pm-action:last-child {
   border-right: 0px;
 }
 .button-container .leaflet-pm-actions-container .leaflet-pm-action {
@@ -125,3 +138,9 @@
   cursor: pointer;
   background-color: #777;
 }
+
+/* That the active control is always over the other controls */
+.leaflet-pm-toolbar.activeChild{
+  z-index: 801;
+}
+

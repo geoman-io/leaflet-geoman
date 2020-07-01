@@ -158,4 +158,30 @@ describe('Draw & Edit Line', () => {
     cy.hasVertexMarkers(0);
     cy.hasMiddleMarkers(0);
   });
+
+  it('hide middle markers', () => {
+    // activate line drawing
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a line
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(250, 250)
+      .click(150, 250);
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({hideMiddleMarkers: true});
+    });
+
+    cy.toolbarButton('edit')
+      .click();
+
+    cy.hasMiddleMarkers(0);
+  });
+
 });

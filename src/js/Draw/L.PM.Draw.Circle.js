@@ -80,6 +80,7 @@ Draw.Circle = Draw.extend({
       shape: this._shape,
       workingLayer: this._layer,
     });
+    this._setGlobalDrawMode();
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -111,6 +112,7 @@ Draw.Circle = Draw.extend({
 
     // fire drawend event
     this._map.fire('pm:drawend', { shape: this._shape });
+    this._setGlobalDrawMode();
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -187,7 +189,6 @@ Draw.Circle = Draw.extend({
       );
 
       this._layer.fire('pm:centerplaced', {
-        shape: this._shape,
         workingLayer: this._layer,
         latlng,
       });
@@ -208,6 +209,9 @@ Draw.Circle = Draw.extend({
 
     // create the final circle layer
     const circleLayer = L.circle(center, options).addTo(this._map);
+
+    // create polygon around the circle border
+    circleLayer.pm._updateHiddenPolyCircle();
 
     // disable drawing
     this.disable();

@@ -78,4 +78,67 @@ describe('Draw Marker', () => {
       expect($p).to.have.length(4);
     });
   });
+
+
+  it('add interactive:false marker to the map and enable edit', () => {
+    // Adds a interactive Marker to the map and enable / disable the edit mode to check if a error is thrown because it is not draggable
+    cy.window().then(({ map, L }) => L.marker([51.505, -0.09], { interactive: false }).addTo(map)).as('marker');
+
+    cy.toolbarButton('edit').click();
+
+    cy.wait(100);
+
+    cy.toolbarButton('edit').click();
+
+    cy.get('@marker').then( marker  => {
+        marker.removeFrom(marker._map);
+    });
+  });
+
+
+
+  it('calls pm:drag-events on Marker drag', () => {
+
+    let dragstart = false;
+    let drag = false;
+    let dragend = false;
+
+    cy.window().then(({map}) =>{
+      map.on('pm:create',(e)=>{
+        e.layer.on('pm:dragstart',()=>{
+          dragstart = true;
+        });
+        e.layer.on('pm:drag',()=>{
+          drag = true;
+        });
+        e.layer.on('pm:dragend',()=>{
+          dragend = true;
+        });
+      })
+
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.wait(1000)
+    cy.get(mapSelector)
+      .click(150, 250)
+    cy.wait(1000)
+    cy.toolbarButton('marker').click();
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ Hand }) => {
+      const handMarker = new Hand({
+        timing: 'frame',
+        onStop: () => {
+          expect(dragstart).to.equal(true);
+          expect(drag).to.equal(true);
+          expect(dragend).to.equal(true);
+        }
+      });
+      const toucherMarker = handMarker.growFinger('mouse');
+      toucherMarker.wait(100).moveTo(150, 240, 100).down().wait(500).moveTo(170, 290, 400).up().wait(100) // Not allowed
+
+    });
+  });
+
 });

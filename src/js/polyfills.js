@@ -3,7 +3,7 @@
 // Array.findIndex Polyfill
 Array.prototype.findIndex =
   Array.prototype.findIndex ||
-  function(callback) {
+  function (callback) {
     if (this === null) {
       throw new TypeError(
         'Array.prototype.findIndex called on null or undefined'
@@ -27,7 +27,7 @@ Array.prototype.findIndex =
 // Requested here: https://github.com/geoman-io/leaflet-geoman/issues/173
 Array.prototype.find =
   Array.prototype.find ||
-  function(callback) {
+  function (callback) {
     if (this === null) {
       throw new TypeError('Array.prototype.find called on null or undefined');
     } else if (typeof callback !== 'function') {
@@ -48,7 +48,7 @@ Array.prototype.find =
 // Polyfill for Object.assign()
 // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
 if (typeof Object.assign != 'function') {
-  Object.assign = function(target) {
+  Object.assign = function (target) {
     'use strict';
     if (target == null) {
       throw new TypeError('Cannot convert undefined or null to object');
@@ -71,8 +71,8 @@ if (typeof Object.assign != 'function') {
 
 // Polyfill for Element.remove()
 // https://developer.mozilla.org/de/docs/Web/API/ChildNode/remove#Polyfill
-(function(arr) {
-  arr.forEach(function(item) {
+(function (arr) {
+  arr.forEach(function (item) {
     if (item.hasOwnProperty('remove')) {
       return;
     }
@@ -91,7 +91,7 @@ if (typeof Object.assign != 'function') {
 // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/includes#Polyfill
 if (!Array.prototype.includes) {
   Object.defineProperty(Array.prototype, 'includes', {
-    value: function(searchElement, fromIndex) {
+    value: function (searchElement, fromIndex) {
 
       if (this == null) {
         throw new TypeError('"this" is null or not defined');

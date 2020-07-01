@@ -105,6 +105,10 @@ Cypress.Commands.add('toolbarButton', name =>
   cy.get(`.leaflet-pm-icon-${name}`)
 );
 
+Cypress.Commands.add('toolbarButtonContainer', (name, map) => {
+  cy.get(map.pm.Toolbar.buttons[name]._container.children[0])
+});
+
 Cypress.Commands.add('drawShape', (shape, ignore) => {
   cy.window().then(({ map, L }) => {
     if (shape === 'PolygonPart1') {
@@ -155,6 +159,18 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
         });
     }
 
+
+    if (shape === 'PolygonIntersects') {
+      cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          //
+          const layer = L.geoJSON(json).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
+
     if (shape === 'FeatureCollectionWithCircles') {
       cy.fixture(shape, ignore)
         .then(json => {
@@ -183,3 +199,6 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     }
   });
 });
+
+
+
