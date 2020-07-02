@@ -409,7 +409,7 @@ The event has an object with an enabled boolean and a reference to the map.
 ### Removal Mode
 
 ```js
-// toggle drag mode like this:
+// toggle removal mode like this:
 map.pm.toggleGlobalRemovalMode();
 ```
 
@@ -417,10 +417,10 @@ The following methods are available on `map.pm`:
 
 | Method                     | Returns   | Description                                                              |
 | :------------------------- | :-------- | :----------------------------------------------------------------------- |
-| enableGlobalRemovalMode()  | -         | Enables global drag mode.                                                |
-| disableGlobalRemovalMode() | -         | Disables global drag mode.                                               |
+| enableGlobalRemovalMode()  | -         | Enables global removal mode.                                             |
+| disableGlobalRemovalMode() | -         | Disables global removal mode.                                            |
 | toggleGlobalRemovalMode()  | -         | Toggles global removal mode.                                             |
-| globalRemovalModeEnabled()     | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
+| globalRemovalModeEnabled() | `Boolean` | Returns `true` if global removal mode is enabled. `false` when disabled. |
 
 The following events are available on a layer instance:
 
