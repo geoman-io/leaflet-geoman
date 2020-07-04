@@ -75,6 +75,11 @@ Draw.Polygon = Draw.Line.extend({
       if (this.options.snappable) {
         this._cleanupSnapping();
       }
+    } else {
+      // add a click event w/ no handler to the marker
+      // event won't bubble so prevents creation of identical markers in same polygon
+      // fixes issue where double click during poly creation when allowSelfIntersection: false caused it to break
+      marker.on('click', () => (1));
     }
 
     // handle tooltip text
