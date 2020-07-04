@@ -406,7 +406,7 @@ const Toolbar = L.Class.extend({
       "CircleMarker": "drawCircleMarker",
       "Edit": "editMode",
       "Drag": "dragMode",
-      "Cut": "cutPoylgon",
+      "Cut": "cutPolygon",
       "Removal": "removalMode"
     };
 
@@ -498,7 +498,7 @@ const Toolbar = L.Class.extend({
       "CircleMarker": "drawCircleMarker",
       "Edit": "editMode",
       "Drag": "dragMode",
-      "Cut": "cutPoylgon",
+      "Cut": "cutPolygon",
       "Removal": "removalMode"
     };
 
@@ -574,7 +574,7 @@ const Toolbar = L.Class.extend({
       "CircleMarker": "drawCircleMarker",
       "Edit": "editMode",
       "Drag": "dragMode",
-      "Cut": "cutPoylgon",
+      "Cut": "cutPolygon",
       "Removal": "removalMode"
     };
 
