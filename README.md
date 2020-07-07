@@ -205,6 +205,7 @@ The following methods are available on `map.pm`:
 | setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                  |
 | setGlobalOptions(`options`)   | -         | Set drawing options.                                                     |
 | getGlobalOptions()            | `Object`  | Returns the global options.                                              |
+| getPMLayers()                 | `Array`   | Returns all Geoman layers on the map.                                    |
 
 See the available options in the table below.
 

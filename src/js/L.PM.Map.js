@@ -125,6 +125,9 @@ const Map = L.Class.extend({
   },
   disableGlobalCutMode() {
     return this.Draw.Cut.disable();
+  },
+  getPMLayers(){
+    return findLayers(this.map);
   }
 
 });
