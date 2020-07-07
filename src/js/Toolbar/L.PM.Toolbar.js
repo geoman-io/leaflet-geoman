@@ -23,6 +23,13 @@ const Toolbar = L.Class.extend({
     customControls: true,
     oneBlock: false,
     position: 'topleft',
+    positions: {
+      draw: undefined,
+      edit: undefined,
+      options: undefined,
+      custom: undefined,
+      oneBlock: undefined,
+    }
   },
   customButtons: [],
   initialize(map) {
@@ -381,10 +388,28 @@ const Toolbar = L.Class.extend({
     for (const btn in buttons) {
       if (this.options[btn] && ignoreBtns.indexOf(btn) === -1) {
         // if options say the button should be visible, add it to the map
-        buttons[btn].setPosition(this.options.position);
+        let block = buttons[btn]._button.tool;
+        if(!block) {
+          // undefined is the draw block
+          block = 'draw';
+        }
+        buttons[btn].setPosition(this._getBtnPosition(block));
         buttons[btn].addTo(this.map);
       }
     }
+  },
+  _getBtnPosition(block){
+    if(this.options.oneBlock){
+      block = 'oneBlock';
+    }
+    return this.options.positions && this.options.positions[block] ? this.options.positions[block] : this.options.position;
+  },
+  setBlockPosition(block,position){
+    this.options.positions[block] = position;
+    this._showHideButtons();
+  },
+  getBlockPositions(){
+    return this.options.positions;
   },
   copyDrawControl(copyInstance, options) {
 
