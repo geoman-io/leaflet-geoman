@@ -74,10 +74,12 @@ Draw.Cut = Draw.Polygon.extend({
         layer: resultingLayer,
         originalLayer: l,
       });
+      this._editedLayers.push(l);
 
     });
   },
   _finishShape() {
+    this._editedLayers = [];
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(false);
@@ -100,5 +102,11 @@ Draw.Cut = Draw.Polygon.extend({
     // remove the first vertex from "other snapping layers"
     this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
     delete this._tempSnapLayerIndex;
+
+    this._editedLayers.forEach((layer) =>{
+      // fire edit event after cut is disabled
+      layer.fire('pm:edit', { layer});
+    });
+    this._editedLayers = [];
   },
 });
