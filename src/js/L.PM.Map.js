@@ -126,7 +126,7 @@ const Map = L.Class.extend({
   disableGlobalCutMode() {
     return this.Draw.Cut.disable();
   },
-  getPMLayers(){
+  getGeomanLayers(){
     return findLayers(this.map);
   }
 
