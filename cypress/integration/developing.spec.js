@@ -20,7 +20,7 @@ describe('Opens Testing Environment', () => {
 
     cy.window().then(({ map}) => {
       const count = map.pm.getGeomanLayers().length;
-      expect(count).to.equal(2);
+      expect(count).to.equal(1);
     });
 
   });
