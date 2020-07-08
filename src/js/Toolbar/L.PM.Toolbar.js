@@ -24,11 +24,10 @@ const Toolbar = L.Class.extend({
     oneBlock: false,
     position: 'topleft',
     positions: {
-      draw: false,
-      edit: false,
-      options: false,
-      custom: false,
-      oneBlock: false,
+      draw: '',
+      edit: '',
+      options: '',
+      custom: '',
     }
   },
   customButtons: [],
@@ -68,6 +67,16 @@ const Toolbar = L.Class.extend({
     );
 
     this._defineButtons();
+  },
+  _createContainer(name){
+    const container = `${name}Container`;
+    if(!this[container]) {
+      this[container] = L.DomUtil.create(
+        'div',
+        `leaflet-pm-toolbar leaflet-pm-${name} leaflet-bar leaflet-control`
+      );
+    }
+    return this[container];
   },
   getButtons() {
     return this.buttons;
@@ -400,14 +409,12 @@ const Toolbar = L.Class.extend({
     }
   },
   _getBtnPosition(block){
-    if(this.options.oneBlock){
-      block = 'oneBlock';
-    }
     return this.options.positions && this.options.positions[block] ? this.options.positions[block] : this.options.position;
   },
   setBlockPosition(block,position){
     this.options.positions[block] = position;
     this._showHideButtons();
+    this.changeControlOrder();
   },
   getBlockPositions(){
     return this.options.positions;

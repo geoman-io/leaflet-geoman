@@ -667,7 +667,7 @@ map.pm.Toolbar.getControlOrder();
 
 **Position**
 
-You can set different positions per block `draw`, `edit`, `options`⭐, `custom`, `oneBlock`: 
+You can set different positions per block `draw`, `edit`, `options`⭐, `custom`: 
 
 Possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'`
 
