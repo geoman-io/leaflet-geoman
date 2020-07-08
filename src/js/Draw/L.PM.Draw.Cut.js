@@ -61,20 +61,10 @@ Draw.Cut = Draw.Polygon.extend({
         this._map.pm.removeLayer({ target: resultingLayer });
       }
 
-      // fire pm:cut on the cutted layer
-      l.fire('pm:cut', {
-        shape: this._shape,
+      this._editedLayers.push({
         layer: resultingLayer,
-        originalLayer: l,
+        originalLayer: l
       });
-
-      // fire pm:cut on the map
-      this._map.fire('pm:cut', {
-        shape: this._shape,
-        layer: resultingLayer,
-        originalLayer: l,
-      });
-      this._editedLayers.push(l);
 
     });
   },
@@ -103,9 +93,23 @@ Draw.Cut = Draw.Polygon.extend({
     this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
     delete this._tempSnapLayerIndex;
 
-    this._editedLayers.forEach((layer) =>{
-      // fire edit event after cut is disabled
-      layer.fire('pm:edit', { layer});
+    this._editedLayers.forEach(({layer, originalLayer}) =>{
+      // fire pm:cut on the cutted layer
+      originalLayer.fire('pm:cut', {
+        shape: this._shape,
+        layer,
+        originalLayer,
+      });
+
+      // fire pm:cut on the map
+      this._map.fire('pm:cut', {
+        shape: this._shape,
+        layer,
+        originalLayer,
+      });
+
+      // fire edit event after cut
+      originalLayer.fire('pm:edit', { layer: originalLayer});
     });
     this._editedLayers = [];
   },
