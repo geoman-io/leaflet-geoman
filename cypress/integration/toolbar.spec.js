@@ -309,7 +309,7 @@ describe('Testing the Toolbar', () => {
     });
   });
 
-  it.only('Different block positions', () => {
+  it('Different block positions', () => {
     cy.window().then(({map}) => {
       map.pm.addControls({
         positions: {
