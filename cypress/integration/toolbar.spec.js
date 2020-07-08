@@ -308,4 +308,21 @@ describe('Testing the Toolbar', () => {
       })
     });
   });
+
+  it.only('Different block positions', () => {
+    cy.window().then(({map}) => {
+      map.pm.addControls({
+        positions: {
+          draw: 'topright',
+          edit: 'topleft'
+        }
+      });
+      cy.get('.leaflet-pm-toolbar.leaflet-pm-edit')
+        .parent('.leaflet-top.leaflet-left')
+        .should('exist');
+      cy.get('.leaflet-pm-toolbar.leaflet-pm-draw')
+        .parent('.leaflet-top.leaflet-right')
+        .should('exist');
+    });
+  });
 });

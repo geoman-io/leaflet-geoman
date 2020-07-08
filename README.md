@@ -667,16 +667,15 @@ map.pm.Toolbar.getControlOrder();
 
 **Position**
 
-You can set the position of each block:
+You can set different positions per block `draw`, `edit`, `options`⭐, `custom`, `oneBlock`: 
+
+Possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'`
 
 ```javascript
 map.pm.addControls({
   positions: {
     draw: 'topright',
     edit: 'topleft',
-    options: undefined,
-    custom: undefined,
-    oneBlock: undefined,
   }
 });
 ```

@@ -24,11 +24,11 @@ const Toolbar = L.Class.extend({
     oneBlock: false,
     position: 'topleft',
     positions: {
-      draw: undefined,
-      edit: undefined,
-      options: undefined,
-      custom: undefined,
-      oneBlock: undefined,
+      draw: false,
+      edit: false,
+      options: false,
+      custom: false,
+      oneBlock: false,
     }
   },
   customButtons: [],
@@ -385,6 +385,7 @@ const Toolbar = L.Class.extend({
     if (this.options.customControls === false) {
       ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool === 'custom'));
     }
+
     for (const btn in buttons) {
       if (this.options[btn] && ignoreBtns.indexOf(btn) === -1) {
         // if options say the button should be visible, add it to the map
