@@ -165,9 +165,6 @@ const SnapMixin = {
   // we got the point we want to snap to (C), but we need to check if a coord of the polygon
   // receives priority over C as the snapping point. Let's check this here
   _checkPrioritiySnapping(closestLayer) {
-    if(!closestLayer){
-      return {};
-    }
     const map = this._map;
 
     // A and B are the points of the closest segment to P (the marker position we want to snap)
