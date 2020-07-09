@@ -90,6 +90,11 @@ const SnapMixin = {
       this._snapList
     );
 
+    // if no layers found. Can happen when circle is the only visible layer on the map and the hidden snapping-border circle layer is also on the map
+    if(Object.keys(closestLayer).length === 0){
+      return false;
+    }
+
     const isMarker =
       closestLayer.layer instanceof L.Marker ||
       closestLayer.layer instanceof L.CircleMarker;
@@ -160,6 +165,9 @@ const SnapMixin = {
   // we got the point we want to snap to (C), but we need to check if a coord of the polygon
   // receives priority over C as the snapping point. Let's check this here
   _checkPrioritiySnapping(closestLayer) {
+    if(!closestLayer){
+      return {};
+    }
     const map = this._map;
 
     // A and B are the points of the closest segment to P (the marker position we want to snap)
