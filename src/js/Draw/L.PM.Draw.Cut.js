@@ -42,7 +42,7 @@ Draw.Cut = Draw.Polygon.extend({
       if (resultLayer.getLayers().length === 1) {
         [resultLayer] = resultLayer.getLayers(); // prevent that a unnecessary layergroup is created
       }
-      const resultingLayer = resultLayer.addTo(this._map);
+      const resultingLayer = resultLayer.addTo(this._map.pm._getLayerGroup());
 
       // give the new layer the original options
       resultingLayer.pm.enable(this.options);
@@ -54,7 +54,9 @@ Draw.Cut = Draw.Polygon.extend({
 
       // remove old layer and cutting layer
       l.remove();
+      l.removeFrom(this._map.pm._getLayerGroup());
       layer.remove();
+      layer.removeFrom(this._map.pm._getLayerGroup());
 
       // Remove it only if it is a layergroup. It can be only not a layergroup if a layer exists
       if (resultingLayer.getLayers && resultingLayer.getLayers().length === 0) {

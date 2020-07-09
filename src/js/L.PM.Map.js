@@ -20,6 +20,7 @@ const Map = L.Class.extend({
 
     this.globalOptions = {
       snappable: true,
+      layerGroup: undefined,
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {
@@ -125,6 +126,9 @@ const Map = L.Class.extend({
   },
   disableGlobalCutMode() {
     return this.Draw.Cut.disable();
+  },
+  _getLayerGroup(){
+    return this.globalOptions.layerGroup && this.globalOptions.layerGroup instanceof L.LayerGroup ? this.globalOptions.layerGroup : this.map;
   }
 
 });

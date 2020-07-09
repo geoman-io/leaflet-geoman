@@ -208,7 +208,7 @@ Draw.Circle = Draw.extend({
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
-    const circleLayer = L.circle(center, options).addTo(this._map);
+    const circleLayer = L.circle(center, options).addTo(this._map.pm._getLayerGroup());
 
     // create polygon around the circle border
     circleLayer.pm._updateHiddenPolyCircle();

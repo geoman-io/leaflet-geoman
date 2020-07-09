@@ -129,7 +129,7 @@ Draw.Marker = Draw.extend({
     const marker = new L.Marker(latlng, this.options.markerStyle);
 
     // add marker to the map
-    marker.addTo(this._map);
+    marker.addTo(this._map.pm._getLayerGroup());
 
     // enable editing for the marker
     marker.pm.enable();
