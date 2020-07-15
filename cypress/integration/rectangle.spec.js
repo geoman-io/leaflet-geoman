@@ -67,4 +67,35 @@ describe('Draw Rectangle', () => {
       expect(marker.options.draggable).to.equal(false);
     });
   });
+
+  it('Multiple Cuts', ()=>{
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(191,216)
+      .click(608,323);
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(226,389)
+      .click(230,105)
+      .click(270,396)
+      .click(226,389);
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(293,356)
+      .click(293,122)
+      .click(340,367)
+      .click(293,356);
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(364,345)
+      .click(363,138)
+      .click(414,368)
+      .click(364,345);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(16);
+  })
 });

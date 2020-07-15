@@ -1,6 +1,5 @@
-import intersect from '@turf/intersect';
-import difference from '@turf/difference';
 import Draw from './L.PM.Draw';
+import {difference, intersect} from "../helpers/turfHelper";
 
 Draw.Cut = Draw.Polygon.extend({
   initialize(map) {
