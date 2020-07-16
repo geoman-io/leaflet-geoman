@@ -128,6 +128,9 @@ const Map = L.Class.extend({
   },
   getGeomanLayers(){
     return findLayers(this.map);
+  },
+  getGeomanDrawLayers(){
+    return findLayers(this.map).filter(l => l._drawnByGeoman === true);
   }
 
 });

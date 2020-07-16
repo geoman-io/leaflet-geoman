@@ -61,6 +61,8 @@ Draw.Cut = Draw.Polygon.extend({
         this._map.pm.removeLayer({ target: resultingLayer });
       }
 
+      this._addDrawnLayerProp(resultingLayer);
+
       // fire pm:cut on the cutted layer
       l.fire('pm:cut', {
         shape: this._shape,

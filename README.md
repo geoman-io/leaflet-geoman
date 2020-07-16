@@ -206,6 +206,7 @@ The following methods are available on `map.pm`:
 | setGlobalOptions(`options`)   | -         | Set drawing options.                                                     |
 | getGlobalOptions()            | `Object`  | Returns the global options.                                              |
 | getGeomanLayers()             | `Array`   | Returns all Geoman layers on the map.                                    |
+| getGeomanDrawLayers()         | `Array`   | Returns all drawn Geoman layers on the map.                              |
 
 See the available options in the table below.
 

@@ -35,6 +35,7 @@ Draw.Polygon = Draw.Line.extend({
     const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
       this._map
     );
+    this._addDrawnLayerProp(polygonLayer);
 
     // disable drawing
     this.disable();

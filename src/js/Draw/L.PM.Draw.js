@@ -140,6 +140,9 @@ const Draw = L.Class.extend({
       return shapeMapping[name];
     }
     return this[name] ? this[name]._shape : name;
+  },
+  _addDrawnLayerProp(layer){
+    layer._drawnByGeoman = true;
   }
 });
 
