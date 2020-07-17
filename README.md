@@ -659,13 +659,37 @@ map.pm.addControls({
 
 Reorder the buttons with
 ```js
-map.pm.Toolbar.changeControlOrder(['drawCircle', 'drawRectangle', 'removalMode', 'editMode'])
+map.pm.Toolbar.changeControlOrder(['drawCircle', 'drawRectangle', 'removalMode', 'editMode']);
 ```
 
 Receive the current order with
 ```js
-map.pm.Toolbar.getControlOrder()
+map.pm.Toolbar.getControlOrder();
 ```
+
+**Position**
+
+You can set different positions per block `draw`, `edit`, `options`⭐, `custom`: 
+
+Possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'`
+
+```javascript
+map.pm.addControls({
+  positions: {
+    draw: 'topright',
+    edit: 'topleft',
+  }
+});
+```
+
+```javascript
+map.pm.Toolbar.setBlockPosition('draw','topright');
+```
+
+```javascript
+map.pm.Toolbar.getBlockPositions();
+```
+
 
 **Adding New/Custom Controls**
 
