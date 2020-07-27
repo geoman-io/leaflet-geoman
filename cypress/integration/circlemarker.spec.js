@@ -208,7 +208,7 @@ describe('Draw Circle Marker', () => {
     });
 
   });
-  it('set min radius of circleMarker', () => {
+  it.only('set min radius of circleMarker', () => {
     let handFinish = false;
 
     cy.toolbarButton('circle-marker')
@@ -255,6 +255,7 @@ describe('Draw Circle Marker', () => {
               handFinish = true;
               map.eachLayer(layer => {
                 if (layer instanceof L.CircleMarker) {
+                  console.log(layer.getRadius())
                   expect(true).to.equal(layer.getRadius() >= 145 && layer.getRadius() < 155);
                 }
               });
@@ -265,7 +266,7 @@ describe('Draw Circle Marker', () => {
         }
       });
       const toucherMarker = handMarker.growFinger('mouse');
-      toucherMarker.wait(100).moveTo(395,198, 100).down().wait(500).moveTo(500,198, 400).up().wait(100)
+      toucherMarker.wait(100).moveTo(400,198, 100).down().wait(500).moveTo(500,198, 400).up().wait(100)
       // wait until hand is finished
       cy.waitUntil(() => cy.window().then(() => handFinish)).then( ()=> {
         expect(handFinish).to.equal(true);
