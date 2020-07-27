@@ -1,5 +1,6 @@
 import Edit from './L.PM.Edit';
 import Utils from "../L.PM.Utils";
+import {destinationOnLine} from "../helpers";
 
 Edit.CircleMarker = Edit.extend({
   _shape: 'CircleMarker',
@@ -28,6 +29,10 @@ Edit.CircleMarker = Edit.extend({
     if (this.options.snappable) {
       if (this.options.editable) {
         this._initSnappableMarkers();
+        if(this.options.editable){
+          // update marker latlng when snapped latlng radius is out of min/max
+          this._outerMarker.on('drag',this._handleOuterMarkerSnapping, this);
+        }
         // sync the hintline with hint marker
         this._outerMarker.on('move', this._syncHintLine, this);
         this._outerMarker.on('move', this._syncCircleRadius, this);
@@ -98,6 +103,10 @@ Edit.CircleMarker = Edit.extend({
 
     if (this.options.editable) {
       this._map.off('move', this._syncMarkers, this);
+      if(this._outerMarker) {
+        // update marker latlng when snapped latlng radius is out of min/max
+        this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
+      }
     } else {
       this._map.off('move', this._updateHiddenPolyCircle, this);
     }
@@ -213,6 +222,7 @@ Edit.CircleMarker = Edit.extend({
     this._updateHiddenPolyCircle();
   },
   _resizeCircle() {
+    this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
     this._syncHintLine();
     this._syncCircleRadius();
   },
@@ -221,14 +231,19 @@ Edit.CircleMarker = Edit.extend({
     const B = this._outerMarker.getLatLng();
 
     const distance = this._map.project(A).distanceTo(this._map.project(B));
+    if(this.options.circleMarkerMin && distance < this.options.circleMarkerMin) {
+      this._layer.setRadius(this.options.circleMarkerMin);
+    }else if(this.options.circleMarkerMax && distance > this.options.circleMarkerMax) {
+      this._layer.setRadius(this.options.circleMarkerMax);
+    }else{
+      this._layer.setRadius(distance);
+    }
 
-    this._layer.setRadius(distance);
     this._updateHiddenPolyCircle();
   },
   _syncHintLine() {
     const A = this._centerMarker.getLatLng();
     const B = this._outerMarker.getLatLng();
-
     // set coords for hintline from marker to last vertex of drawin polyline
     this._hintline.setLatLngs([A, B]);
   },
@@ -301,5 +316,36 @@ Edit.CircleMarker = Edit.extend({
     if (!this._hiddenPolyCircle._parentCopy) {
       this._hiddenPolyCircle._parentCopy = this._layer
     }
+  },
+  _getNewDestinationOfOuterMarker(){
+    const latlng = this._centerMarker.getLatLng();
+    let secondLatLng = this._outerMarker.getLatLng();
+    const distance = this._map.project(latlng).distanceTo(this._map.project(secondLatLng));
+    if(this.options.circleMarkerMin && distance < this.options.circleMarkerMin) {
+      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this._pxRadiusToMeter(this.options.circleMarkerMin));
+    }else if(this.options.circleMarkerMax && distance > this.options.circleMarkerMax) {
+      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this._pxRadiusToMeter(this.options.circleMarkerMax));
+    }
+    return secondLatLng;
+  },
+  _handleOuterMarkerSnapping(){
+    if(this._outerMarker._snapped) {
+      const latlng = this._centerMarker.getLatLng();
+      const secondLatLng = this._outerMarker.getLatLng();
+      const distance = this._map.project(latlng).distanceTo(this._map.project(secondLatLng));
+      if(this.options.circleMarkerMin && distance < this.options.circleMarkerMin) {
+        this._outerMarker.setLatLng(this._outerMarker._orgLatLng);
+      } else if(this.options.circleMarkerMax && distance > this.options.circleMarkerMax) {
+        this._outerMarker.setLatLng(this._outerMarker._orgLatLng);
+      }
+    }
+    // calculate the new latlng of marker if radius is out of min/max
+    this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
+  },
+  _pxRadiusToMeter(radius){
+    const center = this._centerMarker.getLatLng();
+    const pointA = this._map.project(center);
+    const pointB = L.point(pointA.x + radius, pointA.y);
+    return this._map.unproject(pointB).distanceTo(center);
   }
 });

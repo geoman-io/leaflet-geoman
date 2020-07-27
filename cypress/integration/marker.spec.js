@@ -98,7 +98,7 @@ describe('Draw Marker', () => {
 
 
   it('calls pm:drag-events on Marker drag', () => {
-
+    let handFinish = false;
     let dragstart = false;
     let drag = false;
     let dragend = false;
@@ -133,12 +133,19 @@ describe('Draw Marker', () => {
           expect(dragstart).to.equal(true);
           expect(drag).to.equal(true);
           expect(dragend).to.equal(true);
+          handFinish = true;
         }
       });
       const toucherMarker = handMarker.growFinger('mouse');
       toucherMarker.wait(100).moveTo(150, 240, 100).down().wait(500).moveTo(170, 290, 400).up().wait(100) // Not allowed
 
     });
+
+    // wait until hand is finished
+    cy.waitUntil(() => cy.window().then(() => handFinish)).then( ()=> {
+      expect(handFinish).to.equal(true);
+    });
   });
+
 
 });

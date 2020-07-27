@@ -122,6 +122,7 @@ const SnapMixin = {
 
     if (closestLayer.distance < minDistance) {
       // snap the marker
+      marker._orgLatLng = marker.getLatLng();
       marker.setLatLng(snapLatLng);
 
       marker._snapped = true;

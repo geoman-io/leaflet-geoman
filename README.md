@@ -220,8 +220,12 @@ See the available options in the table below.
 | cursorMarker          | `true`                                | show a marker at the cursor                                                                                                                           |
 | finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.2.0.html#interactive-layer-click). |
 | markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
+| hideMiddleMarkers     | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                       |
+| circleMax             | `null`                                | set the max radius of a `Circle`.                                                                                                                     |
+| circleMin             | `null`                                | set the min radius of a `Circle`.                                                                                                                     |
 | editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
-| hideMiddleMarkers   | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                     |
+| circleMarkerMax       | `null`                                | set the max radius of a `CircleMarker` when editable is active.                                                                                       |
+| circleMarkerMin       | `null`                                | set the min radius of a `CircleMarker` when editable is active.                                                                                       |
 
 You can listen to map events to hook into the drawing procedure like this:
 

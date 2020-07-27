@@ -86,10 +86,21 @@ const Map = L.Class.extend({
       ...o
     };
 
+    // check if switched the editable mode for CircleMarker while drawing
+    let reenableCircleMarker = false;
+    if(this.map.pm.Draw.CircleMarker.enabled() && this.map.pm.Draw.CircleMarker.options.editable !== options.editable){
+      this.map.pm.Draw.CircleMarker.disable();
+      reenableCircleMarker = true;
+    }
+
     // enable options for Drawing Shapes
     this.map.pm.Draw.shapes.forEach(shape => {
       this.map.pm.Draw[shape].setOptions(options)
-    })
+    });
+
+    if(reenableCircleMarker){
+      this.map.pm.Draw.CircleMarker.enable();
+    }
 
     // enable options for Editing
     const layers = findLayers(this.map);

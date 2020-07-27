@@ -30,7 +30,7 @@ function destinationVincenty(lonlat, brng, dist) { // rewritten to work with lea
     f: 1 / 298.257223563
   };
 
-  const { a, b, f } = VincentyConstants;
+  const {a, b, f} = VincentyConstants;
   const lon1 = lonlat.lng;
   const lat1 = lonlat.lat;
   const s = dist;
@@ -75,6 +75,7 @@ function destinationVincenty(lonlat, brng, dist) { // rewritten to work with lea
 
   return L.latLng(lamFunc, lat2a);
 }
+
 export function createGeodesicPolygon(origin, radius, sides, rotation) {
   let angle;
   let newLonlat;
@@ -90,3 +91,38 @@ export function createGeodesicPolygon(origin, radius, sides, rotation) {
 
   return points;
 }
+
+/* Copied from L.GeometryUtil */
+function destination(latlng, heading, distance) {
+  heading = (heading + 360) % 360;
+  const rad = Math.PI / 180;
+  const radInv = 180 / Math.PI;
+  const R = 6378137; // approximation of Earth's radius
+  const lon1 = latlng.lng * rad;
+  const lat1 = latlng.lat * rad;
+  const rheading = heading * rad;
+  const sinLat1 = Math.sin(lat1);
+  const cosLat1 = Math.cos(lat1);
+  const cosDistR = Math.cos(distance / R);
+  const sinDistR = Math.sin(distance / R);
+  const lat2 = Math.asin(sinLat1 * cosDistR + cosLat1 * sinDistR * Math.cos(rheading));
+  let lon2 = lon1 + Math.atan2(Math.sin(rheading) * sinDistR * cosLat1, cosDistR - sinLat1 * Math.sin(lat2));
+  lon2 *= radInv;
+  lon2 = lon2 > 180 ? lon2 - 360 : lon2 < -180 ? lon2 + 360 : lon2;
+  return L.latLng([lat2 * radInv, lon2]);
+}
+/* Copied from L.GeometryUtil */
+function angle(map, latlngA, latlngB) {
+  const pointA = map.latLngToContainerPoint(latlngA);
+  const pointB = map.latLngToContainerPoint(latlngB);
+  let angleDeg = Math.atan2(pointB.y - pointA.y, pointB.x - pointA.x) * 180 / Math.PI + 90;
+  angleDeg += angleDeg < 0 ? 360 : 0;
+  return angleDeg;
+
+}
+
+export function destinationOnLine(map, latlngA, latlngB, distance) {
+  const angleDeg = angle(map, latlngA, latlngB);
+  return destination(latlngA, angleDeg, distance);
+}
+

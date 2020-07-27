@@ -1,5 +1,6 @@
 import Edit from './L.PM.Edit';
 import Utils from "../L.PM.Utils";
+import {destinationOnLine} from "../helpers";
 
 Edit.Circle = Edit.extend({
   _shape: 'Circle',
@@ -10,6 +11,8 @@ Edit.Circle = Edit.extend({
   applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
+      // update marker latlng when snapped latlng radius is out of min/max
+      this._outerMarker.on('drag',this._handleOuterMarkerSnapping, this);
       // sync the hintline with hint marker
       this._outerMarker.on('move', this._syncHintLine, this);
       this._outerMarker.on('move', this._syncCircleRadius, this);
@@ -81,6 +84,7 @@ Edit.Circle = Edit.extend({
     this._centerMarker.off('dragstart', this._fireDragStart, this);
     this._centerMarker.off('drag', this._fireDrag, this);
     this._centerMarker.off('dragend', this._fireDragEnd, this);
+    this._outerMarker.off('drag',this._handleOuterMarkerSnapping, this);
 
     layer.pm._enabled = false;
     layer.pm._helperLayers.clearLayers();
@@ -124,8 +128,6 @@ Edit.Circle = Edit.extend({
     this._outerMarker = this._createOuterMarker(outer);
     this._markers = [this._centerMarker, this._outerMarker];
     this._createHintLine(this._centerMarker, this._outerMarker);
-
-
   },
   _getLatLngOnCircle(center, radius) {
     const pointA = this._map.project(center);
@@ -134,6 +136,7 @@ Edit.Circle = Edit.extend({
     return this._map.unproject(pointB);
   },
   _resizeCircle() {
+    this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
     this._syncHintLine();
     this._syncCircleRadius();
   },
@@ -173,18 +176,23 @@ Edit.Circle = Edit.extend({
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
     const B = this._outerMarker.getLatLng();
-
     const distance = A.distanceTo(B);
 
-    this._layer.setRadius(distance);
+    if(this.options.circleMin && distance < this.options.circleMin) {
+      this._layer.setRadius(this.options.circleMin);
+    }else if(this.options.circleMax && distance > this.options.circleMax) {
+      this._layer.setRadius(this.options.circleMax);
+    }else{
+      this._layer.setRadius(distance);
+    }
+
     this._updateHiddenPolyCircle();
   },
   _syncHintLine() {
-    const A = this._centerMarker.getLatLng();
-    const B = this._outerMarker.getLatLng();
-
+    const latlng = this._centerMarker.getLatLng();
+    const secondLatLng = this._outerMarker.getLatLng();
     // set coords for hintline from marker to last vertex of drawin polyline
-    this._hintline.setLatLngs([A, B]);
+    this._hintline.setLatLngs([latlng, secondLatLng]);
   },
   _createHintLine(markerA, markerB) {
     const A = markerA.getLatLng();
@@ -255,5 +263,30 @@ Edit.Circle = Edit.extend({
     if (!this._hiddenPolyCircle._parentCopy) {
       this._hiddenPolyCircle._parentCopy = this._layer
     }
+  },
+  _getNewDestinationOfOuterMarker(){
+    const latlng = this._centerMarker.getLatLng();
+    let secondLatLng = this._outerMarker.getLatLng();
+    const distance = latlng.distanceTo(secondLatLng);
+    if(this.options.circleMin && distance < this.options.circleMin) {
+      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this.options.circleMin);
+    }else if(this.options.circleMax && distance > this.options.circleMax) {
+      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this.options.circleMax);
+    }
+    return secondLatLng;
+  },
+  _handleOuterMarkerSnapping(){
+    if(this._outerMarker._snapped) {
+      const latlng = this._centerMarker.getLatLng();
+      const secondLatLng = this._outerMarker.getLatLng();
+      const distance = latlng.distanceTo(secondLatLng);
+      if(this.options.circleMin && distance < this.options.circleMin) {
+        this._outerMarker.setLatLng(this._outerMarker._orgLatLng);
+      } else if(this.options.circleMax && distance > this.options.circleMax) {
+        this._outerMarker.setLatLng(this._outerMarker._orgLatLng);
+      }
+    }
+    // calculate the new latlng of marker if radius is out of min/max
+    this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
   }
 });
