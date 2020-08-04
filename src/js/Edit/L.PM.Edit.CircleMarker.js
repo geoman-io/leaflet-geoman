@@ -6,6 +6,8 @@ Edit.CircleMarker = Edit.extend({
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
+    // create polygon around the circle border
+    this._updateHiddenPolyCircle();
   },
   applyOptions() {
     // Use the not editable and only draggable version
@@ -285,21 +287,24 @@ Edit.CircleMarker = Edit.extend({
     marker.off('pm:dragstart', this._unsnap, this);
   },
   _updateHiddenPolyCircle() {
-    const pointA = this._layer._map.project(this._layer.getLatLng());
-    const pointB = L.point(pointA.x + this._layer.getRadius(), pointA.y);
-    const radius = this._layer.getLatLng().distanceTo(this._layer._map.unproject(pointB));
+    const map = this._layer._map || this._map;
+    if(map) {
+      const pointA = map.project(this._layer.getLatLng());
+      const pointB = L.point(pointA.x + this._layer.getRadius(), pointA.y);
+      const radius = this._layer.getLatLng().distanceTo(map.unproject(pointB));
 
-    const _layer = L.circle(this._layer.getLatLng(), this._layer.options);
-    _layer.setRadius(radius);
+      const _layer = L.circle(this._layer.getLatLng(), this._layer.options);
+      _layer.setRadius(radius);
 
-    if (this._hiddenPolyCircle) {
-      this._hiddenPolyCircle.setLatLngs(Utils.circleToPolygon(_layer, 200).getLatLngs());
-    } else {
-      this._hiddenPolyCircle = Utils.circleToPolygon(_layer, 200);
-    }
+      if (this._hiddenPolyCircle) {
+        this._hiddenPolyCircle.setLatLngs(Utils.circleToPolygon(_layer, 200).getLatLngs());
+      } else {
+        this._hiddenPolyCircle = Utils.circleToPolygon(_layer, 200);
+      }
 
-    if (!this._hiddenPolyCircle._parentCopy) {
-      this._hiddenPolyCircle._parentCopy = this._layer
+      if (!this._hiddenPolyCircle._parentCopy) {
+        this._hiddenPolyCircle._parentCopy = this._layer
+      }
     }
   }
 });

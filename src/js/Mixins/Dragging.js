@@ -92,6 +92,11 @@ const DragMixin = {
       return false;
     }
 
+    // update the hidden circle border after dragging
+    if(this._layer instanceof L.CircleMarker){
+      this._layer.pm._updateHiddenPolyCircle();
+    }
+
     // timeout to prevent click event after drag :-/
     // TODO: do it better as soon as leaflet has a way to do it better :-)
     window.setTimeout(() => {
