@@ -61,6 +61,8 @@ Draw.Cut = Draw.Polygon.extend({
         this._map.pm.removeLayer({ target: resultingLayer });
       }
 
+      this._addDrawnLayerProp(resultingLayer);
+
       this._editedLayers.push({
         layer: resultingLayer,
         originalLayer: l

@@ -212,6 +212,27 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
   });
 
+  it('create vertex when dblclick', () => {
+    cy.window().then(({ map }) => {
+      map.pm.enableDraw('Polygon', {
+        allowSelfIntersection: false,
+        finishOn: 'dblclick',
+      });
+    });
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 50)
+      .click(150, 50)
+      .dblclick(150, 150);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(4);
+
+    cy.toolbarButton('edit').click();
+  });
+
   it('prevent creation while self intersection', () => {
 
     cy.window().then(({ map }) => {
