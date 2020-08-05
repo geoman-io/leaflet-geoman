@@ -132,7 +132,7 @@ const Draw = L.Class.extend({
       "drawCircleMarker": "CircleMarker",
       "editMode": "Edit",
       "dragMode": "Drag",
-      "cutPoylgon": "Cut",
+      "cutPolygon": "Cut",
       "removalMode": "Removal"
     };
 
