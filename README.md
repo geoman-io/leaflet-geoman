@@ -480,15 +480,16 @@ The following methods are available on `map.pm`:
 
 The following events are available on a layer instance:
 
-| Event  | Params | Description                    | Output                              |
-| :----- | :----- | :----------------------------- | :---------------------------------- |
-| pm:cut | `e`    | Fired when the layer being cut | `shape`, `layer`, `originalLayer`   |
+| Event   | Params | Description                        | Output                              |
+| :------ | :----- | :--------------------------------- | :---------------------------------- |
+| pm:cut  | `e`    | Fired when the layer being cut     | `shape`, `layer`, `originalLayer`   |
+| pm:edit | `e`    | Fired when a layer is edited / cut | `layer`                             |
 
 The following events are available on a map instance:
 
 | Event                    | Params | Description                        | Output                            |
 | :----------------------- | :----- | :--------------------------------- | :-------------------------------- |
-| pm:globaldrawmodetoggled | `e`    | Fired when Drawing Mode is toggled | `enabled`, `map`                  | 
+| pm:globalcutmodetoggled  | `e`    | Fired when Cutting Mode is toggled | `enabled`, `map`                  | 
 | pm:cut                   | `e`    | Fired when any layer is being cut  | `shape`, `layer`, `originalLayer` |
 
 ### Options
