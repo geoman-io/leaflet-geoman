@@ -345,11 +345,13 @@ describe('Events', () => {
 
   it('Events while editing: pm:edit,pm:update,pm:enable,pm:disable,pm:vertexadded,pm:vertexremoved', () => {
     let calledevent = "";
+    let calledeventArr = [];
 
     cy.window().then(({map}) => {
 
       function logEvent(e){
         calledevent = e.type;
+        calledeventArr[e.type] = e.type;
       }
 
       map.on("pm:create",({layer}) => {
@@ -412,8 +414,9 @@ describe('Events', () => {
       map.pm.disableGlobalEditMode();
     }).then(()=>{
       cy.wait(100);
-      expect(calledevent).to.equal("pm:update");
+      expect(calledeventArr["pm:update"]).to.equal("pm:update");
       calledevent = "";
+      calledeventArr = [];
     });
 
     cy.window().then(({map}) => {
