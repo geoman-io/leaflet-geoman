@@ -103,12 +103,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
-    // fire drawstart event
-    this._map.fire('pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
-    this._setGlobalDrawMode();
+
 
     if (!this.options.editable) {
       // enable edit mode for existing markers
@@ -118,12 +113,21 @@ Draw.CircleMarker = Draw.Marker.extend({
         }
       });
     }
+    // fire drawstart event
+    this._map.fire('pm:drawstart', {
+      shape: this._shape,
+      workingLayer: this._layer,
+    });
+    this._setGlobalDrawMode();
   },
   disable() {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
       return;
     }
+    // change enabled state
+    this._enabled = false;
+
     // disable when drawing like a Circle
     if (this.options.editable) {
       // reset cursor
@@ -153,8 +157,6 @@ Draw.CircleMarker = Draw.Marker.extend({
     // remove event listener to sync hint marker
     this._map.off('mousemove', this._syncHintMarker, this);
 
-    // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -164,8 +166,9 @@ Draw.CircleMarker = Draw.Marker.extend({
       this._cleanupSnapping();
     }
 
-    // change enabled state
-    this._enabled = false;
+    // fire drawend event
+    this._map.fire('pm:drawend', { shape: this._shape });
+    this._setGlobalDrawMode();
   },
   _placeCenterMarker(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for

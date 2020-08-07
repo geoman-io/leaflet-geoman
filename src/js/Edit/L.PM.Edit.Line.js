@@ -3,7 +3,7 @@ import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
-import { isEmptyDeep } from '../helpers';
+import {isEmptyDeep} from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -65,8 +65,6 @@ Edit.Line = Edit.extend({
 
     this.applyOptions();
 
-    this._layer.fire('pm:enable', { layer: this._layer });
-
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
 
@@ -85,6 +83,7 @@ Edit.Line = Edit.extend({
       this.isRed = false;
       this._handleLayerStyle();
     }
+    this._layer.fire('pm:enable', {layer: this._layer});
   },
 
   _onLayerRemove(e) {
@@ -117,7 +116,6 @@ Edit.Line = Edit.extend({
     this._layer.off('remove', this._onLayerRemove, this);
 
 
-
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
         'pm:vertexremoved',
@@ -134,13 +132,11 @@ Edit.Line = Edit.extend({
       L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
     }
 
-    this._layer.fire('pm:disable', { layer: this._layer });
-
     if (this._layerEdited) {
-      this._layer.fire('pm:update', { layer: this._layer });
+      this._layer.fire('pm:update', {layer: this._layer});
     }
     this._layerEdited = false;
-
+    this._layer.fire('pm:disable', {layer: this._layer});
     return true;
   },
 
@@ -178,15 +174,15 @@ Edit.Line = Edit.extend({
 
       // if it does self-intersect, mark or flash it red
       if (flash) {
-        layer.setStyle({ color: 'red' });
+        layer.setStyle({color: 'red'});
         this.isRed = true;
 
         window.setTimeout(() => {
-          layer.setStyle({ color: this.cachedColor });
+          layer.setStyle({color: this.cachedColor});
           this.isRed = false;
         }, 200);
       } else {
-        layer.setStyle({ color: 'red' });
+        layer.setStyle({color: 'red'});
         this.isRed = true;
       }
 
@@ -197,7 +193,7 @@ Edit.Line = Edit.extend({
       });
     } else {
       // if not, reset the style to the default color
-      layer.setStyle({ color: this.cachedColor });
+      layer.setStyle({color: this.cachedColor});
       this.isRed = false;
       if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
         this._updateDisabledMarkerStyle(this._markers, false);
@@ -270,7 +266,7 @@ Edit.Line = Edit.extend({
   _createMarker(latlng) {
     const marker = new L.Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: L.divIcon({className: 'marker-icon'}),
     });
 
     marker._pmTempLayer = true;
@@ -315,7 +311,7 @@ Edit.Line = Edit.extend({
       // TODO: move the next two lines inside _addMarker() as soon as
       // https://github.com/Leaflet/Leaflet/issues/4484
       // is fixed
-      const icon = L.divIcon({ className: 'marker-icon' });
+      const icon = L.divIcon({className: 'marker-icon'});
       middleMarker.setIcon(icon);
 
       this._addMarker(middleMarker, leftM, rightM);
@@ -325,7 +321,7 @@ Edit.Line = Edit.extend({
       // callback as soon as this is fixed:
       // https://github.com/Leaflet/Leaflet/issues/4484
       middleMarker.on('moveend', () => {
-        const icon = L.divIcon({ className: 'marker-icon' });
+        const icon = L.divIcon({className: 'marker-icon'});
         middleMarker.setIcon(icon);
 
         middleMarker.off('moveend');
@@ -350,7 +346,7 @@ Edit.Line = Edit.extend({
     const coords = this._layer._latlngs;
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
       this._markers,
       leftM
     );
@@ -407,7 +403,7 @@ Edit.Line = Edit.extend({
     const coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -539,7 +535,7 @@ Edit.Line = Edit.extend({
     const latlng = marker.getLatLng();
 
     // get indexPath of Marker
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -553,7 +549,7 @@ Edit.Line = Edit.extend({
   },
 
   _getNeighborMarkers(marker) {
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -570,13 +566,13 @@ Edit.Line = Edit.extend({
     const prevMarker = markerArr[prevMarkerIndex];
     const nextMarker = markerArr[nextMarkerIndex];
 
-    return { prevMarker, nextMarker };
+    return {prevMarker, nextMarker};
   },
   _onMarkerDrag(e) {
     // dragged marker
     const marker = e.target;
 
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -639,7 +635,7 @@ Edit.Line = Edit.extend({
 
   _onMarkerDragEnd(e) {
     const marker = e.target;
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
+    const {indexPath} = this.findDeepMarkerIndex(this._markers, marker);
 
     this._layer.fire('pm:markerdragend', {
       layer: this._layer,
@@ -676,7 +672,7 @@ Edit.Line = Edit.extend({
   },
   _onMarkerDragStart(e) {
     const marker = e.target;
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
+    const {indexPath} = this.findDeepMarkerIndex(this._markers, marker);
 
     this._layer.fire('pm:markerdragstart', {
       layer: this._layer,
@@ -703,7 +699,7 @@ Edit.Line = Edit.extend({
     }
   },
   _checkMarkerAllowedToDrag(marker) {
-    const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
+    const {prevMarker, nextMarker} = this._getNeighborMarkers(marker);
 
     const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
     const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
@@ -728,6 +724,6 @@ Edit.Line = Edit.extend({
   _fireEdit() {
     // fire edit event
     this._layerEdited = true;
-    this._layer.fire('pm:edit', { layer: this._layer });
+    this._layer.fire('pm:edit', {layer: this._layer});
   },
 });

@@ -72,7 +72,6 @@ Edit.CircleMarker = Edit.extend({
     }
     this.applyOptions();
 
-    this._layer.fire('pm:enable', { layer: this._layer });
     // change state
     this._enabled = true;
 
@@ -80,6 +79,8 @@ Edit.CircleMarker = Edit.extend({
 
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
+
+    this._layer.fire('pm:enable', { layer: this._layer });
   },
   disable(layer = this._layer) {
     // prevent disabling if layer is being dragged
@@ -104,17 +105,16 @@ Edit.CircleMarker = Edit.extend({
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
 
+    this._layer.off('contextmenu', this._removeMarker, this);
+
     // only fire events if it was enabled before
     if (!this.enabled()) {
-      this._layer.fire('pm:disable', { layer: this._layer });
-
       if (this._layerEdited) {
         this._layer.fire('pm:update', { layer: this._layer });
       }
       this._layerEdited = false;
+      this._layer.fire('pm:disable', { layer: this._layer });
     }
-
-    this._layer.off('contextmenu', this._removeMarker, this);
 
     layer.pm._enabled = false;
 

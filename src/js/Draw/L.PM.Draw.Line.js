@@ -89,19 +89,20 @@ Draw.Line = Draw.extend({
     // sync the hintline with hint marker
     this._hintMarker.on('move', this._syncHintLine, this);
 
-    // fire drawstart event
-    this._map.fire('pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
-    this._setGlobalDrawMode();
-
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // an array used in the snapping mixin.
     // TODO: think about moving this somewhere else?
     this._otherSnapLayers = [];
+
+
+    // fire drawstart event
+    this._map.fire('pm:drawstart', {
+      shape: this._shape,
+      workingLayer: this._layer,
+    });
+    this._setGlobalDrawMode();
   },
   disable() {
     // disable draw mode
@@ -130,10 +131,6 @@ Draw.Line = Draw.extend({
     // remove layer
     this._map.removeLayer(this._layerGroup);
 
-    // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
-    this._setGlobalDrawMode();
-
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
@@ -141,6 +138,11 @@ Draw.Line = Draw.extend({
     if (this.options.snappable) {
       this._cleanupSnapping();
     }
+
+    // fire drawend event
+    this._map.fire('pm:drawend', { shape: this._shape });
+    this._setGlobalDrawMode();
+
   },
   enabled() {
     return this._enabled;

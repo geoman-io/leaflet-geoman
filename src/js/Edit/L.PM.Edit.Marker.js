@@ -49,9 +49,8 @@ Edit.Marker = Edit.extend({
     }
     this._enabled = true;
 
-    this._layer.fire('pm:enable', { layer: this._layer });
-
     this.applyOptions();
+    this._layer.fire('pm:enable', { layer: this._layer });
   },
 
   enabled() {
@@ -66,12 +65,11 @@ Edit.Marker = Edit.extend({
 
     this._layer.off('contextmenu', this._removeMarker, this);
 
-    this._layer.fire('pm:disable', { layer: this._layer });
-
     if (this._layerEdited) {
       this._layer.fire('pm:update', { layer: this._layer });
     }
     this._layerEdited = false;
+    this._layer.fire('pm:disable', { layer: this._layer });
   },
   _removeMarker(e) {
     const marker = e.target;

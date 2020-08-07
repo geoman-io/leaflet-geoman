@@ -57,8 +57,6 @@ Edit.Circle = Edit.extend({
 
     this.applyOptions();
 
-    this._layer.fire('pm:enable', { layer: this._layer });
-
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', e => {
       this.disable(e.target);
@@ -66,6 +64,7 @@ Edit.Circle = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
 
+    this._layer.fire('pm:enable', { layer: this._layer });
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -92,13 +91,12 @@ Edit.Circle = Edit.extend({
     const el = layer._path ? layer._path : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
-    this._layer.fire('pm:disable', { layer: this._layer });
-
     if (this._layerEdited) {
       this._layer.fire('pm:update', { layer: this._layer });
     }
     this._layerEdited = false;
 
+    this._layer.fire('pm:disable', { layer: this._layer });
     return true;
   },
   _initMarkers() {

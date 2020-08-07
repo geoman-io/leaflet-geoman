@@ -46,12 +46,6 @@ Draw.Marker = Draw.extend({
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
-    // fire drawstart event
-    this._map.fire('pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
-    this._setGlobalDrawMode();
 
     // enable edit mode for existing markers
     this._map.eachLayer(layer => {
@@ -59,6 +53,13 @@ Draw.Marker = Draw.extend({
         layer.pm.enable();
       }
     });
+
+    // fire drawstart event
+    this._map.fire('pm:drawstart', {
+      shape: this._shape,
+      workingLayer: this._layer,
+    });
+    this._setGlobalDrawMode();
   },
   disable() {
     // cancel, if drawing mode isn't even enabled
@@ -85,9 +86,6 @@ Draw.Marker = Draw.extend({
       }
     });
 
-    // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
-    this._setGlobalDrawMode();
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -97,6 +95,9 @@ Draw.Marker = Draw.extend({
       this._cleanupSnapping();
     }
 
+    // fire drawend event
+    this._map.fire('pm:drawend', { shape: this._shape });
+    this._setGlobalDrawMode();
   },
   isRelevantMarker(layer) {
     return layer instanceof L.Marker && layer.pm && !layer._pmTempLayer;
