@@ -99,11 +99,8 @@ Draw.CircleMarker = Draw.Marker.extend({
       }
     }
 
-
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
-
-
 
     if (!this.options.editable) {
       // enable edit mode for existing markers
@@ -113,6 +110,7 @@ Draw.CircleMarker = Draw.Marker.extend({
         }
       });
     }
+
     // fire drawstart event
     this._map.fire('pm:drawstart', {
       shape: this._shape,
@@ -156,7 +154,6 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // remove event listener to sync hint marker
     this._map.off('mousemove', this._syncHintMarker, this);
-
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);

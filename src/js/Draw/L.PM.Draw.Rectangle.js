@@ -225,6 +225,16 @@ Draw.Rectangle = Draw.extend({
       });
     }
   },
+  _findCorners() {
+    const corners = this._layer.getBounds();
+
+    const northwest = corners.getNorthWest();
+    const northeast = corners.getNorthEast();
+    const southeast = corners.getSouthEast();
+    const southwest = corners.getSouthWest();
+
+    return [northwest, northeast, southeast, southwest];
+  },
   _finishShape(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
@@ -252,15 +262,5 @@ Draw.Rectangle = Draw.extend({
       shape: this._shape,
       layer: rectangleLayer,
     });
-  },
-  _findCorners() {
-    const corners = this._layer.getBounds();
-
-    const northwest = corners.getNorthWest();
-    const northeast = corners.getNorthEast();
-    const southeast = corners.getSouthEast();
-    const southwest = corners.getSouthWest();
-
-    return [northwest, northeast, southeast, southwest];
   },
 });

@@ -7,54 +7,6 @@ Edit.CircleMarker = Edit.extend({
     this._layer = layer;
     this._enabled = false;
   },
-  applyOptions() {
-    // Use the not editable and only draggable version
-    if (!this.options.editable && this.options.draggable) {
-      this.enableLayerDrag();
-    } else {
-      this.disableLayerDrag();
-    }
-
-    // Make it editable like a Circle
-    if (this.options.editable) {
-      this._initMarkers();
-      this._map.on('move', this._syncMarkers, this);
-    } else {
-      // only update the circle border poly
-      this._map.on('move', this._updateHiddenPolyCircle, this);
-    }
-
-    // init snapping in different ways
-    if (this.options.snappable) {
-      if (this.options.editable) {
-        this._initSnappableMarkers();
-        // sync the hintline with hint marker
-        this._outerMarker.on('move', this._syncHintLine, this);
-        this._outerMarker.on('move', this._syncCircleRadius, this);
-      } else {
-        this._initSnappableMarkersDrag();
-      }
-    } else if (this.options.editable) {
-      this._disableSnapping();
-    } else {
-      this._disableSnappingDrag();
-    }
-
-    // enable removal for the marker
-    if (!this.options.preventMarkerRemoval) {
-      this._layer.on('contextmenu', this._removeMarker, this);
-    }
-  },
-  toggleEdit(options) {
-    if (!this.enabled()) {
-      this.enable(options);
-    } else {
-      this.disable();
-    }
-  },
-  enabled() {
-    return this._enabled;
-  },
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
@@ -120,6 +72,54 @@ Edit.CircleMarker = Edit.extend({
 
     return true;
   },
+  enabled() {
+    return this._enabled;
+  },
+  toggleEdit(options) {
+    if (!this.enabled()) {
+      this.enable(options);
+    } else {
+      this.disable();
+    }
+  },
+  applyOptions() {
+    // Use the not editable and only draggable version
+    if (!this.options.editable && this.options.draggable) {
+      this.enableLayerDrag();
+    } else {
+      this.disableLayerDrag();
+    }
+
+    // Make it editable like a Circle
+    if (this.options.editable) {
+      this._initMarkers();
+      this._map.on('move', this._syncMarkers, this);
+    } else {
+      // only update the circle border poly
+      this._map.on('move', this._updateHiddenPolyCircle, this);
+    }
+
+    // init snapping in different ways
+    if (this.options.snappable) {
+      if (this.options.editable) {
+        this._initSnappableMarkers();
+        // sync the hintline with hint marker
+        this._outerMarker.on('move', this._syncHintLine, this);
+        this._outerMarker.on('move', this._syncCircleRadius, this);
+      } else {
+        this._initSnappableMarkersDrag();
+      }
+    } else if (this.options.editable) {
+      this._disableSnapping();
+    } else {
+      this._disableSnappingDrag();
+    }
+
+    // enable removal for the marker
+    if (!this.options.preventMarkerRemoval) {
+      this._layer.on('contextmenu', this._removeMarker, this);
+    }
+  },
   _initMarkers() {
     const map = this._map;
 
@@ -168,20 +168,6 @@ Edit.CircleMarker = Edit.extend({
     }
     return marker;
   },
-  _moveCircle(e) {
-    const center = e.latlng;
-    this._layer.setLatLng(center);
-
-    const radius = this._layer._radius;
-    const outer = this._getLatLngOnCircle(center, radius);
-    this._outerMarker.setLatLng(outer);
-    this._syncHintLine();
-
-    this._layer.fire('pm:centerplaced', {
-      layer: this._layer,
-      latlng: center,
-    });
-  },
   _createOuterMarker(latlng) {
     const marker = this._createMarker(latlng);
     marker.on('drag', this._resizeCircle, this);
@@ -202,6 +188,20 @@ Edit.CircleMarker = Edit.extend({
     this._helperLayers.addLayer(marker);
 
     return marker;
+  },
+  _moveCircle(e) {
+    const center = e.latlng;
+    this._layer.setLatLng(center);
+
+    const radius = this._layer._radius;
+    const outer = this._getLatLngOnCircle(center, radius);
+    this._outerMarker.setLatLng(outer);
+    this._syncHintLine();
+
+    this._layer.fire('pm:centerplaced', {
+      layer: this._layer,
+      latlng: center,
+    });
   },
   _syncMarkers() {
     const center = this._layer.getLatLng();
@@ -232,10 +232,6 @@ Edit.CircleMarker = Edit.extend({
     // set coords for hintline from marker to last vertex of drawin polyline
     this._hintline.setLatLngs([A, B]);
   },
-  _moveMarker(e) {
-    const center = e.latlng;
-    this._layer.setLatLng(center).redraw();
-  },
   _removeMarker() {
     if (this.options.editable) {
       this.disable();
@@ -250,16 +246,16 @@ Edit.CircleMarker = Edit.extend({
       markerEvent: e,
     });
   },
-  _fireEdit() {
-    // fire edit event
-    this._layer.fire('pm:edit', { layer: this._layer });
-    this._layerEdited = true;
-  },
   _onMarkerDragEnd(e) {
     this._layer.fire('pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,
     });
+  },
+  _fireEdit() {
+    // fire edit event
+    this._layer.fire('pm:edit', { layer: this._layer });
+    this._layerEdited = true;
   },
   // _initSnappableMarkers when option editable is not true
   _initSnappableMarkersDrag() {

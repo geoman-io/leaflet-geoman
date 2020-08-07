@@ -22,25 +22,6 @@ Edit.Line = Edit.extend({
     this._layer = layer;
     this._enabled = false;
   },
-
-  applyOptions() {
-    if (this.options.snappable) {
-      this._initSnappableMarkers();
-    } else {
-      this._disableSnapping();
-    }
-  },
-
-  toggleEdit(options) {
-    if (!this.enabled()) {
-      this.enable(options);
-    } else {
-      this.disable();
-    }
-
-    return this.enabled();
-  },
-
   enable(options) {
     L.Util.setOptions(this, options);
 
@@ -85,15 +66,6 @@ Edit.Line = Edit.extend({
     }
     this._layer.fire('pm:enable', {layer: this._layer});
   },
-
-  _onLayerRemove(e) {
-    this.disable(e.target);
-  },
-
-  enabled() {
-    return this._enabled;
-  },
-
   disable(poly = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
@@ -139,83 +111,28 @@ Edit.Line = Edit.extend({
     this._layer.fire('pm:disable', {layer: this._layer});
     return true;
   },
-
-  hasSelfIntersection() {
-    // check for self intersection of the layer and return true/false
-    const selfIntersection = kinks(this._layer.toGeoJSON(15));
-    return selfIntersection.features.length > 0;
+  enabled() {
+    return this._enabled;
   },
-
-  _handleSelfIntersectionOnVertexRemoval() {
-    // check for selfintersection again (mainly to reset the style)
-    this._handleLayerStyle(true);
-
-    if (this.hasSelfIntersection()) {
-      // reset coordinates
-      this._layer.setLatLngs(this._coordsBeforeEdit);
-      this._coordsBeforeEdit = null;
-
-      // re-enable markers for the new coords
-      this._initMarkers();
-    }
-  },
-
-  _handleLayerStyle(flash) {
-    const layer = this._layer;
-
-    if (this.hasSelfIntersection()) {
-      if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
-        this._updateDisabledMarkerStyle(this._markers, true);
-      }
-
-      if (this.isRed) {
-        return;
-      }
-
-      // if it does self-intersect, mark or flash it red
-      if (flash) {
-        layer.setStyle({color: 'red'});
-        this.isRed = true;
-
-        window.setTimeout(() => {
-          layer.setStyle({color: this.cachedColor});
-          this.isRed = false;
-        }, 200);
-      } else {
-        layer.setStyle({color: 'red'});
-        this.isRed = true;
-      }
-
-      // fire intersect event
-      this._layer.fire('pm:intersect', {
-        layer: this._layer,
-        intersection: kinks(this._layer.toGeoJSON(15)),
-      });
+  toggleEdit(options) {
+    if (!this.enabled()) {
+      this.enable(options);
     } else {
-      // if not, reset the style to the default color
-      layer.setStyle({color: this.cachedColor});
-      this.isRed = false;
-      if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
-        this._updateDisabledMarkerStyle(this._markers, false);
-      }
+      this.disable();
+    }
+
+    return this.enabled();
+  },
+  applyOptions() {
+    if (this.options.snappable) {
+      this._initSnappableMarkers();
+    } else {
+      this._disableSnapping();
     }
   },
-  _updateDisabledMarkerStyle(markers, disabled) {
-    markers.forEach((marker) => {
-      if (Array.isArray(marker)) {
-        return this._updateDisabledMarkerStyle(marker, disabled);
-      }
-
-      if (marker._icon) {
-        if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
-          L.DomUtil.addClass(marker._icon, "vertexmarker-disabled");
-        } else {
-          L.DomUtil.removeClass(marker._icon, "vertexmarker-disabled");
-        }
-      }
-    });
+  _onLayerRemove(e) {
+    this.disable(e.target);
   },
-
   _initMarkers() {
     const map = this._map;
     const coords = this._layer.getLatLngs();
@@ -388,6 +305,79 @@ Edit.Line = Edit.extend({
     }
   },
 
+  hasSelfIntersection() {
+    // check for self intersection of the layer and return true/false
+    const selfIntersection = kinks(this._layer.toGeoJSON(15));
+    return selfIntersection.features.length > 0;
+  },
+  _handleSelfIntersectionOnVertexRemoval() {
+    // check for selfintersection again (mainly to reset the style)
+    this._handleLayerStyle(true);
+
+    if (this.hasSelfIntersection()) {
+      // reset coordinates
+      this._layer.setLatLngs(this._coordsBeforeEdit);
+      this._coordsBeforeEdit = null;
+
+      // re-enable markers for the new coords
+      this._initMarkers();
+    }
+  },
+  _handleLayerStyle(flash) {
+    const layer = this._layer;
+
+    if (this.hasSelfIntersection()) {
+      if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+        this._updateDisabledMarkerStyle(this._markers, true);
+      }
+
+      if (this.isRed) {
+        return;
+      }
+
+      // if it does self-intersect, mark or flash it red
+      if (flash) {
+        layer.setStyle({color: 'red'});
+        this.isRed = true;
+
+        window.setTimeout(() => {
+          layer.setStyle({color: this.cachedColor});
+          this.isRed = false;
+        }, 200);
+      } else {
+        layer.setStyle({color: 'red'});
+        this.isRed = true;
+      }
+
+      // fire intersect event
+      this._layer.fire('pm:intersect', {
+        layer: this._layer,
+        intersection: kinks(this._layer.toGeoJSON(15)),
+      });
+    } else {
+      // if not, reset the style to the default color
+      layer.setStyle({color: this.cachedColor});
+      this.isRed = false;
+      if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+        this._updateDisabledMarkerStyle(this._markers, false);
+      }
+    }
+  },
+  _updateDisabledMarkerStyle(markers, disabled) {
+    markers.forEach((marker) => {
+      if (Array.isArray(marker)) {
+        return this._updateDisabledMarkerStyle(marker, disabled);
+      }
+
+      if (marker._icon) {
+        if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
+          L.DomUtil.addClass(marker._icon, "vertexmarker-disabled");
+        } else {
+          L.DomUtil.removeClass(marker._icon, "vertexmarker-disabled");
+        }
+      }
+    });
+  },
   _removeMarker(e) {
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
@@ -568,6 +558,55 @@ Edit.Line = Edit.extend({
 
     return {prevMarker, nextMarker};
   },
+  _checkMarkerAllowedToDrag(marker) {
+    const {prevMarker, nextMarker} = this._getNeighborMarkers(marker);
+
+    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
+    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+
+    let prevLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), prevLine.toGeoJSON(15)).features.length;
+    let nextLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), nextLine.toGeoJSON(15)).features.length;
+
+    // The first and last line has one intersection fewer because they are not connected
+    if (marker.getLatLng() === this._markers[0][0].getLatLng()) {
+      nextLineIntersectionLen += 1;
+    } else if (marker.getLatLng() === this._markers[0][this._markers[0].length - 1].getLatLng()) {
+      prevLineIntersectionLen += 1;
+    }
+
+    // <= 2 the start and end point of the line always intersecting because they have the same coords.
+    if (prevLineIntersectionLen <= 2 && nextLineIntersectionLen <= 2) {
+      return false;
+    }
+    return true;
+  },
+  _onMarkerDragStart(e) {
+    const marker = e.target;
+    const {indexPath} = this.findDeepMarkerIndex(this._markers, marker);
+
+    this._layer.fire('pm:markerdragstart', {
+      layer: this._layer,
+      markerEvent: e,
+      indexPath,
+    });
+
+    // if self intersection isn't allowed, save the coords upon dragstart
+    // in case we need to reset the layer
+    if (!this.options.allowSelfIntersection) {
+      this._coordsBeforeEdit = this._layer.getLatLngs();
+    }
+
+    // When intersection is true while calling enable(), the cachedColor is already set
+    if (!this.cachedColor) {
+      this.cachedColor = this._layer.options.color;
+    }
+
+    if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
+      this._markerAllowedToDrag = this._checkMarkerAllowedToDrag(marker);
+    } else {
+      this._markerAllowedToDrag = null;
+    }
+  },
   _onMarkerDrag(e) {
     // dragged marker
     const marker = e.target;
@@ -632,7 +671,6 @@ Edit.Line = Edit.extend({
       this._handleLayerStyle();
     }
   },
-
   _onMarkerDragEnd(e) {
     const marker = e.target;
     const {indexPath} = this.findDeepMarkerIndex(this._markers, marker);
@@ -665,61 +703,8 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
       this._handleLayerStyle();
     }
-
-
     // fire edit event
     this._fireEdit();
-  },
-  _onMarkerDragStart(e) {
-    const marker = e.target;
-    const {indexPath} = this.findDeepMarkerIndex(this._markers, marker);
-
-    this._layer.fire('pm:markerdragstart', {
-      layer: this._layer,
-      markerEvent: e,
-      indexPath,
-    });
-
-    // if self intersection isn't allowed, save the coords upon dragstart
-    // in case we need to reset the layer
-    if (!this.options.allowSelfIntersection) {
-      this._coordsBeforeEdit = this._layer.getLatLngs();
-    }
-
-    // When intersection is true while calling enable(), the cachedColor is already set
-    if (!this.cachedColor) {
-      this.cachedColor = this._layer.options.color;
-    }
-
-
-    if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
-      this._markerAllowedToDrag = this._checkMarkerAllowedToDrag(marker);
-    } else {
-      this._markerAllowedToDrag = null;
-    }
-  },
-  _checkMarkerAllowedToDrag(marker) {
-    const {prevMarker, nextMarker} = this._getNeighborMarkers(marker);
-
-    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
-    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
-
-    let prevLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), prevLine.toGeoJSON(15)).features.length;
-    let nextLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), nextLine.toGeoJSON(15)).features.length;
-
-    // The first and last line has one intersection fewer because they are not connected
-    if (marker.getLatLng() === this._markers[0][0].getLatLng()) {
-      nextLineIntersectionLen += 1;
-    } else if (marker.getLatLng() === this._markers[0][this._markers[0].length - 1].getLatLng()) {
-      prevLineIntersectionLen += 1;
-    }
-
-    // <= 2 the start and end point of the line always intersecting because they have the same coords.
-    if (prevLineIntersectionLen <= 2 && nextLineIntersectionLen <= 2) {
-      return false;
-    }
-    return true;
-
   },
   _fireEdit() {
     // fire edit event

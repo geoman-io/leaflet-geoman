@@ -154,11 +154,6 @@ Draw.Line = Draw.extend({
       this.enable(options);
     }
   },
-  hasSelfIntersection() {
-    // check for self intersection of the layer and return true/false
-    const selfIntersection = kinks(this._layer.toGeoJSON(15));
-    return selfIntersection.features.length > 0;
-  },
   _syncHintLine() {
     const polyPoints = this._layer.getLatLngs();
 
@@ -187,6 +182,11 @@ Draw.Line = Draw.extend({
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(true, e.latlng);
     }
+  },
+  hasSelfIntersection() {
+    // check for self intersection of the layer and return true/false
+    const selfIntersection = kinks(this._layer.toGeoJSON(15));
+    return selfIntersection.features.length > 0;
   },
   _handleSelfIntersection(addVertex, latlng) {
     // ok we need to check the self intersection here
@@ -220,33 +220,6 @@ Draw.Line = Draw.extend({
     } else if (!this._hintline.isEmpty()) {
       this._hintline.setStyle(this.options.hintlineStyle);
     }
-  },
-  _removeLastVertex() {
-    // remove last coords
-    const coords = this._layer.getLatLngs();
-    const removedCoord = coords.pop();
-
-    // if all coords are gone, cancel drawing
-    if (coords.length < 1) {
-      this.disable();
-      return;
-    }
-
-    // find corresponding marker
-    const marker = this._layerGroup
-      .getLayers()
-      .filter(l => l instanceof L.Marker)
-      .filter(l => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
-      .find(l => l.getLatLng() === removedCoord);
-
-    // remove that marker
-    this._layerGroup.removeLayer(marker);
-
-    // update layer with new coords
-    this._layer.setLatLngs(coords);
-
-    // sync the hintline again
-    this._syncHintLine();
   },
   _createVertex(e) {
     // don't create a vertex if we have a selfIntersection and it is not allowed
@@ -292,6 +265,33 @@ Draw.Line = Draw.extend({
       marker: newMarker,
       latlng,
     });
+  },
+  _removeLastVertex() {
+    // remove last coords
+    const coords = this._layer.getLatLngs();
+    const removedCoord = coords.pop();
+
+    // if all coords are gone, cancel drawing
+    if (coords.length < 1) {
+      this.disable();
+      return;
+    }
+
+    // find corresponding marker
+    const marker = this._layerGroup
+      .getLayers()
+      .filter(l => l instanceof L.Marker)
+      .filter(l => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
+      .find(l => l.getLatLng() === removedCoord);
+
+    // remove that marker
+    this._layerGroup.removeLayer(marker);
+
+    // update layer with new coords
+    this._layer.setLatLngs(coords);
+
+    // sync the hintline again
+    this._syncHintLine();
   },
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!

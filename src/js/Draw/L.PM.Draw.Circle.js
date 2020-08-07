@@ -225,17 +225,4 @@ Draw.Circle = Draw.extend({
       layer: circleLayer,
     });
   },
-  _createMarker(latlng) {
-    // create the new marker
-    const marker = new L.Marker(latlng, {
-      draggable: false,
-      icon: L.divIcon({ className: 'marker-icon' }),
-    });
-    marker._pmTempLayer = true;
-
-    // add it to the map
-    this._layerGroup.addLayer(marker);
-
-    return marker;
-  },
 });

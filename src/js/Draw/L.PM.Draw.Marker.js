@@ -99,9 +99,6 @@ Draw.Marker = Draw.extend({
     this._map.fire('pm:drawend', { shape: this._shape });
     this._setGlobalDrawMode();
   },
-  isRelevantMarker(layer) {
-    return layer instanceof L.Marker && layer.pm && !layer._pmTempLayer;
-  },
   enabled() {
     return this._enabled;
   },
@@ -110,6 +107,20 @@ Draw.Marker = Draw.extend({
       this.disable();
     } else {
       this.enable(options);
+    }
+  },
+  isRelevantMarker(layer) {
+    return layer instanceof L.Marker && layer.pm && !layer._pmTempLayer;
+  },
+  _syncHintMarker(e) {
+    // move the cursor marker
+    this._hintMarker.setLatLng(e.latlng);
+
+    // if snapping is enabled, do it
+    if (this.options.snappable) {
+      const fakeDragEvent = e;
+      fakeDragEvent.target = this._hintMarker;
+      this._handleSnapping(fakeDragEvent);
     }
   },
   _createMarker(e) {
@@ -144,16 +155,5 @@ Draw.Marker = Draw.extend({
     });
 
     this._cleanupSnapping();
-  },
-  _syncHintMarker(e) {
-    // move the cursor marker
-    this._hintMarker.setLatLng(e.latlng);
-
-    // if snapping is enabled, do it
-    if (this.options.snappable) {
-      const fakeDragEvent = e;
-      fakeDragEvent.target = this._hintMarker;
-      this._handleSnapping(fakeDragEvent);
-    }
   },
 });
