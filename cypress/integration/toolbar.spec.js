@@ -262,6 +262,7 @@ describe('Testing the Toolbar', () => {
         cy.window().then(() => {
           map.pm.enableDraw('PolygonCopy');
           map.on('pm:create', (e) => {
+            expect(e.shape).to.equal('PolygonCopy');
             e.layer.on('click', (l) => testlayer = l.target)
           })
         });
