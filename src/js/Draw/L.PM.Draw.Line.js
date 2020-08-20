@@ -183,7 +183,7 @@ Draw.Line = Draw.extend({
 
     // if self-intersection is forbidden, handle it
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(true, e.latlng);
+      this._handleSelfIntersection(true, this._hintMarker.getLatLng());
     }
   },
   _handleSelfIntersection(addVertex, latlng) {
