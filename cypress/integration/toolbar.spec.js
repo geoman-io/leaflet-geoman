@@ -369,4 +369,17 @@ describe('Testing the Toolbar', () => {
       expect(eventFired).to.equal('Cancel');
     });
   });
+  it('Disable button', () => {
+    let eventFired = "";
+    cy.window().then(({map}) => {
+      map.on('pm:buttonclick', ({btnName})=>{eventFired = btnName});
+      map.pm.Toolbar.setButtonDisabled('drawPolygon',true);
+    });
+
+    cy.toolbarButton('polygon').click();
+
+    cy.window().then(() => {
+      expect(eventFired).to.not.equal('drawPolygon');
+    });
+  });
 });
