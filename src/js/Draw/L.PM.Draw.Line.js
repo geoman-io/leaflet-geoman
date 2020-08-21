@@ -240,11 +240,21 @@ Draw.Line = Draw.extend({
     // remove that marker
     this._layerGroup.removeLayer(marker);
 
+    // remove the marker from the snapping list
+    const idx = this._otherSnapLayers.indexOf(marker);
+    if(idx > -1){
+      this._otherSnapLayers.splice(idx,1);
+    }
+
     // update layer with new coords
     this._layer.setLatLngs(coords);
 
     // sync the hintline again
     this._syncHintLine();
+
+    if (this.options.snappable) {
+      this._cleanupSnapping();
+    }
   },
   _createVertex(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
