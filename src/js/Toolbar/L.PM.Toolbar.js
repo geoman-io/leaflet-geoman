@@ -429,21 +429,7 @@ const Toolbar = L.Class.extend({
       options = { name: options };
     }
 
-    const shapeMapping = {
-      "Marker": "drawMarker",
-      "Circle": "drawCircle",
-      "Polygon": "drawPolygon",
-      "Rectangle": "drawRectangle",
-      "Polyline": "drawPolyline",
-      "Line": "drawPolyline",
-      "CircleMarker": "drawCircleMarker",
-      "Edit": "editMode",
-      "Drag": "dragMode",
-      "Cut": "cutPolygon",
-      "Removal": "removalMode"
-    };
-
-    const instance = shapeMapping[copyInstance] ? shapeMapping[copyInstance] : copyInstance;
+    const instance = this._btnNameMapping(copyInstance);
 
     if (!options.name) {
       throw new TypeError(
@@ -509,6 +495,7 @@ const Toolbar = L.Class.extend({
       cssToggle: options.toggle,
       position: this.options.position,
       actions: options.actions || [],
+      disabled: !!options.disabled,
     };
 
     if (this.options[options.name] !== false) {
@@ -521,19 +508,7 @@ const Toolbar = L.Class.extend({
   },
 
   changeControlOrder(order = []) {
-    const shapeMapping = {
-      "Marker": "drawMarker",
-      "Circle": "drawCircle",
-      "Polygon": "drawPolygon",
-      "Rectangle": "drawRectangle",
-      "Polyline": "drawPolyline",
-      "Line": "drawPolyline",
-      "CircleMarker": "drawCircleMarker",
-      "Edit": "editMode",
-      "Drag": "dragMode",
-      "Cut": "cutPolygon",
-      "Removal": "removalMode"
-    };
+    const shapeMapping = this._shapeMapping();
 
     const _order = [];
     order.forEach((shape) => {
@@ -597,21 +572,7 @@ const Toolbar = L.Class.extend({
     return order;
   },
   changeActionsOfControl(name, actions) {
-    const shapeMapping = {
-      "Marker": "drawMarker",
-      "Circle": "drawCircle",
-      "Polygon": "drawPolygon",
-      "Rectangle": "drawRectangle",
-      "Polyline": "drawPolyline",
-      "Line": "drawPolyline",
-      "CircleMarker": "drawCircleMarker",
-      "Edit": "editMode",
-      "Drag": "dragMode",
-      "Cut": "cutPolygon",
-      "Removal": "removalMode"
-    };
-
-    const btnName = shapeMapping[name] ? shapeMapping[name] : name;
+    const btnName = this._btnNameMapping(name);
 
     if (!btnName) {
       throw new TypeError(
@@ -631,6 +592,30 @@ const Toolbar = L.Class.extend({
     }
     this.buttons[btnName]._button.actions = actions;
     this.changeControlOrder();
+  },
+  setButtonDisabled(name,state){
+    const btnName = this._btnNameMapping(name);
+    this.buttons[btnName]._button.disabled = !!state;
+    this._showHideButtons();
+  },
+  _shapeMapping(){
+    return {
+      "Marker": "drawMarker",
+      "Circle": "drawCircle",
+      "Polygon": "drawPolygon",
+      "Rectangle": "drawRectangle",
+      "Polyline": "drawPolyline",
+      "Line": "drawPolyline",
+      "CircleMarker": "drawCircleMarker",
+      "Edit": "editMode",
+      "Drag": "dragMode",
+      "Cut": "cutPolygon",
+      "Removal": "removalMode"
+    }
+  },
+  _btnNameMapping(name){
+    const shapeMapping = this._shapeMapping();
+    return shapeMapping[name] ? shapeMapping[name] : name;
   }
 });
 
