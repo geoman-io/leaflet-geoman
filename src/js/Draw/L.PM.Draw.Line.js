@@ -286,6 +286,11 @@ Draw.Line = Draw.extend({
       return;
     }
 
+    // when last latlng is equal to the current one -> don't create a new point. Can happen while snapping
+    if(this._layer.getLatLngs().length > 0 && latlng.equals(this._layer.getLatLngs().slice(-1)[0])){
+      return;
+    }
+
     // is this the first point?
     const first = this._layer.getLatLngs().length === 0;
 
