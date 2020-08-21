@@ -23,6 +23,12 @@ const Toolbar = L.Class.extend({
     customControls: true,
     oneBlock: false,
     position: 'topleft',
+    positions: {
+      draw: '',
+      edit: '',
+      options: '',
+      custom: '',
+    }
   },
   customButtons: [],
   initialize(map) {
@@ -61,6 +67,16 @@ const Toolbar = L.Class.extend({
     );
 
     this._defineButtons();
+  },
+  _createContainer(name){
+    const container = `${name}Container`;
+    if(!this[container]) {
+      this[container] = L.DomUtil.create(
+        'div',
+        `leaflet-pm-toolbar leaflet-pm-${name} leaflet-bar leaflet-control`
+      );
+    }
+    return this[container];
   },
   getButtons() {
     return this.buttons;
@@ -378,13 +394,30 @@ const Toolbar = L.Class.extend({
     if (this.options.customControls === false) {
       ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool === 'custom'));
     }
+
     for (const btn in buttons) {
       if (this.options[btn] && ignoreBtns.indexOf(btn) === -1) {
         // if options say the button should be visible, add it to the map
-        buttons[btn].setPosition(this.options.position);
+        let block = buttons[btn]._button.tool;
+        if(!block) {
+          // undefined is the draw block
+          block = 'draw';
+        }
+        buttons[btn].setPosition(this._getBtnPosition(block));
         buttons[btn].addTo(this.map);
       }
     }
+  },
+  _getBtnPosition(block){
+    return this.options.positions && this.options.positions[block] ? this.options.positions[block] : this.options.position;
+  },
+  setBlockPosition(block,position){
+    this.options.positions[block] = position;
+    this._showHideButtons();
+    this.changeControlOrder();
+  },
+  getBlockPositions(){
+    return this.options.positions;
   },
   copyDrawControl(copyInstance, options) {
 

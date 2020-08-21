@@ -205,6 +205,8 @@ The following methods are available on `map.pm`:
 | setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                  |
 | setGlobalOptions(`options`)   | -         | Set drawing options.                                                     |
 | getGlobalOptions()            | `Object`  | Returns the global options.                                              |
+| getGeomanLayers()             | `Array`   | Returns all Geoman layers on the map.                                    |
+| getGeomanDrawLayers()         | `Array`   | Returns all drawn Geoman layers on the map.                              |
 
 See the available options in the table below.
 
@@ -478,15 +480,16 @@ The following methods are available on `map.pm`:
 
 The following events are available on a layer instance:
 
-| Event  | Params | Description                    | Output                              |
-| :----- | :----- | :----------------------------- | :---------------------------------- |
-| pm:cut | `e`    | Fired when the layer being cut | `shape`, `layer`, `originalLayer`   |
+| Event   | Params | Description                        | Output                              |
+| :------ | :----- | :--------------------------------- | :---------------------------------- |
+| pm:cut  | `e`    | Fired when the layer being cut     | `shape`, `layer`, `originalLayer`   |
+| pm:edit | `e`    | Fired when a layer is edited / cut | `layer`                             |
 
 The following events are available on a map instance:
 
 | Event                    | Params | Description                        | Output                            |
 | :----------------------- | :----- | :--------------------------------- | :-------------------------------- |
-| pm:globaldrawmodetoggled | `e`    | Fired when Drawing Mode is toggled | `enabled`, `map`                  | 
+| pm:globalcutmodetoggled  | `e`    | Fired when Cutting Mode is toggled | `enabled`, `map`                  | 
 | pm:cut                   | `e`    | Fired when any layer is being cut  | `shape`, `layer`, `originalLayer` |
 
 ### Options
@@ -657,13 +660,37 @@ map.pm.addControls({
 
 Reorder the buttons with
 ```js
-map.pm.Toolbar.changeControlOrder(['drawCircle', 'drawRectangle', 'removalMode', 'editMode'])
+map.pm.Toolbar.changeControlOrder(['drawCircle', 'drawRectangle', 'removalMode', 'editMode']);
 ```
 
 Receive the current order with
 ```js
-map.pm.Toolbar.getControlOrder()
+map.pm.Toolbar.getControlOrder();
 ```
+
+**Position**
+
+You can set different positions per block `draw`, `edit`, `options`⭐, `custom`: 
+
+Possible values are `'topleft'`, `'topright'`, `'bottomleft'`, `'bottomright'`
+
+```javascript
+map.pm.addControls({
+  positions: {
+    draw: 'topright',
+    edit: 'topleft',
+  }
+});
+```
+
+```javascript
+map.pm.Toolbar.setBlockPosition('draw','topright');
+```
+
+```javascript
+map.pm.Toolbar.getBlockPositions();
+```
+
 
 **Adding New/Custom Controls**
 

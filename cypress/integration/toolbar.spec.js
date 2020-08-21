@@ -259,7 +259,7 @@ describe('Testing the Toolbar', () => {
 
         cy.get(actions[0]).click();
         cy.get(container).should('not.have.class', 'active');
-        cy.window().then(({map, L}) => {
+        cy.window().then(() => {
           map.pm.enableDraw('PolygonCopy');
           map.on('pm:create', (e) => {
             console.log(e);
@@ -276,9 +276,7 @@ describe('Testing the Toolbar', () => {
           .click(390, 100)
           .click(450, 100);
 
-
         cy.get(mapSelector).click(410, 140).then(() => {
-          console.log(testlayer);
           expect(testlayer.options.color).to.equal("red");
         })
       })
@@ -304,9 +302,52 @@ describe('Testing the Toolbar', () => {
       map.pm.addControls({
         oneBlock: true
       });
-      cy.get('.leaflet-pm-toolbar.leaflet-pm-draw').then((container) => {
+      cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
         expect(container[0].children.length).to.equal(10);
       })
+    });
+  });
+
+  it('Different block positions', () => {
+    cy.window().then(({map}) => {
+      map.pm.addControls({
+        positions: {
+          draw: 'topright',
+          edit: 'topleft'
+        }
+      });
+      cy.get('.leaflet-pm-toolbar.leaflet-pm-edit')
+        .parent('.leaflet-top.leaflet-left')
+        .should('exist');
+      cy.get('.leaflet-pm-toolbar.leaflet-pm-draw')
+        .parent('.leaflet-top.leaflet-right')
+        .should('exist');
+    });
+  });
+
+  it('Different block positions - One Block', () => {
+    cy.window().then(({map}) => {
+      map.pm.addControls({
+        oneBlock: true,
+        positions: {
+          draw: 'topright',
+          edit: 'topleft',
+          custom: 'topleft',
+        }
+      });
+
+      map.pm.Toolbar.copyDrawControl("Polygon", {
+        name: "PolygonCopy",
+        block: "custom",
+        className: "leaflet-pm-icon-polygon",
+        title: "Display text on hover button",
+      });
+      cy.get('.leaflet-pm-toolbar.leaflet-pm-topright').then((container) => {
+        expect(container[0].children.length).to.equal(6);
+      });
+      cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
+        expect(container[0].children.length).to.equal(5);
+      });
     });
   });
 });

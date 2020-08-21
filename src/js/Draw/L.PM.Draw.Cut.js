@@ -1,6 +1,5 @@
-import intersect from '@turf/intersect';
-import difference from '@turf/difference';
 import Draw from './L.PM.Draw';
+import {difference, intersect} from "../helpers/turfHelper";
 
 Draw.Cut = Draw.Polygon.extend({
   initialize(map) {
@@ -61,23 +60,17 @@ Draw.Cut = Draw.Polygon.extend({
         this._map.pm.removeLayer({ target: resultingLayer });
       }
 
-      // fire pm:cut on the cutted layer
-      l.fire('pm:cut', {
-        shape: this._shape,
-        layer: resultingLayer,
-        originalLayer: l,
-      });
+      this._addDrawnLayerProp(resultingLayer);
 
-      // fire pm:cut on the map
-      this._map.fire('pm:cut', {
-        shape: this._shape,
+      this._editedLayers.push({
         layer: resultingLayer,
-        originalLayer: l,
+        originalLayer: l
       });
 
     });
   },
   _finishShape() {
+    this._editedLayers = [];
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(false);
@@ -100,5 +93,25 @@ Draw.Cut = Draw.Polygon.extend({
     // remove the first vertex from "other snapping layers"
     this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
     delete this._tempSnapLayerIndex;
+
+    this._editedLayers.forEach(({layer, originalLayer}) =>{
+      // fire pm:cut on the cutted layer
+      originalLayer.fire('pm:cut', {
+        shape: this._shape,
+        layer,
+        originalLayer,
+      });
+
+      // fire pm:cut on the map
+      this._map.fire('pm:cut', {
+        shape: this._shape,
+        layer,
+        originalLayer,
+      });
+
+      // fire edit event after cut
+      originalLayer.fire('pm:edit', { layer: originalLayer});
+    });
+    this._editedLayers = [];
   },
 });

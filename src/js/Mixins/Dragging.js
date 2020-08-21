@@ -92,6 +92,10 @@ const DragMixin = {
       return false;
     }
 
+    if(this._layer instanceof L.CircleMarker) {
+      this._updateHiddenPolyCircle();
+    }
+
     // timeout to prevent click event after drag :-/
     // TODO: do it better as soon as leaflet has a way to do it better :-)
     window.setTimeout(() => {
@@ -185,8 +189,10 @@ const DragMixin = {
       });
 
     if (this._layer instanceof L.CircleMarker) {
+      // create the new coordinates array
+      const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
-      this._layer.setLatLng(latlng);
+      this._layer.setLatLng(newCoords[0]);
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());

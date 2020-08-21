@@ -27,14 +27,10 @@ Draw.Polygon = Draw.Line.extend({
       return;
     }
 
-    // create the leaflet shape and add it to the map
-    if (e && e.type === 'dblclick') {
-      // Leaflet creates an extra node with double click
-      coords.splice(coords.length - 1, 1);
-    }
     const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
       this._map
     );
+    this._addDrawnLayerProp(polygonLayer);
 
     // disable drawing
     this.disable();
