@@ -247,15 +247,6 @@ Draw.Line = Draw.extend({
     this._syncHintLine();
   },
   _createVertex(e) {
-    // don't create a vertex if we have a selfIntersection and it is not allowed
-    if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(true, e.latlng);
-
-      if (this._doesSelfIntersect) {
-        return;
-      }
-    }
-
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
@@ -264,6 +255,15 @@ Draw.Line = Draw.extend({
 
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();
+
+    // don't create a vertex if we have a selfIntersection and it is not allowed
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(true, latlng);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
+    }
 
     // check if the first and this vertex have the same latlng
     if (latlng.equals(this._layer.getLatLngs()[0])) {
@@ -351,6 +351,14 @@ Draw.Line = Draw.extend({
 
     if (second) {
       this._hintMarker.setTooltipContent(getTranslation('tooltips.finishLine'));
+      // adding layer to the snapping list after a segment is created (two markers needed)
+      this._otherSnapLayers.push(this._layer);
+    }
+
+    this._otherSnapLayers.push(marker);
+
+    if (this.options.snappable) {
+      this._cleanupSnapping();
     }
 
     return marker;

@@ -71,15 +71,22 @@ Draw.Polygon = Draw.Line.extend({
 
       // add the first vertex to "other snapping layers" so the polygon is easier to finish
       this._tempSnapLayerIndex = this._otherSnapLayers.push(marker) - 1;
-
-      if (this.options.snappable) {
-        this._cleanupSnapping();
-      }
     } else {
       // add a click event w/ no handler to the marker
       // event won't bubble so prevents creation of identical markers in same polygon
       // fixes issue where double click during poly creation when allowSelfIntersection: false caused it to break
       marker.on('click', () => (1));
+      this._otherSnapLayers.push(marker);
+    }
+
+    const second = this._layer.getLatLngs().length === 2;
+    if (second) {
+      // adding layer to the snapping list after a segment is created (two markers needed)
+      this._otherSnapLayers.push(this._layer);
+    }
+
+    if (this.options.snappable) {
+      this._cleanupSnapping();
     }
 
     // handle tooltip text
