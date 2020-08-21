@@ -769,6 +769,15 @@ The following methods are available on `map.pm.Toolbar`:
 | changeControlOrder(`shapes`)                | -         | Change the order of the controls in the Toolbar. You can pass all shapes and `Edit`, `Drag`, `Removal`, `Cut` |
 | getControlOrder()                           | `Array`   | Get the current order of the controls.                                                                        |
 
+The following events are available on a map instance:
+
+| Event          | Params | Description                               | Output                                               |
+| :------------- | :----- | :---------------------------------------- | :--------------------------------------------------- |
+| pm:buttonclick | `e`    | Fired when a Toolbar button is clicked    | `btnName`, `button`                                  |
+| pm:actionclick | `e`    | Fired when a Toolbar action is clicked    | `text`, `action`, `btnName`, `button`                |
+
+
+
 ### Feature Requests
 
 I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.

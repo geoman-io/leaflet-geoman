@@ -137,6 +137,19 @@ const PMButton = L.Control.extend({
       actionNode.innerHTML = action.text;
 
       if (action.onClick) {
+        const actionClick = ()=>{
+            let btnName = "";
+            const {buttons} = this._map.pm.Toolbar;
+            for(const btn in buttons){
+              if(buttons[btn]._button === button){
+                btnName = btn;
+                break;
+              }
+            }
+            this._map.fire('pm:actionclick', {text: action.text, action, btnName, button});
+        };
+
+        L.DomEvent.addListener(actionNode, 'click', actionClick, this);
         L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
       }
       L.DomEvent.disableClickPropagation(actionNode);
@@ -164,6 +177,15 @@ const PMButton = L.Control.extend({
       if (this._button.disableOtherButtons) {
         this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
       }
+      let btnName = "";
+      const {buttons} = this._map.pm.Toolbar;
+      for(const btn in buttons){
+        if(buttons[btn]._button === button){
+          btnName = btn;
+          break;
+        }
+      }
+      this._map.fire('pm:buttonclick', {btnName, button});
     });
     L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
 
