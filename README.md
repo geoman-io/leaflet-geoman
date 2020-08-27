@@ -195,18 +195,18 @@ map.pm.Draw.getShapes();
 
 The following methods are available on `map.pm`:
 
-| Method                        | Returns   | Description                                                              |
-| :---------------------------- | :-------- | :----------------------------------------------------------------------- |
-| enableDraw(`shape`,`options`) | -         | Enable Drawing Mode with the passed shape.                               |
-| disableDraw(`shape`)          | -         | Disable Drawing Mode. The passed shape is optional.                      |
-| Draw.getShapes()              | `Array`   | Array of available shapes.                                               |
-| Draw.getActiveShape()         | `String`  | Returns the active shape.                                                |
-| globalDrawModeEnabled()       | `Boolean` | Returns `true` if global draw mode is enabled. `false` when disabled.    |
-| setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                  |
-| setGlobalOptions(`options`)   | -         | Set drawing options.                                                     |
-| getGlobalOptions()            | `Object`  | Returns the global options.                                              |
-| getGeomanLayers()             | `Array`   | Returns all Geoman layers on the map.                                    |
-| getGeomanDrawLayers()         | `Array`   | Returns all drawn Geoman layers on the map.                              |
+| Method                        | Returns   | Description                                                                                     |
+| :---------------------------- | :-------- | :---------------------------------------------------------------------------------------------- |
+| enableDraw(`shape`,`options`) | -         | Enable Drawing Mode with the passed shape.                                                      |
+| disableDraw(`shape`)          | -         | Disable Drawing Mode. The passed shape is optional.                                             |
+| Draw.getShapes()              | `Array`   | Array of available shapes.                                                                      |
+| Draw.getActiveShape()         | `String`  | Returns the active shape.                                                                       |
+| globalDrawModeEnabled()       | `Boolean` | Returns `true` if global draw mode is enabled. `false` when disabled.                           |
+| setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                                         |
+| setGlobalOptions(`options`)   | -         | Set drawing options.                                                                            |
+| getGlobalOptions()            | `Object`  | Returns the global options.                                                                     |
+| getGeomanLayers()             | `Array`   | Returns all Geoman layers on the map. Call `.toGeoJSON()` to get the layers as geojson.         |
+| getGeomanDrawLayers()         | `Array`   | Returns all drawn Geoman layers on the map. Call `.toGeoJSON()` to get the layers as geojson.   |
 
 See the available options in the table below.
 
