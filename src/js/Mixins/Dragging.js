@@ -92,6 +92,7 @@ const DragMixin = {
       return false;
     }
 
+
     // update the hidden circle border after dragging
     if(this._layer instanceof L.CircleMarker){
       this._layer.pm._updateHiddenPolyCircle();
@@ -190,8 +191,10 @@ const DragMixin = {
       });
 
     if (this._layer instanceof L.CircleMarker) {
+      // create the new coordinates array
+      const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
-      this._layer.setLatLng(latlng);
+      this._layer.setLatLng(newCoords[0]);
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
@@ -210,14 +213,16 @@ const DragMixin = {
   _fireDragStart() {
     this._layer.fire('pm:dragstart', {
       layer: this._layer,
+      shape: this.getShape()
     });
   },
   _fireDrag(e) {
-    this._layer.fire('pm:drag', e);
+    this._layer.fire('pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
     this._layer.fire('pm:dragend', {
       layer: this._layer,
+      shape: this.getShape()
     });
   },
   addDraggingClass() {

@@ -65,7 +65,7 @@ Edit.Line = Edit.extend({
 
     this.applyOptions();
 
-    this._layer.fire('pm:enable', { layer: this._layer });
+    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
 
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
@@ -121,7 +121,8 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
         'pm:vertexremoved',
-        this._handleSelfIntersectionOnVertexRemoval
+        this._handleSelfIntersectionOnVertexRemoval,
+        this
       );
     }
 
@@ -134,10 +135,10 @@ Edit.Line = Edit.extend({
       L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
     }
 
-    this._layer.fire('pm:disable', { layer: this._layer });
+    this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', { layer: this._layer });
+      this._layer.fire('pm:update', { layer: this._layer, shape: this.getShape() });
     }
     this._layerEdited = false;
 
@@ -194,6 +195,7 @@ Edit.Line = Edit.extend({
       this._layer.fire('pm:intersect', {
         layer: this._layer,
         intersection: kinks(this._layer.toGeoJSON(15)),
+        shape: this.getShape()
       });
     } else {
       // if not, reset the style to the default color
@@ -385,6 +387,7 @@ Edit.Line = Edit.extend({
       marker: newM,
       indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
       latlng,
+      shape: this.getShape()
     });
 
     if (this.options.snappable) {
@@ -500,6 +503,7 @@ Edit.Line = Edit.extend({
       layer: this._layer,
       marker,
       indexPath,
+      shape: this.getShape()
       // TODO: maybe add latlng as well?
     });
   },
@@ -645,6 +649,7 @@ Edit.Line = Edit.extend({
       layer: this._layer,
       markerEvent: e,
       indexPath,
+      shape: this.getShape()
     });
 
     // if self intersection is not allowed but this edit caused a self intersection,
@@ -682,6 +687,7 @@ Edit.Line = Edit.extend({
       layer: this._layer,
       markerEvent: e,
       indexPath,
+      shape: this.getShape()
     });
 
     // if self intersection isn't allowed, save the coords upon dragstart
@@ -728,6 +734,6 @@ Edit.Line = Edit.extend({
   _fireEdit() {
     // fire edit event
     this._layerEdited = true;
-    this._layer.fire('pm:edit', { layer: this._layer });
+    this._layer.fire('pm:edit', { layer: this._layer, shape: this.getShape() });
   },
 });
