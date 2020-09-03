@@ -6,6 +6,8 @@ Edit.Circle = Edit.extend({
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
+    // create polygon around the circle border
+    this._updateHiddenPolyCircle();
   },
   applyOptions() {
     if (this.options.snappable) {

@@ -92,8 +92,10 @@ const DragMixin = {
       return false;
     }
 
-    if(this._layer instanceof L.CircleMarker) {
-      this._updateHiddenPolyCircle();
+
+    // update the hidden circle border after dragging
+    if(this._layer instanceof L.CircleMarker){
+      this._layer.pm._updateHiddenPolyCircle();
     }
 
     // timeout to prevent click event after drag :-/
