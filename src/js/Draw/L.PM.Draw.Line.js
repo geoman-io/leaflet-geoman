@@ -313,6 +313,7 @@ Draw.Line = Draw.extend({
     const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(
       this._map
     );
+    this._setShapeForFinishLayer(polylineLayer);
     this._addDrawnLayerProp(polylineLayer);
 
     // disable drawing

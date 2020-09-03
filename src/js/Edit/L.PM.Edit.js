@@ -21,6 +21,9 @@ const Edit = L.Class.extend({
     // if it's a polygon, it means the coordinates array is multi dimensional
     return this._layer instanceof L.Polygon;
   },
+  getShape(){
+    return this._shape;
+  }
 });
 
 export default Edit;

@@ -211,14 +211,16 @@ const DragMixin = {
   _fireDragStart() {
     this._layer.fire('pm:dragstart', {
       layer: this._layer,
+      shape: this.getShape()
     });
   },
   _fireDrag(e) {
-    this._layer.fire('pm:drag', e);
+    this._layer.fire('pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
     this._layer.fire('pm:dragend', {
       layer: this._layer,
+      shape: this.getShape()
     });
   },
   addDraggingClass() {
