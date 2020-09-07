@@ -174,6 +174,64 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(4);
   });
 
+  it('doesnt allow duplicate points in polygon', () => {
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 50)
+      .click(150, 50)
+      .dblclick(150, 150)
+      .click(90, 250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(4);
+
+    cy.toolbarButton('edit').click();
+  });
+
+  it('doesnt break on dblclick while self intersection disabled', () => {
+    cy.window().then(({ map }) => {
+      map.pm.enableDraw('Polygon', {
+        allowSelfIntersection: false,
+      });
+    });
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 50)
+      .click(150, 50)
+      .dblclick(150, 150)
+      .click(90, 250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(4);
+
+    cy.toolbarButton('edit').click();
+  });
+
+  it('create vertex when dblclick', () => {
+    cy.window().then(({ map }) => {
+      map.pm.enableDraw('Polygon', {
+        allowSelfIntersection: false,
+        finishOn: 'dblclick',
+      });
+    });
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 50)
+      .click(150, 50)
+      .dblclick(150, 150);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(4);
+
+    cy.toolbarButton('edit').click();
+  });
 
   it('prevent creation while self intersection', () => {
 

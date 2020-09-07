@@ -80,6 +80,8 @@ Edit.Rectangle = Edit.Polygon.extend({
     this._layer.fire('pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
+      shape: this.getShape(),
+      indexPath: undefined
     });
   },
 
@@ -115,6 +117,8 @@ Edit.Rectangle = Edit.Polygon.extend({
     this._layer.fire('pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,
+      shape: this.getShape(),
+      indexPath: undefined
     });
 
     // fire edit event

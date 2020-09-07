@@ -6,6 +6,8 @@ Edit.Circle = Edit.extend({
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
+    // create polygon around the circle border
+    this._updateHiddenPolyCircle();
   },
   applyOptions() {
     if (this.options.snappable) {
@@ -57,7 +59,7 @@ Edit.Circle = Edit.extend({
 
     this.applyOptions();
 
-    this._layer.fire('pm:enable', { layer: this._layer });
+    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
 
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', e => {
@@ -92,10 +94,10 @@ Edit.Circle = Edit.extend({
     const el = layer._path ? layer._path : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
-    this._layer.fire('pm:disable', { layer: this._layer });
+    this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', { layer: this._layer });
+      this._layer.fire('pm:update', { layer: this._layer, shape: this.getShape() });
     }
     this._layerEdited = false;
 
@@ -152,12 +154,15 @@ Edit.Circle = Edit.extend({
     this._layer.fire('pm:centerplaced', {
       layer: this._layer,
       latlng: center,
+      shape: this.getShape()
     });
   },
   _onMarkerDragStart(e) {
     this._layer.fire('pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
+      shape: this.getShape(),
+      indexPath: undefined
     });
   },
   _onMarkerDragEnd(e) {
@@ -168,6 +173,8 @@ Edit.Circle = Edit.extend({
     this._layer.fire('pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,
+      shape: this.getShape(),
+      indexPath: undefined
     });
   },
   _syncCircleRadius() {
@@ -233,17 +240,17 @@ Edit.Circle = Edit.extend({
   },
   _fireEdit() {
     // fire edit event
-    this._layer.fire('pm:edit', { layer: this._layer });
+    this._layer.fire('pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
   },
   _fireDragStart() {
-    this._layer.fire('pm:dragstart');
+    this._layer.fire('pm:dragstart', { layer: this._layer, shape: this.getShape() });
   },
   _fireDrag(e) {
-    this._layer.fire('pm:drag', e);
+    this._layer.fire('pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
-    this._layer.fire('pm:dragend');
+    this._layer.fire('pm:dragend', { layer: this._layer, shape: this.getShape() });
   },
   _updateHiddenPolyCircle() {
     if (this._hiddenPolyCircle) {
