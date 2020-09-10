@@ -633,4 +633,28 @@ describe('Draw & Edit Poly', () => {
       })
     });
   });
+
+  it('no snapping to polygon with no coords', () => {
+    cy.window().then(({ map, L }) => {
+      L.polygon([]).addTo(map);
+    });
+
+    // activate line drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a line
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(160, 50);
+
+
+    cy.toolbarButton('edit')
+      .click();
+
+    cy.hasVertexMarkers(2);
+  });
 });
