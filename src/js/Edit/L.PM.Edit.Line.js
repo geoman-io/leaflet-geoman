@@ -451,19 +451,20 @@ Edit.Line = Edit.extend({
       this.disable();
       this.enable(this.options);
 
-      // get new markerArr because we removed coords
-      markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
     }
-    // remove all empty coord-rings
-    coords = removeEmptyCoordRings(coords);
-    this._layer.setLatLngs(coords);
-    // remove empty marker arrays
-    this._markers = removeEmptyCoordRings(this._markers);
 
     // if no coords are left, remove the layer
     if (isEmptyDeep(coords)) {
       this._layer.remove();
     }
+
+    // remove all empty coord-rings
+    coords = removeEmptyCoordRings(coords);
+    this._layer.setLatLngs(coords);
+    // remove empty marker arrays
+    this._markers = removeEmptyCoordRings(this._markers);
+    // get new markerArr because we cleaned up coords and markers array
+    markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
     // now handle the middle markers
     // remove the marker and the middlemarkers next to it from the map

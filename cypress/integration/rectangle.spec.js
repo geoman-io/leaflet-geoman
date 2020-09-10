@@ -97,5 +97,32 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(16);
+  });
+
+  it.only('remove empty coord rings', ()=>{
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(100,50)
+      .click(700,400);
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(200,200)
+      .click(300,250)
+      .click(370,200)
+      .click(200,200);
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(7);
+
+    cy.get(mapSelector).rightclick(300,250);
+
+    cy.window().then(({ map}) => {
+      const rect = map.pm.getGeomanDrawLayers()[0];
+      const geojson = rect.toGeoJSON();
+      const coords = geojson.geometry.coordinates;
+      expect(coords.length).to.equal(1);
+    })
   })
 });
