@@ -51,7 +51,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    //TODO: this is wrong: if already enable then go into the if
+    // TODO: this is wrong: if already enable then go into the if
     if (!this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
@@ -457,6 +457,8 @@ Edit.Line = Edit.extend({
     // remove all empty coord-rings
     coords = removeEmptyCoordRings(coords);
     this._layer.setLatLngs(coords);
+    // remove empty marker arrays
+    this._markers = removeEmptyCoordRings(this._markers);
 
     // if no coords are left, remove the layer
     if (isEmptyDeep(coords)) {
