@@ -99,7 +99,7 @@ describe('Draw Rectangle', () => {
     cy.hasVertexMarkers(16);
   });
 
-  it.only('remove empty coord rings', ()=>{
+  it('remove empty coord rings', ()=>{
     cy.toolbarButton('rectangle').click();
     cy.get(mapSelector)
       .click(100,50)
