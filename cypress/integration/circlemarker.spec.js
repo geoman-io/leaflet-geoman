@@ -141,4 +141,25 @@ describe('Draw Circle Marker', () => {
 
     cy.hasVertexMarkers(2);
   });
+  it('snapping to CircleMarker with pmIgnore:true', () => {
+    cy.window().then(({ map, L}) => {
+      L.circleMarker(map.getCenter(),{pmIgnore: true}).addTo(map);
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(4);
+  });
 });

@@ -234,7 +234,7 @@ const SnapMixin = {
       ) {
 
         // adds a hidden polygon which matches the border of the circle
-        if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm._hiddenPolyCircle) {
+        if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm && layer.pm._hiddenPolyCircle) {
           layers.push(layer.pm._hiddenPolyCircle);
         }
         layers.push(layer);
