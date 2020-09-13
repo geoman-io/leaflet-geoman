@@ -14,6 +14,7 @@ import pl from './pl.json';
 import sv from './sv.json';
 import el from './el.json';
 import el from './da.json';
+import hu from './hu.json';
 
 export default {
   en,
@@ -30,5 +31,6 @@ export default {
   pl,
   sv,
   el,
-  da
+  da,
+  hu
 };
