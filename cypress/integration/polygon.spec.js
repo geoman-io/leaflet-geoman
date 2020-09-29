@@ -369,7 +369,7 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(110, 150);
   });
 
-  it.only('draws and edits a polygon', () => {
+  it('draws and edits a polygon', () => {
     cy.hasLayers(1);
 
     // activate polygon drawing
