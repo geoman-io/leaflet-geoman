@@ -79,12 +79,16 @@ Edit.Line = Edit.extend({
       );
     }
 
-    this.cachedColor = undefined;
     if (!this.options.allowSelfIntersection) {
-      this.cachedColor = this._layer.options.color;
-
-      this.isRed = false;
+      if(this._layer.options.color !== 'red') {
+        this.cachedColor = this._layer.options.color;
+        this.isRed = false;
+      }else{
+        this.isRed = true;
+      }
       this._handleLayerStyle();
+    }else{
+      this.cachedColor = undefined;
     }
   },
 

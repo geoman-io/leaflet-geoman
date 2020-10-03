@@ -1,4 +1,5 @@
 import Utils from '../L.PM.Utils';
+import {isEmptyDeep} from "../helpers";
 
 const SnapMixin = {
   _initSnappableMarkers() {
@@ -234,7 +235,7 @@ const SnapMixin = {
       ) {
 
         // adds a hidden polygon which matches the border of the circle
-        if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm._hiddenPolyCircle) {
+        if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm && layer.pm._hiddenPolyCircle) {
           layers.push(layer.pm._hiddenPolyCircle);
         }
         layers.push(layer);
@@ -257,7 +258,7 @@ const SnapMixin = {
 
     // also remove everything that has no coordinates yet
     layers = layers.filter(
-      layer => layer._latlng || (layer._latlngs && layer._latlngs.length > 0)
+      layer => layer._latlng || (layer._latlngs && !isEmptyDeep(layer._latlngs))
     );
 
     // finally remove everything that's leaflet-geoman specific temporary stuff
