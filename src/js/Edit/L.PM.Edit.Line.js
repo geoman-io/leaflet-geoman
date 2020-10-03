@@ -3,7 +3,7 @@ import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
-import {isEmptyDeep} from '../helpers';
+import { isEmptyDeep, removeEmptyCoordRings } from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -32,6 +32,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
+    // TODO: this is wrong: if already enable then go into the if
     if (!this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
@@ -399,7 +400,7 @@ Edit.Line = Edit.extend({
     const marker = e.target;
 
     // coords of the layer
-    const coords = this._layer.getLatLngs();
+    let coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
     const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
@@ -416,7 +417,7 @@ Edit.Line = Edit.extend({
     const coordsRing = indexPath.length > 1 ? get(coords, parentPath) : coords;
 
     // define the markers array that is edited
-    const markerArr =
+    let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
     // remove coordinate
@@ -441,14 +442,21 @@ Edit.Line = Edit.extend({
       // TODO: kind of an ugly workaround maybe do it better?
       this.disable();
       this.enable(this.options);
-    }
 
-    // TODO: we may should remove all empty coord-rings here as well.
+    }
 
     // if no coords are left, remove the layer
     if (isEmptyDeep(coords)) {
       this._layer.remove();
     }
+
+    // remove all empty coord-rings
+    coords = removeEmptyCoordRings(coords);
+    this._layer.setLatLngs(coords);
+    // remove empty marker arrays
+    this._markers = removeEmptyCoordRings(this._markers);
+    // get new markerArr because we cleaned up coords and markers array
+    markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
     // now handle the middle markers
     // remove the marker and the middlemarkers next to it from the map
@@ -462,30 +470,32 @@ Edit.Line = Edit.extend({
     // remove the marker from the map
     this._markerGroup.removeLayer(marker);
 
-    let rightMarkerIndex;
-    let leftMarkerIndex;
+    if(markerArr) {
+      let rightMarkerIndex;
+      let leftMarkerIndex;
 
-    if (this.isPolygon()) {
-      // find neighbor marker-indexes
-      rightMarkerIndex = (index + 1) % markerArr.length;
-      leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
-    } else {
-      // find neighbor marker-indexes
-      leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
-      rightMarkerIndex = index + 1 >= markerArr.length ? undefined : index + 1;
-    }
-
-    // don't create middlemarkers if there is only one marker left
-    if (rightMarkerIndex !== leftMarkerIndex) {
-      const leftM = markerArr[leftMarkerIndex];
-      const rightM = markerArr[rightMarkerIndex];
-      if (this.options.hideMiddleMarkers !== true) {
-        this._createMiddleMarker(leftM, rightM);
+      if (this.isPolygon()) {
+        // find neighbor marker-indexes
+        rightMarkerIndex = (index + 1) % markerArr.length;
+        leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+      } else {
+        // find neighbor marker-indexes
+        leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
+        rightMarkerIndex = index + 1 >= markerArr.length ? undefined : index + 1;
       }
-    }
 
-    // remove the marker from the markers array
-    markerArr.splice(index, 1);
+      // don't create middlemarkers if there is only one marker left
+      if (rightMarkerIndex !== leftMarkerIndex) {
+        const leftM = markerArr[leftMarkerIndex];
+        const rightM = markerArr[rightMarkerIndex];
+        if (this.options.hideMiddleMarkers !== true) {
+          this._createMiddleMarker(leftM, rightM);
+        }
+      }
+
+      // remove the marker from the markers array
+      markerArr.splice(index, 1);
+    }
 
     // fire edit event
     this._fireEdit();
