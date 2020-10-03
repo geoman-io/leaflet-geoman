@@ -1,24 +1,10 @@
 // this mixin adds a global edit mode to the map
 import Utils from '../../L.PM.Utils'
 
-const { findLayers } = Utils
+const { findLayers } = Utils;
 
 const GlobalEditMode = {
   _globalEditMode: false,
-  // TODO: Remove in the next major release
-  globalEditEnabled() {
-    return this.globalEditModeEnabled();
-  },
-  globalEditModeEnabled() {
-    return this._globalEditMode;
-  },
-  setGlobalEditStatus(status) {
-    // set status
-    this._globalEditMode = status;
-
-    // fire event
-    this._fireEditModeEvent(this._globalEditMode);
-  },
   enableGlobalEditMode(o) {
     const options = {
       snappable: this._globalSnappingEnabled,
@@ -66,9 +52,20 @@ const GlobalEditMode = {
 
     this.setGlobalEditStatus(status);
   },
+  // TODO: Remove in the next major release
+  globalEditEnabled() {
+    return this.globalEditModeEnabled();
+  },
+  globalEditModeEnabled() {
+    return this._globalEditMode;
+  },
+  setGlobalEditStatus(status) {
+    // set status
+    this._globalEditMode = status;
+    // fire event
+    this._fireEditModeEvent(this._globalEditMode);
+  },
   toggleGlobalEditMode(options = this.globalOptions) {
-    // console.log('toggle global edit mode', options);
-
     if (this.globalEditModeEnabled()) {
       // disable
       this.disableGlobalEditMode();
@@ -88,6 +85,7 @@ const GlobalEditMode = {
     }
 
     if (this.globalEditModeEnabled()) {
+      // TODO: this._globalSnappingEnabled is a Pro Feature. Remove this option from OSS?
       layer.pm.enable({ ...this.globalOptions, snappable: this._globalSnappingEnabled });
     }
   },
@@ -97,7 +95,6 @@ const GlobalEditMode = {
       map: this.map,
     });
   },
-
-}
+};
 
 export default GlobalEditMode

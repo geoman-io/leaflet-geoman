@@ -9,6 +9,81 @@ Edit.CircleMarker = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
   },
+  enable(options = { draggable: true, snappable: true }) {
+    L.Util.setOptions(this, options);
+
+    this._map = this._layer._map;
+
+    // cancel when map isn't available, this happens when the polygon is removed before this fires
+    if (!this._map) {
+      return;
+    }
+
+    if (!this.enabled()) {
+      // if it was already enabled, disable first
+      // we don't block enabling again because new options might be passed
+      this.disable();
+    }
+    this.applyOptions();
+
+    // change state
+    this._enabled = true;
+
+    this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
+
+    // create polygon around the circle border
+    this._updateHiddenPolyCircle();
+
+    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
+  },
+  disable(layer = this._layer) {
+    // prevent disabling if layer is being dragged
+    if (layer.pm._dragging) {
+      return false;
+    }
+
+    if (layer.pm._helperLayers) {
+      layer.pm._helperLayers.clearLayers();
+    }
+
+    // Add map if it is not already set. This happens when disable() is called before enable()
+    if (!this._map) {
+      this._map = this._layer._map;
+    }
+
+    if (this.options.editable) {
+      this._map.off('move', this._syncMarkers, this);
+    } else {
+      this._map.off('move', this._updateHiddenPolyCircle, this);
+    }
+    // disable dragging, as this could have been active even without being enabled
+    this.disableLayerDrag();
+
+    this._layer.off('contextmenu', this._removeMarker, this);
+
+    // only fire events if it was enabled before
+    if (!this.enabled()) {
+      if (this._layerEdited) {
+        this._layer.fire('pm:update', { layer: this._layer, shape: this.getShape() });
+      }
+      this._layerEdited = false;
+      this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
+    }
+
+    layer.pm._enabled = false;
+
+    return true;
+  },
+  enabled() {
+    return this._enabled;
+  },
+  toggleEdit(options) {
+    if (!this.enabled()) {
+      this.enable(options);
+    } else {
+      this.disable();
+    }
+  },
   applyOptions() {
     // Use the not editable and only draggable version
     if (!this.options.editable && this.options.draggable) {
@@ -46,81 +121,6 @@ Edit.CircleMarker = Edit.extend({
     if (!this.options.preventMarkerRemoval) {
       this._layer.on('contextmenu', this._removeMarker, this);
     }
-  },
-  toggleEdit(options) {
-    if (!this.enabled()) {
-      this.enable(options);
-    } else {
-      this.disable();
-    }
-  },
-  enabled() {
-    return this._enabled;
-  },
-  enable(options = { draggable: true, snappable: true }) {
-    L.Util.setOptions(this, options);
-
-    this._map = this._layer._map;
-
-    // cancel when map isn't available, this happens when the polygon is removed before this fires
-    if (!this._map) {
-      return;
-    }
-
-    if (!this.enabled()) {
-      // if it was already enabled, disable first
-      // we don't block enabling again because new options might be passed
-      this.disable();
-    }
-    this.applyOptions();
-
-    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
-    // change state
-    this._enabled = true;
-
-    this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
-
-    // create polygon around the circle border
-    this._updateHiddenPolyCircle();
-  },
-  disable(layer = this._layer) {
-    // prevent disabling if layer is being dragged
-    if (layer.pm._dragging) {
-      return false;
-    }
-
-    if (layer.pm._helperLayers) {
-      layer.pm._helperLayers.clearLayers();
-    }
-
-    // Add map if it is not already set. This happens when disable() is called before enable()
-    if (!this._map) {
-      this._map = this._layer._map;
-    }
-
-    if (this.options.editable) {
-      this._map.off('move', this._syncMarkers, this);
-    } else {
-      this._map.off('move', this._updateHiddenPolyCircle, this);
-    }
-    // disable dragging, as this could have been active even without being enabled
-    this.disableLayerDrag();
-
-    // only fire events if it was enabled before
-    if (!this.enabled()) {
-      this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
-
-      if (this._layerEdited) {
-        this._layer.fire('pm:update', { layer: this._layer, shape: this.getShape() });
-      }
-      this._layerEdited = false;
-    }
-
-    this._layer.off('contextmenu', this._removeMarker, this);
-
-    layer.pm._enabled = false;
-
-    return true;
   },
   _initMarkers() {
     const map = this._map;
@@ -170,21 +170,6 @@ Edit.CircleMarker = Edit.extend({
     }
     return marker;
   },
-  _moveCircle(e) {
-    const center = e.latlng;
-    this._layer.setLatLng(center);
-
-    const radius = this._layer._radius;
-    const outer = this._getLatLngOnCircle(center, radius);
-    this._outerMarker.setLatLng(outer);
-    this._syncHintLine();
-
-    this._layer.fire('pm:centerplaced', {
-      layer: this._layer,
-      latlng: center,
-      shape: this.getShape()
-    });
-  },
   _createOuterMarker(latlng) {
     const marker = this._createMarker(latlng);
     marker.on('drag', this._resizeCircle, this);
@@ -205,6 +190,21 @@ Edit.CircleMarker = Edit.extend({
     this._helperLayers.addLayer(marker);
 
     return marker;
+  },
+  _moveCircle(e) {
+    const center = e.latlng;
+    this._layer.setLatLng(center);
+
+    const radius = this._layer._radius;
+    const outer = this._getLatLngOnCircle(center, radius);
+    this._outerMarker.setLatLng(outer);
+    this._syncHintLine();
+
+    this._layer.fire('pm:centerplaced', {
+      layer: this._layer,
+      latlng: center,
+      shape: this.getShape()
+    });
   },
   _syncMarkers() {
     const center = this._layer.getLatLng();
@@ -235,10 +235,6 @@ Edit.CircleMarker = Edit.extend({
     // set coords for hintline from marker to last vertex of drawin polyline
     this._hintline.setLatLngs([A, B]);
   },
-  _moveMarker(e) {
-    const center = e.latlng;
-    this._layer.setLatLng(center).redraw();
-  },
   _removeMarker() {
     if (this.options.editable) {
       this.disable();
@@ -255,11 +251,6 @@ Edit.CircleMarker = Edit.extend({
       indexPath: undefined
     });
   },
-  _fireEdit() {
-    // fire edit event
-    this._layer.fire('pm:edit', { layer: this._layer, shape: this.getShape() });
-    this._layerEdited = true;
-  },
   _onMarkerDragEnd(e) {
     this._layer.fire('pm:markerdragend', {
       layer: this._layer,
@@ -267,6 +258,11 @@ Edit.CircleMarker = Edit.extend({
       shape: this.getShape(),
       indexPath: undefined
     });
+  },
+  _fireEdit() {
+    // fire edit event
+    this._layer.fire('pm:edit', { layer: this._layer, shape: this.getShape() });
+    this._layerEdited = true;
   },
   // _initSnappableMarkers when option editable is not true
   _initSnappableMarkersDrag() {

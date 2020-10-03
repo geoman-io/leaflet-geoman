@@ -7,12 +7,57 @@ Draw.Cut = Draw.Polygon.extend({
     this._shape = 'Cut';
     this.toolbarButtonName = 'cutPolygon';
   },
+  _finishShape() {
+    this._editedLayers = [];
+    // if self intersection is not allowed, do not finish the shape!
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(false);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
+    }
+
+    const coords = this._layer.getLatLngs();
+    const polygonLayer = L.polygon(coords, this.options.pathOptions);
+    this._cut(polygonLayer);
+
+    // disable drawing
+    this.disable();
+
+    // clean up snapping states
+    this._cleanupSnapping();
+
+    // remove the first vertex from "other snapping layers"
+    this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
+    delete this._tempSnapLayerIndex;
+
+    this._editedLayers.forEach(({layer, originalLayer}) =>{
+      // fire pm:cut on the cutted layer
+      originalLayer.fire('pm:cut', {
+        shape: this._shape,
+        layer,
+        originalLayer,
+      });
+
+      // fire pm:cut on the map
+      this._map.fire('pm:cut', {
+        shape: this._shape,
+        layer,
+        originalLayer,
+      });
+
+      // fire edit event after cut
+      originalLayer.fire('pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
+    });
+    this._editedLayers = [];
+  },
   _cut(layer) {
     const all = this._map._layers;
 
     // find all layers that intersect with `layer`, the just drawn cutting layer
     const layers = Object.keys(all)
-      // convert object to array
+    // convert object to array
       .map(l => all[l])
       // only layers handled by leaflet-geoman
       .filter(l => l.pm)
@@ -66,52 +111,6 @@ Draw.Cut = Draw.Polygon.extend({
         layer: resultingLayer,
         originalLayer: l
       });
-
     });
-  },
-  _finishShape() {
-    this._editedLayers = [];
-    // if self intersection is not allowed, do not finish the shape!
-    if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(false);
-
-      if (this._doesSelfIntersect) {
-        return;
-      }
-    }
-
-    const coords = this._layer.getLatLngs();
-    const polygonLayer = L.polygon(coords, this.options.pathOptions);
-    this._cut(polygonLayer);
-
-    // disable drawing
-    this.disable();
-
-    // clean up snapping states
-    this._cleanupSnapping();
-
-    // remove the first vertex from "other snapping layers"
-    this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
-    delete this._tempSnapLayerIndex;
-
-    this._editedLayers.forEach(({layer, originalLayer}) =>{
-      // fire pm:cut on the cutted layer
-      originalLayer.fire('pm:cut', {
-        shape: this._shape,
-        layer,
-        originalLayer,
-      });
-
-      // fire pm:cut on the map
-      this._map.fire('pm:cut', {
-        shape: this._shape,
-        layer,
-        originalLayer,
-      });
-
-      // fire edit event after cut
-      originalLayer.fire('pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
-    });
-    this._editedLayers = [];
   },
 });
