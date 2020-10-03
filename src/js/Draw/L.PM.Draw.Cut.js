@@ -48,7 +48,7 @@ Draw.Cut = Draw.Polygon.extend({
       });
 
       // fire edit event after cut
-      originalLayer.fire('pm:edit', { layer: originalLayer});
+      originalLayer.fire('pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
     });
     this._editedLayers = [];
   },

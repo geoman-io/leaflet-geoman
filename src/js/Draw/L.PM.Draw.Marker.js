@@ -139,6 +139,7 @@ Draw.Marker = Draw.extend({
 
     // create marker
     const marker = new L.Marker(latlng, this.options.markerStyle);
+    this._setShapeForFinishLayer(marker);
     this._addDrawnLayerProp(marker);
 
     // add marker to the map

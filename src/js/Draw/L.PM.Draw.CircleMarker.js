@@ -249,6 +249,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // create marker
     const marker = L.circleMarker(latlng, this.options.pathOptions);
+    this._setShapeForFinishLayer(marker);
     this._addDrawnLayerProp(marker);
     // add marker to the map
     marker.addTo(this._map);
@@ -280,6 +281,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // create the final circle layer
     const circleLayer = L.circleMarker(center, options).addTo(this._map);
+    this._setShapeForFinishLayer(circleLayer);
     this._addDrawnLayerProp(circleLayer);
     // create polygon around the circle border
     circleLayer.pm._updateHiddenPolyCircle();

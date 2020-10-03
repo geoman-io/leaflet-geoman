@@ -1,0 +1,32 @@
+{
+  "tooltips": {
+    "placeMarker": "Tryk for at placere en markør",
+    "firstVertex": "Tryk for at placere det første punkt",
+    "continueLine": "Tryk for at fortsætte linjen",
+    "finishLine": "Tryk på et eksisterende punkt for at afslutte",
+    "finishPoly": "Tryk på det første punkt for at afslutte",
+    "finishRect": "Tryk for at afslutte",
+    "startCircle": "Tryk for at placere cirklens center",
+    "finishCircle": "Tryk for at afslutte cirklen",
+    "placeCircleMarker": "Tryk for at placere en cirkelmarkør"
+  },
+  "actions": {
+    "finish": "Afslut",
+    "cancel": "Afbryd",
+    "removeLastVertex": "Fjern sidste punkt"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Placer markør",
+    "drawPolyButton": "Tegn polygon",
+    "drawLineButton": "Tegn linje",
+    "drawCircleButton": "Tegn cirkel",
+    "drawRectButton": "Tegn firkant",
+    "editButton": "Rediger",
+    "dragButton": "Træk",
+    "cutButton": "Klip",
+    "deleteButton": "Fjern",
+    "drawCircleMarkerButton": "Tegn cirkelmarkør",
+    "snappingButton": "Fastgør trukket markør til andre elementer",
+    "pinningButton": "Sammenlæg delte elementer"
+  }
+}

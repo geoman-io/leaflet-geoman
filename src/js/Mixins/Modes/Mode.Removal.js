@@ -82,8 +82,14 @@ const GlobalRemovalMode = {
 
     if (removeable) {
       layer.remove();
-      layer.fire('pm:remove', { layer });
-      this.map.fire('pm:remove', { layer });
+      if(layer instanceof L.LayerGroup){
+        layer.fire('pm:remove', { layer, shape: undefined });
+        this.map.fire('pm:remove', { layer, shape: undefined });
+      }else{
+        layer.fire('pm:remove', { layer, shape: layer.pm.getShape() });
+        this.map.fire('pm:remove', { layer, shape: layer.pm.getShape() });
+      }
+
     }
   },
 };

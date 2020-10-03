@@ -71,6 +71,28 @@ const DragMixin = {
   dragging() {
     return this._dragging;
   },
+  _dragMixinOnMouseDown(e) {
+    // cancel if mouse button is NOT the left button
+    if (e.originalEvent.button > 0) {
+      return;
+    }
+    // save current map dragging state
+    if (this._safeToCacheDragState) {
+      this._originalMapDragState = this._layer._map.dragging._enabled;
+
+      // don't cache the state again until another mouse up is registered
+      this._safeToCacheDragState = false;
+    }
+
+    // save for delta calculation
+    this._tempDragCoord = e.latlng;
+
+    this._layer._map.on('mouseup', this._dragMixinOnMouseUp, this);
+
+    // listen to mousemove on map (instead of polygon),
+    // otherwise fast mouse movements stop the drag
+    this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
+  },
   _dragMixinOnMouseMove(e) {
     const el = this._layer._path
       ? this._layer._path
@@ -94,28 +116,6 @@ const DragMixin = {
     }
 
     this._onLayerDrag(e);
-  },
-  _dragMixinOnMouseDown(e) {
-    // cancel if mouse button is NOT the left button
-    if (e.originalEvent.button > 0) {
-      return;
-    }
-    // save current map dragging state
-    if (this._safeToCacheDragState) {
-      this._originalMapDragState = this._layer._map.dragging._enabled;
-
-      // don't cache the state again until another mouse up is registered
-      this._safeToCacheDragState = false;
-    }
-
-    // save for delta calculation
-    this._tempDragCoord = e.latlng;
-
-    this._layer._map.on('mouseup', this._dragMixinOnMouseUp, this);
-
-    // listen to mousemove on map (instead of polygon),
-    // otherwise fast mouse movements stop the drag
-    this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
   },
   _dragMixinOnMouseUp() {
     const el = this._layer._path
@@ -141,8 +141,9 @@ const DragMixin = {
       return false;
     }
 
-    if(this._layer instanceof L.CircleMarker) {
-      this._updateHiddenPolyCircle();
+    // update the hidden circle border after dragging
+    if(this._layer instanceof L.CircleMarker){
+      this._layer.pm._updateHiddenPolyCircle();
     }
 
     // timeout to prevent click event after drag :-/
@@ -210,14 +211,16 @@ const DragMixin = {
   _fireDragStart() {
     this._layer.fire('pm:dragstart', {
       layer: this._layer,
+      shape: this.getShape()
     });
   },
   _fireDrag(e) {
-    this._layer.fire('pm:drag', e);
+    this._layer.fire('pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
     this._layer.fire('pm:dragend', {
       layer: this._layer,
+      shape: this.getShape()
     });
   },
   addDraggingClass() {

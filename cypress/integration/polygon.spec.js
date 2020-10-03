@@ -22,7 +22,7 @@ describe('Draw & Edit Poly', () => {
 
   it('works without pmIgnore', () => {
     cy.window().then(({ L }) => {
-      L.PM.initialize({ optIn: false });
+      L.PM.setOptIn(false);
       cy.drawShape('MultiPolygon');
     });
 
@@ -33,7 +33,7 @@ describe('Draw & Edit Poly', () => {
 
   it('respects pmIgnore', () => {
     cy.window().then(({ L }) => {
-      L.PM.initialize({ optIn: false });
+      L.PM.setOptIn(false);
       cy.drawShape('MultiPolygon', true);
     });
 
@@ -44,7 +44,7 @@ describe('Draw & Edit Poly', () => {
 
   it('respects optIn', () => {
     cy.window().then(({ L }) => {
-      L.PM.initialize({ optIn: true });
+      L.PM.setOptIn(true);
       cy.drawShape('MultiPolygon');
     });
 
@@ -55,13 +55,64 @@ describe('Draw & Edit Poly', () => {
 
   it('respects pmIgnore with optIn', () => {
     cy.window().then(({ L }) => {
-      L.PM.initialize({ optIn: true });
+      L.PM.setOptIn(true);
       cy.drawShape('MultiPolygon', false);
     });
 
     cy.toolbarButton('edit').click();
 
     cy.hasVertexMarkers(8);
+  });
+
+  it('respects optIn and reinit layer', () => {
+    cy.window().then(({ L }) => {
+      L.PM.setOptIn(true);
+      cy.drawShape('MultiPolygon').then((poly)=>{
+        cy.hasVertexMarkers(0); //Not allowed because optIn
+        L.PM.setOptIn(false);
+        L.PM.reInitLayer(poly);
+      })
+    });
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(8);
+  });
+
+  it('respects optIn and reinit layer with pmIgnore', () => {
+    cy.window().then(({ L }) => {
+      L.PM.setOptIn(true);
+      cy.drawShape('MultiPolygon',true).then((poly)=>{
+        cy.hasVertexMarkers(0); //Not allowed because optIn
+        L.PM.reInitLayer(poly);//Not allowed because pmIgnore is not false
+        cy.hasVertexMarkers(0);
+        L.PM.setOptIn(false);
+        L.PM.reInitLayer(poly);//Not allowed because pmIgnore is true
+        cy.hasVertexMarkers(0);
+        poly.options.pmIgnore = false;
+        poly.eachLayer((layer)=>{
+          layer.options.pmIgnore = false;
+        });
+        L.PM.reInitLayer(poly);//Allowed because pmIgnore is not true
+      })
+    });
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(8);
+  });
+
+  it('respects optIn and disable optIn', () => {
+    cy.window().then(({ L }) => {
+      L.PM.setOptIn(true);
+      cy.drawShape('MultiPolygon');
+      cy.drawShape('MultiPolygon',false).then(()=>{
+        L.PM.setOptIn(false);
+        cy.drawShape('MultiPolygon');
+      })
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(16);
   });
 
   it('doesnt finish single point polys', () => {
@@ -632,5 +683,29 @@ describe('Draw & Edit Poly', () => {
 
       })
     });
+  });
+
+  it('no snapping to polygon with no coords', () => {
+    cy.window().then(({ map, L }) => {
+      L.polygon([]).addTo(map);
+    });
+
+    // activate line drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a line
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(160, 50);
+
+
+    cy.toolbarButton('edit')
+      .click();
+
+    cy.hasVertexMarkers(2);
   });
 });

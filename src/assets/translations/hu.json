@@ -1,0 +1,32 @@
+{
+  "tooltips": {
+    "placeMarker": "Kattintson a jelölő elhelyezéséhez",
+    "firstVertex": "Kattintson az első pont elhelyezéséhez",
+    "continueLine": "Kattintson a következő pont elhelyezéséhez",
+    "finishLine": "A befejezéshez kattintson egy meglévő pontra",
+    "finishPoly": "A befejezéshez kattintson az első pontra",
+    "finishRect": "Kattintson a befejezéshez",
+    "startCircle": "Kattintson a kör középpontjának elhelyezéséhez",
+    "finishCircle": "Kattintson a kör befejezéséhez",
+    "placeCircleMarker": "Kattintson a körjelölő elhelyezéséhez"
+  },
+  "actions": {
+    "finish": "Befejezés",
+    "cancel": "Mégse",
+    "removeLastVertex": "Utolsó pont eltávolítása"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Jelölő rajzolása",
+    "drawPolyButton": "Poligon rajzolása",
+    "drawLineButton": "Vonal rajzolása",
+    "drawCircleButton": "Kör rajzolása",
+    "drawRectButton": "Négyzet rajzolása",
+    "editButton": "Elemek szerkesztése",
+    "dragButton": "Elemek mozgatása",
+    "cutButton": "Elemek vágása",
+    "deleteButton": "Elemek törlése",
+    "drawCircleMarkerButton": "Kör jelölő rajzolása",
+    "snappingButton": "Kapcsolja a jelöltőt másik elemhez vagy ponthoz",
+    "pinningButton": "Közös pontok összekötése"
+  }
+}

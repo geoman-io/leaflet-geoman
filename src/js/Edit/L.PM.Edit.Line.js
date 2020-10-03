@@ -57,14 +57,18 @@ Edit.Line = Edit.extend({
       );
     }
 
-    this.cachedColor = undefined;
     if (!this.options.allowSelfIntersection) {
-      this.cachedColor = this._layer.options.color;
-
-      this.isRed = false;
+      if(this._layer.options.color !== 'red') {
+        this.cachedColor = this._layer.options.color;
+        this.isRed = false;
+      }else{
+        this.isRed = true;
+      }
       this._handleLayerStyle();
+    }else{
+      this.cachedColor = undefined;
     }
-    this._layer.fire('pm:enable', {layer: this._layer});
+    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
   },
   disable(poly = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -91,7 +95,8 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
         'pm:vertexremoved',
-        this._handleSelfIntersectionOnVertexRemoval
+        this._handleSelfIntersectionOnVertexRemoval,
+        this
       );
     }
 
@@ -105,10 +110,10 @@ Edit.Line = Edit.extend({
     }
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', {layer: this._layer});
+      this._layer.fire('pm:update', { layer: this._layer, shape: this.getShape() });
     }
     this._layerEdited = false;
-    this._layer.fire('pm:disable', {layer: this._layer});
+    this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
     return true;
   },
   enabled() {
@@ -120,7 +125,6 @@ Edit.Line = Edit.extend({
     } else {
       this.disable();
     }
-
     return this.enabled();
   },
   applyOptions() {
@@ -183,7 +187,7 @@ Edit.Line = Edit.extend({
   _createMarker(latlng) {
     const marker = new L.Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({className: 'marker-icon'}),
+      icon: L.divIcon({ className: 'marker-icon' }),
     });
 
     marker._pmTempLayer = true;
@@ -228,7 +232,7 @@ Edit.Line = Edit.extend({
       // TODO: move the next two lines inside _addMarker() as soon as
       // https://github.com/Leaflet/Leaflet/issues/4484
       // is fixed
-      const icon = L.divIcon({className: 'marker-icon'});
+      const icon = L.divIcon({ className: 'marker-icon' });
       middleMarker.setIcon(icon);
 
       this._addMarker(middleMarker, leftM, rightM);
@@ -238,7 +242,7 @@ Edit.Line = Edit.extend({
       // callback as soon as this is fixed:
       // https://github.com/Leaflet/Leaflet/issues/4484
       middleMarker.on('moveend', () => {
-        const icon = L.divIcon({className: 'marker-icon'});
+        const icon = L.divIcon({ className: 'marker-icon' });
         middleMarker.setIcon(icon);
 
         middleMarker.off('moveend');
@@ -263,7 +267,7 @@ Edit.Line = Edit.extend({
     const coords = this._layer._latlngs;
 
     // the index path to the marker inside the multidimensional marker array
-    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
       this._markers,
       leftM
     );
@@ -298,6 +302,7 @@ Edit.Line = Edit.extend({
       marker: newM,
       indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
       latlng,
+      shape: this.getShape()
     });
 
     if (this.options.snappable) {
@@ -310,6 +315,7 @@ Edit.Line = Edit.extend({
     const selfIntersection = kinks(this._layer.toGeoJSON(15));
     return selfIntersection.features.length > 0;
   },
+
   _handleSelfIntersectionOnVertexRemoval() {
     // check for selfintersection again (mainly to reset the style)
     this._handleLayerStyle(true);
@@ -323,6 +329,7 @@ Edit.Line = Edit.extend({
       this._initMarkers();
     }
   },
+
   _handleLayerStyle(flash) {
     const layer = this._layer;
 
@@ -337,15 +344,15 @@ Edit.Line = Edit.extend({
 
       // if it does self-intersect, mark or flash it red
       if (flash) {
-        layer.setStyle({color: 'red'});
+        layer.setStyle({ color: 'red' });
         this.isRed = true;
 
         window.setTimeout(() => {
-          layer.setStyle({color: this.cachedColor});
+          layer.setStyle({ color: this.cachedColor });
           this.isRed = false;
         }, 200);
       } else {
-        layer.setStyle({color: 'red'});
+        layer.setStyle({ color: 'red' });
         this.isRed = true;
       }
 
@@ -353,10 +360,11 @@ Edit.Line = Edit.extend({
       this._layer.fire('pm:intersect', {
         layer: this._layer,
         intersection: kinks(this._layer.toGeoJSON(15)),
+        shape: this.getShape()
       });
     } else {
       // if not, reset the style to the default color
-      layer.setStyle({color: this.cachedColor});
+      layer.setStyle({ color: this.cachedColor });
       this.isRed = false;
       if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
         this._updateDisabledMarkerStyle(this._markers, false);
@@ -378,6 +386,7 @@ Edit.Line = Edit.extend({
       }
     });
   },
+
   _removeMarker(e) {
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
@@ -393,7 +402,7 @@ Edit.Line = Edit.extend({
     const coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
-    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -486,6 +495,7 @@ Edit.Line = Edit.extend({
       layer: this._layer,
       marker,
       indexPath,
+      shape: this.getShape()
       // TODO: maybe add latlng as well?
     });
   },
@@ -525,7 +535,7 @@ Edit.Line = Edit.extend({
     const latlng = marker.getLatLng();
 
     // get indexPath of Marker
-    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -539,7 +549,7 @@ Edit.Line = Edit.extend({
   },
 
   _getNeighborMarkers(marker) {
-    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -556,10 +566,10 @@ Edit.Line = Edit.extend({
     const prevMarker = markerArr[prevMarkerIndex];
     const nextMarker = markerArr[nextMarkerIndex];
 
-    return {prevMarker, nextMarker};
+    return { prevMarker, nextMarker };
   },
   _checkMarkerAllowedToDrag(marker) {
-    const {prevMarker, nextMarker} = this._getNeighborMarkers(marker);
+    const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
     const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
     const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
@@ -579,15 +589,17 @@ Edit.Line = Edit.extend({
       return false;
     }
     return true;
+
   },
   _onMarkerDragStart(e) {
     const marker = e.target;
-    const {indexPath} = this.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
     this._layer.fire('pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
       indexPath,
+      shape: this.getShape()
     });
 
     // if self intersection isn't allowed, save the coords upon dragstart
@@ -601,6 +613,7 @@ Edit.Line = Edit.extend({
       this.cachedColor = this._layer.options.color;
     }
 
+
     if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
       this._markerAllowedToDrag = this._checkMarkerAllowedToDrag(marker);
     } else {
@@ -611,7 +624,7 @@ Edit.Line = Edit.extend({
     // dragged marker
     const marker = e.target;
 
-    const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -673,12 +686,13 @@ Edit.Line = Edit.extend({
   },
   _onMarkerDragEnd(e) {
     const marker = e.target;
-    const {indexPath} = this.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
     this._layer.fire('pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,
       indexPath,
+      shape: this.getShape()
     });
 
     // if self intersection is not allowed but this edit caused a self intersection,
@@ -709,6 +723,6 @@ Edit.Line = Edit.extend({
   _fireEdit() {
     // fire edit event
     this._layerEdited = true;
-    this._layer.fire('pm:edit', {layer: this._layer});
+    this._layer.fire('pm:edit', { layer: this._layer, shape: this.getShape() });
   },
 });

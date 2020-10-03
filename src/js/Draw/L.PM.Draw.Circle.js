@@ -193,6 +193,7 @@ Draw.Circle = Draw.extend({
       this._layer.fire('pm:centerplaced', {
         workingLayer: this._layer,
         latlng,
+        shape: this._shape
       });
     }
   },
@@ -211,6 +212,7 @@ Draw.Circle = Draw.extend({
 
     // create the final circle layer
     const circleLayer = L.circle(center, options).addTo(this._map);
+    this._setShapeForFinishLayer(circleLayer);
     this._addDrawnLayerProp(circleLayer);
 
     // create polygon around the circle border

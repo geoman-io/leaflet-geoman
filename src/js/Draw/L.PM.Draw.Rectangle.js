@@ -252,6 +252,7 @@ Draw.Rectangle = Draw.extend({
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(
       this._map
     );
+    this._setShapeForFinishLayer(rectangleLayer);
     this._addDrawnLayerProp(rectangleLayer);
 
     // disable drawing
