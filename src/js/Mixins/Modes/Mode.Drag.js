@@ -1,11 +1,8 @@
 import Utils from '../../L.PM.Utils'
 
-const { findLayers } = Utils
+const { findLayers } = Utils;
 
 const GlobalDragMode = {
-  globalDragModeEnabled() {
-    return !!this._globalDragMode;
-  },
   enableGlobalDragMode() {
     const layers = findLayers(this.map);
 
@@ -44,11 +41,8 @@ const GlobalDragMode = {
 
     this._fireDragModeEvent(false);
   },
-  _fireDragModeEvent(enabled) {
-    this.map.fire('pm:globaldragmodetoggled', {
-      enabled,
-      map: this.map,
-    });
+  globalDragModeEnabled() {
+    return !!this._globalDragMode;
   },
   toggleGlobalDragMode() {
     if (this.globalDragModeEnabled()) {
@@ -58,7 +52,7 @@ const GlobalDragMode = {
     }
   },
   reinitGlobalDragMode({ layer }) {
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily	
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
     const isRelevant = !!layer.pm && !layer._pmTempLayer;
     if (!isRelevant) {
       return;
@@ -69,6 +63,12 @@ const GlobalDragMode = {
       this.disableGlobalDragMode();
       this.enableGlobalDragMode();
     }
+  },
+  _fireDragModeEvent(enabled) {
+    this.map.fire('pm:globaldragmodetoggled', {
+      enabled,
+      map: this.map,
+    });
   },
 }
 
