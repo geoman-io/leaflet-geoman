@@ -111,12 +111,25 @@ their options when creating them. Example:
 L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 ```
 
+Enable leaflet-geoman on an ignored layer:
+```js
+layer.options.pmIgnore = false;
+L.PM.reInitLayer(layer);
+```
+If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.
+
+
 ##### Opt-In
 
 If you want to use leaflet-geoman as opt-in, call the following function right after importing:
 
 ```js
-L.PM.initialize({ optIn: true });
+L.PM.setOptIn(true);
+```
+
+And to disable it:
+```js
+L.PM.setOptIn(false);
 ```
 
 All layers will be ignored by leaflet-geoman, unless you specify `pmIgnore: false` on a layer:
@@ -551,7 +564,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');
 ```
 
-Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `nl`, `el`, `pl`, `sv` and `hu`.
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `nl`, `el`, `pl`, `sv`, `da` and `hu`.
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.

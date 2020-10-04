@@ -40,21 +40,26 @@ Edit.LayerGroup = L.Class.extend({
       this._layers = this.findLayers();
     })
   },
-  findLayers() {
-    // get all layers of the layer group
-    let layers = this._layerGroup.getLayers();
-
-    // filter out layers that are no layerGroup
-    layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
-
-    // filter out layers that don't have leaflet-geoman
-    layers = layers.filter(layer => !!layer.pm);
-
-    // filter out everything that's leaflet-geoman specific temporary stuff
-    layers = layers.filter(layer => !layer._pmTempLayer);
-
-    // return them
-    return layers;
+  enable(options) {
+    this._options = options;
+    this._layers.forEach(layer => {
+      layer.pm.enable(options);
+    });
+  },
+  disable() {
+    this._layers.forEach(layer => {
+      layer.pm.disable();
+    });
+  },
+  enabled() {
+    const enabled = this._layers.find(layer => layer.pm.enabled());
+    return !!enabled;
+  },
+  toggleEdit(options) {
+    this._options = options;
+    this._layers.forEach(layer => {
+      layer.pm.toggleEdit(options);
+    });
   },
   _initLayer(layer) {
     // available events
@@ -87,29 +92,24 @@ Edit.LayerGroup = L.Class.extend({
     // add reference for the group to each layer inside said group
     layer.pm._layerGroup = this._layerGroup;
   },
+  findLayers() {
+    // get all layers of the layer group
+    let layers = this._layerGroup.getLayers();
+
+    // filter out layers that are no layerGroup
+    layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
+
+    // filter out layers that don't have leaflet-geoman
+    layers = layers.filter(layer => !!layer.pm);
+
+    // filter out everything that's leaflet-geoman specific temporary stuff
+    layers = layers.filter(layer => !layer._pmTempLayer);
+
+    // return them
+    return layers;
+  },
   _fireEvent(e) {
     this._layerGroup.fireEvent(e.type, e);
-  },
-  toggleEdit(options) {
-    this._options = options;
-    this._layers.forEach(layer => {
-      layer.pm.toggleEdit(options);
-    });
-  },
-  enable(options) {
-    this._options = options;
-    this._layers.forEach(layer => {
-      layer.pm.enable(options);
-    });
-  },
-  disable() {
-    this._layers.forEach(layer => {
-      layer.pm.disable();
-    });
-  },
-  enabled() {
-    const enabled = this._layers.find(layer => layer.pm.enabled());
-    return !!enabled;
   },
   dragging() {
     const dragging = this._layers.find(layer => layer.pm.dragging());

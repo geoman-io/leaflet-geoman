@@ -10,10 +10,45 @@ Edit.Marker = Edit.extend({
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
   },
+  enable(options = { draggable: true }) {
+    L.Util.setOptions(this, options);
 
+    this._map = this._layer._map;
+
+    if (this.enabled()) {
+      return;
+    }
+    this._enabled = true;
+
+    this.applyOptions();
+    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
+  },
+  disable() {
+    this._enabled = false;
+
+    // disable dragging, as this could have been active even without being enabled
+    this.disableLayerDrag();
+
+    this._layer.off('contextmenu', this._removeMarker, this);
+
+    this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
+
+    if (this._layerEdited) {
+      this._layer.fire('pm:update', { layer: this._layer, shape: this.getShape() });
+    }
+    this._layerEdited = false;
+  },
+  enabled() {
+    return this._enabled;
+  },
+  toggleEdit(options) {
+    if (!this.enabled()) {
+      this.enable(options);
+    } else {
+      this.disable();
+    }
+  },
   applyOptions() {
-    // console.log('apply options', this.options)
-
     if (this.options.snappable) {
       this._initSnappableMarkers();
     } else {
@@ -29,49 +64,6 @@ Edit.Marker = Edit.extend({
     if (!this.options.preventMarkerRemoval) {
       this._layer.on('contextmenu', this._removeMarker, this);
     }
-  },
-
-  toggleEdit(options) {
-    if (!this.enabled()) {
-      this.enable(options);
-    } else {
-      this.disable();
-    }
-  },
-
-  enable(options = { draggable: true }) {
-    L.Util.setOptions(this, options);
-
-    this._map = this._layer._map;
-
-    if (this.enabled()) {
-      return;
-    }
-    this._enabled = true;
-
-    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
-
-    this.applyOptions();
-  },
-
-  enabled() {
-    return this._enabled;
-  },
-
-  disable() {
-    this._enabled = false;
-
-    // disable dragging, as this could have been active even without being enabled
-    this.disableLayerDrag();
-
-    this._layer.off('contextmenu', this._removeMarker, this);
-
-    this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
-
-    if (this._layerEdited) {
-      this._layer.fire('pm:update', { layer: this._layer, shape: this.getShape() });
-    }
-    this._layerEdited = false;
   },
   _removeMarker(e) {
     const marker = e.target;
