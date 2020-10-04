@@ -75,12 +75,6 @@ Draw.Circle = Draw.extend({
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
-    // fire drawstart event
-    this._map.fire('pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
-    this._setGlobalDrawMode();
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -88,6 +82,13 @@ Draw.Circle = Draw.extend({
     // an array used in the snapping mixin.
     // TODO: think about moving this somewhere else?
     this._otherSnapLayers = [];
+
+    // fire drawstart event
+    this._map.fire('pm:drawstart', {
+      shape: this._shape,
+      workingLayer: this._layer,
+    });
+    this._setGlobalDrawMode();
   },
   disable() {
     // disable drawing mode
@@ -110,9 +111,6 @@ Draw.Circle = Draw.extend({
     // remove helping layers
     this._map.removeLayer(this._layerGroup);
 
-    // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
-    this._setGlobalDrawMode();
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -121,6 +119,10 @@ Draw.Circle = Draw.extend({
     if (this.options.snappable) {
       this._cleanupSnapping();
     }
+
+    // fire drawend event
+    this._map.fire('pm:drawend', { shape: this._shape });
+    this._setGlobalDrawMode();
   },
   enabled() {
     return this._enabled;
@@ -191,6 +193,7 @@ Draw.Circle = Draw.extend({
       this._layer.fire('pm:centerplaced', {
         workingLayer: this._layer,
         latlng,
+        shape: this._shape
       });
     }
   },
@@ -209,6 +212,8 @@ Draw.Circle = Draw.extend({
 
     // create the final circle layer
     const circleLayer = L.circle(center, options).addTo(this._map.pm._getLayerGroup());
+    this._setShapeForFinishLayer(circleLayer);
+    this._addDrawnLayerProp(circleLayer);
 
     // create polygon around the circle border
     circleLayer.pm._updateHiddenPolyCircle();
@@ -221,18 +226,5 @@ Draw.Circle = Draw.extend({
       shape: this._shape,
       layer: circleLayer,
     });
-  },
-  _createMarker(latlng) {
-    // create the new marker
-    const marker = new L.Marker(latlng, {
-      draggable: false,
-      icon: L.divIcon({ className: 'marker-icon' }),
-    });
-    marker._pmTempLayer = true;
-
-    // add it to the map
-    this._layerGroup.addLayer(marker);
-
-    return marker;
   },
 });

@@ -1,18 +1,4 @@
 const GlobalRemovalMode = {
-  disableGlobalRemovalMode() {
-    this._globalRemovalMode = false;
-    this.map.eachLayer(layer => {
-      layer.off('click', this.removeLayer, this);
-    });
-
-    // remove map handler
-    this.map.off('layeradd', this.throttledReInitRemoval, this);
-
-    // toogle the button in the toolbar if this is called programatically
-    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
-
-    this._fireRemovalModeEvent(false);
-  },
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
       layer.pm &&
@@ -39,19 +25,19 @@ const GlobalRemovalMode = {
 
     this._fireRemovalModeEvent(true);
   },
-  _fireRemovalModeEvent(enabled) {
-    this.map.fire('pm:globalremovalmodetoggled', {
-      enabled,
-      map: this.map,
+  disableGlobalRemovalMode() {
+    this._globalRemovalMode = false;
+    this.map.eachLayer(layer => {
+      layer.off('click', this.removeLayer, this);
     });
-  },
-  toggleGlobalRemovalMode() {
-    // toggle global edit mode
-    if (this.globalRemovalModeEnabled()) {
-      this.disableGlobalRemovalMode();
-    } else {
-      this.enableGlobalRemovalMode();
-    }
+
+    // remove map handler
+    this.map.off('layeradd', this.throttledReInitRemoval, this);
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+
+    this._fireRemovalModeEvent(false);
   },
   // TODO: Remove in the next major release
   globalRemovalEnabled() {
@@ -60,19 +46,12 @@ const GlobalRemovalMode = {
   globalRemovalModeEnabled() {
     return !!this._globalRemovalMode;
   },
-  removeLayer(e) {
-
-    const layer = e.target;
-    // only remove layer, if it's handled by leaflet-geoman,
-    // not a tempLayer and not currently being dragged
-    const removeable =
-      !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
-
-    if (removeable) {
-      layer.removeFrom(this.map.pm._getLayerGroup());
-      layer.remove();
-      layer.fire('pm:remove', { layer });
-      this.map.fire('pm:remove', { layer });
+  toggleGlobalRemovalMode() {
+    // toggle global edit mode
+    if (this.globalRemovalModeEnabled()) {
+      this.disableGlobalRemovalMode();
+    } else {
+      this.enableGlobalRemovalMode();
     }
   },
   reinitGlobalRemovalMode({ layer }) {
@@ -88,6 +67,32 @@ const GlobalRemovalMode = {
       this.enableGlobalRemovalMode();
     }
   },
-}
+  _fireRemovalModeEvent(enabled) {
+    this.map.fire('pm:globalremovalmodetoggled', {
+      enabled,
+      map: this.map,
+    });
+  },
+  removeLayer(e) {
+    const layer = e.target;
+    // only remove layer, if it's handled by leaflet-geoman,
+    // not a tempLayer and not currently being dragged
+    const removeable =
+      !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
+
+    if (removeable) {
+      layer.removeFrom(this.map.pm._getLayerGroup());
+      layer.remove();
+      if(layer instanceof L.LayerGroup){
+        layer.fire('pm:remove', { layer, shape: undefined });
+        this.map.fire('pm:remove', { layer, shape: undefined });
+      }else{
+        layer.fire('pm:remove', { layer, shape: layer.pm.getShape() });
+        this.map.fire('pm:remove', { layer, shape: layer.pm.getShape() });
+      }
+
+    }
+  },
+};
 
 export default GlobalRemovalMode

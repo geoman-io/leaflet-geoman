@@ -22,7 +22,7 @@ const PMButton = L.Control.extend({
         this._container = this._map.pm.Toolbar.drawContainer;
       }
     } else {
-      this._container = this._map.pm.Toolbar.drawContainer;
+      this._container = this._map.pm.Toolbar._createContainer(this.options.position);
     }
     this.buttonsDomNode = this._makeButton(this._button);
     this._container.appendChild(this.buttonsDomNode);

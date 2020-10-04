@@ -13,6 +13,8 @@ import pt_br from './pt_br.json';
 import pl from './pl.json';
 import sv from './sv.json';
 import el from './el.json';
+import hu from './hu.json';
+import da from './da.json';
 
 export default {
   en,
@@ -28,5 +30,7 @@ export default {
   zh,
   pl,
   sv,
-  el
+  el,
+  hu,
+  da
 };
