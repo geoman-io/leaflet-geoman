@@ -141,6 +141,27 @@ describe('Draw Circle Marker', () => {
 
     cy.hasVertexMarkers(2);
   });
+  it('snapping to CircleMarker with pmIgnore:true', () => {
+    cy.window().then(({ map, L}) => {
+      L.circleMarker(map.getCenter(),{pmIgnore: true}).addTo(map);
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(4);
+  });
 
   it('set max radius of circleMarker', () => {
     let handFinish = false;
@@ -208,7 +229,7 @@ describe('Draw Circle Marker', () => {
     });
 
   });
-  it.only('set min radius of circleMarker', () => {
+  it('set min radius of circleMarker', () => {
     let handFinish = false;
 
     cy.toolbarButton('circle-marker')
@@ -255,7 +276,6 @@ describe('Draw Circle Marker', () => {
               handFinish = true;
               map.eachLayer(layer => {
                 if (layer instanceof L.CircleMarker) {
-                  console.log(layer.getRadius())
                   expect(true).to.equal(layer.getRadius() >= 145 && layer.getRadius() < 155);
                 }
               });

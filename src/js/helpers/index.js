@@ -22,6 +22,15 @@ export function isEmptyDeep(l) {
   return !flatten(l).length;
 }
 
+export function removeEmptyCoordRings(arr) {
+  return arr.reduce((result, item)=>{
+    if(item.length !== 0){
+      result.push( Array.isArray(item) ? removeEmptyCoordRings(item) : item );
+    }
+    return result;
+  }, []);
+}
+
 // Code from https://stackoverflow.com/a/24153998/8283938
 function destinationVincenty(lonlat, brng, dist) { // rewritten to work with leaflet
   const VincentyConstants = {

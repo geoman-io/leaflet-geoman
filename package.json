@@ -1,6 +1,6 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -19,10 +19,9 @@
   ],
   "main": "dist/leaflet-geoman.min.js",
   "dependencies": {
-    "@turf/difference": "^6.0.2",
-    "@turf/intersect": "^6.1.3",
     "@turf/kinks": "6.x",
     "@turf/line-intersect": "^6.0.2",
+    "polygon-clipping": "^0.15.1",
     "lodash": "^4.17.15"
   },
   "devDependencies": {

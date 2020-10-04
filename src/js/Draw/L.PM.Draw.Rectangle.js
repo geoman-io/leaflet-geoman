@@ -86,6 +86,13 @@ Draw.Rectangle = Draw.extend({
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
+    // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
+    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+
+    // an array used in the snapping mixin.
+    // TODO: think about moving this somewhere else?
+    this._otherSnapLayers = [];
+
     // fire drawstart event
     this._map.fire('pm:drawstart', {
       shape: this._shape,
@@ -93,12 +100,6 @@ Draw.Rectangle = Draw.extend({
     });
     this._setGlobalDrawMode();
 
-    // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
-
-    // an array used in the snapping mixin.
-    // TODO: think about moving this somewhere else?
-    this._otherSnapLayers = [];
   },
   disable() {
     // disable drawing mode
@@ -121,10 +122,6 @@ Draw.Rectangle = Draw.extend({
     // remove helping layers
     this._map.removeLayer(this._layerGroup);
 
-    // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
-    this._setGlobalDrawMode();
-
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
@@ -132,6 +129,10 @@ Draw.Rectangle = Draw.extend({
     if (this.options.snappable) {
       this._cleanupSnapping();
     }
+    // fire drawend event
+    this._map.fire('pm:drawend', { shape: this._shape });
+    this._setGlobalDrawMode();
+
   },
   enabled() {
     return this._enabled;
@@ -224,6 +225,16 @@ Draw.Rectangle = Draw.extend({
       });
     }
   },
+  _findCorners() {
+    const corners = this._layer.getBounds();
+
+    const northwest = corners.getNorthWest();
+    const northeast = corners.getNorthEast();
+    const southeast = corners.getSouthEast();
+    const southwest = corners.getSouthWest();
+
+    return [northwest, northeast, southeast, southwest];
+  },
   _finishShape(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
@@ -241,6 +252,8 @@ Draw.Rectangle = Draw.extend({
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(
       this._map
     );
+    this._setShapeForFinishLayer(rectangleLayer);
+    this._addDrawnLayerProp(rectangleLayer);
 
     // disable drawing
     this.disable();
@@ -250,15 +263,5 @@ Draw.Rectangle = Draw.extend({
       shape: this._shape,
       layer: rectangleLayer,
     });
-  },
-  _findCorners() {
-    const corners = this._layer.getBounds();
-
-    const northwest = corners.getNorthWest();
-    const northeast = corners.getNorthEast();
-    const southeast = corners.getSouthEast();
-    const southwest = corners.getSouthWest();
-
-    return [northwest, northeast, southeast, southwest];
   },
 });

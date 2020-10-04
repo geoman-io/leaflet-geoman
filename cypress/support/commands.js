@@ -137,6 +137,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
           const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
+          return layer;
         });
     }
 

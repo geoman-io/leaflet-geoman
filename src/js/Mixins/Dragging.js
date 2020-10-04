@@ -68,6 +68,55 @@ const DragMixin = {
     // disable mousedown event
     this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
   },
+  dragging() {
+    return this._dragging;
+  },
+  _dragMixinOnMouseDown(e) {
+    // cancel if mouse button is NOT the left button
+    if (e.originalEvent.button > 0) {
+      return;
+    }
+    // save current map dragging state
+    if (this._safeToCacheDragState) {
+      this._originalMapDragState = this._layer._map.dragging._enabled;
+
+      // don't cache the state again until another mouse up is registered
+      this._safeToCacheDragState = false;
+    }
+
+    // save for delta calculation
+    this._tempDragCoord = e.latlng;
+
+    this._layer._map.on('mouseup', this._dragMixinOnMouseUp, this);
+
+    // listen to mousemove on map (instead of polygon),
+    // otherwise fast mouse movements stop the drag
+    this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
+  },
+  _dragMixinOnMouseMove(e) {
+    const el = this._layer._path
+      ? this._layer._path
+      : this._layer._renderer._container;
+
+    if (!this._dragging) {
+      // set state
+      this._dragging = true;
+      L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+
+      // bring it to front to prevent drag interception
+      this._layer.bringToFront();
+
+      // disbale map drag
+      if (this._originalMapDragState) {
+        this._layer._map.dragging.disable();
+      }
+
+      // fire pm:dragstart event
+      this._fireDragStart();
+    }
+
+    this._onLayerDrag(e);
+  },
   _dragMixinOnMouseUp() {
     const el = this._layer._path
       ? this._layer._path
@@ -92,6 +141,11 @@ const DragMixin = {
       return false;
     }
 
+    // update the hidden circle border after dragging
+    if(this._layer instanceof L.CircleMarker){
+      this._layer.pm._updateHiddenPolyCircle();
+    }
+
     // timeout to prevent click event after drag :-/
     // TODO: do it better as soon as leaflet has a way to do it better :-)
     window.setTimeout(() => {
@@ -107,56 +161,6 @@ const DragMixin = {
     }, 10);
 
     return true;
-  },
-  _dragMixinOnMouseMove(e) {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
-
-    if (!this._dragging) {
-      // set state
-      this._dragging = true;
-      L.DomUtil.addClass(el, 'leaflet-pm-dragging');
-
-      // bring it to front to prevent drag interception
-      this._layer.bringToFront();
-
-      // disbale map drag
-      if (this._originalMapDragState) {
-        this._layer._map.dragging.disable();
-      }
-
-
-      // fire pm:dragstart event
-      this._fireDragStart();
-    }
-
-    this._onLayerDrag(e);
-  },
-  _dragMixinOnMouseDown(e) {
-    // cancel if mouse button is NOT the left button
-    if (e.originalEvent.button > 0) {
-      return;
-    }
-    // save current map dragging state
-    if (this._safeToCacheDragState) {
-      this._originalMapDragState = this._layer._map.dragging._enabled;
-
-      // don't cache the state again until another mouse up is registered
-      this._safeToCacheDragState = false;
-    }
-
-    // save for delta calculation
-    this._tempDragCoord = e.latlng;
-
-    this._layer._map.on('mouseup', this._dragMixinOnMouseUp, this);
-
-    // listen to mousemove on map (instead of polygon),
-    // otherwise fast mouse movements stop the drag
-    this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
-  },
-  dragging() {
-    return this._dragging;
   },
   _onLayerDrag(e) {
     // latLng of mouse event
@@ -185,8 +189,10 @@ const DragMixin = {
       });
 
     if (this._layer instanceof L.CircleMarker) {
+      // create the new coordinates array
+      const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
-      this._layer.setLatLng(latlng);
+      this._layer.setLatLng(newCoords[0]);
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
@@ -205,14 +211,16 @@ const DragMixin = {
   _fireDragStart() {
     this._layer.fire('pm:dragstart', {
       layer: this._layer,
+      shape: this.getShape()
     });
   },
   _fireDrag(e) {
-    this._layer.fire('pm:drag', e);
+    this._layer.fire('pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
     this._layer.fire('pm:dragend', {
       layer: this._layer,
+      shape: this.getShape()
     });
   },
   addDraggingClass() {
