@@ -282,7 +282,7 @@ describe('Events', () => {
       map.pm.enableDraw("Polygon");
 
       cy.get(mapSelector)
-        .click(200, 200);
+        .click(200, 300);
     }).then(()=>{
       cy.wait(100);
       expect(calledevent).to.equal("pm:vertexadded");
@@ -291,8 +291,8 @@ describe('Events', () => {
 
     cy.window().then(() => {
       cy.get(mapSelector)
-        .click(200, 300)
-        .trigger('mousemove', { clientX: 200, clientY: 205 })
+        .click(200, 350)
+        .trigger('mousemove', { clientX: 200, clientY: 305 })
     }).then(()=>{
       cy.wait(100);
       expect(calledevent).to.equal("pm:snap");
@@ -345,11 +345,14 @@ describe('Events', () => {
 
   it('Events while editing: pm:edit,pm:update,pm:enable,pm:disable,pm:vertexadded,pm:vertexremoved', () => {
     let calledevent = "";
+    let calledeventArr = [];
 
     cy.window().then(({map}) => {
 
       function logEvent(e){
+        console.log(e.type)
         calledevent = e.type;
+        calledeventArr[e.type] = e.type;
       }
 
       map.on("pm:create",({layer}) => {
@@ -380,10 +383,11 @@ describe('Events', () => {
       map.pm.enableDraw("Polygon");
 
       cy.get(mapSelector)
-        .click(200, 200)
-        .click(300, 200)
+
         .click(200, 300)
-        .click(200, 200)
+        .click(300, 300)
+        .click(200, 400)
+        .click(200, 300)
     }).then(()=>{
       cy.wait(100);
       expect(calledevent).to.equal("pm:enable");
@@ -392,7 +396,7 @@ describe('Events', () => {
 
     cy.window().then(() => {
       cy.get(mapSelector)
-        .click(200, 250);
+        .click(200, 350);
     }).then(()=>{
       cy.wait(100);
       expect(calledevent).to.equal("pm:vertexadded");
@@ -401,7 +405,7 @@ describe('Events', () => {
 
     cy.window().then(() => {
       cy.get(mapSelector)
-        .rightclick(200, 250);
+        .rightclick(200, 350);
     }).then(()=>{
       cy.wait(100);
       expect(calledevent).to.equal("pm:vertexremoved");
@@ -412,8 +416,9 @@ describe('Events', () => {
       map.pm.disableGlobalEditMode();
     }).then(()=>{
       cy.wait(100);
-      expect(calledevent).to.equal("pm:update");
+      expect(calledeventArr["pm:update"]).to.equal("pm:update");
       calledevent = "";
+      calledeventArr = [];
     });
 
     cy.window().then(({map}) => {

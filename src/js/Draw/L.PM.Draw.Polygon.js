@@ -8,46 +8,6 @@ Draw.Polygon = Draw.Line.extend({
     this._shape = 'Polygon';
     this.toolbarButtonName = 'drawPolygon';
   },
-  _finishShape(e) {
-    // if self intersection is not allowed, do not finish the shape!
-    if (!this.options.allowSelfIntersection) {
-      // Check if polygon intersects when is completed and the line between the last and the first point is drawn
-      this._handleSelfIntersection(true, this._layer.getLatLngs()[0]);
-
-      if (this._doesSelfIntersect) {
-        return;
-      }
-    }
-
-    // get coordinates
-    const coords = this._layer.getLatLngs();
-
-    // only finish the shape if there are 3 or more vertices
-    if (coords.length <= 2) {
-      return;
-    }
-
-    const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
-      this._map
-    );
-    this._addDrawnLayerProp(polygonLayer);
-
-    // disable drawing
-    this.disable();
-
-    // fire the pm:create event and pass shape and layer
-    this._map.fire('pm:create', {
-      shape: this._shape,
-      layer: polygonLayer,
-    });
-
-    // clean up snapping states
-    this._cleanupSnapping();
-
-    // remove the first vertex from "other snapping layers"
-    this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
-    delete this._tempSnapLayerIndex;
-  },
   _createMarker(latlng, first) {
     // create the new marker
     const marker = new L.Marker(latlng, {
@@ -98,5 +58,46 @@ Draw.Polygon = Draw.Line.extend({
     }
 
     return marker;
+  },
+  _finishShape(e) {
+    // if self intersection is not allowed, do not finish the shape!
+    if (!this.options.allowSelfIntersection) {
+      // Check if polygon intersects when is completed and the line between the last and the first point is drawn
+      this._handleSelfIntersection(true, this._layer.getLatLngs()[0]);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
+    }
+
+    // get coordinates
+    const coords = this._layer.getLatLngs();
+
+    // only finish the shape if there are 3 or more vertices
+    if (coords.length <= 2) {
+      return;
+    }
+
+    const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
+      this._map
+    );
+    this._setShapeForFinishLayer(polygonLayer);
+    this._addDrawnLayerProp(polygonLayer);
+
+    // disable drawing
+    this.disable();
+
+    // fire the pm:create event and pass shape and layer
+    this._map.fire('pm:create', {
+      shape: this._shape,
+      layer: polygonLayer,
+    });
+
+    // clean up snapping states
+    this._cleanupSnapping();
+
+    // remove the first vertex from "other snapping layers"
+    this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
+    delete this._tempSnapLayerIndex;
   },
 });

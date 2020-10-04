@@ -111,6 +111,7 @@ const Draw = L.Class.extend({
 
     this[name] = new L.PM.Draw[instance](this._map);
     this[name].toolbarButtonName = name;
+    this[name]._shape = name;
     this.shapes.push(name);
 
     // needed when extended / copied from a custom instance
@@ -143,6 +144,9 @@ const Draw = L.Class.extend({
   },
   _addDrawnLayerProp(layer){
     layer._drawnByGeoman = true;
+  },
+  _setShapeForFinishLayer(layer){
+    layer.pm._shape = this._shape;
   }
 });
 

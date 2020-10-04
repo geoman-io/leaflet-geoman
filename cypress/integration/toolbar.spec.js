@@ -219,7 +219,7 @@ describe('Testing the Toolbar', () => {
   });
 
 
-  it.only('Custom Controls - new draw instance', () => {
+  it('Custom Controls - new draw instance', () => {
     cy.get('.leaflet-pm-toolbar')
       .parent('.leaflet-top.leaflet-left')
       .should('exist');
@@ -262,7 +262,7 @@ describe('Testing the Toolbar', () => {
         cy.window().then(() => {
           map.pm.enableDraw('PolygonCopy');
           map.on('pm:create', (e) => {
-            console.log(e);
+            expect(e.shape).to.equal('PolygonCopy');
             e.layer.on('click', (l) => testlayer = l.target)
           })
         });

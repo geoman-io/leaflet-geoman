@@ -111,12 +111,25 @@ their options when creating them. Example:
 L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 ```
 
+Enable leaflet-geoman on an ignored layer:
+```js
+layer.options.pmIgnore = false;
+L.PM.reInitLayer(layer);
+```
+If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.
+
+
 ##### Opt-In
 
 If you want to use leaflet-geoman as opt-in, call the following function right after importing:
 
 ```js
-L.PM.initialize({ optIn: true });
+L.PM.setOptIn(true);
+```
+
+And to disable it:
+```js
+L.PM.setOptIn(false);
 ```
 
 All layers will be ignored by leaflet-geoman, unless you specify `pmIgnore: false` on a layer:
@@ -321,19 +334,19 @@ The following events are available on a layer instance:
 
 | Event              | Params | Description                                                                                          | Output                                                                                                  |
 | :----------------- | :----- | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| pm:edit            | `e`    | Fired when a layer is edited.                                                                        | `layer`                                                                                                 |
-| pm:update          | `e`    | Fired when edit mode is disabled and a layer is edited and its coordinates have changed.             | `layer`                                                                                                 |
-| pm:enable          | `e`    | Fired when edit mode on a layer is enabled                                                           | `layer`                                                                                                 |
-| pm:disable         | `e`    | Fired when edit mode on a layer is disabled                                                          | `layer`                                                                                                 |
-| pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         | `layer`, `indexPath`, `latlng`, `marker`                                                                |
-| pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `layer`, `indexPath`, `marker`                                                                          |
-| pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `layer`, `indexPath`, `markerEvent`                                                                     |
-| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`                                                                     |
+| pm:edit            | `e`    | Fired when a layer is edited.                                                                        | `layer`, `shape`                                                                                                 |
+| pm:update          | `e`    | Fired when edit mode is disabled and a layer is edited and its coordinates have changed.             | `layer`, `shape`                                                                                                 |
+| pm:enable          | `e`    | Fired when edit mode on a layer is enabled                                                           | `layer`, `shape`                                                                                                 |
+| pm:disable         | `e`    | Fired when edit mode on a layer is disabled                                                          | `layer`, `shape`                                                                                                 |
+| pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         | `layer`, `indexPath`, `latlng`, `marker`, `shape`                                                                |
+| pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `layer`, `indexPath`, `marker`, `shape`                                                                          |
+| pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
+| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 | pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
-| pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. | `layer`, `intersection`                                                                                 |
-| pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           | `layer`, `latlng`                                                                                       |
+| pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. | `layer`, `intersection`, `shape`                                                                                 |
+| pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           | `layer`, `latlng`, `shape`                                                                                       |
 
 You can enable Edit Mode for all layers on a map like this:
 
@@ -386,11 +399,11 @@ The following methods are available on `map.pm`:
 
 The following events are available on a layer instance:
 
-| Event        | Params | Description                              | Output                                                           |
-| :----------- | :----- | :--------------------------------------- | :--------------------------------------------------------------- |
-| pm:dragstart | `e`    | Fired when a layer starts being dragged. | `layer`                                                          |
-| pm:drag      | `e`    | Fired when a layer is dragged.           | `layer`, `containerPoint`,`latlng`, `layerPoint`,`originalEvent` |
-| pm:dragend   | `e`    | Fired when a layer stops being dragged.  | `layer`                                                          |
+| Event        | Params | Description                              | Output                                                                    |
+| :----------- | :----- | :--------------------------------------- | :------------------------------------------------------------------------ |
+| pm:dragstart | `e`    | Fired when a layer starts being dragged. | `layer`, `shape`                                                          |
+| pm:drag      | `e`    | Fired when a layer is dragged.           | `layer`, `containerPoint`,`latlng`, `layerPoint`,`originalEvent`, `shape` |
+| pm:dragend   | `e`    | Fired when a layer stops being dragged.  | `layer`, `shape`                                                          |
 
 
 The following events are available on a map instance:
@@ -426,16 +439,16 @@ The following methods are available on `map.pm`:
 
 The following events are available on a layer instance:
 
-| Event       | Params | Description                                              | Output  |
-| :---------- | :----- | :------------------------------------------------------- | :------ |
-| pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           | `layer` |
+| Event       | Params | Description                                              | Output           |
+| :---------- | :----- | :------------------------------------------------------- | :--------------- |
+| pm:remove   | `e`    | Fired when a layer is removed via Removal Mode           | `layer`, `shape` |
 
 The following events are available on a map instance:
 
 | Event                         | Params | Description                                              | Output            |
 | :---------------------------- | :----- | :------------------------------------------------------- | :---------------- |
 | pm:globalremovalmodetoggled   | `e`    | Fired when Removal Mode is toggled                       | `enabled`, `map`  |
-| pm:remove                     | `e`    | Fired when a layer is removed via Removal Mode           | `layer`           |
+| pm:remove                     | `e`    | Fired when a layer is removed via Removal Mode           | `layer`, `shape`  |
 | layerremove                   | `e`    | Standard Leaflet event. Fired when any layer is removed. | `layer`           |
 
 You can also listen to specific removal mode events on the map instance like this:
@@ -483,7 +496,7 @@ The following events are available on a layer instance:
 | Event   | Params | Description                        | Output                              |
 | :------ | :----- | :--------------------------------- | :---------------------------------- |
 | pm:cut  | `e`    | Fired when the layer being cut     | `shape`, `layer`, `originalLayer`   |
-| pm:edit | `e`    | Fired when a layer is edited / cut | `layer`                             |
+| pm:edit | `e`    | Fired when a layer is edited / cut | `layer`, `shape`                    |
 
 The following events are available on a map instance:
 
@@ -550,7 +563,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');
 ```
 
-Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `nl`, `el`, `pl` and `sv`.
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `nl`, `el`, `pl`, `sv`, `da` and `hu`.
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.
