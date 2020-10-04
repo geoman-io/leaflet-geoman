@@ -70,72 +70,8 @@ const DragMixin = {
     // disable mousedown event
     this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
   },
-  _dragMixinOnMouseUp() {
-    const el = this._getDOMElem();
-
-    // re-enable map drag
-    if (this._originalMapDragState) {
-      this._layer._map.dragging.enable();
-    }
-
-    // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
-    this._safeToCacheDragState = true;
-
-    // clear up mousemove event
-    this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
-
-    // clear up mouseup event
-    this._layer._map.off('mouseup', this._dragMixinOnMouseUp, this);
-
-    // if no drag happened, don't do anything
-    if (!this._dragging) {
-      return false;
-    }
-
-
-    // update the hidden circle border after dragging
-    if(this._layer instanceof L.CircleMarker){
-      this._layer.pm._updateHiddenPolyCircle();
-    }
-
-    // timeout to prevent click event after drag :-/
-    // TODO: do it better as soon as leaflet has a way to do it better :-)
-    window.setTimeout(() => {
-      // set state
-      this._dragging = false;
-      L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
-
-      // fire pm:dragend event
-      this._fireDragEnd();
-
-      // fire edit
-      this._fireEdit();
-    }, 10);
-
-    return true;
-  },
-  _dragMixinOnMouseMove(e) {
-    const el = this._getDOMElem();
-
-    if (!this._dragging) {
-      // set state
-      this._dragging = true;
-      L.DomUtil.addClass(el, 'leaflet-pm-dragging');
-
-      // bring it to front to prevent drag interception
-      this._layer.bringToFront();
-
-      // disbale map drag
-      if (this._originalMapDragState) {
-        this._layer._map.dragging.disable();
-      }
-
-
-      // fire pm:dragstart event
-      this._fireDragStart();
-    }
-
-    this._onLayerDrag(e);
+  dragging() {
+    return this._dragging;
   },
   _dragMixinOnMouseDown(e) {
     // cancel if mouse button is NOT the left button
@@ -159,8 +95,70 @@ const DragMixin = {
     // otherwise fast mouse movements stop the drag
     this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
   },
-  dragging() {
-    return this._dragging;
+  _dragMixinOnMouseMove(e) {
+    const el = this._getDOMElem();
+
+    if (!this._dragging) {
+      // set state
+      this._dragging = true;
+      L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+
+      // bring it to front to prevent drag interception
+      this._layer.bringToFront();
+
+      // disbale map drag
+      if (this._originalMapDragState) {
+        this._layer._map.dragging.disable();
+      }
+
+      // fire pm:dragstart event
+      this._fireDragStart();
+    }
+
+    this._onLayerDrag(e);
+  },
+  _dragMixinOnMouseUp() {
+    const el = this._getDOMElem();
+
+    // re-enable map drag
+    if (this._originalMapDragState) {
+      this._layer._map.dragging.enable();
+    }
+
+    // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
+    this._safeToCacheDragState = true;
+
+    // clear up mousemove event
+    this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
+
+    // clear up mouseup event
+    this._layer._map.off('mouseup', this._dragMixinOnMouseUp, this);
+
+    // if no drag happened, don't do anything
+    if (!this._dragging) {
+      return false;
+    }
+
+    // update the hidden circle border after dragging
+    if(this._layer instanceof L.CircleMarker){
+      this._layer.pm._updateHiddenPolyCircle();
+    }
+
+    // timeout to prevent click event after drag :-/
+    // TODO: do it better as soon as leaflet has a way to do it better :-)
+    window.setTimeout(() => {
+      // set state
+      this._dragging = false;
+      L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+
+      // fire pm:dragend event
+      this._fireDragEnd();
+
+      // fire edit
+      this._fireEdit();
+    }, 10);
+
+    return true;
   },
   _onLayerDrag(e) {
     // latLng of mouse event

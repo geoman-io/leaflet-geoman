@@ -492,7 +492,9 @@ const Toolbar = L.Class.extend({
       options.block = "";
     }
 
-    if (options.className.indexOf('control-icon') === -1) {
+    if (!options.className){
+      options.className = 'control-icon';
+    }else if(options.className.indexOf('control-icon') === -1) {
       options.className = `control-icon ${options.className}`;
     }
 

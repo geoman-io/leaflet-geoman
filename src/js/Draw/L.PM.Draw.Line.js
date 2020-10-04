@@ -89,19 +89,20 @@ Draw.Line = Draw.extend({
     // sync the hintline with hint marker
     this._hintMarker.on('move', this._syncHintLine, this);
 
-    // fire drawstart event
-    this._map.fire('pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
-    this._setGlobalDrawMode();
-
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // an array used in the snapping mixin.
     // TODO: think about moving this somewhere else?
     this._otherSnapLayers = [];
+
+
+    // fire drawstart event
+    this._map.fire('pm:drawstart', {
+      shape: this._shape,
+      workingLayer: this._layer,
+    });
+    this._setGlobalDrawMode();
   },
   disable() {
     // disable draw mode
@@ -130,10 +131,6 @@ Draw.Line = Draw.extend({
     // remove layer
     this._map.removeLayer(this._layerGroup);
 
-    // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
-    this._setGlobalDrawMode();
-
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
@@ -141,6 +138,11 @@ Draw.Line = Draw.extend({
     if (this.options.snappable) {
       this._cleanupSnapping();
     }
+
+    // fire drawend event
+    this._map.fire('pm:drawend', { shape: this._shape });
+    this._setGlobalDrawMode();
+
   },
   enabled() {
     return this._enabled;
@@ -151,11 +153,6 @@ Draw.Line = Draw.extend({
     } else {
       this.enable(options);
     }
-  },
-  hasSelfIntersection() {
-    // check for self intersection of the layer and return true/false
-    const selfIntersection = kinks(this._layer.toGeoJSON(15));
-    return selfIntersection.features.length > 0;
   },
   _syncHintLine() {
     const polyPoints = this._layer.getLatLngs();
@@ -185,6 +182,11 @@ Draw.Line = Draw.extend({
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(true, e.latlng);
     }
+  },
+  hasSelfIntersection() {
+    // check for self intersection of the layer and return true/false
+    const selfIntersection = kinks(this._layer.toGeoJSON(15));
+    return selfIntersection.features.length > 0;
   },
   _handleSelfIntersection(addVertex, latlng) {
     // ok we need to check the self intersection here
@@ -218,33 +220,6 @@ Draw.Line = Draw.extend({
     } else if (!this._hintline.isEmpty()) {
       this._hintline.setStyle(this.options.hintlineStyle);
     }
-  },
-  _removeLastVertex() {
-    // remove last coords
-    const coords = this._layer.getLatLngs();
-    const removedCoord = coords.pop();
-
-    // if all coords are gone, cancel drawing
-    if (coords.length < 1) {
-      this.disable();
-      return;
-    }
-
-    // find corresponding marker
-    const marker = this._layerGroup
-      .getLayers()
-      .filter(l => l instanceof L.Marker)
-      .filter(l => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
-      .find(l => l.getLatLng() === removedCoord);
-
-    // remove that marker
-    this._layerGroup.removeLayer(marker);
-
-    // update layer with new coords
-    this._layer.setLatLngs(coords);
-
-    // sync the hintline again
-    this._syncHintLine();
   },
   _createVertex(e) {
     // don't create a vertex if we have a selfIntersection and it is not allowed
@@ -290,6 +265,33 @@ Draw.Line = Draw.extend({
       marker: newMarker,
       latlng,
     });
+  },
+  _removeLastVertex() {
+    // remove last coords
+    const coords = this._layer.getLatLngs();
+    const removedCoord = coords.pop();
+
+    // if all coords are gone, cancel drawing
+    if (coords.length < 1) {
+      this.disable();
+      return;
+    }
+
+    // find corresponding marker
+    const marker = this._layerGroup
+      .getLayers()
+      .filter(l => l instanceof L.Marker)
+      .filter(l => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
+      .find(l => l.getLatLng() === removedCoord);
+
+    // remove that marker
+    this._layerGroup.removeLayer(marker);
+
+    // update layer with new coords
+    this._layer.setLatLngs(coords);
+
+    // sync the hintline again
+    this._syncHintLine();
   },
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
