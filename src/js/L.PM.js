@@ -31,6 +31,7 @@ import './Edit/L.PM.Edit.Polygon';
 import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Circle';
 import './Edit/L.PM.Edit.CircleMarker';
+import './Edit/L.PM.Edit.ImageOverlay';
 
 import '../css/layers.css';
 import '../css/controls.css';
@@ -164,6 +165,21 @@ L.PM = L.PM || {
     }
 
     L.Circle.addInitHook(initCircle);
+
+
+    function initImageOverlay() {
+      this.pm = undefined;
+
+      if (L.PM.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.ImageOverlay(this);
+        }
+      } else if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.ImageOverlay(this);
+      }
+    }
+
+    L.ImageOverlay.addInitHook(initImageOverlay);
   },
   reInitLayer(layer){
     if(layer instanceof L.LayerGroup){

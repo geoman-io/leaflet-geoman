@@ -22,6 +22,8 @@ const DragMixin = {
         this._layer.dragging.enable();
       }
       return;
+    }else if(this._layer instanceof L.ImageOverlay){
+      this._getDOMElem().ondragstart = ()=>false;
     }
 
     // temporary coord variable for delta calculation
@@ -69,9 +71,7 @@ const DragMixin = {
     this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
   },
   _dragMixinOnMouseUp() {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
+    const el = this._getDOMElem();
 
     // re-enable map drag
     if (this._originalMapDragState) {
@@ -115,9 +115,7 @@ const DragMixin = {
     return true;
   },
   _dragMixinOnMouseMove(e) {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
+    const el = this._getDOMElem();
 
     if (!this._dragging) {
       // set state
@@ -195,6 +193,11 @@ const DragMixin = {
       const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
+    } else if( this._layer instanceof L.ImageOverlay){
+      // create the new coordinates array
+      const newCoords = moveCoords([this._layer.getBounds().getNorthWest(),this._layer.getBounds().getSouthEast()]);
+      // set new coordinates and redraw
+      this._layer.setBounds(newCoords);
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
@@ -226,16 +229,27 @@ const DragMixin = {
     });
   },
   addDraggingClass() {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
-    L.DomUtil.addClass(el, 'leaflet-pm-draggable');
+    const el = this._getDOMElem();
+    if(el) {
+      L.DomUtil.addClass(el, 'leaflet-pm-draggable');
+    }
   },
   removeDraggingClass() {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
-    L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    const el = this._getDOMElem();
+    if(el) {
+      L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    }
+  },
+  _getDOMElem(){
+    let el = null;
+    if(this._layer._path){
+      el = this._layer._path;
+    }else if(this._layer._renderer && this._layer._renderer._container){
+      el = this._layer._renderer._container;
+    }else if(this._layer._image){
+      el = this._layer._image;
+    }
+    return el;
   }
 };
 

@@ -16,7 +16,8 @@ const Utils = {
         layer instanceof L.Polyline ||
         layer instanceof L.Marker ||
         layer instanceof L.Circle ||
-        layer instanceof L.CircleMarker
+        layer instanceof L.CircleMarker ||
+        layer instanceof L.ImageOverlay
       ) {
         layers.push(layer);
       }
