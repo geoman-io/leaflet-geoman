@@ -205,8 +205,8 @@ The following methods are available on `map.pm`:
 | setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                                         |
 | setGlobalOptions(`options`)   | -         | Set drawing options.                                                                            |
 | getGlobalOptions()            | `Object`  | Returns the global options.                                                                     |
-| getGeomanLayers()             | `Array`   | Returns all Geoman layers on the map. Call `.toGeoJSON()` to get the layers as geojson.         |
-| getGeomanDrawLayers()         | `Array`   | Returns all drawn Geoman layers on the map. Call `.toGeoJSON()` to get the layers as geojson.   |
+| getGeomanLayers(`Boolean`)    | `Array`   | Returns all Geoman layers on the map as array. Pass `true` to get a L.FeatureGroup.             |
+| getGeomanDrawLayers(`Boolean`)| `Array`   | Returns all drawn Geoman layers on the map as array. Pass `true` to get a L.FeatureGroup.       |
 
 See the available options in the table below.
 

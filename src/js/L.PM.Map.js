@@ -126,27 +126,29 @@ const Map = L.Class.extend({
   disableGlobalCutMode() {
     return this.Draw.Cut.disable();
   },
-  getGeomanLayers(){
+  getGeomanLayers(asGroup = false){
     const layers = findLayers(this.map);
-    layers.toGeoJSON = function(num){ // use function because this have to be the layers array
-      const group = L.featureGroup();
-      this.forEach((layer)=>{
-        group.addLayer(layer);
-      });
-      return group.toGeoJSON(num);
-    };
-    return layers;
+    if(!asGroup) {
+      return layers;
+    }
+    const group = L.featureGroup();
+    group._pmTempLayer = true;
+    layers.forEach((layer) => {
+      group.addLayer(layer);
+    });
+    return group;
   },
-  getGeomanDrawLayers(){
+  getGeomanDrawLayers(asGroup = false){
     const layers = findLayers(this.map).filter(l => l._drawnByGeoman === true);
-    layers.toGeoJSON = function(num){ // use function because this have to be the layers array
-      const group = L.featureGroup();
-      this.forEach((layer)=>{
-        group.addLayer(layer);
-      });
-      return group.toGeoJSON(num);
-    };
-    return layers;
+    if(!asGroup) {
+      return layers;
+    }
+    const group = L.featureGroup();
+    group._pmTempLayer = true;
+    layers.forEach((layer) => {
+      group.addLayer(layer);
+    });
+    return group;
   },
 });
 
