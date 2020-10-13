@@ -165,13 +165,16 @@ const SnapMixin = {
       if (
         (layer instanceof L.Polyline ||
           layer instanceof L.Marker ||
-          layer instanceof L.CircleMarker) &&
+          layer instanceof L.CircleMarker ||
+          layer instanceof L.ImageOverlay) &&
         layer.options.snapIgnore !== true
       ) {
 
         // adds a hidden polygon which matches the border of the circle
         if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm && layer.pm._hiddenPolyCircle) {
           layers.push(layer.pm._hiddenPolyCircle);
+        }else if(layer instanceof L.ImageOverlay){
+          layer = L.rectangle(layer.getBounds());
         }
         layers.push(layer);
 

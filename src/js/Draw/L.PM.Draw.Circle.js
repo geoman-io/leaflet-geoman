@@ -230,8 +230,10 @@ Draw.Circle = Draw.extend({
     this._setShapeForFinishLayer(circleLayer);
     this._addDrawnLayerProp(circleLayer);
 
-    // create polygon around the circle border
-    circleLayer.pm._updateHiddenPolyCircle();
+    if(circleLayer.pm) {
+      // create polygon around the circle border
+      circleLayer.pm._updateHiddenPolyCircle();
+    }
 
     // disable drawing
     this.disable();

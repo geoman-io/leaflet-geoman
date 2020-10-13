@@ -146,7 +146,9 @@ const Draw = L.Class.extend({
     layer._drawnByGeoman = true;
   },
   _setShapeForFinishLayer(layer){
-    layer.pm._shape = this._shape;
+    if(layer.pm) {
+      layer.pm._shape = this._shape;
+    }
   }
 });
 

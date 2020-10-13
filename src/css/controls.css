@@ -144,3 +144,10 @@
   z-index: 801;
 }
 
+.leaflet-buttons-control-button.pm-disabled{
+  background-color: #f4f4f4 !important;
+}
+
+.control-icon.pm-disabled{
+  filter: opacity(0.6);
+}

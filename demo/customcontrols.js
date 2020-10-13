@@ -30,3 +30,9 @@ map.pm.Draw.RectangleCopy.setPathOptions({color :'green'});
 map.pm.Toolbar.changeControlOrder(["RectangleCopy"])
 
 
+map.on('pm:actionclick',function (e) {
+    console.log(e)
+})
+map.on('pm:buttonclick',function (e) {
+    console.log(e)
+})

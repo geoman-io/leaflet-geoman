@@ -264,8 +264,10 @@ Draw.CircleMarker = Draw.Marker.extend({
     // add marker to the map
     marker.addTo(this._map);
 
-    // enable editing for the marker
-    marker.pm.enable();
+    if(marker.pm) {
+      // enable editing for the marker
+      marker.pm.enable();
+    }
 
     // fire the pm:create event and pass shape and marker
     this._map.fire('pm:create', {
@@ -303,8 +305,10 @@ Draw.CircleMarker = Draw.Marker.extend({
     const circleLayer = L.circleMarker(center, options).addTo(this._map);
     this._setShapeForFinishLayer(circleLayer);
     this._addDrawnLayerProp(circleLayer);
-    // create polygon around the circle border
-    circleLayer.pm._updateHiddenPolyCircle();
+    if(circleLayer.pm) {
+      // create polygon around the circle border
+      circleLayer.pm._updateHiddenPolyCircle();
+    }
 
     // disable drawing
     this.disable();
