@@ -708,4 +708,34 @@ describe('Draw & Edit Poly', () => {
 
     cy.hasVertexMarkers(2);
   });
+
+  it('don\'t Cut if it has selfIntersection on finish', () => {
+    cy.toolbarButton('polygon')
+      .click();
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(150, 50)
+      .click(500, 50)
+      .click(500, 300)
+      .click(300, 350)
+      .click(90, 250);
+
+
+    cy.toolbarButton('cut')
+      .click();
+
+    // draw a polygon to cut
+    cy.get(mapSelector)
+      .click(200, 100)
+      .click(450, 100)
+      .click(150, 200)
+      .click(450, 200)
+      .click(200, 100);
+
+    cy.toolbarButton('edit')
+      .click();
+
+    cy.hasVertexMarkers(5);
+  })
 });

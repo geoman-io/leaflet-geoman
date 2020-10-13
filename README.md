@@ -9,7 +9,7 @@
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
   Draw, Edit, Drag, Cut, Snap and Pin Layers<br>
-  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
+  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
   <a href="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free">
@@ -208,18 +208,18 @@ map.pm.Draw.getShapes();
 
 The following methods are available on `map.pm`:
 
-| Method                        | Returns   | Description                                                              |
-| :---------------------------- | :-------- | :----------------------------------------------------------------------- |
-| enableDraw(`shape`,`options`) | -         | Enable Drawing Mode with the passed shape.                               |
-| disableDraw(`shape`)          | -         | Disable Drawing Mode. The passed shape is optional.                      |
-| Draw.getShapes()              | `Array`   | Array of available shapes.                                               |
-| Draw.getActiveShape()         | `String`  | Returns the active shape.                                                |
-| globalDrawModeEnabled()       | `Boolean` | Returns `true` if global draw mode is enabled. `false` when disabled.    |
-| setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                  |
-| setGlobalOptions(`options`)   | -         | Set drawing options.                                                     |
-| getGlobalOptions()            | `Object`  | Returns the global options.                                              |
-| getGeomanLayers()             | `Array`   | Returns all Geoman layers on the map.                                    |
-| getGeomanDrawLayers()         | `Array`   | Returns all drawn Geoman layers on the map.                              |
+| Method                        | Returns   | Description                                                                                     |
+| :---------------------------- | :-------- | :---------------------------------------------------------------------------------------------- |
+| enableDraw(`shape`,`options`) | -         | Enable Drawing Mode with the passed shape.                                                      |
+| disableDraw(`shape`)          | -         | Disable Drawing Mode. The passed shape is optional.                                             |
+| Draw.getShapes()              | `Array`   | Array of available shapes.                                                                      |
+| Draw.getActiveShape()         | `String`  | Returns the active shape.                                                                       |
+| globalDrawModeEnabled()       | `Boolean` | Returns `true` if global draw mode is enabled. `false` when disabled.                           |
+| setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                                         |
+| setGlobalOptions(`options`)   | -         | Set drawing options.                                                                            |
+| getGlobalOptions()            | `Object`  | Returns the global options.                                                                     |
+| getGeomanLayers(`Boolean`)    | `Array`   | Returns all Geoman layers on the map as array. Pass `true` to get a L.FeatureGroup.             |
+| getGeomanDrawLayers(`Boolean`)| `Array`   | Returns all drawn Geoman layers on the map as array. Pass `true` to get a L.FeatureGroup.       |
 
 See the available options in the table below.
 
@@ -349,6 +349,7 @@ The following events are available on a layer instance:
 | pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         | `layer`, `indexPath`, `latlng`, `marker`, `shape`                                                                |
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `layer`, `indexPath`, `marker`, `shape`                                                                          |
 | pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
+| pm:markerdrag      | `e`    | Fired when dragging a vertex-marker                                                                  | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 | pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 | pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
@@ -722,14 +723,15 @@ map.pm.Toolbar.createCustomControl(options)
 
 | Option        | Default     | Description                                                                                      |
 | :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
-| name          | Required    | Name of the control |
-| block         | ''          | block of the control. `draw`, `edit`, `options`⭐, `custom` |
-| title         | ''          | Text showing when you hover the control |
-| className     | ''          | CSS class with the Icon |
-| onClick       | -           | Function fired when clicking the control |
-| afterClick    | -           | Function fired after clicking the control |
-| actions       | [ ]          | Action that appears as tooltip. Look under [actions](#actions) for more information |
-| toggle        | true        | Control can be toggled |
+| name          | Required    | Name of the control                                                                              |
+| block         | ''          | block of the control. `draw`, `edit`, `options`⭐, `custom`                                       |
+| title         | ''          | Text showing when you hover the control                                                          |
+| className     | ''          | CSS class with the Icon                                                                          |
+| onClick       | -           | Function fired when clicking the control                                                         |
+| afterClick    | -           | Function fired after clicking the control                                                        |
+| actions       | [ ]         | Action that appears as tooltip. Look under [actions](#actions) for more information              |
+| toggle        | true        | Control can be toggled                                                                           |
+| disabled      | false       | Control is disabled                                                                              |
 
 
 **Inherit from an Existing Control**
@@ -785,10 +787,20 @@ The following methods are available on `map.pm.Toolbar`:
 | Method                                      | Returns   | Description                                                                                                   |
 | :------------------------------------------ | :-------- | :------------------------------------------------------------------------------------------------------------ |
 | createCustomControl(`options`)              | -         | To add a custom Control to the Toolbar.                                                                       |
-| copyDrawControl(`instance`, `options`)       | `Object`  | Creates a copy of a draw Control. Returns the `drawInstance` and the `control`.                               |
-| changeActionsOfControl(`name`, `actions`)    | -         | Change the actions of an existing button.                                                                     |
+| copyDrawControl(`instance`, `options`)      | `Object`  | Creates a copy of a draw Control. Returns the `drawInstance` and the `control`.                               |
+| changeActionsOfControl(`name`, `actions`)   | -         | Change the actions of an existing button.                                                                     |
 | changeControlOrder(`shapes`)                | -         | Change the order of the controls in the Toolbar. You can pass all shapes and `Edit`, `Drag`, `Removal`, `Cut` |
 | getControlOrder()                           | `Array`   | Get the current order of the controls.                                                                        |
+| setButtonDisabled(`name`, `Boolean`)        | -         | Enable / disable a button.                                                                                    |
+
+The following events are available on a map instance:
+
+| Event          | Params | Description                               | Output                                               |
+| :------------- | :----- | :---------------------------------------- | :--------------------------------------------------- |
+| pm:buttonclick | `e`    | Fired when a Toolbar button is clicked    | `btnName`, `button`                                  |
+| pm:actionclick | `e`    | Fired when a Toolbar action is clicked    | `text`, `action`, `btnName`, `button`                |
+
+
 
 ### Feature Requests
 

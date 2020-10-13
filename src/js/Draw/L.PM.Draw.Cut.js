@@ -11,7 +11,8 @@ Draw.Cut = Draw.Polygon.extend({
     this._editedLayers = [];
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(false);
+      // Check if polygon intersects when is completed and the line between the last and the first point is drawn
+      this._handleSelfIntersection(true, this._layer.getLatLngs()[0]);
 
       if (this._doesSelfIntersect) {
         return;
@@ -86,7 +87,7 @@ Draw.Cut = Draw.Polygon.extend({
       if (resultLayer.getLayers().length === 1) {
         [resultLayer] = resultLayer.getLayers(); // prevent that a unnecessary layergroup is created
       }
-      const resultingLayer = resultLayer.addTo(this._map.pm._getLayerGroup());
+      const resultingLayer = resultLayer.addTo(this._map.pm._getContainingLayer());
 
       // give the new layer the original options
       resultingLayer.pm.enable(this.options);
@@ -98,9 +99,9 @@ Draw.Cut = Draw.Polygon.extend({
 
       // remove old layer and cutting layer
       l.remove();
-      l.removeFrom(this._map.pm._getLayerGroup());
+      l.removeFrom(this._map.pm._getContainingLayer());
       layer.remove();
-      layer.removeFrom(this._map.pm._getLayerGroup());
+      layer.removeFrom(this._map.pm._getContainingLayer());
 
       // Remove it only if it is a layergroup. It can be only not a layergroup if a layer exists
       if (resultingLayer.getLayers && resultingLayer.getLayers().length === 0) {

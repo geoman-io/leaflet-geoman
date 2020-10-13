@@ -127,13 +127,32 @@ const Map = L.Class.extend({
   disableGlobalCutMode() {
     return this.Draw.Cut.disable();
   },
-  getGeomanLayers(){
-    return findLayers(this.map);
+  getGeomanLayers(asGroup = false){
+    const layers = findLayers(this.map);
+    if(!asGroup) {
+      return layers;
+    }
+    const group = L.featureGroup();
+    group._pmTempLayer = true;
+    layers.forEach((layer) => {
+      group.addLayer(layer);
+    });
+    return group;
   },
-  getGeomanDrawLayers(){
-    return findLayers(this.map).filter(l => l._drawnByGeoman === true);
+  getGeomanDrawLayers(asGroup = false){
+    const layers = findLayers(this.map).filter(l => l._drawnByGeoman === true);
+    if(!asGroup) {
+      return layers;
+    }
+    const group = L.featureGroup();
+    group._pmTempLayer = true;
+    layers.forEach((layer) => {
+      group.addLayer(layer);
+    });
+    return group;
   },
-  _getLayerGroup(){
+  // returns the map instance by default or a layergroup is set through global options
+  _getContainingLayer(){
     return this.globalOptions.layerGroup && this.globalOptions.layerGroup instanceof L.LayerGroup ? this.globalOptions.layerGroup : this.map;
   }
 

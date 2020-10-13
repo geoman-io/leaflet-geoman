@@ -142,11 +142,16 @@ Draw.Marker = Draw.extend({
     this._setShapeForFinishLayer(marker);
     this._addDrawnLayerProp(marker);
 
+    if(!marker.pm) {
+      marker.options.draggable = false;
+    }
     // add marker to the map
-    marker.addTo(this._map.pm._getLayerGroup());
+    marker.addTo(this._map.pm._getContainingLayer());
 
-    // enable editing for the marker
-    marker.pm.enable();
+    if(marker.pm) {
+      // enable editing for the marker
+      marker.pm.enable();
+    }
 
     // fire the pm:create event and pass shape and marker
     this._map.fire('pm:create', {

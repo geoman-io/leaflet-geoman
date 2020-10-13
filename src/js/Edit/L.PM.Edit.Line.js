@@ -693,6 +693,12 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._handleLayerStyle();
     }
+    this._layer.fire('pm:markerdrag', {
+      layer: this._layer,
+      markerEvent: e,
+      shape: this.getShape(),
+      indexPath
+    });
   },
   _onMarkerDragEnd(e) {
     const marker = e.target;

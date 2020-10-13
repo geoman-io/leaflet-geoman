@@ -72,7 +72,7 @@ Draw.Polygon = Draw.Line.extend({
     }
 
     const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
-      this._map.pm._getLayerGroup()
+      this._map.pm._getContainingLayer()
     );
     this._setShapeForFinishLayer(polygonLayer);
     this._addDrawnLayerProp(polygonLayer);
