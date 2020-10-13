@@ -42,6 +42,7 @@ map.on('pm:create',function (e) {
     layer.on('pm:vertexadded', logEvent);
     layer.on('pm:vertexremoved', logEvent);
     layer.on('pm:markerdragstart', logEvent);
+    layer.on('pm:markerdrag', logEvent);
     layer.on('pm:markerdragend', logEvent);
     layer.on('pm:snap', logEvent);
     layer.on('pm:snapdrag', logEvent);
