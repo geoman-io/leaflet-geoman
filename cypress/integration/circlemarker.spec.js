@@ -174,8 +174,8 @@ describe('Draw Circle Marker', () => {
     cy.window().then(({ map, L }) => {
       L.marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
-        circleMarkerMin: 50,
-        circleMarkerMax: 150,
+        minRadiusCircleMarker: 50,
+        maxRadiusCircleMarker: 150,
         editable: true
       });
       cy.get(mapSelector)
@@ -240,8 +240,8 @@ describe('Draw Circle Marker', () => {
     cy.window().then(({ map, L }) => {
       L.marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
-        circleMarkerMin: 150,
-        circleMarkerMax: 300,
+        minRadiusCircleMarker: 150,
+        maxRadiusCircleMarker: 300,
         editable: true
       });
       cy.get(mapSelector)

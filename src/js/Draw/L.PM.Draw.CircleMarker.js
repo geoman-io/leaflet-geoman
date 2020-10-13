@@ -217,10 +217,10 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     const distance = this._map.project(A).distanceTo(this._map.project(B));
 
-    if(this.options.circleMarkerMin && distance < this.options.circleMarkerMin) {
-      this._layer.setRadius(this.options.circleMarkerMin);
-    }else if(this.options.circleMarkerMax && distance > this.options.circleMarkerMax) {
-      this._layer.setRadius(this.options.circleMarkerMax);
+    if(this.options.minRadiusCircleMarker && distance < this.options.minRadiusCircleMarker) {
+      this._layer.setRadius(this.options.minRadiusCircleMarker);
+    }else if(this.options.maxRadiusCircleMarker && distance > this.options.maxRadiusCircleMarker) {
+      this._layer.setRadius(this.options.maxRadiusCircleMarker);
     }else{
       this._layer.setRadius(distance);
     }
@@ -292,10 +292,10 @@ Draw.CircleMarker = Draw.Marker.extend({
 
 
     if(this.options.editable) {
-      if (this.options.circleMarkerMin && radius < this.options.circleMarkerMin) {
-        radius = this.options.circleMarkerMin;
-      } else if (this.options.circleMarkerMax && radius > this.options.circleMarkerMax) {
-        radius = this.options.circleMarkerMax;
+      if (this.options.minRadiusCircleMarker && radius < this.options.minRadiusCircleMarker) {
+        radius = this.options.minRadiusCircleMarker;
+      } else if (this.options.maxRadiusCircleMarker && radius > this.options.maxRadiusCircleMarker) {
+        radius = this.options.maxRadiusCircleMarker;
       }
     }
 
@@ -324,10 +324,10 @@ Draw.CircleMarker = Draw.Marker.extend({
     if(this.options.editable) {
       const latlng = this._centerMarker.getLatLng();
       const distance = this._map.project(latlng).distanceTo(this._map.project(secondLatLng));
-      if (this.options.circleMarkerMin && distance < this.options.circleMarkerMin) {
-        secondLatLng = destinationOnLine(this._map, latlng, secondLatLng, this._pxRadiusToMeter(this.options.circleMarkerMin));
-      } else if (this.options.circleMarkerMax && distance > this.options.circleMarkerMax) {
-        secondLatLng = destinationOnLine(this._map, latlng, secondLatLng, this._pxRadiusToMeter(this.options.circleMarkerMax));
+      if (this.options.minRadiusCircleMarker && distance < this.options.minRadiusCircleMarker) {
+        secondLatLng = destinationOnLine(this._map, latlng, secondLatLng, this._pxRadiusToMeter(this.options.minRadiusCircleMarker));
+      } else if (this.options.maxRadiusCircleMarker && distance > this.options.maxRadiusCircleMarker) {
+        secondLatLng = destinationOnLine(this._map, latlng, secondLatLng, this._pxRadiusToMeter(this.options.maxRadiusCircleMarker));
       }
     }
     return secondLatLng;
@@ -338,9 +338,9 @@ Draw.CircleMarker = Draw.Marker.extend({
         const latlng = this._centerMarker.getLatLng();
         const secondLatLng = this._hintMarker.getLatLng();
         const distance = this._map.project(latlng).distanceTo(this._map.project(secondLatLng));
-        if (this.options.circleMarkerMin && distance < this.options.circleMarkerMin) {
+        if (this.options.minRadiusCircleMarker && distance < this.options.minRadiusCircleMarker) {
           this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
-        } else if (this.options.circleMarkerMax && distance > this.options.circleMarkerMax) {
+        } else if (this.options.maxRadiusCircleMarker && distance > this.options.maxRadiusCircleMarker) {
           this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
         }
       }

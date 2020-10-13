@@ -96,8 +96,8 @@ describe('Draw Circle', () => {
     cy.window().then(({ map, L }) => {
       L.marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
-        circleMin: 500,
-        circleMax: 1500,
+        minRadiusCircle: 500,
+        maxRadiusCircle: 1500,
       });
       cy.get(mapSelector)
         .click(250,200)
@@ -161,8 +161,8 @@ describe('Draw Circle', () => {
     cy.window().then(({ map, L }) => {
       L.marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
-        circleMin: 1500,
-        circleMax: 3000,
+        minRadiusCircle: 1500,
+        maxRadiusCircle: 3000,
       });
       cy.get(mapSelector)
         .click(250,200)
