@@ -351,4 +351,36 @@ describe('Testing the Toolbar', () => {
       });
     });
   });
+  it('Listen on pm:buttonclick and pm:actionclick', () => {
+    let eventFired = "";
+    cy.window().then(({map}) => {
+      map.on('pm:buttonclick', ({btnName})=>{eventFired = btnName});
+      map.on('pm:actionclick', ({text})=>{eventFired = text});
+    });
+
+    cy.toolbarButton('polygon').click();
+
+    cy.window().then(() => {
+      expect(eventFired).to.equal('drawPolygon');
+    });
+
+    cy.get('.button-container.active .action-cancel').click();
+
+    cy.window().then(() => {
+      expect(eventFired).to.equal('Cancel');
+    });
+  });
+  it('Disable button', () => {
+    let eventFired = "";
+    cy.window().then(({map}) => {
+      map.on('pm:buttonclick', ({btnName})=>{eventFired = btnName});
+      map.pm.Toolbar.setButtonDisabled('drawPolygon',true);
+    });
+
+    cy.toolbarButton('polygon').click();
+
+    cy.window().then(() => {
+      expect(eventFired).to.not.equal('drawPolygon');
+    });
+  });
 });

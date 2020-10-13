@@ -715,14 +715,15 @@ map.pm.Toolbar.createCustomControl(options)
 
 | Option        | Default     | Description                                                                                      |
 | :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
-| name          | Required    | Name of the control |
-| block         | ''          | block of the control. `draw`, `edit`, `options`⭐, `custom` |
-| title         | ''          | Text showing when you hover the control |
-| className     | ''          | CSS class with the Icon |
-| onClick       | -           | Function fired when clicking the control |
-| afterClick    | -           | Function fired after clicking the control |
-| actions       | [ ]          | Action that appears as tooltip. Look under [actions](#actions) for more information |
-| toggle        | true        | Control can be toggled |
+| name          | Required    | Name of the control                                                                              |
+| block         | ''          | block of the control. `draw`, `edit`, `options`⭐, `custom`                                       |
+| title         | ''          | Text showing when you hover the control                                                          |
+| className     | ''          | CSS class with the Icon                                                                          |
+| onClick       | -           | Function fired when clicking the control                                                         |
+| afterClick    | -           | Function fired after clicking the control                                                        |
+| actions       | [ ]         | Action that appears as tooltip. Look under [actions](#actions) for more information              |
+| toggle        | true        | Control can be toggled                                                                           |
+| disabled      | false       | Control is disabled                                                                              |
 
 
 **Inherit from an Existing Control**
@@ -778,10 +779,20 @@ The following methods are available on `map.pm.Toolbar`:
 | Method                                      | Returns   | Description                                                                                                   |
 | :------------------------------------------ | :-------- | :------------------------------------------------------------------------------------------------------------ |
 | createCustomControl(`options`)              | -         | To add a custom Control to the Toolbar.                                                                       |
-| copyDrawControl(`instance`, `options`)       | `Object`  | Creates a copy of a draw Control. Returns the `drawInstance` and the `control`.                               |
-| changeActionsOfControl(`name`, `actions`)    | -         | Change the actions of an existing button.                                                                     |
+| copyDrawControl(`instance`, `options`)      | `Object`  | Creates a copy of a draw Control. Returns the `drawInstance` and the `control`.                               |
+| changeActionsOfControl(`name`, `actions`)   | -         | Change the actions of an existing button.                                                                     |
 | changeControlOrder(`shapes`)                | -         | Change the order of the controls in the Toolbar. You can pass all shapes and `Edit`, `Drag`, `Removal`, `Cut` |
 | getControlOrder()                           | `Array`   | Get the current order of the controls.                                                                        |
+| setButtonDisabled(`name`, `Boolean`)        | -         | Enable / disable a button.                                                                                    |
+
+The following events are available on a map instance:
+
+| Event          | Params | Description                               | Output                                               |
+| :------------- | :----- | :---------------------------------------- | :--------------------------------------------------- |
+| pm:buttonclick | `e`    | Fired when a Toolbar button is clicked    | `btnName`, `button`                                  |
+| pm:actionclick | `e`    | Fired when a Toolbar action is clicked    | `text`, `action`, `btnName`, `button`                |
+
+
 
 ### Feature Requests
 
