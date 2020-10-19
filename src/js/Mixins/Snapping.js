@@ -119,6 +119,7 @@ const SnapMixin = {
       marker.setLatLng(snapLatLng);
 
       marker._snapped = true;
+      marker._snapInfo = eventInfo;
 
       const triggerSnap = () => {
         this._snapLatLng = snapLatLng;
