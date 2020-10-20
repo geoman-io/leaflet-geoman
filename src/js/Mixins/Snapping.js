@@ -220,6 +220,7 @@ const SnapMixin = {
   },
   _calcClosestLayer(latlng, layers) {
     // the closest polygon to our dragged marker latlng
+    let closestLayers = [];
     let closestLayer = {};
 
     // loop through the layers
@@ -237,16 +238,22 @@ const SnapMixin = {
       // save the info if it doesn't exist or if the distance is smaller than the previous one
       if (
         closestLayer.distance === undefined ||
-        results.distance < closestLayer.distance
+        results.distance <= closestLayer.distance
       ) {
+        if(results.distance < closestLayer.distance){
+          closestLayers = [];
+        }
         closestLayer = results;
         closestLayer.layer = layer;
+        closestLayers.push(closestLayer);
       }
     });
 
+    closestLayers.find((result)=>result.layer instanceof L.Marker);
+
     // return the closest layer and it's data
     // if there is no closest layer, return undefined
-    return closestLayer;
+    return this._getOrderedSnappingLayer(closestLayers);
   },
   _calcLayerDistances(latlng, layer) {
     const map = this._map;
@@ -328,6 +335,58 @@ const SnapMixin = {
       segment: closestSegment,
       distance: shortestDistance,
     };
+  },
+  _getOrderedSnappingLayer(layers){
+    // sort the layers by creation, so it is snapping to the oldest layer from the same shape
+    layers = layers.sort((a,b)=>a._leaflet_id-b._leaflet_id);
+
+    // split the layers into arrays
+    const rectangles = layers.filter(({layer})=>layer instanceof L.Rectangle);
+    const polygons = layers.filter(({layer})=>layer instanceof L.Polygon && !(layer instanceof L.Rectangle));
+    const polylines = layers.filter(({layer})=>layer instanceof L.Polyline && !(layer instanceof L.Polygon));
+    const markers = layers.filter(({layer})=>layer instanceof L.Marker);
+    const circles = layers.filter(({layer})=>layer instanceof L.Circle);
+    const circlemarkers = layers.filter(({layer})=>(layer instanceof L.CircleMarker && !(layer instanceof L.Circle)));
+
+    const shapes = {
+      'Marker': markers,
+      'CircleMarker': circlemarkers,
+      'Circle': circles,
+      'Line': polylines,
+      'Polygon': polygons,
+      'Rectangle': rectangles,
+    };
+
+    let result;
+
+    // go through the order what is passed
+    if(this._map.pm.globalOptions.snappingOrder) {
+      this._map.pm.globalOptions.snappingOrder.forEach((shape) => {
+        const resultlayers = shapes[shape];
+        // return the first layer
+        if (resultlayers && resultlayers.length > 0 && !result) {
+          /* eslint-disable-next-line prefer-destructuring */
+          result = resultlayers[0];
+        }
+      });
+
+      if (result) {
+        return result;
+      }
+    }
+
+    // go through the rest of the shapes (they are maybe not in the sortorder option)
+    for(const shape in shapes){
+      const resultlayers = shapes[shape];
+      // return the first layer
+      if(resultlayers && resultlayers.length > 0 && !result){
+        /* eslint-disable-next-line prefer-destructuring */
+        result = resultlayers[0];
+        break;
+      }
+    }
+
+    return result;
   },
   // we got the point we want to snap to (C), but we need to check if a coord of the polygon
   // receives priority over C as the snapping point. Let's check this here

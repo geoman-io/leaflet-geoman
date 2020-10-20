@@ -522,19 +522,20 @@ map.pm.setGlobalOptions({ pinning: true, limitMarkersToCount: 15, limitMarkersCo
 
 The following options are available globally and apply when going into global edit mode.
 
-| Option                    | Default | Description                                                                                               |
-| :------------------------ | :------ | :-------------------------------------------------------------------------------------------------------- |
-| snappable                 | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
-| snapDistance              | `20`    | The distance to another vertex when a snap should happen.                                                 |
-| pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                   |
-| allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
-| preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                  |
-| limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                             |
-| limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                     |
-| limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                           |
-| limitMarkersToViewport    | `false` | Shows only markers in the viewport ⭐                                                                      |
-| limitMarkersToClick       | `false` | Shows markers only after the layer was clicked ⭐                                                          |
-| editable                  | `false` | Makes a `CircleMarker` editable like a `Circle`                                                           |
+| Option                    | Default | Description                                                                                                                 |
+| :------------------------ | :------ | :-------------------------------------------------------------------------------------------------------------------------- |
+| snappable                 | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                   |
+| snapDistance              | `20`    | The distance to another vertex when a snap should happen.                                                                   |
+| pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                                     |
+| allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                                                |
+| preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                                    |
+| limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                                               |
+| limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                                       |
+| limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                                             |
+| limitMarkersToViewport    | `false` | Shows only markers in the viewport ⭐                                                                                        |
+| limitMarkersToClick       | `false` | Shows markers only after the layer was clicked ⭐                                                                            |
+| editable                  | `false` | Makes a `CircleMarker` editable like a `Circle`                                                                             |
+| snappingOrder             | `Array` | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`                |
 
 
 Some details about a few more powerful options:
