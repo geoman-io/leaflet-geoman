@@ -252,7 +252,7 @@ const SnapMixin = {
     closestLayers.find((result)=>result.layer instanceof L.Marker);
 
     // return the closest layer and it's data
-    // if there is no closest layer, return undefined
+    // if there is no closest layer, return an empty object
     return this._getOrderedSnappingLayer(closestLayers);
   },
   _calcLayerDistances(latlng, layer) {
@@ -386,7 +386,7 @@ const SnapMixin = {
       }
     }
 
-    return result;
+    return result || {};
   },
   // we got the point we want to snap to (C), but we need to check if a coord of the polygon
   // receives priority over C as the snapping point. Let's check this here
