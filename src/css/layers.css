@@ -54,3 +54,11 @@
 .vertexmarker-disabled{
   opacity: 0.7;
 }
+
+.leaflet-pm-marker-selected {
+  background-color: rgba(51, 136, 255, 0.2);
+  border: 3px solid #3388ff;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  box-sizing: content-box;
+}

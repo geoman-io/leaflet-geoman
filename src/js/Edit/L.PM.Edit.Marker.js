@@ -64,6 +64,10 @@ Edit.Marker = Edit.extend({
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
 
+    if (this.options.markerBorder) {
+      this._toggleMarkerHighlight();
+    }
+
     this._layer.off('contextmenu', this._removeMarker, this);
 
     this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
@@ -107,5 +111,39 @@ Edit.Marker = Edit.extend({
     marker.off('drag', this._handleSnapping, this);
     marker.off('dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
+  },
+  _toggleMarkerHighlight () {
+    const icon = this._layer._icon;
+
+    // Don't do anything if this layer is a marker but doesn't have an icon. Markers
+    // should usually have icons. If using Leaflet-geoman with Leaflet.markercluster there
+    // is a chance that a marker doesn't.
+    if (!icon) {
+      return;
+    }
+
+    // This is quite naughty, but I don't see another way of doing it. (short of setting a new icon)
+    icon.style.display = 'none';
+
+    if (L.DomUtil.hasClass(icon, 'leaflet-pm-marker-selected')) {
+      L.DomUtil.removeClass(icon, 'leaflet-pm-marker-selected');
+      // Offset as the border will make the icon move.
+      this._offsetMarker(icon, -3);
+
+    } else {
+      L.DomUtil.addClass(icon, 'leaflet-pm-marker-selected');
+      // Offset as the border will make the icon move.
+      this._offsetMarker(icon, 3);
+    }
+
+    icon.style.display = '';
+  },
+
+  _offsetMarker (icon, offset) {
+    let iconMarginTop = parseInt(icon.style.marginTop, 10) - offset,
+      iconMarginLeft = parseInt(icon.style.marginLeft, 10) - offset;
+
+    icon.style.marginTop = `${iconMarginTop  }px`;
+    icon.style.marginLeft = `${iconMarginLeft  }px`;
   }
 });

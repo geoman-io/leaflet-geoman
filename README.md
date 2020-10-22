@@ -297,6 +297,7 @@ See the available options in the table below.
 | limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                           |
 | limitMarkersToViewport| `false` | Shows only markers in the viewport ⭐                                                                      |
 | limitMarkersToClick   | `false` | Shows markers only after the layer was clicked ⭐                                                          |
+| markerBorder          | `false` | Adds a border container around the marker.                                                                 |
 
 The following methods are available for layers under `layer.pm`:
 
