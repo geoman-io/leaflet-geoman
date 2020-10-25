@@ -28,10 +28,14 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     // convenience alias, for better readability
     [this._cornerMarkers] = this._markers;
-
+  },
+  applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
+    } else {
+      this._disableSnapping();
     }
+    this._addMarkerEvents();
   },
 
   // creates initial markers for coordinates
@@ -45,18 +49,22 @@ Edit.Rectangle = Edit.Polygon.extend({
     marker._index = index;
     marker._pmTempLayer = true;
 
-    marker.on('dragstart', this._onMarkerDragStart, this);
-    marker.on('drag', this._onMarkerDrag, this);
-    marker.on('dragend', this._onMarkerDragEnd, this);
-    marker.on('pm:snap', this._adjustRectangleForMarkerSnap, this);
-    if (!this.options.preventMarkerRemoval) {
-      marker.on('contextmenu', this._removeMarker, this);
-    }
     this._markerGroup.addLayer(marker);
 
     return marker;
   },
-
+  // Add marker events after adding the snapping events to the markers, beacause of the execution order
+  _addMarkerEvents(){
+    this._markers[0].forEach((marker)=>{
+      marker.on('dragstart', this._onMarkerDragStart, this);
+      marker.on('drag', this._onMarkerDrag, this);
+      marker.on('dragend', this._onMarkerDragEnd, this);
+      marker.on('pm:snap', this._adjustRectangleForMarkerSnap, this);
+      if (!this.options.preventMarkerRemoval) {
+        marker.on('contextmenu', this._removeMarker, this);
+      }
+    });
+  },
   // Empty callback for 'contextmenu' binding set in L.PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
   // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
   _removeMarker() {
