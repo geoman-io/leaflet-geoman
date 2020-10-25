@@ -45,7 +45,7 @@ const GlobalEditMode = {
     });
 
     // cleanup layer off event
-    this.map.off('layeroff', this.throttledReInitEdit, this);
+    this.map.off('layeradd', this.throttledReInitEdit, this);
 
     // Set toolbar button to currect status
     this.Toolbar.toggleButton('editMode', status);
