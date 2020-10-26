@@ -18,9 +18,10 @@ Edit.Marker = Edit.extend({
     if (this.enabled()) {
       return;
     }
+    this.applyOptions();
+
     this._enabled = true;
 
-    this.applyOptions();
     this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
   },
   disable() {

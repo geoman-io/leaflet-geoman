@@ -28,11 +28,11 @@ Edit.ImageOverlay = Edit.extend({
       // we don't block enabling again because new options might be passed
       this.disable();
     }
-    // change state
-    this._enabled = true;
 
     this.enableLayerDrag();
 
+    // change state
+    this._enabled = true;
 
     // create markers for four corners of ImageOverlay
     this._otherSnapLayers = L.PM.Edit.Rectangle.prototype._findCorners.apply(this);
