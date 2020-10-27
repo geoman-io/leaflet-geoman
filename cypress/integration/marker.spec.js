@@ -95,8 +95,6 @@ describe('Draw Marker', () => {
     });
   });
 
-
-
   it('calls pm:drag-events on Marker drag', () => {
 
     let dragstart = false;
@@ -138,6 +136,19 @@ describe('Draw Marker', () => {
       const toucherMarker = handMarker.growFinger('mouse');
       toucherMarker.wait(100).moveTo(150, 240, 100).down().wait(500).moveTo(170, 290, 400).up().wait(100) // Not allowed
 
+    });
+  });
+
+  it('enabled of Marker is true in edit-mode', () => {
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(150, 250);
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(true);
     });
   });
 
