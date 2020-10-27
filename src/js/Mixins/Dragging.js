@@ -89,6 +89,7 @@ const DragMixin = {
     // save for delta calculation
     this._tempDragCoord = e.latlng;
 
+
     this._layer._map.on('mouseup', this._dragMixinOnMouseUp, this);
 
     // listen to mousemove on map (instead of polygon),

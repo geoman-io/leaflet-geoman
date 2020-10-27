@@ -14,52 +14,73 @@ Edit.LayerGroup = L.Class.extend({
     // if a new layer is added to the group, reinitialize
     // This only works for FeatureGroups, not LayerGroups
     // https://github.com/Leaflet/Leaflet/issues/4861
-    this._layerGroup.on('layeradd', e => {
+
+    const addThrottle = (e) => {
       if (e.target._pmTempLayer) {
         return;
       }
-
       this._layers = this.findLayers();
-      // init the newly added layer
-      if (e.layer.pm) {
-        this._initLayer(e.layer);
-      }
+      const _initLayers = this._layers.filter((layer) => !layer._layerGroup || layer._layerGroup.indexOf(this._layerGroup) === -1);
+      // init the newly added layers
+      _initLayers.forEach((layer) => {
+        this._initLayer(layer);
+      });
       // if editing was already enabled for this group, enable it again
       // so the new layers are enabled
-      if (e.target.pm.enabled()) {
-        this.enable(this.getOptions());
+      if (_initLayers.length > 0) {
+        if (this.enabled()) {
+          this.enable(this.getOptions());
+        }
       }
-    });
+    };
+    this._layerGroup.on('layeradd', L.Util.throttle(addThrottle, 100, this), this);
 
-    // if a layer is removed from the group, calc the layers list again
-    this._layerGroup.on('layerremove', e => {
+    // Remove the layergroup from the layer
+    this._layerGroup.on('layerremove', (e) => {
+      const id = L.Util.stamp(this._layerGroup);
+      delete e.target.pm._layerGroup[id];
+    }, this);
+
+    const removeThrottle = (e) => {
       if (e.target._pmTempLayer) {
         return;
       }
-
       this._layers = this.findLayers();
-    })
+    };
+    // if a layer is removed from the group, calc the layers list again.
+    // we run this as throttle because the findLayers() is a larger function
+    this._layerGroup.on('layerremove', L.Util.throttle(removeThrottle, 100, this), this);
   },
   enable(options) {
     this._options = options;
-    this._layers.forEach(layer => {
-      layer.pm.enable(options);
-    });
+    if (this._layers) {
+      this._layers.forEach(layer => {
+        layer.pm.enable(options);
+      });
+    }
   },
   disable() {
-    this._layers.forEach(layer => {
-      layer.pm.disable();
-    });
+    if (this._layers) {
+      this._layers.forEach(layer => {
+        layer.pm.disable();
+      });
+    }
   },
   enabled() {
-    const enabled = this._layers.find(layer => layer.pm.enabled());
-    return !!enabled;
+    if (this._layers) {
+      const enabled = this._layers.find(layer => layer.pm.enabled());
+      return !!enabled;
+    }
+    return false;
+
   },
   toggleEdit(options) {
     this._options = options;
-    this._layers.forEach(layer => {
-      layer.pm.toggleEdit(options);
-    });
+    if (this._layers) {
+      this._layers.forEach(layer => {
+        layer.pm.toggleEdit(options);
+      });
+    }
   },
   _initLayer(layer) {
     // available events
@@ -89,15 +110,19 @@ Edit.LayerGroup = L.Class.extend({
       layer.on(event, this._fireEvent, this);
     });
 
-    // add reference for the group to each layer inside said group
-    layer.pm._layerGroup = this._layerGroup;
+    // add reference for the group to each layer inside said group by id
+    const id = L.Util.stamp(this._layerGroup);
+    if(!layer.pm._layerGroup){
+      layer.pm._layerGroup = {};
+    }
+    layer.pm._layerGroup[id] = this._layerGroup;
   },
   findLayers() {
     // get all layers of the layer group
     let layers = this._layerGroup.getLayers();
 
     // filter out layers that are no layerGroup
-    layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
+    //   layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
 
     // filter out layers that don't have leaflet-geoman
     layers = layers.filter(layer => !!layer.pm);
@@ -112,8 +137,12 @@ Edit.LayerGroup = L.Class.extend({
     this._layerGroup.fireEvent(e.type, e);
   },
   dragging() {
-    const dragging = this._layers.find(layer => layer.pm.dragging());
-    return !!dragging;
+    if (this._layers) {
+      const dragging = this._layers.find(layer => layer.pm.dragging());
+      return !!dragging;
+    }
+    return false;
+
   },
   getOptions() {
     return this._options;

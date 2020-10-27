@@ -48,7 +48,7 @@ Edit.Marker = Edit.extend({
       this.disable();
     }
   },
-  applyOptions() {
+  lapplyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
     } else {
