@@ -158,5 +158,36 @@ describe('Draw Rectangle', () => {
       const coords = geojson.geometry.coordinates;
       expect(coords.length).to.equal(1);
     })
-  })
+  });
+
+  it('disable popup on layer while drawing', ()=>{
+    let rect = null;
+    cy.window().then(({ map, L }) => {
+      map.on("pm:create",(e)=>{
+        e.layer.bindPopup('Popup test');
+        if(e.layer instanceof L.Rectangle){
+          rect = e.layer;
+        }
+      });
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(100,50)
+      .click(700,400);
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(300,250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map}) => {
+      const len = map.pm.getGeomanDrawLayers().length;
+      expect(len).to.equal(2);
+
+      const text = rect.getPopup().getContent();
+      expect(text).to.equal('Popup test');
+    })
+  });
 });

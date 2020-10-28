@@ -1,4 +1,5 @@
 import SnapMixin from '../Mixins/Snapping';
+import Utils from "../L.PM.Utils";
 
 const Draw = L.Class.extend({
   includes: [SnapMixin],
@@ -93,6 +94,17 @@ const Draw = L.Class.extend({
         shape: this._shape,
         map: this._map,
       });
+    }
+
+    const layers = Utils.findLayers(this._map);
+    if(this._enabled){
+      layers.forEach((layer)=>{
+        Utils.disablePopup(layer);
+      })
+    }else{
+      layers.forEach((layer)=>{
+        Utils.enablePopup(layer);
+      })
     }
   },
 

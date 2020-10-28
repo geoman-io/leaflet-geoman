@@ -42,6 +42,18 @@ const Utils = {
     }
     return L.polygon(polygon, circle.options);
   },
+  disablePopup(layer){
+    if(layer.getPopup()){
+      layer._pmCopyPopup = layer.getPopup();
+      layer.unbindPopup();
+    }
+  },
+  enablePopup(layer){
+    if(layer._pmCopyPopup){
+      layer.bindPopup(layer._pmCopyPopup);
+      delete layer._pmCopyPopup;
+    }
+  },
   createGeodesicPolygon,
   getTranslation,
 };
