@@ -48,11 +48,13 @@ Draw.Marker = Draw.extend({
 
 
     // enable edit mode for existing markers
-    this._map.eachLayer(layer => {
-      if (this.isRelevantMarker(layer)) {
-        layer.pm.enable();
-      }
-    });
+    if(this.options.markerEditable) {
+      this._map.eachLayer(layer => {
+        if (this.isRelevantMarker(layer)) {
+          layer.pm.enable();
+        }
+      });
+    }
 
     // fire drawstart event
     this._map.fire('pm:drawstart', {
@@ -139,18 +141,23 @@ Draw.Marker = Draw.extend({
 
     // create marker
     const marker = new L.Marker(latlng, this.options.markerStyle);
-    this._setShapeForFinishLayer(marker);
-    this._addDrawnLayerProp(marker);
+    this._finishLayer(marker);
 
-    if(!marker.pm) {
+    if(!marker.pm){
       marker.options.draggable = false;
     }
+
     // add marker to the map
     marker.addTo(this._map);
 
-    if(marker.pm) {
+
+    if(marker.pm && this.options.markerEditable) {
       // enable editing for the marker
       marker.pm.enable();
+    }else{
+      if(marker.dragging) {
+        marker.dragging.disable();
+      }
     }
 
     // fire the pm:create event and pass shape and marker
@@ -161,5 +168,9 @@ Draw.Marker = Draw.extend({
     });
 
     this._cleanupSnapping();
+
+    if(!this.options.continueDrawing){
+      this.disable();
+    }
   },
 });

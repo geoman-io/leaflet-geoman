@@ -315,11 +315,7 @@ Draw.Line = Draw.extend({
     const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(
       this._map
     );
-    this._setShapeForFinishLayer(polylineLayer);
-    this._addDrawnLayerProp(polylineLayer);
-
-    // disable drawing
-    this.disable();
+    this._finishLayer(polylineLayer);
 
     // fire the pm:create event and pass shape and layer
     this._map.fire('pm:create', {
@@ -329,6 +325,12 @@ Draw.Line = Draw.extend({
 
     if (this.options.snappable) {
       this._cleanupSnapping();
+    }
+
+    // disable drawing
+    this.disable();
+    if(this.options.continueDrawing){
+      this.enable();
     }
   },
   _createMarker(latlng, first) {

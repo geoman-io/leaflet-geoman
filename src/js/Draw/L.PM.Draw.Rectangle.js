@@ -252,16 +252,18 @@ Draw.Rectangle = Draw.extend({
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(
       this._map
     );
-    this._setShapeForFinishLayer(rectangleLayer);
-    this._addDrawnLayerProp(rectangleLayer);
-
-    // disable drawing
-    this.disable();
+    this._finishLayer(rectangleLayer);
 
     // fire the pm:create event and pass shape and layer
     this._map.fire('pm:create', {
       shape: this._shape,
       layer: rectangleLayer,
     });
+
+    // disable drawing
+    this.disable();
+    if(this.options.continueDrawing){
+      this.enable();
+    }
   },
 });

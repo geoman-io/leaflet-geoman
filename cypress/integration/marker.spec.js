@@ -152,4 +152,58 @@ describe('Draw Marker', () => {
     });
   });
 
+  it('disable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({continueDrawing: false});
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(191,216);
+
+    cy.get(mapSelector)
+      .click(350, 350);
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasLayers(2);
+  });
+
+  it('disable markerEditable', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({markerEditable: false});
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(191,216);
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(false);
+    });
+  });
+
+  it('enable markerEditable but disable MarkerRemoval', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({markerEditable: true, preventMarkerRemoval: true});
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(191,216);
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(true);
+    });
+
+    cy.get(mapSelector)
+      .rightclick(191,214);
+
+    cy.hasLayers(4);
+  });
+
 });
