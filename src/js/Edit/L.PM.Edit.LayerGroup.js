@@ -20,8 +20,8 @@ Edit.LayerGroup = L.Class.extend({
         return;
       }
       this._layers = this.findLayers();
-      const _initLayers = this._layers.filter((layer) => !layer._layerGroup || layer._layerGroup.indexOf(this._layerGroup) === -1);
-      // init the newly added layers
+      const _initLayers = this._layers.filter((layer) => !layer.pm._parentLayerGroup || !(this._layerGroup._leaflet_id in layer.pm._parentLayerGroup));
+      // init the newly added layers (can be multiple because of the throttle)
       _initLayers.forEach((layer) => {
         this._initLayer(layer);
       });
@@ -37,8 +37,7 @@ Edit.LayerGroup = L.Class.extend({
 
     // Remove the layergroup from the layer
     this._layerGroup.on('layerremove', (e) => {
-      const id = L.Util.stamp(this._layerGroup);
-      delete e.target.pm._layerGroup[id];
+      this._removeLayerFromGroup(e.target);
     }, this);
 
     const removeThrottle = (e) => {
@@ -51,90 +50,83 @@ Edit.LayerGroup = L.Class.extend({
     // we run this as throttle because the findLayers() is a larger function
     this._layerGroup.on('layerremove', L.Util.throttle(removeThrottle, 100, this), this);
   },
-  enable(options) {
+  enable(options, _layerIds = []) {
     this._options = options;
-    if (this._layers) {
-      this._layers.forEach(layer => {
+    this._layers.forEach(layer => {
+      if (layer instanceof L.LayerGroup) {
+        if (_layerIds.indexOf(layer._leaflet_id) === -1) {
+          _layerIds.push(layer._leaflet_id);
+          layer.pm.enable(options, _layerIds);
+        }
+      } else {
         layer.pm.enable(options);
-      });
-    }
+      }
+    });
   },
-  disable() {
-    if (this._layers) {
-      this._layers.forEach(layer => {
+  disable(_layerIds = []) {
+    this._layers.forEach(layer => {
+      if (layer instanceof L.LayerGroup) {
+        if (_layerIds.indexOf(layer._leaflet_id) === -1) {
+          _layerIds.push(layer._leaflet_id);
+          layer.pm.disable(_layerIds);
+        }
+      } else {
         layer.pm.disable();
-      });
-    }
+      }
+    });
   },
-  enabled() {
-    if (this._layers) {
-      const enabled = this._layers.find(layer => layer.pm.enabled());
-      return !!enabled;
-    }
-    return false;
+  enabled(_layerIds = []) {
 
-  },
-  toggleEdit(options) {
-    this._options = options;
-    if (this._layers) {
-      this._layers.forEach(layer => {
-        layer.pm.toggleEdit(options);
-      });
-    }
-  },
-  _initLayer(layer) {
-    // available events
-    const availableEvents = [
-      'pm:edit',
-      'pm:update',
-      'pm:enable',
-      'pm:disable',
-      'pm:remove',
-      'pm:dragstart',
-      'pm:drag',
-      'pm:dragend',
-      'pm:snap',
-      'pm:unsnap',
-      'pm:cut',
-      'pm:intersect',
-      'pm:markerdragstart',
-      'pm:markerdrag',
-      'pm:markerdragend',
-      'pm:vertexadded',
-      'pm:vertexremoved',
-      'pm:centerplaced',
-    ];
-
-    // listen to the events of the layers in this group
-    availableEvents.forEach(event => {
-      layer.on(event, this._fireEvent, this);
+    const enabled = this._layers.find((layer) => {
+      if (layer instanceof L.LayerGroup) {
+        if (_layerIds.indexOf(layer._leaflet_id) === -1) {
+          _layerIds.push(layer._leaflet_id);
+          return layer.pm.enabled(_layerIds);
+        }
+        return false; // enabled is already returned because this is not the first time, so we can return always false
+      } else {
+        return layer.pm.enabled();
+      }
     });
 
-    // add reference for the group to each layer inside said group by id
+    return !!enabled;
+  },
+  toggleEdit(options, _layerIds = []) {
+    this._options = options;
+    this._layers.forEach(layer => {
+      if (layer instanceof L.LayerGroup) {
+        if (_layerIds.indexOf(layer._leaflet_id) === -1) {
+          _layerIds.push(layer._leaflet_id);
+          layer.pm.toggleEdit(options, _layerIds);
+        }
+      } else {
+        layer.pm.toggleEdit(options);
+      }
+    });
+  },
+  _initLayer(layer) {
+    // add reference for the group to each layer inside said group by id, a layer can have multiple groups
     const id = L.Util.stamp(this._layerGroup);
-    if(!layer.pm._layerGroup){
-      layer.pm._layerGroup = {};
+    if (!layer.pm._parentLayerGroup) {
+      layer.pm._parentLayerGroup = {};
     }
-    layer.pm._layerGroup[id] = this._layerGroup;
+    layer.pm._parentLayerGroup[id] = this._layerGroup;
+  },
+  _removeLayerFromGroup(layer) {
+    if(layer.pm && layer.pm._layerGroup) {
+      const id = L.Util.stamp(this._layerGroup);
+      delete layer.pm._layerGroup[id];
+    }
   },
   findLayers() {
     // get all layers of the layer group
     let layers = this._layerGroup.getLayers();
-
-    // filter out layers that are no layerGroup
-    //   layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
-
     // filter out layers that don't have leaflet-geoman
     layers = layers.filter(layer => !!layer.pm);
-
     // filter out everything that's leaflet-geoman specific temporary stuff
     layers = layers.filter(layer => !layer._pmTempLayer);
-
     // return them
     return layers;
-  },
-  _fireEvent(e) {
-    this._layerGroup.fireEvent(e.type, e);
   },
   dragging() {
     if (this._layers) {
@@ -142,7 +134,6 @@ Edit.LayerGroup = L.Class.extend({
       return !!dragging;
     }
     return false;
-
   },
   getOptions() {
     return this._options;

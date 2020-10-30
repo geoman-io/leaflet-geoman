@@ -1,6 +1,7 @@
 import Draw from './L.PM.Draw';
 
 import { getTranslation } from '../helpers';
+import Utils from "../L.PM.Utils";
 
 Draw.Circle = Draw.extend({
   initialize(map) {
@@ -84,7 +85,7 @@ Draw.Circle = Draw.extend({
     this._otherSnapLayers = [];
 
     // fire drawstart event
-    this._map.fire('pm:drawstart', {
+    Utils._fireEvent(this._map,'pm:drawstart', {
       shape: this._shape,
       workingLayer: this._layer,
     });
@@ -121,7 +122,7 @@ Draw.Circle = Draw.extend({
     }
 
     // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
+    Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
     this._setGlobalDrawMode();
   },
   enabled() {
@@ -190,7 +191,7 @@ Draw.Circle = Draw.extend({
         getTranslation('tooltips.finishCircle')
       );
 
-      this._layer.fire('pm:centerplaced', {
+      Utils._fireEvent(this._layer,'pm:centerplaced', {
         workingLayer: this._layer,
         latlng,
         shape: this._shape
@@ -224,7 +225,7 @@ Draw.Circle = Draw.extend({
     this.disable();
 
     // fire the pm:create event and pass shape and layer
-    this._map.fire('pm:create', {
+    Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       layer: circleLayer,
     });

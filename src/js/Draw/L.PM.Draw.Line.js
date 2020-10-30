@@ -1,5 +1,6 @@
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
+import Utils from "../L.PM.Utils";
 
 import { getTranslation } from '../helpers';
 
@@ -98,7 +99,7 @@ Draw.Line = Draw.extend({
 
 
     // fire drawstart event
-    this._map.fire('pm:drawstart', {
+    Utils._fireEvent(this._map,'pm:drawstart', {
       shape: this._shape,
       workingLayer: this._layer,
     });
@@ -140,7 +141,7 @@ Draw.Line = Draw.extend({
     }
 
     // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
+    Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
     this._setGlobalDrawMode();
 
   },
@@ -259,7 +260,7 @@ Draw.Line = Draw.extend({
 
     this._hintline.setLatLngs([latlng, latlng]);
 
-    this._layer.fire('pm:vertexadded', {
+    Utils._fireEvent(this._layer,'pm:vertexadded', {
       shape: this._shape,
       workingLayer: this._layer,
       marker: newMarker,
@@ -322,7 +323,7 @@ Draw.Line = Draw.extend({
     this.disable();
 
     // fire the pm:create event and pass shape and layer
-    this._map.fire('pm:create', {
+    Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       layer: polylineLayer,
     });

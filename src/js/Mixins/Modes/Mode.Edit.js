@@ -9,7 +9,7 @@ const GlobalEditMode = {
     const options = {
       snappable: this._globalSnappingEnabled,
       ...o
-    }
+    };
 
     const status = true;
 
@@ -45,7 +45,7 @@ const GlobalEditMode = {
     });
 
     // cleanup layer off event
-    this.map.off('layeroff', this.throttledReInitEdit, this);
+    this.map.off('layeradd', this.throttledReInitEdit, this);
 
     // Set toolbar button to currect status
     this.Toolbar.toggleButton('editMode', status);
@@ -75,22 +75,22 @@ const GlobalEditMode = {
     }
   },
   handleLayerAdditionInGlobalEditMode({ layer }) {
-    // when global edit mode is enabled and a layer is added to the map,
-    // enable edit for that layer if it's relevant
+      // when global edit mode is enabled and a layer is added to the map,
+      // enable edit for that layer if it's relevant
 
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-    const isRelevant = !!layer.pm && !layer._pmTempLayer;
-    if (!isRelevant) {
-      return;
-    }
+      // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
+      const isRelevant = !!layer.pm && !layer._pmTempLayer;
+      if (!isRelevant) {
+        return;
+      }
 
-    if (this.globalEditModeEnabled()) {
+      if (this.globalEditModeEnabled()) {
       // TODO: this._globalSnappingEnabled is a Pro Feature. Remove this option from OSS?
       layer.pm.enable({ ...this.globalOptions, snappable: this._globalSnappingEnabled });
-    }
+      }
   },
   _fireEditModeEvent(enabled) {
-    this.map.fire('pm:globaleditmodetoggled', {
+    Utils._fireEvent(this.map,'pm:globaleditmodetoggled', {
       enabled,
       map: this.map,
     });

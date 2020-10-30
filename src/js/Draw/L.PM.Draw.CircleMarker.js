@@ -1,6 +1,7 @@
 import Draw from './L.PM.Draw';
 
 import { getTranslation } from '../helpers';
+import Utils from "../L.PM.Utils";
 
 Draw.CircleMarker = Draw.Marker.extend({
   initialize(map) {
@@ -112,7 +113,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire drawstart event
-    this._map.fire('pm:drawstart', {
+    Utils._fireEvent(this._map,'pm:drawstart', {
       shape: this._shape,
       workingLayer: this._layer,
     });
@@ -164,7 +165,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
+    Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
     this._setGlobalDrawMode();
   },
   _placeCenterMarker(e) {
@@ -198,7 +199,7 @@ Draw.CircleMarker = Draw.Marker.extend({
         getTranslation('tooltips.finishCircle')
       );
 
-      this._layer.fire('pm:centerplaced', {
+      Utils._fireEvent(this._layer,'pm:centerplaced', {
         shape: this._shape,
         workingLayer: this._layer,
         latlng,
@@ -260,7 +261,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire the pm:create event and pass shape and marker
-    this._map.fire('pm:create', {
+    Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       marker, // DEPRECATED
       layer: marker,
@@ -294,7 +295,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     this.disable();
 
     // fire the pm:create event and pass shape and layer
-    this._map.fire('pm:create', {
+    Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       layer: circleLayer,
     });

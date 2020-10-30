@@ -65,7 +65,7 @@ const GlobalDragMode = {
     }
   },
   _fireDragModeEvent(enabled) {
-    this.map.fire('pm:globaldragmodetoggled', {
+    Utils._fireEvent(this.map,'pm:globaldragmodetoggled', {
       enabled,
       map: this.map,
     });

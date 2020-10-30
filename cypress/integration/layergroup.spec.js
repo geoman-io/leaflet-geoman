@@ -1,5 +1,5 @@
 describe('Edit LayerGroup', () => {
-  // const mapSelector = '#map';
+   const mapSelector = '#map';
 
   it('correctly enables geojson featureCollection', () => {
     cy.drawShape('FeatureCollectionWithCircles');
@@ -43,7 +43,6 @@ describe('Edit LayerGroup', () => {
   });
 
   it('supports clearLayers', () => {
-
     cy.window().then(({ L, map }) => {
       const featureGroup = new L.FeatureGroup();
       featureGroup.addTo(map)
@@ -53,5 +52,119 @@ describe('Edit LayerGroup', () => {
 
       expect(featureGroup.pm._layers).to.have.lengthOf(0);
     });
-  })
+  });
+
+
+  it('pass the fired event of the layer to group', () => {
+    let fg;
+    let firedEvent = "";
+
+    cy.window().then(({ map, L }) => {
+      fg = L.featureGroup();
+      fg.on("pm:cut",(e)=>{
+        firedEvent = e.type;
+      });
+
+      map.on('pm:create',(e)=>{
+        e.layer.addTo(fg);
+      })
+    });
+      // activate polygon drawing
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polygon
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(150, 50)
+      .click(500, 50)
+      .click(500, 300)
+      .click(300, 350)
+      .click(90, 250);
+
+    // activate cutting drawing
+    cy.toolbarButton('cut')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polygon to cut
+    cy.get(mapSelector)
+      .click(450, 100)
+      .click(450, 150)
+      .click(400, 150)
+      .click(390, 140)
+      .click(390, 100)
+      .click(450, 100);
+
+    cy.window().then(() => {
+      expect(firedEvent).to.equal('pm:cut');
+    });
+  });
+
+  it('event is fired only once if group has multiple sub-groups with the same layer', ()=>{
+
+    let firedEventCount = 0;
+    cy.window().then(({ map, L }) => {
+      const group = L.featureGroup().addTo(map);
+      const layers = L.featureGroup().addTo(group);
+      const markers = L.featureGroup().addTo(group);
+      const markersChild = L.featureGroup().addTo(markers);
+      L.marker(map.getCenter()).addTo(layers).addTo(markers).addTo(markersChild);
+
+      group.on('pm:enable', () => {firedEventCount+=1});
+    });
+
+    cy.wait(100);
+
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(() => {
+      expect(firedEventCount).to.equal(1);
+    });
+  });
+
+  it('event is fired on every parent group of a layer (once)', ()=>{
+
+    let firedEventCount = 0;
+    cy.window().then(({ map, L }) => {
+      const group = L.featureGroup().addTo(map);
+      const layers = L.featureGroup().addTo(group);
+      const markers = L.featureGroup().addTo(group);
+      const markersChild = L.featureGroup().addTo(markers);
+      L.marker(map.getCenter()).addTo(layers).addTo(markers).addTo(markersChild);
+
+      group.on('pm:enable', () => {firedEventCount+=1});
+      layers.on('pm:enable', () => {firedEventCount+=1});
+      markers.on('pm:enable', () => {firedEventCount+=1});
+      markersChild.on('pm:enable', () => {firedEventCount+=1});
+    });
+
+    cy.wait(100);
+
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(() => {
+      expect(firedEventCount).to.equal(4);
+    });
+  });
+
+  it('event is fired on L.geoJson when it has FeatureCollections', ()=>{
+    cy.drawShape('FeatureCollectionEventFire');
+
+    let firedEventCount = 0;
+    cy.get('@feature').then(feature => {
+      feature.on('pm:enable', () => {firedEventCount+=1});
+    });
+
+    cy.wait(100);
+
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(() => {
+      expect(firedEventCount).to.equal(2);
+    });
+  });
 });

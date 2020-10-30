@@ -1,4 +1,5 @@
 import Edit from './L.PM.Edit';
+import Utils from "../L.PM.Utils";
 
 Edit.ImageOverlay = Edit.extend({
   _shape: 'ImageOverlay',
@@ -37,7 +38,7 @@ Edit.ImageOverlay = Edit.extend({
     // create markers for four corners of ImageOverlay
     this._otherSnapLayers = L.PM.Edit.Rectangle.prototype._findCorners.apply(this);
 
-    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
   },
   disable(layer = this._layer) {
     // prevent disabling if layer is being dragged
@@ -55,10 +56,10 @@ Edit.ImageOverlay = Edit.extend({
     // only fire events if it was enabled before
     if (!this.enabled()) {
       if (this._layerEdited) {
-        layer.fire('pm:update', { layer, shape: this.getShape() });
+        Utils._fireEvent(layer,'pm:update', { layer, shape: this.getShape() });
       }
       this._layerEdited = false;
-      layer.fire('pm:disable', { layer, shape: this.getShape() });
+      Utils._fireEvent(layer,'pm:disable', { layer, shape: this.getShape() });
     }
 
     this._layer.off('contextmenu', this._removeMarker, this);
@@ -67,7 +68,7 @@ Edit.ImageOverlay = Edit.extend({
   },
   _fireEdit() {
     // fire edit event
-    this._layer.fire('pm:edit', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
   },
 });
