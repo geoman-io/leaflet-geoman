@@ -19,10 +19,9 @@ Edit.Marker = Edit.extend({
     if (this.enabled()) {
       return;
     }
-    this._enabled = true;
     this.applyOptions();
+    this._enabled = true;
 
-  //  Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
     Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
   },
   disable() {

@@ -145,7 +145,13 @@ Draw.Circle = Draw.extend({
     const A = this._centerMarker.getLatLng();
     const B = this._hintMarker.getLatLng();
 
-    const distance = A.distanceTo(B);
+    let distance;
+
+    if (this._map.options.crs === L.CRS.Simple) {
+      distance = this._map.distance(A, B);
+    } else {
+      distance = A.distanceTo(B);
+    }
 
     this._layer.setRadius(distance);
   },
@@ -208,7 +214,15 @@ Draw.Circle = Draw.extend({
     // calc the radius
     const center = this._centerMarker.getLatLng();
     const latlng = this._hintMarker.getLatLng();
-    const radius = center.distanceTo(latlng);
+
+    let radius;
+
+    if (this._map.options.crs === L.CRS.Simple) {
+      radius = this._map.distance(center, latlng);
+    } else {
+      radius = center.distanceTo(latlng);
+    }
+
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
