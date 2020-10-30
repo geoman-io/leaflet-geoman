@@ -311,4 +311,20 @@ describe('Modes', () => {
       ).to.equal(0);
     });
   });
+  it('re-enable layers that added while in globaleditmode', () => {
+
+    cy.window().then(({ map, L }) => {
+      map.pm.enableGlobalEditMode();
+
+      const json = JSON.parse("{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[-74.058559,40.718564],[-74.058559,40.726045],[-74.03959,40.726045],[-74.03959,40.718564],[-74.058559,40.718564]]]}}");
+      const json2 = JSON.parse("{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[-74.035277,40.703719],[-74.035277,40.712633],[-74.017596,40.712633],[-74.017596,40.703719],[-74.035277,40.703719]]]}}");
+      const p2 = L.geoJson(json).addTo(map);
+      L.geoJson(json2).addTo(map);
+
+      map.fitBounds(p2.getBounds());
+      map.setZoom(13);
+    });
+    cy.hasVertexMarkers(8);
+
+  });
 });
