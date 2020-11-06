@@ -238,9 +238,17 @@ See the available options in the table below.
 | hideMiddleMarkers     | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                       |
 | minRadiusCircle       | `null`                                | set the min radius of a `Circle`.                                                                                                                     |
 | maxRadiusCircle       | `null`                                | set the max radius of a `Circle`.                                                                                                                     |
-| editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
 | minRadiusCircleMarker | `null`                                | set the min radius of a `CircleMarker` when editable is active.                                                                                       |
 | maxRadiusCircleMarker | `null`                                | set the max radius of a `CircleMarker` when editable is active.                                                                                       |
+| editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
+
+
+
+This options are only available for the global options:
+
+| Option                | Default                               | Description                                                                                                                                           |
+| :-------------------- | :------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| layerGroup            | `map`                                 | add the created layers to a layergroup instead to the map.                                                                                            |
 
 You can listen to map events to hook into the drawing procedure like this:
 

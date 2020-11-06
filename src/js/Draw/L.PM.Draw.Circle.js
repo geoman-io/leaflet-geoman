@@ -143,7 +143,13 @@ Draw.Circle = Draw.extend({
     const A = this._centerMarker.getLatLng();
     const B = this._hintMarker.getLatLng();
 
-    const distance = A.distanceTo(B);
+    let distance;
+
+    if (this._map.options.crs === L.CRS.Simple) {
+      distance = this._map.distance(A, B);
+    } else {
+      distance = A.distanceTo(B);
+    }
 
     if(this.options.minRadiusCircle && distance < this.options.minRadiusCircle) {
       this._layer.setRadius(this.options.minRadiusCircle);
@@ -216,7 +222,15 @@ Draw.Circle = Draw.extend({
     // calc the radius
     const center = this._centerMarker.getLatLng();
     const latlng = this._hintMarker.getLatLng();
-    let radius = center.distanceTo(latlng);
+
+    let radius;
+
+    if (this._map.options.crs === L.CRS.Simple) {
+      radius = this._map.distance(center, latlng);
+    } else {
+      radius = center.distanceTo(latlng);
+    }
+
     if(this.options.minRadiusCircle && radius < this.options.minRadiusCircle){
       radius = this.options.minRadiusCircle;
     }else if(this.options.maxRadiusCircle && radius > this.options.maxRadiusCircle){
@@ -226,7 +240,7 @@ Draw.Circle = Draw.extend({
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
-    const circleLayer = L.circle(center, options).addTo(this._map);
+    const circleLayer = L.circle(center, options).addTo(this._map.pm._getContainingLayer());
     this._setShapeForFinishLayer(circleLayer);
     this._addDrawnLayerProp(circleLayer);
 

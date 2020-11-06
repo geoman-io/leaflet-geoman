@@ -95,8 +95,6 @@ describe('Draw Marker', () => {
     });
   });
 
-
-
   it('calls pm:drag-events on Marker drag', () => {
     let handFinish = false;
     let dragstart = false;
@@ -147,5 +145,18 @@ describe('Draw Marker', () => {
     });
   });
 
+
+  it('enabled of Marker is true in edit-mode', () => {
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(150, 250);
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(true);
+    });
+  });
 
 });

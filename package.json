@@ -18,6 +18,7 @@
     "dist"
   ],
   "main": "dist/leaflet-geoman.min.js",
+  "types": "dist/leaflet-geoman.d.ts",
   "dependencies": {
     "@turf/kinks": "6.x",
     "@turf/line-intersect": "^6.0.2",
@@ -28,6 +29,7 @@
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "babel-loader": "^8.1.0",
+    "copy-webpack-plugin": "^6.2.1",
     "css-loader": "^3.5.3",
     "cypress": "^3.8.3",
     "cypress-wait-until": "^1.7.1",

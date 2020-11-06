@@ -20,6 +20,7 @@ const Map = L.Class.extend({
 
     this.globalOptions = {
       snappable: true,
+      layerGroup: undefined,
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {
@@ -161,6 +162,11 @@ const Map = L.Class.extend({
     });
     return group;
   },
+  // returns the map instance by default or a layergroup is set through global options
+  _getContainingLayer(){
+    return this.globalOptions.layerGroup && this.globalOptions.layerGroup instanceof L.LayerGroup ? this.globalOptions.layerGroup : this.map;
+  }
+
 });
 
 export default Map;
