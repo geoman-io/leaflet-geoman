@@ -237,8 +237,8 @@ See the available options in the table below.
 | markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
 | editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
 | hideMiddleMarkers     | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                       |
-| markerEditable        | `true`                                | Markers and CircleMarkers changing to the edit mode after creation.                                                                                   |
-| continueDrawing       | `false` / `true`                      | The drawing mode is not finished if the value is `true`. It can be directly drawn a new shape. Markers and CircleMarkers are by default `true`.       |                                                                                |
+| markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them)                                                                                   |
+| continueDrawing       | `false` / `true`                      | Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.       |                                                                                |
 
 You can listen to map events to hook into the drawing procedure like this:
 

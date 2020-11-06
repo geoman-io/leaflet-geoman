@@ -95,10 +95,12 @@ describe('Draw Circle', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
+    // draw first circle
     cy.get(mapSelector)
       .click(200, 200)
       .click(250, 250);
 
+    // draw with continueDrawing: ture the second circle
     cy.get(mapSelector)
       .click(300, 200)
       .click(350, 250);

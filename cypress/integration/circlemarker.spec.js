@@ -175,6 +175,9 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector)
       .click(350, 350);
 
+    cy.toolbarButton('circle-marker')
+      .closest('.button-container')
+      .should('have.not.class', 'active');
 
     cy.toolbarButton('edit').click();
     cy.hasLayers(3);
