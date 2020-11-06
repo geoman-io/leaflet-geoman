@@ -92,7 +92,6 @@ Edit.Line = Edit.extend({
     // remove onRemove listener
     this._layer.off('remove', this._onLayerRemove, this);
 
-
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
         'pm:vertexremoved',
