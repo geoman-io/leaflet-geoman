@@ -240,6 +240,14 @@ See the available options in the table below.
 | markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them)                                                                                   |
 | continueDrawing       | `false` / `true`                      | Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.       |                                                                                |
 
+
+
+This options are only available for the global options:
+
+| Option                | Default                               | Description                                                                                                                                           |
+| :-------------------- | :------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| layerGroup            | `map`                                 | add the created layers to a layergroup instead to the map.                                                                                            |
+
 You can listen to map events to hook into the drawing procedure like this:
 
 ```js

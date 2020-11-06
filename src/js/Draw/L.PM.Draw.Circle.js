@@ -225,7 +225,7 @@ Draw.Circle = Draw.extend({
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
-    const circleLayer = L.circle(center, options).addTo(this._map);
+    const circleLayer = L.circle(center, options).addTo(this._map.pm._getContainingLayer());
     this._finishLayer(circleLayer);
 
     if(circleLayer.pm) {
