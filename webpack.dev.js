@@ -1,6 +1,7 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -41,5 +42,12 @@ module.exports = {
             },
         ],
     },
-    plugins: [new MiniCssExtractPlugin({ filename: 'leaflet-geoman.css' }),],
+    plugins: [
+        new MiniCssExtractPlugin({ filename: 'leaflet-geoman.css' }),
+        new CopyPlugin({
+            patterns: [
+                { from: 'leaflet-geoman.d.ts', to: 'leaflet-geoman.d.ts' },
+            ],
+        }),
+    ],
 };
