@@ -146,7 +146,7 @@ Draw.Marker = Draw.extend({
       marker.options.draggable = false;
     }
     // add marker to the map
-    marker.addTo(this._map);
+    marker.addTo(this._map.pm._getContainingLayer());
 
     if(marker.pm) {
       // enable editing for the marker

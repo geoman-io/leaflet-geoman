@@ -1,5 +1,5 @@
 describe('Edit LayerGroup', () => {
-   const mapSelector = '#map';
+  const mapSelector = '#map';
 
   it('correctly enables geojson featureCollection', () => {
     cy.drawShape('FeatureCollectionWithCircles');
@@ -43,7 +43,7 @@ describe('Edit LayerGroup', () => {
   });
 
   it('supports clearLayers', () => {
-    cy.window().then(({ L, map }) => {
+    cy.window().then(({L, map}) => {
       const featureGroup = new L.FeatureGroup();
       featureGroup.addTo(map)
       featureGroup.addLayer(new L.Marker([19.04469, 72.9258]));
@@ -54,22 +54,117 @@ describe('Edit LayerGroup', () => {
     });
   });
 
+  it('adds the created layers to a layergroup', () => {
+    let fg;
+    let fg2;
+
+    // Add layer to group
+    cy.window().then(({L, map}) => {
+      fg = L.featureGroup().addTo(map);
+      fg2 = L.featureGroup().addTo(map);
+      map.on('click', (e) => console.log(map.latLngToContainerPoint(e.latlng)));
+
+      map.pm.setGlobalOptions({layerGroup: fg});
+
+      cy.toolbarButton('rectangle')
+        .click()
+        .closest('.button-container')
+        .should('have.class', 'active');
+
+      cy.get(mapSelector)
+        .click(200, 200)
+        .click(400, 350);
+
+      cy.hasLayers(5);
+    });
+
+    // check if layer is on group and will be removed from map, when group is removed
+    cy.window().then(({map}) => {
+      fg.removeFrom(map);
+      cy.hasLayers(3);
+
+      const count = fg.getLayers().length;
+      expect(count).to.equal(1);
+    });
+    // delete layer from group and map
+    cy.window().then(({map}) => {
+      fg.addTo(map);
+
+      cy.toolbarButton('delete')
+        .click();
+
+      cy.get(mapSelector)
+        .click(280, 280);
+    });
+    cy.window().then(() => {
+      const count = fg.getLayers().length;
+      expect(count).to.equal(0);
+    });
+
+    // add layer and then change group
+    cy.window().then(() => {
+      cy.toolbarButton('rectangle')
+        .click();
+
+      cy.get(mapSelector)
+        .click(200, 200)
+        .click(400, 350);
+    });
+    cy.window().then(({map}) => {
+      map.pm.setGlobalOptions({layerGroup: fg2});
+      cy.hasLayers(5);
+
+      cy.toolbarButton('circle')
+        .click();
+      cy.get(mapSelector)
+        .click(200, 200)
+        .click(250, 250);
+    });
+    // delete layer from another (first) group
+    cy.window().then(() => {
+      cy.toolbarButton('delete')
+        .click();
+
+      cy.get(mapSelector)
+        .click(280, 280);
+    });
+    cy.window().then(() => {
+      const count = fg.getLayers().length;
+      expect(count).to.equal(1);
+      const count2 = fg2.getLayers().length;
+      expect(count2).to.equal(1);
+      cy.hasLayers(5);
+    });
+    // delete circle from second group
+    cy.window().then(() => {
+      cy.get(mapSelector)
+        .click(180, 180);
+      cy.toolbarButton('delete')
+        .click();
+    });
+    cy.window().then(() => {
+      const count2 = fg2.getLayers().length;
+      expect(count2).to.equal(0);
+      cy.hasLayers(4);
+    });
+  })
+
 
   it('pass the fired event of the layer to group', () => {
     let fg;
     let firedEvent = "";
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map, L}) => {
       fg = L.featureGroup();
-      fg.on("pm:cut",(e)=>{
+      fg.on("pm:cut", (e) => {
         firedEvent = e.type;
       });
 
-      map.on('pm:create',(e)=>{
+      map.on('pm:create', (e) => {
         e.layer.addTo(fg);
       })
     });
-      // activate polygon drawing
+    // activate polygon drawing
     cy.toolbarButton('polygon')
       .click()
       .closest('.button-container')
@@ -104,17 +199,19 @@ describe('Edit LayerGroup', () => {
     });
   });
 
-  it('event is fired only once if group has multiple sub-groups with the same layer', ()=>{
+  it('event is fired only once if group has multiple sub-groups with the same layer', () => {
 
     let firedEventCount = 0;
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map, L}) => {
       const group = L.featureGroup().addTo(map);
       const layers = L.featureGroup().addTo(group);
       const markers = L.featureGroup().addTo(group);
       const markersChild = L.featureGroup().addTo(markers);
       L.marker(map.getCenter()).addTo(layers).addTo(markers).addTo(markersChild);
 
-      group.on('pm:enable', () => {firedEventCount+=1});
+      group.on('pm:enable', () => {
+        firedEventCount += 1
+      });
     });
 
     cy.wait(100);
@@ -126,20 +223,28 @@ describe('Edit LayerGroup', () => {
     });
   });
 
-  it('event is fired on every parent group of a layer (once)', ()=>{
+  it('event is fired on every parent group of a layer (once)', () => {
 
     let firedEventCount = 0;
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({map, L}) => {
       const group = L.featureGroup().addTo(map);
       const layers = L.featureGroup().addTo(group);
       const markers = L.featureGroup().addTo(group);
       const markersChild = L.featureGroup().addTo(markers);
       L.marker(map.getCenter()).addTo(layers).addTo(markers).addTo(markersChild);
 
-      group.on('pm:enable', () => {firedEventCount+=1});
-      layers.on('pm:enable', () => {firedEventCount+=1});
-      markers.on('pm:enable', () => {firedEventCount+=1});
-      markersChild.on('pm:enable', () => {firedEventCount+=1});
+      group.on('pm:enable', () => {
+        firedEventCount += 1
+      });
+      layers.on('pm:enable', () => {
+        firedEventCount += 1
+      });
+      markers.on('pm:enable', () => {
+        firedEventCount += 1
+      });
+      markersChild.on('pm:enable', () => {
+        firedEventCount += 1
+      });
     });
 
     cy.wait(100);
@@ -151,12 +256,14 @@ describe('Edit LayerGroup', () => {
     });
   });
 
-  it('event is fired on L.geoJson when it has FeatureCollections', ()=>{
+  it('event is fired on L.geoJson when it has FeatureCollections', () => {
     cy.drawShape('FeatureCollectionEventFire');
 
     let firedEventCount = 0;
     cy.get('@feature').then(feature => {
-      feature.on('pm:enable', () => {firedEventCount+=1});
+      feature.on('pm:enable', () => {
+        firedEventCount += 1
+      });
     });
 
     cy.wait(100);
@@ -167,4 +274,5 @@ describe('Edit LayerGroup', () => {
       expect(firedEventCount).to.equal(2);
     });
   });
+
 });

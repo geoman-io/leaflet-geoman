@@ -253,7 +253,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     this._setShapeForFinishLayer(marker);
     this._addDrawnLayerProp(marker);
     // add marker to the map
-    marker.addTo(this._map);
+    marker.addTo(this._map.pm._getContainingLayer());
 
     if(marker.pm) {
       // enable editing for the marker
@@ -283,7 +283,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
-    const circleLayer = L.circleMarker(center, options).addTo(this._map);
+    const circleLayer = L.circleMarker(center, options).addTo(this._map.pm._getContainingLayer());
     this._setShapeForFinishLayer(circleLayer);
     this._addDrawnLayerProp(circleLayer);
     if(circleLayer.pm) {
