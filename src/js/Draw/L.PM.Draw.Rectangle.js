@@ -250,7 +250,7 @@ Draw.Rectangle = Draw.extend({
 
     // create the final rectangle layer, based on opposite corners A & B
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(
-      this._map
+      this._map.pm._getContainingLayer()
     );
     this._setShapeForFinishLayer(rectangleLayer);
     this._addDrawnLayerProp(rectangleLayer);

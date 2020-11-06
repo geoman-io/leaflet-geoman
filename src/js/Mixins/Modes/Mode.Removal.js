@@ -81,6 +81,7 @@ const GlobalRemovalMode = {
       !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
 
     if (removeable) {
+      layer.removeFrom(this.map.pm._getContainingLayer());
       layer.remove();
       if(layer instanceof L.LayerGroup){
         layer.fire('pm:remove', { layer, shape: undefined });

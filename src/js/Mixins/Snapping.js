@@ -36,6 +36,11 @@ const SnapMixin = {
     // meanwhile, new layers could've been added to the map
     delete this._snapList;
 
+    if(this.throttledList) {
+      this._map.off('layeradd', this.throttledList, this);
+      this.throttledList = undefined;
+    }
+
     // remove map event
     this._map.off('pm:remove', this._handleSnapLayerRemoval, this);
 
@@ -46,8 +51,9 @@ const SnapMixin = {
     }
   },
   _handleSnapping(e) {
-    function throttledList() {
-      return L.Util.throttle(this._createSnapList, 100, this);
+
+    if(!this.throttledList) {
+      this.throttledList =  L.Util.throttle(this._createSnapList, 100, this);
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
@@ -62,8 +68,8 @@ const SnapMixin = {
       this._createSnapList();
 
       // re-create the snaplist again when a layer is added during draw
-      this._map.off('layeradd', throttledList, this);
-      this._map.on('layeradd', throttledList, this);
+      this._map.off('layeradd', this.throttledList, this);
+      this._map.on('layeradd', this.throttledList, this);
     }
 
     // if there are no layers to snap to, stop here
@@ -167,9 +173,12 @@ const SnapMixin = {
           layer instanceof L.Marker ||
           layer instanceof L.CircleMarker ||
           layer instanceof L.ImageOverlay) &&
-        layer.options.snapIgnore !== true
+          layer.options.snapIgnore !== true &&
+        (
+          (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+          (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
+        )
       ) {
-
         // adds a hidden polygon which matches the border of the circle
         if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm && layer.pm._hiddenPolyCircle) {
           layers.push(layer.pm._hiddenPolyCircle);
