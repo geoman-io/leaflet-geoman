@@ -44,14 +44,14 @@ const Utils = {
   },
   disablePopup(layer){
     if(layer.getPopup()){
-      layer._pmCopyPopup = layer.getPopup();
+      layer._tempPopupCopy = layer.getPopup();
       layer.unbindPopup();
     }
   },
   enablePopup(layer){
-    if(layer._pmCopyPopup){
-      layer.bindPopup(layer._pmCopyPopup);
-      delete layer._pmCopyPopup;
+    if(layer._tempPopupCopy){
+      layer.bindPopup(layer._tempPopupCopy);
+      delete layer._tempPopupCopy;
     }
   },
   createGeodesicPolygon,

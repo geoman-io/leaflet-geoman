@@ -97,12 +97,12 @@ const Draw = L.Class.extend({
     }
 
     const layers = Utils.findLayers(this._map);
-    if(this._enabled){
-      layers.forEach((layer)=>{
+    if (this._enabled) {
+      layers.forEach((layer) => {
         Utils.disablePopup(layer);
       })
-    }else{
-      layers.forEach((layer)=>{
+    } else {
+      layers.forEach((layer) => {
         Utils.enablePopup(layer);
       })
     }
@@ -154,11 +154,11 @@ const Draw = L.Class.extend({
     }
     return this[name] ? this[name]._shape : name;
   },
-  _addDrawnLayerProp(layer){
+  _addDrawnLayerProp(layer) {
     layer._drawnByGeoman = true;
   },
-  _setShapeForFinishLayer(layer){
-    if(layer.pm) {
+  _setShapeForFinishLayer(layer) {
+    if (layer.pm) {
       layer.pm._shape = this._shape;
     }
   }
