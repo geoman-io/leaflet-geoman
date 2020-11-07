@@ -36,7 +36,7 @@ const SnapMixin = {
     // meanwhile, new layers could've been added to the map
     delete this._snapList;
 
-    if(this.throttledList) {
+    if (this.throttledList) {
       this._map.off('layeradd', this.throttledList, this);
       this.throttledList = undefined;
     }
@@ -52,8 +52,8 @@ const SnapMixin = {
   },
   _handleSnapping(e) {
 
-    if(!this.throttledList) {
-      this.throttledList =  L.Util.throttle(this._createSnapList, 100, this);
+    if (!this.throttledList) {
+      this.throttledList = L.Util.throttle(this._createSnapList, 100, this);
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
@@ -86,7 +86,7 @@ const SnapMixin = {
     );
 
     // if no layers found. Can happen when circle is the only visible layer on the map and the hidden snapping-border circle layer is also on the map
-    if(Object.keys(closestLayer).length === 0){
+    if (Object.keys(closestLayer).length === 0) {
       return false;
     }
 
@@ -172,7 +172,7 @@ const SnapMixin = {
           layer instanceof L.Marker ||
           layer instanceof L.CircleMarker ||
           layer instanceof L.ImageOverlay) &&
-          layer.options.snapIgnore !== true &&
+        layer.options.snapIgnore !== true &&
         (
           (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
           (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
@@ -181,13 +181,13 @@ const SnapMixin = {
         // adds a hidden polygon which matches the border of the circle
         if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm && layer.pm._hiddenPolyCircle) {
           layers.push(layer.pm._hiddenPolyCircle);
-        }else if(layer instanceof L.ImageOverlay){
+        } else if (layer instanceof L.ImageOverlay) {
           layer = L.rectangle(layer.getBounds());
         }
         layers.push(layer);
 
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        const debugLine = L.polyline([], {color: 'red', pmIgnore: true});
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
         if (layer instanceof L.Circle || layer instanceof L.CircleMarker) {
@@ -219,7 +219,7 @@ const SnapMixin = {
 
     this.debugIndicatorLines = debugIndicatorLines;
   },
-  _handleSnapLayerRemoval({ layer }) {
+  _handleSnapLayerRemoval({layer}) {
     // find the layers index in snaplist
     const index = this._snapList.findIndex(
       e => e._leaflet_id === layer._leaflet_id
@@ -249,7 +249,7 @@ const SnapMixin = {
         closestLayer.distance === undefined ||
         results.distance <= closestLayer.distance
       ) {
-        if(results.distance < closestLayer.distance){
+        if (results.distance < closestLayer.distance) {
           closestLayers = [];
         }
         closestLayer = results;
@@ -343,24 +343,25 @@ const SnapMixin = {
       distance: shortestDistance,
     };
   },
-  _getClosestLayerByPriority(layers){
+  _getClosestLayerByPriority(layers) {
     // sort the layers by creation, so it is snapping to the oldest layer from the same shape
-    layers = layers.sort((a,b)=>a._leaflet_id-b._leaflet_id);
+    layers = layers.sort((a, b) => a._leaflet_id - b._leaflet_id);
 
-    const shapes = ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle'];
+    const shapes = ['Marker', 'CircleMarker', 'Circle', 'Line', 'Polygon', 'Rectangle'];
     const order = this._map.pm.globalOptions.snappingOrder || [];
 
     let lastIndex = 0;
     const prioOrder = {};
-    order.concat(shapes).forEach((shape)=>{
-      if(!prioOrder[shape]){
-        lastIndex+=1;
+    // merge user-preferred priority with default priority
+    order.concat(shapes).forEach((shape) => {
+      if (!prioOrder[shape]) {
+        lastIndex += 1;
         prioOrder[shape] = lastIndex;
       }
     });
 
     // sort layers by priority
-    layers.sort(prioritiseSort('instanceofShape',prioOrder));
+    layers.sort(prioritiseSort('instanceofShape', prioOrder));
     return layers[0] || {};
   },
   // we got the point we want to snap to (C), but we need to check if a coord of the polygon
