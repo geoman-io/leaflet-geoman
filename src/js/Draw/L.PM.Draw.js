@@ -18,6 +18,8 @@ const Draw = L.Class.extend({
     markerStyle: {
       draggable: true,
     },
+    markerEditable: true,
+    continueDrawing: false,
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
@@ -33,6 +35,9 @@ const Draw = L.Class.extend({
     this.shapes.forEach(shape => {
       this[shape] = new L.PM.Draw[shape](this._map);
     });
+
+    this.Marker.setOptions({continueDrawing: true});
+    this.CircleMarker.setOptions({continueDrawing: true});
   },
   setPathOptions(options) {
     this.options.pathOptions = options;
@@ -142,14 +147,18 @@ const Draw = L.Class.extend({
     }
     return this[name] ? this[name]._shape : name;
   },
-  _addDrawnLayerProp(layer){
-    layer._drawnByGeoman = true;
-  },
-  _setShapeForFinishLayer(layer){
+  _finishLayer(layer){
+    // add the pm options from drawing to the new layer (edit)
+    layer.pm.setOptions(this.options);
+    // set the shape (can be a custom shape)
     if(layer.pm) {
       layer.pm._shape = this._shape;
     }
-  }
+    this._addDrawnLayerProp(layer);
+  },
+  _addDrawnLayerProp(layer){
+    layer._drawnByGeoman = true;
+  },
 });
 
 export default Draw;

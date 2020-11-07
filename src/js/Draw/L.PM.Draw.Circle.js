@@ -241,22 +241,24 @@ Draw.Circle = Draw.extend({
 
     // create the final circle layer
     const circleLayer = L.circle(center, options).addTo(this._map.pm._getContainingLayer());
-    this._setShapeForFinishLayer(circleLayer);
-    this._addDrawnLayerProp(circleLayer);
+    this._finishLayer(circleLayer);
 
     if(circleLayer.pm) {
       // create polygon around the circle border
       circleLayer.pm._updateHiddenPolyCircle();
     }
 
-    // disable drawing
-    this.disable();
-
     // fire the pm:create event and pass shape and layer
     this._map.fire('pm:create', {
       shape: this._shape,
       layer: circleLayer,
     });
+
+    // disable drawing
+    this.disable();
+    if(this.options.continueDrawing){
+      this.enable();
+    }
   },
   _getNewDestinationOfHintMarker(){
     const latlng = this._centerMarker.getLatLng();

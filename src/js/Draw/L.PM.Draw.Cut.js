@@ -23,9 +23,6 @@ Draw.Cut = Draw.Polygon.extend({
     const polygonLayer = L.polygon(coords, this.options.pathOptions);
     this._cut(polygonLayer);
 
-    // disable drawing
-    this.disable();
-
     // clean up snapping states
     this._cleanupSnapping();
 
@@ -52,6 +49,12 @@ Draw.Cut = Draw.Polygon.extend({
       originalLayer.fire('pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
     });
     this._editedLayers = [];
+
+    // disable drawing
+    this.disable();
+    if(this.options.continueDrawing){
+      this.enable();
+    }
   },
   _cut(layer) {
     const all = this._map._layers;

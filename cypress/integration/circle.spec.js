@@ -85,6 +85,30 @@ describe('Draw Circle', () => {
     });
   });
 
+  it('enable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({continueDrawing: true});
+    });
+
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw first circle
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(250, 250);
+
+    // draw with continueDrawing: ture the second circle
+    cy.get(mapSelector)
+      .click(300, 200)
+      .click(350, 250);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(4);
+  });
+
   it('set max radius of circle', () => {
     let handFinish = false;
 
