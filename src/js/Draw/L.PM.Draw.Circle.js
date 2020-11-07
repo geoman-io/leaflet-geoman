@@ -1,6 +1,6 @@
 import Draw from './L.PM.Draw';
 
-import { getTranslation } from '../helpers';
+import {destinationOnLine, getTranslation} from '../helpers';
 
 Draw.Circle = Draw.extend({
   initialize(map) {
@@ -55,7 +55,6 @@ Draw.Circle = Draw.extend({
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
-
           opacity: 0.8,
         })
         .openTooltip();
@@ -136,9 +135,9 @@ Draw.Circle = Draw.extend({
   },
   _syncHintLine() {
     const latlng = this._centerMarker.getLatLng();
-
+    const secondLatLng = this._getNewDestinationOfHintMarker();
     // set coords for hintline from marker to last vertex of drawin polyline
-    this._hintline.setLatLngs([latlng, this._hintMarker.getLatLng()]);
+    this._hintline.setLatLngs([latlng, secondLatLng]);
   },
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
@@ -152,11 +151,19 @@ Draw.Circle = Draw.extend({
       distance = A.distanceTo(B);
     }
 
-    this._layer.setRadius(distance);
+    if(this.options.minRadiusCircle && distance < this.options.minRadiusCircle) {
+      this._layer.setRadius(this.options.minRadiusCircle);
+    }else if(this.options.maxRadiusCircle && distance > this.options.maxRadiusCircle) {
+      this._layer.setRadius(this.options.maxRadiusCircle);
+    }else{
+      this._layer.setRadius(distance);
+    }
   },
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
+    // calculate the new latlng of marker if radius is out of min/max
+    this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
 
     // if snapping is enabled, do it
     if (this.options.snappable) {
@@ -164,6 +171,8 @@ Draw.Circle = Draw.extend({
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
     }
+
+    this._handleHintMarkerSnapping();
   },
   _placeCenterMarker(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
@@ -222,6 +231,12 @@ Draw.Circle = Draw.extend({
       radius = center.distanceTo(latlng);
     }
 
+    if(this.options.minRadiusCircle && radius < this.options.minRadiusCircle){
+      radius = this.options.minRadiusCircle;
+    }else if(this.options.maxRadiusCircle && radius > this.options.maxRadiusCircle){
+      radius = this.options.maxRadiusCircle;
+    }
+
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
@@ -245,4 +260,30 @@ Draw.Circle = Draw.extend({
       this.enable();
     }
   },
+  _getNewDestinationOfHintMarker(){
+    const latlng = this._centerMarker.getLatLng();
+    let secondLatLng = this._hintMarker.getLatLng();
+    const distance = latlng.distanceTo(secondLatLng);
+
+    if(this.options.minRadiusCircle && distance < this.options.minRadiusCircle) {
+      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this.options.minRadiusCircle);
+    }else if(this.options.maxRadiusCircle && distance > this.options.maxRadiusCircle) {
+      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this.options.maxRadiusCircle);
+    }
+    return secondLatLng;
+  },
+  _handleHintMarkerSnapping(){
+    if(this._hintMarker._snapped) {
+      const latlng = this._centerMarker.getLatLng();
+      const secondLatLng = this._hintMarker.getLatLng();
+      const distance = latlng.distanceTo(secondLatLng);
+      if(this.options.minRadiusCircle && distance < this.options.minRadiusCircle) {
+        this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
+      } else if(this.options.maxRadiusCircle && distance > this.options.maxRadiusCircle) {
+        this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
+      }
+    }
+    // calculate the new latlng of marker if the snapped latlng radius is out of min/max
+    this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
+  }
 });

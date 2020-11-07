@@ -219,4 +219,136 @@ describe('Draw Circle Marker', () => {
 
     cy.hasLayers(5);
   });
+
+  it('set max radius of circleMarker', () => {
+    let handFinish = false;
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.window().then(({ map, L }) => {
+      L.marker(map.getCenter()).addTo(map);
+      map.pm.setGlobalOptions({
+        minRadiusCircleMarker: 50,
+        maxRadiusCircleMarker: 150,
+        editable: true
+      });
+      cy.get(mapSelector)
+        .click(250,200)
+        .click(400,190)
+        .then(() => {
+          const layers = map.pm.getGeomanDrawLayers();
+          layers.forEach(layer => {
+            if (layer instanceof L.CircleMarker) {
+              expect(layer.getRadius()).to.equal(150);
+            }
+          });
+        });
+    });
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.window().then(({ Hand, map, L }) => {
+      const handMarker = new Hand({
+        timing: 'frame',
+        onStop: ()=>{
+          map.eachLayer(layer => {
+            if (layer instanceof L.CircleMarker) {
+              expect(true).to.equal(layer.getRadius() < 150);
+            }
+          });
+          const handMarker2 = new Hand({
+            timing: 'frame',
+            onStop: () => {
+              handFinish = true;
+              map.eachLayer(layer => {
+                if (layer instanceof L.CircleMarker) {
+                  expect(true).to.equal(layer.getRadius() >= 145 && layer.getRadius() < 155);
+                }
+              });
+            }
+          });
+          const toucherMarker2 = handMarker2.growFinger('mouse');
+          toucherMarker2.wait(100).moveTo(317,198, 100).down().wait(500).moveTo(500,198, 600).up().wait(100)
+        }
+      });
+      const toucherMarker = handMarker.growFinger('mouse');
+      toucherMarker.wait(100).moveTo(400,198, 100).down().wait(500).moveTo(317,198, 400).up().wait(100);
+
+      // wait until hand is finished
+      cy.waitUntil(() => cy.window().then(() => handFinish)).then( ()=> {
+        expect(handFinish).to.equal(true);
+      });
+    });
+
+  });
+  it('set min radius of circleMarker', () => {
+    let handFinish = false;
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.window().then(({ map, L }) => {
+      L.marker(map.getCenter()).addTo(map);
+      map.pm.setGlobalOptions({
+        minRadiusCircleMarker: 150,
+        maxRadiusCircleMarker: 300,
+        editable: true
+      });
+      cy.get(mapSelector)
+        .click(250,200)
+        .click(300,200)
+        .then(() => {
+          const layers = map.pm.getGeomanDrawLayers();
+          layers.forEach(layer => {
+            if (layer instanceof L.CircleMarker) {
+              expect(layer.getRadius()).to.equal(150);
+            }
+          });
+        });
+    });
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.window().then(({ Hand, map, L }) =>  {
+      const handMarker = new Hand({
+        timing: 'frame',
+        onStop: ()=>{
+          map.eachLayer(layer => {
+            if (layer instanceof L.CircleMarker) {
+              expect(true).to.equal(layer.getRadius() > 150)
+            }
+          });
+          const handMarker2 = new Hand({
+            timing: 'frame',
+            onStop: () =>{
+              handFinish = true;
+              map.eachLayer(layer => {
+                if (layer instanceof L.CircleMarker) {
+                  expect(true).to.equal(layer.getRadius() >= 145 && layer.getRadius() < 155);
+                }
+              });
+            }
+          });
+          const toucherMarker2 = handMarker2.growFinger('mouse');
+          toucherMarker2.wait(200).moveTo(490,198, 100).down().wait(500).moveTo(317,198, 600).up().wait(100)
+        }
+      });
+      const toucherMarker = handMarker.growFinger('mouse');
+      toucherMarker.wait(100).moveTo(400,198, 100).down().wait(500).moveTo(500,198, 400).up().wait(100)
+      // wait until hand is finished
+      cy.waitUntil(() => cy.window().then(() => handFinish)).then( ()=> {
+        expect(handFinish).to.equal(true);
+      });
+    });
+  });
 });
