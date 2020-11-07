@@ -254,6 +254,12 @@ Draw.Line = Draw.extend({
     // is this the first point?
     const first = this._layer.getLatLngs().length === 0;
 
+    this._layer._latlngInfo = this._layer._latlngInfo || [];
+    this._layer._latlngInfo.push({
+      latlng,
+      snapInfo: this._hintMarker._snapInfo
+    });
+
     this._layer.addLatLng(latlng);
     const newMarker = this._createMarker(latlng, first);
 

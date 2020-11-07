@@ -42,8 +42,67 @@ const Utils = {
     }
     return L.polygon(polygon, circle.options);
   },
+  disablePopup(layer){
+    if(layer.getPopup()){
+      layer._tempPopupCopy = layer.getPopup();
+      layer.unbindPopup();
+    }
+  },
+  enablePopup(layer){
+    if(layer._tempPopupCopy){
+      layer.bindPopup(layer._tempPopupCopy);
+      delete layer._tempPopupCopy;
+    }
+  },
   createGeodesicPolygon,
   getTranslation,
+  findDeepCoordIndex(arr, latlng) {
+    // find latlng in arr and return its location as path
+    // thanks for the function, Felix Heck
+    let result;
+
+    const run = path => (v, i) => {
+      const iRes = path.concat(i);
+
+      if (v.lat && v.lat === latlng.lat && v.lng === latlng.lng) {
+        result = iRes;
+        return true;
+      }
+
+      return Array.isArray(v) && v.some(run(iRes));
+    };
+    arr.some(run([]));
+
+    let returnVal = {};
+
+    if (result) {
+      returnVal = {
+        indexPath: result,
+        index: result[result.length - 1],
+        parentPath: result.slice(0, result.length - 1),
+      };
+    }
+
+    return returnVal;
+  },
+  _getIndexFromSegment(coords, segment) {
+    if (segment && segment.length === 2) {
+      const indexA = this.findDeepCoordIndex(coords, segment[0]);
+      const indexB = this.findDeepCoordIndex(coords, segment[1]);
+      let newIndex = Math.max(indexA.index, indexB.index);
+      if ((indexA.index === 0 || indexB.index === 0) && newIndex !== 1) {
+        newIndex+=1;
+      }
+      return {
+        indexA,
+        indexB,
+        newIndex,
+        indexPath: indexA.indexPath,
+        parentPath: indexA.parentPath,
+      };
+    }
+    return null;
+  },
 };
 
 export default Utils;

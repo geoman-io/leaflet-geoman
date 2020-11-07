@@ -21,6 +21,7 @@ const Map = L.Class.extend({
     this.globalOptions = {
       snappable: true,
       layerGroup: undefined,
+      snappingOrder: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {
