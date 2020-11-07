@@ -239,7 +239,8 @@ describe('Draw Circle Marker', () => {
         .click(250,200)
         .click(400,190)
         .then(() => {
-          map.eachLayer(layer => {
+          const layers = map.pm.getGeomanDrawLayers();
+          layers.forEach(layer => {
             if (layer instanceof L.CircleMarker) {
               expect(layer.getRadius()).to.equal(150);
             }
@@ -305,14 +306,14 @@ describe('Draw Circle Marker', () => {
         .click(250,200)
         .click(300,200)
         .then(() => {
-          map.eachLayer(layer => {
+          const layers = map.pm.getGeomanDrawLayers();
+          layers.forEach(layer => {
             if (layer instanceof L.CircleMarker) {
               expect(layer.getRadius()).to.equal(150);
             }
           });
         });
     });
-
     cy.toolbarButton('edit')
       .click()
       .closest('.button-container')
