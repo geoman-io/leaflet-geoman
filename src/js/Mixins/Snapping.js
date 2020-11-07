@@ -117,8 +117,8 @@ const SnapMixin = {
       distance: closestLayer.distance,
     };
 
-    eventInfo.marker.fire('pm:snapdrag', eventInfo);
-    this._layer.fire('pm:snapdrag', eventInfo);
+    Utils._fireEvent(eventInfo.marker,'pm:snapdrag', eventInfo);
+    Utils._fireEvent(this._layer,'pm:snapdrag', eventInfo);
 
     if (closestLayer.distance < minDistance) {
       // snap the marker
@@ -130,8 +130,8 @@ const SnapMixin = {
 
       const triggerSnap = () => {
         this._snapLatLng = snapLatLng;
-        marker.fire('pm:snap', eventInfo);
-        this._layer.fire('pm:snap', eventInfo);
+        Utils._fireEvent(marker,'pm:snap', eventInfo);
+        Utils._fireEvent(this._layer,'pm:snap', eventInfo);
       };
 
       // check if the snapping position differs from the last snap
@@ -152,8 +152,8 @@ const SnapMixin = {
       marker._snapped = false;
 
       // and fire unsnap event
-      eventInfo.marker.fire('pm:unsnap', eventInfo);
-      this._layer.fire('pm:unsnap', eventInfo);
+      Utils._fireEvent(eventInfo.marker,'pm:unsnap', eventInfo);
+      Utils._fireEvent(this._layer,'pm:unsnap', eventInfo);
     }
 
     return true;

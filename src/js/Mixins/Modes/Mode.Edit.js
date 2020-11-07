@@ -9,7 +9,7 @@ const GlobalEditMode = {
     const options = {
       snappable: this._globalSnappingEnabled,
       ...o
-    }
+    };
 
     const status = true;
 
@@ -99,7 +99,7 @@ const GlobalEditMode = {
     this._addedLayers.push(layer);
   },
   _fireEditModeEvent(enabled) {
-    this.map.fire('pm:globaleditmodetoggled', {
+    Utils._fireEvent(this.map,'pm:globaleditmodetoggled', {
       enabled,
       map: this.map,
     });

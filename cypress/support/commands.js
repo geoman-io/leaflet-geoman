@@ -173,6 +173,19 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
         });
     }
 
+    if (shape === 'FeatureCollectionEventFire') {
+      cy.fixture(shape)
+        .then(json => {
+          //
+          const layer = L.geoJSON(json).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+
+          return layer;
+        })
+        .as('feature');
+    }
+
     if (shape === 'FeatureCollectionWithCircles') {
       cy.fixture(shape, ignore)
         .then(json => {

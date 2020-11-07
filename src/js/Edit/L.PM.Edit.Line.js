@@ -69,7 +69,7 @@ Edit.Line = Edit.extend({
     }else{
       this.cachedColor = undefined;
     }
-    this._layer.fire('pm:enable', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
   },
   disable(poly = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -110,10 +110,10 @@ Edit.Line = Edit.extend({
     }
 
     if (this._layerEdited) {
-      this._layer.fire('pm:update', { layer: this._layer, shape: this.getShape() });
+      Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
     }
     this._layerEdited = false;
-    this._layer.fire('pm:disable', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
     return true;
   },
   enabled() {
@@ -297,7 +297,7 @@ Edit.Line = Edit.extend({
     // fire edit event
     this._fireEdit();
 
-    this._layer.fire('pm:vertexadded', {
+    Utils._fireEvent(this._layer,'pm:vertexadded', {
       layer: this._layer,
       marker: newM,
       indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
@@ -357,7 +357,7 @@ Edit.Line = Edit.extend({
       }
 
       // fire intersect event
-      this._layer.fire('pm:intersect', {
+      Utils._fireEvent(this._layer,'pm:intersect', {
         layer: this._layer,
         intersection: kinks(this._layer.toGeoJSON(15)),
         shape: this.getShape()
@@ -500,7 +500,7 @@ Edit.Line = Edit.extend({
     this._fireEdit();
 
     // fire vertex removal event
-    this._layer.fire('pm:vertexremoved', {
+    Utils._fireEvent(this._layer,'pm:vertexremoved', {
       layer: this._layer,
       marker,
       indexPath,
@@ -604,7 +604,7 @@ Edit.Line = Edit.extend({
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
-    this._layer.fire('pm:markerdragstart', {
+    Utils._fireEvent(this._layer,'pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
       indexPath,
@@ -692,7 +692,7 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._handleLayerStyle();
     }
-    this._layer.fire('pm:markerdrag', {
+    Utils._fireEvent(this._layer,'pm:markerdrag', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
@@ -703,7 +703,7 @@ Edit.Line = Edit.extend({
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
-    this._layer.fire('pm:markerdragend', {
+    Utils._fireEvent(this._layer,'pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,
       indexPath,
@@ -738,6 +738,6 @@ Edit.Line = Edit.extend({
   _fireEdit() {
     // fire edit event
     this._layerEdited = true;
-    this._layer.fire('pm:edit', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
   },
 });

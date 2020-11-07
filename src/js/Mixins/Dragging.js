@@ -1,3 +1,5 @@
+import Utils from "../L.PM.Utils";
+
 const DragMixin = {
   enableLayerDrag() {
     // before enabling layer drag, disable layer editing
@@ -212,16 +214,16 @@ const DragMixin = {
     this._fireDrag(e);
   },
   _fireDragStart() {
-    this._layer.fire('pm:dragstart', {
+    Utils._fireEvent(this._layer,'pm:dragstart', {
       layer: this._layer,
       shape: this.getShape()
     });
   },
   _fireDrag(e) {
-    this._layer.fire('pm:drag', Object.assign({},e, {shape:this.getShape()}));
+    Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
-    this._layer.fire('pm:dragend', {
+    Utils._fireEvent(this._layer,'pm:dragend', {
       layer: this._layer,
       shape: this.getShape()
     });

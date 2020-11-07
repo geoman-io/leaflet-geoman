@@ -39,21 +39,21 @@ Draw.Cut = Draw.Polygon.extend({
 
     this._editedLayers.forEach(({layer, originalLayer}) =>{
       // fire pm:cut on the cutted layer
-      originalLayer.fire('pm:cut', {
+      Utils._fireEvent(originalLayer,'pm:cut', {
         shape: this._shape,
         layer,
         originalLayer,
       });
 
       // fire pm:cut on the map
-      this._map.fire('pm:cut', {
+      Utils._fireEvent(this._map,'pm:cut', {
         shape: this._shape,
         layer,
         originalLayer,
       });
 
       // fire edit event after cut
-      originalLayer.fire('pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
+      Utils._fireEvent(originalLayer,'pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
     });
     this._editedLayers = [];
 

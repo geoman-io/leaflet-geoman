@@ -1,4 +1,5 @@
 import { getTranslation } from '../helpers';
+import Utils from "../L.PM.Utils";
 
 const PMButton = L.Control.extend({
   options: {
@@ -147,7 +148,7 @@ const PMButton = L.Control.extend({
                 break;
               }
             }
-            this._map.fire('pm:actionclick', {text: action.text, action, btnName, button});
+            Utils._fireEvent(this._map,'pm:actionclick', {text: action.text, action, btnName, button});
           };
 
           L.DomEvent.addListener(actionNode, 'click', actionClick, this);
@@ -188,7 +189,7 @@ const PMButton = L.Control.extend({
             break;
           }
         }
-        this._map.fire('pm:buttonclick', {btnName, button});
+        Utils._fireEvent(this._map,'pm:buttonclick', {btnName, button});
       });
       L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
     }
