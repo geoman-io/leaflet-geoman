@@ -5,7 +5,6 @@ import get from "lodash/get";
 import Utils from "../L.PM.Utils";
 import Draw from './L.PM.Draw';
 import {difference, intersect} from "../helpers/turfHelper";
-import Utils from "../L.PM.Utils";
 
 Draw.Cut = Draw.Polygon.extend({
   initialize(map) {
