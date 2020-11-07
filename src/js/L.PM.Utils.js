@@ -42,6 +42,18 @@ const Utils = {
     }
     return L.polygon(polygon, circle.options);
   },
+  disablePopup(layer){
+    if(layer.getPopup()){
+      layer._tempPopupCopy = layer.getPopup();
+      layer.unbindPopup();
+    }
+  },
+  enablePopup(layer){
+    if(layer._tempPopupCopy){
+      layer.bindPopup(layer._tempPopupCopy);
+      delete layer._tempPopupCopy;
+    }
+  },
   createGeodesicPolygon,
   getTranslation,
   findDeepCoordIndex(arr, latlng) {
