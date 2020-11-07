@@ -255,6 +255,12 @@ Draw.Line = Draw.extend({
     // is this the first point?
     const first = this._layer.getLatLngs().length === 0;
 
+    this._layer._latlngInfo = this._layer._latlngInfo || [];
+    this._layer._latlngInfo.push({
+      latlng,
+      snapInfo: this._hintMarker._snapInfo
+    });
+
     this._layer.addLatLng(latlng);
     const newMarker = this._createMarker(latlng, first);
 
@@ -316,11 +322,7 @@ Draw.Line = Draw.extend({
     const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(
       this._map.pm._getContainingLayer()
     );
-    this._setShapeForFinishLayer(polylineLayer);
-    this._addDrawnLayerProp(polylineLayer);
-
-    // disable drawing
-    this.disable();
+    this._finishLayer(polylineLayer);
 
     // fire the pm:create event and pass shape and layer
     Utils._fireEvent(this._map,'pm:create', {
@@ -330,6 +332,12 @@ Draw.Line = Draw.extend({
 
     if (this.options.snappable) {
       this._cleanupSnapping();
+    }
+
+    // disable drawing
+    this.disable();
+    if(this.options.continueDrawing){
+      this.enable();
     }
   },
   _createMarker(latlng, first) {

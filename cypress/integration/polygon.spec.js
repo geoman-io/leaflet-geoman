@@ -640,26 +640,15 @@ describe('Draw & Edit Poly', () => {
           const layer = L.geoJSON(json).getLayers()[0].addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
-          console.log(map.getCenter());
           return layer;
         })
         .as('poly');
 
       cy.get("@poly").then((poly)=>{
+        let handFinish = false;
 
         expect(poly.pm.hasSelfIntersection()).to.equal(true);
-        const hand_selfIntersectionTrue = new Hand({
-          timing: 'frame',
-          onStop () {
-            expect(poly.pm.hasSelfIntersection()).to.equal(true);
-
-            const toucher_selfIntersectionFalse = hand_selfIntersectionFalse.growFinger('mouse');
-            toucher_selfIntersectionFalse.wait(100).moveTo(504, 337, 100).down().wait(500).moveTo(780, 259, 400).up().wait(100) // allowed
-            // No intersection anymore
-              .moveTo(294, 114, 100).down().wait(500).moveTo(752, 327, 800).up().wait(500) // Not allowed
-          }
-        });
-        var hand_selfIntersectionFalse = new Hand({
+        const handSelfIntersectionFalse = new Hand({
           timing: 'frame',
           onStop () {
             expect(poly.pm.hasSelfIntersection()).to.equal(false);
@@ -668,7 +657,18 @@ describe('Draw & Edit Poly', () => {
             const center = map.getCenter();
             expect(center.lat).to.equal(48.77492609799526);
             expect(center.lng).to.equal(4.847301999999988);
+            handFinish = true;
+          }
+        });
+        const handSelfIntersectionTrue = new Hand({
+          timing: 'frame',
+          onStop () {
+            expect(poly.pm.hasSelfIntersection()).to.equal(true);
 
+            const toucherSelfIntersectionFalse = handSelfIntersectionFalse.growFinger('mouse');
+            toucherSelfIntersectionFalse.wait(100).moveTo(504, 337, 100).down().wait(500).moveTo(780, 259, 400).up().wait(100) // allowed
+            // No intersection anymore
+              .moveTo(294, 114, 100).down().wait(500).moveTo(752, 327, 800).up().wait(500) // Not allowed
           }
         });
 
@@ -676,12 +676,20 @@ describe('Draw & Edit Poly', () => {
 
         map.pm.enableGlobalEditMode({ allowSelfIntersection: false,  allowSelfIntersectionEdit: true, });
 
-        const toucher_selfIntersectionTrue = hand_selfIntersectionTrue.growFinger('mouse');
-        toucher_selfIntersectionTrue.wait(100).moveTo(294, 114, 100).down().wait(500).moveTo(782, 127, 400).up().wait(100) // Not allowed
+        const toucherSelfIntersectionTrue = handSelfIntersectionTrue.growFinger('mouse');
+        toucherSelfIntersectionTrue.wait(100).moveTo(294, 114, 100).down().wait(500).moveTo(782, 127, 400).up().wait(100) // Not allowed
         .moveTo(313, 345, 100).down().wait(500).moveTo(256, 311, 400).up().wait(100) // allowed
         .moveTo(317, 252, 100).down().wait(500).moveTo(782, 127, 400).up().wait(500); // allowed
 
-      })
+
+        // wait until hand is finished
+        cy.waitUntil(() => cy.window().then(() => handFinish),{
+          timeout: 9000,
+        }).then( ()=> {
+          expect(handFinish).to.equal(true);
+        });
+
+      });
     });
   });
 
@@ -737,5 +745,29 @@ describe('Draw & Edit Poly', () => {
       .click();
 
     cy.hasVertexMarkers(5);
-  })
+  });
+
+  it('enable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({continueDrawing: true});
+    });
+
+    cy.toolbarButton('polygon').click();
+
+    // draw a line
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.get(mapSelector)
+      .click(230, 230)
+      .click(250, 250)
+      .click(250, 300)
+      .click(230, 230);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(6);
+  });
 });

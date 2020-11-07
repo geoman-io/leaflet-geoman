@@ -39,7 +39,7 @@ function destinationVincenty(lonlat, brng, dist) { // rewritten to work with lea
     f: 1 / 298.257223563
   };
 
-  const { a, b, f } = VincentyConstants;
+  const {a, b, f} = VincentyConstants;
   const lon1 = lonlat.lng;
   const lat1 = lonlat.lat;
   const s = dist;
@@ -84,6 +84,7 @@ function destinationVincenty(lonlat, brng, dist) { // rewritten to work with lea
 
   return L.latLng(lamFunc, lat2a);
 }
+
 export function createGeodesicPolygon(origin, radius, sides, rotation) {
   let angle;
   let newLonlat;
@@ -98,4 +99,106 @@ export function createGeodesicPolygon(origin, radius, sides, rotation) {
   }
 
   return points;
+}
+
+/* Copied from L.GeometryUtil */
+function destination(latlng, heading, distance) {
+  heading = (heading + 360) % 360;
+  const rad = Math.PI / 180;
+  const radInv = 180 / Math.PI;
+  const R = 6378137; // approximation of Earth's radius
+  const lon1 = latlng.lng * rad;
+  const lat1 = latlng.lat * rad;
+  const rheading = heading * rad;
+  const sinLat1 = Math.sin(lat1);
+  const cosLat1 = Math.cos(lat1);
+  const cosDistR = Math.cos(distance / R);
+  const sinDistR = Math.sin(distance / R);
+  const lat2 = Math.asin(sinLat1 * cosDistR + cosLat1 * sinDistR * Math.cos(rheading));
+  let lon2 = lon1 + Math.atan2(Math.sin(rheading) * sinDistR * cosLat1, cosDistR - sinLat1 * Math.sin(lat2));
+  lon2 *= radInv;
+  lon2 = lon2 > 180 ? lon2 - 360 : lon2 < -180 ? lon2 + 360 : lon2;
+  return L.latLng([lat2 * radInv, lon2]);
+}
+/* Copied from L.GeometryUtil */
+function angle(map, latlngA, latlngB) {
+  const pointA = map.latLngToContainerPoint(latlngA);
+  const pointB = map.latLngToContainerPoint(latlngB);
+  let angleDeg = Math.atan2(pointB.y - pointA.y, pointB.x - pointA.x) * 180 / Math.PI + 90;
+  angleDeg += angleDeg < 0 ? 360 : 0;
+  return angleDeg;
+
+}
+
+export function destinationOnLine(map, latlngA, latlngB, distance) {
+  const angleDeg = angle(map, latlngA, latlngB);
+  return destination(latlngA, angleDeg, distance);
+}
+
+
+// this function is used with the .sort(prioritiseSort(key, sortingOrder)) function of arrays
+export function prioritiseSort(key, _sortingOrder, order = 'asc') {
+  /* the sorting order has all possible keys (lowercase) with the index and then it is sorted by the key on the object */
+
+  if(!_sortingOrder || Object.keys(_sortingOrder).length === 0) {
+    return (a,b)=>a-b; // default sort method
+  }
+
+  // change the keys to lowercase
+  const keys = Object.keys(_sortingOrder);
+  let objKey;
+  let n = keys.length;
+  const sortingOrder={};
+  while (n--) {
+    objKey = keys[n];
+    sortingOrder[objKey.toLowerCase()] = _sortingOrder[objKey];
+  }
+
+  function getShape(layer){
+    if(layer instanceof L.Marker){
+      return "Marker";
+    }else if(layer instanceof L.Circle){
+      return "Circle";
+    }else if(layer instanceof L.CircleMarker){
+      return "CircleMarker";
+    }else if(layer instanceof L.Rectangle){
+      return "Rectangle";
+    }else if(layer instanceof L.Polygon){
+      return "Polygon";
+    }else if(layer instanceof L.Polyline){
+      return "Line";
+    }else{
+      return undefined;
+    }
+  }
+
+  return (a, b) => {
+    let keyA;
+    let keyB;
+    if(key === "instanceofShape"){
+      keyA = getShape(a.layer).toLowerCase();
+      keyB = getShape(b.layer).toLowerCase();
+      if(!keyA || !keyB) return 0;
+    }else{
+      /* eslint-disable-next-line no-prototype-builtins */
+      if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) return 0;
+      keyA = a[key].toLowerCase();
+      keyB = b[key].toLowerCase();
+    }
+
+    const first =
+      keyA in sortingOrder
+        ? sortingOrder[keyA]
+        : Number.MAX_SAFE_INTEGER;
+
+    const second =
+      keyB in sortingOrder
+        ? sortingOrder[keyB]
+        : Number.MAX_SAFE_INTEGER;
+
+    let result = 0;
+    if (first < second) result = -1;
+    else if (first > second) result = 1;
+    return order === 'desc' ? (result * -1) : result;
+  }
 }

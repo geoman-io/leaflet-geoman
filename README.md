@@ -235,8 +235,14 @@ See the available options in the table below.
 | cursorMarker          | `true`                                | show a marker at the cursor                                                                                                                           |
 | finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.2.0.html#interactive-layer-click). |
 | markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
-| editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
 | hideMiddleMarkers     | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                       |
+| minRadiusCircle       | `null`                                | set the min radius of a `Circle`.                                                                                                                     |
+| maxRadiusCircle       | `null`                                | set the max radius of a `Circle`.                                                                                                                     |
+| minRadiusCircleMarker | `null`                                | set the min radius of a `CircleMarker` when editable is active.                                                                                       |
+| maxRadiusCircleMarker | `null`                                | set the max radius of a `CircleMarker` when editable is active.                                                                                       |
+| editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
+| markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them)                                                                                   |
+| continueDrawing       | `false` / `true`                      | Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.       |                                                                                |
 
 
 
@@ -530,19 +536,20 @@ map.pm.setGlobalOptions({ pinning: true, limitMarkersToCount: 15, limitMarkersCo
 
 The following options are available globally and apply when going into global edit mode.
 
-| Option                    | Default | Description                                                                                               |
-| :------------------------ | :------ | :-------------------------------------------------------------------------------------------------------- |
-| snappable                 | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
-| snapDistance              | `20`    | The distance to another vertex when a snap should happen.                                                 |
-| pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                   |
-| allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
-| preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                  |
-| limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                             |
-| limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                     |
-| limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                           |
-| limitMarkersToViewport    | `false` | Shows only markers in the viewport ⭐                                                                      |
-| limitMarkersToClick       | `false` | Shows markers only after the layer was clicked ⭐                                                          |
-| editable                  | `false` | Makes a `CircleMarker` editable like a `Circle`                                                           |
+| Option                    | Default | Description                                                                                                                 |
+| :------------------------ | :------ | :-------------------------------------------------------------------------------------------------------------------------- |
+| snappable                 | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                   |
+| snapDistance              | `20`    | The distance to another vertex when a snap should happen.                                                                   |
+| pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                                     |
+| allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                                                |
+| preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                                    |
+| limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                                               |
+| limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                                       |
+| limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                                             |
+| limitMarkersToViewport    | `false` | Shows only markers in the viewport ⭐                                                                                        |
+| limitMarkersToClick       | `false` | Shows markers only after the layer was clicked ⭐                                                                            |
+| editable                  | `false` | Makes a `CircleMarker` editable like a `Circle`                                                                             |
+| snappingOrder             | `Array` | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`                |
 
 
 Some details about a few more powerful options:

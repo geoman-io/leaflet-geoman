@@ -158,5 +158,55 @@ describe('Draw Rectangle', () => {
       const coords = geojson.geometry.coordinates;
       expect(coords.length).to.equal(1);
     })
-  })
+  });
+
+  it('enable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({continueDrawing: true});
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(191,216)
+      .click(608,323);
+
+    cy.get(mapSelector)
+      .click(230, 230)
+      .click(350, 350);
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(8);
+  });
+
+  it('disable popup on layer while drawing', ()=>{
+    let rect = null;
+    cy.window().then(({ map, L }) => {
+      map.on("pm:create",(e)=>{
+        e.layer.bindPopup('Popup test');
+        if(e.layer instanceof L.Rectangle){
+          rect = e.layer;
+        }
+      });
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(100,50)
+      .click(700,400);
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(300,250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map}) => {
+      const len = map.pm.getGeomanDrawLayers().length;
+      expect(len).to.equal(2);
+
+      const text = rect.getPopup().getContent();
+      expect(text).to.equal('Popup test');
+    })
+  });
 });

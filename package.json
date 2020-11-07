@@ -23,7 +23,9 @@
     "@turf/kinks": "6.x",
     "@turf/line-intersect": "^6.0.2",
     "polygon-clipping": "^0.15.1",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "@turf/boolean-contains": "^6.0.1",
+    "@turf/line-split": "^5.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
@@ -32,6 +34,7 @@
     "copy-webpack-plugin": "^6.2.1",
     "css-loader": "^3.5.3",
     "cypress": "^3.8.3",
+    "cypress-wait-until": "^1.7.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^3.6.0",

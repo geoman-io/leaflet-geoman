@@ -523,7 +523,49 @@ describe('Events', () => {
 
   });
 
-/*
 
- */
+  it('snappingOrder', () => {
+
+    let event = "";
+    cy.window().then(({ map}) => {
+      map.on('pm:drawstart',(e)=>{
+        e.workingLayer.on('pm:snap', (x)=>{event=x});
+      });
+
+      map.pm.setGlobalOptions({snappingOrder: ['Marker']});
+    });
+
+    cy.window().then(() => {
+      cy.toolbarButton('marker').click();
+      cy.get(mapSelector)
+        .click(200, 250);
+
+      cy.toolbarButton('circle-marker').click();
+      cy.get(mapSelector)
+        .click(200, 250);
+
+      cy.toolbarButton('marker').click();
+      cy.get(mapSelector)
+        .trigger("mousemove", 200, 250, { which: 1 })
+    });
+    cy.window().then(() => {
+      const shape = event.layerInteractedWith.pm._shape;
+      expect(shape).to.eq("Marker");
+    });
+
+
+    cy.window().then(({map}) => {
+      map.pm.setGlobalOptions({snappingOrder: ['CircleMarker']});
+
+      map.pm.enableDraw('Marker');
+
+      cy.get(mapSelector)
+        .trigger("mousemove", 200, 150, { which: 1 })
+        .trigger("mousemove", 200, 250, { which: 1 })
+    });
+    cy.window().then(() => {
+      const shape = event.layerInteractedWith.pm._shape;
+      expect(shape).to.eq("CircleMarker");
+    });
+  });
 });
