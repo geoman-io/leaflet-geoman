@@ -160,6 +160,25 @@ describe('Draw Rectangle', () => {
     })
   });
 
+  it('enable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({continueDrawing: true});
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(191,216)
+      .click(608,323);
+
+    cy.get(mapSelector)
+      .click(230, 230)
+      .click(350, 350);
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(8);
+  });
+
   it('disable popup on layer while drawing', ()=>{
     let rect = null;
     cy.window().then(({ map, L }) => {

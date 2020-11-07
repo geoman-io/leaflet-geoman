@@ -236,7 +236,17 @@ See the available options in the table below.
 | finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.2.0.html#interactive-layer-click). |
 | markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
 | editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
-| hideMiddleMarkers   | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                     |
+| hideMiddleMarkers     | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                       |
+| markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them)                                                                                   |
+| continueDrawing       | `false` / `true`                      | Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.       |                                                                                |
+
+
+
+This options are only available for the global options:
+
+| Option                | Default                               | Description                                                                                                                                           |
+| :-------------------- | :------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| layerGroup            | `map`                                 | add the created layers to a layergroup instead to the map.                                                                                            |
 
 You can listen to map events to hook into the drawing procedure like this:
 

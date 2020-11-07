@@ -7,6 +7,8 @@ Draw.CircleMarker = Draw.Marker.extend({
     this._map = map;
     this._shape = 'CircleMarker';
     this.toolbarButtonName = 'drawCircleMarker';
+    // with _layerIsDragging we check if a circlemarker is currently dragged and disable marker creation
+    this._layerIsDragging = false;
   },
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
@@ -102,7 +104,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
-    if (!this.options.editable) {
+    if (!this.options.editable && this.options.markerEditable) {
       // enable edit mode for existing markers
       this._map.eachLayer(layer => {
         if (this.isRelevantMarker(layer)) {
@@ -110,6 +112,8 @@ Draw.CircleMarker = Draw.Marker.extend({
         }
       });
     }
+
+    this._layer.bringToBack();
 
     // fire drawstart event
     this._map.fire('pm:drawstart', {
@@ -234,7 +238,8 @@ Draw.CircleMarker = Draw.Marker.extend({
     return layer instanceof L.CircleMarker && !(layer instanceof L.Circle) && layer.pm && !layer._pmTempLayer;
   },
   _createMarker(e) {
-    if (!e.latlng) {
+    // with _layerIsDragging we check if a circlemarker is currently dragged
+    if (!e.latlng || this._layerIsDragging) {
       return;
     }
 
@@ -249,12 +254,11 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // create marker
     const marker = L.circleMarker(latlng, this.options.pathOptions);
-    this._setShapeForFinishLayer(marker);
-    this._addDrawnLayerProp(marker);
+    this._finishLayer(marker);
     // add marker to the map
-    marker.addTo(this._map);
+    marker.addTo(this._map.pm._getContainingLayer());
 
-    if(marker.pm) {
+    if(marker.pm && this.options.markerEditable) {
       // enable editing for the marker
       marker.pm.enable();
     }
@@ -267,6 +271,10 @@ Draw.CircleMarker = Draw.Marker.extend({
     });
 
     this._cleanupSnapping();
+
+    if(!this.options.continueDrawing){
+      this.disable();
+    }
   },
   _finishShape(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
@@ -282,21 +290,23 @@ Draw.CircleMarker = Draw.Marker.extend({
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
-    const circleLayer = L.circleMarker(center, options).addTo(this._map);
-    this._setShapeForFinishLayer(circleLayer);
-    this._addDrawnLayerProp(circleLayer);
+    const circleLayer = L.circleMarker(center, options).addTo(this._map.pm._getContainingLayer());
+    this._finishLayer(circleLayer);
     if(circleLayer.pm) {
       // create polygon around the circle border
       circleLayer.pm._updateHiddenPolyCircle();
     }
-
-    // disable drawing
-    this.disable();
 
     // fire the pm:create event and pass shape and layer
     this._map.fire('pm:create', {
       shape: this._shape,
       layer: circleLayer,
     });
+
+    // disable drawing
+    this.disable();
+    if(this.options.continueDrawing){
+      this.enable();
+    }
   },
 });

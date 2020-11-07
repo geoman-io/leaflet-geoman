@@ -95,8 +95,6 @@ describe('Draw Marker', () => {
     });
   });
 
-
-
   it('calls pm:drag-events on Marker drag', () => {
 
     let dragstart = false;
@@ -139,6 +137,73 @@ describe('Draw Marker', () => {
       toucherMarker.wait(100).moveTo(150, 240, 100).down().wait(500).moveTo(170, 290, 400).up().wait(100) // Not allowed
 
     });
+  });
+
+  it('enabled of Marker is true in edit-mode', () => {
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(150, 250);
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(true);
+    });
+  });
+
+  it('disable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({continueDrawing: false});
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(191,216);
+
+    cy.get(mapSelector)
+      .click(350, 350);
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasLayers(2);
+  });
+
+  it('disable markerEditable', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({markerEditable: false});
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(191,216);
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(false);
+    });
+  });
+
+  it('enable markerEditable but disable MarkerRemoval', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({markerEditable: true, preventMarkerRemoval: true});
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(191,216);
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(true);
+    });
+
+    cy.get(mapSelector)
+      .rightclick(191,214);
+
+    cy.hasLayers(4);
   });
 
 });

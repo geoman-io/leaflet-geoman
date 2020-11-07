@@ -19,7 +19,7 @@ Edit.CircleMarker = Edit.extend({
       return;
     }
 
-    if (!this.enabled()) {
+    if (this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
       this.disable();
@@ -29,6 +29,7 @@ Edit.CircleMarker = Edit.extend({
     // change state
     this._enabled = true;
 
+    this._layer.on('pm:dragstart', this._onDragStart, this);
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
 
     // create polygon around the circle border
@@ -244,6 +245,9 @@ Edit.CircleMarker = Edit.extend({
     this._layer.fire('pm:remove', { layer: this._layer, shape: this.getShape() });
     this._map.fire('pm:remove', { layer: this._layer, shape: this.getShape() });
   },
+  _onDragStart(){
+    this._map.pm.Draw.CircleMarker._layerIsDragging = true;
+  },
   _onMarkerDragStart(e) {
     this._layer.fire('pm:markerdragstart', {
       markerEvent: e,
@@ -261,6 +265,7 @@ Edit.CircleMarker = Edit.extend({
     });
   },
   _onMarkerDragEnd(e) {
+    this._map.pm.Draw.CircleMarker._layerIsDragging = false;
     this._layer.fire('pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,

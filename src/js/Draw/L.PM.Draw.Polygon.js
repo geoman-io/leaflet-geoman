@@ -72,13 +72,9 @@ Draw.Polygon = Draw.Line.extend({
     }
 
     const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
-      this._map
+      this._map.pm._getContainingLayer()
     );
-    this._setShapeForFinishLayer(polygonLayer);
-    this._addDrawnLayerProp(polygonLayer);
-
-    // disable drawing
-    this.disable();
+    this._finishLayer(polygonLayer);
 
     // fire the pm:create event and pass shape and layer
     this._map.fire('pm:create', {
@@ -92,5 +88,11 @@ Draw.Polygon = Draw.Line.extend({
     // remove the first vertex from "other snapping layers"
     this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
     delete this._tempSnapLayerIndex;
+
+    // disable drawing
+    this.disable();
+    if(this.options.continueDrawing){
+      this.enable();
+    }
   },
 });

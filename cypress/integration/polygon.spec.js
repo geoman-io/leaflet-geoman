@@ -737,5 +737,29 @@ describe('Draw & Edit Poly', () => {
       .click();
 
     cy.hasVertexMarkers(5);
-  })
+  });
+
+  it('enable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({continueDrawing: true});
+    });
+
+    cy.toolbarButton('polygon').click();
+
+    // draw a line
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.get(mapSelector)
+      .click(230, 230)
+      .click(250, 250)
+      .click(250, 300)
+      .click(230, 230);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(6);
+  });
 });

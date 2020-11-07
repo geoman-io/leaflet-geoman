@@ -23,9 +23,6 @@ Draw.Cut = Draw.Polygon.extend({
     const polygonLayer = L.polygon(coords, this.options.pathOptions);
     this._cut(polygonLayer);
 
-    // disable drawing
-    this.disable();
-
     // clean up snapping states
     this._cleanupSnapping();
 
@@ -52,6 +49,12 @@ Draw.Cut = Draw.Polygon.extend({
       originalLayer.fire('pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
     });
     this._editedLayers = [];
+
+    // disable drawing
+    this.disable();
+    if(this.options.continueDrawing){
+      this.enable();
+    }
   },
   _cut(layer) {
     const all = this._map._layers;
@@ -87,7 +90,7 @@ Draw.Cut = Draw.Polygon.extend({
       if (resultLayer.getLayers().length === 1) {
         [resultLayer] = resultLayer.getLayers(); // prevent that a unnecessary layergroup is created
       }
-      const resultingLayer = resultLayer.addTo(this._map);
+      const resultingLayer = resultLayer.addTo(this._map.pm._getContainingLayer());
 
       // give the new layer the original options
       resultingLayer.pm.enable(this.options);
@@ -99,7 +102,9 @@ Draw.Cut = Draw.Polygon.extend({
 
       // remove old layer and cutting layer
       l.remove();
+      l.removeFrom(this._map.pm._getContainingLayer());
       layer.remove();
+      layer.removeFrom(this._map.pm._getContainingLayer());
 
       // Remove it only if it is a layergroup. It can be only not a layergroup if a layer exists
       if (resultingLayer.getLayers && resultingLayer.getLayers().length === 0) {
