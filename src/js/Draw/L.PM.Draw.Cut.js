@@ -1,3 +1,8 @@
+import lineIntersect from "@turf/line-intersect";
+import lineSplit from "@turf/line-split";
+import booleanContains from "@turf/boolean-contains";
+import get from "lodash/get";
+import Utils from "../L.PM.Utils";
 import Draw from './L.PM.Draw';
 import {difference, intersect} from "../helpers/turfHelper";
 
@@ -21,7 +26,9 @@ Draw.Cut = Draw.Polygon.extend({
 
     const coords = this._layer.getLatLngs();
     const polygonLayer = L.polygon(coords, this.options.pathOptions);
-    this._cut(polygonLayer);
+    // readout information about the latlngs like snapping points
+    polygonLayer._latlngInfos = this._layer._latlngInfo;
+    this.cut(polygonLayer);
 
     // clean up snapping states
     this._cleanupSnapping();
@@ -56,8 +63,10 @@ Draw.Cut = Draw.Polygon.extend({
       this.enable();
     }
   },
-  _cut(layer) {
+  cut(layer) {
     const all = this._map._layers;
+    // contains information about snapping points
+    const _latlngInfos = layer._latlngInfos || [];
 
     // find all layers that intersect with `layer`, the just drawn cutting layer
     const layers = Object.keys(all)
@@ -65,14 +74,21 @@ Draw.Cut = Draw.Polygon.extend({
       .map(l => all[l])
       // only layers handled by leaflet-geoman
       .filter(l => l.pm)
-      // only polygons
-      .filter(l => l instanceof L.Polygon)
+      // only polyline instances
+      .filter(l => l instanceof L.Polyline)
       // exclude the drawn one
       .filter(l => l !== layer)
+      .filter(l => !this._layerGroup.hasLayer(l))
       // only layers with intersections
       .filter(l => {
         try {
+          const lineInter = !!lineIntersect(layer.toGeoJSON(15), l.toGeoJSON(15)).features.length > 0;
+
+          if(lineInter){
+            return lineInter;
+          }
           return !!intersect(layer.toGeoJSON(15), l.toGeoJSON(15));
+
         } catch (e) {
           /* eslint-disable-next-line no-console */
           console.error('You cant cut polygons with self-intersections');
@@ -82,8 +98,35 @@ Draw.Cut = Draw.Polygon.extend({
 
     // loop through all layers that intersect with the drawn (cutting) layer
     layers.forEach(l => {
+      let newLayer;
+      if(l instanceof L.Polygon) { // Also for L.Rectangle
+        // easiest way to clone the complete latlngs without reference
+        newLayer = L.polygon(l.getLatLngs());
+        const coords = newLayer.getLatLngs();
+
+        // snapping points added to the layer, so borders are cutted correct
+        _latlngInfos.forEach((info)=>{
+          if(info && info.snapInfo) {
+            const {latlng} = info;
+            // get closest layer ( == input layer) with the closest segment to the intersection point
+            const closest = this._calcClosestLayer(latlng, [newLayer]);
+            if (closest && closest.segment && closest.distance < this.options.snapDistance) {
+              const {segment} = closest;
+              if (segment && segment.length === 2) {
+                const {indexPath, parentPath, newIndex} = Utils._getIndexFromSegment(coords, segment);
+                // define the coordsRing that is edited
+                const coordsRing = indexPath.length > 1 ? get(coords, parentPath) : coords;
+                coordsRing.splice(newIndex, 0, latlng);
+              }
+            }
+          }
+        });
+      }else{ // L.Polyline
+        newLayer = l;
+      }
+
       // find layer difference
-      const diff = difference(l.toGeoJSON(15), layer.toGeoJSON(15));
+      const diff = this._cutLayer(layer,newLayer);
 
       // the resulting layer after the cut
       let resultLayer = L.geoJSON(diff, l.options);
@@ -117,6 +160,31 @@ Draw.Cut = Draw.Polygon.extend({
         layer: resultingLayer,
         originalLayer: l
       });
+
     });
+
+  },
+  _cutLayer(layer,l){
+    const fg = L.geoJSON();
+    let diff;
+    // cut
+    if (l instanceof L.Polygon) {
+      // find layer difference
+      diff = difference(l.toGeoJSON(15), layer.toGeoJSON(15));
+    } else {
+      // get splitted line to look which line part is coverd by the cut polygon
+      const lineDiff = lineSplit(l.toGeoJSON(15), layer.toGeoJSON(15));
+      if (!lineDiff) {
+        return null;
+      }
+      L.geoJSON(lineDiff).getLayers().forEach((lay) => {
+        // add only parts to the map, they are not covered by the cut polygon
+        if (!booleanContains(layer.toGeoJSON(15), lay.toGeoJSON(15))) {
+          lay.addTo(fg);
+        }
+      });
+      diff = fg.toGeoJSON(15);
+    }
+    return diff;
   },
 });
