@@ -1,0 +1,32 @@
+{
+  "tooltips": {
+    "placeMarker": "單擊放置標記",
+    "firstVertex": "單擊放置第一個頂點",
+    "continueLine": "單擊繼續繪製",
+    "finishLine": "單擊任何存在的標記以完成",
+    "finishPoly": "單擊第一個標記以完成",
+    "finishRect": "單擊完成",
+    "startCircle": "單擊放置圓心",
+    "finishCircle": "單擊完成圓形",
+    "placeCircleMarker": "點擊放置圓形標記"
+  },
+  "actions": {
+    "finish": "完成",
+    "cancel": "取消",
+    "removeLastVertex": "移除最後一個頂點"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "放置標記",
+    "drawPolyButton": "繪製多邊形",
+    "drawLineButton": "繪製線段",
+    "drawCircleButton": "繪製圓形",
+    "drawRectButton": "繪製方形",
+    "editButton": "編輯圖形",
+    "dragButton": "移動圖形",
+    "cutButton": "裁切圖形",
+    "deleteButton": "刪除圖形",
+    "drawCircleMarkerButton": "畫圓圈標記",
+    "snappingButton": "將拖動的標記對齊到其他圖層和頂點",
+    "pinningButton": "將共享頂點固定在一起"
+  }
+}

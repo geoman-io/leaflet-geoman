@@ -25,6 +25,8 @@
     "dragButton": "Layer bewegen",
     "cutButton": "Layer schneiden",
     "deleteButton": "Layer löschen",
-    "drawCircleMarkerButton": "Kreismarker zeichnen"
+    "drawCircleMarkerButton": "Kreismarker zeichnen",
+    "snappingButton": "Bewegter Layer an andere Layer oder Vertexe einhacken",
+    "pinningButton": "Vertexe an der gleichen Position verknüpfen"
   }
 }

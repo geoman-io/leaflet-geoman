@@ -25,6 +25,8 @@
     "dragButton": "Mută straturile",
     "cutButton": "Taie straturile",
     "deleteButton": "Șterge straturile",
-    "placeCircleMarker": "Adaugă o bulină"
+    "drawCircleMarkerButton": "Desenează marcatorul cercului",
+    "snappingButton": "Fixați marcatorul glisat pe alte straturi și vârfuri",
+    "pinningButton": "Fixați vârfurile partajate împreună"
   }
 }

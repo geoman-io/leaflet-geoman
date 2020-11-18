@@ -7,7 +7,8 @@
     "finishPoly": "Klik marker pertama untuk mengakhiri",
     "finishRect": "Klik untuk mengakhiri",
     "startCircle": "Klik untuk menempatkan titik pusat lingkaran",
-    "finishCircle": "Klik untuk mengakhiri lingkaran"
+    "finishCircle": "Klik untuk mengakhiri lingkaran",
+    "placeCircleMarker": "Klik untuk menempatkan penanda lingkarann"
   },
   "actions": {
     "finish": "Selesai",
@@ -23,6 +24,9 @@
     "editButton": "Edit Layer",
     "dragButton": "Geser Layer",
     "cutButton": "Potong Layer",
-    "deleteButton": "Hilangkan Layer"
+    "deleteButton": "Hilangkan Layer",
+    "drawCircleMarkerButton": "Digitasi Penanda Lingkaran",
+    "snappingButton": "Jepretkan penanda yang ditarik ke lapisan dan simpul lain",
+    "pinningButton": "Sematkan simpul bersama bersama"
   }
 }

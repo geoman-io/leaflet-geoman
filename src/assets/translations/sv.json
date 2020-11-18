@@ -25,6 +25,8 @@
     "dragButton": "Dra Lager",
     "cutButton": "Klipp i Lager",
     "deleteButton": "Ta bort Lager",
-    "drawCircleMarkerButton": "Rita Cirkelmarkör"
+    "drawCircleMarkerButton": "Rita Cirkelmarkör",
+    "snappingButton": "Snäpp dra markören till andra lager och hörn",
+    "pinningButton": "Fäst delade hörn tillsammans"
   }
 }
