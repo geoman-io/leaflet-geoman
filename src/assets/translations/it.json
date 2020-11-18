@@ -25,6 +25,8 @@
     "dragButton": "Sposta Livelli",
     "cutButton": "Ritaglia Livelli",
     "deleteButton": "Elimina Livelli",
-    "drawCircleMarkerButton": "Disegna Marker del Cherchio"
+    "drawCircleMarkerButton": "Disegna Marker del Cerchio",
+    "snappingButton": "Snap ha trascinato il pennarello su altri strati e vertici",
+    "pinningButton": "Pin condiviso vertici insieme"
   }
 }

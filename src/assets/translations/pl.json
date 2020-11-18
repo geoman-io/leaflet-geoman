@@ -25,6 +25,8 @@
     "dragButton": "Przesuń",
     "cutButton": "Wytnij",
     "deleteButton": "Usuń",
-    "drawCircleMarkerButton": "Narysuj okrągły znacznik"
+    "drawCircleMarkerButton": "Narysuj okrągły znacznik",
+    "snappingButton": "Snap przeciągnięty marker na inne warstwy i wierzchołki",
+    "pinningButton": "Sworzeń wspólne wierzchołki razem"
   }
 }

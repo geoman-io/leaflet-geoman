@@ -7,7 +7,8 @@
     "finishPoly": "Cliquez sur le premier marqueur pour terminer",
     "finishRect": "Cliquez pour terminer",
     "startCircle": "Cliquez pour placer le centre du cercle",
-    "finishCircle": "Cliquez pour finir le cercle"
+    "finishCircle": "Cliquez pour finir le cercle",
+    "placeCircleMarker": "Cliquez pour placer le marqueur circulaire"
   },
   "actions": {
     "finish": "Terminer",
@@ -23,6 +24,9 @@
     "editButton": "Éditer des calques",
     "dragButton": "Déplacer des calques",
     "cutButton": "Couper des calques",
-    "deleteButton": "Supprimer des calques"
+    "deleteButton": "Supprimer des calques",
+    "drawCircleMarkerButton": "Dessiner un marqueur circulaire",
+    "snappingButton": "Glisser le marqueur vers d'autres couches et sommets",
+    "pinningButton": "Épingler ensemble les sommets partagés"
   }
 }
