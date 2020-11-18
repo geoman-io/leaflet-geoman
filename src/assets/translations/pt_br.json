@@ -7,7 +7,8 @@
       "finishPoly": "Clique no primeiro ponto para fechar o polígono",
       "finishRect": "Clique para finalizar",
       "startCircle": "Clique para posicionar o centro do círculo",
-      "finishCircle": "Clique para fechar o círculo"
+      "finishCircle": "Clique para fechar o círculo",
+      "placeCircleMarker": "Clique para posicionar o marcador circular"
     },
     "actions": {
       "finish": "Finalizar",
@@ -23,7 +24,9 @@
       "editButton": "Editar camada(s)",
       "dragButton": "Mover camada(s)",
       "cutButton": "Recortar camada(s)",
-      "deleteButton": "Remover camada(s)"
+      "deleteButton": "Remover camada(s)",
+      "drawCircleMarkerButton": "Marcador de círculos de desenho",
+      "snappingButton": "Marcador arrastado para outras camadas e vértices",
+      "pinningButton": "Vértices compartilhados de pinos juntos"
     }
   }
-  

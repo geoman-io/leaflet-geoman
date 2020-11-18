@@ -1,29 +1,15 @@
 // this mixin adds a global edit mode to the map
 import Utils from '../../L.PM.Utils'
 
-const { findLayers } = Utils
+const { findLayers } = Utils;
 
 const GlobalEditMode = {
   _globalEditMode: false,
-  // TODO: Remove in the next major release
-  globalEditEnabled() {
-    return this.globalEditModeEnabled();
-  },
-  globalEditModeEnabled() {
-    return this._globalEditMode;
-  },
-  setGlobalEditStatus(status) {
-    // set status
-    this._globalEditMode = status;
-
-    // fire event
-    this._fireEditModeEvent(this._globalEditMode);
-  },
   enableGlobalEditMode(o) {
     const options = {
       snappable: this._globalSnappingEnabled,
       ...o
-    }
+    };
 
     const status = true;
 
@@ -42,6 +28,9 @@ const GlobalEditMode = {
       this.throttledReInitEdit = L.Util.throttle(this.handleLayerAdditionInGlobalEditMode, 100, this)
     }
 
+    // save the added layers into the _addedLayers array, to read it later out
+    this._addedLayers = [];
+    this.map.on('layeradd', this._layerAdded, this);
     // handle layers that are added while in removal mode
     this.map.on('layeradd', this.throttledReInitEdit, this);
 
@@ -59,16 +48,27 @@ const GlobalEditMode = {
     });
 
     // cleanup layer off event
-    this.map.off('layeroff', this.throttledReInitEdit, this);
+    this.map.off('layeradd', this.throttledReInitEdit, this);
 
     // Set toolbar button to currect status
     this.Toolbar.toggleButton('editMode', status);
 
     this.setGlobalEditStatus(status);
   },
+  // TODO: Remove in the next major release
+  globalEditEnabled() {
+    return this.globalEditModeEnabled();
+  },
+  globalEditModeEnabled() {
+    return this._globalEditMode;
+  },
+  setGlobalEditStatus(status) {
+    // set status
+    this._globalEditMode = status;
+    // fire event
+    this._fireEditModeEvent(this._globalEditMode);
+  },
   toggleGlobalEditMode(options = this.globalOptions) {
-    // console.log('toggle global edit mode', options);
-
     if (this.globalEditModeEnabled()) {
       // disable
       this.disableGlobalEditMode();
@@ -77,27 +77,33 @@ const GlobalEditMode = {
       this.enableGlobalEditMode(options);
     }
   },
-  handleLayerAdditionInGlobalEditMode({ layer }) {
-    // when global edit mode is enabled and a layer is added to the map,
-    // enable edit for that layer if it's relevant
+  handleLayerAdditionInGlobalEditMode() {
+    const layers = this._addedLayers;
+    this._addedLayers = [];
+    layers.forEach((layer)=> {
+      // when global edit mode is enabled and a layer is added to the map,
+      // enable edit for that layer if it's relevant
 
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-    const isRelevant = !!layer.pm && !layer._pmTempLayer;
-    if (!isRelevant) {
-      return;
-    }
+      // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
+      const isRelevant = !!layer.pm && !layer._pmTempLayer;
+      if (!isRelevant) {
+        return;
+      }
 
-    if (this.globalEditModeEnabled()) {
-      layer.pm.enable({ ...this.globalOptions, snappable: this._globalSnappingEnabled });
-    }
+      if (this.globalEditModeEnabled()) {
+        layer.pm.enable({...this.globalOptions});
+      }
+    });
+  },
+  _layerAdded({layer}){
+    this._addedLayers.push(layer);
   },
   _fireEditModeEvent(enabled) {
-    this.map.fire('pm:globaleditmodetoggled', {
+    Utils._fireEvent(this.map,'pm:globaleditmodetoggled', {
       enabled,
       map: this.map,
     });
   },
-
-}
+};
 
 export default GlobalEditMode

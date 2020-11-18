@@ -20,6 +20,8 @@ const Map = L.Class.extend({
 
     this.globalOptions = {
       snappable: true,
+      layerGroup: undefined,
+      snappingOrder: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {
@@ -30,7 +32,7 @@ const Map = L.Class.extend({
 
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
-    this.map.fire("pm:langchange", {
+    Utils._fireEvent(this.map,"pm:langchange", {
       oldLang,
       activeLang: lang,
       fallback,
@@ -86,10 +88,21 @@ const Map = L.Class.extend({
       ...o
     };
 
+    // check if switched the editable mode for CircleMarker while drawing
+    let reenableCircleMarker = false;
+    if(this.map.pm.Draw.CircleMarker.enabled() && this.map.pm.Draw.CircleMarker.options.editable !== options.editable){
+      this.map.pm.Draw.CircleMarker.disable();
+      reenableCircleMarker = true;
+    }
+
     // enable options for Drawing Shapes
     this.map.pm.Draw.shapes.forEach(shape => {
       this.map.pm.Draw[shape].setOptions(options)
-    })
+    });
+
+    if(reenableCircleMarker){
+      this.map.pm.Draw.CircleMarker.enable();
+    }
 
     // enable options for Editing
     const layers = findLayers(this.map);
@@ -126,11 +139,33 @@ const Map = L.Class.extend({
   disableGlobalCutMode() {
     return this.Draw.Cut.disable();
   },
-  getGeomanLayers(){
-    return findLayers(this.map);
+  getGeomanLayers(asGroup = false){
+    const layers = findLayers(this.map);
+    if(!asGroup) {
+      return layers;
+    }
+    const group = L.featureGroup();
+    group._pmTempLayer = true;
+    layers.forEach((layer) => {
+      group.addLayer(layer);
+    });
+    return group;
   },
-  getGeomanDrawLayers(){
-    return findLayers(this.map).filter(l => l._drawnByGeoman === true);
+  getGeomanDrawLayers(asGroup = false){
+    const layers = findLayers(this.map).filter(l => l._drawnByGeoman === true);
+    if(!asGroup) {
+      return layers;
+    }
+    const group = L.featureGroup();
+    group._pmTempLayer = true;
+    layers.forEach((layer) => {
+      group.addLayer(layer);
+    });
+    return group;
+  },
+  // returns the map instance by default or a layergroup is set through global options
+  _getContainingLayer(){
+    return this.globalOptions.layerGroup && this.globalOptions.layerGroup instanceof L.LayerGroup ? this.globalOptions.layerGroup : this.map;
   }
 
 });

@@ -1,6 +1,6 @@
 import Draw from './L.PM.Draw';
-
 import { getTranslation } from '../helpers';
+import Utils from "../L.PM.Utils";
 
 Draw.Marker = Draw.extend({
   initialize(map) {
@@ -46,19 +46,22 @@ Draw.Marker = Draw.extend({
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
+
+    // enable edit mode for existing markers
+    if(this.options.markerEditable) {
+      this._map.eachLayer(layer => {
+        if (this.isRelevantMarker(layer)) {
+          layer.pm.enable();
+        }
+      });
+    }
+
     // fire drawstart event
-    this._map.fire('pm:drawstart', {
+    Utils._fireEvent(this._map,'pm:drawstart', {
       shape: this._shape,
       workingLayer: this._layer,
     });
     this._setGlobalDrawMode();
-
-    // enable edit mode for existing markers
-    this._map.eachLayer(layer => {
-      if (this.isRelevantMarker(layer)) {
-        layer.pm.enable();
-      }
-    });
   },
   disable() {
     // cancel, if drawing mode isn't even enabled
@@ -85,9 +88,6 @@ Draw.Marker = Draw.extend({
       }
     });
 
-    // fire drawend event
-    this._map.fire('pm:drawend', { shape: this._shape });
-    this._setGlobalDrawMode();
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -97,9 +97,9 @@ Draw.Marker = Draw.extend({
       this._cleanupSnapping();
     }
 
-  },
-  isRelevantMarker(layer) {
-    return layer instanceof L.Marker && layer.pm && !layer._pmTempLayer;
+    // fire drawend event
+    Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    this._setGlobalDrawMode();
   },
   enabled() {
     return this._enabled;
@@ -109,6 +109,20 @@ Draw.Marker = Draw.extend({
       this.disable();
     } else {
       this.enable(options);
+    }
+  },
+  isRelevantMarker(layer) {
+    return layer instanceof L.Marker && layer.pm && !layer._pmTempLayer;
+  },
+  _syncHintMarker(e) {
+    // move the cursor marker
+    this._hintMarker.setLatLng(e.latlng);
+
+    // if snapping is enabled, do it
+    if (this.options.snappable) {
+      const fakeDragEvent = e;
+      fakeDragEvent.target = this._hintMarker;
+      this._handleSnapping(fakeDragEvent);
     }
   },
   _createMarker(e) {
@@ -127,33 +141,36 @@ Draw.Marker = Draw.extend({
 
     // create marker
     const marker = new L.Marker(latlng, this.options.markerStyle);
-    this._setShapeForFinishLayer(marker);
-    this._addDrawnLayerProp(marker);
+    this._finishLayer(marker);
+
+    if(!marker.pm){
+      marker.options.draggable = false;
+    }
 
     // add marker to the map
-    marker.addTo(this._map);
+    marker.addTo(this._map.pm._getContainingLayer());
 
-    // enable editing for the marker
-    marker.pm.enable();
+
+    if(marker.pm && this.options.markerEditable) {
+      // enable editing for the marker
+      marker.pm.enable();
+    }else{
+      if(marker.dragging) {
+        marker.dragging.disable();
+      }
+    }
 
     // fire the pm:create event and pass shape and marker
-    this._map.fire('pm:create', {
+    Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       marker, // DEPRECATED
       layer: marker,
     });
 
     this._cleanupSnapping();
-  },
-  _syncHintMarker(e) {
-    // move the cursor marker
-    this._hintMarker.setLatLng(e.latlng);
 
-    // if snapping is enabled, do it
-    if (this.options.snappable) {
-      const fakeDragEvent = e;
-      fakeDragEvent.target = this._hintMarker;
-      this._handleSnapping(fakeDragEvent);
+    if(!this.options.continueDrawing){
+      this.disable();
     }
   },
 });

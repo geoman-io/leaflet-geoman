@@ -1,4 +1,5 @@
 import SnapMixin from '../Mixins/Snapping';
+import Utils from "../L.PM.Utils";
 
 const Draw = L.Class.extend({
   includes: [SnapMixin],
@@ -17,12 +18,21 @@ const Draw = L.Class.extend({
     },
     markerStyle: {
       draggable: true,
+      icon: L.icon()
     },
+    markerEditable: true,
+    continueDrawing: false,
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
   },
   initialize(map) {
+    // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon
+    // Issue https://github.com/Leaflet/Leaflet/issues/7302 - Leaflet v1.7.1
+    const defaultIcon = new L.Icon.Default();
+    defaultIcon.options.tooltipAnchor = [0,0];
+    this.options.markerStyle.icon = defaultIcon;
+
     // save the map
     this._map = map;
 
@@ -33,6 +43,9 @@ const Draw = L.Class.extend({
     this.shapes.forEach(shape => {
       this[shape] = new L.PM.Draw[shape](this._map);
     });
+
+    this.Marker.setOptions({continueDrawing: true});
+    this.CircleMarker.setOptions({continueDrawing: true});
   },
   setPathOptions(options) {
     this.options.pathOptions = options;
@@ -83,16 +96,27 @@ const Draw = L.Class.extend({
   _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
     if (this._shape === "Cut") {
-      this._map.fire('pm:globalcutmodetoggled', {
+      Utils._fireEvent(this._map,'pm:globalcutmodetoggled', {
         enabled: !!this._enabled,
         map: this._map,
       });
     } else {
-      this._map.fire('pm:globaldrawmodetoggled', {
+      Utils._fireEvent(this._map,'pm:globaldrawmodetoggled', {
         enabled: this._enabled,
         shape: this._shape,
         map: this._map,
       });
+    }
+
+    const layers = Utils.findLayers(this._map);
+    if (this._enabled) {
+      layers.forEach((layer) => {
+        Utils.disablePopup(layer);
+      })
+    } else {
+      layers.forEach((layer) => {
+        Utils.enablePopup(layer);
+      })
     }
   },
 
@@ -142,12 +166,18 @@ const Draw = L.Class.extend({
     }
     return this[name] ? this[name]._shape : name;
   },
+  _finishLayer(layer){
+    // add the pm options from drawing to the new layer (edit)
+    layer.pm.setOptions(this.options);
+    // set the shape (can be a custom shape)
+    if(layer.pm) {
+      layer.pm._shape = this._shape;
+    }
+    this._addDrawnLayerProp(layer);
+  },
   _addDrawnLayerProp(layer){
     layer._drawnByGeoman = true;
   },
-  _setShapeForFinishLayer(layer){
-    layer.pm._shape = this._shape;
-  }
 });
 
 export default Draw;

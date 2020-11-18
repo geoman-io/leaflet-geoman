@@ -1,4 +1,5 @@
 import { getTranslation } from '../helpers';
+import Utils from "../L.PM.Utils";
 
 const PMButton = L.Control.extend({
   options: {
@@ -136,8 +137,23 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
-      if (action.onClick) {
-        L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+      if(!button.disabled) {
+        if (action.onClick) {
+          const actionClick = () => {
+            let btnName = "";
+            const {buttons} = this._map.pm.Toolbar;
+            for (const btn in buttons) {
+              if (buttons[btn]._button === button) {
+                btnName = btn;
+                break;
+              }
+            }
+            Utils._fireEvent(this._map,'pm:actionclick', {text: action.text, action, btnName, button});
+          };
+
+          L.DomEvent.addListener(actionNode, 'click', actionClick, this);
+          L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+        }
       }
       L.DomEvent.disableClickPropagation(actionNode);
     });
@@ -158,14 +174,30 @@ const PMButton = L.Control.extend({
     if (button.className) {
       L.DomUtil.addClass(image, button.className);
     }
-    // before the actual click, trigger a click on currently toggled buttons to
-    // untoggle them and their functionality
-    L.DomEvent.addListener(newButton, 'click', () => {
-      if (this._button.disableOtherButtons) {
-        this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
-      }
-    });
-    L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
+    if(!button.disabled) {
+      // before the actual click, trigger a click on currently toggled buttons to
+      // untoggle them and their functionality
+      L.DomEvent.addListener(newButton, 'click', () => {
+        if (this._button.disableOtherButtons) {
+          this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
+        }
+        let btnName = "";
+        const {buttons} = this._map.pm.Toolbar;
+        for (const btn in buttons) {
+          if (buttons[btn]._button === button) {
+            btnName = btn;
+            break;
+          }
+        }
+        Utils._fireEvent(this._map,'pm:buttonclick', {btnName, button});
+      });
+      L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
+    }
+
+    if(button.disabled){
+      L.DomUtil.addClass(newButton, 'pm-disabled');
+      L.DomUtil.addClass(image, 'pm-disabled');
+    }
 
     L.DomEvent.disableClickPropagation(newButton);
     return buttonContainer;

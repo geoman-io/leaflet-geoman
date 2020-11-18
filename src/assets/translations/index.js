@@ -9,11 +9,14 @@ import nl from './nl.json';
 import fr from './fr.json';
 import zh from './zh.json';
 // eslint-disable-next-line camelcase
+import zh_tw from './zh_tw.json';
+// eslint-disable-next-line camelcase
 import pt_br from './pt_br.json';
 import pl from './pl.json';
 import sv from './sv.json';
 import el from './el.json';
 import hu from './hu.json';
+import da from './da.json';
 
 export default {
   en,
@@ -27,8 +30,10 @@ export default {
   fr,
   pt_br,
   zh,
+  zh_tw,
   pl,
   sv,
   el,
-  hu
+  hu,
+  da
 };

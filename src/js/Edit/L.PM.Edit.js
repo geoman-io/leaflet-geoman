@@ -23,7 +23,7 @@ const Edit = L.Class.extend({
   },
   getShape(){
     return this._shape;
-  }
+  },
 });
 
 export default Edit;

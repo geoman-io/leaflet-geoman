@@ -25,6 +25,8 @@
         "dragButton": "Arrastrar Capas",
         "cutButton": "Cortar Capas",
         "deleteButton": "Remover Capas",
-        "drawCircleMarkerButton": "Dibujar Marcador de Circulo"
+        "drawCircleMarkerButton": "Dibujar Marcador de Circulo",
+        "snappingButton": "El marcador de Snap arrastrado a otras capas y vértices",
+        "pinningButton": "Fijar juntos los vértices compartidos"
     }
 }

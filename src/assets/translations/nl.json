@@ -25,6 +25,8 @@
     "dragButton": "Verplaats",
     "cutButton": "Knip",
     "deleteButton": "Verwijder",
-    "drawCircleMarkerButton": "Plaats Marker"
+    "drawCircleMarkerButton": "Plaats Marker",
+    "snappingButton": "Snap gesleepte marker naar andere lagen en hoekpunten",
+    "pinningButton": "Speld gedeelde hoekpunten samen"
   }
 }

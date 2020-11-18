@@ -1,3 +1,5 @@
+import Utils from "../L.PM.Utils";
+
 const DragMixin = {
   enableLayerDrag() {
     // before enabling layer drag, disable layer editing
@@ -22,6 +24,8 @@ const DragMixin = {
         this._layer.dragging.enable();
       }
       return;
+    }else if(this._layer instanceof L.ImageOverlay){
+      this._getDOMElem().ondragstart = ()=>false;
     }
 
     // temporary coord variable for delta calculation
@@ -68,76 +72,8 @@ const DragMixin = {
     // disable mousedown event
     this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
   },
-  _dragMixinOnMouseUp() {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
-
-    // re-enable map drag
-    if (this._originalMapDragState) {
-      this._layer._map.dragging.enable();
-    }
-
-    // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
-    this._safeToCacheDragState = true;
-
-    // clear up mousemove event
-    this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
-
-    // clear up mouseup event
-    this._layer._map.off('mouseup', this._dragMixinOnMouseUp, this);
-
-    // if no drag happened, don't do anything
-    if (!this._dragging) {
-      return false;
-    }
-
-
-    // update the hidden circle border after dragging
-    if(this._layer instanceof L.CircleMarker){
-      this._layer.pm._updateHiddenPolyCircle();
-    }
-
-    // timeout to prevent click event after drag :-/
-    // TODO: do it better as soon as leaflet has a way to do it better :-)
-    window.setTimeout(() => {
-      // set state
-      this._dragging = false;
-      L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
-
-      // fire pm:dragend event
-      this._fireDragEnd();
-
-      // fire edit
-      this._fireEdit();
-    }, 10);
-
-    return true;
-  },
-  _dragMixinOnMouseMove(e) {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
-
-    if (!this._dragging) {
-      // set state
-      this._dragging = true;
-      L.DomUtil.addClass(el, 'leaflet-pm-dragging');
-
-      // bring it to front to prevent drag interception
-      this._layer.bringToFront();
-
-      // disbale map drag
-      if (this._originalMapDragState) {
-        this._layer._map.dragging.disable();
-      }
-
-
-      // fire pm:dragstart event
-      this._fireDragStart();
-    }
-
-    this._onLayerDrag(e);
+  dragging() {
+    return this._dragging;
   },
   _dragMixinOnMouseDown(e) {
     // cancel if mouse button is NOT the left button
@@ -161,8 +97,70 @@ const DragMixin = {
     // otherwise fast mouse movements stop the drag
     this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
   },
-  dragging() {
-    return this._dragging;
+  _dragMixinOnMouseMove(e) {
+    const el = this._getDOMElem();
+
+    if (!this._dragging) {
+      // set state
+      this._dragging = true;
+      L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+
+      // bring it to front to prevent drag interception
+      this._layer.bringToFront();
+
+      // disbale map drag
+      if (this._originalMapDragState) {
+        this._layer._map.dragging.disable();
+      }
+
+      // fire pm:dragstart event
+      this._fireDragStart();
+    }
+
+    this._onLayerDrag(e);
+  },
+  _dragMixinOnMouseUp() {
+    const el = this._getDOMElem();
+
+    // re-enable map drag
+    if (this._originalMapDragState) {
+      this._layer._map.dragging.enable();
+    }
+
+    // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
+    this._safeToCacheDragState = true;
+
+    // clear up mousemove event
+    this._layer._map.off('mousemove', this._dragMixinOnMouseMove, this);
+
+    // clear up mouseup event
+    this._layer._map.off('mouseup', this._dragMixinOnMouseUp, this);
+
+    // if no drag happened, don't do anything
+    if (!this._dragging) {
+      return false;
+    }
+
+    // update the hidden circle border after dragging
+    if(this._layer instanceof L.CircleMarker){
+      this._layer.pm._updateHiddenPolyCircle();
+    }
+
+    // timeout to prevent click event after drag :-/
+    // TODO: do it better as soon as leaflet has a way to do it better :-)
+    window.setTimeout(() => {
+      // set state
+      this._dragging = false;
+      L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+
+      // fire pm:dragend event
+      this._fireDragEnd();
+
+      // fire edit
+      this._fireEdit();
+    }, 10);
+
+    return true;
   },
   _onLayerDrag(e) {
     // latLng of mouse event
@@ -195,6 +193,11 @@ const DragMixin = {
       const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
+    } else if( this._layer instanceof L.ImageOverlay){
+      // create the new coordinates array
+      const newCoords = moveCoords([this._layer.getBounds().getNorthWest(),this._layer.getBounds().getSouthEast()]);
+      // set new coordinates and redraw
+      this._layer.setBounds(newCoords);
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
@@ -211,31 +214,42 @@ const DragMixin = {
     this._fireDrag(e);
   },
   _fireDragStart() {
-    this._layer.fire('pm:dragstart', {
+    Utils._fireEvent(this._layer,'pm:dragstart', {
       layer: this._layer,
       shape: this.getShape()
     });
   },
   _fireDrag(e) {
-    this._layer.fire('pm:drag', Object.assign({},e, {shape:this.getShape()}));
+    Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
-    this._layer.fire('pm:dragend', {
+    Utils._fireEvent(this._layer,'pm:dragend', {
       layer: this._layer,
       shape: this.getShape()
     });
   },
   addDraggingClass() {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
-    L.DomUtil.addClass(el, 'leaflet-pm-draggable');
+    const el = this._getDOMElem();
+    if(el) {
+      L.DomUtil.addClass(el, 'leaflet-pm-draggable');
+    }
   },
   removeDraggingClass() {
-    const el = this._layer._path
-      ? this._layer._path
-      : this._layer._renderer._container;
-    L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    const el = this._getDOMElem();
+    if(el) {
+      L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    }
+  },
+  _getDOMElem(){
+    let el = null;
+    if(this._layer._path){
+      el = this._layer._path;
+    }else if(this._layer._renderer && this._layer._renderer._container){
+      el = this._layer._renderer._container;
+    }else if(this._layer._image){
+      el = this._layer._image;
+    }
+    return el;
   }
 };
 

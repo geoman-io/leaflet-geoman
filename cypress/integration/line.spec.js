@@ -184,4 +184,28 @@ describe('Draw & Edit Line', () => {
     cy.hasMiddleMarkers(0);
   });
 
+  it('enable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({continueDrawing: true});
+    });
+
+    cy.toolbarButton('polyline').click();
+
+    // draw a line
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(250, 50);
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(250, 250)
+      .click(250, 250);
+
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(5);
+  });
+
 });

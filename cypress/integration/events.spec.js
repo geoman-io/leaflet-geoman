@@ -345,12 +345,14 @@ describe('Events', () => {
 
   it('Events while editing: pm:edit,pm:update,pm:enable,pm:disable,pm:vertexadded,pm:vertexremoved', () => {
     let calledevent = "";
+    let calledeventArr = [];
 
     cy.window().then(({map}) => {
 
       function logEvent(e){
         console.log(e.type)
         calledevent = e.type;
+        calledeventArr[e.type] = e.type;
       }
 
       map.on("pm:create",({layer}) => {
@@ -414,8 +416,9 @@ describe('Events', () => {
       map.pm.disableGlobalEditMode();
     }).then(()=>{
       cy.wait(100);
-      expect(calledevent).to.equal("pm:update");
+      expect(calledeventArr["pm:update"]).to.equal("pm:update");
       calledevent = "";
+      calledeventArr = [];
     });
 
     cy.window().then(({map}) => {
@@ -520,7 +523,49 @@ describe('Events', () => {
 
   });
 
-/*
 
- */
+  it('snappingOrder', () => {
+
+    let event = "";
+    cy.window().then(({ map}) => {
+      map.on('pm:drawstart',(e)=>{
+        e.workingLayer.on('pm:snap', (x)=>{event=x});
+      });
+
+      map.pm.setGlobalOptions({snappingOrder: ['Marker']});
+    });
+
+    cy.window().then(() => {
+      cy.toolbarButton('marker').click();
+      cy.get(mapSelector)
+        .click(200, 250);
+
+      cy.toolbarButton('circle-marker').click();
+      cy.get(mapSelector)
+        .click(200, 250);
+
+      cy.toolbarButton('marker').click();
+      cy.get(mapSelector)
+        .trigger("mousemove", 200, 250, { which: 1 })
+    });
+    cy.window().then(() => {
+      const shape = event.layerInteractedWith.pm._shape;
+      expect(shape).to.eq("Marker");
+    });
+
+
+    cy.window().then(({map}) => {
+      map.pm.setGlobalOptions({snappingOrder: ['CircleMarker']});
+
+      map.pm.enableDraw('Marker');
+
+      cy.get(mapSelector)
+        .trigger("mousemove", 200, 150, { which: 1 })
+        .trigger("mousemove", 200, 250, { which: 1 })
+    });
+    cy.window().then(() => {
+      const shape = event.layerInteractedWith.pm._shape;
+      expect(shape).to.eq("CircleMarker");
+    });
+  });
 });

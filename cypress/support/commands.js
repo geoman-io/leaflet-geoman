@@ -1,3 +1,4 @@
+import 'cypress-wait-until';
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -136,6 +137,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
           const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
+          return layer;
         });
     }
 
@@ -169,6 +171,19 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
+    }
+
+    if (shape === 'FeatureCollectionEventFire') {
+      cy.fixture(shape)
+        .then(json => {
+          //
+          const layer = L.geoJSON(json).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+
+          return layer;
+        })
+        .as('feature');
     }
 
     if (shape === 'FeatureCollectionWithCircles') {

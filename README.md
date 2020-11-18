@@ -9,7 +9,7 @@
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
   Draw, Edit, Drag, Cut, Snap and Pin Layers<br>
-  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, LayerGroups, GeoJSON and MultiPolygons
+  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON and MultiPolygons
 </p>
 <p align="center">
   <a href="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free">
@@ -111,12 +111,25 @@ their options when creating them. Example:
 L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 ```
 
+Enable leaflet-geoman on an ignored layer:
+```js
+layer.options.pmIgnore = false;
+L.PM.reInitLayer(layer);
+```
+If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.
+
+
 ##### Opt-In
 
 If you want to use leaflet-geoman as opt-in, call the following function right after importing:
 
 ```js
-L.PM.initialize({ optIn: true });
+L.PM.setOptIn(true);
+```
+
+And to disable it:
+```js
+L.PM.setOptIn(false);
 ```
 
 All layers will be ignored by leaflet-geoman, unless you specify `pmIgnore: false` on a layer:
@@ -195,18 +208,18 @@ map.pm.Draw.getShapes();
 
 The following methods are available on `map.pm`:
 
-| Method                        | Returns   | Description                                                              |
-| :---------------------------- | :-------- | :----------------------------------------------------------------------- |
-| enableDraw(`shape`,`options`) | -         | Enable Drawing Mode with the passed shape.                               |
-| disableDraw(`shape`)          | -         | Disable Drawing Mode. The passed shape is optional.                      |
-| Draw.getShapes()              | `Array`   | Array of available shapes.                                               |
-| Draw.getActiveShape()         | `String`  | Returns the active shape.                                                |
-| globalDrawModeEnabled()       | `Boolean` | Returns `true` if global draw mode is enabled. `false` when disabled.    |
-| setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                  |
-| setGlobalOptions(`options`)   | -         | Set drawing options.                                                     |
-| getGlobalOptions()            | `Object`  | Returns the global options.                                              |
-| getGeomanLayers()             | `Array`   | Returns all Geoman layers on the map.                                    |
-| getGeomanDrawLayers()         | `Array`   | Returns all drawn Geoman layers on the map.                              |
+| Method                        | Returns   | Description                                                                                     |
+| :---------------------------- | :-------- | :---------------------------------------------------------------------------------------------- |
+| enableDraw(`shape`,`options`) | -         | Enable Drawing Mode with the passed shape.                                                      |
+| disableDraw(`shape`)          | -         | Disable Drawing Mode. The passed shape is optional.                                             |
+| Draw.getShapes()              | `Array`   | Array of available shapes.                                                                      |
+| Draw.getActiveShape()         | `String`  | Returns the active shape.                                                                       |
+| globalDrawModeEnabled()       | `Boolean` | Returns `true` if global draw mode is enabled. `false` when disabled.                           |
+| setPathOptions(`options`)     | -         | Customize the style of the drawn layer.                                                         |
+| setGlobalOptions(`options`)   | -         | Set drawing options.                                                                            |
+| getGlobalOptions()            | `Object`  | Returns the global options.                                                                     |
+| getGeomanLayers(`Boolean`)    | `Array`   | Returns all Geoman layers on the map as array. Pass `true` to get a L.FeatureGroup.             |
+| getGeomanDrawLayers(`Boolean`)| `Array`   | Returns all drawn Geoman layers on the map as array. Pass `true` to get a L.FeatureGroup.       |
 
 See the available options in the table below.
 
@@ -222,8 +235,22 @@ See the available options in the table below.
 | cursorMarker          | `true`                                | show a marker at the cursor                                                                                                                           |
 | finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.2.0.html#interactive-layer-click). |
 | markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.4.0.html#marker-icon) (only for drawing markers).                                          |
+| hideMiddleMarkers     | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                       |
+| minRadiusCircle       | `null`                                | set the min radius of a `Circle`.                                                                                                                     |
+| maxRadiusCircle       | `null`                                | set the max radius of a `Circle`.                                                                                                                     |
+| minRadiusCircleMarker | `null`                                | set the min radius of a `CircleMarker` when editable is active.                                                                                       |
+| maxRadiusCircleMarker | `null`                                | set the max radius of a `CircleMarker` when editable is active.                                                                                       |
 | editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |
-| hideMiddleMarkers   | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                     |
+| markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them)                                                                                   |
+| continueDrawing       | `false` / `true`                      | Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.       |                                                                                |
+
+
+
+This options are only available for the global options:
+
+| Option                | Default                               | Description                                                                                                                                           |
+| :-------------------- | :------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| layerGroup            | `map`                                 | add the created layers to a layergroup instead to the map.                                                                                            |
 
 You can listen to map events to hook into the drawing procedure like this:
 
@@ -328,6 +355,7 @@ The following events are available on a layer instance:
 | pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         | `layer`, `indexPath`, `latlng`, `marker`, `shape`                                                                |
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `layer`, `indexPath`, `marker`, `shape`                                                                          |
 | pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
+| pm:markerdrag      | `e`    | Fired when dragging a vertex-marker                                                                  | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 | pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 | pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
@@ -508,19 +536,20 @@ map.pm.setGlobalOptions({ pinning: true, limitMarkersToCount: 15, limitMarkersCo
 
 The following options are available globally and apply when going into global edit mode.
 
-| Option                    | Default | Description                                                                                               |
-| :------------------------ | :------ | :-------------------------------------------------------------------------------------------------------- |
-| snappable                 | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |
-| snapDistance              | `20`    | The distance to another vertex when a snap should happen.                                                 |
-| pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                   |
-| allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |
-| preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                  |
-| limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                             |
-| limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                     |
-| limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                           |
-| limitMarkersToViewport    | `false` | Shows only markers in the viewport ⭐                                                                      |
-| limitMarkersToClick       | `false` | Shows markers only after the layer was clicked ⭐                                                          |
-| editable                  | `false` | Makes a `CircleMarker` editable like a `Circle`                                                           |
+| Option                    | Default | Description                                                                                                                 |
+| :------------------------ | :------ | :-------------------------------------------------------------------------------------------------------------------------- |
+| snappable                 | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                   |
+| snapDistance              | `20`    | The distance to another vertex when a snap should happen.                                                                   |
+| pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                                     |
+| allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                                                |
+| preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                                    |
+| limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                                               |
+| limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                                       |
+| limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                                             |
+| limitMarkersToViewport    | `false` | Shows only markers in the viewport ⭐                                                                                        |
+| limitMarkersToClick       | `false` | Shows markers only after the layer was clicked ⭐                                                                            |
+| editable                  | `false` | Makes a `CircleMarker` editable like a `Circle`                                                                             |
+| snappingOrder             | `Array` | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`                |
 
 
 Some details about a few more powerful options:
@@ -550,7 +579,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');
 ```
 
-Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `nl`, `el`, `pl`, `sv` and `hu`.
+Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `zh_tw`, `nl`, `el`, `pl`, `sv`, `da` and `hu`.
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.
@@ -701,14 +730,15 @@ map.pm.Toolbar.createCustomControl(options)
 
 | Option        | Default     | Description                                                                                      |
 | :------------ | :---------- | :----------------------------------------------------------------------------------------------- |
-| name          | Required    | Name of the control |
-| block         | ''          | block of the control. `draw`, `edit`, `options`⭐, `custom` |
-| title         | ''          | Text showing when you hover the control |
-| className     | ''          | CSS class with the Icon |
-| onClick       | -           | Function fired when clicking the control |
-| afterClick    | -           | Function fired after clicking the control |
-| actions       | [ ]          | Action that appears as tooltip. Look under [actions](#actions) for more information |
-| toggle        | true        | Control can be toggled |
+| name          | Required    | Name of the control                                                                              |
+| block         | ''          | block of the control. `draw`, `edit`, `options`⭐, `custom`                                       |
+| title         | ''          | Text showing when you hover the control                                                          |
+| className     | ''          | CSS class with the Icon                                                                          |
+| onClick       | -           | Function fired when clicking the control                                                         |
+| afterClick    | -           | Function fired after clicking the control                                                        |
+| actions       | [ ]         | Action that appears as tooltip. Look under [actions](#actions) for more information              |
+| toggle        | true        | Control can be toggled                                                                           |
+| disabled      | false       | Control is disabled                                                                              |
 
 
 **Inherit from an Existing Control**
@@ -764,10 +794,20 @@ The following methods are available on `map.pm.Toolbar`:
 | Method                                      | Returns   | Description                                                                                                   |
 | :------------------------------------------ | :-------- | :------------------------------------------------------------------------------------------------------------ |
 | createCustomControl(`options`)              | -         | To add a custom Control to the Toolbar.                                                                       |
-| copyDrawControl(`instance`, `options`)       | `Object`  | Creates a copy of a draw Control. Returns the `drawInstance` and the `control`.                               |
-| changeActionsOfControl(`name`, `actions`)    | -         | Change the actions of an existing button.                                                                     |
+| copyDrawControl(`instance`, `options`)      | `Object`  | Creates a copy of a draw Control. Returns the `drawInstance` and the `control`.                               |
+| changeActionsOfControl(`name`, `actions`)   | -         | Change the actions of an existing button.                                                                     |
 | changeControlOrder(`shapes`)                | -         | Change the order of the controls in the Toolbar. You can pass all shapes and `Edit`, `Drag`, `Removal`, `Cut` |
 | getControlOrder()                           | `Array`   | Get the current order of the controls.                                                                        |
+| setButtonDisabled(`name`, `Boolean`)        | -         | Enable / disable a button.                                                                                    |
+
+The following events are available on a map instance:
+
+| Event          | Params | Description                               | Output                                               |
+| :------------- | :----- | :---------------------------------------- | :--------------------------------------------------- |
+| pm:buttonclick | `e`    | Fired when a Toolbar button is clicked    | `btnName`, `button`                                  |
+| pm:actionclick | `e`    | Fired when a Toolbar action is clicked    | `text`, `action`, `btnName`, `button`                |
+
+
 
 ### Feature Requests
 

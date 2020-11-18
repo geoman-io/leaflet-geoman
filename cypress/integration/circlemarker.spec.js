@@ -44,55 +44,53 @@ describe('Draw Circle Marker', () => {
     createMarkers();
   });
 
-
   it('handles 6k circle markers in under 1 sec', () => {
+    cy.toolbarButton('circle-marker').click();
 
-    cy.toolbarButton('circle-marker')
-      .click()
-
-    cy.get(mapSelector)
-      .click(150, 250)
+    cy.get(mapSelector).click(150, 250);
 
     cy.testLayerAdditionPerformance();
   });
 
-
-
   it('correctly disables drag', () => {
-
     createMarkers();
 
     cy.window().then(({ map, L }) => {
-      map.eachLayer((layer) => {
+      map.eachLayer(layer => {
         if (layer instanceof L.CircleMarker) {
-          assert.isFalse(L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'), 'not draggable')
+          assert.isFalse(
+            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            'not draggable'
+          );
         }
-      })
+      });
     });
 
-    cy.toolbarButton('edit')
-      .click()
+    cy.toolbarButton('edit').click();
 
     cy.window().then(({ map, L }) => {
-      map.eachLayer((layer) => {
+      map.eachLayer(layer => {
         if (layer instanceof L.CircleMarker) {
-          assert.isTrue(L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'), 'draggable')
+          assert.isTrue(
+            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            'draggable'
+          );
         }
-      })
+      });
     });
 
-    cy.toolbarButton('edit')
-      .click()
+    cy.toolbarButton('edit').click();
 
     cy.window().then(({ map, L }) => {
-      map.eachLayer((layer) => {
+      map.eachLayer(layer => {
         if (layer instanceof L.CircleMarker) {
-          assert.isFalse(L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'), 'not draggable')
+          assert.isFalse(
+            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            'not draggable'
+          );
         }
-      })
+      });
     });
-
-
   });
 
   it('deletes all circle markers', () => {
@@ -116,10 +114,9 @@ describe('Draw Circle Marker', () => {
     cy.hasCircleLayers(0);
   });
 
-
   it('draw a CircleMarker like a Circle', () => {
-    cy.window().then(({ map}) => {
-      map.pm.setGlobalOptions({editable: true});
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ editable: true, continueDrawing: false });
     });
 
     cy.toolbarButton('circle-marker')
@@ -133,12 +130,194 @@ describe('Draw Circle Marker', () => {
 
     cy.hasCircleLayers(1);
 
-
     cy.toolbarButton('edit')
       .click()
       .closest('.button-container')
       .should('have.class', 'active');
 
     cy.hasVertexMarkers(2);
+  });
+  it('snapping to CircleMarker with pmIgnore:true', () => {
+    cy.window().then(({ map, L }) => {
+      L.circleMarker(map.getCenter(), { pmIgnore: true }).addTo(map);
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(4);
+  });
+
+  it('disable continueDrawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ continueDrawing: false });
+    });
+
+    cy.toolbarButton('circle-marker').click();
+    cy.get(mapSelector).click(191, 216);
+
+    cy.get(mapSelector).click(350, 350);
+
+    cy.toolbarButton('circle-marker')
+      .closest('.button-container')
+      .should('have.not.class', 'active');
+
+    cy.toolbarButton('edit').click();
+    cy.hasLayers(3);
+  });
+
+  it('disable markerEditable', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ markerEditable: false });
+    });
+
+    cy.toolbarButton('circle-marker').click();
+    cy.get(mapSelector).click(191, 216);
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(false);
+    });
+  });
+
+  it('enable markerEditable but disable MarkerRemoval', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        markerEditable: true,
+        preventMarkerRemoval: true,
+      });
+    });
+
+    cy.toolbarButton('circle-marker').click();
+    cy.get(mapSelector).click(191, 216);
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      const enabled = marker.pm.enabled();
+      expect(enabled).to.equal(true);
+    });
+
+    cy.get(mapSelector).rightclick(191, 214);
+
+    cy.hasLayers(5);
+  });
+
+  it('set max radius of circleMarker', () => {
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.window().then(({ map, L }) => {
+      L.marker(map.getCenter()).addTo(map);
+      map.pm.setGlobalOptions({
+        minRadiusCircleMarker: 50,
+        maxRadiusCircleMarker: 150,
+        editable: true,
+      });
+      cy.get(mapSelector)
+        .click(250, 200)
+        .click(400, 190)
+        .then(() => {
+          const layers = map.pm.getGeomanDrawLayers();
+          layers.forEach(layer => {
+            if (layer instanceof L.CircleMarker) {
+              expect(layer.getRadius()).to.equal(150);
+            }
+          });
+        });
+    });
+  });
+  it('set min radius of circleMarker', () => {
+    let handFinish = false;
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.window().then(({ map, L }) => {
+      L.marker(map.getCenter()).addTo(map);
+      map.pm.setGlobalOptions({
+        minRadiusCircleMarker: 150,
+        maxRadiusCircleMarker: 300,
+        editable: true,
+      });
+      cy.get(mapSelector)
+        .click(250, 200)
+        .click(300, 200)
+        .then(() => {
+          const layers = map.pm.getGeomanDrawLayers();
+          layers.forEach(layer => {
+            if (layer instanceof L.CircleMarker) {
+              expect(layer.getRadius()).to.equal(150);
+            }
+          });
+        });
+    });
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.window().then(({ Hand, map, L }) => {
+      const handMarker = new Hand({
+        timing: 'frame',
+        onStop: () => {
+          map.eachLayer(layer => {
+            if (layer instanceof L.CircleMarker) {
+              expect(true).to.equal(layer.getRadius() > 150);
+            }
+          });
+          const handMarker2 = new Hand({
+            timing: 'frame',
+            onStop: () => {
+              handFinish = true;
+              map.eachLayer(layer => {
+                if (layer instanceof L.CircleMarker) {
+                  expect(true).to.equal(
+                    layer.getRadius() >= 145 && layer.getRadius() < 155
+                  );
+                }
+              });
+            },
+          });
+          const toucherMarker2 = handMarker2.growFinger('mouse');
+          toucherMarker2
+            .wait(200)
+            .moveTo(490, 198, 100)
+            .down()
+            .wait(500)
+            .moveTo(317, 198, 600)
+            .up()
+            .wait(100);
+        },
+      });
+      const toucherMarker = handMarker.growFinger('mouse');
+      toucherMarker
+        .wait(100)
+        .moveTo(400, 198, 100)
+        .down()
+        .wait(500)
+        .moveTo(500, 198, 400)
+        .up()
+        .wait(100);
+      // wait until hand is finished
+      cy.waitUntil(() => cy.window().then(() => handFinish)).then(() => {
+        expect(handFinish).to.equal(true);
+      });
+    });
   });
 });

@@ -1,4 +1,5 @@
 import Utils from '../L.PM.Utils';
+import {isEmptyDeep, prioritiseSort} from "../helpers";
 
 const SnapMixin = {
   _initSnappableMarkers() {
@@ -30,14 +31,15 @@ const SnapMixin = {
       marker.on('dragend', this._cleanupSnapping, this);
     });
   },
-  _unsnap() {
-    // delete the last snap
-    delete this._snapLatLng;
-  },
   _cleanupSnapping() {
     // delete it, we need to refresh this with each start of a drag because
     // meanwhile, new layers could've been added to the map
     delete this._snapList;
+
+    if (this.throttledList) {
+      this._map.off('layeradd', this.throttledList, this);
+      this.throttledList = undefined;
+    }
 
     // remove map event
     this._map.off('pm:remove', this._handleSnapLayerRemoval, this);
@@ -48,17 +50,10 @@ const SnapMixin = {
       });
     }
   },
-  _handleSnapLayerRemoval({ layer }) {
-    // find the layers index in snaplist
-    const index = this._snapList.findIndex(
-      e => e._leaflet_id === layer._leaflet_id
-    );
-    // remove it from the snaplist
-    this._snapList.splice(index, 1);
-  },
   _handleSnapping(e) {
-    function throttledList() {
-      return L.Util.throttle(this._createSnapList, 100, this);
+
+    if (!this.throttledList) {
+      this.throttledList = L.Util.throttle(this._createSnapList, 100, this);
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
@@ -73,8 +68,8 @@ const SnapMixin = {
       this._createSnapList();
 
       // re-create the snaplist again when a layer is added during draw
-      this._map.off('layeradd', throttledList, this);
-      this._map.on('layeradd', throttledList, this);
+      this._map.off('layeradd', this.throttledList, this);
+      this._map.on('layeradd', this.throttledList, this);
     }
 
     // if there are no layers to snap to, stop here
@@ -91,7 +86,7 @@ const SnapMixin = {
     );
 
     // if no layers found. Can happen when circle is the only visible layer on the map and the hidden snapping-border circle layer is also on the map
-    if(Object.keys(closestLayer).length === 0){
+    if (Object.keys(closestLayer).length === 0) {
       return false;
     }
 
@@ -122,19 +117,21 @@ const SnapMixin = {
       distance: closestLayer.distance,
     };
 
-    eventInfo.marker.fire('pm:snapdrag', eventInfo);
-    this._layer.fire('pm:snapdrag', eventInfo);
+    Utils._fireEvent(eventInfo.marker,'pm:snapdrag', eventInfo);
+    Utils._fireEvent(this._layer,'pm:snapdrag', eventInfo);
 
     if (closestLayer.distance < minDistance) {
       // snap the marker
+      marker._orgLatLng = marker.getLatLng();
       marker.setLatLng(snapLatLng);
 
       marker._snapped = true;
+      marker._snapInfo = eventInfo;
 
       const triggerSnap = () => {
         this._snapLatLng = snapLatLng;
-        marker.fire('pm:snap', eventInfo);
-        this._layer.fire('pm:snap', eventInfo);
+        Utils._fireEvent(marker,'pm:snap', eventInfo);
+        Utils._fireEvent(this._layer,'pm:snap', eventInfo);
       };
 
       // check if the snapping position differs from the last snap
@@ -155,66 +152,12 @@ const SnapMixin = {
       marker._snapped = false;
 
       // and fire unsnap event
-      eventInfo.marker.fire('pm:unsnap', eventInfo);
-      this._layer.fire('pm:unsnap', eventInfo);
+      Utils._fireEvent(eventInfo.marker,'pm:unsnap', eventInfo);
+      Utils._fireEvent(this._layer,'pm:unsnap', eventInfo);
     }
 
     return true;
   },
-
-  // we got the point we want to snap to (C), but we need to check if a coord of the polygon
-  // receives priority over C as the snapping point. Let's check this here
-  _checkPrioritiySnapping(closestLayer) {
-    const map = this._map;
-
-    // A and B are the points of the closest segment to P (the marker position we want to snap)
-    const A = closestLayer.segment[0];
-    const B = closestLayer.segment[1];
-
-    // C is the point we would snap to on the segment.
-    // The closest point on the closest segment of the closest polygon to P. That's right.
-    const C = closestLayer.latlng;
-
-    // distances from A to C and B to C to check which one is closer to C
-    const distanceAC = this._getDistance(map, A, C);
-    const distanceBC = this._getDistance(map, B, C);
-
-    // closest latlng of A and B to C
-    let closestVertexLatLng = distanceAC < distanceBC ? A : B;
-
-    // distance between closestVertexLatLng and C
-    let shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
-
-    // snap to middle (M) of segment if option is enabled
-    if (this.options.snapMiddle) {
-      const M = Utils.calcMiddleLatLng(map, A, B);
-      const distanceMC = this._getDistance(map, M, C);
-
-      if (distanceMC < distanceAC && distanceMC < distanceBC) {
-        // M is the nearest vertex
-        closestVertexLatLng = M;
-        shortestDistance = distanceMC;
-      }
-    }
-
-    // the distance that needs to be undercut to trigger priority
-    const priorityDistance = this.options.snapDistance;
-
-    // the latlng we ultemately want to snap to
-    let snapLatlng;
-
-    // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
-    // the closestVertexLatLng has priority over C as the snapping point.
-    if (shortestDistance < priorityDistance) {
-      snapLatlng = closestVertexLatLng;
-    } else {
-      snapLatlng = C;
-    }
-
-    // return the copy of snapping point
-    return Object.assign({}, snapLatlng);
-  },
-
   _createSnapList() {
     let layers = [];
     const debugIndicatorLines = [];
@@ -229,18 +172,24 @@ const SnapMixin = {
       if (
         (layer instanceof L.Polyline ||
           layer instanceof L.Marker ||
-          layer instanceof L.CircleMarker) &&
-        layer.options.snapIgnore !== true
+          layer instanceof L.CircleMarker ||
+          layer instanceof L.ImageOverlay) &&
+        layer.options.snapIgnore !== true &&
+        (
+          (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+          (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
+        )
       ) {
-
         // adds a hidden polygon which matches the border of the circle
-        if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm._hiddenPolyCircle) {
+        if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm && layer.pm._hiddenPolyCircle) {
           layers.push(layer.pm._hiddenPolyCircle);
+        } else if (layer instanceof L.ImageOverlay) {
+          layer = L.rectangle(layer.getBounds());
         }
         layers.push(layer);
 
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        const debugLine = L.polyline([], {color: 'red', pmIgnore: true});
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
         if (layer instanceof L.Circle || layer instanceof L.CircleMarker) {
@@ -257,7 +206,7 @@ const SnapMixin = {
 
     // also remove everything that has no coordinates yet
     layers = layers.filter(
-      layer => layer._latlng || (layer._latlngs && layer._latlngs.length > 0)
+      layer => layer._latlng || (layer._latlngs && !isEmptyDeep(layer._latlngs))
     );
 
     // finally remove everything that's leaflet-geoman specific temporary stuff
@@ -272,8 +221,17 @@ const SnapMixin = {
 
     this.debugIndicatorLines = debugIndicatorLines;
   },
+  _handleSnapLayerRemoval({layer}) {
+    // find the layers index in snaplist
+    const index = this._snapList.findIndex(
+      e => e._leaflet_id === layer._leaflet_id
+    );
+    // remove it from the snaplist
+    this._snapList.splice(index, 1);
+  },
   _calcClosestLayer(latlng, layers) {
     // the closest polygon to our dragged marker latlng
+    let closestLayers = [];
     let closestLayer = {};
 
     // loop through the layers
@@ -291,18 +249,21 @@ const SnapMixin = {
       // save the info if it doesn't exist or if the distance is smaller than the previous one
       if (
         closestLayer.distance === undefined ||
-        results.distance < closestLayer.distance
+        results.distance <= closestLayer.distance
       ) {
+        if (results.distance < closestLayer.distance) {
+          closestLayers = [];
+        }
         closestLayer = results;
         closestLayer.layer = layer;
+        closestLayers.push(closestLayer);
       }
     });
 
     // return the closest layer and it's data
-    // if there is no closest layer, return undefined
-    return closestLayer;
+    // if there is no closest layer, return an empty object
+    return this._getClosestLayerByPriority(closestLayers);
   },
-
   _calcLayerDistances(latlng, layer) {
     const map = this._map;
 
@@ -384,7 +345,83 @@ const SnapMixin = {
       distance: shortestDistance,
     };
   },
+  _getClosestLayerByPriority(layers) {
+    // sort the layers by creation, so it is snapping to the oldest layer from the same shape
+    layers = layers.sort((a, b) => a._leaflet_id - b._leaflet_id);
 
+    const shapes = ['Marker', 'CircleMarker', 'Circle', 'Line', 'Polygon', 'Rectangle'];
+    const order = this._map.pm.globalOptions.snappingOrder || [];
+
+    let lastIndex = 0;
+    const prioOrder = {};
+    // merge user-preferred priority with default priority
+    order.concat(shapes).forEach((shape) => {
+      if (!prioOrder[shape]) {
+        lastIndex += 1;
+        prioOrder[shape] = lastIndex;
+      }
+    });
+
+    // sort layers by priority
+    layers.sort(prioritiseSort('instanceofShape', prioOrder));
+    return layers[0] || {};
+  },
+  // we got the point we want to snap to (C), but we need to check if a coord of the polygon
+  // receives priority over C as the snapping point. Let's check this here
+  _checkPrioritiySnapping(closestLayer) {
+    const map = this._map;
+
+    // A and B are the points of the closest segment to P (the marker position we want to snap)
+    const A = closestLayer.segment[0];
+    const B = closestLayer.segment[1];
+
+    // C is the point we would snap to on the segment.
+    // The closest point on the closest segment of the closest polygon to P. That's right.
+    const C = closestLayer.latlng;
+
+    // distances from A to C and B to C to check which one is closer to C
+    const distanceAC = this._getDistance(map, A, C);
+    const distanceBC = this._getDistance(map, B, C);
+
+    // closest latlng of A and B to C
+    let closestVertexLatLng = distanceAC < distanceBC ? A : B;
+
+    // distance between closestVertexLatLng and C
+    let shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
+
+    // snap to middle (M) of segment if option is enabled
+    if (this.options.snapMiddle) {
+      const M = Utils.calcMiddleLatLng(map, A, B);
+      const distanceMC = this._getDistance(map, M, C);
+
+      if (distanceMC < distanceAC && distanceMC < distanceBC) {
+        // M is the nearest vertex
+        closestVertexLatLng = M;
+        shortestDistance = distanceMC;
+      }
+    }
+
+    // the distance that needs to be undercut to trigger priority
+    const priorityDistance = this.options.snapDistance;
+
+    // the latlng we ultemately want to snap to
+    let snapLatlng;
+
+    // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
+    // the closestVertexLatLng has priority over C as the snapping point.
+    if (shortestDistance < priorityDistance) {
+      snapLatlng = closestVertexLatLng;
+    } else {
+      snapLatlng = C;
+    }
+
+    // return the copy of snapping point
+    return Object.assign({}, snapLatlng);
+  },
+  _unsnap() {
+    // delete the last snap
+    delete this._snapLatLng;
+  },
   _getClosestPointOnSegment(map, latlng, latlngA, latlngB) {
     let maxzoom = map.getMaxZoom();
     if (maxzoom === Infinity) {
