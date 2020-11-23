@@ -2,7 +2,7 @@ import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
 import Utils from "../L.PM.Utils";
 
-import { getTranslation } from '../helpers';
+import {formatDistance, getTranslation} from '../helpers';
 
 Draw.Line = Draw.extend({
   initialize(map) {
@@ -22,6 +22,8 @@ Draw.Line = Draw.extend({
 
     // enable draw mode
     this._enabled = true;
+    // set initial perimeter
+    this._perimeter = 0;
 
     // create a new layergroup
     this._layerGroup = new L.LayerGroup();
@@ -172,6 +174,9 @@ Draw.Line = Draw.extend({
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
 
+    // update marker hint
+    this._updateHintMarkerContent();
+
     // if snapping is enabled, do it
     if (this.options.snappable) {
       const fakeDragEvent = e;
@@ -261,6 +266,10 @@ Draw.Line = Draw.extend({
       snapInfo: this._hintMarker._snapInfo
     });
 
+    // add distance between vertices
+    if (!first) {
+      this._perimeter += latlng.distanceTo(this._layer.getLatLngs()[this._layer.getLatLngs().length - 1]);
+    }
     this._layer.addLatLng(latlng);
     const newMarker = this._createMarker(latlng, first);
 
@@ -276,6 +285,8 @@ Draw.Line = Draw.extend({
   _removeLastVertex() {
     // remove last coords
     const coords = this._layer.getLatLngs();
+    // subtract from perimeter length of deleted edge
+    this._perimeter -= coords[coords.length - 1].distanceTo(coords[coords.length - 2]);
     const removedCoord = coords.pop();
 
     // if all coords are gone, cancel drawing
@@ -322,6 +333,10 @@ Draw.Line = Draw.extend({
     const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(
       this._map.pm._getContainingLayer()
     );
+
+    // set perimeter in leaflet layer
+    polylineLayer.perimeter = this._perimeter;
+
     this._finishLayer(polylineLayer);
 
     // fire the pm:create event and pass shape and layer
@@ -368,4 +383,23 @@ Draw.Line = Draw.extend({
 
     return marker;
   },
+  _updateHintMarkerContent() {
+    const latlngs = this._hintline.getLatLngs();
+    if (latlngs !== undefined && latlngs[0] !== undefined) {
+
+      const secondVertex = this._layer.getLatLngs().length > 2;
+      // select right hint based on number of vertices
+      const drawHint = secondVertex ? getTranslation('tooltips.finishLine') : getTranslation('tooltips.continueLine');
+
+      // distance between last and new vertex
+      const distance = latlngs[0].distanceTo(latlngs[1]);
+
+      this._hintMarker.setTooltipContent(
+        `${drawHint}<br> 
+         <b>${getTranslation('tooltips.distance')}:</b> ${formatDistance(distance)}<br>
+         <b>${getTranslation('tooltips.perimeter')}:</b> ${formatDistance(this._perimeter + distance)}`
+      );
+    }
+  },
+
 });

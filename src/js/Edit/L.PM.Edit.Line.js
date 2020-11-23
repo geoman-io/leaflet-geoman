@@ -3,7 +3,7 @@ import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
-import { isEmptyDeep, removeEmptyCoordRings } from '../helpers';
+import {formatArea, formatDistance, getTranslation, isEmptyDeep, removeEmptyCoordRings} from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -26,6 +26,14 @@ Edit.Line = Edit.extend({
     L.Util.setOptions(this, options);
 
     this._map = this._layer._map;
+
+    // take perimeter from leaflet layer
+    this._perimeter = this._layer.perimeter;
+
+    // take area from leaflet polygon layer
+    if (this.isPolygon()) {
+      this._area = this._layer.area;
+    }
 
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {
@@ -110,6 +118,10 @@ Edit.Line = Edit.extend({
     }
 
     if (this._layerEdited) {
+      // save updated parameters to leaflet layer
+      this._layer.perimeter = this._perimeter;
+      this._layer.area = this._area;
+
       Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
     }
     this._layerEdited = false;
@@ -604,6 +616,9 @@ Edit.Line = Edit.extend({
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
+    // get initial marker coords
+    this._initialMarkerCoords = marker.getLatLng();
+
     Utils._fireEvent(this._layer,'pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
@@ -622,6 +637,25 @@ Edit.Line = Edit.extend({
       this.cachedColor = this._layer.options.color;
     }
 
+    // get neighbor markers
+    const connectedMarkers = this._getConnectedNeighborMarkers(marker);
+    // set hint on neighbor markers
+    connectedMarkers.forEach(neighborMarker => {
+      neighborMarker.bindTooltip('neighborMarker', {
+        permanent: true,
+        offset: L.point(0, 10),
+        direction: 'bottom',
+        opacity: 0.8,
+      }).openTooltip();
+    });
+
+    // set tooltip on dragged marker
+    marker.bindTooltip('center', {
+      permanent: true,
+      offset: L.point(0, 10),
+      direction: 'bottom',
+      opacity: 0.8,
+    }).openTooltip();
 
     if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
       this._markerAllowedToDrag = this._checkMarkerAllowedToDrag(marker);
@@ -688,6 +722,35 @@ Edit.Line = Edit.extend({
       marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
     }
 
+    // get neighbor markers
+    const connectedMarkers = this._getConnectedNeighborMarkers(marker);
+    const neighborMarkerInitialDistance = [0, 0];
+    const neighborMarkerDistance = [0, 0];
+    let neighborMarkerIndex = 0;
+
+
+    connectedMarkers.forEach(neighborMarker => {
+      // calculate actual distance between neighbor and center marker
+      neighborMarkerDistance[neighborMarkerIndex] = neighborMarker.getLatLng().distanceTo(marker.getLatLng());
+      // calculate initial distance between neighbor and center marker
+      neighborMarkerInitialDistance[neighborMarkerIndex] = neighborMarker.getLatLng().distanceTo(this._initialMarkerCoords);
+      // update hint on neighbor marker
+      neighborMarker.setTooltipContent(`<b>${getTranslation('tooltips.distance')}:</b> ${formatDistance(neighborMarkerDistance[neighborMarkerIndex])}`);
+      // update index for next measurements
+      neighborMarkerIndex += 1;
+    });
+
+    // calculate actual perimeter
+    const actualPerimeter = this._perimeter + neighborMarkerDistance[0] - neighborMarkerInitialDistance[0] + neighborMarkerDistance[1] - neighborMarkerInitialDistance[1];
+    let markerTooltip = `<b>${getTranslation('tooltips.perimeter')}:</b> ${formatDistance(actualPerimeter)}`;
+    // calculate actual area if polygon
+    if (this.isPolygon()) {
+      this._area = Utils.calculatePolygonArea(this._layer.getLatLngs()[0]);
+      markerTooltip += `<br><b>${getTranslation('tooltips.area')}:</b> ${formatArea(this._area)}`;
+    }
+    // update center marker hint
+    marker.setTooltipContent(markerTooltip);
+
     // if self intersection is not allowed, handle it
     if (!this.options.allowSelfIntersection) {
       this._handleLayerStyle();
@@ -717,6 +780,10 @@ Edit.Line = Edit.extend({
       intersection = false;
     }
 
+    // unbind tooltips when drag ended
+    this._getConnectedNeighborMarkers(marker).forEach(neighborMarker => neighborMarker.unbindTooltip());
+    marker.unbindTooltip();
+
     if (!this.options.allowSelfIntersection && intersection) {
       // reset coordinates
       this._layer.setLatLngs(this._coordsBeforeEdit);
@@ -738,6 +805,40 @@ Edit.Line = Edit.extend({
   _fireEdit() {
     // fire edit event
     this._layerEdited = true;
+    // update layer's params
+    this._calculateFigureParams();
     Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
   },
+  _calculateFigureParams() {
+    this._recalculatePerimeter();
+  },
+  _recalculatePerimeter() {
+    this._perimeter = 0;
+    this._layer.getLatLngs().forEach((value, index, array) => {
+      if (index !== array.length - 1)
+        this._perimeter += value.distanceTo(array[index + 1]);
+    });
+  },
+  _getConnectedNeighborMarkers(marker) {
+    const result = [];
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+      this._markers,
+      marker
+    );
+    const markerArr =
+      indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
+
+    // find the indices of next and previous markers
+    const nextMarkerIndex = (index + 1) % markerArr.length;
+    const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+
+    const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
+    // add if editing marker not last in polyline
+    if (nextMarkerIndex !== 0)
+      result.push(nextMarker);
+    // add if editing marker not first in polyline
+    if (prevMarkerIndex === index - 1)
+      result.push(prevMarker)
+    return result;
+  }
 });

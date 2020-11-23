@@ -1,5 +1,6 @@
 import lineIntersect from "@turf/line-intersect";
 import Edit from './L.PM.Edit';
+import Utils from "../L.PM.Utils";
 
 Edit.Polygon = Edit.Line.extend({
     _shape: 'Polygon',
@@ -19,4 +20,25 @@ Edit.Polygon = Edit.Line.extend({
         return true;
 
     },
+    _calculateFigureParams() {
+      this._recalculatePerimeter();
+      this.area = Utils.calculatePolygonArea(this._layer.getLatLngs());
+    },
+    _recalculatePerimeter() {
+      this._perimeter = 0;
+      this._layer.getLatLngs()[0].forEach((value, index, array) => {
+        if (index !== array.length - 1)
+          this._perimeter += value.distanceTo(array[index + 1]);
+        else
+          this._perimeter += value.distanceTo(array[0]); // edge between first and last vertices
+      });
+   },
+   _getConnectedNeighborMarkers(marker) {
+     const result = [];
+     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
+     // in case of polygon all neighbor vertices are connected so add both
+     result.push(nextMarker);
+     result.push(prevMarker)
+     return result;
+   },
 });

@@ -1,7 +1,7 @@
 import Draw from './L.PM.Draw';
 import Utils from "../L.PM.Utils";
 
-import { getTranslation } from '../helpers';
+import {formatDistance, getTranslation} from '../helpers';
 
 Draw.Polygon = Draw.Line.extend({
   initialize(map) {
@@ -75,6 +75,15 @@ Draw.Polygon = Draw.Line.extend({
     const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
       this._map.pm._getContainingLayer()
     );
+
+    // add edge between first and last vertices
+    this._perimeter += coords[0].distanceTo(coords[coords.length - 1]);
+    // set perimeter in leaflet layer
+    polygonLayer.perimeter = this._perimeter;
+
+    // calculate area of polygon and set it on leaflet layer
+    polygonLayer.area = Utils.calculatePolygonArea(this._layer.getLatLngs());
+
     this._finishLayer(polygonLayer);
 
     // fire the pm:create event and pass shape and layer
@@ -96,4 +105,22 @@ Draw.Polygon = Draw.Line.extend({
       this.enable();
     }
   },
+  _updateHintMarkerContent() {
+    const latlngs = this._hintline.getLatLngs();
+    if (latlngs !== undefined && latlngs[0] !== undefined) {
+
+      const secondVertex = this._layer.getLatLngs().length > 2;
+      // select right hint based on number of vertices
+      const drawHint = secondVertex ? getTranslation('tooltips.finishPoly') : getTranslation('tooltips.continueLine');
+
+      // distance between last and new vertex
+      const distance = latlngs[0].distanceTo(latlngs[1]);
+
+      this._hintMarker.setTooltipContent(
+        `${drawHint}<br> 
+         <b>${getTranslation('tooltips.distance')}:</b> ${formatDistance(distance)}<br>
+         <b>${getTranslation('tooltips.perimeter')}:</b> ${formatDistance(this._perimeter + distance)}`
+      );
+    }
+  }
 });

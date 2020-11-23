@@ -9,6 +9,39 @@ const Utils = {
 
     return map.unproject(p1._add(p2)._divideBy(2));
   },
+  calculatePolygonArea(coords) {
+    // Algorithm based on https://mathworld.wolfram.com/PolygonArea.html
+    const diameter = 6371000 * 2;
+    const circumference = diameter * Math.PI;
+    const arrayY = [];
+    const arrayX = [];
+    const arrayArea = [];
+    let area = 0;
+    const latRef = coords[0].lat;
+    const lngRef = coords[0].lng;
+    coords.forEach(latlng => {
+      arrayY.push(this.calculateYSegment(latRef, latlng.lat, circumference));
+      arrayX.push(this.calculateXSegment(lngRef, latlng.lng, latlng.lat, circumference));
+    })
+    arrayY.forEach((value, index) => {
+      if (index > 0) {
+        arrayArea.push(this.calculateAreaInSquareMeters(arrayX[index - 1], arrayX[index], arrayY[index - 1], arrayY[index]));
+      }
+    });
+    arrayArea.forEach(value => {
+      area += value;
+    })
+    return Math.abs(area);
+  },
+  calculateYSegment(latitudeRef, latitude, circumference) {
+    return (latitude - latitudeRef) * circumference / 360.0;
+  },
+  calculateXSegment(longitudeRef, longitude, latitude, circumference) {
+    return (longitude - longitudeRef) * circumference * Math.cos(latitude * (Math.PI / 180)) / 360.0;
+  },
+  calculateAreaInSquareMeters(x1, x2, y1, y2) {
+    return (y1 * x2 - x1 * y2) / 2;
+  },
   findLayers(map) {
     let layers = [];
     map.eachLayer(layer => {
