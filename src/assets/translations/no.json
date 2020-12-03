@@ -1,0 +1,32 @@
+{
+  "tooltips": {
+    "placeMarker": "Klikk for å plassere punkt",
+    "firstVertex": "Klikk for å plassere første punkt",
+    "continueLine": "Klikk for å tegne videre",
+    "finishLine": "Klikk på et eksisterende punkt for å fullføre",
+    "finishPoly": "Klikk første punkt for å fullføre",
+    "finishRect": "Klikk for å fullføre",
+    "startCircle": "Klikk for å sette sirkel midtpunkt",
+    "finishCircle": "Klikk for å fullføre sirkel",
+    "placeCircleMarker": "Klikk for å plassere sirkel"
+  },
+  "actions": {
+    "finish": "Fullfør",
+    "cancel": "Kanseller",
+    "removeLastVertex": "Fjern forrige punkt"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Tegn Punkt",
+    "drawPolyButton": "Tegn Flate",
+    "drawLineButton": "Tegn Linje",
+    "drawCircleButton": "Tegn Sirkel",
+    "drawRectButton": "Tegn rektangel",
+    "editButton": "Rediger Objekter",
+    "dragButton": "Dra Objekter",
+    "cutButton": "Kutt Objekter",
+    "deleteButton": "Fjern Objekter",
+    "drawCircleMarkerButton": "Tegn sirkel-punkt",
+    "snappingButton": "Fest dratt punkt til andre objekter og punkt",
+    "pinningButton": "Pin delte punkt sammen"
+  }
+}
