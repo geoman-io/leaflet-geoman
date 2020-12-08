@@ -68,7 +68,7 @@ Edit.CircleMarker = Edit.extend({
     this._layer.off('contextmenu', this._removeMarker, this);
 
     // only fire events if it was enabled before
-    if (!this.enabled()) {
+    if (this.enabled()) {
       if (this._layerEdited) {
         Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
       }
