@@ -77,7 +77,7 @@
   background-image: url('../assets/icons/Magnet.svg');
 }
 
-.leaflet-buttons-control-button:hover {
+.leaflet-buttons-control-button:hover,.leaflet-buttons-control-button:focus {
   cursor: pointer;
   background-color: #f4f4f4;
 }
