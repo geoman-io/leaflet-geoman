@@ -344,13 +344,7 @@ Edit.Line = Edit.extend({
 
       // if it does self-intersect, mark or flash it red
       if (flash) {
-        layer.setStyle({ color: 'red' });
-        this.isRed = true;
-
-        window.setTimeout(() => {
-          layer.setStyle({ color: this.cachedColor });
-          this.isRed = false;
-        }, 200);
+        this._flashLayer();
       } else {
         layer.setStyle({ color: 'red' });
         this.isRed = true;
@@ -370,6 +364,19 @@ Edit.Line = Edit.extend({
         this._updateDisabledMarkerStyle(this._markers, false);
       }
     }
+  },
+  _flashLayer(){
+    if(!this.cachedColor){
+      this.cachedColor = this._layer.options.color;
+    }
+
+    this._layer.setStyle({ color: 'red' });
+    this.isRed = true;
+
+    window.setTimeout(() => {
+      this._layer.setStyle({ color: this.cachedColor });
+      this.isRed = false;
+    }, 200);
   },
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
@@ -419,19 +426,14 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // if allowed to delete objects
+    // prevent removal of the layer
     if(this.options.preventObjectDelete) {
-      // if there are 2 vertexes, dont allow delete
-      if (coordsRing.length <= 2) {
-        return;
-      }
-
-      // for polygons if there are 3 vertexes, dont allow delete
-      if (this.isPolygon() && coordsRing.length <= 3) {
+      // if on a line only 2 vertices left or on a polygon 3 vertices left, don't allow to delete
+      if (coordsRing.length <= 2 || (this.isPolygon() && coordsRing.length <= 3)) {
+        this._flashLayer();
         return;
       }
     }
-
 
     // remove coordinate
     coordsRing.splice(index, 1);
@@ -455,9 +457,8 @@ Edit.Line = Edit.extend({
       // TODO: kind of an ugly workaround maybe do it better?
       this.disable();
       this.enable(this.options);
+
     }
-
-
 
     // if no coords are left, remove the layer
     if (isEmptyDeep(coords)) {
