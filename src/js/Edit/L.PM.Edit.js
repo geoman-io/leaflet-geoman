@@ -12,7 +12,7 @@ const Edit = L.Class.extend({
     limitMarkersToCount: -1,
     preventMarkerRemoval: false,
     hideMiddleMarkers: false,
-    preventObjectDelete: false
+    removeLayerBelowMinVertexCount: true
   },
   setOptions(options) {
     L.Util.setOptions(this, options);

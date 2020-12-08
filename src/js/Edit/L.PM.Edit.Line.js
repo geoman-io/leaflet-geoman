@@ -420,7 +420,7 @@ Edit.Line = Edit.extend({
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
     // if allowed to delete objects
-    if(!this.options.preventObjectDelete) {
+    if(this.options.removeLayerBelowMinVertexCount) {
       // remove coordinate
       coordsRing.splice(index, 1);
 
