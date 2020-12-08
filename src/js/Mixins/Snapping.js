@@ -52,6 +52,9 @@ const SnapMixin = {
   },
   _handleSnapping(e) {
 
+    const marker = e.target;
+    marker._snapped = false;
+
     if (!this.throttledList) {
       this.throttledList = L.Util.throttle(this._createSnapList, 100, this);
     }
@@ -77,7 +80,6 @@ const SnapMixin = {
       return false;
     }
 
-    const marker = e.target;
 
     // get the closest layer, it's closest latlng, segment and the distance
     const closestLayer = this._calcClosestLayer(
