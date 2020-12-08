@@ -419,7 +419,7 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // if allowed to delete objects
+    // if allowed to delete layer
     if(this.options.removeLayerBelowMinVertexCount) {
       // remove coordinate
       coordsRing.splice(index, 1);
@@ -446,12 +446,12 @@ Edit.Line = Edit.extend({
       }
 
     } else {
-      // if there are 2 vertexes, dont allow delete
+      // if there are 2 vertexes on line, dont allow delete layer
       if (coordsRing.length <= 2) {
         return;
       }
 
-      // for polygons if there are 3 vertexes, dont allow delete
+      // for polygons if there are 3 vertexes, dont allow delete layer
       if (this.isPolygon() && coordsRing.length <= 3) {
         return;
       }
