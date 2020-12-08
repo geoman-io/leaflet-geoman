@@ -83,6 +83,7 @@ const PMButton = L.Control.extend({
       'leaflet-buttons-control-button',
       buttonContainer
     );
+    newButton.setAttribute('role','button');
 
     // the buttons actions
     const actionContainer = L.DomUtil.create(
@@ -134,6 +135,7 @@ const PMButton = L.Control.extend({
         `leaflet-pm-action ${pos} action-${name}`,
         actionContainer
       );
+      actionNode.setAttribute('role','button');
 
       actionNode.innerHTML = action.text;
 
