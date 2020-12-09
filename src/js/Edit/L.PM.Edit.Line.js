@@ -426,8 +426,9 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // prevent removal of the layer
-    if(this.options.preventObjectDelete) {
+
+    // prevent removal of the layer if the vertex count is below minimum
+    if(!this.options.removeLayerBelowMinVertexCount) {
       // if on a line only 2 vertices left or on a polygon 3 vertices left, don't allow to delete
       if (coordsRing.length <= 2 || (this.isPolygon() && coordsRing.length <= 3)) {
         this._flashLayer();
