@@ -419,28 +419,66 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // remove coordinate
-    coordsRing.splice(index, 1);
+    // if allowed to delete layer
+    if(this.options.removeLayerBelowMinVertexCount) {
+      // remove coordinate
+      coordsRing.splice(index, 1);
 
-    // set new latlngs to the polygon
-    this._layer.setLatLngs(coords);
-
-    // if a polygon has less than 3 vertices, remove all of them. We will remove only one here, the if-clause after that will handle the rest
-    if (this.isPolygon() && coordsRing.length <= 2) {
-      coordsRing.splice(0, coordsRing.length);
-    }
-
-    // if the ring of the line has no coordinates left, remove the last coord too
-    if (coordsRing.length <= 1) {
-      coordsRing.splice(0, coordsRing.length);
-
-      // set new coords
+      // set new latlngs to the polygon
       this._layer.setLatLngs(coords);
 
-      // re-enable editing so unnecessary markers are removed
-      // TODO: kind of an ugly workaround maybe do it better?
-      this.disable();
-      this.enable(this.options);
+      // if a polygon has less than 3 vertices, remove all of them. We will remove only one here, the if-clause after that will handle the rest
+      if (this.isPolygon() && coordsRing.length <= 2) {
+        coordsRing.splice(0, coordsRing.length);
+      }
+
+      // if the ring of the line has no coordinates left, remove the last coord too
+      if (coordsRing.length <= 1) {
+        coordsRing.splice(0, coordsRing.length);
+
+        // set new coords
+        this._layer.setLatLngs(coords);
+
+        // re-enable editing so unnecessary markers are removed
+        // TODO: kind of an ugly workaround maybe do it better?
+        this.disable();
+        this.enable(this.options);
+      }
+
+    } else {
+      // if there are 2 vertexes on line, dont allow delete layer
+      if (coordsRing.length <= 2) {
+        return;
+      }
+
+      // for polygons if there are 3 vertexes, dont allow delete layer
+      if (this.isPolygon() && coordsRing.length <= 3) {
+        return;
+      }
+
+      // remove coordinate
+      coordsRing.splice(index, 1);
+
+      // set new latlngs to the polygon
+      this._layer.setLatLngs(coords);
+
+      // if a polygon has less than 3 vertices, remove all of them. We will remove only one here, the if-clause after that will handle the rest
+      if (this.isPolygon() && coordsRing.length <= 2) {
+        coordsRing.splice(0, coordsRing.length);
+      }
+
+      // if the ring of the line has no coordinates left, remove the last coord too
+      if (coordsRing.length <= 1) {
+        coordsRing.splice(0, coordsRing.length);
+
+        // set new coords
+        this._layer.setLatLngs(coords);
+
+        // re-enable editing so unnecessary markers are removed
+        // TODO: kind of an ugly workaround maybe do it better?
+        this.disable();
+        this.enable(this.options);
+      }
 
     }
 

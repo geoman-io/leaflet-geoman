@@ -11,7 +11,8 @@ const Edit = L.Class.extend({
     draggable: true,
     limitMarkersToCount: -1,
     preventMarkerRemoval: false,
-    hideMiddleMarkers: false
+    hideMiddleMarkers: false,
+    removeLayerBelowMinVertexCount: true
   },
   setOptions(options) {
     L.Util.setOptions(this, options);

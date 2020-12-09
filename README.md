@@ -543,6 +543,7 @@ The following options are available globally and apply when going into global ed
 | pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                                     |
 | allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                                                |
 | preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                                    |
+| removeLayerBelowMinVertexCount       | `true` | If `true`, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If `false`, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons. |
 | limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                                               |
 | limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                                       |
 | limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                                             |
