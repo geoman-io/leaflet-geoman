@@ -344,13 +344,7 @@ Edit.Line = Edit.extend({
 
       // if it does self-intersect, mark or flash it red
       if (flash) {
-        layer.setStyle({ color: 'red' });
-        this.isRed = true;
-
-        window.setTimeout(() => {
-          layer.setStyle({ color: this.cachedColor });
-          this.isRed = false;
-        }, 200);
+        this._flashLayer();
       } else {
         layer.setStyle({ color: 'red' });
         this.isRed = true;
@@ -370,6 +364,19 @@ Edit.Line = Edit.extend({
         this._updateDisabledMarkerStyle(this._markers, false);
       }
     }
+  },
+  _flashLayer(){
+    if(!this.cachedColor){
+      this.cachedColor = this._layer.options.color;
+    }
+
+    this._layer.setStyle({ color: 'red' });
+    this.isRed = true;
+
+    window.setTimeout(() => {
+      this._layer.setStyle({ color: this.cachedColor });
+      this.isRed = false;
+    }, 200);
   },
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
@@ -419,66 +426,38 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // if allowed to delete layer
-    if(this.options.removeLayerBelowMinVertexCount) {
-      // remove coordinate
-      coordsRing.splice(index, 1);
 
-      // set new latlngs to the polygon
-      this._layer.setLatLngs(coords);
-
-      // if a polygon has less than 3 vertices, remove all of them. We will remove only one here, the if-clause after that will handle the rest
-      if (this.isPolygon() && coordsRing.length <= 2) {
-        coordsRing.splice(0, coordsRing.length);
-      }
-
-      // if the ring of the line has no coordinates left, remove the last coord too
-      if (coordsRing.length <= 1) {
-        coordsRing.splice(0, coordsRing.length);
-
-        // set new coords
-        this._layer.setLatLngs(coords);
-
-        // re-enable editing so unnecessary markers are removed
-        // TODO: kind of an ugly workaround maybe do it better?
-        this.disable();
-        this.enable(this.options);
-      }
-
-    } else {
-      // if there are 2 vertexes on line, dont allow delete layer
-      if (coordsRing.length <= 2) {
+    // prevent removal of the layer if the vertex count is below minimum
+    if(!this.options.removeLayerBelowMinVertexCount) {
+      // if on a line only 2 vertices left or on a polygon 3 vertices left, don't allow to delete
+      if (coordsRing.length <= 2 || (this.isPolygon() && coordsRing.length <= 3)) {
+        this._flashLayer();
         return;
       }
+    }
 
-      // for polygons if there are 3 vertexes, dont allow delete layer
-      if (this.isPolygon() && coordsRing.length <= 3) {
-        return;
-      }
+    // remove coordinate
+    coordsRing.splice(index, 1);
 
-      // remove coordinate
-      coordsRing.splice(index, 1);
+    // set new latlngs to the polygon
+    this._layer.setLatLngs(coords);
 
-      // set new latlngs to the polygon
+    // if a polygon has less than 3 vertices, remove all of them. We will remove only one here, the if-clause after that will handle the rest
+    if (this.isPolygon() && coordsRing.length <= 2) {
+      coordsRing.splice(0, coordsRing.length);
+    }
+
+    // if the ring of the line has no coordinates left, remove the last coord too
+    if (coordsRing.length <= 1) {
+      coordsRing.splice(0, coordsRing.length);
+
+      // set new coords
       this._layer.setLatLngs(coords);
 
-      // if a polygon has less than 3 vertices, remove all of them. We will remove only one here, the if-clause after that will handle the rest
-      if (this.isPolygon() && coordsRing.length <= 2) {
-        coordsRing.splice(0, coordsRing.length);
-      }
-
-      // if the ring of the line has no coordinates left, remove the last coord too
-      if (coordsRing.length <= 1) {
-        coordsRing.splice(0, coordsRing.length);
-
-        // set new coords
-        this._layer.setLatLngs(coords);
-
-        // re-enable editing so unnecessary markers are removed
-        // TODO: kind of an ugly workaround maybe do it better?
-        this.disable();
-        this.enable(this.options);
-      }
+      // re-enable editing so unnecessary markers are removed
+      // TODO: kind of an ugly workaround maybe do it better?
+      this.disable();
+      this.enable(this.options);
 
     }
 
