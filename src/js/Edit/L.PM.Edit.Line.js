@@ -192,6 +192,7 @@ Edit.Line = Edit.extend({
 
     marker._pmTempLayer = true;
 
+    marker.on('click', this._onVertexClick, this);
     marker.on('dragstart', this._onMarkerDragStart, this);
     marker.on('move', this._onMarkerDrag, this);
     marker.on('dragend', this._onMarkerDragEnd, this);
@@ -259,7 +260,9 @@ Edit.Line = Edit.extend({
     // first, make this middlemarker a regular marker
     newM.off('movestart');
     newM.off('click');
-
+    newM.on('click', () => {
+      newM.on('click', this._onVertexClick, this);
+    })
     // now, create the polygon coordinate point for that marker
     // and push into marker array
     // and associate polygon coordinate with marker coordinate
@@ -734,6 +737,17 @@ Edit.Line = Edit.extend({
     }
     // fire edit event
     this._fireEdit();
+  },
+  _onVertexClick(e) {
+    const vertex = e.target;
+    const { indexPath } = this.findDeepMarkerIndex(this._markers, vertex);
+
+    Utils._fireEvent(this._layer,'pm:vertexclick', {
+      layer: this._layer,
+      markerEvent: e,
+      indexPath,
+      shape: this.getShape()
+    });
   },
   _fireEdit() {
     // fire edit event
