@@ -260,9 +260,7 @@ Edit.Line = Edit.extend({
     // first, make this middlemarker a regular marker
     newM.off('movestart');
     newM.off('click');
-    newM.on('click', () => {
-      newM.on('click', this._onVertexClick, this);
-    })
+    newM.on('click', this._onVertexClick, this);
     // now, create the polygon coordinate point for that marker
     // and push into marker array
     // and associate polygon coordinate with marker coordinate
