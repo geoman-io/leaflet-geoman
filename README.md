@@ -354,7 +354,7 @@ The following events are available on a layer instance:
 | pm:disable         | `e`    | Fired when edit mode on a layer is disabled                                                          | `layer`, `shape`                                                                                                 |
 | pm:vertexadded     | `e`    | Fired when a vertex is added                                                                         | `layer`, `indexPath`, `latlng`, `marker`, `shape`                                                                |
 | pm:vertexremoved   | `e`    | Fired when a vertex is removed                                                                       | `layer`, `indexPath`, `marker`, `shape`                                                                          |
-| pm:vertexclick     | `e`    | Fired when a vertex is clicked                                                                       | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
+| pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 | pm:markerdrag      | `e`    | Fired when dragging a vertex-marker                                                                  | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 | pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 | pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
@@ -362,6 +362,7 @@ The following events are available on a layer instance:
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. | `layer`, `intersection`, `shape`                                                                                 |
 | pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           | `layer`, `latlng`, `shape`                                                                                       |
+| pm:vertexclick     | `e`    | Fired when a vertex is clicked                                                                       | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 
 You can enable Edit Mode for all layers on a map like this:
 
