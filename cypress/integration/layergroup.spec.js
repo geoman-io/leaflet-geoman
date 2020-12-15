@@ -62,7 +62,6 @@ describe('Edit LayerGroup', () => {
     cy.window().then(({L, map}) => {
       fg = L.featureGroup().addTo(map);
       fg2 = L.featureGroup().addTo(map);
-      map.on('click', (e) => console.log(map.latLngToContainerPoint(e.latlng)));
 
       map.pm.setGlobalOptions({layerGroup: fg});
 
@@ -273,6 +272,60 @@ describe('Edit LayerGroup', () => {
     cy.window().then(() => {
       expect(firedEventCount).to.equal(2);
     });
+  });
+
+  it('new added layers will be changed to edit mode too if editmode is enabled', () => {
+
+    cy.window().then(({map, L}) => {
+      map.setView([4.009783550466563,104.00000000000006],8);
+      const fg = L.featureGroup().addTo(map)
+
+      map.on('pm:create layeradd',(e)=>{
+        e.layer.addTo(fg);
+      })
+    });
+
+    cy.toolbarButton('rectangle')
+      .click();
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('edit').click();
+
+    cy.drawShape('MultiPolygon');
+
+
+    cy.hasVertexMarkers(12);
+  });
+
+
+  it('new drawn markers not enable other layers in the same layergroup', () => {
+
+    cy.window().then(({map, L}) => {
+      map.setView([4.009783550466563,104.00000000000006],8);
+      const fg = L.featureGroup().addTo(map)
+
+      map.on('pm:create layeradd',(e)=>{
+        e.layer.addTo(fg);
+      })
+    });
+
+    cy.toolbarButton('rectangle')
+      .click();
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('marker')
+      .click();
+
+    cy.get(mapSelector)
+      .click(450, 350);
+
+    cy.hasVertexMarkers(0);
   });
 
 });

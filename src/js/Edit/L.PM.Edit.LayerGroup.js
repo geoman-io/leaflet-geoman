@@ -25,13 +25,6 @@ Edit.LayerGroup = L.Class.extend({
       _initLayers.forEach((layer) => {
         this._initLayer(layer);
       });
-      // if editing was already enabled for this group, enable it again
-      // so the new layers are enabled
-      if (_initLayers.length > 0) {
-        if (this.enabled()) {
-          this.enable(this.getOptions());
-        }
-      }
     };
     this._layerGroup.on('layeradd', L.Util.throttle(addThrottle, 100, this), this);
 
