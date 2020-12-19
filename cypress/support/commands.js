@@ -151,6 +151,17 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
         });
     }
 
+
+    if (shape === 'MultiLineString') {
+      cy.fixture(shape)
+        .as('poly')
+        .then(json => {
+          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const bounds = layer.getBounds();
+          map.fitBounds(bounds);
+        });
+    }
+
     if (shape === 'MonsterPolygon') {
       cy.fixture(shape)
         .as('poly')

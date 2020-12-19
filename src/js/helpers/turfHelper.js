@@ -23,6 +23,10 @@ export function turfLineString(coords) {
   return feature({"type": "LineString", "coordinates": coords});
 }
 
+export function turfMultiLineString(coords) {
+  return feature({"type": "MultiLineString", "coordinates": coords});
+}
+
 export function turfPolygon(coords) {
   return feature({"type": "Polygon", "coordinates": coords});
 }
@@ -53,4 +57,40 @@ export function difference(polygon1, polygon2) {
   if (differenced.length === 0) return null;
   if (differenced.length === 1) return turfPolygon(differenced[0]);
   return turfMultiPolygon(differenced);
+}
+
+// LineString coords returns 1
+// MultiLineString coords returns 2
+export function getDepthOfCoords(coords){
+  if(Array.isArray(coords)){
+    return 1 + getDepthOfCoords(coords[0]);
+  }
+  return -1; // return -1 because this is already the lng of the lnglat (geojson) array
+}
+
+export function flattenPolyline(polyline){
+  if(polyline instanceof L.Polyline){
+    polyline = polyline.toGeoJSON(15);
+  }
+
+  const coords = getCoords(polyline);
+  const depth = getDepthOfCoords(coords);
+  const features = [];
+  if(depth > 1){
+    coords.forEach((coord)=>{
+      features.push(turfLineString(coord));
+    });
+  }else{
+    features.push(polyline);
+  }
+
+  return features;
+}
+
+export function groupToMultiLineString(group){
+  const coords = [];
+  group.eachLayer((layer)=>{
+      coords.push(getCoords(layer.toGeoJSON(15)));
+  });
+  return turfMultiLineString(coords);
 }
