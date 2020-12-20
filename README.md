@@ -362,6 +362,7 @@ The following events are available on a layer instance:
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. | `layer`, `intersection`, `shape`                                                                                 |
 | pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           | `layer`, `latlng`, `shape`                                                                                       |
+| pm:vertexclick     | `e`    | Fired when a vertex is clicked                                                                       | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 
 You can enable Edit Mode for all layers on a map like this:
 
