@@ -274,11 +274,10 @@ describe('Edit LayerGroup', () => {
     });
   });
 
-  it('new added layers will be changed to edit mode too if editmode is enabled', () => {
-
+  it('new added layers will be changed to edit mode if editmode is enabled', () => {
     cy.window().then(({map, L}) => {
       map.setView([4.009783550466563,104.00000000000006],8);
-      const fg = L.featureGroup().addTo(map)
+      const fg = L.featureGroup().addTo(map);
 
       map.on('pm:create layeradd',(e)=>{
         e.layer.addTo(fg);
@@ -296,16 +295,14 @@ describe('Edit LayerGroup', () => {
 
     cy.drawShape('MultiPolygon');
 
-
     cy.hasVertexMarkers(12);
   });
 
 
   it('new drawn markers not enable other layers in the same layergroup', () => {
-
     cy.window().then(({map, L}) => {
       map.setView([4.009783550466563,104.00000000000006],8);
-      const fg = L.featureGroup().addTo(map)
+      const fg = L.featureGroup().addTo(map);
 
       map.on('pm:create layeradd',(e)=>{
         e.layer.addTo(fg);
