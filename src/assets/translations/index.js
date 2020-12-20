@@ -17,6 +17,7 @@ import sv from './sv.json';
 import el from './el.json';
 import hu from './hu.json';
 import da from './da.json';
+import no from './no.json';
 
 export default {
   en,
@@ -35,5 +36,6 @@ export default {
   sv,
   el,
   hu,
-  da
+  da,
+  no
 };
