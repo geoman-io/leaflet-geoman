@@ -344,13 +344,7 @@ Edit.Line = Edit.extend({
 
       // if it does self-intersect, mark or flash it red
       if (flash) {
-        layer.setStyle({ color: 'red' });
-        this.isRed = true;
-
-        window.setTimeout(() => {
-          layer.setStyle({ color: this.cachedColor });
-          this.isRed = false;
-        }, 200);
+        this._flashLayer();
       } else {
         layer.setStyle({ color: 'red' });
         this.isRed = true;
@@ -370,6 +364,19 @@ Edit.Line = Edit.extend({
         this._updateDisabledMarkerStyle(this._markers, false);
       }
     }
+  },
+  _flashLayer(){
+    if(!this.cachedColor){
+      this.cachedColor = this._layer.options.color;
+    }
+
+    this._layer.setStyle({ color: 'red' });
+    this.isRed = true;
+
+    window.setTimeout(() => {
+      this._layer.setStyle({ color: this.cachedColor });
+      this.isRed = false;
+    }, 200);
   },
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
@@ -418,6 +425,16 @@ Edit.Line = Edit.extend({
     // define the markers array that is edited
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
+
+
+    // prevent removal of the layer if the vertex count is below minimum
+    if(!this.options.removeLayerBelowMinVertexCount) {
+      // if on a line only 2 vertices left or on a polygon 3 vertices left, don't allow to delete
+      if (coordsRing.length <= 2 || (this.isPolygon() && coordsRing.length <= 3)) {
+        this._flashLayer();
+        return;
+      }
+    }
 
     // remove coordinate
     coordsRing.splice(index, 1);
