@@ -448,6 +448,7 @@ Edit.Line = Edit.extend({
       coordsRing.splice(0, coordsRing.length);
     }
 
+    let layerRemoved = false;
     // if the ring of the line has no coordinates left, remove the last coord too
     if (coordsRing.length <= 1) {
       coordsRing.splice(0, coordsRing.length);
@@ -459,7 +460,7 @@ Edit.Line = Edit.extend({
       // TODO: kind of an ugly workaround maybe do it better?
       this.disable();
       this.enable(this.options);
-
+      layerRemoved = true;
     }
 
     // if no coords are left, remove the layer
@@ -472,46 +473,50 @@ Edit.Line = Edit.extend({
     this._layer.setLatLngs(coords);
     // remove empty marker arrays
     this._markers = removeEmptyCoordRings(this._markers);
-    // get new markerArr because we cleaned up coords and markers array
-    markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // now handle the middle markers
-    // remove the marker and the middlemarkers next to it from the map
-    if (marker._middleMarkerPrev) {
-      this._markerGroup.removeLayer(marker._middleMarkerPrev);
-    }
-    if (marker._middleMarkerNext) {
-      this._markerGroup.removeLayer(marker._middleMarkerNext);
-    }
+    // No need to calculate the middle marker when the layer was removed
+    if(!layerRemoved) {
+      // get new markerArr because we cleaned up coords and markers array
+      markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // remove the marker from the map
-    this._markerGroup.removeLayer(marker);
-
-    if(markerArr) {
-      let rightMarkerIndex;
-      let leftMarkerIndex;
-
-      if (this.isPolygon()) {
-        // find neighbor marker-indexes
-        rightMarkerIndex = (index + 1) % markerArr.length;
-        leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
-      } else {
-        // find neighbor marker-indexes
-        leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
-        rightMarkerIndex = index + 1 >= markerArr.length ? undefined : index + 1;
+      // now handle the middle markers
+      // remove the marker and the middlemarkers next to it from the map
+      if (marker._middleMarkerPrev) {
+        this._markerGroup.removeLayer(marker._middleMarkerPrev);
+      }
+      if (marker._middleMarkerNext) {
+        this._markerGroup.removeLayer(marker._middleMarkerNext);
       }
 
-      // don't create middlemarkers if there is only one marker left
-      if (rightMarkerIndex !== leftMarkerIndex) {
-        const leftM = markerArr[leftMarkerIndex];
-        const rightM = markerArr[rightMarkerIndex];
-        if (this.options.hideMiddleMarkers !== true) {
-          this._createMiddleMarker(leftM, rightM);
+      // remove the marker from the map
+      this._markerGroup.removeLayer(marker);
+
+      if (markerArr) {
+        let rightMarkerIndex;
+        let leftMarkerIndex;
+
+        if (this.isPolygon()) {
+          // find neighbor marker-indexes
+          rightMarkerIndex = (index + 1) % markerArr.length;
+          leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+        } else {
+          // find neighbor marker-indexes
+          leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
+          rightMarkerIndex = index + 1 >= markerArr.length ? undefined : index + 1;
         }
-      }
 
-      // remove the marker from the markers array
-      markerArr.splice(index, 1);
+        // don't create middlemarkers if there is only one marker left
+        if (rightMarkerIndex !== leftMarkerIndex) {
+          const leftM = markerArr[leftMarkerIndex];
+          const rightM = markerArr[rightMarkerIndex];
+          if (this.options.hideMiddleMarkers !== true) {
+            this._createMiddleMarker(leftM, rightM);
+          }
+        }
+
+        // remove the marker from the markers array
+        markerArr.splice(index, 1);
+      }
     }
 
     // fire edit event

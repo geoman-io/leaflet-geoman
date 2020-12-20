@@ -9,7 +9,7 @@
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
   Draw, Edit, Drag, Cut, Snap and Pin Layers<br>
-  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON and MultiPolygons
+  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON, MultiLineStrings and MultiPolygons
 </p>
 <p align="center">
   <a href="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free">
