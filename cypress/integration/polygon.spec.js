@@ -770,4 +770,26 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(6);
   });
+
+  it('pane support', () => {
+    cy.window().then(({ map }) => {
+      map.createPane('draw');
+      map.pm.setGlobalOptions({panes: {layerPane: 'draw', vertexPane: 'draw'}})
+    });
+
+    cy.toolbarButton('polygon').click();
+
+    // draw a line
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.window().then(({ map }) => {
+      const drawPane = map._panes['draw'];
+      const polygon = map.pm.getGeomanDrawLayers()[0];
+      expect(drawPane.className).to.eq(polygon.getPane().className);
+    });
+  });
 });

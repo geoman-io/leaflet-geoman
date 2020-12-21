@@ -189,6 +189,7 @@ Edit.Line = Edit.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
 
     marker._pmTempLayer = true;
 

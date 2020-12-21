@@ -15,6 +15,7 @@ Draw.Polygon = Draw.Line.extend({
       draggable: false,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
 
     // mark this marker as temporary
     marker._pmTempLayer = true;
@@ -72,10 +73,10 @@ Draw.Polygon = Draw.Line.extend({
       return;
     }
 
-    const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
-      this._map.pm._getContainingLayer()
-    );
+    const polygonLayer = L.polygon(coords, this.options.pathOptions);
+    this._setPane(polygonLayer,'layerPane');
     this._finishLayer(polygonLayer);
+    polygonLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
     Utils._fireEvent(this._map,'pm:create', {

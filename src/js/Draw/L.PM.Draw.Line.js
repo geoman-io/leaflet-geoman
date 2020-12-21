@@ -30,11 +30,13 @@ Draw.Line = Draw.extend({
 
     // this is the polyLine that'll make up the polygon
     this._layer = L.polyline([], this.options.templineStyle);
+    this._setPane(this._layer,'layerPane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
     // this is the hintline from the mouse cursor to the last marker
     this._hintline = L.polyline([], this.options.hintlineStyle);
+    this._setPane(this._hintline,'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
@@ -42,6 +44,7 @@ Draw.Line = Draw.extend({
     this._hintMarker = L.marker(this._map.getCenter(), {
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
+    this._setPane(this._hintMarker,'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
@@ -319,10 +322,10 @@ Draw.Line = Draw.extend({
     }
 
     // create the leaflet shape and add it to the map
-    const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(
-      this._map.pm._getContainingLayer()
-    );
+    const polylineLayer = L.polyline(coords, this.options.pathOptions);
+    this._setPane(polylineLayer,'layerPane');
     this._finishLayer(polylineLayer);
+    polylineLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
     Utils._fireEvent(this._map,'pm:create', {
@@ -346,6 +349,7 @@ Draw.Line = Draw.extend({
       draggable: false,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
     marker._pmTempLayer = true;
 
     // add it to the map
