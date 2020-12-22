@@ -120,7 +120,7 @@ L.PM.reInitLayer(layer);
 If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.  
   
   
-##### Opt-In  
+#### Opt-In  
   
 If you want to use leaflet-geoman as opt-in, call the following function right after importing:  
   
@@ -536,7 +536,53 @@ The following events are available on a map instance:
 | :----------------------- | :----- | :--------------------------------- | :-------------------------------- |  
 | pm:globalcutmodetoggled  | `e`    | Fired when Cut Mode is toggled | `enabled`, `map`                  |
 | pm:cut                   | `e`    | Fired when any layer is being cut  | `shape`, `layer`, `originalLayer` |  
+
+### Split Mode ⭐
+
+Enable drawing for the shape "Split" to draw a line that splits all underlying polygons and polylines. 
+
+Important: the splitted layer will be replaced, not updated. Listen to the
+`pm:split` event to update your layer references in your code. The `pm:split` event
+will provide you with the original layer and returns the resulting
+layer(s) that is/are added to the map as a Polygon / MultiPolygon or Polyline / MultiPolyline.
   
+
+```js
+// enable cutting mode
+map.pm.enableGlobalSplitMode({
+  allowSelfIntersection: false,
+});
+```
+
+Available options are the same as in [Draw Mode](#draw-mode) and in table below:  
+
+| Option                | Default | Description                                                                                                                                                                     |
+| :-------------------- | :------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| splitOnlyMarkedLayers | `false` | If it is set to `false` layers can be excluded with the option `splitMark: false`. Set it to `true` to enable splitting only for the layers with the option `splitMark: true`.  |
+
+The following methods are available on `map.pm`:
+
+| Method                           | Returns | Description          |
+| :------------------------------- | :------ | :------------------- |
+| enableGlobalSplitMode(`options`) | -       | Enable Split Mode. |
+| disableGlobalSplitMode()         | -       | Disable Split Mode |
+| toggleGlobalSplitMode(`options`) | -       | Toggle Split Mode  |
+| globalSplitModeEnabled()         | `Boolean` | Returns `true` if global Split Mode is enabled. `false` when disabled.    |
+
+The following events are available on a layer instance:
+
+| Event  | Params | Description                    | Output                                               |
+| :----- | :----- | :----------------------------- | :--------------------------------------------------- |
+| pm:split | `e`    | Fired when the layer being split | `shape`, `splitLayer`, `layers`, `originalLayer` |
+
+The following events are available on a map instance:
+
+| Event                     | Params | Description                        | Output                                           |
+| :------------------------ | :----- | :--------------------------------- | :----------------------------------------------- |
+| pm:globalsplitmodetoggled | `e`    | Fired when Split Mode is toggled   | `enabled`, `map`                                 | 
+| pm:split                  | `e`    | Fired when any layer is being split| `shape`, `splitLayer`, `layers`, `originalLayer` |
+
+
 ### Options  
   
 You have many options available when drawing and editing your layers (described above).  
@@ -574,7 +620,33 @@ When dragging a vertex/marker, you can pin all other Markers/Vertices that have 
   
 ![Pinning Option](https://user-images.githubusercontent.com/2399810/65375984-288ece80-dc9b-11e9-930e-bca03ad7cb56.gif)  
   
-  
+
+##### Measurement ⭐
+
+Calculates the measurement of a layer while drawing and editing. Exclusive for Leaflet-Geoman Pro ⭐
+
+```js
+map.pm.setGlobalOptions({ measurements: { measurement: true, displayFormat: 'metric', ... } })
+```
+
+See the available options in the table below.
+
+| Option                | Default  | Description                                                                                                           |
+| :-------------------- | :------- | :-------------------------------------------------------------------------------------------------------------------- |
+| measurement           | `true`   | Enable measurement calculation                                                                                        |
+| showTooltip           | `true`   | Shows the tooltip during draw and edit                                                                                |
+| showTooltipOnHover    | `true`   | Shows the tooltip when hovering a finished layer                                                                      |
+| displayFormat         | `metric` | Displayed format in the tooltip `metric` or `imperial`                                                                |
+| totalLength           | `true`   | Shows the total length in the tooltip `Line`                                                                          |
+| segmentLength         | `true`   | Shows the segment length in the tooltip `Line`, `Polygon`                                                             |
+| area                  | `true`   | Shows the area in the tooltip `Polygon`, `Rectangle`, `Circle`, `CircleMarker`                                        |
+| radius                | `true`   | Shows the radius in the tooltip `Circle`, `CircleMarker`                                                              |
+| perimeter             | `true`   | Shows the perimeter in the tooltip `Polygon`, `Rectangle`, `Circle`, `CircleMarker`                                   |
+| height                | `true`   | Shows the height in the tooltip `Rectangle`                                                                           |
+| width                 | `true`   | Shows the width in the tooltip `Rectangle`                                                                            |
+| coordinates           | `true`   | Shows the coordinates in the tooltip `Marker`, `CircleMarker` and the current dragged marker while drawing / editing  |
+
+
 ### Customize  
   
 #### Customize Language  
