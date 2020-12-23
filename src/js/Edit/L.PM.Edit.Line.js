@@ -85,10 +85,6 @@ Edit.Line = Edit.extend({
     poly.pm._markerGroup.clearLayers();
     poly.pm._markerGroup.removeFrom(this._map);
 
-    // clean up draggable
-    poly.off('mousedown');
-    poly.off('mouseup');
-
     // remove onRemove listener
     this._layer.off('remove', this._onLayerRemove, this);
 
@@ -224,48 +220,56 @@ Edit.Line = Edit.extend({
       className: 'marker-icon marker-icon-middle',
     });
     middleMarker.setIcon(middleIcon);
+    middleMarker.leftM = leftM;
+    middleMarker.rightM = rightM;
 
     // save reference to this middle markers on the neighboor regular markers
     leftM._middleMarkerNext = middleMarker;
     rightM._middleMarkerPrev = middleMarker;
 
-    middleMarker.on('click', () => {
-      // TODO: move the next two lines inside _addMarker() as soon as
-      // https://github.com/Leaflet/Leaflet/issues/4484
-      // is fixed
-      const icon = L.divIcon({ className: 'marker-icon' });
-      middleMarker.setIcon(icon);
-
-      this._addMarker(middleMarker, leftM, rightM);
-    });
-    middleMarker.on('movestart', () => {
-      // TODO: This is a workaround. Remove the moveend listener and
-      // callback as soon as this is fixed:
-      // https://github.com/Leaflet/Leaflet/issues/4484
-      middleMarker.on('moveend', () => {
-        const icon = L.divIcon({ className: 'marker-icon' });
-        middleMarker.setIcon(icon);
-
-        middleMarker.off('moveend');
-      });
-
-      this._addMarker(middleMarker, leftM, rightM);
-    });
+    middleMarker.on('click', this._onMiddleMarkerClick, this);
+    middleMarker.on('movestart',this._onMiddleMarkerMoveStart, this);
 
     return middleMarker;
   },
-
+  _onMiddleMarkerClick(e){
+    const middleMarker = e.target;
+    // TODO: move the next two lines inside _addMarker() as soon as
+    // https://github.com/Leaflet/Leaflet/issues/4484
+    // is fixed
+    const icon = L.divIcon({ className: 'marker-icon' });
+    middleMarker.setIcon(icon);
+    this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
+  },
+  _onMiddleMarkerMoveStart(e){
+    const middleMarker = e.target;
+    // TODO: This is a workaround. Remove the moveend listener and
+    // callback as soon as this is fixed:
+    // https://github.com/Leaflet/Leaflet/issues/4484
+    middleMarker.on('moveend', this._onMiddleMarkerMoveEnd, this);
+    this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
+  },
+  _onMiddleMarkerMoveEnd(e){
+    const middleMarker = e.target;
+    const icon = L.divIcon({ className: 'marker-icon' });
+    middleMarker.setIcon(icon);
+    middleMarker.off('moveend', this._onMiddleMarkerMoveEnd, this);
+  },
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {
     // first, make this middlemarker a regular marker
-    newM.off('movestart');
-    newM.off('click');
+    newM.off('movestart',this._onMiddleMarkerMoveStart, this);
+    newM.off('click', this._onMiddleMarkerClick, this);
     newM.on('click', this._onVertexClick, this);
     // now, create the polygon coordinate point for that marker
     // and push into marker array
     // and associate polygon coordinate with marker coordinate
     const latlng = newM.getLatLng();
     const coords = this._layer._latlngs;
+
+    // remove linked markers
+    delete newM.leftM;
+    delete newM.rightM;
 
     // the index path to the marker inside the multidimensional marker array
     const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
