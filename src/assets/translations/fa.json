@@ -1,0 +1,32 @@
+{
+  "tooltips": {
+    "placeMarker": "کلیک برای جانمایی نشان",
+    "firstVertex": "کلیک برای رسم اولین رأس",
+    "continueLine": "کلیک برای ادامه رسم",
+    "finishLine": "کلیک روی هر نشان موجود برای پایان",
+    "finishPoly": "کلیک روی اولین نشان برای پایان",
+    "finishRect": "کلیک برای پایان",
+    "startCircle": "کلیک برای رسم مرکز دایره",
+    "finishCircle": "کلیک برای پایان رسم دایره",
+    "placeCircleMarker": "کلیک برای رسم نشان دایره"
+  },
+  "actions": {
+    "finish": "پایان",
+    "cancel": "لفو",
+    "removeLastVertex": "حذف آخرین رأس"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "درج نشان",
+    "drawPolyButton": "رسم چندضلعی",
+    "drawLineButton": "رسم خط",
+    "drawCircleButton": "رسم دایره",
+    "drawRectButton": "رسم چهارضلعی",
+    "editButton": "ویرایش لایه‌ها",
+    "dragButton": "جابجایی لایه‌ها",
+    "cutButton": "برش لایه‌ها",
+    "deleteButton": "حذف لایه‌ها",
+    "drawCircleMarkerButton": "رسم نشان دایره",
+    "snappingButton": "نشانگر را به لایه ها و رئوس دیگر بکشید",
+    "pinningButton": "رئوس مشترک را با هم پین کنید"
+  }
+}
