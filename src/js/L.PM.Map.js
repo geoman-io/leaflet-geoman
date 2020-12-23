@@ -1,4 +1,3 @@
-
 import merge from 'lodash/merge';
 import translations from '../assets/translations';
 import Utils from './L.PM.Utils'
@@ -10,6 +9,7 @@ import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 const { findLayers } = Utils
 
 const Map = L.Class.extend({
+  _removedLayersForReverting: [],
   includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode],
   initialize(map) {
     this.map = map;
@@ -166,6 +166,22 @@ const Map = L.Class.extend({
   // returns the map instance by default or a layergroup is set through global options
   _getContainingLayer(){
     return this.globalOptions.layerGroup && this.globalOptions.layerGroup instanceof L.LayerGroup ? this.globalOptions.layerGroup : this.map;
+  },
+  addRemovedLayerToRevertList(layer){
+    this._removedLayersForReverting.push(layer);
+  },
+  clearRemovedLayersToRevert(){
+    this._removedLayersForReverting = [];
+  },
+  getRemovedLayersToRevert(){
+    let layers = this._removedLayersForReverting;
+
+    // filter out layers that don't have the leaflet-geoman instance
+    layers = layers.filter(layer => !!layer.pm);
+    // filter out everything that's leaflet-geoman specific temporary stuff
+    layers = layers.filter(layer => !layer._pmTempLayer);
+
+    return layers;
   }
 
 });

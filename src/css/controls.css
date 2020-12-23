@@ -132,6 +132,7 @@
   display: inline-block;
   width: auto;
   border-right: 1px solid #eee;
+  border-bottom: none;
   user-select: none;
 }
 

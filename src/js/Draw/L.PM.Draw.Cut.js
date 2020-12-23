@@ -54,6 +54,7 @@ Draw.Cut = Draw.Polygon.extend({
 
       // fire edit event after cut
       Utils._fireEvent(originalLayer,'pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
+      Utils._fireEvent(this._map,'pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
     });
     this._editedLayers = [];
 

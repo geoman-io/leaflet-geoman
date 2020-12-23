@@ -3,7 +3,7 @@ import Utils from "../../L.PM.Utils";
 const GlobalRemovalMode = {
   enableGlobalRemovalMode() {
     const isRelevant = layer =>
-      layer.pm &&
+      layer.pm && !layer._pmTempLayer &&
       !(layer instanceof L.LayerGroup);
 
     this._globalRemovalMode = true;
@@ -11,9 +11,11 @@ const GlobalRemovalMode = {
     this.map.eachLayer(layer => {
       if (isRelevant(layer)) {
         layer.pm.disable();
+        layer.pm.setMap();
         layer.on('click', this.removeLayer, this);
       }
     });
+    this.clearRemovedLayersToRevert();
 
     if (!this.throttledReInitRemoval) {
       this.throttledReInitRemoval = L.Util.throttle(this.reinitGlobalRemovalMode, 100, this)
@@ -27,11 +29,20 @@ const GlobalRemovalMode = {
 
     this._fireRemovalModeEvent(true);
   },
-  disableGlobalRemovalMode() {
+  disableGlobalRemovalMode(revert = false) {
+
     this._globalRemovalMode = false;
     this.map.eachLayer(layer => {
       layer.off('click', this.removeLayer, this);
     });
+
+    if(revert) {
+      const layers = this.getRemovedLayersToRevert();
+      layers.forEach((layer) => {
+        layer.pm.revert('removal');
+      });
+    }
+    this.clearRemovedLayersToRevert();
 
     // remove map handler
     this.map.off('layeradd', this.throttledReInitRemoval, this);
@@ -55,6 +66,9 @@ const GlobalRemovalMode = {
     } else {
       this.enableGlobalRemovalMode();
     }
+  },
+  cancelGlobalRemovalMode(){
+    this.disableGlobalRemovalMode(true);
   },
   reinitGlobalRemovalMode({ layer }) {
     // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
@@ -91,6 +105,7 @@ const GlobalRemovalMode = {
       }else{
         Utils._fireEvent(layer,'pm:remove', { layer, shape: layer.pm.getShape() });
         Utils._fireEvent(this.map,'pm:remove', { layer, shape: layer.pm.getShape() });
+        this.addRemovedLayerToRevertList(layer);
       }
 
     }

@@ -5,9 +5,11 @@ const DragMixin = {
     // before enabling layer drag, disable layer editing
     this.disable();
 
+    this._setRevertLatLng()
+
     // if layer never enabled and _map is not set (for snapping)
     if (!this._map) {
-      this._map = this._layer._map;
+      this.setMap();
     }
 
     if (this._layer instanceof L.Marker) {

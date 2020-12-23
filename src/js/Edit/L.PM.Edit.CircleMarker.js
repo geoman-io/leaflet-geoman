@@ -1,6 +1,7 @@
 import Edit from './L.PM.Edit';
 import Utils from "../L.PM.Utils";
 import {destinationOnLine} from "../helpers";
+import cloneDeep from "lodash/cloneDeep";
 
 Edit.CircleMarker = Edit.extend({
   _shape: 'CircleMarker',
@@ -13,7 +14,7 @@ Edit.CircleMarker = Edit.extend({
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
+    this.setMap();
 
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {
@@ -29,6 +30,8 @@ Edit.CircleMarker = Edit.extend({
 
     // change state
     this._enabled = true;
+    this._setRevertLatLng();
+    this._revertRadius = this._layer.getRadius();
 
     this._layer.on('pm:dragstart', this._onDragStart, this);
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
@@ -48,9 +51,12 @@ Edit.CircleMarker = Edit.extend({
       layer.pm._helperLayers.clearLayers();
     }
 
+    this._removeRevertLatLng();
+    delete this._revertRadius;
+
     // Add map if it is not already set. This happens when disable() is called before enable()
     if (!this._map) {
-      this._map = this._layer._map;
+      this.setMap();
     }
 
     if (this.options.editable) {
@@ -295,6 +301,7 @@ Edit.CircleMarker = Edit.extend({
   _fireEdit() {
     // fire edit event
     Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._map,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
   },
   // _initSnappableMarkers when option editable is not true

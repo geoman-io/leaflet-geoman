@@ -308,7 +308,12 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['finishMode'],
+      actions: ['finishMode', {
+          text: getTranslation('actions.cancel'),
+          onClick: () => {
+            this.map.pm.cancelGlobalEditMode();
+          }
+        }],
     };
 
     const dragButton = {
@@ -323,7 +328,12 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['finishMode'],
+      actions: ['finishMode', {
+        text: getTranslation('actions.cancel'),
+        onClick: () => {
+          this.map.pm.cancelGlobalDragMode();
+        }
+      }],
     };
 
     const cutButton = {
@@ -359,7 +369,12 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['finishMode'],
+      actions: ['finishMode', {
+        text: getTranslation('actions.cancel'),
+        onClick: () => {
+          this.map.pm.cancelGlobalRemovalMode();
+        }
+      }],
     };
 
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));

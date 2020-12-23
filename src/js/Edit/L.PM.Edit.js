@@ -1,8 +1,9 @@
 import SnapMixin from '../Mixins/Snapping';
 import DragMixin from '../Mixins/Dragging';
+import RevertMixin from "../Mixins/Reverting";
 
 const Edit = L.Class.extend({
-  includes: [DragMixin, SnapMixin],
+  includes: [DragMixin, SnapMixin, RevertMixin],
   options: {
     snappable: true,
     snapDistance: 20,
@@ -25,6 +26,9 @@ const Edit = L.Class.extend({
   getShape(){
     return this._shape;
   },
+  setMap(map){
+    this._map = map || this._layer._map;
+  }
 });
 
 export default Edit;

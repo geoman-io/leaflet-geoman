@@ -29,6 +29,8 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     // convenience alias, for better readability
     [this._cornerMarkers] = this._markers;
+
+    this.applyOptions();
   },
   applyOptions() {
     if (this.options.snappable) {

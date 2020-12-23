@@ -1,6 +1,7 @@
 import Edit from './L.PM.Edit';
 import Utils from "../L.PM.Utils";
-import {destinationOnLine} from "../helpers";
+import {destinationOnLine, isArrayEqual} from "../helpers";
+import cloneDeep from "lodash/cloneDeep";
 
 Edit.Circle = Edit.extend({
   _shape: 'Circle',
@@ -13,7 +14,7 @@ Edit.Circle = Edit.extend({
   enable(options) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
+    this.setMap();
 
     if (!this.enabled()) {
       // if it was already enabled, disable first
@@ -23,6 +24,8 @@ Edit.Circle = Edit.extend({
 
     // change state
     this._enabled = true;
+    this._setRevertLatLng();
+    this._revertRadius = this._layer.getRadius();
 
     // init markers
     this._initMarkers();
@@ -55,6 +58,8 @@ Edit.Circle = Edit.extend({
     this._outerMarker.off('drag',this._handleOuterMarkerSnapping, this);
 
     layer.pm._enabled = false;
+    this._removeRevertLatLng();
+    delete this._revertRadius;
     layer.pm._helperLayers.clearLayers();
     // clean up draggable
     layer.off('mousedown');
@@ -253,6 +258,7 @@ Edit.Circle = Edit.extend({
   _fireEdit() {
     // fire edit event
     Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._map,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
   },
   _fireDragStart() {

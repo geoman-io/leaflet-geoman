@@ -1,5 +1,7 @@
 import Edit from './L.PM.Edit';
 import Utils from "../L.PM.Utils";
+import {isArrayEqual} from "../helpers";
+import cloneDeep from "lodash/cloneDeep";
 
 Edit.Marker = Edit.extend({
   _shape: 'Marker',
@@ -14,18 +16,20 @@ Edit.Marker = Edit.extend({
   enable(options = { draggable: true }) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
+    this.setMap();
 
     if (this.enabled()) {
       return;
     }
     this.applyOptions();
     this._enabled = true;
+    this._setRevertLatLng()
 
     Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
   },
   disable() {
     this._enabled = false;
+    this._removeRevertLatLng();
 
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
@@ -75,9 +79,11 @@ Edit.Marker = Edit.extend({
   },
   _onDragEnd(e) {
     const marker = e.target;
-
     // fire the pm:edit event and pass shape and marker
     Utils._fireEvent(marker,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    if(!this._layer._pmTempLayer) {
+      Utils._fireEvent(this._map, 'pm:edit', {layer: this._layer, shape: this.getShape()});
+    }
     this._layerEdited = true;
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin

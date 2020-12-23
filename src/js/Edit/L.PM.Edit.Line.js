@@ -3,9 +3,9 @@ import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
-import { isEmptyDeep, removeEmptyCoordRings } from '../helpers';
-
+import {isEmptyDeep, removeEmptyCoordRings} from '../helpers';
 import MarkerLimits from '../Mixins/MarkerLimits';
+import cloneDeep from "lodash/cloneDeep";
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
@@ -25,7 +25,7 @@ Edit.Line = Edit.extend({
   enable(options) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
+    this.setMap();
 
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {
@@ -41,11 +41,10 @@ Edit.Line = Edit.extend({
 
     // change state
     this._enabled = true;
+    this._setRevertLatLng()
 
     // init markers
     this._initMarkers();
-
-    this.applyOptions();
 
     // if polygon gets removed from map, disable edit mode
     this._layer.on('remove', this._onLayerRemove, this);
@@ -71,23 +70,24 @@ Edit.Line = Edit.extend({
     }
     Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
   },
-  disable(poly = this._layer) {
+  disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
       return false;
     }
 
     // prevent disabling if polygon is being dragged
-    if (poly.pm._dragging) {
+    if (this._layer.pm._dragging) {
       return false;
     }
-    poly.pm._enabled = false;
-    poly.pm._markerGroup.clearLayers();
-    poly.pm._markerGroup.removeFrom(this._map);
+    this._layer.pm._enabled = false;
+    this._removeRevertLatLng();
+    this._layer.pm._markerGroup.clearLayers();
+    this._layer.pm._markerGroup.removeFrom(this._map);
 
     // clean up draggable
-    poly.off('mousedown');
-    poly.off('mouseup');
+    this._layer.off('mousedown');
+    this._layer.off('mouseup');
 
     // remove onRemove listener
     this._layer.off('remove', this._onLayerRemove, this);
@@ -101,7 +101,7 @@ Edit.Line = Edit.extend({
     }
 
     // remove draggable class
-    const el = poly._path ? poly._path : this._layer._renderer._container;
+    const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
     // remove invalid class if layer has self intersection
@@ -134,8 +134,12 @@ Edit.Line = Edit.extend({
       this._disableSnapping();
     }
   },
-  _onLayerRemove(e) {
-    this.disable(e.target);
+  _onLayerRemove() {
+    // temporary store _revertLatLng to re-assign after disabling. It is needed if the deletion will be reverted
+    const _revertLatLng = cloneDeep(this._revertLatLng);
+    this.disable();
+    this._revertLatLng = _revertLatLng;
+    this._map.pm.addRemovedLayerToRevertList(this._layer);
   },
   _initMarkers() {
     const map = this._map;
@@ -181,6 +185,8 @@ Edit.Line = Edit.extend({
 
     // add markerGroup to map
     map.addLayer(this._markerGroup);
+
+    this.applyOptions();
   },
 
   // creates initial markers for coordinates
@@ -455,11 +461,7 @@ Edit.Line = Edit.extend({
 
       // set new coords
       this._layer.setLatLngs(coords);
-
-      // re-enable editing so unnecessary markers are removed
-      // TODO: kind of an ugly workaround maybe do it better?
-      this.disable();
-      this.enable(this.options);
+      this._initMarkers();
       layerRemoved = true;
     }
 
@@ -773,5 +775,6 @@ Edit.Line = Edit.extend({
     // fire edit event
     this._layerEdited = true;
     Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._map,'pm:edit', { layer: this._layer, shape: this.getShape() });
   },
 });
