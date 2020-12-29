@@ -57,6 +57,13 @@ const RevertMixin = {
       return;
     }
 
+    if(!this._map){
+      this.setMap();
+      if(!this._map){
+        return;
+      }
+    }
+
     if(this._getLastChange().mode === "vertexRemoveLayer" && change.mode === "removeLayer") {
       return;
     }
