@@ -1,99 +1,159 @@
 import cloneDeep from "lodash/cloneDeep";
-import {isArrayEqual} from "../helpers";
 import Utils from "../L.PM.Utils";
 
 const RevertMixin = {
-  revert(mode = 'edit') {
-    let reverted = false;
-    let lastLatLng = null;
-    let revertedLatLng = null;
-
-    if (this._layer._latlng) {
-      lastLatLng = cloneDeep(this._layer.getLatLng());
-      if (this._revertLatLng && (!isArrayEqual([this._layer.getLatLng()], [this._revertLatLng]) || (this._layer instanceof L.CircleMarker && this._layer.getRadius() !== this._revertRadius))) {
-        this._layer.setLatLng(this._revertLatLng);
-        revertedLatLng = this._layer.getLatLng();
-
-        if (this._layer instanceof L.Circle) {
-          if (this._revertRadius) {
-            this._layer.setRadius(this._revertRadius);
-          }
-          if(this.enabled()){
-            this._initMarkers();
-          }
-        } else if (this._layer instanceof L.CircleMarker) {
-          if (this._revertRadius) {
-            this._layer.setRadius(this._revertRadius);
-          }
-          if (this._layer.pm.options.editable && this.enabled()) {
-            this.applyOptions();
-          }
-        }
-        reverted = true;
-      }
-    } else if (this._layer._latlngs) {
-      lastLatLng = cloneDeep(this._layer.getLatLngs());
-      if (this._revertLatLng && !isArrayEqual(this._layer.getLatLngs(), this._revertLatLng)) {
-        this._layer.setLatLngs(this._revertLatLng);
-        revertedLatLng = this._layer.getLatLngs();
-
-        if (this.enabled()) {
-          this._initMarkers();
-        }
-        reverted = true;
-      }
-    } else if (this._layer instanceof L.ImageOverlay) {
-      lastLatLng = cloneDeep(this._findCorners());
-      if (this._revertLatLng && !isArrayEqual(this._findCorners(), this._revertLatLng)) {
-        this._layer.setBounds([this._revertLatLng[1], this._revertLatLng[3]]);
-        revertedLatLng = this._findCorners();
-        reverted = true;
-      }
+  _changesOnLayer: [],
+  _changePos: 0,
+  _reverting: false,
+  undoChange(step = 1){
+    if(!this._reverting) {
+      this._goToChange(this._changePos - step);
     }
-
-    if (this._layer._map !== this._map && this._map) {
-      this._layer.addTo(this._map);
-      if (!this.enabled() && this._map.pm.globalEditModeEnabled()) {
-        this.enable();
-      }
-      reverted = true;
+  },
+  redoChange(step = 1){
+    if(!this._reverting) {
+      this._goToChange(this._changePos + step);
     }
+  },
+  revert(mode = 'edit'){
+    this._goToChange(0);
 
-    if (reverted) {
-      if (!revertedLatLng) {
-        revertedLatLng = lastLatLng;
-      }
+    if(this._changesOnLayer.length >= 2) {
+      // Needs two changes => init and an additional
+      const oldChange = this._getCurrentChange();
+      const newChange = this._changesOnLayer[0];
+
       Utils._fireEvent(this._layer, 'pm:revert', {
         layer: this._layer,
         shape: this.getShape(),
-        lastLatLng,
-        revertedLatLng,
+        oldChange,
+        newChange,
         mode
       });
       Utils._fireEvent(this._map, 'pm:revert', {
         layer: this._layer,
         shape: this.getShape(),
-        lastLatLng,
-        revertedLatLng,
+        oldChange,
+        newChange,
         mode
       });
     }
   },
-  _setRevertLatLng(latlng){
-    if(!latlng){
-      if(this._layer._latlngs) {
-        latlng = this._layer.getLatLngs();
-      } else if(this._layer._latlng) {
-        latlng = this._layer.getLatLng();
-      } else if (this._layer instanceof L.ImageOverlay) {
-        latlng = this._findCorners();
-      }
-    }
-    this._revertLatLng = cloneDeep(latlng);
+  _getLastChange(){
+    return this._changesOnLayer[this._changesOnLayer.length-1] || {mode: null, latlng: null};
   },
-  _removeRevertLatLng(){
-    delete this._revertLatLng
-  }
+  _getCurrentChange(){
+    return this._changesOnLayer[this._changePos] || {mode: null, latlng: null};
+  },
+  _clearChangesOnLayer(){
+    if(!this._reverting) {
+      this._changesOnLayer = [];
+      this._changePos = 0;
+      this._reverting = false;
+    }
+  },
+  createChangeOnLayer(change = {}){
+    if(!change || !change.mode || this._layer._pmTempLayer || this._reverting){
+      return;
+    }
+
+    if(this._getLastChange().mode === "vertexRemoveLayer" && change.mode === "removeLayer") {
+      return;
+    }
+
+    // GlobalModes: All layers that are removed, have to be stored, else we have no way to know which layers needs to be reverted on cancel on a global mode
+    if(change.mode === "removeLayer" || change.mode === "vertexRemoveLayer"){
+      this._map.pm._addRemovedLayerToRevertList(this._layer);
+    }
+
+    if(this._layer._latlngs) {
+      change.latlng = cloneDeep(this._layer.getLatLngs());
+    }else if(this._layer._latlng){
+      change.latlng = cloneDeep(this._layer.getLatLng());
+    }else if (this._layer instanceof L.ImageOverlay) {
+      change.latlng = cloneDeep(this._findCorners());
+    }
+
+    if(this._layer._radius){
+      change.radius = cloneDeep(this._layer.getRadius());
+    }
+
+    change.isEnabled = this.enabled();
+
+    // The changePos is not on the last position, so the new change have to inserted after the changePos and all other changes after have to be removed
+    if(this._changePos !== this._changesOnLayer.length-1){
+      // remove all next steps, but keep the current one (+1)
+      this._changesOnLayer = this._changesOnLayer.slice(0,this._changePos+1);
+    }
+    this._changesOnLayer.push(change);
+    this._changePos = this._changesOnLayer.length-1;
+    // init changes are not added to the global changes, else there where a lot of changes with no action in the global history
+    if(change.mode !== "init") {
+      this._map.pm._addGlobalChangeLayer(this._layer);
+    }
+  },
+  _goToChange(pos){
+    this._reverting = true;
+    if(pos < 0){
+      pos = 0;
+    }else if(pos > this._changesOnLayer.length-1){
+      pos = this._changesOnLayer.length-1;
+    }
+    this._changePos = pos;
+
+    const change = this._changesOnLayer[this._changePos];
+    if(!change){
+      return;
+    }
+
+    // _pmTempLayer is needed so that Mode.Edit._layerAdded is not called --> would be reset the changes through enable (only happens when undo is to fast clicked and the layer is removed / added)
+    this._layer._pmTempLayer = true;
+
+    // TODO: Does this work with LayerGroups?
+    // all remove modes have to be added here
+    if(change.mode === "removeLayer" || change.mode === "vertexRemoveLayer"){
+      this._layer.remove();
+    }else if(!this._layer._map){ // if the layer is not added to the map, it have to be added
+      // While executing addTo, the function enable() can be called and this clears the changes. So we store the changes temporary
+      const temp = {changes: this._changesOnLayer, pos: this._changePos};
+      this._layer.addTo(this._map);
+      if(change.isEnabled) {
+        this.enable();
+      }
+      this._changesOnLayer = temp.changes;
+      this._changePos = temp.pos;
+      // set reverting true a second time, because it can happens that while addTo the reverting will be set to false
+      this._reverting = true;
+    }
+    this._layer._pmTempLayer = false;
+
+    this._changeByPos();
+    this._reverting = false;
+  },
+  _changeByPos(){
+    const change = this._changesOnLayer[this._changePos];
+
+    if(this._layer._latlngs) {
+      this._layer.setLatLngs(cloneDeep(change.latlng));
+    }else if(this._layer._latlng){
+      this._layer.setLatLng(cloneDeep(change.latlng));
+    }else if (this._layer instanceof L.ImageOverlay) {
+      this._layer.setBounds(cloneDeep(change.latlng));
+    }
+
+    if(change.radius) {
+      this._layer.setRadius(change.radius);
+    }
+
+    if(change.isEnabled) {
+      // Executing initMarkers only if it exists for all layers, excluding CircleMarkers with not the option "editable"
+      if(this._initMarkers && !(this._layer instanceof L.CircleMarker && !(this._layer instanceof L.Circle) && !this.options.editable)) {
+        this._initMarkers();
+      }
+    }else if (this._markerGroup) {
+      this._markerGroup.clearLayers();
+    }
+  },
 };
 
 export default RevertMixin;

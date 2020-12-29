@@ -19,7 +19,8 @@ const GlobalEditMode = {
     // find all layers handled by leaflet-geoman
     const layers = findLayers(this.map);
 
-    this.clearRemovedLayersToRevert();
+    this._clearRemovedLayersToRevert();
+    this._clearGlobalChanges();
     // enable all layers
     layers.forEach(layer => {
       layer.pm.enable(options);
@@ -41,7 +42,8 @@ const GlobalEditMode = {
     const status = false;
 
     // find all layers handles by leaflet-geoman
-    const layers = findLayers(this.map).concat(this.getRemovedLayersToRevert());
+    let layers = findLayers(this.map);
+    layers = layers.concat(this._getRemovedLayersToRevert().filter(x => layers.indexOf(x) === -1));
 
     // disable all layers
     layers.forEach(layer => {
@@ -50,7 +52,8 @@ const GlobalEditMode = {
       }
       layer.pm.disable();
     });
-    this.clearRemovedLayersToRevert();
+    this._clearRemovedLayersToRevert();
+    this._clearGlobalChanges();
 
     // cleanup layer off event
     this.map.off('layeradd', this.throttledReInitEdit, this);
@@ -104,7 +107,10 @@ const GlobalEditMode = {
     });
   },
   _layerAdded({layer}){
-    this._addedLayers.push(layer);
+    const isRelevant = !!layer.pm && !layer._pmTempLayer;
+    if (isRelevant) {
+      this._addedLayers.push(layer);
+    }
   },
   _fireEditModeEvent(enabled) {
     Utils._fireEvent(this.map,'pm:globaleditmodetoggled', {

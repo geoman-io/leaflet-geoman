@@ -1,16 +1,13 @@
 import merge from 'lodash/merge';
 import translations from '../assets/translations';
 import Utils from './L.PM.Utils'
-
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
-
-const { findLayers } = Utils
+import GlobalRevertingMode from "./Mixins/Modes/Mode.Reverting";
 
 const Map = L.Class.extend({
-  _removedLayersForReverting: [],
-  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode],
+  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode,GlobalRevertingMode],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);
@@ -105,7 +102,7 @@ const Map = L.Class.extend({
     }
 
     // enable options for Editing
-    const layers = findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
     layers.forEach(layer => {
       layer.pm.setOptions(options);
     });
@@ -117,7 +114,7 @@ const Map = L.Class.extend({
     this.globalOptions = options;
   },
   applyGlobalOptions() {
-    const layers = findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
     layers.forEach(layer => {
       if (layer.pm.enabled()) {
         layer.pm.applyOptions();
@@ -140,7 +137,7 @@ const Map = L.Class.extend({
     return this.Draw.Cut.disable();
   },
   getGeomanLayers(asGroup = false){
-    const layers = findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
     if(!asGroup) {
       return layers;
     }
@@ -152,7 +149,7 @@ const Map = L.Class.extend({
     return group;
   },
   getGeomanDrawLayers(asGroup = false){
-    const layers = findLayers(this.map).filter(l => l._drawnByGeoman === true);
+    const layers = Utils.findLayers(this.map).filter(l => l._drawnByGeoman === true);
     if(!asGroup) {
       return layers;
     }
@@ -167,23 +164,6 @@ const Map = L.Class.extend({
   _getContainingLayer(){
     return this.globalOptions.layerGroup && this.globalOptions.layerGroup instanceof L.LayerGroup ? this.globalOptions.layerGroup : this.map;
   },
-  addRemovedLayerToRevertList(layer){
-    this._removedLayersForReverting.push(layer);
-  },
-  clearRemovedLayersToRevert(){
-    this._removedLayersForReverting = [];
-  },
-  getRemovedLayersToRevert(){
-    let layers = this._removedLayersForReverting;
-
-    // filter out layers that don't have the leaflet-geoman instance
-    layers = layers.filter(layer => !!layer.pm);
-    // filter out everything that's leaflet-geoman specific temporary stuff
-    layers = layers.filter(layer => !layer._pmTempLayer);
-
-    return layers;
-  }
-
 });
 
 export default Map;

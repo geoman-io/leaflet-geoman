@@ -32,8 +32,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    // TODO: this is wrong: if already enable then go into the if
-    if (!this.enabled()) {
+    if (this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
       this.disable();
@@ -41,7 +40,8 @@ Edit.Line = Edit.extend({
 
     // change state
     this._enabled = true;
-    this._setRevertLatLng()
+    this._clearChangesOnLayer();
+    this.createChangeOnLayer({mode: 'init'});
 
     // init markers
     this._initMarkers();
@@ -81,7 +81,7 @@ Edit.Line = Edit.extend({
       return false;
     }
     this._layer.pm._enabled = false;
-    this._removeRevertLatLng();
+
     this._layer.pm._markerGroup.clearLayers();
     this._layer.pm._markerGroup.removeFrom(this._map);
 
@@ -135,11 +135,8 @@ Edit.Line = Edit.extend({
     }
   },
   _onLayerRemove() {
-    // temporary store _revertLatLng to re-assign after disabling. It is needed if the deletion will be reverted
-    const _revertLatLng = cloneDeep(this._revertLatLng);
+    this.createChangeOnLayer({mode: 'removeLayer'});
     this.disable();
-    this._revertLatLng = _revertLatLng;
-    this._map.pm.addRemovedLayerToRevertList(this._layer);
   },
   _initMarkers() {
     const map = this._map;
@@ -245,6 +242,9 @@ Edit.Line = Edit.extend({
       this._addMarker(middleMarker, leftM, rightM);
     });
     middleMarker.on('movestart', () => {
+
+      this._wasMiddleMarkerOnMoveStart = true;
+
       // TODO: This is a workaround. Remove the moveend listener and
       // callback as soon as this is fixed:
       // https://github.com/Leaflet/Leaflet/issues/4484
@@ -301,6 +301,9 @@ Edit.Line = Edit.extend({
       this._createMiddleMarker(newM, rightM);
     }
 
+    if(!this._wasMiddleMarkerOnMoveStart) {
+      this.createChangeOnLayer({mode: 'addVertex'});
+    }
     // fire edit event
     this._fireEdit();
 
@@ -463,6 +466,7 @@ Edit.Line = Edit.extend({
       this._layer.setLatLngs(coords);
       this._initMarkers();
       layerRemoved = true;
+      this.createChangeOnLayer({mode: 'vertexRemoveLayer'});
     }
 
     // if no coords are left, remove the layer
@@ -519,6 +523,8 @@ Edit.Line = Edit.extend({
         // remove the marker from the markers array
         markerArr.splice(index, 1);
       }
+
+      this.createChangeOnLayer({mode: 'vertexRemove'});
     }
 
     // fire edit event
@@ -756,6 +762,12 @@ Edit.Line = Edit.extend({
     }
     if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
       this._handleLayerStyle();
+    }
+    if(this._wasMiddleMarkerOnMoveStart) {
+      this.createChangeOnLayer({mode: 'moveAddMarker'});
+      delete this._wasMiddleMarkerOnMoveStart;
+    }else {
+      this.createChangeOnLayer({mode: 'move'});
     }
     // fire edit event
     this._fireEdit();

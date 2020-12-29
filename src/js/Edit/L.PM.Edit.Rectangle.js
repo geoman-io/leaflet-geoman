@@ -132,6 +132,8 @@ Edit.Rectangle = Edit.Polygon.extend({
     // Update bounding box
     this._layer.setLatLngs(corners);
 
+    this.createChangeOnLayer({mode: 'move'});
+
     Utils._fireEvent(this._layer,'pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,

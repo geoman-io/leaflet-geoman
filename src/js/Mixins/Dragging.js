@@ -5,8 +5,6 @@ const DragMixin = {
     // before enabling layer drag, disable layer editing
     this.disable();
 
-    this._setRevertLatLng()
-
     // if layer never enabled and _map is not set (for snapping)
     if (!this._map) {
       this.setMap();
@@ -155,6 +153,7 @@ const DragMixin = {
       this._dragging = false;
       L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
+      this.createChangeOnLayer({mode: 'move'});
       // fire pm:dragend event
       this._fireDragEnd();
 

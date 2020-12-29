@@ -31,12 +31,12 @@ Edit.ImageOverlay = Edit.extend({
       this.disable();
     }
 
-    this.enableLayerDrag();
-
     // change state
     this._enabled = true;
-    this._setRevertLatLng()
+    this._clearChangesOnLayer();
+    this.createChangeOnLayer({mode: 'init'});
 
+    this.enableLayerDrag();
 
     // create markers for four corners of ImageOverlay
     this._otherSnapLayers = this._findCorners();
@@ -55,8 +55,6 @@ Edit.ImageOverlay = Edit.extend({
     }
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
-
-    this._removeRevertLatLng();
 
     // only fire events if it was enabled before
     if (!this.enabled()) {

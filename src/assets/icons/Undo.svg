@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>Atoms/Icons/Tools/Undo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M21.7,16.82a17.12,17.12,0,0,0-3-6.19,16.14,16.14,0,0,0-5.45-4.78A16,16,0,0,0,7.08,4.08V.14A.14.14,0,0,0,6.83.05L3.51,3.58,0,7.28a.14.14,0,0,0,0,.19l3.47,3.7L6.83,14.7a.14.14,0,0,0,.25-.09V10.82a15.48,15.48,0,0,1,3.92.43,14.94,14.94,0,0,1,4.92,2.16,14.28,14.28,0,0,1,3.92,4.18,14.91,14.91,0,0,1,1.74,4,.22.22,0,0,0,.44-.06A20.44,20.44,0,0,0,21.7,16.82Z" id="path-1"></path>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Atoms/Icons/Tools/Undo" transform="translate(1.000000, 1.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="Mask" fill="#fff" fill-rule="nonzero" transform="" xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>

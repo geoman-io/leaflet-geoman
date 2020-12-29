@@ -299,6 +299,7 @@ const Toolbar = L.Class.extend({
     const editButton = {
       title: getTranslation('buttonTitles.editButton'),
       className: 'control-icon leaflet-pm-icon-edit',
+      jsClass: 'Edit',
       onClick: () => { },
       afterClick: () => {
         this.map.pm.toggleGlobalEditMode();
@@ -308,17 +309,13 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['finishMode', {
-          text: getTranslation('actions.cancel'),
-          onClick: () => {
-            this.map.pm.cancelGlobalEditMode();
-          }
-        }],
+      actions: ['undo','redo','finishMode', 'cancelMode'],
     };
 
     const dragButton = {
       title: getTranslation('buttonTitles.dragButton'),
       className: 'control-icon leaflet-pm-icon-drag',
+      jsClass: 'Drag',
       onClick: () => { },
       afterClick: () => {
         this.map.pm.toggleGlobalDragMode();
@@ -328,12 +325,7 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['finishMode', {
-        text: getTranslation('actions.cancel'),
-        onClick: () => {
-          this.map.pm.cancelGlobalDragMode();
-        }
-      }],
+      actions: ['undo','redo','finishMode','cancelMode'],
     };
 
     const cutButton = {
@@ -360,6 +352,7 @@ const Toolbar = L.Class.extend({
     const deleteButton = {
       title: getTranslation('buttonTitles.deleteButton'),
       className: 'control-icon leaflet-pm-icon-delete',
+      jsClass: 'Delete',
       onClick: () => { },
       afterClick: () => {
         this.map.pm.toggleGlobalRemovalMode();
@@ -369,12 +362,7 @@ const Toolbar = L.Class.extend({
       disableOtherButtons: true,
       position: this.options.position,
       tool: 'edit',
-      actions: ['finishMode', {
-        text: getTranslation('actions.cancel'),
-        onClick: () => {
-          this.map.pm.cancelGlobalRemovalMode();
-        }
-      }],
+      actions: ['undo','redo','finishMode', 'cancelMode'],
     };
 
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));

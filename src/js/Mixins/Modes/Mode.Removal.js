@@ -2,20 +2,13 @@ import Utils from "../../L.PM.Utils";
 
 const GlobalRemovalMode = {
   enableGlobalRemovalMode() {
-    const isRelevant = layer =>
-      layer.pm && !layer._pmTempLayer &&
-      !(layer instanceof L.LayerGroup);
-
     this._globalRemovalMode = true;
     // handle existing layers
     this.map.eachLayer(layer => {
-      if (isRelevant(layer)) {
-        layer.pm.disable();
-        layer.pm.setMap();
-        layer.on('click', this.removeLayer, this);
-      }
+      this._activateRemovalOnLayer(layer);
     });
-    this.clearRemovedLayersToRevert();
+    this._clearRemovedLayersToRevert();
+    this._clearGlobalChanges();
 
     if (!this.throttledReInitRemoval) {
       this.throttledReInitRemoval = L.Util.throttle(this.reinitGlobalRemovalMode, 100, this)
@@ -37,12 +30,13 @@ const GlobalRemovalMode = {
     });
 
     if(revert) {
-      const layers = this.getRemovedLayersToRevert();
+      const layers = this._getRemovedLayersToRevert();
       layers.forEach((layer) => {
         layer.pm.revert('removal');
       });
     }
-    this.clearRemovedLayersToRevert();
+    this._clearRemovedLayersToRevert();
+    this._clearGlobalChanges();
 
     // remove map handler
     this.map.off('layeradd', this.throttledReInitRemoval, this);
@@ -79,8 +73,16 @@ const GlobalRemovalMode = {
 
     // re-enable global removal mode if it's enabled already
     if (this.globalRemovalModeEnabled()) {
-      this.disableGlobalRemovalMode();
-      this.enableGlobalRemovalMode();
+      this._activateRemovalOnLayer(layer);
+    }
+  },
+  _activateRemovalOnLayer(layer){
+    if (layer.pm && !layer._pmTempLayer && !(layer instanceof L.LayerGroup)) {
+      layer.pm.disable();
+      layer.pm.setMap();
+      layer.on('click', this.removeLayer, this);
+      layer.pm._clearChangesOnLayer();
+      layer.pm.createChangeOnLayer({mode: 'init'});
     }
   },
   _fireRemovalModeEvent(enabled) {
@@ -105,7 +107,7 @@ const GlobalRemovalMode = {
       }else{
         Utils._fireEvent(layer,'pm:remove', { layer, shape: layer.pm.getShape() });
         Utils._fireEvent(this.map,'pm:remove', { layer, shape: layer.pm.getShape() });
-        this.addRemovedLayerToRevertList(layer);
+        layer.pm.createChangeOnLayer({mode: 'removeLayer'});
       }
 
     }

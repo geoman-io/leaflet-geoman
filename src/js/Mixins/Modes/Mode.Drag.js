@@ -8,8 +8,11 @@ const GlobalDragMode = {
 
     this._globalDragMode = true;
 
+    this._clearGlobalChanges();
+
     layers.forEach(layer => {
-      layer.pm._setRevertLatLng();
+      layer.pm._clearChangesOnLayer();
+      layer.pm.createChangeOnLayer({mode: 'init'});
       layer.pm.enableLayerDrag();
     });
 
@@ -35,8 +38,9 @@ const GlobalDragMode = {
       if(revert){
         layer.pm.revert('drag');
       }
-      layer.pm._removeRevertLatLng();
     });
+
+    this._clearGlobalChanges();
 
     // remove map handler
     this.map.off('layeradd', this.throttledReInitDrag, this);
