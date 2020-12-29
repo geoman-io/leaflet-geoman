@@ -91,6 +91,19 @@ const RevertMixin = {
     if(change.mode !== "init") {
       this._map.pm._addGlobalChangeLayer(this._layer);
     }
+
+    Utils._fireEvent(this._layer, 'pm:addhistory', {
+      layer: this._layer,
+      shape: this.getShape(),
+      change,
+      position: this._changePos
+    });
+    Utils._fireEvent(this._map, 'pm:addhistory', {
+      layer: this._layer,
+      shape: this.getShape(),
+      change,
+      position: this._changePos
+    });
   },
   _goToChange(pos){
     this._reverting = true;
@@ -153,6 +166,19 @@ const RevertMixin = {
     }else if (this._markerGroup) {
       this._markerGroup.clearLayers();
     }
+
+    Utils._fireEvent(this._layer, 'pm:changehistory', {
+      layer: this._layer,
+      shape: this.getShape(),
+      change,
+      position: this._changePos
+    });
+    Utils._fireEvent(this._map, 'pm:changehistory', {
+      layer: this._layer,
+      shape: this.getShape(),
+      change,
+      position: this._changePos
+    });
   },
 };
 

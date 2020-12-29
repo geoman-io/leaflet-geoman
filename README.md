@@ -333,7 +333,10 @@ The following methods are available for layers under `layer.pm`:
 | disable()             | -         | Disables edit mode.                                                                                 |
 | toggleEdit(`options`) | -         | Toggles edit mode. Passed options are preserved.                                                    |
 | enabled()             | `Boolean` | Returns `true` if edit mode is enabled. `false` when disabled.                                      |
-| hasSelfIntersection() | `Boolean` | Returns `true` is the layer has a self intersection.                                                |
+| undoChange(`step`)    | -         | Undo changes on the layer by `x` steps. Default is 1 step.                                          |
+| redoChange(`step`)    | -         | Redo changes on the layer by `x` steps. Default is 1 step.                                          |
+| createChangeOnLayer(`Object`) | -         | Creates a new history entry on the layer. The input Object requires the property `mode` f.ex: `move`,`removeLayer` |
+| revert()              | -         | Revert the layer to it init state.                                                                  |
 
 You can listen to events related to editing on events like this:
 
@@ -361,8 +364,10 @@ The following events are available on a layer instance:
 | pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. | `layer`, `intersection`, `shape`                                                                                 |
-| pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           | `layer`, `latlng`, `shape`                                                                                       |
-| pm:vertexclick     | `e`    | Fired when a vertex is clicked                                                                       | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
+| pm:centerplaced    | `e`    | Fired when the center of a circle is moved.                                                          | `layer`, `latlng`, `shape`                                                                                       |
+| pm:vertexclick     | `e`    | Fired when a vertex is clicked.                                                                      | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
+| pm:addhistory      | `e`    | Fired when a history entry is created.                                                               | `layer`, `change`, `position`, `shape`                                                                           |
+| pm:changehistory   | `e`    | Fired when a history entry is loaded.                                                                | `layer`, `change`, `position`, `shape`                                                                           |
 
 You can enable Edit Mode for all layers on a map like this:
 
@@ -520,6 +525,32 @@ The following events are available on a map instance:
 | :----------------------- | :----- | :--------------------------------- | :-------------------------------- |
 | pm:globalcutmodetoggled  | `e`    | Fired when Cutting Mode is toggled | `enabled`, `map`                  | 
 | pm:cut                   | `e`    | Fired when any layer is being cut  | `shape`, `layer`, `originalLayer` |
+
+
+### Reverting
+History function on global modes (`Edit`, `Drag`, `Removal`)
+
+The following methods are available on `map.pm`:
+
+| Method                     | Returns   | Description                                                              |
+| :------------------------- | :-------- | :----------------------------------------------------------------------- |
+| undoGlobalChange()         | -         | Undo the change by one step                                              |
+| redoGlobalChange()         | -         | Redo the change by one step                                              |
+
+The following events are available on a layer instance:
+
+| Event                    | Params | Description                                              | Output                                 |
+| :----------------------- | :----- | :------------------------------------------------------- | :------------------------------------- |
+| pm:addhistory            | `e`    | Fired when a history entry is created.                   | `layer`, `change`, `position`, `shape` |
+| pm:changehistory         | `e`    | Fired when a history entry is loaded.                    | `layer`, `change`, `position`, `shape` |
+
+The following events are available on a map instance:
+
+| Event                    | Params | Description                                              | Output                                 |
+| :----------------------- | :----- | :------------------------------------------------------- | :------------------------------------- |
+| pm:addhistory            | `e`    | Fired when a history entry is created.                   | `layer`, `change`, `position`, `shape` |
+| pm:changehistory         | `e`    | Fired when a history entry is loaded.                    | `layer`, `change`, `position`, `shape` |
+
 
 ### Options
 
