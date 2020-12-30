@@ -135,7 +135,7 @@
   user-select: none;
 }
 
-.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover {
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover, .button-container .leaflet-pm-actions-container .leaflet-pm-action:focus {
   cursor: pointer;
   background-color: #777;
 }

@@ -85,6 +85,8 @@ const PMButton = L.Control.extend({
     );
     newButton.setAttribute('role','button');
     newButton.setAttribute('tabindex','0');
+    newButton.href = '#';
+    L.DomEvent.on(newButton, 'click', L.DomEvent.stop);
 
     // the buttons actions
     const actionContainer = L.DomUtil.create(
@@ -138,6 +140,8 @@ const PMButton = L.Control.extend({
       );
       actionNode.setAttribute('role','button');
       actionNode.setAttribute('tabindex','0');
+      actionNode.href = '#';
+      L.DomEvent.on(actionNode, 'click', L.DomEvent.stop);
 
       actionNode.innerHTML = action.text;
 
