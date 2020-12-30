@@ -471,7 +471,7 @@ Edit.Line = Edit.extend({
 
     // if no coords are left, remove the layer
     if (isEmptyDeep(coords)) {
-      this._layer.remove();
+      this.removeLayer();
     }
 
     // remove all empty coord-rings

@@ -28,6 +28,12 @@ const Edit = L.Class.extend({
   },
   setMap(map){
     this._map = map || this._layer._map;
+  },
+  removeLayer(){
+    this._layer.removeFrom(this._map.pm._getContainingLayer());
+  },
+  addLayer(){
+    this._layer.addTo(this._map.pm._getContainingLayer());
   }
 });
 

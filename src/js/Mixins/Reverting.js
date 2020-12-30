@@ -129,14 +129,15 @@ const RevertMixin = {
     // _pmTempLayer is needed so that Mode.Edit._layerAdded is not called --> would be reset the changes through enable (only happens when undo is to fast clicked and the layer is removed / added)
     this._layer._pmTempLayer = true;
 
-    // TODO: Does this work with LayerGroups?
     // all remove modes have to be added here
     if(change.mode === "removeLayer" || change.mode === "vertexRemoveLayer"){
-      this._layer.remove();
+      this.removeLayer();
     }else if(!this._layer._map){ // if the layer is not added to the map, it have to be added
       // While executing addTo, the function enable() can be called and this clears the changes. So we store the changes temporary
       const temp = {changes: this._changesOnLayer, pos: this._changePos};
-      this._layer.addTo(this._map);
+
+      this.addLayer();
+
       if(change.isEnabled) {
         this.enable();
       }
