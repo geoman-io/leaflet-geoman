@@ -212,4 +212,32 @@ describe('Shows Tooltips', () => {
 
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
   });
+
+  it('Reset tooltip after remove vertex', () => {
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 350)
+      .click(200, 350);
+
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Click first marker to finish');
+    });
+
+    cy.window().then(({ map }) => {
+      map.pm.Draw.Polygon._removeLastVertex();
+    });
+
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Click to continue drawing');
+    });
+
+    cy.get(mapSelector)
+      .click(200, 350);
+
+    cy.get('.leaflet-tooltip-bottom').then(el => {
+      expect(el).to.have.text('Click first marker to finish');
+    });
+  });
 });
