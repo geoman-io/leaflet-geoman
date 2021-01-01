@@ -1,5 +1,7 @@
 import Edit from './L.PM.Edit';
 import Utils from "../L.PM.Utils";
+import {isArrayEqual} from "../helpers";
+import cloneDeep from "lodash/cloneDeep";
 
 Edit.Marker = Edit.extend({
   _shape: 'Marker',
@@ -14,13 +16,14 @@ Edit.Marker = Edit.extend({
   enable(options = { draggable: true }) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
+    this.setMap();
 
     if (this.enabled()) {
       return;
     }
     this.applyOptions();
     this._enabled = true;
+    this.createChangeOnLayer({mode: 'init'});
 
     Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
   },
@@ -68,6 +71,7 @@ Edit.Marker = Edit.extend({
   },
   _removeMarker(e) {
     const marker = e.target;
+    this.createChangeOnLayer({mode: 'removeLayer'});
     marker.remove();
     // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
     Utils._fireEvent(marker,'pm:remove', { layer: marker, shape: this.getShape() });
@@ -75,9 +79,12 @@ Edit.Marker = Edit.extend({
   },
   _onDragEnd(e) {
     const marker = e.target;
-
+    this.createChangeOnLayer({mode: 'move'});
     // fire the pm:edit event and pass shape and marker
     Utils._fireEvent(marker,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    if(!this._layer._pmTempLayer) {
+      Utils._fireEvent(this._map, 'pm:edit', {layer: this._layer, shape: this.getShape()});
+    }
     this._layerEdited = true;
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin

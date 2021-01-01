@@ -1,6 +1,7 @@
 import Edit from './L.PM.Edit';
 import Utils from "../L.PM.Utils";
 import {destinationOnLine} from "../helpers";
+import cloneDeep from "lodash/cloneDeep";
 
 Edit.CircleMarker = Edit.extend({
   _shape: 'CircleMarker',
@@ -13,7 +14,7 @@ Edit.CircleMarker = Edit.extend({
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
+    this.setMap();
 
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {
@@ -29,6 +30,9 @@ Edit.CircleMarker = Edit.extend({
 
     // change state
     this._enabled = true;
+
+    this._clearChangesOnLayer();
+    this.createChangeOnLayer({mode: 'init'});
 
     this._layer.on('pm:dragstart', this._onDragStart, this);
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
@@ -50,7 +54,7 @@ Edit.CircleMarker = Edit.extend({
 
     // Add map if it is not already set. This happens when disable() is called before enable()
     if (!this._map) {
-      this._map = this._layer._map;
+      this.setMap();
     }
 
     if (this.options.editable) {
@@ -112,17 +116,10 @@ Edit.CircleMarker = Edit.extend({
       if (this.options.editable) {
         this._initSnappableMarkers();
 
-        // TODO: switch back to move event once this leaflet issue is solved:
-        // https://github.com/Leaflet/Leaflet/issues/6492
-        this._centerMarker.on('drag', this._moveCircle, this);
-
         if(this.options.editable){
           // update marker latlng when snapped latlng radius is out of min/max
           this._outerMarker.on('drag',this._handleOuterMarkerSnapping, this);
         }
-        // sync the hintline with hint marker
-        this._outerMarker.on('move', this._syncHintLine, this);
-        this._outerMarker.on('move', this._syncCircleRadius, this);
       } else {
         this._initSnappableMarkersDrag();
       }
@@ -177,6 +174,11 @@ Edit.CircleMarker = Edit.extend({
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
       L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
+      if(this.options.editable) {
+        marker.on('drag', this._moveCircle, this);
+        marker.on('dragstart', this._fireDragStart, this);
+        marker.on('dragend', this._fireDragEndMove, this);
+      }
     } else {
       marker.dragging.disable();
     }
@@ -185,6 +187,7 @@ Edit.CircleMarker = Edit.extend({
   _createOuterMarker(latlng) {
     const marker = this._createMarker(latlng);
     marker.on('drag', this._resizeCircle, this);
+    marker.on('dragend', this._fireDragEndResize, this);
     return marker;
   },
   _createMarker(latlng) {
@@ -204,7 +207,7 @@ Edit.CircleMarker = Edit.extend({
 
     return marker;
   },
-  _moveCircle() {
+  _moveCircle(e) {
     const center = this._centerMarker.getLatLng();
     this._layer.setLatLng(center);
 
@@ -214,6 +217,8 @@ Edit.CircleMarker = Edit.extend({
     this._syncHintLine();
 
     this._updateHiddenPolyCircle();
+
+    this._fireDrag(e);
 
     Utils._fireEvent(this._layer,'pm:centerplaced', {
       layer: this._layer,
@@ -257,6 +262,7 @@ Edit.CircleMarker = Edit.extend({
     this._hintline.setLatLngs([A, B]);
   },
   _removeMarker() {
+    this.createChangeOnLayer({mode: 'removeLayer'});
     if (this.options.editable) {
       this.disable();
     }
@@ -295,7 +301,15 @@ Edit.CircleMarker = Edit.extend({
   _fireEdit() {
     // fire edit event
     Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._map,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
+  },
+  _fireDragEndMove() {
+    this.createChangeOnLayer({mode: 'move'});
+    Utils._fireEvent(this._layer,'pm:dragend', { layer: this._layer, shape: this.getShape() });
+  },
+  _fireDragEndResize() {
+    this.createChangeOnLayer({mode: 'resize'});
   },
   // _initSnappableMarkers when option editable is not true
   _initSnappableMarkersDrag() {

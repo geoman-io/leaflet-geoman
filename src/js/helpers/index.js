@@ -1,3 +1,5 @@
+import xorWith from 'lodash/xorWith';
+import isEqual from 'lodash/isEqual';
 import get from 'lodash/get';
 import has from 'lodash/has';
 import translations from '../../assets/translations';
@@ -30,6 +32,10 @@ export function removeEmptyCoordRings(arr) {
     return result;
   }, []);
 }
+
+export function isArrayEqual(x, y) {
+  return xorWith(x, y, isEqual).length === 0;
+};
 
 // Code from https://stackoverflow.com/a/24153998/8283938
 function destinationVincenty(lonlat, brng, dist) { // rewritten to work with leaflet

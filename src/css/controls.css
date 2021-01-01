@@ -76,6 +76,12 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-snapping {
   background-image: url('../assets/icons/Magnet.svg');
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-undo {
+  background-image: url('../assets/icons/Undo.svg');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-redo {
+  background-image: url('../assets/icons/Redo.svg');
+}
 
 .leaflet-buttons-control-button:hover {
   cursor: pointer;
@@ -132,6 +138,7 @@
   display: inline-block;
   width: auto;
   border-right: 1px solid #eee;
+  border-bottom: none;
   user-select: none;
 }
 
@@ -151,4 +158,13 @@
 
 .control-icon.pm-disabled{
   filter: opacity(0.6);
+}
+
+.action-icon {
+  width: 30px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  -webkit-background-size: 19px;
+  background-size: 19px;
+  vertical-align: top;
 }

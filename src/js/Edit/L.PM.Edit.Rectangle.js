@@ -29,6 +29,8 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     // convenience alias, for better readability
     [this._cornerMarkers] = this._markers;
+
+    this.applyOptions();
   },
   applyOptions() {
     if (this.options.snappable) {
@@ -129,6 +131,8 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     // Update bounding box
     this._layer.setLatLngs(corners);
+
+    this.createChangeOnLayer({mode: 'move'});
 
     Utils._fireEvent(this._layer,'pm:markerdragend', {
       layer: this._layer,

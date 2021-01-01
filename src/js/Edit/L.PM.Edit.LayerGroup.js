@@ -138,4 +138,22 @@ Edit.LayerGroup = L.Class.extend({
   getOptions() {
     return this._options;
   },
+  removeLayer(){
+    this._groups = [this._layerGroup._map];
+    if(this._layerGroup._map.pm._getContainingLayer().hasLayer(this._layerGroup)){
+      this._groups.push(this._layerGroup._map.pm._getContainingLayer());
+    }
+    this._groups.forEach((group)=>{
+      this._layerGroup.removeFrom(group);
+    });
+  },
+  addLayer(){
+    if(this._groups && this._groups.length > 0) {
+      this._groups.forEach((group)=>{
+        this._layerGroup.addTo(group);
+      });
+    }else{
+      this._layerGroup.addTo(this._layerGroup._map.pm._getContainingLayer());
+    }
+  }
 });

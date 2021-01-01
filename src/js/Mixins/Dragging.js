@@ -7,7 +7,7 @@ const DragMixin = {
 
     // if layer never enabled and _map is not set (for snapping)
     if (!this._map) {
-      this._map = this._layer._map;
+      this.setMap();
     }
 
     if (this._layer instanceof L.Marker) {
@@ -153,6 +153,7 @@ const DragMixin = {
       this._dragging = false;
       L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
 
+      this.createChangeOnLayer({mode: 'move'});
       // fire pm:dragend event
       this._fireDragEnd();
 

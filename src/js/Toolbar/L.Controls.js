@@ -118,6 +118,27 @@ const PMButton = L.Control.extend({
           this._map.pm.Draw[button.jsClass]._finishShape(e);
         },
       },
+      undo: {
+        title: getTranslation('actions.undo'),
+        className: 'action-icon leaflet-pm-icon-undo',
+        onClick() {
+          this._map.pm.undoGlobalChange();
+        },
+      },
+      redo: {
+        title: getTranslation('actions.redo'),
+        className: 'action-icon leaflet-pm-icon-redo',
+        onClick() {
+          this._map.pm.redoGlobalChange();
+        },
+      },
+      cancelMode: {
+        text: getTranslation('actions.cancel'),
+        onClick() {
+          const btn = this._button;
+          this._map.pm._cancelMode(btn.jsClass);
+        },
+      },
     };
 
     activeActions.forEach(name => {
@@ -135,7 +156,16 @@ const PMButton = L.Control.extend({
         actionContainer
       );
 
-      actionNode.innerHTML = action.text;
+      if (action.title) {
+        actionNode.setAttribute('title', action.title);
+      }
+      if (action.className) {
+        L.DomUtil.addClass(actionNode, action.className);
+      }
+
+      if (action.text) {
+        actionNode.innerHTML = action.text;
+      }
 
       if(!button.disabled) {
         if (action.onClick) {

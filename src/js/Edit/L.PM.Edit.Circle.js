@@ -13,7 +13,7 @@ Edit.Circle = Edit.extend({
   enable(options) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
+    this.setMap();
 
     if (!this.enabled()) {
       // if it was already enabled, disable first
@@ -23,6 +23,9 @@ Edit.Circle = Edit.extend({
 
     // change state
     this._enabled = true;
+
+    this._clearChangesOnLayer();
+    this.createChangeOnLayer({mode: 'init'});
 
     // init markers
     this._initMarkers();
@@ -51,7 +54,7 @@ Edit.Circle = Edit.extend({
 
     this._centerMarker.off('dragstart', this._fireDragStart, this);
     this._centerMarker.off('drag', this._fireDrag, this);
-    this._centerMarker.off('dragend', this._fireDragEnd, this);
+    this._centerMarker.off('dragend', this._fireDragEndMove, this);
     this._outerMarker.off('drag',this._handleOuterMarkerSnapping, this);
 
     layer.pm._enabled = false;
@@ -112,10 +115,6 @@ Edit.Circle = Edit.extend({
       this._initSnappableMarkers();
       // update marker latlng when snapped latlng radius is out of min/max
       this._outerMarker.on('drag',this._handleOuterMarkerSnapping, this);
-      // sync the hintline with hint marker
-      this._outerMarker.on('move', this._syncHintLine, this);
-      this._outerMarker.on('move', this._syncCircleRadius, this);
-      this._centerMarker.on('move', this._moveCircle, this);
     } else {
       this._disableSnapping();
     }
@@ -131,22 +130,16 @@ Edit.Circle = Edit.extend({
     const marker = this._createMarker(latlng);
 
     L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
-    // TODO: switch back to move event once this leaflet issue is solved:
-    // https://github.com/Leaflet/Leaflet/issues/6492
     marker.on('drag', this._moveCircle, this);
-
     marker.on('dragstart', this._fireDragStart, this);
-    marker.on('drag', this._fireDrag, this);
-    marker.on('dragend', this._fireDragEnd, this);
-    // marker.on('contextmenu', this._removeMarker, this);
+    marker.on('dragend', this._fireDragEndMove, this);
 
     return marker;
   },
   _createOuterMarker(latlng) {
     const marker = this._createMarker(latlng);
-
     marker.on('drag', this._resizeCircle, this);
-
+    marker.on('dragend', this._fireDragEndResize, this);
     return marker;
   },
   _createMarker(latlng) {
@@ -182,6 +175,8 @@ Edit.Circle = Edit.extend({
     this._syncHintLine();
 
     this._updateHiddenPolyCircle();
+
+    this._fireDrag(e);
 
     Utils._fireEvent(this._layer,'pm:centerplaced', {
       layer: this._layer,
@@ -253,6 +248,7 @@ Edit.Circle = Edit.extend({
   _fireEdit() {
     // fire edit event
     Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    Utils._fireEvent(this._map,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
   },
   _fireDragStart() {
@@ -261,8 +257,12 @@ Edit.Circle = Edit.extend({
   _fireDrag(e) {
     Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
-  _fireDragEnd() {
+  _fireDragEndMove() {
+    this.createChangeOnLayer({mode: 'move'});
     Utils._fireEvent(this._layer,'pm:dragend', { layer: this._layer, shape: this.getShape() });
+  },
+  _fireDragEndResize() {
+    this.createChangeOnLayer({mode: 'resize'});
   },
   _updateHiddenPolyCircle() {
     if (this._hiddenPolyCircle) {
@@ -305,5 +305,5 @@ Edit.Circle = Edit.extend({
     }
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
-  }
+  },
 });

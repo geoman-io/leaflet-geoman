@@ -8,7 +8,11 @@ const GlobalDragMode = {
 
     this._globalDragMode = true;
 
+    this._clearGlobalChanges();
+
     layers.forEach(layer => {
+      layer.pm._clearChangesOnLayer();
+      layer.pm.createChangeOnLayer({mode: 'init'});
       layer.pm.enableLayerDrag();
     });
 
@@ -24,14 +28,19 @@ const GlobalDragMode = {
 
     this._fireDragModeEvent(true);
   },
-  disableGlobalDragMode() {
+  disableGlobalDragMode(revert = false) {
     const layers = findLayers(this.map);
 
     this._globalDragMode = false;
 
     layers.forEach(layer => {
       layer.pm.disableLayerDrag();
+      if(revert){
+        layer.pm.revert('drag');
+      }
     });
+
+    this._clearGlobalChanges();
 
     // remove map handler
     this.map.off('layeradd', this.throttledReInitDrag, this);
@@ -50,6 +59,9 @@ const GlobalDragMode = {
     } else {
       this.enableGlobalDragMode();
     }
+  },
+  cancelGlobalDragMode(){
+    this.disableGlobalDragMode(true);
   },
   reinitGlobalDragMode({ layer }) {
     // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
