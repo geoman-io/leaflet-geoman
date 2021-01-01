@@ -272,12 +272,11 @@ describe('Testing the Toolbar', () => {
           .click(450, 100)
           .click(450, 150)
           .click(400, 150)
-          .click(390, 140)
+          .click(390, 120)
           .click(390, 100)
           .click(450, 100);
 
-
-        cy.get(mapSelector).click(390, 140).then(() => {
+        cy.get(mapSelector).click(410, 140).then(() => {
           expect(testlayer.options.color).to.equal("red");
         })
       })

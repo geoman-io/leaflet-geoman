@@ -558,7 +558,7 @@ describe('Draw & Edit Poly', () => {
       .click(450, 100)
       .click(450, 150)
       .click(400, 150)
-      .click(390, 140)
+      .click(390, 120)
       .click(390, 100)
       .click(450, 100);
 

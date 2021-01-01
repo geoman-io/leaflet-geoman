@@ -181,7 +181,7 @@ Draw.Line = Draw.extend({
 
     // if self-intersection is forbidden, handle it
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(true, e.latlng);
+      this._handleSelfIntersection(true, this._hintMarker.getLatLng());
     }
   },
   hasSelfIntersection() {
@@ -223,15 +223,6 @@ Draw.Line = Draw.extend({
     }
   },
   _createVertex(e) {
-    // don't create a vertex if we have a selfIntersection and it is not allowed
-    if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(true, e.latlng);
-
-      if (this._doesSelfIntersect) {
-        return;
-      }
-    }
-
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
@@ -241,6 +232,15 @@ Draw.Line = Draw.extend({
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();
 
+    // don't create a vertex if we have a selfIntersection and it is not allowed
+    if (!this.options.allowSelfIntersection) {
+      this._handleSelfIntersection(true, latlng);
+
+      if (this._doesSelfIntersect) {
+        return;
+      }
+    }
+
     // check if the first and this vertex have the same latlng
     if (latlng.equals(this._layer.getLatLngs()[0])) {
       // yes? finish the polygon
@@ -249,6 +249,11 @@ Draw.Line = Draw.extend({
       // "why?", you ask? Because this happens when we snap the last vertex to the first one
       // and then click without hitting the last marker. Click happens on the map
       // in 99% of cases it's because the user wants to finish the polygon. So...
+      return;
+    }
+
+    // when last latlng is equal to the current one -> don't create a new point. Can happen while snapping
+    if(this._layer.getLatLngs().length > 0 && latlng.equals(this._layer.getLatLngs().slice(-1)[0])){
       return;
     }
 
@@ -294,11 +299,21 @@ Draw.Line = Draw.extend({
     // remove that marker
     this._layerGroup.removeLayer(marker);
 
+    // remove the marker from the snapping list
+    const idx = this._otherSnapLayers.indexOf(marker);
+    if(idx > -1){
+      this._otherSnapLayers.splice(idx,1);
+    }
+
     // update layer with new coords
     this._layer.setLatLngs(coords);
 
     // sync the hintline again
     this._syncHintLine();
+
+    if (this.options.snappable) {
+      this._cleanupSnapping();
+    }
   },
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
@@ -364,6 +379,14 @@ Draw.Line = Draw.extend({
 
     if (second) {
       this._hintMarker.setTooltipContent(getTranslation('tooltips.finishLine'));
+      // adding layer to the snapping list after a segment is created (two markers needed)
+      this._otherSnapLayers.push(this._layer);
+    }
+
+    this._otherSnapLayers.push(marker);
+
+    if (this.options.snappable) {
+      this._cleanupSnapping();
     }
 
     return marker;

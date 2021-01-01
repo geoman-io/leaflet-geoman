@@ -246,6 +246,9 @@ const SnapMixin = {
       const results = this._calcLayerDistances(latlng, layer);
 
       // show indicator lines, it's for debugging
+      if(!this.debugIndicatorLines[index] || !(this.debugIndicatorLines[index] instanceof L.Polyline)){
+        this.debugIndicatorLines[index] = L.polyline([], { color: 'red', pmIgnore: true });
+      }
       this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
 
       // save the info if it doesn't exist or if the distance is smaller than the previous one
