@@ -45,6 +45,7 @@ Edit.Rectangle = Edit.Polygon.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
 
     marker._origLatLng = latlng;
     marker._index = index;

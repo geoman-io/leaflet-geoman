@@ -170,6 +170,7 @@ Edit.CircleMarker = Edit.extend({
     const A = markerA.getLatLng();
     const B = markerB.getLatLng();
     this._hintline = L.polyline([A, B], this.options.hintlineStyle);
+    this._setPane(this._hintline,'layerPane');
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
   },
@@ -192,6 +193,7 @@ Edit.CircleMarker = Edit.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
 
     marker._origLatLng = latlng;
     marker._pmTempLayer = true;

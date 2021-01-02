@@ -56,9 +56,6 @@ Edit.Circle = Edit.extend({
 
     layer.pm._enabled = false;
     layer.pm._helperLayers.clearLayers();
-    // clean up draggable
-    layer.off('mousedown');
-    layer.off('mouseup');
 
     // remove draggable class
     const el = layer._path ? layer._path : this._layer._renderer._container;
@@ -124,6 +121,7 @@ Edit.Circle = Edit.extend({
     const A = markerA.getLatLng();
     const B = markerB.getLatLng();
     this._hintline = L.polyline([A, B], this.options.hintlineStyle);
+    this._setPane(this._hintline,'layerPane');
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
   },
@@ -154,6 +152,7 @@ Edit.Circle = Edit.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
 
     marker._origLatLng = latlng;
     marker._pmTempLayer = true;

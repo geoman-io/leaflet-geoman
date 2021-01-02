@@ -24,11 +24,13 @@ Draw.Line = Draw.extend({
 
     // this is the polyLine that'll make up the polygon
     this._layer = L.polyline([], this.options.templineStyle);
+    this._setPane(this._layer,'layerPane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
     // this is the hintline from the mouse cursor to the last marker
     this._hintline = L.polyline([], this.options.hintlineStyle);
+    this._setPane(this._hintline,'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
@@ -36,6 +38,7 @@ Draw.Line = Draw.extend({
     this._hintMarker = L.marker(this._map.getCenter(), {
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
+    this._setPane(this._hintMarker,'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
@@ -246,9 +249,6 @@ Draw.Line = Draw.extend({
       return;
     }
 
-    // is this the first point?
-    const first = this._layer.getLatLngs().length === 0;
-
     this._layer._latlngInfo = this._layer._latlngInfo || [];
     this._layer._latlngInfo.push({
       latlng,
@@ -256,7 +256,8 @@ Draw.Line = Draw.extend({
     });
 
     this._layer.addLatLng(latlng);
-    const newMarker = this._createMarker(latlng, first);
+    const newMarker = this._createMarker(latlng);
+    this._setTooltipText();
 
     this._hintline.setLatLngs([latlng, latlng]);
 
@@ -293,6 +294,7 @@ Draw.Line = Draw.extend({
 
     // sync the hintline again
     this._syncHintLine();
+    this._setTooltipText();
   },
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
@@ -313,10 +315,10 @@ Draw.Line = Draw.extend({
     }
 
     // create the leaflet shape and add it to the map
-    const polylineLayer = L.polyline(coords, this.options.pathOptions).addTo(
-      this._map.pm._getContainingLayer()
-    );
+    const polylineLayer = L.polyline(coords, this.options.pathOptions);
+    this._setPane(polylineLayer,'layerPane');
     this._finishLayer(polylineLayer);
+    polylineLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
     Utils._fireEvent(this._map,'pm:create', {
@@ -334,12 +336,13 @@ Draw.Line = Draw.extend({
       this.enable();
     }
   },
-  _createMarker(latlng, first) {
+  _createMarker(latlng) {
     // create the new marker
     const marker = new L.Marker(latlng, {
       draggable: false,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
     marker._pmTempLayer = true;
 
     // add it to the map
@@ -348,18 +351,18 @@ Draw.Line = Draw.extend({
     // a click on any marker finishes this shape
     marker.on('click', this._finishShape, this);
 
-    // handle tooltip text
-    if (first) {
-      this._hintMarker.setTooltipContent(
-        getTranslation('tooltips.continueLine')
-      );
-    }
-    const second = this._layer.getLatLngs().length === 2;
-
-    if (second) {
-      this._hintMarker.setTooltipContent(getTranslation('tooltips.finishLine'));
-    }
-
     return marker;
   },
+  _setTooltipText(){
+    const {length} = this._layer.getLatLngs().flat();
+    let text = "";
+
+    // handle tooltip text
+    if(length <= 1){
+      text = getTranslation('tooltips.continueLine');
+    }else{
+      text = getTranslation('tooltips.finishLine');
+    }
+    this._hintMarker.setTooltipContent(text);
+  }
 });

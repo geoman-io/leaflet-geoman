@@ -604,7 +604,8 @@ The following options are additionally to the [Draw](#draw-mode) and [Edit Mode]
 | :------------------------ | :------ | :-------------------------------------------------------------------------------------------------------------------------- |    
 | snappingOrder             | `Array` | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`                |  
 | layerGroup                | `map`   | add the created layers to a layergroup instead to the map.                                                                  |
-  
+| panes                     | `Object`| Defines in which [panes](https://leafletjs.com/reference-1.7.1.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' }` |
+
 Some details about a few more powerful options:  
 
 ##### Snapping  
@@ -656,7 +657,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');  
 ```  
   
-Currently available languages are `da`, `de`, `el`, `en`, `es`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `zh` and `zh_tw`.  
+Currently available languages are `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `zh` and `zh_tw`.  
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.  
   
 You can also provide your own custom translations.  

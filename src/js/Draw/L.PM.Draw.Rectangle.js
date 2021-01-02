@@ -24,6 +24,7 @@ Draw.Rectangle = Draw.extend({
 
     // the rectangle we want to draw
     this._layer = L.rectangle([[0, 0], [0, 0]], this.options.pathOptions);
+    this._setPane(this._layer,'layerPane');
     this._layer._pmTempLayer = true;
 
     // this is the marker at the origin of the rectangle
@@ -34,6 +35,7 @@ Draw.Rectangle = Draw.extend({
       zIndexOffset: 100,
       opacity: this.options.cursorMarker ? 1 : 0,
     });
+    this._setPane(this._startMarker,'vertexPane');
     this._startMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._startMarker);
 
@@ -41,6 +43,7 @@ Draw.Rectangle = Draw.extend({
     this._hintMarker = L.marker([0, 0], {
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
+    this._setPane(this._hintMarker,'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
@@ -71,6 +74,7 @@ Draw.Rectangle = Draw.extend({
           draggable: false,
           zIndexOffset: 100,
         });
+        this._setPane(styleMarker,'vertexPane');
         styleMarker._pmTempLayer = true;
         this._layerGroup.addLayer(styleMarker);
 
@@ -250,10 +254,10 @@ Draw.Rectangle = Draw.extend({
     const A = this._startMarker.getLatLng();
 
     // create the final rectangle layer, based on opposite corners A & B
-    const rectangleLayer = L.rectangle([A, B], this.options.pathOptions).addTo(
-      this._map.pm._getContainingLayer()
-    );
+    const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
+    this._setPane(rectangleLayer,'layerPane');
     this._finishLayer(rectangleLayer);
+    rectangleLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
     Utils._fireEvent(this._map,'pm:create', {
