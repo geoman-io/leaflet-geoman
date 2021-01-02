@@ -77,7 +77,7 @@
   background-image: url('../assets/icons/Magnet.svg');
 }
 
-.leaflet-buttons-control-button:hover {
+.leaflet-buttons-control-button:hover,.leaflet-buttons-control-button:focus {
   cursor: pointer;
   background-color: #f4f4f4;
 }
@@ -135,7 +135,7 @@
   user-select: none;
 }
 
-.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover {
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover, .button-container .leaflet-pm-actions-container .leaflet-pm-action:focus {
   cursor: pointer;
   background-color: #777;
 }
