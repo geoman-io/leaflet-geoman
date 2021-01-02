@@ -7,6 +7,7 @@ Edit.LayerGroup = L.Class.extend({
   initialize(layerGroup) {
     this._layerGroup = layerGroup;
     this._layers = this.findLayers();
+    this._getMap();
 
     // init all layers of the group
     this._layers.forEach(layer => this._initLayer(layer));
@@ -27,7 +28,7 @@ Edit.LayerGroup = L.Class.extend({
       });
       // if editing was already enabled for this group, enable it again
       // so the new layers are enabled
-      if (_initLayers.length > 0) {
+      if (_initLayers.length > 0 && this._getMap() && this._getMap().pm.globalEditModeEnabled()) {
         if (this.enabled()) {
           this.enable(this.getOptions());
         }
@@ -84,9 +85,9 @@ Edit.LayerGroup = L.Class.extend({
           return layer.pm.enabled(_layerIds);
         }
         return false; // enabled is already returned because this is not the first time, so we can return always false
-      } else {
-        return layer.pm.enabled();
       }
+        return layer.pm.enabled();
+
     });
 
     return !!enabled;
@@ -138,4 +139,7 @@ Edit.LayerGroup = L.Class.extend({
   getOptions() {
     return this._options;
   },
+  _getMap(){
+    return this._map || this._layers.find(l => !!l._map)?._map || null;
+  }
 });
