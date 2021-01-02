@@ -14,12 +14,6 @@ Draw.Line = Draw.extend({
   enable(options) {
     L.Util.setOptions(this, options);
 
-    // fallback option for finishOnDoubleClick
-    // TODO: remove in a later release
-    if (this.options.finishOnDoubleClick && !this.options.finishOn) {
-      this.options.finishOn = 'dblclick';
-    }
-
     // enable draw mode
     this._enabled = true;
 
