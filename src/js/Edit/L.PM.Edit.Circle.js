@@ -56,9 +56,6 @@ Edit.Circle = Edit.extend({
 
     layer.pm._enabled = false;
     layer.pm._helperLayers.clearLayers();
-    // clean up draggable
-    layer.off('mousedown');
-    layer.off('mouseup');
 
     // remove draggable class
     const el = layer._path ? layer._path : this._layer._renderer._container;
