@@ -32,6 +32,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
       // this is the circle we want to draw
       this._layer = L.circleMarker([0, 0], this.options.templineStyle);
+      this._setPane(this._layer,'layerPane');
       this._layer._pmTempLayer = true;
       this._layerGroup.addLayer(this._layer);
 
@@ -41,6 +42,7 @@ Draw.CircleMarker = Draw.Marker.extend({
         draggable: false,
         zIndexOffset: 100,
       });
+      this._setPane(this._centerMarker,'vertexPane');
       this._centerMarker._pmTempLayer = true;
       this._layerGroup.addLayer(this._centerMarker);
 
@@ -48,6 +50,7 @@ Draw.CircleMarker = Draw.Marker.extend({
       this._hintMarker = L.marker([0, 0], {
         icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
       });
+      this._setPane(this._hintMarker,'vertexPane');
       this._hintMarker._pmTempLayer = true;
       this._layerGroup.addLayer(this._hintMarker);
 
@@ -71,6 +74,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
       // this is the hintline from the hint marker to the center marker
       this._hintline = L.polyline([], this.options.hintlineStyle);
+      this._setPane(this._hintline,'layerPane');
       this._hintline._pmTempLayer = true;
       this._layerGroup.addLayer(this._hintline);
       // create a polygon-point on click
@@ -83,6 +87,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
       // this is the hintmarker on the mouse cursor
       this._hintMarker = L.circleMarker([0, 0], this.options.templineStyle);
+      this._setPane(this._hintMarker,'layerPane');
       this._hintMarker._pmTempLayer = true;
       this._hintMarker.addTo(this._map);
       // this is just to keep the snappable mixin happy
@@ -265,6 +270,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // create marker
     const marker = L.circleMarker(latlng, this.options.pathOptions);
+    this._setPane(marker,'layerPane');
     this._finishLayer(marker);
     // add marker to the map
     marker.addTo(this._map.pm._getContainingLayer());
@@ -311,8 +317,11 @@ Draw.CircleMarker = Draw.Marker.extend({
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
-    const circleLayer = L.circleMarker(center, options).addTo(this._map.pm._getContainingLayer());
+    const circleLayer = L.circleMarker(center, options);
+    this._setPane(circleLayer,'layerPane');
     this._finishLayer(circleLayer);
+    circleLayer.addTo(this._map.pm._getContainingLayer());
+
     if(circleLayer.pm) {
       // create polygon around the circle border
       circleLayer.pm._updateHiddenPolyCircle();

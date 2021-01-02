@@ -1,4 +1,3 @@
-
 import merge from 'lodash/merge';
 import translations from '../assets/translations';
 import Utils from './L.PM.Utils'
@@ -21,7 +20,12 @@ const Map = L.Class.extend({
     this.globalOptions = {
       snappable: true,
       layerGroup: undefined,
-      snappingOrder: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']
+      snappingOrder: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle'],
+      panes: {
+        vertexPane: 'markerPane',
+        layerPane: 'overlayPane',
+        markerPane: 'markerPane'
+      }
     };
   },
   setLang(lang = 'en', t, fallback = 'en') {
@@ -83,10 +87,7 @@ const Map = L.Class.extend({
   },
   setGlobalOptions(o) {
     // merge passed and existing options
-    const options = {
-      ...this.globalOptions,
-      ...o
-    };
+    const options = merge(this.globalOptions,o);
 
     // check if switched the editable mode for CircleMarker while drawing
     let reenableCircleMarker = false;

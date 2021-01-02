@@ -178,6 +178,15 @@ const Draw = L.Class.extend({
   _addDrawnLayerProp(layer){
     layer._drawnByGeoman = true;
   },
+  _setPane(layer,type){
+    if(type === "layerPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.layerPane || 'overlayPane';
+    }else if(type === "vertexPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.vertexPane || 'markerPane';
+    }else if(type === "markerPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.markerPane || 'markerPane';
+    }
+  }
 });
 
 export default Draw;
