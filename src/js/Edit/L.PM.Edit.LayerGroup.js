@@ -85,9 +85,9 @@ Edit.LayerGroup = L.Class.extend({
           return layer.pm.enabled(_layerIds);
         }
         return false; // enabled is already returned because this is not the first time, so we can return always false
-      } 
+      }
         return layer.pm.enabled();
-      
+
     });
 
     return !!enabled;
@@ -140,18 +140,6 @@ Edit.LayerGroup = L.Class.extend({
     return this._options;
   },
   _getMap(){
-    if(this._map){
-      return this._map
-    }
-
-    for(let i = 0; i < this._layers.length; i+=1){
-      const layer = this._layers[i];
-      if(layer._map){
-        this._map = layer._map;
-        return this._map;
-      }
-    }
-
-    return null;
+    return this._map || this._layers.find(l => !!l._map)?._map || null;
   }
 });
