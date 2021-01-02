@@ -9,7 +9,7 @@
 <p align="center">
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>
   Draw, Edit, Drag, Cut, Snap and Pin Layers<br>
-  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON and MultiPolygons
+  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON, MultiLineStrings and MultiPolygons
 </p>
 <p align="center">
   <a href="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free">
@@ -362,6 +362,7 @@ The following events are available on a layer instance:
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected. | `layer`, `intersection`, `shape`                                                                                 |
 | pm:centerplaced    | `e`    | Fired when the center of a circle is moved                                                           | `layer`, `latlng`, `shape`                                                                                       |
+| pm:vertexclick     | `e`    | Fired when a vertex is clicked                                                                       | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |
 
 You can enable Edit Mode for all layers on a map like this:
 
@@ -543,6 +544,7 @@ The following options are available globally and apply when going into global ed
 | pinning                   | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning)                                                     |
 | allowSelfIntersection     | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                                                |
 | preventMarkerRemoval      | `false` | Disable the removal of markers/vertexes via right click.                                                                    |
+| removeLayerBelowMinVertexCount       | `true` | If `true`, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If `false`, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons. |
 | limitMarkersToCount       | `-1`    | Shows only `n` markers per layer closest to the cursor. Use `-1` for no limit                                               |
 | limitMarkersCountGlobally | `false` | Activates `limitMarkersToCount` across layers on the entire map, not just per layer ⭐                                       |
 | limitMarkersToZoom        | `-1`    | Shows markers when under the given zoom level ⭐                                                                             |
@@ -550,6 +552,7 @@ The following options are available globally and apply when going into global ed
 | limitMarkersToClick       | `false` | Shows markers only after the layer was clicked ⭐                                                                            |
 | editable                  | `false` | Makes a `CircleMarker` editable like a `Circle`                                                                             |
 | snappingOrder             | `Array` | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`                |
+| panes                     | `Object`| Defines in which [panes](https://leafletjs.com/reference-1.7.1.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' }` |
 
 
 Some details about a few more powerful options:
@@ -579,7 +582,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');
 ```
 
-Currently available languages are `en`, `de`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `zh_tw`, `nl`, `el`, `pl`, `sv`, `da` and `hu`.
+Currently available languages are `en`, `de`, `fa`, `it`, `ru`, `ro`, `es`, `fr`, `pt_br`, `id`, `zh`, `zh_tw`, `nl`, `el`, `pl`, `sv`, `da`, `hu` and `no`.
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.

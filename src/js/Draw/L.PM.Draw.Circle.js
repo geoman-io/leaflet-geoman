@@ -25,6 +25,7 @@ Draw.Circle = Draw.extend({
 
     // this is the circle we want to draw
     this._layer = L.circle([0, 0], this.options.templineStyle);
+    this._setPane(this._layer,'layerPane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
@@ -34,6 +35,7 @@ Draw.Circle = Draw.extend({
       draggable: false,
       zIndexOffset: 100,
     });
+    this._setPane(this._centerMarker,'vertexPane');
     this._centerMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._centerMarker);
 
@@ -41,6 +43,7 @@ Draw.Circle = Draw.extend({
     this._hintMarker = L.marker([0, 0], {
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
+    this._setPane(this._hintMarker,'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
@@ -63,6 +66,7 @@ Draw.Circle = Draw.extend({
 
     // this is the hintline from the hint marker to the center marker
     this._hintline = L.polyline([], this.options.hintlineStyle);
+    this._setPane(this._hintline,'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
@@ -241,8 +245,10 @@ Draw.Circle = Draw.extend({
     const options = Object.assign({}, this.options.pathOptions, { radius });
 
     // create the final circle layer
-    const circleLayer = L.circle(center, options).addTo(this._map.pm._getContainingLayer());
+    const circleLayer = L.circle(center, options);
+    this._setPane(circleLayer,'layerPane');
     this._finishLayer(circleLayer);
+    circleLayer.addTo(this._map.pm._getContainingLayer());
 
     if(circleLayer.pm) {
       // create polygon around the circle border

@@ -9,12 +9,13 @@ Draw.Polygon = Draw.Line.extend({
     this._shape = 'Polygon';
     this.toolbarButtonName = 'drawPolygon';
   },
-  _createMarker(latlng, first) {
+  _createMarker(latlng) {
     // create the new marker
     const marker = new L.Marker(latlng, {
       draggable: false,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
 
     // mark this marker as temporary
     marker._pmTempLayer = true;
@@ -23,7 +24,7 @@ Draw.Polygon = Draw.Line.extend({
     this._layerGroup.addLayer(marker);
 
     // if the first marker gets clicked again, finish this shape
-    if (first) {
+    if (this._layer.getLatLngs().flat().length === 1) {
       marker.on('click', this._finishShape, this);
 
       // add the first vertex to "other snapping layers" so the polygon is easier to finish
@@ -39,19 +40,19 @@ Draw.Polygon = Draw.Line.extend({
       marker.on('click', () => (1));
     }
 
-    // handle tooltip text
-    if (first) {
-      this._hintMarker.setTooltipContent(
-        getTranslation('tooltips.continueLine')
-      );
-    }
-    const third = this._layer.getLatLngs().length === 3;
-
-    if (third) {
-      this._hintMarker.setTooltipContent(getTranslation('tooltips.finishPoly'));
-    }
-
     return marker;
+  },
+  _setTooltipText(){
+    const {length} = this._layer.getLatLngs().flat();
+    let text = "";
+
+    // handle tooltip text
+    if(length <= 2){
+      text = getTranslation('tooltips.continueLine');
+    }else{
+      text = getTranslation('tooltips.finishPoly');
+    }
+    this._hintMarker.setTooltipContent(text);
   },
   _finishShape(e) {
     // if self intersection is not allowed, do not finish the shape!
@@ -72,10 +73,10 @@ Draw.Polygon = Draw.Line.extend({
       return;
     }
 
-    const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
-      this._map.pm._getContainingLayer()
-    );
+    const polygonLayer = L.polygon(coords, this.options.pathOptions);
+    this._setPane(polygonLayer,'layerPane');
     this._finishLayer(polygonLayer);
+    polygonLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
     Utils._fireEvent(this._map,'pm:create', {

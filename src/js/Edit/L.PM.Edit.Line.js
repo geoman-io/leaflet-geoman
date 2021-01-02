@@ -85,10 +85,6 @@ Edit.Line = Edit.extend({
     poly.pm._markerGroup.clearLayers();
     poly.pm._markerGroup.removeFrom(this._map);
 
-    // clean up draggable
-    poly.off('mousedown');
-    poly.off('mouseup');
-
     // remove onRemove listener
     this._layer.off('remove', this._onLayerRemove, this);
 
@@ -189,9 +185,11 @@ Edit.Line = Edit.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
 
     marker._pmTempLayer = true;
 
+    marker.on('click', this._onVertexClick, this);
     marker.on('dragstart', this._onMarkerDragStart, this);
     marker.on('move', this._onMarkerDrag, this);
     marker.on('dragend', this._onMarkerDragEnd, this);
@@ -223,48 +221,56 @@ Edit.Line = Edit.extend({
       className: 'marker-icon marker-icon-middle',
     });
     middleMarker.setIcon(middleIcon);
+    middleMarker.leftM = leftM;
+    middleMarker.rightM = rightM;
 
     // save reference to this middle markers on the neighboor regular markers
     leftM._middleMarkerNext = middleMarker;
     rightM._middleMarkerPrev = middleMarker;
 
-    middleMarker.on('click', () => {
-      // TODO: move the next two lines inside _addMarker() as soon as
-      // https://github.com/Leaflet/Leaflet/issues/4484
-      // is fixed
-      const icon = L.divIcon({ className: 'marker-icon' });
-      middleMarker.setIcon(icon);
-
-      this._addMarker(middleMarker, leftM, rightM);
-    });
-    middleMarker.on('movestart', () => {
-      // TODO: This is a workaround. Remove the moveend listener and
-      // callback as soon as this is fixed:
-      // https://github.com/Leaflet/Leaflet/issues/4484
-      middleMarker.on('moveend', () => {
-        const icon = L.divIcon({ className: 'marker-icon' });
-        middleMarker.setIcon(icon);
-
-        middleMarker.off('moveend');
-      });
-
-      this._addMarker(middleMarker, leftM, rightM);
-    });
+    middleMarker.on('click', this._onMiddleMarkerClick, this);
+    middleMarker.on('movestart',this._onMiddleMarkerMoveStart, this);
 
     return middleMarker;
   },
-
+  _onMiddleMarkerClick(e){
+    const middleMarker = e.target;
+    // TODO: move the next two lines inside _addMarker() as soon as
+    // https://github.com/Leaflet/Leaflet/issues/4484
+    // is fixed
+    const icon = L.divIcon({ className: 'marker-icon' });
+    middleMarker.setIcon(icon);
+    this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
+  },
+  _onMiddleMarkerMoveStart(e){
+    const middleMarker = e.target;
+    // TODO: This is a workaround. Remove the moveend listener and
+    // callback as soon as this is fixed:
+    // https://github.com/Leaflet/Leaflet/issues/4484
+    middleMarker.on('moveend', this._onMiddleMarkerMoveEnd, this);
+    this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
+  },
+  _onMiddleMarkerMoveEnd(e){
+    const middleMarker = e.target;
+    const icon = L.divIcon({ className: 'marker-icon' });
+    middleMarker.setIcon(icon);
+    middleMarker.off('moveend', this._onMiddleMarkerMoveEnd, this);
+  },
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {
     // first, make this middlemarker a regular marker
-    newM.off('movestart');
-    newM.off('click');
-
+    newM.off('movestart',this._onMiddleMarkerMoveStart, this);
+    newM.off('click', this._onMiddleMarkerClick, this);
+    newM.on('click', this._onVertexClick, this);
     // now, create the polygon coordinate point for that marker
     // and push into marker array
     // and associate polygon coordinate with marker coordinate
     const latlng = newM.getLatLng();
     const coords = this._layer._latlngs;
+
+    // remove linked markers
+    delete newM.leftM;
+    delete newM.rightM;
 
     // the index path to the marker inside the multidimensional marker array
     const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
@@ -344,13 +350,7 @@ Edit.Line = Edit.extend({
 
       // if it does self-intersect, mark or flash it red
       if (flash) {
-        layer.setStyle({ color: 'red' });
-        this.isRed = true;
-
-        window.setTimeout(() => {
-          layer.setStyle({ color: this.cachedColor });
-          this.isRed = false;
-        }, 200);
+        this._flashLayer();
       } else {
         layer.setStyle({ color: 'red' });
         this.isRed = true;
@@ -370,6 +370,19 @@ Edit.Line = Edit.extend({
         this._updateDisabledMarkerStyle(this._markers, false);
       }
     }
+  },
+  _flashLayer(){
+    if(!this.cachedColor){
+      this.cachedColor = this._layer.options.color;
+    }
+
+    this._layer.setStyle({ color: 'red' });
+    this.isRed = true;
+
+    window.setTimeout(() => {
+      this._layer.setStyle({ color: this.cachedColor });
+      this.isRed = false;
+    }, 200);
   },
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
@@ -419,6 +432,16 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
+
+    // prevent removal of the layer if the vertex count is below minimum
+    if(!this.options.removeLayerBelowMinVertexCount) {
+      // if on a line only 2 vertices left or on a polygon 3 vertices left, don't allow to delete
+      if (coordsRing.length <= 2 || (this.isPolygon() && coordsRing.length <= 3)) {
+        this._flashLayer();
+        return;
+      }
+    }
+
     // remove coordinate
     coordsRing.splice(index, 1);
 
@@ -430,6 +453,7 @@ Edit.Line = Edit.extend({
       coordsRing.splice(0, coordsRing.length);
     }
 
+    let layerRemoved = false;
     // if the ring of the line has no coordinates left, remove the last coord too
     if (coordsRing.length <= 1) {
       coordsRing.splice(0, coordsRing.length);
@@ -441,7 +465,7 @@ Edit.Line = Edit.extend({
       // TODO: kind of an ugly workaround maybe do it better?
       this.disable();
       this.enable(this.options);
-
+      layerRemoved = true;
     }
 
     // if no coords are left, remove the layer
@@ -454,46 +478,50 @@ Edit.Line = Edit.extend({
     this._layer.setLatLngs(coords);
     // remove empty marker arrays
     this._markers = removeEmptyCoordRings(this._markers);
-    // get new markerArr because we cleaned up coords and markers array
-    markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // now handle the middle markers
-    // remove the marker and the middlemarkers next to it from the map
-    if (marker._middleMarkerPrev) {
-      this._markerGroup.removeLayer(marker._middleMarkerPrev);
-    }
-    if (marker._middleMarkerNext) {
-      this._markerGroup.removeLayer(marker._middleMarkerNext);
-    }
+    // No need to calculate the middle marker when the layer was removed
+    if(!layerRemoved) {
+      // get new markerArr because we cleaned up coords and markers array
+      markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // remove the marker from the map
-    this._markerGroup.removeLayer(marker);
-
-    if(markerArr) {
-      let rightMarkerIndex;
-      let leftMarkerIndex;
-
-      if (this.isPolygon()) {
-        // find neighbor marker-indexes
-        rightMarkerIndex = (index + 1) % markerArr.length;
-        leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
-      } else {
-        // find neighbor marker-indexes
-        leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
-        rightMarkerIndex = index + 1 >= markerArr.length ? undefined : index + 1;
+      // now handle the middle markers
+      // remove the marker and the middlemarkers next to it from the map
+      if (marker._middleMarkerPrev) {
+        this._markerGroup.removeLayer(marker._middleMarkerPrev);
+      }
+      if (marker._middleMarkerNext) {
+        this._markerGroup.removeLayer(marker._middleMarkerNext);
       }
 
-      // don't create middlemarkers if there is only one marker left
-      if (rightMarkerIndex !== leftMarkerIndex) {
-        const leftM = markerArr[leftMarkerIndex];
-        const rightM = markerArr[rightMarkerIndex];
-        if (this.options.hideMiddleMarkers !== true) {
-          this._createMiddleMarker(leftM, rightM);
+      // remove the marker from the map
+      this._markerGroup.removeLayer(marker);
+
+      if (markerArr) {
+        let rightMarkerIndex;
+        let leftMarkerIndex;
+
+        if (this.isPolygon()) {
+          // find neighbor marker-indexes
+          rightMarkerIndex = (index + 1) % markerArr.length;
+          leftMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+        } else {
+          // find neighbor marker-indexes
+          leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
+          rightMarkerIndex = index + 1 >= markerArr.length ? undefined : index + 1;
         }
-      }
 
-      // remove the marker from the markers array
-      markerArr.splice(index, 1);
+        // don't create middlemarkers if there is only one marker left
+        if (rightMarkerIndex !== leftMarkerIndex) {
+          const leftM = markerArr[leftMarkerIndex];
+          const rightM = markerArr[rightMarkerIndex];
+          if (this.options.hideMiddleMarkers !== true) {
+            this._createMiddleMarker(leftM, rightM);
+          }
+        }
+
+        // remove the marker from the markers array
+        markerArr.splice(index, 1);
+      }
     }
 
     // fire edit event
@@ -734,6 +762,17 @@ Edit.Line = Edit.extend({
     }
     // fire edit event
     this._fireEdit();
+  },
+  _onVertexClick(e) {
+    const vertex = e.target;
+    const { indexPath } = this.findDeepMarkerIndex(this._markers, vertex);
+
+    Utils._fireEvent(this._layer,'pm:vertexclick', {
+      layer: this._layer,
+      markerEvent: e,
+      indexPath,
+      shape: this.getShape()
+    });
   },
   _fireEdit() {
     // fire edit event

@@ -62,6 +62,10 @@ const PMButton = L.Control.extend({
     this.toggle(false);
   },
   _triggerClick(e) {
+    if(e) {
+      // is needed to prevent scrolling when clicking on a-element with href="a"
+      e.preventDefault();
+    }
     // TODO is this a big change when we change from e to a object with the event and the button? Now it's the second argument
     this._button.onClick(e, { button: this, event: e });
     this._clicked(e);
@@ -83,6 +87,9 @@ const PMButton = L.Control.extend({
       'leaflet-buttons-control-button',
       buttonContainer
     );
+    newButton.setAttribute('role','button');
+    newButton.setAttribute('tabindex','0');
+    newButton.href = '#';
 
     // the buttons actions
     const actionContainer = L.DomUtil.create(
@@ -134,12 +141,17 @@ const PMButton = L.Control.extend({
         `leaflet-pm-action ${pos} action-${name}`,
         actionContainer
       );
+      actionNode.setAttribute('role','button');
+      actionNode.setAttribute('tabindex','0');
+      actionNode.href = '#';
 
       actionNode.innerHTML = action.text;
 
       if(!button.disabled) {
         if (action.onClick) {
-          const actionClick = () => {
+          const actionClick = (e) => {
+            // is needed to prevent scrolling when clicking on a-element with href="a"
+            e.preventDefault();
             let btnName = "";
             const {buttons} = this._map.pm.Toolbar;
             for (const btn in buttons) {
