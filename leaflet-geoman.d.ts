@@ -126,13 +126,16 @@ declare module 'leaflet' {
 
         interface Map {
             addControls(options?: DrawControlOptions): void;
+            removeControls(): void;
+            toggleControls(): void;
+            controlsVisible(): boolean;
             enableDraw(shape: SUPPORTED_SHAPES, options?: MapDrawOptions): void;
             disableDraw(shape: SUPPORTED_SHAPES): void;
-            enableGlobalEditMode(options): void;
+            enableGlobalEditMode(options : any): void;
             disableGlobalEditMode(): void;
-            toggleGlobalEditMode(options): void;
+            toggleGlobalEditMode(options : any): void;
             globalEditEnabled(): boolean;
-            setLang(lang: 'en' | 'de' | 'it' | 'ru' | 'ro' | 'es' | 'fr' | 'pt_br' | 'zh' | 'nl', customTranslations?: Translations, fallbackLanguage?: string);
+            setLang(lang: 'en' | 'de' | 'it' | 'ru' | 'ro' | 'es' | 'fr' | 'pt_br' | 'zh' | 'nl', customTranslations?: Translations, fallbackLanguage?: string): void;
             setPathOptions(options: PathOptions): void;
             Draw: GeomanHelpers;
         }
