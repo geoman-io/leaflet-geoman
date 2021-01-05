@@ -188,9 +188,18 @@ const DragMixin = {
         };
       });
 
-    if (this._layer instanceof L.CircleMarker) {
+    if (this._layer instanceof L.Circle ||(this._layer instanceof L.CircleMarker && this._layer.options.editable)) {
       // create the new coordinates array
       const newCoords = moveCoords([this._layer.getLatLng()]);
+      // set new coordinates and redraw
+      this._layer.setLatLng(newCoords[0]);
+    } else if (this._layer instanceof L.CircleMarker) {
+      let coordsRefernce = this._layer.getLatLng();
+      if(this._layer._snapped) {
+        coordsRefernce = this._layer._orgLatLng;
+      }
+      // create the new coordinates array
+      const newCoords = moveCoords([coordsRefernce]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
     } else if( this._layer instanceof L.ImageOverlay){

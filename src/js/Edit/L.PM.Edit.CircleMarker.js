@@ -68,7 +68,7 @@ Edit.CircleMarker = Edit.extend({
     this._layer.off('contextmenu', this._removeMarker, this);
 
     // only fire events if it was enabled before
-    if (!this.enabled()) {
+    if (this.enabled()) {
       if (this._layerEdited) {
         Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
       }
@@ -111,6 +111,11 @@ Edit.CircleMarker = Edit.extend({
     if (this.options.snappable) {
       if (this.options.editable) {
         this._initSnappableMarkers();
+
+        // TODO: switch back to move event once this leaflet issue is solved:
+        // https://github.com/Leaflet/Leaflet/issues/6492
+        this._centerMarker.on('drag', this._moveCircle, this);
+
         if(this.options.editable){
           // update marker latlng when snapped latlng radius is out of min/max
           this._outerMarker.on('drag',this._handleOuterMarkerSnapping, this);
@@ -165,6 +170,7 @@ Edit.CircleMarker = Edit.extend({
     const A = markerA.getLatLng();
     const B = markerB.getLatLng();
     this._hintline = L.polyline([A, B], this.options.hintlineStyle);
+    this._setPane(this._hintline,'layerPane');
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
   },
@@ -172,9 +178,6 @@ Edit.CircleMarker = Edit.extend({
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
       L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
-      // TODO: switch back to move event once this leaflet issue is solved:
-      // https://github.com/Leaflet/Leaflet/issues/6492
-      marker.on('drag', this._moveCircle, this);
     } else {
       marker.dragging.disable();
     }
@@ -190,6 +193,7 @@ Edit.CircleMarker = Edit.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
+    this._setPane(marker,'vertexPane');
 
     marker._origLatLng = latlng;
     marker._pmTempLayer = true;
@@ -202,14 +206,16 @@ Edit.CircleMarker = Edit.extend({
 
     return marker;
   },
-  _moveCircle(e) {
-    const center = e.latlng;
+  _moveCircle() {
+    const center = this._centerMarker.getLatLng();
     this._layer.setLatLng(center);
 
     const radius = this._layer._radius;
     const outer = this._getLatLngOnCircle(center, radius);
     this._outerMarker.setLatLng(outer);
     this._syncHintLine();
+
+    this._updateHiddenPolyCircle();
 
     Utils._fireEvent(this._layer,'pm:centerplaced', {
       layer: this._layer,

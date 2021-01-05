@@ -4,7 +4,7 @@ import booleanContains from "@turf/boolean-contains";
 import get from "lodash/get";
 import Utils from "../L.PM.Utils";
 import Draw from './L.PM.Draw';
-import {difference, intersect} from "../helpers/turfHelper";
+import {difference, flattenPolyline, groupToMultiLineString, intersect} from "../helpers/turfHelper";
 
 Draw.Cut = Draw.Polygon.extend({
   initialize(map) {
@@ -133,6 +133,7 @@ Draw.Cut = Draw.Polygon.extend({
       if (resultLayer.getLayers().length === 1) {
         [resultLayer] = resultLayer.getLayers(); // prevent that a unnecessary layergroup is created
       }
+      this._setPane(resultLayer,'layerPane');
       const resultingLayer = resultLayer.addTo(this._map.pm._getContainingLayer());
 
       // give the new layer the original options
@@ -172,18 +173,32 @@ Draw.Cut = Draw.Polygon.extend({
       // find layer difference
       diff = difference(l.toGeoJSON(15), layer.toGeoJSON(15));
     } else {
-      // get splitted line to look which line part is coverd by the cut polygon
-      const lineDiff = lineSplit(l.toGeoJSON(15), layer.toGeoJSON(15));
-      if (!lineDiff) {
-        return null;
-      }
-      L.geoJSON(lineDiff).getLayers().forEach((lay) => {
-        // add only parts to the map, they are not covered by the cut polygon
-        if (!booleanContains(layer.toGeoJSON(15), lay.toGeoJSON(15))) {
-          lay.addTo(fg);
+      const features = flattenPolyline(l);
+
+      features.forEach((feature)=>{
+        // get splitted line to look which line part is coverd by the cut polygon
+        const lineDiff = lineSplit(feature, layer.toGeoJSON(15));
+
+        let group;
+        if (lineDiff && lineDiff.features.length > 0) {
+          group = L.geoJSON(lineDiff);
+        }else{
+          group = L.geoJSON(feature);
         }
+
+        group.getLayers().forEach((lay) => {
+          // add only parts to the map, they are not covered by the cut polygon
+          if (!booleanContains(layer.toGeoJSON(15), lay.toGeoJSON(15))) {
+            lay.addTo(fg);
+          }
+        });
       });
-      diff = fg.toGeoJSON(15);
+
+      if(features.length > 1){
+        diff = groupToMultiLineString(fg);
+      }else{
+        diff = fg.toGeoJSON(15);
+      }
     }
     return diff;
   },

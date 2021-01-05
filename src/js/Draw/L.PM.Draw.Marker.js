@@ -24,6 +24,7 @@ Draw.Marker = Draw.extend({
 
     // this is the hintmarker on the mouse cursor
     this._hintMarker = L.marker([0, 0], this.options.markerStyle);
+    this._setPane(this._hintMarker,'markerPane');
     this._hintMarker._pmTempLayer = true;
     this._hintMarker.addTo(this._map);
 
@@ -141,7 +142,9 @@ Draw.Marker = Draw.extend({
 
     // create marker
     const marker = new L.Marker(latlng, this.options.markerStyle);
+    this._setPane(marker,'markerPane');
     this._finishLayer(marker);
+    marker.addTo(this._map.pm._getContainingLayer());
 
     if(!marker.pm){
       marker.options.draggable = false;

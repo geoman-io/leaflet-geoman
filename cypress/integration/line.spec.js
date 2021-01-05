@@ -208,4 +208,37 @@ describe('Draw & Edit Line', () => {
     cy.hasVertexMarkers(5);
   });
 
+  it('edit MultiLineString', () => {
+    cy.drawShape('MultiLineString');
+
+    cy.toolbarButton('edit').click();
+
+    cy.get(mapSelector)
+    .rightclick(641,462)
+    .rightclick(702,267);
+
+    cy.hasVertexMarkers(3);
+    cy.hasMiddleMarkers(2);
+  });
+
+  it('cut MultiLineString', () => {
+    cy.drawShape('MultiLineString');
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(394,203)
+      .click(333,77)
+      .click(607,112)
+      .click(394,203);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(10);
+    cy.hasMiddleMarkers(6);
+
+    cy.window().then(({ map }) => {
+      const layers = map.pm.getGeomanDrawLayers();
+      expect(layers.length).to.eq(1);
+      expect(layers[0].getLatLngs().length).to.eq(4);
+    });
+  });
 });

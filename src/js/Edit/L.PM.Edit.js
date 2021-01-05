@@ -8,10 +8,11 @@ const Edit = L.Class.extend({
     snapDistance: 20,
     allowSelfIntersection: true,
     allowSelfIntersectionEdit: false,
-    draggable: true,
-    limitMarkersToCount: -1,
     preventMarkerRemoval: false,
-    hideMiddleMarkers: false
+    removeLayerBelowMinVertexCount: true,
+    limitMarkersToCount: -1,
+    hideMiddleMarkers: false,
+    draggable: true,
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
@@ -24,6 +25,15 @@ const Edit = L.Class.extend({
   getShape(){
     return this._shape;
   },
+  _setPane(layer,type){
+    if(type === "layerPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.layerPane || 'overlayPane';
+    }else if(type === "vertexPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.vertexPane || 'markerPane';
+    }else if(type === "markerPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.markerPane || 'markerPane';
+    }
+  }
 });
 
 export default Edit;

@@ -6,20 +6,27 @@ const Draw = L.Class.extend({
   options: {
     snappable: true,
     snapDistance: 20,
-    tooltips: true,
-    cursorMarker: true,
-    finishOnDoubleClick: false,
-    finishOn: null,
+    snapMiddle: false,
     allowSelfIntersection: true,
+    tooltips: true,
     templineStyle: {},
     hintlineStyle: {
       color: '#3388ff',
       dashArray: '5,5',
     },
+    pathOptions: null,
+    cursorMarker: true,
+    finishOn: null,
     markerStyle: {
       draggable: true,
       icon: L.icon()
     },
+    hideMiddleMarkers: false,
+    minRadiusCircle: null,
+    maxRadiusCircle: null,
+    minRadiusCircleMarker: null,
+    maxRadiusCircleMarker: null,
+    editable: false,
     markerEditable: true,
     continueDrawing: false,
   },
@@ -178,6 +185,15 @@ const Draw = L.Class.extend({
   _addDrawnLayerProp(layer){
     layer._drawnByGeoman = true;
   },
+  _setPane(layer,type){
+    if(type === "layerPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.layerPane || 'overlayPane';
+    }else if(type === "vertexPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.vertexPane || 'markerPane';
+    }else if(type === "markerPane"){
+      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.markerPane || 'markerPane';
+    }
+  }
 });
 
 export default Draw;
