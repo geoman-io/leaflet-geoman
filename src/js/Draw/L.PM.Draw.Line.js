@@ -312,6 +312,11 @@ Draw.Line = Draw.extend({
       }
     }
 
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped) {
+      return
+    }
+
     // get coordinates
     const coords = this._layer.getLatLngs();
 
