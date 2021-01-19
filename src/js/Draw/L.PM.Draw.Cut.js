@@ -74,6 +74,13 @@ Draw.Cut = Draw.Polygon.extend({
       .map(l => all[l])
       // only layers handled by leaflet-geoman
       .filter(l => l.pm)
+      .filter(l => !l._pmTempLayer)
+      // filter out everything that ignore leaflet-geoman
+      .filter(l => (
+          (!L.PM.optIn && !l.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+          (L.PM.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+        )
+      )
       // only polyline instances
       .filter(l => l instanceof L.Polyline)
       // exclude the drawn one

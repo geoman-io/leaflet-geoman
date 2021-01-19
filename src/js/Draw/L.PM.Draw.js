@@ -174,10 +174,10 @@ const Draw = L.Class.extend({
     return this[name] ? this[name]._shape : name;
   },
   _finishLayer(layer){
-    // add the pm options from drawing to the new layer (edit)
-    layer.pm.setOptions(this.options);
-    // set the shape (can be a custom shape)
-    if(layer.pm) {
+    if (layer.pm) {
+      // add the pm options from drawing to the new layer (edit)
+      layer.pm.setOptions(this.options);
+      // set the shape (can be a custom shape)
       layer.pm._shape = this._shape;
     }
     this._addDrawnLayerProp(layer);
