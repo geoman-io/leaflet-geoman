@@ -243,6 +243,7 @@ See the available options in the table below.
 | snappable             | `true`                                | enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                                             |  
 | snapDistance          | `20`                                  | the distance to another vertex when a snap should happen                                                                                              |  
 | snapMiddle            | `false`                               | allow snapping in the middle of two vertices (middleMarker)                                                                                           |  
+| snapSegment           | `true`                                | allow snapping between two vertices                                                                                            |  
 | tooltips              | `true`                                | show helpful tooltips for your user                                                                                                                   |  
 | allowSelfIntersection | `true`                                | allow self intersections                                                                                                                              |  
 | templineStyle         | `{ color: 'red' },`                   | [leaflet path options](https://leafletjs.com/reference-1.7.1.html#path) for the lines between drawn vertices/markers.                                 |  

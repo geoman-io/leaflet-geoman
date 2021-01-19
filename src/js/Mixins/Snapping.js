@@ -4,6 +4,7 @@ import {isEmptyDeep, prioritiseSort} from "../helpers";
 const SnapMixin = {
   _initSnappableMarkers() {
     this.options.snapDistance = this.options.snapDistance || 30;
+    this.options.snapSegment = this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
     this._assignEvents(this._markers);
 
@@ -94,7 +95,8 @@ const SnapMixin = {
 
     const isMarker =
       closestLayer.layer instanceof L.Marker ||
-      closestLayer.layer instanceof L.CircleMarker;
+      closestLayer.layer instanceof L.CircleMarker || 
+      !this.options.snapSegment;
 
     // find the final latlng that we want to snap to
     let snapLatLng;
@@ -290,6 +292,40 @@ const SnapMixin = {
       };
     }
 
+    if (!this.options.snapSegment) {
+      // Only snap on the coords
+
+      // the closest coord of the layer
+      let closestCoord;
+
+      // the shortest distance from P to closestCoord
+      let shortestDistance;
+
+      const loopThroughCoords = coords => {
+        coords.forEach((coord, index) => {
+          if (Array.isArray(coord)) {
+            loopThroughCoords(coord);
+            return;
+          }
+          const distance = this._getDistance(map, P, coord);
+
+          if (shortestDistance === undefined || distance < shortestDistance) {
+            shortestDistance = distance;
+            closestCoord = coord;
+          }
+        });
+      };
+
+      loopThroughCoords(latlngs);
+
+      // return the closest coord
+      return {
+        latlng: closestCoord,
+        distance: shortestDistance,
+      };
+
+    }
+
     // the closest segment (line between two points) of the layer
     let closestSegment;
 
@@ -297,10 +333,10 @@ const SnapMixin = {
     let shortestDistance;
 
     // loop through the coords of the layer
-    const loopThroughCoords = coords => {
+    const loopThroughSegments = coords => {
       coords.forEach((coord, index) => {
         if (Array.isArray(coord)) {
-          loopThroughCoords(coord);
+          loopThroughSegments(coord);
           return;
         }
 
@@ -330,7 +366,7 @@ const SnapMixin = {
       });
     };
 
-    loopThroughCoords(latlngs);
+    loopThroughSegments(latlngs);
 
     // now, take the closest segment (closestSegment) and calc the closest point to P on it.
     const C = this._getClosestPointOnSegment(
