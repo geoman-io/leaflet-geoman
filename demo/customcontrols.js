@@ -19,11 +19,11 @@ map.pm.addControls({
 });
 
 // Click button -> toggle disabled
-map.pm.Toolbar.createCustomControl({name:"alertBox",block: "custom",className: "leaflet-pm-icon-marker",title: "Count layers",onClick: ()=>{alert("There are "+L.PM.Utils.findLayers(map).length+" layers on the map")},toggle: false});
+map.pm.Toolbar.createCustomControl({name:"alertBox",block: "custom",className: "leaflet-pm-icon-marker xyz-class",title: "Count layers",onClick: ()=>{alert("There are "+L.PM.Utils.findLayers(map).length+" layers on the map")},toggle: false});
 
 
 // Copy Geoman Draw Control
-const _actions = [{text: "Custom message, with click event",onClick(e){alert('click');}}];
+const _actions = [{text: "Custom message, with click event",onClick(e){alert('click');}, name: 'actionName'}];
 map.pm.Toolbar.copyDrawControl("Rectangle", {name:"RectangleCopy",block: "custom",title: "Display text on hover button",actions: _actions});
 map.pm.Draw.RectangleCopy.setPathOptions({color :'green'});
 
