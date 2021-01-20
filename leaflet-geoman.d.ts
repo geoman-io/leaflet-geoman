@@ -54,6 +54,7 @@ declare module 'leaflet' {
 
         export interface GeomanHelpers {
             getShapes(): string[];
+            getActiveShape(): string;
         }
 
         export class MapDrawOptions {
@@ -75,21 +76,86 @@ declare module 'leaflet' {
             preventMarkerRemoval?: boolean;
         }
 
-        export class DrawControlOptions {
-            position?: ControlPosition;
-            drawMarker?: boolean;
-            drawCircleMarker?: boolean;
-            drawPolyline?: boolean;
-            drawRectangle?: boolean;
-            drawPolygon?: boolean;
-            drawCircle?: boolean;
-            editMode?: boolean;
-            dragMode?: boolean;
-            cutPolygon?: boolean;
-            removalMode?: boolean;
+        export interface BlockPositions {
+            draw?: ControlPosition;
+            edit?: ControlPosition;
+            custom?: ControlPosition;
+            options?: ControlPosition;
         }
 
-        export function initialize(options?: { optIn: boolean }): void;
+        export class DrawControlOptions {
+            position?: ControlPosition;
+            positions?: BlockPositions;
+            /** adds button to draw Markers (default:true) */
+            drawMarker?: boolean;
+            /** adds button to draw CircleMarkers (default:true) */
+            drawCircleMarker?: boolean;
+            /** adds button to draw Line (default:true) */
+            drawPolyline?: boolean;
+            /** adds button to draw Rectangle (default:true) */
+            drawRectangle?: boolean;
+            /** adds button to draw Polygon (default:true) */
+            drawPolygon?: boolean;
+            /** adds button to draw Circle (default:true) */
+            drawCircle?: boolean;
+            /** adds button to toggle edit mode for all layers (default:true) */
+            editMode?: boolean;
+            /** adds button to toggle drag mode for all layers (default:true) */
+            dragMode?: boolean;
+            /** adds button to cut a hole in a polygon or line (default:true) */
+            cutPolygon?: boolean;
+            /** adds a button to remove layers (default:true) */
+            removalMode?: boolean;
+            /** all buttons will be displayed as one block Customize Controls (default:false) */
+            oneBlock?: boolean;
+            /** shows all draw buttons / buttons in the draw block (default:true) */
+            drawControls?: boolean;
+            /** shows all edit buttons / buttons in the edit block (default:true) */
+            editControls?: boolean;
+            /** shows all buttons in the custom block (default:true) */
+            customControls?: boolean;
+            /** shows all options buttons / buttons in the option block ⭐ (default:true) */
+            optionsControls?: boolean;
+            /** adds a button to toggle the Pinning Option ⭐ (default:true) */
+            pinningOption?: boolean;
+            /** adds a button to toggle the Snapping Option ⭐ (default:true) */
+            snappingOption?: boolean;
+        }
+
+        export class CustomControlOptions {
+            /** Name of the control */
+            name: string;
+            /** block of the control. draw, edit, custom, options⭐  */
+            block?: string;
+            /** Text showing when you hover the control */
+            title?: string;
+            /** CSS class with the Icon */
+            className?: string;
+            /** Function fired when clicking the control */
+            onClick?: (e: any) => void;
+            /** Function fired after clicking the control */
+            afterClick?: (e: any) => void;
+            /** Action that appears as tooltip. Look under Actions for more information */
+            actions?: (Action | string)[];
+            /** Control can be toggled (default:true) */
+            toggle?: boolean;
+            /** Control is disabled (default:false) */
+            disabled?: boolean;
+        }
+
+        export class GlobalOptions {
+            /** add the created layers to a layergroup instead to the map. */
+            layerGroup?: L.Layer;
+        }
+
+        export class Action {
+            text: string;
+            onClick: (e: any) => void;
+        }
+
+        export function initialize(options?: {}): void;
+
+        export function setOptIn(optIn: boolean): void;
 
         export class Translations {
             tooltips?: {
@@ -125,16 +191,36 @@ declare module 'leaflet' {
         }
 
         interface Map {
-            addControls(options?: DrawControlOptions): void;
             enableDraw(shape: SUPPORTED_SHAPES, options?: MapDrawOptions): void;
             disableDraw(shape: SUPPORTED_SHAPES): void;
+            /** Returns true if global Draw Mode is enabled. false when disabled. */
+            globalDrawModeEnabled(): boolean
+            /** Customize the style of the drawn layer. Only for L.Path layers. Shapes can be excluded with a ignoreShapes array in optionsModifier */
+            setPathOptions(options: PathOptions): void
+            /** Set globalOptions and apply them. */
+            setGlobalOptions(options: GlobalOptions): void
+            /** Apply the current globalOptions to all existing layers. */
+            applyGlobalOptions(): void
+            /** Returns the globalOptions. */
+            getGlobalOptions(): Object;
+            /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
+            getGeomanLayers(featureGroup?: boolean): L.FeatureGroup | L.Layer[];
+            /** Returns all drawn Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
+            getGeomanDrawLayers(featureGroup?: boolean): L.FeatureGroup | L.Layer
+
+            // Edit Mode
             enableGlobalEditMode(options): void;
             disableGlobalEditMode(): void;
             toggleGlobalEditMode(options): void;
             globalEditEnabled(): boolean;
-            setLang(lang: 'en' | 'de' | 'it' | 'ru' | 'ro' | 'es' | 'fr' | 'pt_br' | 'zh' | 'nl', customTranslations?: Translations, fallbackLanguage?: string);
-            setPathOptions(options: PathOptions): void;
+
+            setLang(lang: 'en' | 'de' | 'it' | 'ru' | 'ro' | 'es' | 'fr' | 'pt_br' | 'zh' | 'nl', customTranslations?: Translations, fallbackLanguage?: string): void;
+
+            addControls(options?: DrawControlOptions): void;
+            removeControls(): void;
+
             Draw: GeomanHelpers;
+            Toolbar: Toolbar;
         }
 
         interface Layer {
@@ -143,6 +229,18 @@ declare module 'leaflet' {
             toggleEdit(options?: LayerDrawOptions): void;
             enabled(): boolean;
             hasSelfIntersection(): boolean;
+        }
+
+        interface Toolbar {
+            changeControlOrder(order: string[]): void;
+            getControlOrder(): string[];
+            setBlockPosition(block: 'draw' | 'edit' | 'custom' | 'options', position: ControlPosition): void;
+            getBlockPositions(): BlockPositions;
+            createCustomControl(options: CustomControlOptions): void;
+        }
+
+        export namespace Utils {
+            export function findLayers(layer: L.Layer): L.Layer[];
         }
     }
 
