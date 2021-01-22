@@ -128,7 +128,7 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ map, L }) => {
       const rect = map.pm.getGeomanDrawLayers()[0];
-      expect(rect.options.color).to.not.equal('red');
+      expect(rect.options.color).to.not.equal('#f00000ff');
 
     })
   });
