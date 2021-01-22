@@ -1,4 +1,3 @@
-import Utils from '../L.PM.Utils';
 import {isEmptyDeep, prioritiseSort} from "../helpers";
 
 const SnapMixin = {
@@ -119,8 +118,8 @@ const SnapMixin = {
       distance: closestLayer.distance,
     };
 
-    Utils._fireEvent(eventInfo.marker,'pm:snapdrag', eventInfo);
-    Utils._fireEvent(this._layer,'pm:snapdrag', eventInfo);
+    L.PM.Utils._fireEvent(eventInfo.marker,'pm:snapdrag', eventInfo);
+    L.PM.Utils._fireEvent(this._layer,'pm:snapdrag', eventInfo);
 
     if (closestLayer.distance < minDistance) {
       // snap the marker
@@ -132,8 +131,8 @@ const SnapMixin = {
 
       const triggerSnap = () => {
         this._snapLatLng = snapLatLng;
-        Utils._fireEvent(marker,'pm:snap', eventInfo);
-        Utils._fireEvent(this._layer,'pm:snap', eventInfo);
+        L.PM.Utils._fireEvent(marker,'pm:snap', eventInfo);
+        L.PM.Utils._fireEvent(this._layer,'pm:snap', eventInfo);
       };
 
       // check if the snapping position differs from the last snap
@@ -154,8 +153,8 @@ const SnapMixin = {
       marker._snapped = false;
 
       // and fire unsnap event
-      Utils._fireEvent(eventInfo.marker,'pm:unsnap', eventInfo);
-      Utils._fireEvent(this._layer,'pm:unsnap', eventInfo);
+      L.PM.Utils._fireEvent(eventInfo.marker,'pm:unsnap', eventInfo);
+      L.PM.Utils._fireEvent(this._layer,'pm:unsnap', eventInfo);
     }
 
     return true;
@@ -393,7 +392,7 @@ const SnapMixin = {
 
     // snap to middle (M) of segment if option is enabled
     if (this.options.snapMiddle) {
-      const M = Utils.calcMiddleLatLng(map, A, B);
+      const M = L.PM.Utils.calcMiddleLatLng(map, A, B);
       const distanceMC = this._getDistance(map, M, C);
 
       if (distanceMC < distanceAC && distanceMC < distanceBC) {

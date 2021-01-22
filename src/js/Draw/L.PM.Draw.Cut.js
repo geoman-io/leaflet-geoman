@@ -2,7 +2,6 @@ import lineIntersect from "@turf/line-intersect";
 import lineSplit from "@turf/line-split";
 import booleanContains from "@turf/boolean-contains";
 import get from "lodash/get";
-import Utils from "../L.PM.Utils";
 import Draw from './L.PM.Draw';
 import {difference, flattenPolyline, groupToMultiLineString, intersect} from "../helpers/turfHelper";
 
@@ -39,21 +38,21 @@ Draw.Cut = Draw.Polygon.extend({
 
     this._editedLayers.forEach(({layer, originalLayer}) =>{
       // fire pm:cut on the cutted layer
-      Utils._fireEvent(originalLayer,'pm:cut', {
+      L.PM.Utils._fireEvent(originalLayer,'pm:cut', {
         shape: this._shape,
         layer,
         originalLayer,
       });
 
       // fire pm:cut on the map
-      Utils._fireEvent(this._map,'pm:cut', {
+      L.PM.Utils._fireEvent(this._map,'pm:cut', {
         shape: this._shape,
         layer,
         originalLayer,
       });
 
       // fire edit event after cut
-      Utils._fireEvent(originalLayer,'pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
+      L.PM.Utils._fireEvent(originalLayer,'pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
     });
     this._editedLayers = [];
 
@@ -113,7 +112,7 @@ Draw.Cut = Draw.Polygon.extend({
             if (closest && closest.segment && closest.distance < this.options.snapDistance) {
               const {segment} = closest;
               if (segment && segment.length === 2) {
-                const {indexPath, parentPath, newIndex} = Utils._getIndexFromSegment(coords, segment);
+                const {indexPath, parentPath, newIndex} = L.PM.Utils._getIndexFromSegment(coords, segment);
                 // define the coordsRing that is edited
                 const coordsRing = indexPath.length > 1 ? get(coords, parentPath) : coords;
                 coordsRing.splice(newIndex, 0, latlng);
