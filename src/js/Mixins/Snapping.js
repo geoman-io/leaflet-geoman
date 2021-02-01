@@ -50,13 +50,20 @@ const SnapMixin = {
       });
     }
   },
+  _handleThrottleSnapping(){
+    // we check if the throttledList is existing, else the function is deleted but the `layeradd` event calls it.
+    // this made problems when layer was removed and added to the map in the `pm:create` event
+    if(this.throttledList){
+      this._createSnapList();
+    }
+  },
   _handleSnapping(e) {
 
     const marker = e.target;
     marker._snapped = false;
 
     if (!this.throttledList) {
-      this.throttledList = L.Util.throttle(this._createSnapList, 100, this);
+      this.throttledList = L.Util.throttle(this._handleThrottleSnapping, 100, this);
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
