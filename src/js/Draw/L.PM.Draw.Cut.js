@@ -84,14 +84,16 @@ Draw.Cut = Draw.Polygon.extend({
         try {
           const lineInter = !!lineIntersect(layer.toGeoJSON(15), l.toGeoJSON(15)).features.length > 0;
 
-          if(lineInter){
+          if(lineInter || (l instanceof L.Polyline && !(l instanceof L.Polygon))){
             return lineInter;
           }
           return !!intersect(layer.toGeoJSON(15), l.toGeoJSON(15));
 
         } catch (e) {
-          /* eslint-disable-next-line no-console */
-          console.error('You cant cut polygons with self-intersections');
+          if (l instanceof L.Polygon) {
+            /* eslint-disable-next-line no-console */
+            console.error('You can\'t cut polygons with self-intersections');
+          }
           return false;
         }
       });
@@ -137,7 +139,7 @@ Draw.Cut = Draw.Polygon.extend({
       const resultingLayer = resultLayer.addTo(this._map.pm._getContainingLayer());
 
       // give the new layer the original options
-      resultingLayer.pm.enable(this.options);
+      resultingLayer.pm.enable(l.pm.options);
       resultingLayer.pm.disable();
 
       // add templayer prop so pm:remove isn't fired
