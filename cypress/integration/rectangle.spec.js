@@ -209,4 +209,27 @@ describe('Draw Rectangle', () => {
       expect(text).to.equal('Popup test');
     })
   });
+
+  it('prevent not correct created snaplist', () => {
+    cy.window().then(({ map }) => {
+      map.on("pm:create",(e)=>{
+        map.removeLayer(e.layer);
+        map.addLayer(e.layer);
+      });
+    });
+
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList).to.equal(undefined);
+    });
+  });
 });
