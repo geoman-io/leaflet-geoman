@@ -213,7 +213,7 @@ Draw.Line = Draw.extend({
     // change the style based on self intersection
     if (this._doesSelfIntersect) {
       this._hintline.setStyle({
-        color: 'red',
+        color: '#f00000ff',
       });
     } else if (!this._hintline.isEmpty()) {
       this._hintline.setStyle(this.options.hintlineStyle);

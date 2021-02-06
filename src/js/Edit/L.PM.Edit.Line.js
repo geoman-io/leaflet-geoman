@@ -59,7 +59,7 @@ Edit.Line = Edit.extend({
     }
 
     if (!this.options.allowSelfIntersection) {
-      if(this._layer.options.color !== 'red') {
+      if(this._layer.options.color !== '#f00000ff') {
         this.cachedColor = this._layer.options.color;
         this.isRed = false;
       }else{
@@ -356,7 +356,7 @@ Edit.Line = Edit.extend({
       if (flash) {
         this._flashLayer();
       } else {
-        layer.setStyle({ color: 'red' });
+        layer.setStyle({ color: '#f00000ff' });
         this.isRed = true;
       }
 
@@ -380,7 +380,7 @@ Edit.Line = Edit.extend({
       this.cachedColor = this._layer.options.color;
     }
 
-    this._layer.setStyle({ color: 'red' });
+    this._layer.setStyle({ color: '#f00000ff' });
     this.isRed = true;
 
     window.setTimeout(() => {
