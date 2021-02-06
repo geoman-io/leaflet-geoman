@@ -21,12 +21,12 @@
     "drawLineButton": "رسم خط",
     "drawCircleButton": "رسم دایره",
     "drawRectButton": "رسم چهارضلعی",
-    "editButton": "ویرایش لایه‌ها",
+    "editButton": "ویرایش لایه‌هل",
     "dragButton": "جابجایی لایه‌ها",
     "cutButton": "برش لایه‌ها",
     "deleteButton": "حذف لایه‌ها",
     "drawCircleMarkerButton": "رسم نشان دایره",
-    "snappingButton": "نشانگر را به لایه‌ها و رئوس دیگر بکشید",
+    "snappingButton": "نشانگر را به لایه ها و رئوس دیگر بکشید",
     "pinningButton": "رئوس مشترک را با هم پین کنید"
   }
 }
