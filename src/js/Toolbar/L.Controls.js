@@ -127,12 +127,13 @@ const PMButton = L.Control.extend({
       },
     };
 
-    activeActions.forEach(name => {
+    activeActions.forEach(_action => {
+      const name = typeof _action === "string" ? _action : _action.name;
       let action;
       if (actions[name]) {
         action = actions[name];
-      } else if (name.text) {
-        action = name;
+      } else if (_action.text) {
+        action = _action;
       } else {
         return;
       }
