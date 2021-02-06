@@ -216,6 +216,12 @@ const SnapMixin = {
 
     // save snaplist from layers and the other snap layers added from other classes/scripts
     if (this._otherSnapLayers) {
+      this._otherSnapLayers.forEach(()=>{
+        // this is for debugging
+        const debugLine = L.polyline([], {color: 'red', pmIgnore: true});
+        debugLine._pmTempLayer = true;
+        debugIndicatorLines.push(debugLine);
+      })
       this._snapList = layers.concat(this._otherSnapLayers);
     } else {
       this._snapList = layers;
@@ -245,8 +251,10 @@ const SnapMixin = {
       // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
       const results = this._calcLayerDistances(latlng, layer);
 
-      // show indicator lines, it's for debugging
-      this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
+      if(this.debugIndicatorLines[index]) {
+        // show indicator lines, it's for debugging
+        this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
+      }
 
       // save the info if it doesn't exist or if the distance is smaller than the previous one
       if (
