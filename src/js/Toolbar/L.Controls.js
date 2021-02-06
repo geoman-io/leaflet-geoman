@@ -77,7 +77,7 @@ const PMButton = L.Control.extend({
     // button container
     const buttonContainer = L.DomUtil.create(
       'div',
-      'button-container',
+      `button-container  ${pos}`,
       this._container
     );
 
