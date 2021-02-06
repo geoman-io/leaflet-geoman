@@ -244,6 +244,7 @@ Edit.Line = Edit.extend({
   },
   _onMiddleMarkerMoveStart(e){
     const middleMarker = e.target;
+    middleMarker._dragging = true;
     // TODO: This is a workaround. Remove the moveend listener and
     // callback as soon as this is fixed:
     // https://github.com/Leaflet/Leaflet/issues/4484
@@ -255,13 +256,16 @@ Edit.Line = Edit.extend({
     const icon = L.divIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
     middleMarker.off('moveend', this._onMiddleMarkerMoveEnd, this);
+    // timeout is needed else this._onVertexClick fires the event because it is called after deleting the flag
+    setTimeout(()=> {
+      delete middleMarker._dragging;
+    },100);
   },
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {
     // first, make this middlemarker a regular marker
     newM.off('movestart',this._onMiddleMarkerMoveStart, this);
     newM.off('click', this._onMiddleMarkerClick, this);
-    newM.on('click', this._onVertexClick, this);
     // now, create the polygon coordinate point for that marker
     // and push into marker array
     // and associate polygon coordinate with marker coordinate
@@ -765,6 +769,10 @@ Edit.Line = Edit.extend({
   },
   _onVertexClick(e) {
     const vertex = e.target;
+    if(vertex._dragging){
+      return;
+    }
+
     const { indexPath } = this.findDeepMarkerIndex(this._markers, vertex);
 
     Utils._fireEvent(this._layer,'pm:vertexclick', {
