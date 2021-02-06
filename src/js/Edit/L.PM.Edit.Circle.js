@@ -1,5 +1,4 @@
 import Edit from './L.PM.Edit';
-import Utils from "../L.PM.Utils";
 import {destinationOnLine} from "../helpers";
 
 Edit.Circle = Edit.extend({
@@ -36,7 +35,7 @@ Edit.Circle = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
 
-    Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
+    L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -63,11 +62,11 @@ Edit.Circle = Edit.extend({
 
 
     if (this._layerEdited) {
-      Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
+      L.PM.Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
     }
     this._layerEdited = false;
 
-    Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
+    L.PM.Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
     return true;
   },
   enabled() {
@@ -182,7 +181,7 @@ Edit.Circle = Edit.extend({
 
     this._updateHiddenPolyCircle();
 
-    Utils._fireEvent(this._layer,'pm:centerplaced', {
+    L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
       layer: this._layer,
       latlng: center,
       shape: this.getShape()
@@ -222,7 +221,7 @@ Edit.Circle = Edit.extend({
     this._layer.off('pm:dragstart', this._unsnap, this);
   },
   _onMarkerDragStart(e) {
-    Utils._fireEvent(this._layer,'pm:markerdragstart', {
+    L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
@@ -230,7 +229,7 @@ Edit.Circle = Edit.extend({
     });
   },
   _onMarkerDrag(e) {
-    Utils._fireEvent(this._layer,'pm:markerdrag', {
+    L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
@@ -242,7 +241,7 @@ Edit.Circle = Edit.extend({
     this._fireEdit();
 
     // fire markerdragend event
-    Utils._fireEvent(this._layer,'pm:markerdragend', {
+    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
@@ -251,23 +250,23 @@ Edit.Circle = Edit.extend({
   },
   _fireEdit() {
     // fire edit event
-    Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
   },
   _fireDragStart() {
-    Utils._fireEvent(this._layer,'pm:dragstart', { layer: this._layer, shape: this.getShape() });
+    L.PM.Utils._fireEvent(this._layer,'pm:dragstart', { layer: this._layer, shape: this.getShape() });
   },
   _fireDrag(e) {
-    Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
+    L.PM.Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
-    Utils._fireEvent(this._layer,'pm:dragend', { layer: this._layer, shape: this.getShape() });
+    L.PM.Utils._fireEvent(this._layer,'pm:dragend', { layer: this._layer, shape: this.getShape() });
   },
   _updateHiddenPolyCircle() {
     if (this._hiddenPolyCircle) {
-      this._hiddenPolyCircle.setLatLngs(Utils.circleToPolygon(this._layer, 200).getLatLngs());
+      this._hiddenPolyCircle.setLatLngs(L.PM.Utils.circleToPolygon(this._layer, 200).getLatLngs());
     } else {
-      this._hiddenPolyCircle = Utils.circleToPolygon(this._layer, 200);
+      this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(this._layer, 200);
     }
 
     if (!this._hiddenPolyCircle._parentCopy) {

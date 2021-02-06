@@ -1,5 +1,3 @@
-import Utils from "../../L.PM.Utils";
-
 const GlobalRemovalMode = {
   enableGlobalRemovalMode() {
     this._globalRemovalMode = true;
@@ -65,7 +63,7 @@ const GlobalRemovalMode = {
     }
   },
   _fireRemovalModeEvent(enabled) {
-    Utils._fireEvent(this.map,'pm:globalremovalmodetoggled', {
+    L.PM.Utils._fireEvent(this.map,'pm:globalremovalmodetoggled', {
       enabled,
       map: this.map,
     });
@@ -80,11 +78,11 @@ const GlobalRemovalMode = {
       layer.removeFrom(this.map.pm._getContainingLayer());
       layer.remove();
       if(layer instanceof L.LayerGroup){
-        Utils._fireEvent(layer,'pm:remove', { layer, shape: undefined });
-        Utils._fireEvent(this.map,'pm:remove', { layer, shape: undefined });
+        L.PM.Utils._fireEvent(layer,'pm:remove', { layer, shape: undefined });
+        L.PM.Utils._fireEvent(this.map,'pm:remove', { layer, shape: undefined });
       }else{
-        Utils._fireEvent(layer,'pm:remove', { layer, shape: layer.pm.getShape() });
-        Utils._fireEvent(this.map,'pm:remove', { layer, shape: layer.pm.getShape() });
+        L.PM.Utils._fireEvent(layer,'pm:remove', { layer, shape: layer.pm.getShape() });
+        L.PM.Utils._fireEvent(this.map,'pm:remove', { layer, shape: layer.pm.getShape() });
       }
 
     }
