@@ -9,6 +9,7 @@ import {_convertLatLngs, _toPoint} from "../helpers/ModeHelper";
 
 const RotateMixin = {
   _onRotateStart(e){
+    this._preventRenderingMarkers(true);
     this._rotationOriginLatLng = this._getRotationCenter().clone();
     this._rotationOriginPoint = _toPoint(this._map,this._rotationOriginLatLng);
     this._rotationStartPoint = _toPoint(this._map,e.target.getLatLng());
@@ -90,6 +91,7 @@ const RotateMixin = {
     L.PM.Utils._fireEvent(this._rotationLayer,'pm:rotateend',data);
     L.PM.Utils._fireEvent(this._map,'pm:rotateend',data);
 
+    this._preventRenderingMarkers(false);
   },
   _rotateLayer(radiant, latlngs, origin, _matrix, map){
    const originPoint =_toPoint(map,origin);
@@ -113,12 +115,13 @@ const RotateMixin = {
   *
   */
   enableRotate(){
-    // we set pmIgnore to false, so the `pm` property will be always create. Also if OptIn == true
+    // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
     const options = {color: this._layer.options.color, fill: false, stroke: false, pmIgnore: false, snapIgnore: true};
 
     // we create a temp polygon for rotation
     this._rotatePoly = L.polygon(this._layer.getLatLngs(), options).addTo(this._layer._map);
     this._rotatePoly.pm._setAngle(this.getAngle());
+    this._rotatePoly.pm.setOptions(this._layer.pm.getGlobalOptions());
     this._rotatePoly.pm.setOptions({rotate: true, snappable: false, hideMiddleMarkers: true});
     // we connect the temp polygon (that will be enabled for rotation) with the current layer, so that we can rotate the current layer too
     this._rotatePoly.pm._rotationLayer = this._layer;
