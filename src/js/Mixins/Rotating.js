@@ -121,7 +121,7 @@ const RotateMixin = {
     // we create a temp polygon for rotation
     this._rotatePoly = L.polygon(this._layer.getLatLngs(), options).addTo(this._layer._map);
     this._rotatePoly.pm._setAngle(this.getAngle());
-    this._rotatePoly.pm.setOptions(this._layer.pm.getGlobalOptions());
+    this._rotatePoly.pm.setOptions(this._layer._map.pm.getGlobalOptions());
     this._rotatePoly.pm.setOptions({rotate: true, snappable: false, hideMiddleMarkers: true});
     // we connect the temp polygon (that will be enabled for rotation) with the current layer, so that we can rotate the current layer too
     this._rotatePoly.pm._rotationLayer = this._layer;
