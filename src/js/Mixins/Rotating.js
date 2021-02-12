@@ -49,7 +49,8 @@ const RotateMixin = {
     this._rotationLayer.setLatLngs(this._rotateLayer(angleDiffRadiant, this._rotationLayer.pm._rotateOrgLatLng, this._rotationOriginLatLng, L.Matrix.init(), this._map));
 
     // convert the difference radiant to degrees and add it to the angle before rotation starts
-    const angleDiff = (angleDiffRadiant * 180 / Math.PI);
+    let angleDiff = (angleDiffRadiant * 180 / Math.PI);
+    angleDiff = angleDiff < 0 ? angleDiff + 360 : angleDiff;
     const angle = angleDiff + this._startAngle;
     this._setAngle(angle);
     this._rotationLayer.pm._setAngle(angle);
@@ -162,7 +163,11 @@ const RotateMixin = {
   rotateLayer(angle){
     const rads = angle * (Math.PI / 180);
     this._layer.setLatLngs(this._rotateLayer(rads,this._layer.getLatLngs(), this._getRotationCenter(), L.Matrix.init(), this._layer._map));
-    this._setAngle(this._angle + angle)
+    this._setAngle(this.getAngle() + angle)
+  },
+  rotateLayerToAngle(angle){
+    const newAnlge = angle - this.getAngle();
+    this.rotateLayer(newAnlge);
   },
   // angle is clockwise (0-360)
   getAngle(){
