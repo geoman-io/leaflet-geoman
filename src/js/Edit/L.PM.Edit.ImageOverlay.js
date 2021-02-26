@@ -35,7 +35,7 @@ Edit.ImageOverlay = Edit.extend({
     this._enabled = true;
 
     // create markers for four corners of ImageOverlay
-    this._otherSnapLayers = L.PM.Edit.Rectangle.prototype._findCorners.apply(this);
+    this._otherSnapLayers = this._findCorners();
 
     L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
   },
@@ -69,5 +69,15 @@ Edit.ImageOverlay = Edit.extend({
     // fire edit event
     L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
+  },
+  _findCorners() {
+    const corners = this._layer.getBounds();
+
+    const northwest = corners.getNorthWest();
+    const northeast = corners.getNorthEast();
+    const southeast = corners.getSouthEast();
+    const southwest = corners.getSouthWest();
+
+    return [northwest, northeast, southeast, southwest];
   },
 });
