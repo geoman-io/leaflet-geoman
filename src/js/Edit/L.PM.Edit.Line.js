@@ -756,6 +756,10 @@ Edit.Line = Edit.extend({
       // re-enable markers for the new coords
       this._initMarkers();
 
+      if (this.options.snappable) {
+        this._initSnappableMarkers();
+      }
+
       // check for selfintersection again (mainly to reset the style)
       this._handleLayerStyle();
       return;
