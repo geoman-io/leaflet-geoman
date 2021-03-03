@@ -256,6 +256,9 @@ Draw.Rectangle = Draw.extend({
     if(this.options.rectangleAngle){
       const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectangleAngle || 0, this._map);
       rectangleLayer.setLatLngs(corners);
+      if(rectangleLayer.pm){
+        rectangleLayer.pm._setAngle(this.options.rectangleAngle || 0);
+      }
     }
 
     this._setPane(rectangleLayer,'layerPane');

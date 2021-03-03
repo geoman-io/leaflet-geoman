@@ -127,4 +127,25 @@ describe('Rotation', () => {
       expect(layer.getLatLngs()[0][0].equals(layer.pm._rotatePoly.getLatLngs()[0][0])).to.equal(true);
     });
   });
+
+  it('draw rotated rectangle', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({rectangleAngle: 40});
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(600, 350);
+
+    cy.window().then(({ map, L }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      expect(layer.pm.getAngle()).to.equal(40);
+      expect(layer.getLatLngs()[0][1].equals(L.latLng([51.48267237710426, -0.08847595304329439]))).to.equal(true);
+    });
+  });
 });
