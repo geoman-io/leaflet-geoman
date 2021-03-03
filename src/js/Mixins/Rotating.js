@@ -9,6 +9,7 @@ import {_convertLatLngs, _toPoint} from "../helpers/ModeHelper";
 
 const RotateMixin = {
   _onRotateStart(e){
+    // prevent that the limit Markers are calculated new
     this._preventRenderingMarkers(true);
     this._rotationOriginLatLng = this._getRotationCenter().clone();
     this._rotationOriginPoint = _toPoint(this._map,this._rotationOriginLatLng);
@@ -166,7 +167,13 @@ const RotateMixin = {
   rotateLayer(angle){
     const rads = angle * (Math.PI / 180);
     this._layer.setLatLngs(this._rotateLayer(rads,this._layer.getLatLngs(), this._getRotationCenter(), L.Matrix.init(), this._layer._map));
-    this._setAngle(this.getAngle() + angle)
+    // store the new latlngs
+    this._rotateOrgLatLng = L.polygon(this._layer.getLatLngs()).getLatLngs();
+    this._setAngle(this.getAngle() + angle);
+    if(this.rotateEnabled() && this._rotatePoly && this._rotatePoly.pm.enabled()){
+      this._rotatePoly.setLatLngs(this._rotateLayer(rads,this._rotatePoly.getLatLngs(), this._getRotationCenter(), L.Matrix.init(), this._rotatePoly._map));
+      this._rotatePoly.pm._initMarkers();
+    }
   },
   rotateLayerToAngle(angle){
     const newAnlge = angle - this.getAngle();

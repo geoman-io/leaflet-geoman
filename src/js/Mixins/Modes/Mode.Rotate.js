@@ -7,6 +7,9 @@ const GlobalRotateMode = {
     layers.forEach(layer => {
       layer.pm.enableRotate();
     });
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
     this._fireRotateModeEvent();
   },
   disableGlobalRotateMode() {
@@ -15,6 +18,9 @@ const GlobalRotateMode = {
     layers.forEach(layer => {
       layer.pm.disableRotate();
     });
+
+    // toogle the button in the toolbar if this is called programatically
+    this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
     this._fireRotateModeEvent();
   },
   globalRotateModeEnabled() {
