@@ -205,7 +205,7 @@ Draw.Rectangle = Draw.extend({
     const B = this._hintMarker.getLatLng();
 
     // Create a (maybe rotated) box using corners A & B (A = Starting Position, B = Current Mouse Position)
-    const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectAngle || 0, this._map);
+    const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectangleAngle || 0, this._map);
     this._layer.setLatLngs(corners);
 
     // Add matching style markers, if cursor marker is shown
@@ -253,8 +253,8 @@ Draw.Rectangle = Draw.extend({
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
 
     // rectangle can only initialized with bounds (not working with rotation) so we update the latlngs
-    if(this.options.rectAngle){
-      const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectAngle || 0, this._map);
+    if(this.options.rectangleAngle){
+      const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectangleAngle || 0, this._map);
       rectangleLayer.setLatLngs(corners);
     }
 

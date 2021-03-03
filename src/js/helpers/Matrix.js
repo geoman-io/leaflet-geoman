@@ -1,4 +1,10 @@
-// TODO: Add Copyright: https://github.com/w8r/Leaflet.Path.Transform
+/**
+ * Copyright (c) https://github.com/w8r/Leaflet.Path.Transform
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ */
+
+
 /**
  * @class  L.Matrix
  *
@@ -10,7 +16,6 @@
  * @param {Number} f
  */
 L.Matrix = function(a, b, c, d, e, f) {
-
   /**
    * @type {Array.<Number>}
    */
@@ -22,18 +27,13 @@ L.Matrix.init = function(){
 };
 
 L.Matrix.prototype = {
-
-
-
-
   /**
    * @param  {L.Point} point
    * @return {L.Point}
    */
-  transform: function(point) {
+  transform(point) {
     return this._transform(point.clone());
   },
-
 
   /**
    * Destructive
@@ -44,9 +44,9 @@ L.Matrix.prototype = {
    * @param  {L.Point} point
    * @return {L.Point}
    */
-  _transform: function(point) {
-    var matrix = this._matrix;
-    var x = point.x, y = point.y;
+  _transform(point) {
+    const matrix = this._matrix;
+    const { x , y } = point;
     point.x = matrix[0] * x + matrix[1] * y + matrix[4];
     point.y = matrix[2] * x + matrix[3] * y + matrix[5];
     return point;
@@ -57,39 +57,39 @@ L.Matrix.prototype = {
    * @param  {L.Point} point
    * @return {L.Point}
    */
-  untransform: function (point) {
-    var matrix = this._matrix;
+  untransform (point) {
+    const matrix = this._matrix;
     return new L.Point(
       (point.x / matrix[0] - matrix[4]) / matrix[0],
       (point.y / matrix[2] - matrix[5]) / matrix[2]
     );
   },
 
-
   /**
    * @return {L.Matrix}
    */
-  clone: function() {
-    var matrix = this._matrix;
+  clone() {
+    const matrix = this._matrix;
     return new L.Matrix(
       matrix[0], matrix[1], matrix[2],
       matrix[3], matrix[4], matrix[5]
     );
   },
 
-
   /**
-   * @param {L.Point=|Number=} translate
+   * @param {L.Point|Number} translate
    * @return {L.Matrix|L.Point}
    */
-  translate: function(translate) {
+  translate(translate) {
     if (translate === undefined) {
       return new L.Point(this._matrix[4], this._matrix[5]);
     }
 
-    var translateX, translateY;
+    let translateX;
+    let translateY;
     if (typeof translate === 'number') {
-      translateX = translateY = translate;
+      translateX =  translate;
+      translateY = translate;
     } else {
       translateX = translate.x;
       translateY = translate.y;
@@ -98,23 +98,25 @@ L.Matrix.prototype = {
     return this._add(1, 0, 0, 1, translateX, translateY);
   },
 
-
   /**
-   * @param {L.Point=|Number=} scale
+   * @param {L.Point|Number} scale
+   * @param {L.Point|Number} origin
    * @return {L.Matrix|L.Point}
    */
-  scale: function(scale, origin) {
+  scale(scale, origin) {
     if (scale === undefined) {
       return new L.Point(this._matrix[0], this._matrix[3]);
     }
 
-    var scaleX, scaleY;
+    let scaleX;
+    let scaleY;
     origin = origin || L.point(0, 0);
     if (typeof scale === 'number') {
-      scaleX = scaleY = scale;
+      scaleX = scale;
+      scaleY = scale;
     } else {
-      scaleX = scale.y;
-      scaleY = scale.x;
+      scaleX = scale.x;
+      scaleY = scale.y;
     }
 
     return this
@@ -130,9 +132,9 @@ L.Matrix.prototype = {
    * @param {L.Point=} origin
    * @return {L.Matrix}
    */
-  rotate: function(angle, origin) {
-    var cos = Math.cos(angle);
-    var sin = Math.sin(angle);
+  rotate(angle, origin) {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
 
     origin = origin || new L.Point(0, 0);
 
@@ -141,17 +143,15 @@ L.Matrix.prototype = {
       ._add(1, 0, 0, 1, -origin.x, -origin.y);
   },
 
-
   /**
    * Invert rotation
    * @return {L.Matrix}
    */
-  flip: function() {
+  flip() {
     this._matrix[1] *= -1;
     this._matrix[2] *= -1;
     return this;
   },
-
 
   /**
    * @param {Number|L.Matrix} a
@@ -161,20 +161,20 @@ L.Matrix.prototype = {
    * @param {Number} e
    * @param {Number} f
    */
-  _add: function(a, b, c, d, e, f) {
-    var result = [[], [], []];
-    var src = this._matrix;
-    var m = [
+  _add(a, b, c, d, e, f) {
+    const result = [[], [], []];
+    let src = this._matrix;
+    const m = [
       [src[0], src[2], src[4]],
       [src[1], src[3], src[5]],
       [     0,      0,     1]
     ];
-    var other = [
+    let other = [
       [a, c, e],
       [b, d, f],
       [0, 0, 1]
-    ], val;
-
+    ];
+    let val;
 
     if (a && a instanceof L.Matrix) {
       src = a._matrix;
@@ -184,10 +184,10 @@ L.Matrix.prototype = {
         [     0,      0,     1]];
     }
 
-    for (var i = 0; i < 3; i++) {
-      for (var j = 0; j < 3; j++) {
+    for (let i = 0; i < 3; i+=1) {
+      for (let j = 0; j < 3; j+=1) {
         val = 0;
-        for (var k = 0; k < 3; k++) {
+        for (let k = 0; k < 3; k+=1) {
           val += m[i][k] * other[k][j];
         }
         result[i][j] = val;
@@ -200,10 +200,7 @@ L.Matrix.prototype = {
     ];
     return this;
   }
-
-
 };
-
 
 L.matrix = function(a, b, c, d, e, f) {
   return new L.Matrix(a, b, c, d, e, f);

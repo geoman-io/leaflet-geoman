@@ -2,7 +2,7 @@ import {_convertLatLngs, _toPoint} from "../helpers/ModeHelper";
 
 /**
  * We create a temporary polygon with the same latlngs as the layer that we want to rotate.
- * Why polygon? Because then we have the correct center also for polylines.
+ * Why polygon? Because then we have the correct center also for polylines with `layer.getCenter()`.
  * We reference the origin layer as `_rotationLayer`. The rotate listeners (`_onRotate...()`) are only applied to the temp polygon and from there we need to rotate the `_rotationLayer` too.
  *
  */
@@ -116,7 +116,7 @@ const RotateMixin = {
   */
   enableRotate(){
     // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
-    const options = {color: this._layer.options.color, fill: false, stroke: false, pmIgnore: false, snapIgnore: true};
+    const options = {fill: false, stroke: false, pmIgnore: false, snapIgnore: true};
 
     // we create a temp polygon for rotation
     this._rotatePoly = L.polygon(this._layer.getLatLngs(), options).addTo(this._layer._map);

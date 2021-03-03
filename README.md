@@ -257,8 +257,9 @@ See the available options in the table below.
 | minRadiusCircleMarker | `null`                                | set the min radius of a `CircleMarker` when editable is active.                                                                                       |  
 | maxRadiusCircleMarker | `null`                                | set the max radius of a `CircleMarker` when editable is active.                                                                                       |  
 | editable              | `false`                               | makes a `CircleMarker` editable like a `Circle`                                                                                                       |  
-| markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them)                                                                                   |  
-| continueDrawing       | `false` / `true`                      | Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.       |                                                                                |  
+| markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them)                              |
+| continueDrawing       | `false` / `true`                      | Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.       |             
+| rectangleAngle        | `0`                                   | Rectangle can drawn with a rotation angle 0-360 degrees                                                                                               |
   
   
   
@@ -536,6 +537,57 @@ The following events are available on a map instance:
 | :----------------------- | :----- | :--------------------------------- | :-------------------------------- |  
 | pm:globalcutmodetoggled  | `e`    | Fired when Cut Mode is toggled | `enabled`, `map`                  |
 | pm:cut                   | `e`    | Fired when any layer is being cut  | `shape`, `layer`, `originalLayer` |  
+
+### Rotate Mode
+The rotation is clockwise. It starts in the North with 0° and goes over East (90°) and South (180°) to West (270°).
+The rotation center is the center (`layer.getCenter()`) of a polygon with the LatLngs of the layer.
+
+You can enable Rotate Mode for all layers on a map like this:
+```js  
+// enable rotate mode like this:  
+map.pm.enableGlobalRotateMode();  
+```  
+
+The following methods are available on `map.pm`:  
+  
+| Method                     | Returns   | Description                                                              |  
+| :------------------------- | :-------- | :----------------------------------------------------------------------- |  
+| enableGlobalRotateMode()   | -         | Enables global rotate mode.                                              |  
+| disableGlobalRotateMode()  | -         | Disables global rotate mode.                                             |  
+| toggleGlobalRotateMode()   | -         | Toggles global rotate mode.                                              |  
+| globalRotateModeEnabled()  | `Boolean` | Returns `true` if global rotate mode is enabled. `false` when disabled.  |  
+
+The following methods are available for layers under `layer.pm`:
+  
+| Method                        | Returns   | Description                                                              |  
+| :---------------------------- | :-------- | :----------------------------------------------------------------------- |  
+| enableRotate()                | -         | Enables rotate mode on the layer.                                        |  
+| disableRotate()               | -         | Disables rotate mode on the layer.                                       |  
+| rotateEnabled()               | -         | Toggles rotate mode on the layer.                                        |  
+| rotateLayer(`degrees`)        | -         | Rotates the layer by `x` degrees.                                        | 
+| rotateLayerToAngle(`degrees`) | -         | Rotates the layer to `x` degrees.                                        | 
+| getAngle()                    | `Degrees` | Returns the angle of the layer in degrees.                               | 
+  
+The following events are available on a layer instance:  
+  
+| Event             | Params | Description                                              | Output                                                                                 |  
+| :---------------- | :----- | :------------------------------------------------------- | :------------------------------------------------------------------------------------- |  
+| pm:rotateenable   | `e`    | Fired when rotation is enabled for a layer.              | `layer`, `helpLayer`                                                                   |  
+| pm:rotatedisable  | `e`    | Fired when rotation is disabled for a layer.             | `layer`                                                                                |  
+| pm:rotatestart    | `e`    | Fired when rotation starts on a layer.                   | `layer`, `helpLayer`, `startAngle`, `originLatLngs`                                    |  
+| pm:rotate         | `e`    | Fired when a layer is rotated.                           | `layer`, `helpLayer`, `startAngle`, `angle`, `angleDiff`, `oldLatLngs`, `newLatLngs`   |  
+| pm:rotateend      | `e`    | Fired when rotation ends on a layer.                     | `layer`, `helpLayer`, `startAngle`, `angle`, `originLatLngs`, `newLatLngs`             |  
+  
+The following events are available on a map instance:  
+  
+| Event                         | Params | Description                                              | Output                                                                                 |  
+| :---------------------------- | :----- | :------------------------------------------------------- | :------------------------------------------------------------------------------------- |   
+| pm:globalrotatemodetoggled    | `e`    | Fired when Rotate Mode is toggled                        | `enabled`, `map`                                                                       |  
+| pm:rotateenable               | `e`    | Fired when rotation is enabled for a layer.              | `layer`, `helpLayer`                                                                   |  
+| pm:rotatedisable              | `e`    | Fired when rotation is disabled for a layer.             | `layer`                                                                                |  
+| pm:rotatestart                | `e`    | Fired when rotation starts on a layer.                   | `layer`, `helpLayer`, `startAngle`, `originLatLngs`                                    |  
+| pm:rotate                     | `e`    | Fired when a layer is rotated.                           | `layer`, `helpLayer`, `startAngle`, `angle`, `angleDiff`, `oldLatLngs`, `newLatLngs`   |  
+| pm:rotateend                  | `e`    | Fired when rotation ends on a layer.                     | `layer`, `helpLayer`, `startAngle`, `angle`, `originLatLngs`, `newLatLngs`             |  
 
 ### Split Mode ⭐
 
@@ -882,10 +934,8 @@ Take a look into [CONTRIBUTING](./CONTRIBUTING.md)
   
 ### Credit  
   
-As I never built a leaflet plugin before, I looked heavily into the code of  
-leaflet.draw to find out how to do stuff. So don't be surprised to see some  
-familiar code.  
+As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be surprised to see some familiar code.  
   
-I also took a hard look at the great  
-[L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some  
-of my helper functions.
+I also took a hard look at the great [L.GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil) for some of my helper functions.
+
+The Rotate Mode are only working because of the great calculation code of [L.Path.Transform](https://github.com/w8r/Leaflet.Path.Transform)
