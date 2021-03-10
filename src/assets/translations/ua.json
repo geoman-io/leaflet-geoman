@@ -1,0 +1,32 @@
+{
+  "tooltips": {
+    "placeMarker": "Натисніть, щоб нанести маркер",
+    "firstVertex": "Натисніть, щоб нанести першу вершину",
+    "continueLine": "Натисніть, щоб продовжити малювати",
+    "finishLine": "Натисніть будь-який існуючий маркер для завершення",
+    "finishPoly": "Виберіть перший маркер, щоб завершити",
+    "finishRect": "Натисніть, щоб завершити",
+    "startCircle": "Натисніть, щоб додати центр кола",
+    "finishCircle": "Натисніть, щоб завершити коло",
+    "placeCircleMarker": "Натисніть, щоб нанести круговий маркер"
+  },
+  "actions": {
+    "finish": "Завершити",
+    "cancel": "Відмінити",
+    "removeLastVertex": "Видалити попередню вершину"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Малювати маркер",
+    "drawPolyButton": "Малювати полігон",
+    "drawLineButton": "Малювати криву",
+    "drawCircleButton": "Малювати коло",
+    "drawRectButton": "Малювати прямокутник",
+    "editButton": "Редагувати шари",
+    "dragButton": "Перенести шари",
+    "cutButton": "Вирізати шари",
+    "deleteButton": "Видалити шари",
+    "drawCircleMarkerButton": "Малювати круговий маркер",
+    "snappingButton": "Прив’язати перетягнутий маркер до інших шарів та вершин",
+    "pinningButton": "Зв'язати спільні вершини разом"
+  }
+}
