@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 
-declare module 'leaflet' {
+declare module 'leaflet-geoman' {
 
     export interface GeomanLayerOptions {
         pmIgnore?: boolean;
@@ -76,7 +76,7 @@ declare module 'leaflet' {
         }
 
         export class DrawControlOptions {
-            position?: ControlPosition;
+            position?: L.ControlPosition;
             drawMarker?: boolean;
             drawCircleMarker?: boolean;
             drawPolyline?: boolean;
@@ -133,7 +133,7 @@ declare module 'leaflet' {
             toggleGlobalEditMode(options): void;
             globalEditEnabled(): boolean;
             setLang(lang: 'en' | 'de' | 'it' | 'ru' | 'ro' | 'es' | 'fr' | 'pt_br' | 'zh' | 'nl', customTranslations?: Translations, fallbackLanguage?: string);
-            setPathOptions(options: PathOptions): void;
+            setPathOptions(options: L.PathOptions): void;
             Draw: GeomanHelpers;
         }
 
