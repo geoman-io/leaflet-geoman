@@ -182,12 +182,18 @@ const SnapMixin = {
           layer instanceof L.Marker ||
           layer instanceof L.CircleMarker ||
           layer instanceof L.ImageOverlay) &&
-        layer.options.snapIgnore !== true &&
-        (
-          (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-          (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
-        )
+        layer.options.snapIgnore !== true
       ) {
+
+        // if snapIgnore === false the layer will be always snappable
+        if(layer.options.snapIgnore === undefined && (
+            (!L.PM.optIn && layer.options.pmIgnore === true) || // if optIn is not set and pmIgnore is true, the layer will be ignored
+            (L.PM.optIn && layer.options.pmIgnore !== false) // if optIn is true and pmIgnore is not false, the layer will be ignored
+          )
+        ){
+          return;
+        }
+
         // adds a hidden polygon which matches the border of the circle
         if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm && layer.pm._hiddenPolyCircle) {
           layers.push(layer.pm._hiddenPolyCircle);

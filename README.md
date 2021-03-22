@@ -611,6 +611,7 @@ Some details about a few more powerful options:
 ##### Snapping  
   
 Snap the dragged marker/vertex to other layers for precision drawing.  
+Snapping can be disabled for layers with the layer option `snapIgnore: true`. With `snapIgnore: false` it will be always snappable, also if `pmIgnore` is set.
   
 ![Snapping Options](https://files-r7ezk18qq.now.sh/snapping.gif)  
   
