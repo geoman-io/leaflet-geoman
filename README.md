@@ -659,7 +659,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');  
 ```  
   
-Currently available languages are `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `ua`, `zh` and `zh_tw`.  
+Currently available languages are `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `tr`, `ua`, `zh` and `zh_tw`.  
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.  
   
 You can also provide your own custom translations.  
