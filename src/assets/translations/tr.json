@@ -1,0 +1,32 @@
+{
+  "tooltips": {
+    "placeMarker": "İşaretçi yerleştirmek için tıklayın",
+    "firstVertex": "İlk tepe noktasını yerleştirmek için tıklayın",
+    "continueLine": "Çizime devam etmek için tıklayın",
+    "finishLine": "Bitirmek için mevcut herhangi bir işaretçiyi tıklayın",
+    "finishPoly": "Bitirmek için ilk işaretçiyi tıklayın",
+    "finishRect": "Bitirmek için tıklayın",
+    "startCircle": "Daire merkezine yerleştirmek için tıklayın",
+    "finishCircle": "Daireyi bitirmek için tıklayın",
+    "placeCircleMarker": "Daire işaretçisi yerleştirmek için tıklayın"
+  },
+  "actions": {
+    "finish": "Bitir",
+    "cancel": "İptal",
+    "removeLastVertex": "Son köşeyi kaldır"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Çizim İşaretçisi",
+    "drawPolyButton": "Çokgenler çiz",
+    "drawLineButton": "Çoklu çizgi çiz",
+    "drawCircleButton": "Çember çiz",
+    "drawRectButton": "Dikdörtgen çiz",
+    "editButton": "Katmanları düzenle",
+    "dragButton": "Katmanları sürükle",
+    "cutButton": "Katmanları kes",
+    "deleteButton": "Katmanları kaldır",
+    "drawCircleMarkerButton": "Daire işaretçisi çiz",
+    "snappingButton": "Sürüklenen işaretçiyi diğer katmanlara ve köşelere yapıştır",
+    "pinningButton": "Paylaşılan köşeleri birbirine sabitle"
+  }
+}
