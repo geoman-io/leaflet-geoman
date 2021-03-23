@@ -254,6 +254,11 @@ Draw.CircleMarker = Draw.Marker.extend({
     return layer instanceof L.CircleMarker && !(layer instanceof L.Circle) && layer.pm && !layer._pmTempLayer;
   },
   _createMarker(e) {
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
+    }
+
     // with _layerIsDragging we check if a circlemarker is currently dragged
     if (!e.latlng || this._layerIsDragging) {
       return;
@@ -294,6 +299,12 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
   },
   _finishShape(e) {
+
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
+    }
+
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {

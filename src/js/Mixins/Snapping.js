@@ -95,7 +95,7 @@ const SnapMixin = {
 
     const isMarker =
       closestLayer.layer instanceof L.Marker ||
-      closestLayer.layer instanceof L.CircleMarker || 
+      closestLayer.layer instanceof L.CircleMarker ||
       !this.options.snapSegment;
 
     // find the final latlng that we want to snap to
@@ -292,96 +292,84 @@ const SnapMixin = {
       };
     }
 
-    if (!this.options.snapSegment) {
-      // Only snap on the coords
+    // the closest coord of the layer
+    let closestCoord;
 
-      // the closest coord of the layer
-      let closestCoord;
-
-      // the shortest distance from P to closestCoord
-      let shortestDistance;
-
-      const loopThroughCoords = coords => {
-        coords.forEach((coord, index) => {
-          if (Array.isArray(coord)) {
-            loopThroughCoords(coord);
-            return;
-          }
-          const distance = this._getDistance(map, P, coord);
-
-          if (shortestDistance === undefined || distance < shortestDistance) {
-            shortestDistance = distance;
-            closestCoord = coord;
-          }
-        });
-      };
-
-      loopThroughCoords(latlngs);
-
-      // return the closest coord
-      return {
-        latlng: closestCoord,
-        distance: shortestDistance,
-      };
-
-    }
+    // the shortest distance from P to closestCoord
+    let shortestDistance;
 
     // the closest segment (line between two points) of the layer
     let closestSegment;
 
-    // the shortest distance from P to closestSegment
-    let shortestDistance;
-
-    // loop through the coords of the layer
-    const loopThroughSegments = coords => {
+    const loopThroughCoords = coords => {
       coords.forEach((coord, index) => {
         if (Array.isArray(coord)) {
-          loopThroughSegments(coord);
+          loopThroughCoords(coord);
           return;
         }
 
-        // take this coord (A)...
-        const A = coord;
-        let nextIndex;
+        if (this.options.snapSegment) {
+          // take this coord (A)...
+          const A = coord;
+          let nextIndex;
 
-        // and the next coord (B) as points
-        if (isPolygon) {
-          nextIndex = index + 1 === coords.length ? 0 : index + 1;
-        } else {
-          nextIndex = index + 1 === coords.length ? undefined : index + 1;
-        }
+          // and the next coord (B) as points
+          if (isPolygon) {
+            nextIndex = index + 1 === coords.length ? 0 : index + 1;
+          } else {
+            nextIndex = index + 1 === coords.length ? undefined : index + 1;
+          }
 
-        const B = coords[nextIndex];
+          const B = coords[nextIndex];
+          if (B) {
+            // calc the distance between P and AB-segment
+            const distance = this._getDistanceToSegment(map, P, A, B);
 
-        if (B) {
-          // calc the distance between P and AB-segment
-          const distance = this._getDistanceToSegment(map, P, A, B);
+            // is the distance shorter than the previous one? Save it and the segment
+            if (shortestDistance === undefined || distance < shortestDistance) {
+              shortestDistance = distance;
+              closestSegment = [A, B];
+            }
+          }
 
-          // is the distance shorter than the previous one? Save it and the segment
-          if (shortestDistance === undefined || distance < shortestDistance) {
-            shortestDistance = distance;
-            closestSegment = [A, B];
+        }else{
+          // Only snap on the coords
+          const distancePoint = this._getDistance(map, P, coord);
+
+          if (shortestDistance === undefined || distancePoint < shortestDistance) {
+            shortestDistance = distancePoint;
+            closestCoord = coord;
           }
         }
+
       });
     };
 
-    loopThroughSegments(latlngs);
+    loopThroughCoords(latlngs);
 
-    // now, take the closest segment (closestSegment) and calc the closest point to P on it.
-    const C = this._getClosestPointOnSegment(
-      map,
-      latlng,
-      closestSegment[0],
-      closestSegment[1]
-    );
+    if(this.options.snapSegment){
+      // now, take the closest segment (closestSegment) and calc the closest point to P on it.
+      const C = this._getClosestPointOnSegment(
+        map,
+        latlng,
+        closestSegment[0],
+        closestSegment[1]
+      );
 
-    // return the latlng of that sucker
+      // return the latlng of that sucker
+      return {
+        latlng: Object.assign({}, C),
+        segment: closestSegment,
+        distance: shortestDistance,
+      };
+    }
+    // Only snap on the coords
+    // return the closest coord
     return {
-      latlng: Object.assign({}, C),
-      segment: closestSegment,
+      latlng: closestCoord,
       distance: shortestDistance,
     };
+
   },
   _getClosestLayerByPriority(layers) {
     // sort the layers by creation, so it is snapping to the oldest layer from the same shape

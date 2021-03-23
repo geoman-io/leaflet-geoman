@@ -68,7 +68,7 @@ Draw.Line = Draw.extend({
 
     // finish on layer event
     // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
-    if (this.options.finishOn && this.options.finishOn != "snap") {
+    if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.on(this.options.finishOn, this._finishShape, this);
     }
 
@@ -118,7 +118,7 @@ Draw.Line = Draw.extend({
     // unbind listeners
     this._map.off('click', this._createVertex, this);
     this._map.off('mousemove', this._syncHintMarker, this);
-    if (this.options.finishOn && this.options.finishOn != "snap") {
+    if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.off(this.options.finishOn, this._finishShape, this);
     }
 
@@ -269,9 +269,8 @@ Draw.Line = Draw.extend({
     });
 
     // check if we should finish on snap
-    if (this.options.finishOn == 'snap' && this._hintMarker._snapped) {
+    if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {
       this._finishShape(e);
-      return
     }
   },
   _removeLastVertex() {
@@ -313,8 +312,8 @@ Draw.Line = Draw.extend({
     }
 
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
-    if (this.options.requireSnapToFinish && !this._hintMarker._snapped) {
-      return
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
     }
 
     // get coordinates

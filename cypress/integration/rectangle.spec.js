@@ -209,4 +209,57 @@ describe('Draw Rectangle', () => {
       expect(text).to.equal('Popup test');
     })
   });
+
+  it('requireSnapToFinish', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({requireSnapToFinish: true});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+
+    cy.get(mapSelector)
+      .click(250, 50);
+
+    cy.window().then(({ map }) => {
+      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
+
+  it('requireSnapToFinish not applied for first layer', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({requireSnapToFinish: true});
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(450, 250)
+      .click(390, 60);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
 });

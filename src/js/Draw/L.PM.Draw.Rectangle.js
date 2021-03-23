@@ -249,9 +249,13 @@ Draw.Rectangle = Draw.extend({
 
     // get coordinate for new vertex by hintMarker (cursor marker)
     const B = this._hintMarker.getLatLng();
-
     // get already placed corner from the startmarker
     const A = this._startMarker.getLatLng();
+
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
+    }
 
     // create the final rectangle layer, based on opposite corners A & B
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
