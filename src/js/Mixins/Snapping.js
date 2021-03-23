@@ -1,4 +1,3 @@
-import Utils from '../L.PM.Utils';
 import {isEmptyDeep, prioritiseSort} from "../helpers";
 
 const SnapMixin = {
@@ -51,13 +50,20 @@ const SnapMixin = {
       });
     }
   },
+  _handleThrottleSnapping(){
+    // we check if the throttledList is existing, else the function is deleted but the `layeradd` event calls it.
+    // this made problems when layer was removed and added to the map in the `pm:create` event
+    if(this.throttledList){
+      this._createSnapList();
+    }
+  },
   _handleSnapping(e) {
 
     const marker = e.target;
     marker._snapped = false;
 
     if (!this.throttledList) {
-      this.throttledList = L.Util.throttle(this._createSnapList, 100, this);
+      this.throttledList = L.Util.throttle(this._handleThrottleSnapping, 100, this);
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
@@ -121,8 +127,8 @@ const SnapMixin = {
       distance: closestLayer.distance,
     };
 
-    Utils._fireEvent(eventInfo.marker,'pm:snapdrag', eventInfo);
-    Utils._fireEvent(this._layer,'pm:snapdrag', eventInfo);
+    L.PM.Utils._fireEvent(eventInfo.marker,'pm:snapdrag', eventInfo);
+    L.PM.Utils._fireEvent(this._layer,'pm:snapdrag', eventInfo);
 
     if (closestLayer.distance < minDistance) {
       // snap the marker
@@ -134,8 +140,8 @@ const SnapMixin = {
 
       const triggerSnap = () => {
         this._snapLatLng = snapLatLng;
-        Utils._fireEvent(marker,'pm:snap', eventInfo);
-        Utils._fireEvent(this._layer,'pm:snap', eventInfo);
+        L.PM.Utils._fireEvent(marker,'pm:snap', eventInfo);
+        L.PM.Utils._fireEvent(this._layer,'pm:snap', eventInfo);
       };
 
       // check if the snapping position differs from the last snap
@@ -156,8 +162,8 @@ const SnapMixin = {
       marker._snapped = false;
 
       // and fire unsnap event
-      Utils._fireEvent(eventInfo.marker,'pm:unsnap', eventInfo);
-      Utils._fireEvent(this._layer,'pm:unsnap', eventInfo);
+      L.PM.Utils._fireEvent(eventInfo.marker,'pm:unsnap', eventInfo);
+      L.PM.Utils._fireEvent(this._layer,'pm:unsnap', eventInfo);
     }
 
     return true;
@@ -178,12 +184,18 @@ const SnapMixin = {
           layer instanceof L.Marker ||
           layer instanceof L.CircleMarker ||
           layer instanceof L.ImageOverlay) &&
-        layer.options.snapIgnore !== true &&
-        (
-          (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-          (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
-        )
+        layer.options.snapIgnore !== true
       ) {
+
+        // if snapIgnore === false the layer will be always snappable
+        if(layer.options.snapIgnore === undefined && (
+            (!L.PM.optIn && layer.options.pmIgnore === true) || // if optIn is not set and pmIgnore is true, the layer will be ignored
+            (L.PM.optIn && layer.options.pmIgnore !== false) // if optIn is true and pmIgnore is not false, the layer will be ignored
+          )
+        ){
+          return;
+        }
+
         // adds a hidden polygon which matches the border of the circle
         if ((layer instanceof L.Circle || layer instanceof L.CircleMarker) && layer.pm && layer.pm._hiddenPolyCircle) {
           layers.push(layer.pm._hiddenPolyCircle);
@@ -218,6 +230,12 @@ const SnapMixin = {
 
     // save snaplist from layers and the other snap layers added from other classes/scripts
     if (this._otherSnapLayers) {
+      this._otherSnapLayers.forEach(()=>{
+        // this is for debugging
+        const debugLine = L.polyline([], {color: 'red', pmIgnore: true});
+        debugLine._pmTempLayer = true;
+        debugIndicatorLines.push(debugLine);
+      })
       this._snapList = layers.concat(this._otherSnapLayers);
     } else {
       this._snapList = layers;
@@ -247,8 +265,10 @@ const SnapMixin = {
       // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
       const results = this._calcLayerDistances(latlng, layer);
 
-      // show indicator lines, it's for debugging
-      this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
+      if(this.debugIndicatorLines[index]) {
+        // show indicator lines, it's for debugging
+        this.debugIndicatorLines[index].setLatLngs([latlng, results.latlng]);
+      }
 
       // save the info if it doesn't exist or if the distance is smaller than the previous one
       if (
@@ -417,7 +437,7 @@ const SnapMixin = {
 
     // snap to middle (M) of segment if option is enabled
     if (this.options.snapMiddle) {
-      const M = Utils.calcMiddleLatLng(map, A, B);
+      const M = L.PM.Utils.calcMiddleLatLng(map, A, B);
       const distanceMC = this._getDistance(map, M, C);
 
       if (distanceMC < distanceAC && distanceMC < distanceBC) {

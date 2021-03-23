@@ -393,7 +393,8 @@ The following events are available on a layer instance:
 | pm:vertexclick     | `e`    | Fired when a vertex is clicked                                                                       | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
 | pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
 | pm:markerdrag      | `e`    | Fired when dragging a vertex-marker                                                                  | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
-| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
+| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`, `shape`, `intersectionReset`                                                |
+| pm:layerreset      | `e`    | Fired when coords of a layer are reset. E.g. by self-intersection.                                   | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
 | pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |  
 | pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |  
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |  
@@ -613,6 +614,7 @@ Some details about a few more powerful options:
 ##### Snapping  
   
 Snap the dragged marker/vertex to other layers for precision drawing.  
+Snapping can be disabled for layers with the layer option `snapIgnore: true`. With `snapIgnore: false` it will be always snappable, also if `pmIgnore` is set.
   
 ![Snapping Options](https://files-r7ezk18qq.now.sh/snapping.gif)  
   
@@ -659,7 +661,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');  
 ```  
   
-Currently available languages are `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `zh` and `zh_tw`.  
+Currently available languages are `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `tr`, `ua`, `zh` and `zh_tw`.  
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.  
   
 You can also provide your own custom translations.  

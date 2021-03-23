@@ -53,6 +53,64 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(0);
   });
 
+  it('OptIn drawing without error', () => {
+    cy.window().then(({ L }) => {
+      L.PM.setOptIn(true);
+    });
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(120, 150)
+      .click(120, 100)
+      .click(300, 100)
+      .click(300, 200)
+      .click(120, 150);
+
+    cy.hasDrawnLayers(1);
+  });
+
+  it('pmIgnore:true disable editing', () => {
+    cy.window().then(({ map }) => {
+      map.on('pm:create',(e)=> {
+        e.layer.options.pmIgnore = true;
+      })
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(120, 150)
+      .click(120, 100)
+      .click(300, 100)
+      .click(300, 200)
+      .click(120, 150);
+
+    cy.hasDrawnLayers(1);
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(0);
+  });
+
+
+  it('pmIgnore:true disable deleting', () => {
+    cy.window().then(({ map }) => {
+      map.on('pm:create',(e)=> {
+        e.layer.options.pmIgnore = true;
+      })
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(120, 150)
+      .click(120, 100)
+      .click(300, 100)
+      .click(300, 200)
+      .click(120, 150);
+
+    cy.hasDrawnLayers(1);
+    cy.toolbarButton('delete').click();
+    cy.get(mapSelector)
+      .click(220, 160);
+    cy.hasDrawnLayers(1);
+  });
+
   it('respects pmIgnore with optIn', () => {
     cy.window().then(({ L }) => {
       L.PM.setOptIn(true);

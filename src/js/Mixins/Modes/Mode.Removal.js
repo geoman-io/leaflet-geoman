@@ -1,15 +1,9 @@
-import Utils from "../../L.PM.Utils";
-
 const GlobalRemovalMode = {
   enableGlobalRemovalMode() {
-    const isRelevant = layer =>
-      layer.pm &&
-      !(layer instanceof L.LayerGroup);
-
     this._globalRemovalMode = true;
     // handle existing layers
     this.map.eachLayer(layer => {
-      if (isRelevant(layer)) {
+      if (this._isRelevant(layer)) {
         layer.pm.disable();
         layer.on('click', this.removeLayer, this);
       }
@@ -58,8 +52,7 @@ const GlobalRemovalMode = {
   },
   reinitGlobalRemovalMode({ layer }) {
     // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-    const isRelevant = !!layer.pm && !layer._pmTempLayer;
-    if (!isRelevant) {
+    if (!this._isRelevant(layer)) {
       return;
     }
 
@@ -70,7 +63,7 @@ const GlobalRemovalMode = {
     }
   },
   _fireRemovalModeEvent(enabled) {
-    Utils._fireEvent(this.map,'pm:globalremovalmodetoggled', {
+    L.PM.Utils._fireEvent(this.map,'pm:globalremovalmodetoggled', {
       enabled,
       map: this.map,
     });
@@ -79,22 +72,30 @@ const GlobalRemovalMode = {
     const layer = e.target;
     // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
-    const removeable =
-      !layer._pmTempLayer && (!layer.pm || !layer.pm.dragging());
+    const removeable = this._isRelevant(layer) && !layer.pm.dragging();
 
     if (removeable) {
       layer.removeFrom(this.map.pm._getContainingLayer());
       layer.remove();
       if(layer instanceof L.LayerGroup){
-        Utils._fireEvent(layer,'pm:remove', { layer, shape: undefined });
-        Utils._fireEvent(this.map,'pm:remove', { layer, shape: undefined });
+        L.PM.Utils._fireEvent(layer,'pm:remove', { layer, shape: undefined });
+        L.PM.Utils._fireEvent(this.map,'pm:remove', { layer, shape: undefined });
       }else{
-        Utils._fireEvent(layer,'pm:remove', { layer, shape: layer.pm.getShape() });
-        Utils._fireEvent(this.map,'pm:remove', { layer, shape: layer.pm.getShape() });
+        L.PM.Utils._fireEvent(layer,'pm:remove', { layer, shape: layer.pm.getShape() });
+        L.PM.Utils._fireEvent(this.map,'pm:remove', { layer, shape: layer.pm.getShape() });
       }
 
     }
   },
+  _isRelevant(layer){
+    return layer.pm
+      && !(layer instanceof L.LayerGroup)
+      && (
+        (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
+      )
+      && !layer._pmTempLayer
+  }
 };
 
 export default GlobalRemovalMode

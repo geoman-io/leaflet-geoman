@@ -1,6 +1,4 @@
 import Draw from './L.PM.Draw';
-import Utils from "../L.PM.Utils";
-
 import { getTranslation } from '../helpers';
 
 Draw.Rectangle = Draw.extend({
@@ -99,7 +97,7 @@ Draw.Rectangle = Draw.extend({
     this._otherSnapLayers = [];
 
     // fire drawstart event
-    Utils._fireEvent(this._map,'pm:drawstart', {
+    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
       shape: this._shape,
       workingLayer: this._layer,
     });
@@ -135,7 +133,7 @@ Draw.Rectangle = Draw.extend({
       this._cleanupSnapping();
     }
     // fire drawend event
-    Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
     this._setGlobalDrawMode();
 
   },
@@ -264,7 +262,7 @@ Draw.Rectangle = Draw.extend({
     rectangleLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
-    Utils._fireEvent(this._map,'pm:create', {
+    L.PM.Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       layer: rectangleLayer,
     });
