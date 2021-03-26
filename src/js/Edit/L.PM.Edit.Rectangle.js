@@ -2,7 +2,6 @@
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
 
 import Edit from './L.PM.Edit';
-import Utils from "../L.PM.Utils";
 
 Edit.Rectangle = Edit.Polygon.extend({
   _shape: 'Rectangle',
@@ -87,7 +86,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
     draggedMarker._snapped = false;
 
-    Utils._fireEvent(this._layer,'pm:markerdragstart', {
+    L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
@@ -109,7 +108,7 @@ Edit.Rectangle = Edit.Polygon.extend({
       this._adjustRectangleForMarkerMove(draggedMarker);
     }
 
-    Utils._fireEvent(this._layer,'pm:markerdrag', {
+    L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
@@ -131,7 +130,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     // Update bounding box
     this._layer.setLatLngs(corners);
 
-    Utils._fireEvent(this._layer,'pm:markerdragend', {
+    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),

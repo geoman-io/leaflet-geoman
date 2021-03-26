@@ -1,40 +1,27 @@
-/* eslint-disable */
-// Provide your access token
-const accessToken =
-  'pk.eyJ1IjoibWFwc29mc3VtaXQiLCJhIjoiY2l1ZDF3dHE5MDAxZDMwbjA0cTR3dG50eSJ9.63Xci-GKFikhAobboF0DVQ';
+const tiles1 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
 
-// set mapbox tile layer
-const mapboxTiles1 = L.tileLayer(
-  `https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`,
-  {
-    attribution:
-      '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }
-);
-const mapboxTiles2 = L.tileLayer(
-  `https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`,
-  {
-    attribution:
-      '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }
-);
-const mapboxTiles3 = L.tileLayer(
-  `https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${accessToken}`,
-  {
-    attribution:
-      '&copy; <a href="https://www.mapbox.com/feedback/">Mapbox</a> &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }
-);
+const tiles2 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
+
+const tiles3 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
 
 const map2 = L.map('example2')
   .setView([51.505, -0.09], 13)
-  .addLayer(mapboxTiles1);
+  .addLayer(tiles1);
 const map3 = L.map('example3')
   .setView([51.505, -0.09], 13)
-  .addLayer(mapboxTiles2);
+  .addLayer(tiles2);
 const map4 = L.map('example4')
   .setView([51.505, -0.09], 13)
-  .addLayer(mapboxTiles3);
+  .addLayer(tiles3);
 // map2.dragging.disable();
 
 // map2.on('pm:create', function(e) {

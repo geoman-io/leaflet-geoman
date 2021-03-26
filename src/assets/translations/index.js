@@ -19,6 +19,8 @@ import hu from './hu.json';
 import da from './da.json';
 import no from './no.json';
 import fa from './fa.json';
+import ua from './ua.json';
+import tr from './tr.json';
 
 export default {
   en,
@@ -39,5 +41,7 @@ export default {
   hu,
   da,
   no,
-  fa
+  fa,
+  ua,
+  tr
 };

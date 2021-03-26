@@ -1,5 +1,4 @@
 import SnapMixin from '../Mixins/Snapping';
-import Utils from "../L.PM.Utils";
 
 const Draw = L.Class.extend({
   includes: [SnapMixin],
@@ -103,26 +102,26 @@ const Draw = L.Class.extend({
   _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
     if (this._shape === "Cut") {
-      Utils._fireEvent(this._map,'pm:globalcutmodetoggled', {
+      L.PM.Utils._fireEvent(this._map,'pm:globalcutmodetoggled', {
         enabled: !!this._enabled,
         map: this._map,
       });
     } else {
-      Utils._fireEvent(this._map,'pm:globaldrawmodetoggled', {
+      L.PM.Utils._fireEvent(this._map,'pm:globaldrawmodetoggled', {
         enabled: this._enabled,
         shape: this._shape,
         map: this._map,
       });
     }
 
-    const layers = Utils.findLayers(this._map);
+    const layers = L.PM.Utils.findLayers(this._map);
     if (this._enabled) {
       layers.forEach((layer) => {
-        Utils.disablePopup(layer);
+        L.PM.Utils.disablePopup(layer);
       })
     } else {
       layers.forEach((layer) => {
-        Utils.enablePopup(layer);
+        L.PM.Utils.enablePopup(layer);
       })
     }
   },
@@ -174,10 +173,10 @@ const Draw = L.Class.extend({
     return this[name] ? this[name]._shape : name;
   },
   _finishLayer(layer){
-    // add the pm options from drawing to the new layer (edit)
-    layer.pm.setOptions(this.options);
-    // set the shape (can be a custom shape)
-    if(layer.pm) {
+    if (layer.pm) {
+      // add the pm options from drawing to the new layer (edit)
+      layer.pm.setOptions(this.options);
+      // set the shape (can be a custom shape)
       layer.pm._shape = this._shape;
     }
     this._addDrawnLayerProp(layer);

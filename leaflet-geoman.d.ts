@@ -275,7 +275,7 @@ declare module 'leaflet' {
                     | 'zh_tw',
                 customTranslations?: Translations,
                 fallbackLanguage?: string
-            );
+            ): void;
 
             addControls(options?: DrawControlOptions): void;
             removeControls(): void;
