@@ -850,4 +850,86 @@ describe('Draw & Edit Poly', () => {
       expect(drawPane.className).to.eq(polygon.getPane().className);
     });
   });
+
+  it('disable snapping on segment', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({snapSegment: false});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    // if snapping is not disabled, the point will be placed at 190|50
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      const lastLatLng = map.pm.Draw.Polygon._layer.getLatLngs()[1];
+      const point = map.latLngToContainerPoint(lastLatLng);
+      expect(point.y).to.eq(60);
+    });
+  });
+
+  it('finishOn snap', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({finishOn: 'snap'});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    // if snapping is not disabled, the point will be placed at 190|50
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 90)
+      .click(250, 50);
+
+    cy.window().then(({ map }) => {
+      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
+
+  it('requireSnapToFinish', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({requireSnapToFinish: true});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 160)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      map.pm.Draw.Polygon._finishShape();
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+
+    cy.get(mapSelector)
+      .click(250, 50);
+
+    cy.window().then(({ map }) => {
+      map.pm.Draw.Polygon._finishShape();
+      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
+
 });

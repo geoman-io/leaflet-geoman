@@ -71,6 +71,8 @@ declare module 'leaflet' {
             snappable?: boolean;
             snapDistance?: number;
             snapMiddle?: boolean;
+            snapSegment?: boolean;
+            requireSnapToFinish?: boolean;
             tooltips?: boolean;
             allowSelfIntersection?: true;
             templineStyle?: L.PathOptions;
