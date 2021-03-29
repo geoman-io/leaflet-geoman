@@ -61,12 +61,14 @@ declare module 'leaflet' {
             snappable?: boolean;
             snapDistance?: number;
             snapMiddle?: boolean;
+            snapSegment?: boolean;
+            requireSnapToFinish?: boolean;
             tooltips?: boolean;
             allowSelfIntersection?: true;
             templineStyle?: L.PathOptions;
             hintlineStyle?: L.PathOptions;
             cursorMarker?: boolean;
-            finishOn?: null | 'click' | 'dblclick' | 'mousedown' | 'mouseover' | 'mouseout' | 'contextmenu';
+            finishOn?: null | 'click' | 'dblclick' | 'mousedown' | 'mouseover' | 'mouseout' | 'contextmenu' | 'snap';
         }
 
         export class LayerDrawOptions {
