@@ -1,10 +1,7 @@
-import Utils from '../../L.PM.Utils'
-
-const { findLayers } = Utils;
 
 const GlobalDragMode = {
   enableGlobalDragMode() {
-    const layers = findLayers(this.map);
+    const layers = L.PM.Utils.findLayers(this.map);
 
     this._globalDragMode = true;
 
@@ -25,7 +22,7 @@ const GlobalDragMode = {
     this._fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
-    const layers = findLayers(this.map);
+    const layers = L.PM.Utils.findLayers(this.map);
 
     this._globalDragMode = false;
 
@@ -65,7 +62,7 @@ const GlobalDragMode = {
     }
   },
   _fireDragModeEvent(enabled) {
-    Utils._fireEvent(this.map,'pm:globaldragmodetoggled', {
+    L.PM.Utils._fireEvent(this.map,'pm:globaldragmodetoggled', {
       enabled,
       map: this.map,
     });

@@ -128,7 +128,7 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ map, L }) => {
       const rect = map.pm.getGeomanDrawLayers()[0];
-      expect(rect.options.color).to.not.equal('red');
+      expect(rect.options.color).to.not.equal('#f00000ff');
 
     })
   });
@@ -208,5 +208,204 @@ describe('Draw Rectangle', () => {
       const text = rect.getPopup().getContent();
       expect(text).to.equal('Popup test');
     })
+  });
+
+  it('prevent not correct created snaplist', () => {
+    cy.window().then(({ map }) => {
+      map.on("pm:create",(e)=>{
+        map.removeLayer(e.layer);
+        map.addLayer(e.layer);
+      });
+    });
+
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList).to.equal(undefined);
+    });
+  });
+
+  it('make layer snappable with pmIgnore', () => {
+    // create snapping layer
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    // test 1: snapIgnore: undefined, pmIgnore: undefined, optIn: false --> snappable
+    cy.toolbarButton('rectangle')
+      .click();
+    // click or mousemove is needed to init snapList
+    cy.get(mapSelector)
+      .click(200, 100);
+
+    let layer;
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
+      map.pm.disableDraw();
+      layer = map.pm.getGeomanDrawLayers()[0];
+    });
+
+    // test 2: snapIgnore: true, pmIgnore: undefined, optIn: false --> not snappable
+    cy.window().then(() => {
+      layer.options.snapIgnore = true;
+    });
+    cy.toolbarButton('rectangle')
+      .click();
+    // click or mousemove is needed to init snapList
+    cy.get(mapSelector)
+      .click(200, 100);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
+      map.pm.disableDraw();
+    });
+
+    // test 3: snapIgnore: false, pmIgnore: true, optIn: false --> snappable
+    cy.window().then(() => {
+      layer.options.snapIgnore = false;
+      layer.options.pmIgnore = true;
+    });
+    cy.toolbarButton('rectangle')
+      .click();
+    // click or mousemove is needed to init snapList
+    cy.get(mapSelector)
+      .click(200, 100);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
+      map.pm.disableDraw();
+    });
+
+    // test 4: snapIgnore: undefined, pmIgnore: true, optIn: false --> not snappable
+    cy.window().then(() => {
+      delete layer.options.snapIgnore;
+      layer.options.pmIgnore = true;
+    });
+    cy.toolbarButton('rectangle')
+      .click();
+    // click or mousemove is needed to init snapList
+    cy.get(mapSelector)
+      .click(200, 100);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
+      map.pm.disableDraw();
+    });
+
+
+    // test 5: snapIgnore: undefined, pmIgnore: false, optIn: true --> snappable
+    cy.window().then(({L}) => {
+      delete layer.options.snapIgnore;
+      layer.options.pmIgnore = false;
+      L.PM.setOptIn(true)
+    });
+    cy.toolbarButton('rectangle')
+      .click();
+    // click or mousemove is needed to init snapList
+    cy.get(mapSelector)
+      .click(200, 100);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
+      map.pm.disableDraw();
+    });
+
+    // test 6: snapIgnore: undefined, pmIgnore: true, optIn: true --> not snappable
+    cy.window().then(({L}) => {
+      layer.options.pmIgnore = true;
+      L.PM.setOptIn(true)
+    });
+    cy.toolbarButton('rectangle')
+      .click();
+    // click or mousemove is needed to init snapList
+    cy.get(mapSelector)
+      .click(200, 100);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
+      map.pm.disableDraw();
+    });
+
+
+    // test 7: snapIgnore: false, pmIgnore: true, optIn: true --> snappable
+    cy.window().then(() => {
+      layer.options.snapIgnore = false;
+    });
+    cy.toolbarButton('rectangle')
+      .click();
+    // click or mousemove is needed to init snapList
+    cy.get(mapSelector)
+      .click(200, 100);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
+      map.pm.disableDraw();
+    });
+  });
+
+  it('requireSnapToFinish', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({requireSnapToFinish: true});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+
+    cy.get(mapSelector)
+      .click(250, 50);
+
+    cy.window().then(({ map }) => {
+      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
+
+  it('requireSnapToFinish not applied for first layer', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({requireSnapToFinish: true});
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(450, 250)
+      .click(390, 60);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
   });
 });

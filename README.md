@@ -243,6 +243,8 @@ See the available options in the table below.
 | snappable             | `true`                                | enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                                             |  
 | snapDistance          | `20`                                  | the distance to another vertex when a snap should happen                                                                                              |  
 | snapMiddle            | `false`                               | allow snapping in the middle of two vertices (middleMarker)                                                                                           |  
+| snapSegment           | `true`                                | allow snapping between two vertices                                                                                                                   |  
+| requireSnapToFinish   | `false`                               | require the last point of a shape to be snapped                                                                                                       |  
 | tooltips              | `true`                                | show helpful tooltips for your user                                                                                                                   |  
 | allowSelfIntersection | `true`                                | allow self intersections                                                                                                                              |  
 | templineStyle         | `{ color: 'red' },`                   | [leaflet path options](https://leafletjs.com/reference-1.7.1.html#path) for the lines between drawn vertices/markers.                                 |  
@@ -250,7 +252,7 @@ See the available options in the table below.
 | pathOptions           | `null`                                | [leaflet path options](https://leafletjs.com/reference-1.7.1.html#path) for the drawn layer (Only for L.Path layers).                                 |  
 | markerStyle           | `{ draggable: true }`                 | [leaflet marker options](https://leafletjs.com/reference-1.7.1.html#marker-icon) (only for drawing markers).                                          |
 | cursorMarker          | `true`                                | show a marker at the cursor                                                                                                                           |  
-| finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click). |    
+| finishOn              | `null`                                | leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click). `snap` is also an option for Line, Polygon and Rectangle |    
 | hideMiddleMarkers     | `false`                               | hide the middle Markers in edit mode from Polyline and Polygon.                                                                                       |  
 | minRadiusCircle       | `null`                                | set the min radius of a `Circle`.                                                                                                                     |  
 | maxRadiusCircle       | `null`                                | set the max radius of a `Circle`.                                                                                                                     |  
@@ -391,7 +393,8 @@ The following events are available on a layer instance:
 | pm:vertexclick     | `e`    | Fired when a vertex is clicked                                                                       | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
 | pm:markerdragstart | `e`    | Fired when dragging of a marker which corresponds to a vertex starts                                 | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
 | pm:markerdrag      | `e`    | Fired when dragging a vertex-marker                                                                  | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
-| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
+| pm:markerdragend   | `e`    | Fired when dragging of a vertex-marker ends                                                          | `layer`, `indexPath`, `markerEvent`, `shape`, `intersectionReset`                                                |
+| pm:layerreset      | `e`    | Fired when coords of a layer are reset. E.g. by self-intersection.                                   | `layer`, `indexPath`, `markerEvent`, `shape`                                                                     |  
 | pm:snapdrag        | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation| `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |  
 | pm:snap            | `e`    | Fired when a vertex-marker is snapped to another vertex. Also fired on the marker itself.            | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |  
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.              | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |  
@@ -611,6 +614,7 @@ Some details about a few more powerful options:
 ##### Snapping  
   
 Snap the dragged marker/vertex to other layers for precision drawing.  
+Snapping can be disabled for layers with the layer option `snapIgnore: true`. With `snapIgnore: false` it will be always snappable, also if `pmIgnore` is set.
   
 ![Snapping Options](https://files-r7ezk18qq.now.sh/snapping.gif)  
   
@@ -657,7 +661,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');  
 ```  
   
-Currently available languages are `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `zh` and `zh_tw`.  
+Currently available languages are `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `tr`, `ua`, `zh` and `zh_tw`.  
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.  
   
 You can also provide your own custom translations.  

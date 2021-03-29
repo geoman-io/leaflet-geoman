@@ -2,7 +2,6 @@ import lineIntersect from "@turf/line-intersect";
 import lineSplit from "@turf/line-split";
 import booleanContains from "@turf/boolean-contains";
 import get from "lodash/get";
-import Utils from "../L.PM.Utils";
 import Draw from './L.PM.Draw';
 import {difference, flattenPolyline, groupToMultiLineString, intersect} from "../helpers/turfHelper";
 
@@ -39,21 +38,21 @@ Draw.Cut = Draw.Polygon.extend({
 
     this._editedLayers.forEach(({layer, originalLayer}) =>{
       // fire pm:cut on the cutted layer
-      Utils._fireEvent(originalLayer,'pm:cut', {
+      L.PM.Utils._fireEvent(originalLayer,'pm:cut', {
         shape: this._shape,
         layer,
         originalLayer,
       });
 
       // fire pm:cut on the map
-      Utils._fireEvent(this._map,'pm:cut', {
+      L.PM.Utils._fireEvent(this._map,'pm:cut', {
         shape: this._shape,
         layer,
         originalLayer,
       });
 
       // fire edit event after cut
-      Utils._fireEvent(originalLayer,'pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
+      L.PM.Utils._fireEvent(originalLayer,'pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
     });
     this._editedLayers = [];
 
@@ -74,6 +73,13 @@ Draw.Cut = Draw.Polygon.extend({
       .map(l => all[l])
       // only layers handled by leaflet-geoman
       .filter(l => l.pm)
+      .filter(l => !l._pmTempLayer)
+      // filter out everything that ignore leaflet-geoman
+      .filter(l => (
+          (!L.PM.optIn && !l.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+          (L.PM.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+        )
+      )
       // only polyline instances
       .filter(l => l instanceof L.Polyline)
       // exclude the drawn one
@@ -84,14 +90,16 @@ Draw.Cut = Draw.Polygon.extend({
         try {
           const lineInter = !!lineIntersect(layer.toGeoJSON(15), l.toGeoJSON(15)).features.length > 0;
 
-          if(lineInter){
+          if(lineInter || (l instanceof L.Polyline && !(l instanceof L.Polygon))){
             return lineInter;
           }
           return !!intersect(layer.toGeoJSON(15), l.toGeoJSON(15));
 
         } catch (e) {
-          /* eslint-disable-next-line no-console */
-          console.error('You cant cut polygons with self-intersections');
+          if (l instanceof L.Polygon) {
+            /* eslint-disable-next-line no-console */
+            console.error('You can\'t cut polygons with self-intersections');
+          }
           return false;
         }
       });
@@ -113,7 +121,7 @@ Draw.Cut = Draw.Polygon.extend({
             if (closest && closest.segment && closest.distance < this.options.snapDistance) {
               const {segment} = closest;
               if (segment && segment.length === 2) {
-                const {indexPath, parentPath, newIndex} = Utils._getIndexFromSegment(coords, segment);
+                const {indexPath, parentPath, newIndex} = L.PM.Utils._getIndexFromSegment(coords, segment);
                 // define the coordsRing that is edited
                 const coordsRing = indexPath.length > 1 ? get(coords, parentPath) : coords;
                 coordsRing.splice(newIndex, 0, latlng);
@@ -137,7 +145,7 @@ Draw.Cut = Draw.Polygon.extend({
       const resultingLayer = resultLayer.addTo(this._map.pm._getContainingLayer());
 
       // give the new layer the original options
-      resultingLayer.pm.enable(this.options);
+      resultingLayer.pm.enable(l.pm.options);
       resultingLayer.pm.disable();
 
       // add templayer prop so pm:remove isn't fired

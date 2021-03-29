@@ -1,6 +1,5 @@
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
-import Utils from "../L.PM.Utils";
 
 import { getTranslation } from '../helpers';
 
@@ -68,7 +67,7 @@ Draw.Line = Draw.extend({
 
     // finish on layer event
     // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
-    if (this.options.finishOn) {
+    if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.on(this.options.finishOn, this._finishShape, this);
     }
 
@@ -96,7 +95,7 @@ Draw.Line = Draw.extend({
 
 
     // fire drawstart event
-    Utils._fireEvent(this._map,'pm:drawstart', {
+    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
       shape: this._shape,
       workingLayer: this._layer,
     });
@@ -118,7 +117,7 @@ Draw.Line = Draw.extend({
     // unbind listeners
     this._map.off('click', this._createVertex, this);
     this._map.off('mousemove', this._syncHintMarker, this);
-    if (this.options.finishOn) {
+    if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.off(this.options.finishOn, this._finishShape, this);
     }
 
@@ -138,7 +137,7 @@ Draw.Line = Draw.extend({
     }
 
     // fire drawend event
-    Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
     this._setGlobalDrawMode();
 
   },
@@ -213,7 +212,7 @@ Draw.Line = Draw.extend({
     // change the style based on self intersection
     if (this._doesSelfIntersect) {
       this._hintline.setStyle({
-        color: 'red',
+        color: '#f00000ff',
       });
     } else if (!this._hintline.isEmpty()) {
       this._hintline.setStyle(this.options.hintlineStyle);
@@ -261,12 +260,17 @@ Draw.Line = Draw.extend({
 
     this._hintline.setLatLngs([latlng, latlng]);
 
-    Utils._fireEvent(this._layer,'pm:vertexadded', {
+    L.PM.Utils._fireEvent(this._layer,'pm:vertexadded', {
       shape: this._shape,
       workingLayer: this._layer,
       marker: newMarker,
       latlng,
     });
+
+    // check if we should finish on snap
+    if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {
+      this._finishShape(e);
+    }
   },
   _removeLastVertex() {
     // remove last coords
@@ -306,6 +310,11 @@ Draw.Line = Draw.extend({
       }
     }
 
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
+    }
+
     // get coordinates
     const coords = this._layer.getLatLngs();
 
@@ -321,7 +330,7 @@ Draw.Line = Draw.extend({
     polylineLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
-    Utils._fireEvent(this._map,'pm:create', {
+    L.PM.Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       layer: polylineLayer,
     });

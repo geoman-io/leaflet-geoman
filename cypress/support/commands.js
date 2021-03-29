@@ -32,6 +32,13 @@ Cypress.Commands.add('hasLayers', count => {
   });
 });
 
+Cypress.Commands.add('hasDrawnLayers', count => {
+  cy.window().then(({ map }) => {
+    const layerCount = Object.keys(map._layers).filter(l => map._layers[l]._drawnByGeoman).length;
+    cy.wrap(layerCount).should('eq', count);
+  });
+});
+
 Cypress.Commands.add('testLayerAdditionPerformance', () => {
   let t0;
 

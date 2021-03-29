@@ -1,7 +1,5 @@
 import Draw from './L.PM.Draw';
-
 import {destinationOnLine, getTranslation } from '../helpers';
-import Utils from "../L.PM.Utils";
 
 Draw.CircleMarker = Draw.Marker.extend({
   initialize(map) {
@@ -122,7 +120,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     this._layer.bringToBack();
 
     // fire drawstart event
-    Utils._fireEvent(this._map,'pm:drawstart', {
+    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
       shape: this._shape,
       workingLayer: this._layer,
     });
@@ -174,7 +172,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire drawend event
-    Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
     this._setGlobalDrawMode();
   },
   _placeCenterMarker(e) {
@@ -208,7 +206,7 @@ Draw.CircleMarker = Draw.Marker.extend({
         getTranslation('tooltips.finishCircle')
       );
 
-      Utils._fireEvent(this._layer,'pm:centerplaced', {
+      L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
         shape: this._shape,
         workingLayer: this._layer,
         latlng,
@@ -254,6 +252,11 @@ Draw.CircleMarker = Draw.Marker.extend({
     return layer instanceof L.CircleMarker && !(layer instanceof L.Circle) && layer.pm && !layer._pmTempLayer;
   },
   _createMarker(e) {
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
+    }
+
     // with _layerIsDragging we check if a circlemarker is currently dragged
     if (!e.latlng || this._layerIsDragging) {
       return;
@@ -281,7 +284,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire the pm:create event and pass shape and marker
-    Utils._fireEvent(this._map,'pm:create', {
+    L.PM.Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       marker, // DEPRECATED
       layer: marker,
@@ -294,6 +297,12 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
   },
   _finishShape(e) {
+
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
+    }
+
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
@@ -328,7 +337,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire the pm:create event and pass shape and layer
-    Utils._fireEvent(this._map,'pm:create', {
+    L.PM.Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       layer: circleLayer,
     });

@@ -212,5 +212,32 @@ describe('Draw Marker', () => {
 
     cy.hasLayers(4);
   });
+  it('requireSnapToFinish', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({requireSnapToFinish: true});
+    });
 
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+
+    cy.get(mapSelector)
+      .click(250, 50);
+
+    cy.window().then(({ map }) => {
+      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
 });

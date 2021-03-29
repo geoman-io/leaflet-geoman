@@ -241,4 +241,36 @@ describe('Draw & Edit Line', () => {
       expect(layers[0].getLatLngs().length).to.eq(4);
     });
   });
+
+  it('requireSnapToFinish', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({requireSnapToFinish: true});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('polyline').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 160)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      map.pm.Draw.Line._finishShape();
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+
+    cy.get(mapSelector)
+      .click(250, 50);
+
+    cy.window().then(({ map }) => {
+      map.pm.Draw.Line._finishShape();
+      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
 });

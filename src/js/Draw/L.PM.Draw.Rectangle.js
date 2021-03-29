@@ -1,6 +1,4 @@
 import Draw from './L.PM.Draw';
-import Utils from "../L.PM.Utils";
-
 import { getTranslation } from '../helpers';
 
 Draw.Rectangle = Draw.extend({
@@ -99,7 +97,7 @@ Draw.Rectangle = Draw.extend({
     this._otherSnapLayers = [];
 
     // fire drawstart event
-    Utils._fireEvent(this._map,'pm:drawstart', {
+    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
       shape: this._shape,
       workingLayer: this._layer,
     });
@@ -135,7 +133,7 @@ Draw.Rectangle = Draw.extend({
       this._cleanupSnapping();
     }
     // fire drawend event
-    Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
     this._setGlobalDrawMode();
 
   },
@@ -249,9 +247,13 @@ Draw.Rectangle = Draw.extend({
 
     // get coordinate for new vertex by hintMarker (cursor marker)
     const B = this._hintMarker.getLatLng();
-
     // get already placed corner from the startmarker
     const A = this._startMarker.getLatLng();
+
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
+    }
 
     // create the final rectangle layer, based on opposite corners A & B
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
@@ -260,7 +262,7 @@ Draw.Rectangle = Draw.extend({
     rectangleLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
-    Utils._fireEvent(this._map,'pm:create', {
+    L.PM.Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       layer: rectangleLayer,
     });

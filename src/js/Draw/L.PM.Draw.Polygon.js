@@ -1,5 +1,4 @@
 import Draw from './L.PM.Draw';
-import Utils from "../L.PM.Utils";
 
 import { getTranslation } from '../helpers';
 
@@ -65,6 +64,11 @@ Draw.Polygon = Draw.Line.extend({
       }
     }
 
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+      return;
+    }
+
     // get coordinates
     const coords = this._layer.getLatLngs();
 
@@ -79,7 +83,7 @@ Draw.Polygon = Draw.Line.extend({
     polygonLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
-    Utils._fireEvent(this._map,'pm:create', {
+    L.PM.Utils._fireEvent(this._map,'pm:create', {
       shape: this._shape,
       layer: polygonLayer,
     });
