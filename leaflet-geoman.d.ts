@@ -7,50 +7,60 @@ declare module 'leaflet' {
     }
 
     namespace PM {
-        export type SUPPORTED_SHAPES = (
-            'Marker' | 'Circle' | 'Line' |
-            'Rectangle' | 'Polygon' | 'Cut'
-        );
 
-        export type GEOMAN_MAP_DRAW_MODE_EVENTS = (
-            'pm:drawstart' | 'pm:drawend' | 'pm:create'
-        );
+        export type SUPPORTED_SHAPES =
+            | 'Marker'
+            | 'Circle'
+            | 'Line'
+            | 'Rectangle'
+            | 'Polygon'
+            | 'Cut'
+            | 'CircleMarker';
 
-        export type GEOMAN_MAP_EDIT_MODE_EVENTS = (
-            'pm:globaleditmodetoggled'
-        );
+        export type GEOMAN_MAP_DRAW_MODE_EVENTS =
+            | 'pm:drawstart'
+            | 'pm:drawend'
+            | 'pm:create';
 
-        export type GEOMAN_MAP_DRAG_MODE_EVENTS = (
-            'pm:globaldrawmodetoggled'
-        );
+        export type GEOMAN_MAP_EDIT_MODE_EVENTS = 'pm:globaleditmodetoggled';
 
-        export type GEOMAN_MAP_REMOVAL_MODE_EVENTS = (
-            'pm:globalremovalmodetoggled'
-        );
+        export type GEOMAN_MAP_DRAG_MODE_EVENTS = 'pm:globaldragmodetoggled';
 
-        export type GEOMAN_MAP_CUT_MODE_EVENTS = (
-            'pm:cut'
-        );
+        export type GEOMAN_MAP_REMOVAL_MODE_EVENTS = 'pm:globalremovalmodetoggled' | 'pm:remove' | 'layerremove';
 
-        export type GEOMAN_LAYER_DRAW_MODE_EVENTS = (
-            'pm:vertexadded' | 'pm:snapdrag' |
-            'pm:snap' | 'pm:unsnap' |
-            'pm:centerplaced'
-        );
+        export type GEOMAN_MAP_CUT_MODE_EVENTS = 'pm:cut' | 'pm:globalcutmodetoggled';
 
-        export type GEOMAN_LAYER_EDIT_MODE_EVENTS = (
-            'pm:edit' | 'pm:vertexadded' | 'pm:vertexremoved' |
-            'pm:markerdragstart' | 'pm:markerdragend' | 'pm:snap' |
-            'pm:unsnap' | 'pm:intersect' | 'pm:centerplaced'
-        );
+        export type GEOMAN_LAYER_DRAW_MODE_EVENTS =
+            | 'pm:vertexadded'
+            | 'pm:snapdrag'
+            | 'pm:snap'
+            | 'pm:unsnap'
+            | 'pm:centerplaced';
 
-        export type GEOMAN_LAYER_DRAG_MODE_EVENTS = (
-            'pm:dragstart' | 'pm:drag' | 'pm:dragend'
-        );
+        export type GEOMAN_LAYER_EDIT_MODE_EVENTS =
+            | 'pm:edit'
+            | 'pm:update'
+            | 'pm:enable'
+            | 'pm:disable'
+            | 'pm:vertexadded'
+            | 'pm:vertexremoved'
+            | 'pm:vertexclick'
+            | 'pm:markerdragstart'
+            | 'pm:markerdrag'
+            | 'pm:markerdragend'
+            | 'pm:layerrest'
+            | 'pm:snapdrag'
+            | 'pm:snap'
+            | 'pm:unsnap'
+            | 'pm:intersect'
+            | 'pm:centerplaced';
 
-        export type GEOMAN_LAYER_CUT_MODE_EVENTS = (
-            'pm:cut'
-        );
+        export type GEOMAN_LAYER_DRAG_MODE_EVENTS =
+            | 'pm:dragstart'
+            | 'pm:drag'
+            | 'pm:dragend';
+
+        export type GEOMAN_LAYER_CUT_MODE_EVENTS = 'pm:cut' | 'pm:edit';
 
         export interface GeomanHelpers {
             getShapes(): string[];
@@ -61,19 +71,44 @@ declare module 'leaflet' {
             snappable?: boolean;
             snapDistance?: number;
             snapMiddle?: boolean;
+            snapSegment?: boolean;
+            requireSnapToFinish?: boolean;
             tooltips?: boolean;
             allowSelfIntersection?: true;
             templineStyle?: L.PathOptions;
             hintlineStyle?: L.PathOptions;
             cursorMarker?: boolean;
-            finishOn?: null | 'click' | 'dblclick' | 'mousedown' | 'mouseover' | 'mouseout' | 'contextmenu';
+            finishOn?:
+                | null
+                | 'click'
+                | 'dblclick'
+                | 'mousedown'
+                | 'mouseover'
+                | 'mouseout'
+                | 'contextmenu';
+            hideMiddleMarkers?: boolean;
+            minRadiusCircle?: number;
+            maxRadiusCircle?: number;
+            minRadiusCircleMarker?: number;
+            maxRadiusCircleMarker?: number;
+            editable?: boolean;
+            markerEditable?: boolean;
+            continueDrawing?: boolean;
+            layerGroup?: L.Map | L.LayerGroup
         }
 
         export class LayerDrawOptions {
             snappable?: boolean;
             snapDistance?: number;
             allowSelfIntersection?: boolean;
+            allowSelfIntersectionEdit?: boolean;
             preventMarkerRemoval?: boolean;
+            removeLayerBelowMinVertexCount?: boolean;
+            limitMarkersToCount?: number;
+            limitMarkersToZoom?: number;
+            limitMarkersToViewport?: boolean;
+            limitMarkersToClick?: boolean;
+            pinning?: boolean;
         }
 
         export interface BlockPositions {
@@ -153,9 +188,11 @@ declare module 'leaflet' {
             onClick: (e: any) => void;
         }
 
-        export function initialize(options?: {}): void;
+        export function initialize(options?: { optIn: boolean }): void;
 
         export function setOptIn(optIn: boolean): void;
+
+        export function reInitLayer(): void;
 
         export class Translations {
             tooltips?: {
@@ -191,6 +228,7 @@ declare module 'leaflet' {
         }
 
         interface Map {
+            addControls(options?: DrawControlOptions): void;
             enableDraw(shape: SUPPORTED_SHAPES, options?: MapDrawOptions): void;
             disableDraw(shape: SUPPORTED_SHAPES): void;
             /** Returns true if global Draw Mode is enabled. false when disabled. */
@@ -214,10 +252,50 @@ declare module 'leaflet' {
             toggleGlobalEditMode(options): void;
             globalEditEnabled(): boolean;
 
-            setLang(lang: 'en' | 'de' | 'it' | 'ru' | 'ro' | 'es' | 'fr' | 'pt_br' | 'zh' | 'nl', customTranslations?: Translations, fallbackLanguage?: string): void;
+            setLang(
+                lang:
+                    | 'da'
+                    | 'de'
+                    | 'el'
+                    | 'en'
+                    | 'es'
+                    | 'fa'
+                    | 'fr'
+                    | 'hu'
+                    | 'id'
+                    | 'it'
+                    | 'nl'
+                    | 'no'
+                    | 'pl'
+                    | 'pt_br'
+                    | 'ro'
+                    | 'ru'
+                    | 'sv'
+                    | 'tr'
+                    | 'ua'
+                    | 'zh'
+                    | 'zh_tw',
+                customTranslations?: Translations,
+                fallbackLanguage?: string
+            ): void;
 
             addControls(options?: DrawControlOptions): void;
             removeControls(): void;
+
+            controlsVisible(): boolean;
+            globalCutModeEnabled(): boolean;
+            enableGlobalCutMode(options: DrawControlOptions): void;
+            toggleGlobalCutMode(options: DrawControlOptions): void;
+            disableGlobalCutMode(): void;
+            globalEditModeEnabled(): boolean;
+            enableGlobalDragMode(): void;
+            disableGlobalDragMode(): void;
+            globalDragModeEnabled(): boolean;
+            toggleGlobalDragMode(): void;
+            enableGlobalRemovalMode(): void;
+            disableGlobalRemovalMode(): void;
+            globalRemovalModeEnabled(): boolean;
+            toggleGlobalRemovalMode(): void;
 
             Draw: GeomanHelpers;
             Toolbar: Toolbar;

@@ -193,6 +193,10 @@ const Draw = L.Class.extend({
     }else if(type === "markerPane"){
       layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.markerPane || 'markerPane';
     }
+  },
+  _isFirstLayer(){
+    const map = this._map || this._layer._map;
+    return map.pm.getGeomanLayers().length === 0;
   }
 });
 

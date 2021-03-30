@@ -741,12 +741,6 @@ Edit.Line = Edit.extend({
     const marker = e.target;
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
-      layer: this._layer,
-      markerEvent: e,
-      indexPath,
-      shape: this.getShape()
-    });
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
@@ -755,7 +749,17 @@ Edit.Line = Edit.extend({
       intersection = false;
     }
 
-    if (!this.options.allowSelfIntersection && intersection) {
+    const intersectionReset = !this.options.allowSelfIntersection && intersection;
+
+    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
+      layer: this._layer,
+      markerEvent: e,
+      indexPath,
+      shape: this.getShape(),
+      intersectionReset
+    });
+
+    if (intersectionReset) {
       // reset coordinates
       this._layer.setLatLngs(this._coordsBeforeEdit);
       this._coordsBeforeEdit = null;
@@ -763,8 +767,19 @@ Edit.Line = Edit.extend({
       // re-enable markers for the new coords
       this._initMarkers();
 
+      if (this.options.snappable) {
+        this._initSnappableMarkers();
+      }
+
       // check for selfintersection again (mainly to reset the style)
       this._handleLayerStyle();
+
+      L.PM.Utils._fireEvent(this._layer,'pm:layerreset', {
+        layer: this._layer,
+        markerEvent: e,
+        indexPath,
+        shape: this.getShape()
+      });
       return;
     }
     if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
