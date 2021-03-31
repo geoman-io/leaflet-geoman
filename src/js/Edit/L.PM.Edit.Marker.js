@@ -15,6 +15,12 @@ Edit.Marker = Edit.extend({
 
     this._map = this._layer._map;
 
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
+      return;
+    }
+
     if (this.enabled()) {
       return;
     }

@@ -84,6 +84,18 @@ Draw.Cut = Draw.Polygon.extend({
       .filter(l => l instanceof L.Polyline)
       // exclude the drawn one
       .filter(l => l !== layer)
+      // layer is allowed to cut
+      .filter(l => l.pm.options.allowCutting)
+      // filter out everything that ignore leaflet-geoman
+      .filter(l =>{
+        // TODO: after cutting nothing else can be cutted anymore until a new list is passed, because the layers don't exists anymore. Should we remove the cutted layers from the list?
+        if(this.options.layersToCut && L.Util.isArray(this.options.layersToCut) && this.options.layersToCut.length > 0){
+          return this.options.layersToCut.indexOf(l) > -1;
+        }else{
+          return true;
+        }
+      })
+      // filter out everything that ignore leaflet-geoman
       .filter(l => !this._layerGroup.hasLayer(l))
       // only layers with intersections
       .filter(l => {

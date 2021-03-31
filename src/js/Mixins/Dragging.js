@@ -1,5 +1,10 @@
 const DragMixin = {
   enableLayerDrag() {
+    // layer is not allowed to dragged
+    if(!this.options.allowDragging){
+      return;
+    }
+
     // before enabling layer drag, disable layer editing
     this.disable();
 

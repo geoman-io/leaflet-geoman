@@ -141,5 +141,18 @@ Edit.LayerGroup = L.Class.extend({
   },
   _getMap(){
     return this._map || this._layers.find(l => !!l._map)?._map || null;
-  }
+  },
+  applyOptionsToAllChilds(options, _layerIds = []) {
+    this._options = options;
+    this._layers.forEach(layer => {
+      if (layer instanceof L.LayerGroup) {
+        if (_layerIds.indexOf(layer._leaflet_id) === -1) {
+          _layerIds.push(layer._leaflet_id);
+          layer.pm.applyOptionsToAllChilds(options, _layerIds);
+        }
+      } else {
+        layer.pm.setOptions(options);
+      }
+    });
+  },
 });

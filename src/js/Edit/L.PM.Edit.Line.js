@@ -31,8 +31,13 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    // TODO: this is wrong: if already enable then go into the if
-    if (!this.enabled()) {
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
+      return;
+    }
+
+    if (this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
       this.disable();

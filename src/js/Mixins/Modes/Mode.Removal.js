@@ -95,6 +95,7 @@ const GlobalRemovalMode = {
         (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
       )
       && !layer._pmTempLayer
+      && layer.pm.options.allowRemoval
   }
 };
 
