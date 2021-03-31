@@ -408,4 +408,17 @@ describe('Draw Rectangle', () => {
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
   });
+
+  it('map property is added after creation', () => {
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      expect(layer.pm._map).to.not.eq(undefined);
+    });
+  });
+
 });

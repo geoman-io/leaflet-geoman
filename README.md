@@ -229,7 +229,7 @@ The following methods are available on `map.pm`:
 | Draw.getShapes()              | `Array`   | Array of available shapes.                                                                      |  
 | Draw.getActiveShape()         | `String`  | Returns the active shape.                                                                       |  
 | globalDrawModeEnabled()       | `Boolean` | Returns `true` if global Draw Mode is enabled. `false` when disabled.                           |  
-| setPathOptions(`options`, `optionsModifier`)     | -         | Customize the style of the drawn layer. Only for L.Path layers. Shapes can be excluded with a `ignoreShapes` array in `optionsModifier` [Details](#customize-style)                                                         |  
+| setPathOptions(`options`, `optionsModifier`)     | -         | Customize the style of the drawn layer. Only for L.Path layers. Shapes can be excluded with a `ignoreShapes` array or merged with the current style with `merge: true` in `optionsModifier` [Details](#customize-style)                                                         |  
 | setGlobalOptions(`options`)   | -         | Set `globalOptions` and apply them.                                                                            |
 | applyGlobalOptions()          | -         | Apply the current `globalOptions` to all existing layers. |  
 | getGlobalOptions()            | `Object`  | Returns the `globalOptions`.                                                                     |  
@@ -701,6 +701,13 @@ If you want to exclude shapes from receiving these path options, use the second 
 ```javascript  
 map.pm.setPathOptions({color: 'orange'}, {
   ignoreShapes: ['Circle', 'Rectangle']  
+});  
+```  
+
+You can also merge the new style with the current one, if you pass the parameter `merge: true`:  
+```javascript  
+map.pm.setPathOptions({color: 'orange'}, {
+  merge: true
 });  
 ```  
   
