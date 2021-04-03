@@ -1,0 +1,43 @@
+const KeyboardMixins = {
+  _lastEvents: {keydown: undefined, keyup: undefined, current: undefined},
+  _initKeyListener(map) {
+    this.map = map;
+    L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
+  },
+  _onKeyListener(e) {
+    let focusOn = 'document';
+
+    // TODO: .contains only supported since IE9, problem? Should we define, which Versions we are Support?
+    // with focusOn the user can add a check if the key was pressed while the user interacts with the map
+    if (this.map.getContainer().contains(e.target)){
+      focusOn = 'map';
+    }
+
+    const data = {event: e, eventType: e.type, focusOn};
+    this._lastEvents[e.type] = data;
+    this._lastEvents.current = data;
+
+    L.PM.Utils._fireEvent(this.map, 'pm:keyevent',data);
+  },
+  getLastKeyEvent(type = 'current') {
+    return this._lastEvents[type];
+  },
+  // TODO: isXYZPressed or getXYZPressed?
+  isShiftKeyPressed() {
+    return this._lastEvents.current?.event.shiftKey;
+  },
+  isAltKeyPressed() {
+    return this._lastEvents.current?.event.altKey;
+  },
+  isCtrlKeyPressed() {
+    return this._lastEvents.current?.event.ctrlKey;
+  },
+  isMetaKeyPressed() {
+    return this._lastEvents.current?.event.metaKey;
+  },
+  getPressedKey(){
+    return this._lastEvents.current?.event.key;
+  }
+};
+
+export default KeyboardMixins;

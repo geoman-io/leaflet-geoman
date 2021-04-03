@@ -3,6 +3,7 @@ import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
+import KeyboardMixins from "./Mixins/Keyboard";
 
 const Map = L.Class.extend({
   includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode],
@@ -10,6 +11,7 @@ const Map = L.Class.extend({
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
+    this.Keyboard = KeyboardMixins;
 
     this._globalRemovalMode = false;
 
@@ -23,6 +25,8 @@ const Map = L.Class.extend({
         markerPane: 'markerPane'
       }
     };
+
+    this.Keyboard._initKeyListener(map);
   },
   setLang(lang = 'en', t, fallback = 'en') {
     const oldLang = L.PM.activeLang;

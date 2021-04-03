@@ -356,19 +356,24 @@ The following methods are available for layers under `layer.pm`:
   
 See the available options in the table below.  
   
-| Option                | Default | Description                                                                                               |  
-| :-------------------- | :------ | :-------------------------------------------------------------------------------------------------------- |  
-| snappable             | `true`  | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key. |  
-| snapDistance          | `20`    | The distance to another vertex when a snap should happen.                                                 |   
-| allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |  
-| allowSelfIntersectionEdit | `false`  | Allow/Disallow to change vertices they are connected to a intersecting line. Only working if allowSelfIntersection is `true` and the layer is already self-intersecting while enabling edit mode.                                         |  
-| preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
-| removeLayerBelowMinVertexCount       | `true` | If `true`, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If `false`, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons. |    
-| limitMarkersToCount   | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |  
-| limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                           |  
-| limitMarkersToViewport| `false` | Shows only markers in the viewport ⭐                                                                      |  
-| limitMarkersToClick   | `false` | Shows markers only after the layer was clicked ⭐                                                          |  
-| pinning               | `false` | Pin shared vertices/markers together during edit ⭐. [Details](#pinning-⭐)                                   | 
+| Option                               | Default       | Description                                                                                                                                                                                        |  
+| :----------------------------------- | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |  
+| snappable                            | `true`        | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                                                                                          |  
+| snapDistance                         | `20`          | The distance to another vertex when a snap should happen.                                                                                                                                          |
+| allowSelfIntersection                | `true`        | Allow/Disallow self-intersections on polygons and polylines.                                                                                                                                       |  
+| allowSelfIntersectionEdit            | `false`       | Allow/Disallow to change vertices they are connected to a intersecting line. Only working if allowSelfIntersection is `true` and the layer is already self-intersecting while enabling edit mode.  |  
+| preventMarkerRemoval                 | `false`       | Disable the removal of markers/vertexes via right click.                                                                                                                                           |
+| removeLayerBelowMinVertexCount       | `true`        | If `true`, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If `false`, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons. |    
+| addVertexOn                          | `click`       | Leaflet layer event to add a vertex to a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click).                                   | 
+| addVertexValidation                  | `undefined`   | A function for validation if a vertex (of a Line / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.     | 
+| removeVertexOn                       | `contextmenu` | Leaflet layer event to remove a vertex from a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click).                              | 
+| removeVertexValidation               | `undefined`   | A function for validation if a vertex (of a Line / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.  | 
+| moveVertexValidation                 | `undefined`   | A function for validation if a vertex / helper-marker is allowed to move / drag. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.  | 
+| limitMarkersToCount                  | `-1`          | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                                                                                                                |  
+| limitMarkersToZoom                   | `-1`          | Shows markers when under the given zoom level ⭐                                                                                                                                                    |  
+| limitMarkersToViewport               | `false`       | Shows only markers in the viewport ⭐                                                                                                                                                               |  
+| limitMarkersToClick                  | `false`       | Shows markers only after the layer was clicked ⭐                                                                                                                                                   |  
+| pinning                              | `false`       | Pin shared vertices/markers together during edit ⭐. [Details](#pinning-⭐)                                                                                                                          | 
   
 
 You can listen to events related to editing on events like this:  
@@ -652,7 +657,7 @@ See the available options in the table below.
 | coordinates           | `true`   | Shows the coordinates in the tooltip `Marker`, `CircleMarker` and the current dragged marker while drawing / editing  |
 
 
-### Customize  
+### Customize
   
 #### Customize Language  
 Change the language of user-facing copy in leaflet-geoman  
@@ -835,8 +840,28 @@ The following events are available on a map instance:
 | :------------- | :----- | :---------------------------------------- | :--------------------------------------------------- |  
 | pm:buttonclick | `e`    | Fired when a Toolbar button is clicked    | `btnName`, `button`                                  |  
 | pm:actionclick | `e`    | Fired when a Toolbar action is clicked    | `text`, `action`, `btnName`, `button`                |  
+
+
+### Keyboard
+We implemented a built-in keyboard listener to make one central place where keyboard events can be accessed (without adding self a listener).
+
+The following methods are available on `map.pm.Keyboard`:  
   
+| Method                                 | Returns   | Description                                                                                                                          |  
+| :------------------------------------- | :-------- | :----------------------------------------------------------------------------------------------------------------------------------- |  
+| getLastKeyEvent(`type = 'current'`)    | `Object`  | Returns the last event. Also `keydown` and `keyup` can be passed, to get the specific one.                                           | 
+| getPressedKey()                        | `String`  | Returns the current pressed key. [KeyboardEvent.key](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)             |    
+| isShiftKeyPressed()                    | `Boolean` | Returns true if the `Shift` key is currently pressed.                                                                                |  
+| isAltKeyPressed()                      | `Boolean` | Returns true if the `Alt` key is currently pressed.                                                                                  |  
+| isCtrlKeyPressed()                     | `Boolean` | Returns true if the `Ctrl` key is currently pressed.                                                                                 |  
+| isMetaKeyPressed()                     | `Boolean` | Returns true if the `Meta` key is currently pressed.                                                                                 | 
+
+The following events are available on a map instance:  
   
+| Event          | Params | Description                                                                                                                 | Output                            |  
+| :------------- | :----- | :-------------------------------------------------------------------------------------------------------------------------- | :-------------------------------- |  
+| pm:keyevent    | `e`    | Fired when `keydown` or `keyup` on the document is fired. `eventType` = `keydown / keyup`, `focusOn` = `document / map`     | `event`, `eventType`, `focusOn`   |  
+
   
 ### Feature Requests  
   

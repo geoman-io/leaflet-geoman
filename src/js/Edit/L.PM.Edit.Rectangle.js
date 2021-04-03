@@ -74,9 +74,12 @@ Edit.Rectangle = Edit.Polygon.extend({
   },
 
   _onMarkerDragStart(e) {
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
+
     // dragged marker
     const draggedMarker = e.target;
-
     // Store/update a reference to marker in opposite corner
     const corners = this._findCorners();
     draggedMarker._oppositeCornerLatLng =
@@ -98,6 +101,10 @@ Edit.Rectangle = Edit.Polygon.extend({
     // dragged marker
     const draggedMarker = e.target;
 
+    if(!this._vertexValidationDrag(draggedMarker)){
+      return;
+    }
+
     // only continue if this is NOT a middle marker (should NEVER be one, but this is just a safety check)
     if (draggedMarker._index === undefined) {
       return;
@@ -117,6 +124,12 @@ Edit.Rectangle = Edit.Polygon.extend({
   },
 
   _onMarkerDragEnd(e) {
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDragEnd(draggedMarker)){
+      return;
+    }
+
     const corners = this._findCorners();
 
     // Reposition ALL markers (so that indices are correctly correlated with corner order (NW, NE, SE, SW))

@@ -30,6 +30,7 @@ Edit.CircleMarker = Edit.extend({
     this._enabled = true;
 
     this._layer.on('pm:dragstart', this._onDragStart, this);
+    this._layer.on('pm:drag', this._onMarkerDrag, this);
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
 
     // create polygon around the circle border
@@ -265,10 +266,17 @@ Edit.CircleMarker = Edit.extend({
     L.PM.Utils._fireEvent(this._layer,'pm:remove', { layer: this._layer, shape: this.getShape() });
     L.PM.Utils._fireEvent(this._map,'pm:remove', { layer: this._layer, shape: this.getShape() });
   },
-  _onDragStart(){
+  _onDragStart(e){
     this._map.pm.Draw.CircleMarker._layerIsDragging = true;
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
   },
   _onMarkerDragStart(e) {
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
+
     L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
       markerEvent: e,
       layer: this._layer,
@@ -277,6 +285,12 @@ Edit.CircleMarker = Edit.extend({
     });
   },
   _onMarkerDrag(e) {
+    // dragged marker
+    const draggedMarker = e.target;
+    if(draggedMarker instanceof L.Marker && !this._vertexValidationDrag(draggedMarker)){
+      return;
+    }
+
     L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
       layer: this._layer,
       markerEvent: e,
@@ -286,6 +300,12 @@ Edit.CircleMarker = Edit.extend({
   },
   _onMarkerDragEnd(e) {
     this._map.pm.Draw.CircleMarker._layerIsDragging = false;
+
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDragEnd(draggedMarker)){
+      return;
+    }
     L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,

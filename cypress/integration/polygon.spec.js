@@ -126,7 +126,7 @@ describe('Draw & Edit Poly', () => {
     cy.window().then(({ L }) => {
       L.PM.setOptIn(true);
       cy.drawShape('MultiPolygon').then((poly)=>{
-        cy.hasVertexMarkers(0); //Not allowed because optIn
+        cy.hasVertexMarkers(0); // Not allowed because optIn
         L.PM.setOptIn(false);
         L.PM.reInitLayer(poly);
       })
@@ -140,17 +140,17 @@ describe('Draw & Edit Poly', () => {
     cy.window().then(({ L }) => {
       L.PM.setOptIn(true);
       cy.drawShape('MultiPolygon',true).then((poly)=>{
-        cy.hasVertexMarkers(0); //Not allowed because optIn
-        L.PM.reInitLayer(poly);//Not allowed because pmIgnore is not false
+        cy.hasVertexMarkers(0); // Not allowed because optIn
+        L.PM.reInitLayer(poly);// Not allowed because pmIgnore is not false
         cy.hasVertexMarkers(0);
         L.PM.setOptIn(false);
-        L.PM.reInitLayer(poly);//Not allowed because pmIgnore is true
+        L.PM.reInitLayer(poly);// Not allowed because pmIgnore is true
         cy.hasVertexMarkers(0);
         poly.options.pmIgnore = false;
         poly.eachLayer((layer)=>{
           layer.options.pmIgnore = false;
         });
-        L.PM.reInitLayer(poly);//Allowed because pmIgnore is not true
+        L.PM.reInitLayer(poly);// Allowed because pmIgnore is not true
       })
     });
     cy.toolbarButton('edit').click();
@@ -845,7 +845,7 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      const drawPane = map._panes['draw'];
+      const drawPane = map._panes.draw;
       const polygon = map.pm.getGeomanDrawLayers()[0];
       expect(drawPane.className).to.eq(polygon.getPane().className);
     });
@@ -930,6 +930,82 @@ describe('Draw & Edit Poly', () => {
       map.pm.Draw.Polygon._finishShape();
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
+  });
+
+  it('addVertexOn contextmenu / removeVertexOn click', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({addVertexOn: 'contextmenu', removeVertexOn: 'click'});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('edit').click();
+
+    // Add Vertex
+    cy.get(mapSelector)
+      .click(205, 50);
+    cy.hasVertexMarkers(3);
+
+    cy.get(mapSelector)
+      .rightclick(205, 50);
+    cy.hasVertexMarkers(4);
+
+    // Remove Vertex
+    cy.get(mapSelector)
+      .rightclick(205, 50);
+    cy.hasVertexMarkers(4);
+
+    cy.get(mapSelector)
+      .click(205, 50);
+    cy.hasVertexMarkers(3);
+
+  });
+
+  it('addVertexValidation / removeVertexValidation', () => {
+    cy.window().then(({ map }) => {
+      const check = ({layer})=>layer._valid;
+      map.pm.setGlobalOptions({addVertexValidation: check, removeVertexValidation: check});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('edit').click();
+
+    // Add Vertex
+    cy.get(mapSelector)
+      .click(205, 50);
+    cy.hasVertexMarkers(3);
+
+    // Remove Vertex
+    cy.get(mapSelector)
+      .rightclick(150, 250);
+    cy.hasVertexMarkers(3);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer._valid = true;
+    });
+
+    // Add Vertex
+    cy.get(mapSelector)
+      .click(205, 50);
+    cy.hasVertexMarkers(4);
+
+    // Remove Vertex
+    cy.get(mapSelector)
+      .rightclick(205, 50);
+    cy.hasVertexMarkers(3);
+
   });
 
 });

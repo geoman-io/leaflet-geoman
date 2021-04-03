@@ -170,6 +170,11 @@ Edit.Circle = Edit.extend({
     this._syncCircleRadius();
   },
   _moveCircle(e) {
+    const draggedMarker = e.target;
+    if(draggedMarker._vertexResetLatLng) {
+      return;
+    }
+
     const center = e.latlng;
     this._layer.setLatLng(center);
 
@@ -221,6 +226,10 @@ Edit.Circle = Edit.extend({
     this._layer.off('pm:dragstart', this._unsnap, this);
   },
   _onMarkerDragStart(e) {
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
+
     L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
@@ -229,6 +238,12 @@ Edit.Circle = Edit.extend({
     });
   },
   _onMarkerDrag(e) {
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDrag(draggedMarker)){
+      return;
+    }
+
     L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
       layer: this._layer,
       markerEvent: e,
@@ -237,6 +252,12 @@ Edit.Circle = Edit.extend({
     });
   },
   _onMarkerDragEnd(e) {
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDragEnd(draggedMarker)){
+      return;
+    }
+
     // fire edit event
     this._fireEdit();
 
@@ -253,13 +274,26 @@ Edit.Circle = Edit.extend({
     L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
   },
-  _fireDragStart() {
+  _fireDragStart(e) {
+    if(!this._vertexValidationDrag(e.target)){
+      // we create a new flag, because the other flag is cleared before _fireDragEnd is called
+      this._vertexValidationReset = true;
+      return;
+    }
+    delete this._vertexValidationReset;
     L.PM.Utils._fireEvent(this._layer,'pm:dragstart', { layer: this._layer, shape: this.getShape() });
   },
   _fireDrag(e) {
+    if(this._vertexValidationReset){
+      return;
+    }
     L.PM.Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
   },
   _fireDragEnd() {
+    if(this._vertexValidationReset){
+      delete this._vertexValidationReset;
+      return;
+    }
     L.PM.Utils._fireEvent(this._layer,'pm:dragend', { layer: this._layer, shape: this.getShape() });
   },
   _updateHiddenPolyCircle() {
