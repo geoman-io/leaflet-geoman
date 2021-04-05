@@ -72,11 +72,12 @@ Edit.Marker = Edit.extend({
     L.PM.Utils._fireEvent(marker,'pm:remove', { layer: marker, shape: this.getShape() });
     L.PM.Utils._fireEvent(this._map,'pm:remove', { layer: marker, shape: this.getShape() });
   },
-  _onDragEnd(e) {
-    const marker = e.target;
-
+  _onDragEnd() {
+    this._fireEdit();
+  },
+  _fireEdit() {
     // fire the pm:edit event and pass shape and marker
-    L.PM.Utils._fireEvent(marker,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin

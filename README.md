@@ -427,12 +427,15 @@ map.pm.enableGlobalDragMode();
   
 The following methods are available on `map.pm`:  
   
-| Method                  | Returns   | Description                                                           |  
-| :---------------------- | :-------- | :-------------------------------------------------------------------- |  
-| enableGlobalDragMode()  | -         | Enables global drag mode.                                             |  
-| disableGlobalDragMode() | -         | Disables global drag mode.                                            |  
-| toggleGlobalDragMode()  | -         | Toggles global drag mode.                                             |  
-| globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled. |  
+| Method                  | Returns   | Description                                                                     |  
+| :---------------------- | :-------- | :------------------------------------------------------------------------------ |  
+| enableGlobalDragMode()  | -         | Enables global drag mode.                                                       |  
+| disableGlobalDragMode() | -         | Disables global drag mode.                                                      |  
+| toggleGlobalDragMode()  | -         | Toggles global drag mode.                                                       |  
+| globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled.           |  
+| enableLayerGroupDrag()  | -         | Enables dragging for LayerGroups.                                               |  
+| disableLayerGroupDrag() | -         | Disables dragging for LayerGroups.                                              |  
+| layerGroupDragEnabled() | `Boolean` | Returns `true` if LayerGroup drag is enabled. `false` when disabled (Default).  |   
   
 The following events are available on a layer instance:  
   

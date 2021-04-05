@@ -1,74 +1,119 @@
 const DragMixin = {
-  enableLayerDrag() {
+  enableLayerDrag(calledFromLayerGroup = false) {
     // before enabling layer drag, disable layer editing
     this.disable();
 
-    // if layer never enabled and _map is not set (for snapping)
-    if (!this._map) {
-      this._map = this._layer._map;
-    }
+    if (this._layers ) { //Check if Layergroup
+      if(this._layers.length > 0){
+        this._layerGroup.on('mousedown', this._dragMixinOnMouseDownLayerGroup, this);
+        this._layers.forEach((layer)=>{
+          if(layer.pm) {
+            // we need to disable snapping for CircleMarker because they are snapping because of the check in onLayerDrag -> if(_snapped)
+            if (layer.pm.options.snappable && layer instanceof L.CircleMarker && !(layer instanceof L.Circle)) {
+              if (layer.pm.options.editable) {
+                layer.pm._disableSnapping();
+              } else {
+                layer.pm._disableSnappingDrag();
+              }
+            }
+            layer.pm.enableLayerDrag(true);
+          }
+        })
+      }
+    } else {
+      // if layer never enabled and _map is not set (for snapping)
+      if (!this._map) {
+        this._map = this._layer._map;
+      }
 
-    if (this._layer instanceof L.Marker) {
-      this._layer.on('dragstart', this._fireDragStart, this);
-      this._layer.on('drag', this._fireDrag, this);
-      this._layer.on('dragend', this._fireDragEnd, this);
+      // if LayerGroup is dragged, we want to act Markers like a normal layer
+      if(!calledFromLayerGroup) {
+        if (this._layer instanceof L.Marker) {
+          this._layer.on('dragstart', this._fireDragStart, this);
+          this._layer.on('drag', this._fireDrag, this);
+          this._layer.on('dragend', this._fireDragEnd, this);
 
-      if (this.options.snappable) {
-        this._initSnappableMarkers();
+          if (this.options.snappable) {
+            this._initSnappableMarkers();
+          } else {
+            this._disableSnapping();
+          }
+          if (this._layer.dragging) {
+            this._layer.dragging.enable();
+          }
+          return;
+        } else if (this._layer instanceof L.ImageOverlay) {
+          this._getDOMElem().ondragstart = () => false;
+        }
+      }else{
+        if (this._layer instanceof L.Marker) {
+          L.DomEvent.on(this._getDOMElem(),'dragstart',(e)=>{e.preventDefault(); return false});
+        }
+
+      }
+      // temporary coord variable for delta calculation
+      this._tempDragCoord = null;
+
+      // add CSS class
+      if (this._layer._map.options.preferCanvas) {
+        this._layer.on('mouseout', this.removeDraggingClass, this);
+        this._layer.on('mouseover', this.addDraggingClass, this);
       } else {
-        this._disableSnapping();
+        this.addDraggingClass();
       }
-      if (this._layer.dragging) {
-        this._layer.dragging.enable();
-      }
-      return;
-    }else if(this._layer instanceof L.ImageOverlay){
-      this._getDOMElem().ondragstart = ()=>false;
+
+      this._originalMapDragState = this._layer._map.dragging._enabled;
+
+      // can we reliably save the map's draggable state?
+      // (if the mouse up event happens outside the container, then the map can become undraggable)
+      this._safeToCacheDragState = true;
+
+      // add mousedown event to trigger drag
+      this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
     }
-
-    // temporary coord variable for delta calculation
-    this._tempDragCoord = null;
-
-    // add CSS class
-    if (this._layer._map.options.preferCanvas) {
-      this._layer.on('mouseout', this.removeDraggingClass, this);
-      this._layer.on('mouseover', this.addDraggingClass, this);
-    } else {
-      this.addDraggingClass();
-    }
-
-    this._originalMapDragState = this._layer._map.dragging._enabled;
-
-    // can we reliably save the map's draggable state?
-    // (if the mouse up event happens outside the container, then the map can become undraggable)
-    this._safeToCacheDragState = true;
-
-    // add mousedown event to trigger drag
-    this._layer.on('mousedown', this._dragMixinOnMouseDown, this);
   },
-  disableLayerDrag() {
-    if (this._layer instanceof L.Marker) {
-      this._layer.off('dragstart', this._fireDragStart, this);
-      this._layer.off('drag', this._fireDrag, this);
-      this._layer.off('dragend', this._fireDragEnd, this);
-      if (this._layer.dragging) {
-        this._layer.dragging.disable();
+  disableLayerDrag(calledFromLayerGroup = false) {
+    if (this._layers ) { //Check if Layergroup
+      if(this._layers.length > 0){
+        this._layerGroup.off('mousedown', this._dragMixinOnMouseDownLayerGroup, this);
+        this._layers.forEach((layer)=>{
+          if(layer.pm) {
+            layer.pm.disableLayerDrag(true);
+
+            // To re-enable snapping
+            if (layer instanceof L.CircleMarker && !(layer instanceof L.Circle)) {
+              layer.pm.enable();
+              layer.pm.disable();
+            }
+          }
+        })
       }
-      return;
-    }
-
-    // remove CSS class
-    if (this._layer._map.options.preferCanvas) {
-      this._layer.off('mouseout', this.removeDraggingClass, this);
-      this._layer.off('mouseover', this.addDraggingClass, this);
     } else {
-      this.removeDraggingClass();
-    }
-    // no longer save the drag state
-    this._safeToCacheDragState = false;
+      if(!calledFromLayerGroup) {
+        if (this._layer instanceof L.Marker) {
+          this._layer.off('dragstart', this._fireDragStart, this);
+          this._layer.off('drag', this._fireDrag, this);
+          this._layer.off('dragend', this._fireDragEnd, this);
+          if (this._layer.dragging) {
+            this._layer.dragging.disable();
+          }
+          return;
+        }
+      }
 
-    // disable mousedown event
-    this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
+      // remove CSS class
+      if (this._layer._map.options.preferCanvas) {
+        this._layer.off('mouseout', this.removeDraggingClass, this);
+        this._layer.off('mouseover', this.addDraggingClass, this);
+      } else {
+        this.removeDraggingClass();
+      }
+      // no longer save the drag state
+      this._safeToCacheDragState = false;
+
+      // disable mousedown event
+      this._layer.off('mousedown', this._dragMixinOnMouseDown, this);
+    }
   },
   dragging() {
     return this._dragging;
@@ -78,6 +123,8 @@ const DragMixin = {
     if (e.originalEvent.button > 0) {
       return;
     }
+    this._overwriteEventIfItComesFromMarker(e);
+
     // save current map dragging state
     if (this._safeToCacheDragState) {
       this._originalMapDragState = this._layer._map.dragging._enabled;
@@ -96,6 +143,7 @@ const DragMixin = {
     this._layer._map.on('mousemove', this._dragMixinOnMouseMove, this);
   },
   _dragMixinOnMouseMove(e) {
+    this._overwriteEventIfItComesFromMarker(e);
     const el = this._getDOMElem();
 
     if (!this._dragging) {
@@ -103,8 +151,10 @@ const DragMixin = {
       this._dragging = true;
       L.DomUtil.addClass(el, 'leaflet-pm-dragging');
 
-      // bring it to front to prevent drag interception
-      this._layer.bringToFront();
+      if(!(this._layer instanceof L.Marker)) {
+        // bring it to front to prevent drag interception
+        this._layer.bringToFront();
+      }
 
       // disbale map drag
       if (this._originalMapDragState) {
@@ -116,6 +166,11 @@ const DragMixin = {
     }
 
     this._onLayerDrag(e);
+
+    // update the hidden circle border after dragging
+    if(this._layer instanceof L.CircleMarker){
+      this._layer.pm._updateHiddenPolyCircle();
+    }
   },
   _dragMixinOnMouseUp() {
     const el = this._getDOMElem();
@@ -186,7 +241,7 @@ const DragMixin = {
         };
       });
 
-    if (this._layer instanceof L.Circle ||(this._layer instanceof L.CircleMarker && this._layer.options.editable)) {
+    if (this._layer instanceof L.Circle || (this._layer instanceof L.CircleMarker && this._layer.options.editable) || this._layer instanceof L.Marker) {
       // create the new coordinates array
       const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
@@ -219,6 +274,19 @@ const DragMixin = {
     e.layer = this._layer;
     // fire pm:dragstart event
     this._fireDrag(e);
+  },
+  _dragMixinOnMouseDownLayerGroup(e) {
+    this._overwriteEventIfItComesFromMarker(e);
+    this._layers.forEach((layer) => {
+      layer.fire('mousedown', e);
+    });
+    this._getMap().on('mouseup', this._dragMixinOnMouseUpLayerGroup, this);
+  },
+  _dragMixinOnMouseUpLayerGroup(e) {
+    this._layers.forEach((layer) => {
+      layer.fire('mouseup',e);
+    });
+    this._getMap().off('mouseup', this._dragMixinOnMouseUpLayerGroup, this);
   },
   _fireDragStart() {
     L.PM.Utils._fireEvent(this._layer,'pm:dragstart', {
@@ -255,8 +323,20 @@ const DragMixin = {
       el = this._layer._renderer._container;
     }else if(this._layer._image){
       el = this._layer._image;
+    }else if(this._layer._icon){
+      el = this._layer._icon;
     }
     return el;
+  },
+  _overwriteEventIfItComesFromMarker(e){
+    // e.latlng is not the clicked latlng if the layer is a Marker (or the radius below 10) -> Leaflet definition
+    // https://github.com/Leaflet/Leaflet/blob/0f904a515879fcd08f69b7f51799ee7f18f23fd8/src/map/Map.js#L1416
+    const isMarker = e.target.getLatLng && (!e.target._radius || e.target._radius <= 10);
+    if(isMarker){
+      // we want the clicked latlng / point, so we overwrite the property e.latlng
+      e.containerPoint = this._map.mouseEventToContainerPoint(e.originalEvent);
+      e.latlng = this._map.containerPointToLatLng(e.containerPoint);
+    }
   }
 };
 
