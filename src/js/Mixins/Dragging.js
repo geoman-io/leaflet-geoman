@@ -3,6 +3,8 @@ const DragMixin = {
     // before enabling layer drag, disable layer editing
     this.disable();
 
+    this._draggingEnabled = true;
+
     if (this._layers ) { //Check if Layergroup
       if(this._layers.length > 0){
         this._layerGroup.on('mousedown', this._dragMixinOnMouseDownLayerGroup, this);
@@ -73,6 +75,9 @@ const DragMixin = {
     }
   },
   disableLayerDrag(calledFromLayerGroup = false) {
+
+    this._draggingEnabled = false;
+
     if (this._layers ) { //Check if Layergroup
       if(this._layers.length > 0){
         this._layerGroup.off('mousedown', this._dragMixinOnMouseDownLayerGroup, this);
@@ -117,6 +122,9 @@ const DragMixin = {
   },
   dragging() {
     return this._dragging;
+  },
+  draggingEnabled(){
+    return !!this._draggingEnabled;
   },
   _dragMixinOnMouseDown(e) {
     // cancel if mouse button is NOT the left button

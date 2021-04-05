@@ -325,4 +325,77 @@ describe('Edit LayerGroup', () => {
     cy.hasVertexMarkers(0);
   });
 
+  it('LayerGroup Dragging', () => {
+    cy.toolbarButton('rectangle')
+      .click();
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.window().then(({map, L}) => {
+      const fg = L.featureGroup().addTo(map);
+      map.pm.setGlobalOptions({layerGroup: fg});
+    });
+
+    cy.toolbarButton('marker')
+      .click();
+
+    cy.get(mapSelector)
+      .click(450, 450);
+
+
+    cy.toolbarButton('rectangle')
+      .click();
+
+    cy.get(mapSelector)
+      .click(400, 450)
+      .click(500, 350);
+
+    cy.window().then(({map}) => {
+      map.pm.enableLayerGroupDrag();
+      map.pm.enableGlobalDragMode();
+
+      let count = 0;
+      const layers = map.pm.getGeomanDrawLayers();
+      layers.forEach((layer)=>{
+        if(layer.pm.draggingEnabled()){
+          count += 1;
+        }
+      });
+
+      expect(count).to.eq(2);
+
+    });
+
+    cy.window().then(({map}) => {
+      // Disable layergroup drag and enable layer drag
+      map.pm.disableLayerGroupDrag();
+
+      let count = 0;
+      const layers = map.pm.getGeomanDrawLayers();
+      layers.forEach((layer)=>{
+        if(layer.pm.draggingEnabled()){
+          count += 1;
+        }
+      });
+
+      expect(count).to.eq(3);
+    });
+
+    cy.window().then(({map}) => {
+      // Disable drag mode
+      map.pm.disableGlobalDragMode();
+
+      let count = 0;
+      const layers = map.pm.getGeomanDrawLayers();
+      layers.forEach((layer)=>{
+        if(layer.pm.draggingEnabled()){
+          count += 1;
+        }
+      });
+
+      expect(count).to.eq(0);
+    });
+  });
 });
