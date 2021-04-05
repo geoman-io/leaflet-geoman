@@ -214,7 +214,7 @@ describe('Draw Marker', () => {
   });
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true});
+      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
     });
 
     cy.toolbarButton('polygon').click();

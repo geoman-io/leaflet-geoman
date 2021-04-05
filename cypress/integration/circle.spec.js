@@ -159,7 +159,7 @@ describe('Draw Circle', () => {
         });
     });
   });
-  it.only('requireSnapToFinish', () => {
+  it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
     });
