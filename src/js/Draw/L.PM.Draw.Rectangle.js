@@ -97,10 +97,7 @@ Draw.Rectangle = Draw.extend({
     this._otherSnapLayers = [];
 
     // fire drawstart event
-    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
+    this._fireDrawStart();
     this._setGlobalDrawMode();
 
   },
@@ -133,7 +130,7 @@ Draw.Rectangle = Draw.extend({
       this._cleanupSnapping();
     }
     // fire drawend event
-    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    this._fireDrawEnd();
     this._setGlobalDrawMode();
 
   },
@@ -262,10 +259,7 @@ Draw.Rectangle = Draw.extend({
     rectangleLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      layer: rectangleLayer,
-    });
+    this._fireCreate(rectangleLayer);
 
     // disable drawing
     this.disable();

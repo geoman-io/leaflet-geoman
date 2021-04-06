@@ -38,21 +38,13 @@ Draw.Cut = Draw.Polygon.extend({
 
     this._editedLayers.forEach(({layer, originalLayer}) =>{
       // fire pm:cut on the cutted layer
-      L.PM.Utils._fireEvent(originalLayer,'pm:cut', {
-        shape: this._shape,
-        layer,
-        originalLayer,
-      });
+      this._fireCut(originalLayer,layer,originalLayer);
 
       // fire pm:cut on the map
-      L.PM.Utils._fireEvent(this._map,'pm:cut', {
-        shape: this._shape,
-        layer,
-        originalLayer,
-      });
+      this._fireCut(this._map,layer,originalLayer);
 
       // fire edit event after cut
-      L.PM.Utils._fireEvent(originalLayer,'pm:edit', { layer: originalLayer, shape: originalLayer.pm.getShape()});
+      this._fireEdit(originalLayer);
     });
     this._editedLayers = [];
 

@@ -220,21 +220,6 @@ const DragMixin = {
     // fire pm:dragstart event
     this._fireDrag(e);
   },
-  _fireDragStart() {
-    L.PM.Utils._fireEvent(this._layer,'pm:dragstart', {
-      layer: this._layer,
-      shape: this.getShape()
-    });
-  },
-  _fireDrag(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
-  },
-  _fireDragEnd() {
-    L.PM.Utils._fireEvent(this._layer,'pm:dragend', {
-      layer: this._layer,
-      shape: this.getShape()
-    });
-  },
   addDraggingClass() {
     const el = this._getDOMElem();
     if(el) {

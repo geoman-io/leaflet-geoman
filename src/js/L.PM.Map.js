@@ -3,9 +3,10 @@ import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
+import {EventMixinGlobal} from "./Mixins/Events";
 
 const Map = L.Class.extend({
-  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode],
+  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode,EventMixinGlobal],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);
@@ -32,12 +33,7 @@ const Map = L.Class.extend({
 
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
-    L.PM.Utils._fireEvent(this.map,"pm:langchange", {
-      oldLang,
-      activeLang: lang,
-      fallback,
-      translations: translations[lang]
-    });
+    this._fireLangChange(oldLang, lang, fallback, translations[lang]);
   },
   addControls(options) {
     this.Toolbar.addControls(options);

@@ -1,7 +1,8 @@
 import SnapMixin from '../Mixins/Snapping';
+import {EventMixinDraw, EventMixinSnapping} from "../Mixins/Events";
 
 const Draw = L.Class.extend({
-  includes: [SnapMixin],
+  includes: [SnapMixin, EventMixinDraw, EventMixinSnapping],
   options: {
     snappable: true,
     snapDistance: 20,
@@ -102,16 +103,9 @@ const Draw = L.Class.extend({
   _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
     if (this._shape === "Cut") {
-      L.PM.Utils._fireEvent(this._map,'pm:globalcutmodetoggled', {
-        enabled: !!this._enabled,
-        map: this._map,
-      });
+      this._fireGlobalCutModeToggled();
     } else {
-      L.PM.Utils._fireEvent(this._map,'pm:globaldrawmodetoggled', {
-        enabled: this._enabled,
-        shape: this._shape,
-        map: this._map,
-      });
+      this._fireGlobalDrawModeToggled();
     }
 
     const layers = L.PM.Utils.findLayers(this._map);

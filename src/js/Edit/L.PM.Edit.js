@@ -1,8 +1,9 @@
 import SnapMixin from '../Mixins/Snapping';
 import DragMixin from '../Mixins/Dragging';
+import {EventMixinEdit, EventMixinSnapping} from "../Mixins/Events";
 
 const Edit = L.Class.extend({
-  includes: [DragMixin, SnapMixin],
+  includes: [DragMixin, SnapMixin, EventMixinEdit, EventMixinSnapping],
   options: {
     snappable: true,
     snapDistance: 20,
