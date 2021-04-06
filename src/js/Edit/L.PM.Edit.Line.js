@@ -188,14 +188,21 @@ Edit.Line = Edit.extend({
 
     marker._pmTempLayer = true;
 
-    marker.on('click', this._onVertexClick, this);
-    marker.on('dragstart', this._onMarkerDragStart, this);
-    marker.on('move', this._onMarkerDrag, this);
-    marker.on('dragend', this._onMarkerDragEnd, this);
+    if (this.options.rotate) {
+      marker.on('dragstart', this._onRotateStart, this);
+      marker.on('drag', this._onRotate, this);
+      marker.on('dragend', this._onRotateEnd, this);
+    } else {
+      marker.on('click', this._onVertexClick, this);
+      marker.on('dragstart', this._onMarkerDragStart, this);
+      marker.on('move', this._onMarkerDrag, this);
+      marker.on('dragend', this._onMarkerDragEnd, this);
 
-    if (!this.options.preventMarkerRemoval) {
-      marker.on('contextmenu', this._removeMarker, this);
+      if (!this.options.preventMarkerRemoval) {
+        marker.on('contextmenu', this._removeMarker, this);
+      }
     }
+
 
     this._markerGroup.addLayer(marker);
 

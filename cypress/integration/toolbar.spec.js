@@ -304,7 +304,7 @@ describe('Testing the Toolbar', () => {
         oneBlock: true
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
-        expect(container[0].children.length).to.equal(10);
+        expect(container[0].children.length).to.equal(11);
       })
     });
   });
@@ -347,7 +347,7 @@ describe('Testing the Toolbar', () => {
         expect(container[0].children.length).to.equal(6);
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
-        expect(container[0].children.length).to.equal(5);
+        expect(container[0].children.length).to.equal(6);
       });
     });
   });
