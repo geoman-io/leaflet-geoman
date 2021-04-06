@@ -1,4 +1,5 @@
 import { createGeodesicPolygon, getTranslation } from "./helpers";
+import {_toLatLng, _toPoint} from "./helpers/ModeHelper";
 
 const Utils = {
   calcMiddleLatLng(map, latlng1, latlng2) {
@@ -153,6 +154,28 @@ const Utils = {
       };
     }
     return null;
+  },
+  // Returns the corners of the rectangle with a given rotation
+  // degrees: Between marker A and the marker counterclockwise before. Same for marker B
+  _getRotatedRectangle(A, B, rotation, map) {
+    const startPoint = _toPoint(map,A);
+    const endPoint = _toPoint(map,B);
+    const theta = (rotation * Math.PI) / 180;
+    const cos = Math.cos(theta);
+    const sin = Math.sin(theta);
+
+    const width = ((endPoint.x - startPoint.x) * cos) + ((endPoint.y - startPoint.y) * sin);
+    const height = ((endPoint.y - startPoint.y) * cos) - ((endPoint.x - startPoint.x) * sin);
+    const x0 = (width * cos) + startPoint.x;
+    const y0 = (width * sin) + startPoint.y;
+    const x1 = (-height * sin) + startPoint.x;
+    const y1 = (height * cos) + startPoint.y;
+
+    const p0 = _toLatLng(map,startPoint);
+    const p1 = _toLatLng(map,{ x: x0, y: y0 });
+    const p2 = _toLatLng(map,endPoint);
+    const p3 = _toLatLng(map,{ x: x1, y: y1 });
+    return [p0, p1, p2, p3];
   },
 };
 

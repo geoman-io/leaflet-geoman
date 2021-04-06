@@ -3,10 +3,11 @@ import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
+import GlobalRotateMode from "./Mixins/Modes/Mode.Rotate";
 import {EventMixinGlobal} from "./Mixins/Events";
 
 const Map = L.Class.extend({
-  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode,EventMixinGlobal],
+  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode, GlobalRotateMode, EventMixinGlobal],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);

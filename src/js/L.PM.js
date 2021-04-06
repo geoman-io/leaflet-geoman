@@ -36,6 +36,8 @@ import './Edit/L.PM.Edit.ImageOverlay';
 import '../css/layers.css';
 import '../css/controls.css';
 
+import './helpers/Matrix';
+
 import Utils from './L.PM.Utils';
 
 L.PM = L.PM || {
