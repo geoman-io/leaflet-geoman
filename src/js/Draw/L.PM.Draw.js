@@ -164,7 +164,8 @@ const Draw = L.Class.extend({
       "editMode": "Edit",
       "dragMode": "Drag",
       "cutPolygon": "Cut",
-      "removalMode": "Removal"
+      "removalMode": "Removal",
+      "rotateMode": "Rotate",
     };
 
     if (shapeMapping[name]) {
