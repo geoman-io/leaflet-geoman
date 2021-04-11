@@ -1,3 +1,4 @@
+import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
 
 const Draw = L.Class.extend({
@@ -55,8 +56,12 @@ const Draw = L.Class.extend({
     this.Marker.setOptions({continueDrawing: true});
     this.CircleMarker.setOptions({continueDrawing: true});
   },
-  setPathOptions(options) {
-    this.options.pathOptions = options;
+  setPathOptions(options, mergeOptions = false) {
+    if(!mergeOptions) {
+      this.options.pathOptions = options;
+    }else{
+      this.options.pathOptions = merge(this.options.pathOptions,options);
+    }
   },
   getShapes() {
     // if somebody wants to know what shapes are available
@@ -181,6 +186,8 @@ const Draw = L.Class.extend({
       layer.pm.setOptions(this.options);
       // set the shape (can be a custom shape)
       layer.pm._shape = this._shape;
+      // apply the map to the new created layer in the pm object
+      layer.pm._map = this._map;
     }
     this._addDrawnLayerProp(layer);
   },
