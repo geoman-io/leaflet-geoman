@@ -14,6 +14,7 @@ const Edit = L.Class.extend({
     limitMarkersToCount: -1,
     hideMiddleMarkers: false,
     draggable: true,
+    snapSegment: true
   },
   setOptions(options) {
     L.Util.setOptions(this, options);

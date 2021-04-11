@@ -28,6 +28,8 @@ const Draw = L.Class.extend({
     editable: false,
     markerEditable: true,
     continueDrawing: false,
+    snapSegment: true,
+    requireSnapToFinish: false,
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
