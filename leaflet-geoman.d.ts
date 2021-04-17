@@ -244,7 +244,7 @@ declare module 'leaflet' {
             /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
             getGeomanLayers(featureGroup?: boolean): L.FeatureGroup | L.Layer[];
             /** Returns all drawn Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
-            getGeomanDrawLayers(featureGroup?: boolean): L.FeatureGroup | L.Layer
+            getGeomanDrawLayers(featureGroup?: boolean): L.FeatureGroup | L.Layer[];
 
             // Edit Mode
             enableGlobalEditMode(options): void;
