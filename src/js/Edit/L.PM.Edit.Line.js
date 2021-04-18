@@ -312,6 +312,7 @@ Edit.Line = Edit.extend({
 
     // fire edit event
     this._fireEdit();
+    this._layerEdited = true;
 
     this._fireVertexAdded(newM,this.findDeepMarkerIndex(this._markers, newM).indexPath, latlng);
 
@@ -527,6 +528,7 @@ Edit.Line = Edit.extend({
 
     // fire edit event
     this._fireEdit();
+    this._layerEdited = true;
 
     // fire vertex removal event
     // TODO: maybe fire latlng as well?
@@ -751,6 +753,7 @@ Edit.Line = Edit.extend({
     }
     // fire edit event
     this._fireEdit();
+    this._layerEdited = true;
   },
   _onVertexClick(e) {
     const vertex = e.target;

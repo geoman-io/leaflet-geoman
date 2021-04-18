@@ -121,6 +121,7 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     // fire edit event
     this._fireEdit();
+    this._layerEdited = true;
   },
 
   // adjusts the rectangle's size and bounds whenever a marker is moved

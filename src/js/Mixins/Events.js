@@ -1,236 +1,253 @@
-const EventMixinEdit = {
-  // also fired in EventMixinDraw
-  _fireEdit() {
-    L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
-    this._layerEdited = true;
+import merge from 'lodash/merge';
+
+const EventMixin = {
+  // Draw Events
+  // Fired when enableDraw() is called -> draw start
+  _fireDrawStart(source = "Draw", customPayload = {}){
+    this.__fire(this._map,'pm:drawstart', {
+      shape: this._shape,
+      workingLayer: this._layer,
+    }, source, customPayload);
   },
-  _fireEnable(){
-    L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
+  // Fired when disableDraw() is called -> draw stop
+  _fireDrawEnd(source = "Draw", customPayload = {}){
+    this.__fire(this._map,'pm:drawend', {
+      shape: this._shape,
+    }, source, customPayload);
   },
-  _fireDisable(){
-    L.PM.Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
+  // Fired when layer is created while drawing
+  _fireCreate(layer, source = "Draw", customPayload = {}){
+    this.__fire(this._map,'pm:create', {
+      shape: this._shape,
+      layer,
+    }, source, customPayload);
   },
-  _fireUpdate(){
-    L.PM.Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
-  },
-  _fireCenterPlaced(){
-    L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
-      layer: this._layer,
+  // Fired when Circle / CircleMarker center is placed
+  // if source == "Draw" then `workingLayer` is passed else `layer`
+  _fireCenterPlaced(source = "Draw", customPayload = {}) {
+    const workingLayer = source === "Draw" ? this._layer : undefined;
+    const layer = source !== "Draw" ? this._layer : undefined;
+
+    this.__fire(this._layer,'pm:centerplaced', {
+      shape: this._shape,
+      workingLayer,
+      layer,
       latlng: this._layer.getLatLng(),
-      shape: this.getShape()
-    });
+    }, source, customPayload);
   },
-  _fireMarkerDragStart(e, indexPath = undefined){
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
+  // Fired when layer is cutted
+  // TODO: is Cut "Draw" or "Edit"? The event `pm:edit` in the same scope is called as source "Edit"
+  _fireCut(fireLayer, layer, originalLayer, source = "Draw", customPayload = {}){
+    this.__fire(fireLayer,'pm:cut', {
+      shape: this._shape,
+      layer,
+      originalLayer,
+    }, source, customPayload);
+  },
+
+  // Edit Events
+  // Fired when layer is edited / changed
+  _fireEdit(source = "Edit", customPayload = {}) {
+    this.__fire(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() }, source, customPayload);
+  },
+  // Fired when layer is enabled for editing
+  _fireEnable(source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() }, source, customPayload);
+  },
+  // Fired when layer is disabled for editing
+  _fireDisable(source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() }, source, customPayload);
+  },
+  // Fired when layer is disabled and was edited / changed
+  _fireUpdate(source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() }, source, customPayload);
+  },
+  // Fired when a vertex-marker is started dragging
+  // indexPath is only passed from Line / Polygon
+  _fireMarkerDragStart(e, indexPath = undefined, source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:markerdragstart', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
       indexPath
-    });
+    }, source, customPayload);
   },
-  _fireMarkerDrag(e, indexPath = undefined){
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
+  // Fired while dragging a vertex-marker
+  // indexPath is only passed from Line / Polygon
+  _fireMarkerDrag(e, indexPath = undefined, source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:markerdrag', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
       indexPath
-    });
+    }, source, customPayload);
   },
-  _fireMarkerDragEnd(e, indexPath = undefined, intersectionReset = undefined){
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
+  // Fired when a vertex-marker is stopped dragging
+  // indexPath and intersectionReset is only passed from Line / Polygon
+  _fireMarkerDragEnd(e, indexPath = undefined, intersectionReset = undefined, source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:markerdragend', {
       layer: this._layer,
       markerEvent: e,
       shape: this.getShape(),
       indexPath,
       intersectionReset
-    });
+    }, source, customPayload);
   },
-  _fireDragStart() {
-    L.PM.Utils._fireEvent(this._layer,'pm:dragstart', {
+  // Fired when a layer is started dragging
+  _fireDragStart(source = "Edit", customPayload = {}) {
+    this.__fire(this._layer,'pm:dragstart', {
       layer: this._layer,
       shape: this.getShape()
-    });
+    }, source, customPayload);
   },
-  _fireDrag(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:drag', Object.assign({}, e, {shape:this.getShape()}));
+  // Fired while dragging a layer
+  _fireDrag(e, source = "Edit", customPayload = {}) {
+    this.__fire(this._layer,'pm:drag', Object.assign({}, e, {shape:this.getShape()}), source, customPayload);
   },
-  _fireDragEnd() {
-    L.PM.Utils._fireEvent(this._layer,'pm:dragend', {
+  // Fired when a layer is stopped dragging
+  _fireDragEnd(source = "Edit", customPayload = {}) {
+    this.__fire(this._layer,'pm:dragend', {
       layer: this._layer,
       shape: this.getShape()
-    });
+    }, source, customPayload);
   },
-  // also fired in EventMixinGlobal
-  _fireRemove(fireLayer,refLayer = fireLayer){
-    L.PM.Utils._fireEvent(fireLayer,'pm:remove', { layer: refLayer, shape: this.getShape() });
+  // Fired when a layer is removed
+  _fireRemove(fireLayer,refLayer = fireLayer, source = "Edit", customPayload = {}){
+    this.__fire(fireLayer,'pm:remove', { layer: refLayer, shape: this.getShape() }, source, customPayload);
   },
-  _fireVertexAdded(marker, indexPath, latlng){
-    L.PM.Utils._fireEvent(this._layer,'pm:vertexadded', {
+  // Fired when a vertex-marker is created
+  _fireVertexAdded(marker, indexPath, latlng, source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:vertexadded', {
       layer: this._layer,
       marker,
       indexPath,
       latlng,
       shape: this.getShape()
-    });
+    }, source, customPayload);
   },
-  _fireVertexRemoved(marker, indexPath){
-    L.PM.Utils._fireEvent(this._layer,'pm:vertexremoved', {
+  // Fired when a vertex-marker is removed
+  _fireVertexRemoved(marker, indexPath, source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:vertexremoved', {
       layer: this._layer,
       marker,
       indexPath,
       shape: this.getShape()
       // TODO: maybe add latlng as well?
-    });
+    }, source, customPayload);
   },
-  _fireVertexClick(e, indexPath){
-    L.PM.Utils._fireEvent(this._layer,'pm:vertexclick', {
+  // Fired when a vertex-marker is clicked
+  _fireVertexClick(e, indexPath, source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:vertexclick', {
       layer: this._layer,
       markerEvent: e,
       indexPath,
       shape: this.getShape()
-    });
+    }, source, customPayload);
   },
-  _fireIntersect(intersection){
-    L.PM.Utils._fireEvent(this._layer,'pm:intersect', {
+  // Fired when a Line / Polygon has self intersection
+  _fireIntersect(intersection, source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:intersect', {
       layer: this._layer,
       intersection,
       shape: this.getShape()
-    });
+    }, source, customPayload);
   },
-  _fireLayerReset(e, indexPath){
-    L.PM.Utils._fireEvent(this._layer,'pm:layerreset', {
+  // Fired when a Line / Polygon is reset because of self intersection
+  _fireLayerReset(e, indexPath, source = "Edit", customPayload = {}){
+    this.__fire(this._layer,'pm:layerreset', {
       layer: this._layer,
       markerEvent: e,
       indexPath,
       shape: this.getShape()
-    });
-  }
-};
+    }, source, customPayload);
+  },
 
-const EventMixinDraw = {
-  _fireDrawStart(){
-    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
+  // Snapping Events
+  // Fired during a marker move/drag and other layers are existing
+  _fireSnapDrag(fireLayer, eventInfo, source = "Snapping", customPayload = {}){
+    this.__fire(fireLayer,'pm:snapdrag', eventInfo, source, customPayload);
   },
-  _fireDrawEnd(){
-    L.PM.Utils._fireEvent(this._map,'pm:drawend', {
-      shape: this._shape,
-    });
+  // Fired when a vertex is snapped
+  _fireSnap(fireLayer, eventInfo, source = "Snapping", customPayload = {}){
+    this.__fire(fireLayer,'pm:snap', eventInfo, source, customPayload);
   },
-  _fireCreate(layer){
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      layer,
-    });
+  // Fired when a vertex is unsnapped
+  _fireUnsnap(fireLayer, eventInfo, source = "Snapping", customPayload = {}){
+    this.__fire(fireLayer,'pm:unsnap', eventInfo, source, customPayload);
   },
-  _fireCenterPlaced() {
-    L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
-      shape: this._shape,
-      workingLayer: this._layer,
-      latlng: this._layer.getLatLng(),
-    });
-  },
-  _fireVertexAdded(marker, latlng) {
-    L.PM.Utils._fireEvent(this._layer,'pm:vertexadded', {
-      shape: this._shape,
-      workingLayer: this._layer,
-      marker,
-      latlng,
-    });
-  },
-  _fireCut(fireLayer, layer, originalLayer){
-    L.PM.Utils._fireEvent(fireLayer,'pm:cut', {
-      shape: this._shape,
-      layer,
-      originalLayer,
-    });
-  },
-  // also fired in EventMixinEdit
-  _fireEdit(layer){
-    L.PM.Utils._fireEvent(layer,'pm:edit', {
-      layer,
-      shape: layer.pm.getShape()
-    });
-  },
-  _fireGlobalCutModeToggled(){
-    L.PM.Utils._fireEvent(this._map,'pm:globalcutmodetoggled', {
-      enabled: !!this._enabled,
-      map: this._map,
-    });
-  },
-  _fireGlobalDrawModeToggled(){
-    L.PM.Utils._fireEvent(this._map,'pm:globaldrawmodetoggled', {
-      enabled: this._enabled,
-      shape: this._shape,
-      map: this._map,
-    });
-  }
-};
 
-const EventMixinSnapping = {
-  _fireSnapDrag(fireLayer, eventInfo){
-    L.PM.Utils._fireEvent(fireLayer,'pm:snapdrag', eventInfo);
-  },
-  _fireSnap(fireLayer, eventInfo){
-    L.PM.Utils._fireEvent(fireLayer,'pm:snap', eventInfo);
-  },
-  _fireUnsnap(fireLayer, eventInfo){
-    L.PM.Utils._fireEvent(fireLayer,'pm:unsnap', eventInfo);
-  }
-};
-
-const EventMixinGlobal = {
-  _fireActionClick(action, btnName, button){
+  // Global Events
+  // Fired when a Toolbar action is clicked
+  _fireActionClick(action, btnName, button, source = "Toolbar", customPayload = {}){
     // this._map is used because this is fired from L.Controls (PMButton)
-    L.PM.Utils._fireEvent(this._map,'pm:actionclick', {
+    this.__fire(this._map,'pm:actionclick', {
       text: action.text,
       action,
       btnName,
       button
-    });
+    }, source, customPayload);
   },
-  _fireButtonClick(btnName, button){
+  // Fired when a Toolbar button is clicked
+  _fireButtonClick(btnName, button, source = "Toolbar", customPayload = {}){
     // this._map is used because this is fired from L.Controls (PMButton)
-    L.PM.Utils._fireEvent(this._map,'pm:buttonclick', {btnName, button});
+    this.__fire(this._map,'pm:buttonclick', {btnName, button}, source, customPayload);
   },
-  _fireLangChange(oldLang, activeLang, fallback, translations ){
-    L.PM.Utils._fireEvent(this.map,"pm:langchange", {
+  // Fired when language is changed
+  _fireLangChange(oldLang, activeLang, fallback, translations, source = "Global", customPayload = {} ){
+    this.__fire(this.map,"pm:langchange", {
       oldLang,
       activeLang,
       fallback,
       translations
-    });
+    }, source, customPayload);
   },
-  _fireGlobalDragModeToggled(enabled) {
-    L.PM.Utils._fireEvent(this.map,'pm:globaldragmodetoggled', {
+  // Fired when Drag Mode is toggled.
+  _fireGlobalDragModeToggled(enabled, source = "Global", customPayload = {}) {
+    this.__fire(this.map,'pm:globaldragmodetoggled', {
       enabled,
       map: this.map,
-    });
+    }, source, customPayload);
   },
-  _fireGlobalEditModeToggled(enabled) {
-    L.PM.Utils._fireEvent(this.map,'pm:globaleditmodetoggled', {
+  // Fired when Edit Mode is toggled.
+  _fireGlobalEditModeToggled(enabled, source = "Global", customPayload = {}) {
+    this.__fire(this.map,'pm:globaleditmodetoggled', {
       enabled,
       map: this.map,
-    });
+    }, source, customPayload);
   },
-  _fireGlobalRemovalModeToggled(enabled) {
-    L.PM.Utils._fireEvent(this.map,'pm:globalremovalmodetoggled', {
+  // Fired when Removal Mode is toggled.
+  _fireGlobalRemovalModeToggled(enabled, source = "Global", customPayload = {}) {
+    this.__fire(this.map,'pm:globalremovalmodetoggled', {
       enabled,
       map: this.map,
-    });
+    }, source, customPayload);
   },
-  // Called when LayerGroup is removed, also fired in EventMixinEdit
-  _fireRemoveLayerGroup(fireLayer, refLayer = fireLayer) {
-    L.PM.Utils._fireEvent(fireLayer,'pm:remove', { layer: refLayer, shape: undefined });
+  // Fired when Cut Mode is toggled.
+  _fireGlobalCutModeToggled(source = "Global", customPayload = {}){
+    this.__fire(this._map,'pm:globalcutmodetoggled', {
+      enabled: !!this._enabled,
+      map: this._map,
+    }, source, customPayload);
+  },
+  // Fired when Draw Mode is toggled.
+  _fireGlobalDrawModeToggled(source = "Global", customPayload = {}){
+    this.__fire(this._map,'pm:globaldrawmodetoggled', {
+      enabled: this._enabled,
+      shape: this._shape,
+      map: this._map,
+    }, source, customPayload);
+  },
+  // Fired when LayerGroup is removed
+  _fireRemoveLayerGroup(fireLayer, refLayer = fireLayer, source = "Edit", customPayload = {}) {
+    this.__fire(fireLayer,'pm:remove', { layer: refLayer, shape: undefined }, source, customPayload);
+  },
+
+  // private (very private) fire function
+  __fire(fireLayer, type, payload, source, customPayload = {}){
+    payload = merge(payload, customPayload, {source});
+    L.PM.Utils._fireEvent(fireLayer,type,payload);
   }
+
 };
 
-// TODO: is it possible to merge EventMixinEdit / EventMixinDraw with EventMixinSnapping
-export {
-  EventMixinEdit,
-  EventMixinDraw,
-  EventMixinSnapping,
-  EventMixinGlobal
-}
+export default EventMixin;

@@ -75,6 +75,7 @@ Edit.Marker = Edit.extend({
   },
   _onDragEnd(e) {
     this._fireEdit();
+    this._layerEdited = true;
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin
   _initSnappableMarkers() {

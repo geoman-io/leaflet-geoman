@@ -1,8 +1,8 @@
 import { getTranslation } from '../helpers';
-import {EventMixinGlobal} from "../Mixins/Events";
+import EventMixin from "../Mixins/Events";
 
 const PMButton = L.Control.extend({
-  includes: [EventMixinGlobal],
+  includes: [EventMixin],
   options: {
     position: 'topleft',
   },

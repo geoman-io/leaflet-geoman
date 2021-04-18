@@ -1,8 +1,8 @@
 import SnapMixin from '../Mixins/Snapping';
-import {EventMixinDraw, EventMixinSnapping} from "../Mixins/Events";
+import EventMixin from "../Mixins/Events";
 
 const Draw = L.Class.extend({
-  includes: [SnapMixin, EventMixinDraw, EventMixinSnapping],
+  includes: [SnapMixin, EventMixin],
   options: {
     snappable: true,
     snapDistance: 20,
@@ -60,6 +60,10 @@ const Draw = L.Class.extend({
   getShapes() {
     // if somebody wants to know what shapes are available
     return this.shapes;
+  },
+  getShape() {
+    // return the shape of the current drawing layer
+    return this._shape;
   },
   enable(shape, options) {
     if (!shape) {

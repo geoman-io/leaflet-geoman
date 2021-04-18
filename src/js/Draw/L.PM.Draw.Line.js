@@ -257,7 +257,7 @@ Draw.Line = Draw.extend({
 
     this._hintline.setLatLngs([latlng, latlng]);
 
-    this._fireVertexAdded(newMarker, latlng);
+    this._fireVertexAdded(newMarker, undefined, latlng, "Draw");
 
     // check if we should finish on snap
     if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {

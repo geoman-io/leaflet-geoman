@@ -181,7 +181,7 @@ Edit.Circle = Edit.extend({
 
     this._updateHiddenPolyCircle();
 
-    this._fireCenterPlaced();
+    this._fireCenterPlaced("Edit");
   },
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
@@ -225,6 +225,7 @@ Edit.Circle = Edit.extend({
   _onMarkerDragEnd(e) {
     // fire edit event
     this._fireEdit();
+    this._layerEdited = true;
     this._fireMarkerDragEnd(e);
   },
   _updateHiddenPolyCircle() {

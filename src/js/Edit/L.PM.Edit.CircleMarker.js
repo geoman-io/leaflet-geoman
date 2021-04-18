@@ -216,7 +216,7 @@ Edit.CircleMarker = Edit.extend({
 
     this._updateHiddenPolyCircle();
 
-    this._fireCenterPlaced();
+    this._fireCenterPlaced("Edit");
   },
   _syncMarkers() {
     const center = this._layer.getLatLng();
@@ -274,6 +274,7 @@ Edit.CircleMarker = Edit.extend({
     this._map.pm.Draw.CircleMarker._layerIsDragging = false;
     if (this.options.editable) {
       this._fireEdit();
+      this._layerEdited = true;
     }
     this._fireMarkerDragEnd(e);
   },

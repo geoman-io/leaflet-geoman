@@ -44,7 +44,7 @@ Draw.Cut = Draw.Polygon.extend({
       this._fireCut(this._map,layer,originalLayer);
 
       // fire edit event after cut
-      this._fireEdit(originalLayer);
+      originalLayer.pm._fireEdit();
     });
     this._editedLayers = [];
 
@@ -135,7 +135,7 @@ Draw.Cut = Draw.Polygon.extend({
       }
       this._setPane(resultLayer,'layerPane');
       const resultingLayer = resultLayer.addTo(this._map.pm._getContainingLayer());
-
+      this._addDrawnLayerProp(resultingLayer);
       // give the new layer the original options
       resultingLayer.pm.enable(l.pm.options);
       resultingLayer.pm.disable();
