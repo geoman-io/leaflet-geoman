@@ -7,7 +7,7 @@ const KeyboardMixins = {
   _onKeyListener(e) {
     let focusOn = 'document';
 
-    // TODO: .contains only supported since IE9, problem? Should we define, which Versions we are Support?
+    // .contains only supported since IE9, if you want to use Geoman with IE8 or lower you need to implement a polyfill for .contains
     // with focusOn the user can add a check if the key was pressed while the user interacts with the map
     if (this.map.getContainer().contains(e.target)){
       focusOn = 'map';
@@ -22,7 +22,6 @@ const KeyboardMixins = {
   getLastKeyEvent(type = 'current') {
     return this._lastEvents[type];
   },
-  // TODO: isXYZPressed or getXYZPressed?
   isShiftKeyPressed() {
     return this._lastEvents.current?.event.shiftKey;
   },

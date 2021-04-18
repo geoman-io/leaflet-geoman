@@ -14,6 +14,7 @@ const Edit = L.Class.extend({
     limitMarkersToCount: -1,
     hideMiddleMarkers: false,
     draggable: true,
+    snapSegment: true,
     addVertexOn: 'click',
     removeVertexOn: 'contextmenu',
     removeVertexValidation: undefined,
