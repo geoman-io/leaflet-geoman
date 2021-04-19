@@ -268,7 +268,7 @@ describe('Draw Circle Marker', () => {
   });
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true});
+      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
     });
 
     cy.toolbarButton('polygon').click();
@@ -296,7 +296,7 @@ describe('Draw Circle Marker', () => {
   });
   it('requireSnapToFinish editable', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true, editable: true});
+      map.pm.setGlobalOptions({requireSnapToFinish: true, editable: true, snapSegment: false});
     });
 
     cy.toolbarButton('polygon').click();

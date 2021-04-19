@@ -358,7 +358,7 @@ describe('Draw Rectangle', () => {
 
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true});
+      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
     });
 
     cy.toolbarButton('polygon').click();
@@ -387,7 +387,7 @@ describe('Draw Rectangle', () => {
 
   it('requireSnapToFinish not applied for first layer', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true});
+      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
     });
 
     cy.toolbarButton('rectangle').click();
@@ -408,6 +408,19 @@ describe('Draw Rectangle', () => {
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
   });
+
+  it('map property is added after creation', () => {
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      expect(layer.pm._map).to.not.eq(undefined);
+    });
+  });
+
 
   it('allows only one of two rectangles to be editable', () => {
     cy.toolbarButton('rectangle')

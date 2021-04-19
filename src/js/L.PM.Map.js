@@ -68,13 +68,14 @@ const Map = L.Class.extend({
 
     this.Draw.disable(shape);
   },
-  // optionsModifier for spezial options like ignoreShapes
+  // optionsModifier for special options like ignoreShapes or merge
   setPathOptions(options, optionsModifier = {}) {
     const ignore = optionsModifier.ignoreShapes || [];
+    const mergeOptions = optionsModifier.merge || false;
 
     this.map.pm.Draw.shapes.forEach(shape => {
       if (ignore.indexOf(shape) === -1) {
-        this.map.pm.Draw[shape].setPathOptions(options)
+        this.map.pm.Draw[shape].setPathOptions(options, mergeOptions);
       }
     })
   },
