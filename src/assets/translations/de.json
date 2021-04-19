@@ -27,6 +27,7 @@
     "deleteButton": "Layer löschen",
     "drawCircleMarkerButton": "Kreismarker zeichnen",
     "snappingButton": "Bewegter Layer an andere Layer oder Vertexe einhacken",
-    "pinningButton": "Vertexe an der gleichen Position verknüpfen"
+    "pinningButton": "Vertexe an der gleichen Position verknüpfen",
+    "rotateButton": "Layer drehen"
   }
 }

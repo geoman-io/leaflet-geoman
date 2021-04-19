@@ -77,6 +77,9 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-snapping {
   background-image: url('../assets/icons/Magnet.svg');
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-rotate {
+  background-image: url('../assets/icons/Rotate.svg');
+}
 
 .leaflet-buttons-control-button:hover,.leaflet-buttons-control-button:focus {
   cursor: pointer;

@@ -16,6 +16,7 @@ const Toolbar = L.Class.extend({
     dragMode: true,
     cutPolygon: true,
     removalMode: true,
+    rotateMode: true,
     snappingOption: true,
     drawControls: true,
     editControls: true,
@@ -362,6 +363,21 @@ const Toolbar = L.Class.extend({
       actions: ['finishMode'],
     };
 
+    const rotateButton = {
+      title: getTranslation('buttonTitles.rotateButton'),
+      className: 'control-icon leaflet-pm-icon-rotate',
+      onClick: () => { },
+      afterClick: () => {
+        this.map.pm.toggleGlobalRotateMode();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      tool: 'edit',
+      actions: ['finishMode'],
+    };
+
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
     this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
@@ -372,6 +388,7 @@ const Toolbar = L.Class.extend({
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
     this._addButton('removalMode', new L.Control.PMButton(deleteButton));
+    this._addButton('rotateMode', new L.Control.PMButton(rotateButton));
   },
 
   _showHideButtons() {
@@ -612,7 +629,8 @@ const Toolbar = L.Class.extend({
       "Edit": "editMode",
       "Drag": "dragMode",
       "Cut": "cutPolygon",
-      "Removal": "removalMode"
+      "Removal": "removalMode",
+      "Rotate": "rotateMode",
     }
   },
   _btnNameMapping(name){
