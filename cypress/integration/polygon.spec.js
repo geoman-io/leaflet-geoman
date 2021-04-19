@@ -932,7 +932,7 @@ describe('Draw & Edit Poly', () => {
     });
   });
 
-  it('allowEditing: false', () => {
+  it('disable Edit-Mode for layer with allowEditing: false', () => {
     cy.toolbarButton('polygon').click();
     cy.get(mapSelector)
       .click(150, 250)
@@ -953,7 +953,7 @@ describe('Draw & Edit Poly', () => {
     });
   });
 
-  it('allowRemoval: false', () => {
+  it('disable Removal-Mode for layer with allowRemoval: false', () => {
     cy.toolbarButton('polygon').click();
     cy.get(mapSelector)
       .click(150, 250)
@@ -974,7 +974,7 @@ describe('Draw & Edit Poly', () => {
     });
   });
 
-  it('allowDragging: false', () => {
+  it('disable Drag-Mode for layer with draggable: false', () => {
     cy.toolbarButton('polygon').click();
     cy.get(mapSelector)
       .click(150, 250)
@@ -983,7 +983,7 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({allowDragging: false});
+      map.pm.setGlobalOptions({draggable: false});
     });
 
     cy.toolbarButton('drag').click();
@@ -996,7 +996,7 @@ describe('Draw & Edit Poly', () => {
     });
   });
 
-  it('allowCutting: false', () => {
+  it('disable Cut-Mode for layer with allowCutting: false', () => {
     cy.toolbarButton('polygon').click();
     cy.get(mapSelector)
       .click(150, 250)
@@ -1023,7 +1023,7 @@ describe('Draw & Edit Poly', () => {
     });
   });
 
-  it('cut certain layers', () => {
+  it('cut only certain layers', () => {
     cy.toolbarButton('rectangle').click();
     cy.get(mapSelector)
       .click(450, 250)
@@ -1049,6 +1049,18 @@ describe('Draw & Edit Poly', () => {
 
     cy.window().then(({ map }) => {
       expect(map.hasLayer(layer)).to.eq(true);
+    });
+
+    // Cut again, because now all layers must be cuttable -> layerToCut is empty (cutted layers are removed from array)
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(180, 230)
+      .click(190, 70)
+      .click(500, 190)
+      .click(180, 230);
+
+    cy.window().then(({ map }) => {
+      expect(map.hasLayer(layer)).to.eq(false);
     });
   });
 });

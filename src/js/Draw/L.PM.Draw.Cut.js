@@ -177,6 +177,13 @@ Draw.Cut = Draw.Polygon.extend({
 
       this._addDrawnLayerProp(resultingLayer);
 
+      if(this.options.layersToCut && L.Util.isArray(this.options.layersToCut) && this.options.layersToCut.length > 0){
+        const idx = this.options.layersToCut.indexOf(l);
+        if( idx > -1){
+          this.options.layersToCut.splice(idx, 1);
+        }
+      }
+
       this._editedLayers.push({
         layer: resultingLayer,
         originalLayer: l

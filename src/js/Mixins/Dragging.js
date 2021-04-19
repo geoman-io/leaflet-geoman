@@ -1,7 +1,7 @@
 const DragMixin = {
   enableLayerDrag() {
     // layer is not allowed to dragged
-    if(!this.options.allowDragging){
+    if(!this.options.draggable){
       return;
     }
 

@@ -116,6 +116,12 @@ const RotateMixin = {
   *
   */
   enableRotate(){
+
+    if(!this.options.allowRotation){
+      this.disableRotate();
+      return;
+    }
+
     // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
     const options = {fill: false, stroke: false, pmIgnore: false, snapIgnore: true};
 

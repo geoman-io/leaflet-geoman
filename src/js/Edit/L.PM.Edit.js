@@ -5,7 +5,7 @@ import RotateMixin from "../Mixins/Rotating";
 const Edit = L.Class.extend({
   includes: [DragMixin, SnapMixin, RotateMixin],
   options: {
-    snappable: true, //TODO: should we create also an option allowSnapping
+    snappable: true, //TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,
     allowSelfIntersection: true,
     allowSelfIntersectionEdit: false,
@@ -13,11 +13,11 @@ const Edit = L.Class.extend({
     removeLayerBelowMinVertexCount: true,
     limitMarkersToCount: -1,
     hideMiddleMarkers: false,
-    draggable: true,
-    allowEditing: true, //TODO: should it disable all interactions on a layer if `enable()` is called? For example a Circle can also be dragged -> But it is in Edit-Mode
-    allowDragging: true, //Todo: same as draggable? -> Not direct but can confuse the user. Draggable are only options for Marker to make it draggable (Leaflet Core)
-    allowRemoval: true, //TODO: or should we name it "allowDeleting"
+    draggable: true,  //TODO: next major Release, rename it to allowDragging
+    allowEditing: true, // disable all interactions on a layer which are activated with `enable()`. For example a Circle can't be dragged in Edit-Mode
+    allowRemoval: true,
     allowCutting: true,
+    allowRotation: true,
   },
   setOptions(options) {
     L.Util.setOptions(this, options);

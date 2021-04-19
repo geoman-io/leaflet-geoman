@@ -9,6 +9,7 @@ Edit.CircleMarker = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
   },
+  //TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
