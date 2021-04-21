@@ -17,7 +17,7 @@ describe('Draw Marker', () => {
 
       map.eachLayer((layer) => {
         if (layer instanceof L.Marker) {
-          assert.isTrue(layer.dragging._enabled)
+          assert.isTrue(layer.pm.layerDragEnabled())
         }
       })
     });

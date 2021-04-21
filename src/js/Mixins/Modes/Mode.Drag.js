@@ -2,7 +2,7 @@
 const GlobalDragMode = {
   _layerGroupDrag: false,
   enableGlobalDragMode() {
-    const layers = this._findLayers();
+    const layers = L.PM.Utils.findLayers(this.map);
 
     this._globalDragMode = true;
 
@@ -23,7 +23,7 @@ const GlobalDragMode = {
     this._fireDragModeEvent(true);
   },
   disableGlobalDragMode() {
-    const layers = this._findLayers();
+    const layers = L.PM.Utils.findLayers(this.map);
 
     this._globalDragMode = false;
 
@@ -68,36 +68,6 @@ const GlobalDragMode = {
       map: this.map,
     });
   },
-  _findLayers(){
-    if(this._layerGroupDrag){
-      return L.PM.Utils.findLayerGroups(this.map);
-    }else{
-      return L.PM.Utils.findLayers(this.map);
-    }
-  },
-  enableLayerGroupDrag(){
-    const dragModeEnabled = this.globalDragModeEnabled();
-    if (dragModeEnabled) {
-      this.disableGlobalDragMode();
-    }
-    this._layerGroupDrag = true;
-    if (dragModeEnabled) {
-      this.enableGlobalDragMode();
-    }
-  },
-  disableLayerGroupDrag(){
-    const dragModeEnabled = this.globalDragModeEnabled();
-    if (dragModeEnabled) {
-      this.disableGlobalDragMode();
-    }
-    this._layerGroupDrag = false;
-    if (dragModeEnabled) {
-      this.enableGlobalDragMode();
-    }
-  },
-  layerGroupDragEnabled(){
-    return this._layerGroupDrag;
-  }
 }
 
 export default GlobalDragMode
