@@ -1,5 +1,4 @@
 import Edit from './L.PM.Edit';
-import DragMixin from "../Mixins/Dragging";
 
 // LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Polygon
 // (which inherits from L.PM.Edit) for each layer,

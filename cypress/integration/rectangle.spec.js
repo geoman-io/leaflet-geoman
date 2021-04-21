@@ -421,7 +421,7 @@ describe('Draw Rectangle', () => {
     });
   });
 
-  it.only('drags a whole LayerGroup', () => {
+  it('drags a whole LayerGroup', () => {
     cy.window().then(({ map, L }) => {
       const fg = L.featureGroup().addTo(map);
       map.pm.setGlobalOptions({layerGroup: fg, syncLayersOnDrag: true});

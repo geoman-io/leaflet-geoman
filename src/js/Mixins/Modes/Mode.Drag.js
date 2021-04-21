@@ -1,6 +1,5 @@
 
 const GlobalDragMode = {
-  _layerGroupDrag: false,
   enableGlobalDragMode() {
     const layers = L.PM.Utils.findLayers(this.map);
 
