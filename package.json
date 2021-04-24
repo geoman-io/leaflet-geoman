@@ -20,12 +20,12 @@
   "main": "dist/leaflet-geoman.min.js",
   "types": "dist/leaflet-geoman.d.ts",
   "dependencies": {
+    "@turf/boolean-contains": "^6.0.1",
     "@turf/kinks": "6.x",
     "@turf/line-intersect": "^6.0.2",
-    "polygon-clipping": "^0.15.1",
+    "@turf/line-split": "^5.1.5",
     "lodash": "^4.17.15",
-    "@turf/boolean-contains": "^6.0.1",
-    "@turf/line-split": "^5.1.5"
+    "polygon-clipping": "^0.15.1"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

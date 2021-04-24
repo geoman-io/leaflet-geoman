@@ -1,0 +1,32 @@
+{
+  "tooltips": {
+    "placeMarker": "Kliknutím vytvoříte značku",
+    "firstVertex": "Kliknutím vytvoříte první objekt",
+    "continueLine": "Kliknutím pokračujte v kreslení",
+    "finishLine": "Kliknutí na libovolnou existující značku pro dokončení",
+    "finishPoly": "Vyberte první bod pro dokončení",
+    "finishRect": "Klikněte pro dokončení",
+    "startCircle": "Kliknutím přidejte střed kruhu",
+    "finishCircle": "Нажмите, чтобы задать радиус",
+    "placeCircleMarker": "Kliknutím nastavte poloměr"
+  },
+  "actions": {
+    "finish": "Dokončit",
+    "cancel": "Zrušit",
+    "removeLastVertex": "Zrušit poslední akci"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Přidat značku",
+    "drawPolyButton": "Nakreslit polygon",
+    "drawLineButton": "Nakreslit křivku",
+    "drawCircleButton": "Nakreslit kruh",
+    "drawRectButton": "Nakreslit obdélník",
+    "editButton": "Upravit vrstvu",
+    "dragButton": "Přeneste vrstvu",
+    "cutButton": "Vyjmout vrstvu",
+    "deleteButton": "Smazat vrstvu",
+    "drawCircleMarkerButton": "Přidat kruhovou značku",
+    "snappingButton": "Navázat tažnou značku k dalším vrstvám a vrcholům",
+    "pinningButton": "Spojit společné body dohromady"
+  }
+}
