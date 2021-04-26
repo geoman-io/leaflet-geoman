@@ -42,8 +42,10 @@ const RotateMixin = {
     // rotate the temp polygon
     this._layer.setLatLngs(this._rotateLayer(angleDiffRadiant, this._initialRotateLatLng, this._rotationOriginLatLng, L.Matrix.init(), this._map));
     // move the helper markers
-    this._layer.getLatLngs()[0].forEach((latlng, index) => {
-      this._markers[0][index].setLatLng(latlng);
+    this._layer.getLatLngs().forEach((latLngs, i) => {
+      latLngs.forEach((latLng, j) => {
+        this._markers[i][j].setLatLng(latLng);
+      });
     });
 
     const oldLatLngs = L.polygon(this._rotationLayer.getLatLngs()).getLatLngs();
