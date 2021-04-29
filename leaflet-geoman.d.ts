@@ -85,7 +85,7 @@ declare module 'leaflet' {
         on(type: 'pm:unsnap', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
 
         /** Called when the center of a circle is placed/moved. */
-        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, workingLayer: L.Layer, marker: L.Marker, latLng: L.LatLng }) => void): this;
+        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, workingLayer: L.Layer, latLng: L.LatLng }) => void): this;
 
         /****************************************** 
         * 
@@ -121,7 +121,7 @@ declare module 'leaflet' {
         on(type: 'pm:markerdrag', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this; // todo: no any
 
         /** Fired when dragging of a vertex-marker ends. */
-        on(type: 'pm:markerdragend', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES, intersectionRest: any }) => void): this; // todo: no any
+        on(type: 'pm:markerdragend', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES, intersectionRest: boolean }) => void): this;
 
         /** Fired when coords of a layer are reset. E.g. by self-intersection.. */
         on(type: 'pm:layerreset	', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this; // todo: no any
@@ -135,8 +135,12 @@ declare module 'leaflet' {
         /** Fired when a vertex is unsnapped. */
         on(type: 'pm:unsnap', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
 
+        /** When allowSelfIntersection: false, this event is fired as soon as a self-intersection is detected. */
+        on(type: 'pm:intersect', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, layer: L.Layer, intersection: L.LatLng }) => void): this; // todo: uncertain about intersection
+
         /** Called when the center of a circle is placed/moved. */
-        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, workingLayer: L.Layer, marker: L.Marker, latLng: L.LatLng }) => void): this;
+        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, workingLayer: L.Layer, latLng: L.LatLng }) => void): this;
+
 
         /****************************************** 
         * 
@@ -192,8 +196,30 @@ declare module 'leaflet' {
         /** Fired when a layer is removed via Removal Mode. */
         on(type: 'pm:remove', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
 
-        /** Standard Leaflet event. Fired when any layer is removed. */
-        on(type: 'layerremove', fn: (e: { layer: L.Layer }) => void): this;
+        /****************************************** 
+        * 
+        * TODO: CUT MODE EVENTS ON MAP ONLY
+        *
+        ********************************************/
+
+        /** Fired when a layer is removed via Removal Mode. */
+        on(type: 'pm:globalcutmodetoggled', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+
+        /** Fired when a layer is edited / cut. */
+        on(type: 'pm:cut', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+
+        /****************************************** 
+        * 
+        * TODO: CUT MODE EVENTS ON LAYER ONLY
+        *
+        ********************************************/
+
+        /** Fired when the layer being cut. */
+        on(type: 'pm:cut', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+
+        /** Fired when a layer is edited / cut */
+        on(type: 'pm:edit', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+
 
         /****************************************** 
         * 
@@ -234,7 +260,8 @@ declare module 'leaflet' {
             | L.Polyline
             | L.Rectangle
             | L.Polygon
-            | L.CircleMarker;
+            | L.CircleMarker
+            | L.ImageOverlay;  
 
 
         /**
@@ -255,7 +282,7 @@ declare module 'leaflet' {
         /**
          * PM map interface.
          */
-        interface PMMap extends PMDrawMap, PMEditMap, PMDrawMap, PMRemoveMap, PMCutMap {
+        interface PMMap extends PMDrawMap, PMEditMap, PMDragMap, PMRemoveMap, PMCutMap {
 
             Toolbar: PMMapToolbar;
 
@@ -693,6 +720,21 @@ declare module 'leaflet' {
 
             /** Returns true if edit mode is enabled. false when disabled. */
             enabled(): boolean;
+
+            /** sets layer options */
+            setOptions(options?: EditModeOptions): void;
+
+            /** get shape */
+            getShape(): SUPPORTED_SHAPE_TYPES;
+
+            /** enables dragging for the layer. */
+            enableLayerDrag(): void;
+
+            /** disables dragging for the layer. */
+            disableLayerDrag(): void;
+
+            /** returns if the layer is currently dragging. */
+            dragging(): boolean;
         }
 
         namespace Utils {
