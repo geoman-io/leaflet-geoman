@@ -326,6 +326,15 @@ declare module 'leaflet' {
                 customTranslations?: Translations,
                 fallbackLanguage?: string
             ): void;
+
+            /** Set globalOptions and apply them. */
+            setGlobalOptions(options: GlobalOptions): void;
+
+            /** Apply the current globalOptions to all existing layers. */
+            applyGlobalOptions(): void;
+
+            /** Returns the globalOptions. */
+            getGlobalOptions(): GlobalOptions;
         }
 
         class Translations {
@@ -473,15 +482,6 @@ declare module 'leaflet' {
 
             /** Customize the style of the drawn layer. Only for L.Path layers. Shapes can be excluded with a ignoreShapes array in optionsModifier. */
             setPathOptions(options: L.PathOptions, optionsModifier: { ignoreShapes: SUPPORTED_SHAPES[] }): void;
-
-            /** Set globalOptions and apply them. */
-            setGlobalOptions(options: GlobalOptions): void;
-
-            /** Apply the current globalOptions to all existing layers. */
-            applyGlobalOptions(): void;
-
-            /** Returns the globalOptions. */
-            getGlobalOptions(): GlobalOptions;
 
             /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
             getGeomanLayers(asFeatureGroup: boolean): L.FeatureGroup | L.Layer[];
