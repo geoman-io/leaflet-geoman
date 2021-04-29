@@ -720,6 +720,15 @@ declare module 'leaflet' {
 
             /** shows all buttons in the custom block (default:true) */
             customControls?: boolean;
+
+            /** shows all options buttons / buttons in the option block ⭐ */
+            optionsControls?: boolean;
+
+            /** adds a button to toggle the Pinning Option ⭐ */
+            pinningOption?: boolean;
+
+            /** adds a button to toggle the Snapping Option ⭐ */
+            snappingOption?: boolean;
         }
 
         /** the position of each block. */
