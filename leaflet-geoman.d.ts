@@ -27,6 +27,16 @@ declare module 'leaflet' {
         pm: PM.PMLayer;
     }
 
+    interface Polygon {
+        /** Returns true if Line or Polygon has a self intersection. */
+        hasSelfIntersection(): boolean;
+    }
+
+    interface Polyline {
+        /** Returns true if Line or Polygon has a self intersection. */
+        hasSelfIntersection(): boolean;
+    }
+
     /**
      * Extends @types/leaflet events...
      * 
@@ -201,10 +211,10 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when a Toolbar button is clicked. */
-        on(type: 'pm:buttonclick', fn: (e: { btnName: string, button: HTMLElement }) => void): this; // todo: is this an HTMLElement
+        on(type: 'pm:buttonclick', fn: (e: { btnName: string, button: PM.Button }) => void): this;
 
         /** Fired when a Toolbar action is clicked. */
-        on(type: 'pm:actionclick', fn: (e: { text: string; action: string; btnName: string; button: HTMLElement }) => void): this; // todo: is this an HTMLElement
+        on(type: 'pm:actionclick', fn: (e: { text: string; action: string; btnName: string; button: PM.Button }) => void): this;
     }
 
     namespace PM {
@@ -246,6 +256,8 @@ declare module 'leaflet' {
          * PM map interface.
          */
         interface PMMap extends PMDrawMap, PMEditMap, PMDrawMap, PMRemoveMap, PMCutMap {
+
+            Toolbar: PMMapToolbar;
 
             /** Adds the Toolbar to the map. */
             addControls(options?: ToolbarOptions): void;
@@ -344,10 +356,37 @@ declare module 'leaflet' {
             createCustomControl(options: CustomControlOptions): void;
 
             /** Creates a copy of a draw Control. Returns the drawInstance and the control. */
-            copyDrawControl(instance: object, options?: CustomControlOptions): void;
+            copyDrawControl(copyInstance: string, options?: CustomControlOptions): void;
 
             /** Change the actions of an existing button. */
             changeActionsOfControl(name: string, actions: (ACTION_NAMES | Action)[]): void;
+        }
+
+        interface Button {
+            /** actions */
+            actions: (ACTION_NAMES | Action)[];
+
+            /** Function fired after clicking the control. */
+            afterClick: () => void;
+
+            /** CSS class with the Icon. */
+            className: string;
+
+            /**  */
+            disableOtherButtons: boolean;
+
+            doToggle: boolean;
+
+            jsClass: string;
+
+            /** Function fired when clicking the control. */
+            onClick: () => void;
+
+            position: L.ControlPosition;
+
+            title: string;
+
+            toggleStatus: boolean;
         }
 
         interface CustomControlOptions {
@@ -369,6 +408,7 @@ declare module 'leaflet' {
             /** Function fired after clicking the control. */
             afterClick?: () => void;
 
+            /** actions */
             actions?: (ACTION_NAMES | Action)[];
 
             /** Control can be toggled. */
@@ -392,7 +432,7 @@ declare module 'leaflet' {
             globalDrawModeEnabled(): boolean;
 
             /** Customize the style of the drawn layer. Only for L.Path layers. Shapes can be excluded with a ignoreShapes array in optionsModifier. */
-            setPathOptions(options: L.PathOptions, optionsModifier: { ignoreShapes: SUPPORTED_SHAPES[] }): void; // todo: remove any
+            setPathOptions(options: L.PathOptions, optionsModifier: { ignoreShapes: SUPPORTED_SHAPES[] }): void;
 
             /** Set globalOptions and apply them. */
             setGlobalOptions(options: DrawModeOptions): void;
@@ -637,7 +677,7 @@ declare module 'leaflet' {
             edit?: ControlPosition;
 
             /** custom control position (default:''). */
-            custom?: ControlPosition; // todo: i dont think this is right. custom are named
+            custom?: ControlPosition;
         }
 
 
@@ -653,9 +693,6 @@ declare module 'leaflet' {
 
             /** Returns true if edit mode is enabled. false when disabled. */
             enabled(): boolean;
-
-            /** Returns true if Line or Polygon has a self intersection. */
-            hasSelfIntersection(): boolean; // todo: only on line or Polygon?
         }
 
     }
