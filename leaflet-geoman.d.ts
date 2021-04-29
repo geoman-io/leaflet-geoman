@@ -695,6 +695,19 @@ declare module 'leaflet' {
             enabled(): boolean;
         }
 
+        namespace Utils {
+            /**  path = json string f.ex. tooltips.placeMarker */
+            function getTranslation(path: string): string;
+
+            /** returns the middle latlng between two points */
+            function calcMiddleLatLng(map: L.Map, latlng1: L.LatLng, latlng2: L.LatLng);
+
+            /** returns all layers that are available for Geoman */
+            function findLayers(map: L.Map): L.Layer[];
+
+            /** converts a circle into a polygon with default 60 sides */
+            function circleToPolygon(circle: L.Circle, sides?: number): L.Polygon
+        }
     }
 }
 
