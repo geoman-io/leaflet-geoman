@@ -244,7 +244,7 @@ declare module 'leaflet' {
     }
 
     namespace PM {
-        /** supported shape types. */
+        /** supported shape names. 'ImageOverlay' is in Edit Mode only. */
         type SUPPORTED_SHAPES =
             | 'Marker'
             | 'Circle'
@@ -252,8 +252,10 @@ declare module 'leaflet' {
             | 'Rectangle'
             | 'Polygon'
             | 'Cut'
-            | 'CircleMarker';
+            | 'CircleMarker'
+            | 'ImageOverlay';
 
+        /** supported shape types. 'ImageOverlay' is in Edit Mode only. */
         type SUPPORTED_SHAPE_TYPES =
             | L.Marker
             | L.Circle
@@ -261,7 +263,7 @@ declare module 'leaflet' {
             | L.Rectangle
             | L.Polygon
             | L.CircleMarker
-            | L.ImageOverlay;  
+            | L.ImageOverlay;
 
 
         /**
@@ -420,8 +422,8 @@ declare module 'leaflet' {
             /** Name of the control */
             name: string;
 
-            /** block of the control. */
-            block?: 'draw' | 'edit' | 'custom';
+            /** block of the control. 'options' is ⭐ only. */
+            block?: 'draw' | 'edit' | 'custom' | 'options';
 
             /** Text showing when you hover the control. */
             title?: string;
@@ -445,6 +447,11 @@ declare module 'leaflet' {
             disabled?: boolean;
         }
 
+        interface GlobalOptions extends DrawModeOptions, EditModeOptions {
+            /** add the created layers to a layergroup instead to the map. */
+            layerGroup?: L.Map | L.LayerGroup;
+        }
+
         interface PMDrawMap {
             /** Enable Draw Mode with the passed shape. */
             enableDraw(shape: SUPPORTED_SHAPES, options?: DrawModeOptions): void;
@@ -462,13 +469,13 @@ declare module 'leaflet' {
             setPathOptions(options: L.PathOptions, optionsModifier: { ignoreShapes: SUPPORTED_SHAPES[] }): void;
 
             /** Set globalOptions and apply them. */
-            setGlobalOptions(options: DrawModeOptions): void;
+            setGlobalOptions(options: GlobalOptions): void;
 
             /** Apply the current globalOptions to all existing layers. */
             applyGlobalOptions(): void;
 
             /** Returns the globalOptions. */
-            getGlobalOptions(): DrawModeOptions;
+            getGlobalOptions(): GlobalOptions;
 
             /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
             getGeomanLayers(asFeatureGroup: boolean): L.FeatureGroup | L.Layer[];
@@ -539,6 +546,9 @@ declare module 'leaflet' {
 
             /** Returns the active shape. */
             getActiveShape(): SUPPORTED_SHAPES;
+
+            /** Set path options */
+            setPathOptions(options: L.PathOptions);
         }
 
         interface CutModeOptions {
@@ -567,10 +577,20 @@ declare module 'leaflet' {
             /** Shows only n markers closest to the cursor. Use -1 for no limit (default:-1). */
             limitMarkersToCount?: number;
 
+            /** Shows markers when under the given zoom level ⭐ */
             limitMarkersToZoom?: number;
+
+            /** Shows only markers in the viewport ⭐ */
             limitMarkersToViewport?: boolean;
+
+            /** Shows markers only after the layer was clicked ⭐ */
             limitMarkersToClick?: boolean;
+
+            /** Pin shared vertices/markers together during edit ⭐ */
             pinning?: boolean;
+
+            /** hide the middle Markers in edit mode from Polyline and Polygon. */
+            hideMiddleMarkers?: boolean;
         }
 
         interface DrawModeOptions {
@@ -612,7 +632,8 @@ declare module 'leaflet' {
             | 'mousedown'
             | 'mouseover'
             | 'mouseout'
-            | 'contextmenu';
+            | 'contextmenu'
+            | 'snap';
 
             /** hide the middle Markers in edit mode from Polyline and Polygon. (default:false). */
             hideMiddleMarkers?: boolean;
@@ -637,9 +658,6 @@ declare module 'leaflet' {
 
             /** Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to true for Markers and CircleMarkers and false for all other layers. */
             continueDrawing?: boolean;
-
-            /** add the created layers to a layergroup instead to the map. */
-            layerGroup?: L.Map | L.LayerGroup;
         }
 
         /**
@@ -705,6 +723,9 @@ declare module 'leaflet' {
 
             /** custom control position (default:''). */
             custom?: ControlPosition;
+
+            /** options control position (default:'') ⭐ */
+            options?: ControlPosition;
         }
 
 
