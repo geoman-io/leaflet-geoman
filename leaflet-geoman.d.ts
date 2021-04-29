@@ -377,12 +377,26 @@ declare module 'leaflet' {
             onClick?: (e: any) => void;
         }
 
+        type TOOLBAR_CONTROL_ORDER =
+            | 'drawMarker'
+            | 'drawCircleMarker'
+            | 'drawPolyline'
+            | 'drawRectangle'
+            | 'drawPolygon'
+            | 'drawCircle'
+            | 'editMode'
+            | 'dragMode'
+            | 'cutPolygon'
+            | 'removalMode'
+            | string;
+
         interface PMMapToolbar {
+
             /** Pass an array of button names to reorder the buttons in the Toolbar. */
-            changeControlOrder(order: 'drawCircle' | 'drawRectangle' | 'removalMode' | 'editMode'[]): void;
+            changeControlOrder(order: TOOLBAR_CONTROL_ORDER[]): void;
 
             /** Receive the current order with. */
-            getControlOrder(): 'drawCircle' | 'drawRectangle' | 'removalMode' | 'editMode'[];
+            getControlOrder(): TOOLBAR_CONTROL_ORDER[];
 
             /** The position of a block (draw, edit, custom, options⭐) in the Toolbar can be changed. If not set, the value from position of the Toolbar is taken. */
             setBlockPosition(block: 'draw' | 'edit' | 'custom' | 'options', position: ControlPosition): void;
@@ -398,6 +412,9 @@ declare module 'leaflet' {
 
             /** Change the actions of an existing button. */
             changeActionsOfControl(name: string, actions: (ACTION_NAMES | Action)[]): void;
+
+            /** disable button by control name */
+            setButtonDisabled(name: TOOLBAR_CONTROL_ORDER, state: boolean): void;
         }
 
         interface Button {
