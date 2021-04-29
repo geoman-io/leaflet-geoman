@@ -482,6 +482,9 @@ declare module 'leaflet' {
 
             /** Returns all drawn Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
             getGeomanDrawLayers(): L.FeatureGroup | L.Layer[];
+
+            /** Returns all Geoman draw layers on the map as array. Pass true to get a L.FeatureGroup. */
+            getGeomanDrawLayers(asFeatureGroup: boolean): L.FeatureGroup | L.Layer[];
         }
 
         interface PMEditMap {
