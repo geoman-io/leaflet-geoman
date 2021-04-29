@@ -365,7 +365,7 @@ declare module 'leaflet' {
 
         class Action {
             text: string;
-            onClick: (e: any) => void;
+            onClick?: (e: any) => void;
         }
 
         interface PMMapToolbar {
@@ -416,6 +416,12 @@ declare module 'leaflet' {
             title: string;
 
             toggleStatus: boolean;
+
+            /** block of the control. 'options' is ⭐ only. */
+            block?: 'draw' | 'edit' | 'custom' | 'options';
+
+            /** tool. */
+            tool?: any;
         }
 
         interface CustomControlOptions {
