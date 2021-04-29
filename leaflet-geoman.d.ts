@@ -4,22 +4,26 @@ import * as L from 'leaflet';
 declare module 'leaflet' {
 
     /** Extends built in leaflet layer options. */
-    export interface LayerOptions {
+    interface LayerOptions {
         pmIgnore?: boolean;
         snapIgnore?: boolean;
+    }
+
+    interface MapOptions {
+        pmIgnore?: boolean;
     }
 
     /**
      * Extends built in leaflet map.
      */
-    export interface Map {
+    interface Map {
         pm: PM.PMMap;
     }
 
     /**
      * Extends built in leaflet layer.
      */
-    export interface Layer {
+    interface Layer {
         pm: PM.PMLayer;
     }
 
@@ -31,7 +35,7 @@ declare module 'leaflet' {
      * makes this very hard to work around.
      * 
      */
-    export interface Evented {
+    interface Evented {
 
         /****************************************** 
         * 
@@ -205,7 +209,7 @@ declare module 'leaflet' {
 
     namespace PM {
         /** supported shape types. */
-        export type SUPPORTED_SHAPES =
+        type SUPPORTED_SHAPES =
             | 'Marker'
             | 'Circle'
             | 'Line'
@@ -214,7 +218,7 @@ declare module 'leaflet' {
             | 'Cut'
             | 'CircleMarker';
 
-        export type SUPPORTED_SHAPE_TYPES =
+        type SUPPORTED_SHAPE_TYPES =
             | L.Marker
             | L.Circle
             | L.Polyline
@@ -228,14 +232,14 @@ declare module 'leaflet' {
         *
         * @param optIn - if true, a layers pmIgnore property has to be set to false to get initiated.
         */
-        export function setOptIn(optIn: boolean): void;
+        function setOptIn(optIn: boolean): void;
 
         /**
          * Enable leaflet-geoman on an ignored layer.
          *
          * @param layer - re-reads layer.options.pmIgnore to initialize leaflet-geoman.
          */
-        export function reInitLayer(layer: L.Layer): void;
+        function reInitLayer(layer: L.Layer): void;
 
 
         /**
@@ -283,7 +287,7 @@ declare module 'leaflet' {
             ): void;
         }
 
-        export class Translations {
+        class Translations {
             tooltips?: {
                 placeMarker?: string;
                 firstVertex?: string;
@@ -316,9 +320,9 @@ declare module 'leaflet' {
             };
         }
 
-        export type ACTION_NAMES = 'cancel' | 'removeLastVertex' | 'finish' | 'finishMode';
+        type ACTION_NAMES = 'cancel' | 'removeLastVertex' | 'finish' | 'finishMode';
 
-        export class Action {
+        class Action {
             text: string;
             onClick: (e: any) => void;
         }
@@ -470,11 +474,11 @@ declare module 'leaflet' {
             getActiveShape(): SUPPORTED_SHAPES;
         }
 
-        export interface CutModeOptions {
+        interface CutModeOptions {
             allowSelfIntersection?: boolean;
         }
 
-        export interface EditModeOptions {
+        interface EditModeOptions {
             /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
             snappable?: boolean;
 
@@ -502,7 +506,7 @@ declare module 'leaflet' {
             pinning?: boolean;
         }
 
-        export interface DrawModeOptions {
+        interface DrawModeOptions {
             /** enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
             snappable?: boolean;
 
@@ -574,7 +578,7 @@ declare module 'leaflet' {
         /**
          * PM toolbar options.
          */
-        export interface ToolbarOptions {
+        interface ToolbarOptions {
             /** toolbar position. */
             position?: L.ControlPosition;
 
@@ -625,7 +629,7 @@ declare module 'leaflet' {
         }
 
         /** the position of each block. */
-        export interface BlockPositions {
+        interface BlockPositions {
             /** draw control position (default:''). */
             draw?: ControlPosition;
 
@@ -637,7 +641,7 @@ declare module 'leaflet' {
         }
 
 
-        export interface PMLayer {
+        interface PMLayer {
             /** Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar */
             enable(options?: EditModeOptions): void;
 
