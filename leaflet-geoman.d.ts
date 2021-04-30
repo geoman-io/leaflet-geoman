@@ -54,16 +54,16 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when Drawing Mode is toggled. */
-        on(type: 'pm:globaldrawmodetoggled', fn: (event: { enabled: boolean, shape: PM.SUPPORTED_SHAPE_TYPES, map: L.Map }) => void, context?: any): L.Evented;
+        on(type: 'pm:globaldrawmodetoggled', fn: (event: { enabled: boolean, shape: PM.SUPPORTED_SHAPES, map: L.Map }) => void, context?: any): L.Evented;
 
         /** Called when drawing mode is enabled. Payload includes the shape type and working layer. */
-        on(type: 'pm:drawstart', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, workingLayer: L.Layer }) => void, context?: any): L.Evented;
+        on(type: 'pm:drawstart', fn: (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer }) => void, context?: any): L.Evented;
 
         /** Called when drawing mode is disabled. Payload includes the shape type. */
-        on(type: 'pm:drawend', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES }) => void, context?: any): L.Evented;
+        on(type: 'pm:drawend', fn: (e: { shape: PM.SUPPORTED_SHAPES }) => void, context?: any): L.Evented;
 
         /** Called when drawing mode is disabled. Payload includes the shape type. */
-        on(type: 'pm:create', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, layer: L.Layer }) => void, context?: any): L.Evented;
+        on(type: 'pm:create', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void, context?: any): L.Evented;
 
 
         /****************************************** 
@@ -73,19 +73,19 @@ declare module 'leaflet' {
          ********************************************/
 
         /** Called when a new vertex is added. */
-        on(type: 'pm:vertexadded', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, workingLayer: L.Layer, marker: L.Marker, latLng: L.LatLng }) => void): this;
+        on(type: 'pm:vertexadded', fn: (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer, marker: L.Marker, latLng: L.LatLng }) => void): this;
 
         /** Fired during a marker move/drag. */
-        on(type: 'pm:snapdrag', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
+        on(type: 'pm:snapdrag', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
 
         /** Fired when a vertex is snapped. */
-        on(type: 'pm:snap', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
+        on(type: 'pm:snap', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
 
         /** Fired when a vertex is unsnapped. */
-        on(type: 'pm:unsnap', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
+        on(type: 'pm:unsnap', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
 
         /** Called when the center of a circle is placed/moved. */
-        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, workingLayer: L.Layer, latLng: L.LatLng }) => void): this;
+        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer, latLng: L.LatLng }) => void): this;
 
         /****************************************** 
         * 
@@ -94,52 +94,52 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when a layer is edited. */
-        on(type: 'pm:edit', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, layer: L.Layer }) => void): this;
+        on(type: 'pm:edit', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void): this;
 
         /** Fired when edit mode is disabled and a layer is edited and its coordinates have changed. */
-        on(type: 'pm:update', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, layer: L.Layer }) => void): this;
+        on(type: 'pm:update', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void): this;
 
         /** Fired when edit mode on a layer is enabled. */
-        on(type: 'pm:enable', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, layer: L.Layer }) => void): this;
+        on(type: 'pm:enable', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void): this;
 
         /** Fired when edit mode on a layer is disabled. */
-        on(type: 'pm:disable', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, layer: L.Layer }) => void): this;
+        on(type: 'pm:disable', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void): this;
 
         /** Fired when a vertex is added. */
-        on(type: 'pm:vertexadded', fn: (e: { layer: L.Layer, indexPath: number, latLng: L.LatLng, marker: L.Marker, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:vertexadded', fn: (e: { layer: L.Layer, indexPath: number, latLng: L.LatLng, marker: L.Marker, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /** Fired when a vertex is removed. */
-        on(type: 'pm:vertexremoved', fn: (e: { layer: L.Layer, indexPath: number, marker: L.Marker, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:vertexremoved', fn: (e: { layer: L.Layer, indexPath: number, marker: L.Marker, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /** Fired when a vertex is clicked. */
-        on(type: 'pm:vertexclick', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this; // todo: no any
+        on(type: 'pm:vertexclick', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: no any
 
         /** Fired when dragging of a marker which corresponds to a vertex starts. */
-        on(type: 'pm:markerdragstart', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this; // todo: no any
+        on(type: 'pm:markerdragstart', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: no any
 
         /** Fired when dragging a vertex-marker. */
-        on(type: 'pm:markerdrag', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this; // todo: no any
+        on(type: 'pm:markerdrag', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: no any
 
         /** Fired when dragging of a vertex-marker ends. */
-        on(type: 'pm:markerdragend', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES, intersectionRest: boolean }) => void): this;
+        on(type: 'pm:markerdragend', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES, intersectionRest: boolean }) => void): this;
 
         /** Fired when coords of a layer are reset. E.g. by self-intersection.. */
-        on(type: 'pm:layerreset	', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this; // todo: no any
+        on(type: 'pm:layerreset	', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: no any
 
         /** Fired during a marker move/drag. */
-        on(type: 'pm:snapdrag', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
+        on(type: 'pm:snapdrag', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
 
         /** Fired when a vertex is snapped. */
-        on(type: 'pm:snap', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
+        on(type: 'pm:snap', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
 
         /** Fired when a vertex is unsnapped. */
-        on(type: 'pm:unsnap', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
+        on(type: 'pm:unsnap', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
 
         /** When allowSelfIntersection: false, this event is fired as soon as a self-intersection is detected. */
-        on(type: 'pm:intersect', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, layer: L.Layer, intersection: L.LatLng }) => void): this; // todo: uncertain about intersection
+        on(type: 'pm:intersect', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer, intersection: L.LatLng }) => void): this; // todo: uncertain about intersection
 
         /** Called when the center of a circle is placed/moved. */
-        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPE_TYPES, workingLayer: L.Layer, latLng: L.LatLng }) => void): this;
+        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer, latLng: L.LatLng }) => void): this;
 
 
         /****************************************** 
@@ -167,13 +167,13 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when a layer starts being dragged. */
-        on(type: 'pm:dragstart', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:dragstart', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /** Fired when a layer is dragged. */
-        on(type: 'pm:drag', fn: (e: { layer: L.Layer, containerPoint: any, latLng: L.LatLng, layerPoint: L.Point, originalEvent: any, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this; // todo: any
+        on(type: 'pm:drag', fn: (e: { layer: L.Layer, containerPoint: any, latLng: L.LatLng, layerPoint: L.Point, originalEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: any
 
         /** Fired when a layer stops being dragged. */
-        on(type: 'pm:dragend', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:dragend', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /****************************************** 
         * 
@@ -182,7 +182,7 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when a layer is removed via Removal Mode. */
-        on(type: 'pm:remove', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:remove', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /****************************************** 
         * 
@@ -194,7 +194,7 @@ declare module 'leaflet' {
         on(type: 'pm:globalremovalmodetoggled', fn: (e: { enabled: boolean, map: L.Map }) => void): this;
 
         /** Fired when a layer is removed via Removal Mode. */
-        on(type: 'pm:remove', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:remove', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /****************************************** 
         * 
@@ -203,10 +203,10 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when a layer is removed via Removal Mode. */
-        on(type: 'pm:globalcutmodetoggled', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:globalcutmodetoggled', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /** Fired when a layer is edited / cut. */
-        on(type: 'pm:cut', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:cut', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /****************************************** 
         * 
@@ -215,10 +215,55 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when the layer being cut. */
-        on(type: 'pm:cut', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:cut', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /** Fired when a layer is edited / cut */
-        on(type: 'pm:edit', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPE_TYPES }) => void): this;
+        on(type: 'pm:edit', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
+
+        /****************************************** 
+        * 
+        * TODO: ROTATE MODE EVENTS ON LAYER ONLY
+        *
+        ********************************************/
+
+        /** Fired when rotation is enabled for a layer. */
+        on(type: 'pm:rotateenable', fn: (e: { layer: L.Layer, helpLayer: L.Layer }) => void): this;
+
+        /** Fired when rotation is disabled for a layer. */
+        on(type: 'pm:rotatedisable', fn: (e: { layer: L.Layer }) => void): this;
+
+        /** Fired when rotation starts on a layer. */
+        on(type: 'pm:rotatestart', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, originLatLngs: L.LatLng[] }) => void): this;
+
+        /** Fired when a layer is rotated. */
+        on(type: 'pm:rotate', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, angleDiff: number, oldLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void): this;
+
+        /** Fired when rotation ends on a layer. */
+        on(type: 'pm:rotateend', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, originLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void): this;
+
+        /****************************************** 
+        * 
+        * TODO: ROTATE MODE EVENTS ON MAP ONLY
+        *
+        ********************************************/
+
+        /** Fired when Rotate Mode is toggled. */
+        on(type: 'pm:globalrotatemodetoggled', fn: (e: { enabled: boolean, map: L.Map }) => void): this;
+
+        /** Fired when rotation is enabled for a layer. */
+        on(type: 'pm:rotateenable', fn: (e: { layer: L.Layer, helpLayer: L.Layer }) => void): this;
+
+        /** Fired when rotation is disabled for a layer. */
+        on(type: 'pm:rotatedisable', fn: (e: { layer: L.Layer }) => void): this;
+
+        /** Fired when rotation starts on a layer. */
+        on(type: 'pm:rotatestart', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, originLatLngs: L.LatLng[] }) => void): this;
+
+        /** Fired when a layer is rotated. */
+        on(type: 'pm:rotate', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, angleDiff: number, oldLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void): this;
+
+        /** Fired when rotation ends on a layer. */
+        on(type: 'pm:rotateend', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, originLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void): this;
 
 
         /****************************************** 
@@ -244,7 +289,8 @@ declare module 'leaflet' {
     }
 
     namespace PM {
-        /** supported shape names. 'ImageOverlay' is in Edit Mode only. */
+
+        /** supported shape names. 'ImageOverlay' is in Edit Mode only. Also accepts custom shape name. */
         type SUPPORTED_SHAPES =
             | 'Marker'
             | 'Circle'
@@ -253,18 +299,8 @@ declare module 'leaflet' {
             | 'Polygon'
             | 'Cut'
             | 'CircleMarker'
-            | 'ImageOverlay';
-
-        /** supported shape types. 'ImageOverlay' is in Edit Mode only. */
-        type SUPPORTED_SHAPE_TYPES =
-            | L.Marker
-            | L.Circle
-            | L.Polyline
-            | L.Rectangle
-            | L.Polygon
-            | L.CircleMarker
-            | L.ImageOverlay;
-
+            | 'ImageOverlay'
+            | string;
 
         /**
         * Changes default registration of leaflet-geoman on leaflet layers.
@@ -284,7 +320,7 @@ declare module 'leaflet' {
         /**
          * PM map interface.
          */
-        interface PMMap extends PMDrawMap, PMEditMap, PMDragMap, PMRemoveMap, PMCutMap {
+        interface PMMap extends PMDrawMap, PMEditMap, PMDragMap, PMRemoveMap, PMCutMap, PMRotateMap {
 
             Toolbar: PMMapToolbar;
 
@@ -443,11 +479,8 @@ declare module 'leaflet' {
 
             toggleStatus: boolean;
 
-            /** block of the control. 'options' is ⭐ only. */
-            block?: 'draw' | 'edit' | 'custom' | 'options';
-
-            /** tool. */
-            tool?: any;
+            /** tool. 'options' is ⭐ only. */
+            tool?: 'draw' | 'edit' | 'custom' | 'options';
         }
 
         interface CustomControlOptions {
@@ -503,11 +536,8 @@ declare module 'leaflet' {
             /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
             getGeomanLayers(asFeatureGroup: boolean): L.FeatureGroup | L.Layer[];
 
-            /** Returns all drawn Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
-            getGeomanDrawLayers(): L.FeatureGroup | L.Layer[];
-
             /** Returns all Geoman draw layers on the map as array. Pass true to get a L.FeatureGroup. */
-            getGeomanDrawLayers(asFeatureGroup: boolean): L.FeatureGroup | L.Layer[];
+            getGeomanDrawLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
         }
 
         interface PMEditMap {
@@ -526,7 +556,7 @@ declare module 'leaflet' {
 
         interface PMDragMap {
             /** Enables global drag mode. */
-            enableGlobalDragMode(options?: EditModeOptions): void;
+            enableGlobalDragMode(): void;
 
             /** Disables global drag mode. */
             disableGlobalDragMode(): void;
@@ -564,6 +594,40 @@ declare module 'leaflet' {
 
             /** Returns true if global cut mode is enabled. false when disabled. */
             globalCutModeEnabled(): boolean;
+        }
+
+        interface PMRotateMap {
+            /** Enables global rotate mode. */
+            enableGlobalRotateMode(): void;
+
+            /** Disables global rotate mode. */
+            disableGlobalRotateMode(): void;
+
+            /** Toggles global rotate mode. */
+            toggleGlobalRotateMode(): void;
+
+            /** Returns true if global rotate mode is enabled. false when disabled. */
+            globalRotateModeEnabled(): boolean;
+        }
+
+        interface PMRotateLayer {
+            /** Enables rotate mode on the layer. */
+            enableRotate(): void;
+
+            /** Disables rotate mode on the layer. */
+            disableRotate(): void;
+
+            /** Toggles rotate mode on the layer. */
+            rotateEnabled(): void;
+
+            /** Rotates the layer by x degrees. */
+            rotateLayer(degrees: number): void;
+
+            /** Rotates the layer to x degrees. */
+            rotateLayerToAngle(degrees: number): void;
+
+            /** Returns the angle of the layer in degrees. */
+            getAngle(): number;
         }
 
         interface Draw {
@@ -629,6 +693,12 @@ declare module 'leaflet' {
             /** allow snapping in the middle of two vertices (middleMarker)(default:false). */
             snapMiddle?: boolean;
 
+            /** allow snapping between two vertices. (default: true)*/
+            snapSegment?: boolean;
+
+            /** require the last point of a shape to be snapped. (default: false). */
+            requireSnapToFinish?: boolean;
+
             /** show helpful tooltips for your user (default:true). */
             tooltips?: boolean;
 
@@ -684,6 +754,9 @@ declare module 'leaflet' {
 
             /** Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to true for Markers and CircleMarkers and false for all other layers. */
             continueDrawing?: boolean;
+
+            /** angel of rectangle. */
+            rectangleAngle?: number;
         }
 
         /**
@@ -763,10 +836,12 @@ declare module 'leaflet' {
             options?: ControlPosition;
         }
 
-
-        interface PMLayer {
+        interface PMEditLayer {
             /** Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar */
             enable(options?: EditModeOptions): void;
+
+            /** sets layer options */
+            setOptions(options?: EditModeOptions): void;
 
             /** Disables edit mode. */
             disable(): void;
@@ -777,12 +852,11 @@ declare module 'leaflet' {
             /** Returns true if edit mode is enabled. false when disabled. */
             enabled(): boolean;
 
-            /** sets layer options */
-            setOptions(options?: EditModeOptions): void;
+            /** Returns true if Line or Polygon has a self intersection. */
+            hasSelfIntersection(): boolean;
+        }
 
-            /** get shape */
-            getShape(): SUPPORTED_SHAPE_TYPES;
-
+        interface PMDragLayer {
             /** enables dragging for the layer. */
             enableLayerDrag(): void;
 
@@ -791,6 +865,12 @@ declare module 'leaflet' {
 
             /** returns if the layer is currently dragging. */
             dragging(): boolean;
+        }
+
+
+        interface PMLayer extends PMRotateLayer, PMEditLayer, PMDragLayer {
+            /** get shape */
+            getShape(): SUPPORTED_SHAPES;
         }
 
         namespace Utils {
