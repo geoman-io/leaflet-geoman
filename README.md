@@ -114,11 +114,12 @@ L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
   
 Enable leaflet-geoman on an ignored layer:  
 ```js  
-layer.options.pmIgnore = false;
+layer.setStyle({pmIgnore: false});
+// layer.options.pmIgnore = false; // If the layer is a LayerGroup / FeatureGroup / GeoJSON this line is needed too
 L.PM.reInitLayer(layer);  
 ```  
 If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.  
-  
+
   
 #### Opt-In  
   
