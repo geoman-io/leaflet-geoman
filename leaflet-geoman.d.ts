@@ -542,7 +542,7 @@ declare module 'leaflet' {
             setPathOptions(options: L.PathOptions, optionsModifier: { ignoreShapes: SUPPORTED_SHAPES[] }): void;
 
             /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
-            getGeomanLayers(asFeatureGroup: boolean): L.FeatureGroup | L.Layer[];
+            getGeomanLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
 
             /** Returns all Geoman draw layers on the map as array. Pass true to get a L.FeatureGroup. */
             getGeomanDrawLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
