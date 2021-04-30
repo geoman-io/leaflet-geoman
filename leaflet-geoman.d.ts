@@ -512,9 +512,17 @@ declare module 'leaflet' {
             disabled?: boolean;
         }
 
+        type PANE = 'mapPane'|'tilePane'|'overlayPane'|'shadowPane'|'markerPane'|'tooltipPane'|'popupPane';
+
         interface GlobalOptions extends DrawModeOptions, EditModeOptions {
             /** add the created layers to a layergroup instead to the map. */
             layerGroup?: L.Map | L.LayerGroup;
+
+            /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']. */
+            snappingOrder: SUPPORTED_SHAPES[];
+
+            /** Defines in which panes the layers and helper vertices are created. Default: { vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' } */
+            panes: { vertexPane: PANE, layerPane: PANE, markerPane: PANE }
         }
 
         interface PMDrawMap {
