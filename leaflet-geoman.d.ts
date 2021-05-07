@@ -55,30 +55,37 @@ declare module 'leaflet' {
 
         /** Fired when a layer is removed via Removal Mode. */
         on(type: 'pm:remove', fn: PM.RemoveEventHandler): this;
+        once(type: 'pm:remove', fn: PM.RemoveEventHandler): this;
         off(type: 'pm:remove', fn?: PM.RemoveEventHandler): this;
 
         /** Fired when the layer being cut. Draw+Edit Mode*/
         on(type: 'pm:cut', fn: PM.CutEventHandler): this;
+        once(type: 'pm:cut', fn: PM.CutEventHandler): this;
         off(type: 'pm:cut', fn?: PM.CutEventHandler): this;
 
         /** Fired when rotation is enabled for a layer. */
         on(type: 'pm:rotateenable', fn: PM.RotateEnableEventHandler): this;
+        once(type: 'pm:rotateenable', fn: PM.RotateEnableEventHandler): this;
         off(type: 'pm:rotateenable', fn?: PM.RotateEnableEventHandler): this;
 
         /** Fired when rotation is disabled for a layer. */
         on(type: 'pm:rotatedisable', fn: PM.RotateDisableEventHandler): this;
+        once(type: 'pm:rotatedisable', fn: PM.RotateDisableEventHandler): this;
         off(type: 'pm:rotatedisable', fn?: PM.RotateDisableEventHandler): this;
 
         /** Fired when rotation starts on a layer. */
         on(type: 'pm:rotatestart', fn: PM.RotateStartEventHandler): this;
+        once(type: 'pm:rotatestart', fn: PM.RotateStartEventHandler): this;
         off(type: 'pm:rotatestart', fn?: PM.RotateStartEventHandler): this;
 
         /** Fired when a layer is rotated. */
         on(type: 'pm:rotate', fn: PM.RotateEventHandler): this;
+        once(type: 'pm:rotate', fn: PM.RotateEventHandler): this;
         off(type: 'pm:rotate', fn?: PM.RotateEventHandler): this;
 
         /** Fired when rotation ends on a layer. */
         on(type: 'pm:rotateend', fn: PM.RotateEndEventHandler): this;
+        once(type: 'pm:rotateend', fn: PM.RotateEndEventHandler): this;
         off(type: 'pm:rotateend', fn?: PM.RotateEndEventHandler): this;
 
 
@@ -90,18 +97,22 @@ declare module 'leaflet' {
 
         /** Fired during a marker move/drag. */
         on(type: 'pm:snapdrag', fn: PM.SnapEventHandler): this;
+        once(type: 'pm:snapdrag', fn: PM.SnapEventHandler): this;
         off(type: 'pm:snapdrag', fn?: PM.SnapEventHandler): this;
 
         /** Fired when a vertex is snapped. */
         on(type: 'pm:snap', fn: PM.SnapEventHandler): this;
+        once(type: 'pm:snap', fn: PM.SnapEventHandler): this;
         off(type: 'pm:snap', fn?: PM.SnapEventHandler): this;
 
         /** Fired when a vertex is unsnapped. */
         on(type: 'pm:unsnap', fn: PM.SnapEventHandler): this;
+        once(type: 'pm:unsnap', fn: PM.SnapEventHandler): this;
         off(type: 'pm:unsnap', fn?: PM.SnapEventHandler): this;
 
         /** Called when the center of a circle is placed/moved. */
         on(type: 'pm:centerplaced', fn: PM.CenterPlacedEventHandler): this;
+        once(type: 'pm:centerplaced', fn: PM.CenterPlacedEventHandler): this;
         off(type: 'pm:centerplaced', fn?: PM.CenterPlacedEventHandler): this;
 
         /****************************************** 
@@ -112,6 +123,7 @@ declare module 'leaflet' {
 
         /** Fired when a layer is edited. */
         on(type: 'pm:edit', fn: PM.EditEventHandler): this;
+        once(type: 'pm:edit', fn: PM.EditEventHandler): this;
         off(type: 'pm:edit', fn?: PM.EditEventHandler): this;
 
 
@@ -123,18 +135,22 @@ declare module 'leaflet' {
 
         /** Fired when Drawing Mode is toggled. */
         on(type: 'pm:globaldrawmodetoggled', fn: PM.GlobalDrawModeToggledEventHandler, context?: any): L.Evented;
+        once(type: 'pm:globaldrawmodetoggled', fn: PM.GlobalDrawModeToggledEventHandler, context?: any): L.Evented;
         off(type: 'pm:globaldrawmodetoggled', fn?: PM.GlobalDrawModeToggledEventHandler, context?: any): L.Evented;
 
         /** Called when drawing mode is enabled. Payload includes the shape type and working layer. */
         on(type: 'pm:drawstart', fn: PM.DrawStartEventHandler, context?: any): L.Evented;
+        once(type: 'pm:drawstart', fn: PM.DrawStartEventHandler, context?: any): L.Evented;
         off(type: 'pm:drawstart', fn?: PM.DrawStartEventHandler, context?: any): L.Evented;
 
         /** Called when drawing mode is disabled. Payload includes the shape type. */
         on(type: 'pm:drawend', fn: PM.DrawEndEventHandler, context?: any): L.Evented;
+        once(type: 'pm:drawend', fn: PM.DrawEndEventHandler, context?: any): L.Evented;
         off(type: 'pm:drawend', fn?: PM.DrawEndEventHandler, context?: any): L.Evented;
 
         /** Called when drawing mode is disabled. Payload includes the shape type. */
         on(type: 'pm:create', fn: PM.CreateEventHandler, context?: any): L.Evented;
+        once(type: 'pm:create', fn: PM.CreateEventHandler, context?: any): L.Evented;
         off(type: 'pm:create', fn?: PM.CreateEventHandler, context?: any): L.Evented;
 
 
@@ -146,6 +162,7 @@ declare module 'leaflet' {
 
         /** Called when a new vertex is added. */
         on(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler): this;
+        once(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler): this;
         off(type: 'pm:vertexadded', fn?: PM.VertexAddedEventHandler): this;
 
         /****************************************** 
@@ -156,46 +173,57 @@ declare module 'leaflet' {
 
         /** Fired when edit mode is disabled and a layer is edited and its coordinates have changed. */
         on(type: 'pm:update', fn: PM.UpdateEventHandler): this;
+        once(type: 'pm:update', fn: PM.UpdateEventHandler): this;
         off(type: 'pm:update', fn?: PM.UpdateEventHandler): this;
 
         /** Fired when edit mode on a layer is enabled. */
         on(type: 'pm:enable', fn: PM.EnableEventHandler): this;
+        once(type: 'pm:enable', fn: PM.EnableEventHandler): this;
         off(type: 'pm:enable', fn?: PM.EnableEventHandler): this;
 
         /** Fired when edit mode on a layer is disabled. */
         on(type: 'pm:disable', fn: PM.DisableEventHandler): this;
+        once(type: 'pm:disable', fn: PM.DisableEventHandler): this;
         off(type: 'pm:disable', fn?: PM.DisableEventHandler): this;
 
         /** Fired when a vertex is added. */
         on(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler2): this;
+        once(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler2): this;
         off(type: 'pm:vertexadded', fn?: PM.VertexAddedEventHandler2): this;
 
         /** Fired when a vertex is removed. */
         on(type: 'pm:vertexremoved', fn: PM.VertexRemovedEventHandler): this;
+        once(type: 'pm:vertexremoved', fn: PM.VertexRemovedEventHandler): this;
         off(type: 'pm:vertexremoved', fn?: PM.VertexRemovedEventHandler): this;
 
         /** Fired when a vertex is clicked. */
         on(type: 'pm:vertexclick', fn: PM.VertexClickEventHandler): this;
+        once(type: 'pm:vertexclick', fn: PM.VertexClickEventHandler): this;
         off(type: 'pm:vertexclick', fn?: PM.VertexClickEventHandler): this;
 
         /** Fired when dragging of a marker which corresponds to a vertex starts. */
         on(type: 'pm:markerdragstart', fn: PM.MarkerDragStartEventHandler): this;
+        once(type: 'pm:markerdragstart', fn: PM.MarkerDragStartEventHandler): this;
         off(type: 'pm:markerdragstart', fn?: PM.MarkerDragStartEventHandler): this;
 
         /** Fired when dragging a vertex-marker. */
         on(type: 'pm:markerdrag', fn: PM.MarkerDragEventHandler): this;
+        once(type: 'pm:markerdrag', fn: PM.MarkerDragEventHandler): this;
         off(type: 'pm:markerdrag', fn?: PM.MarkerDragEventHandler): this;
 
         /** Fired when dragging of a vertex-marker ends. */
         on(type: 'pm:markerdragend', fn: PM.MarkerDragEndEventHandler): this;
+        once(type: 'pm:markerdragend', fn: PM.MarkerDragEndEventHandler): this;
         off(type: 'pm:markerdragend', fn?: PM.MarkerDragEndEventHandler): this;
 
         /** Fired when coords of a layer are reset. E.g. by self-intersection.. */
         on(type: 'pm:layerreset', fn: PM.LayerResetEventHandler): this;
+        once(type: 'pm:layerreset', fn: PM.LayerResetEventHandler): this;
         off(type: 'pm:layerreset', fn?: PM.LayerResetEventHandler): this;
 
         /** When allowSelfIntersection: false, this event is fired as soon as a self-intersection is detected. */
         on(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
+        once(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
         off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
 
 
@@ -207,6 +235,7 @@ declare module 'leaflet' {
 
         /** Fired when Edit Mode is toggled. */
         on(type: 'pm:globaleditmodetoggled', fn: PM.GlobalEditModeToggledEventHandler): this;
+        once(type: 'pm:globaleditmodetoggled', fn: PM.GlobalEditModeToggledEventHandler): this;
         off(type: 'pm:globaleditmodetoggled', fn?: PM.GlobalEditModeToggledEventHandler): this;
 
         /****************************************** 
@@ -217,6 +246,7 @@ declare module 'leaflet' {
 
         /** Fired when Drag Mode is toggled. */
         on(type: 'pm:globaldragmodetoggled', fn: PM.GlobalDragModeToggledEventHandler): this;
+        once(type: 'pm:globaldragmodetoggled', fn: PM.GlobalDragModeToggledEventHandler): this;
         off(type: 'pm:globaldragmodetoggled', fn?: PM.GlobalDragModeToggledEventHandler): this;
 
         /****************************************** 
@@ -227,17 +257,18 @@ declare module 'leaflet' {
 
         /** Fired when a layer starts being dragged. */
         on(type: 'pm:dragstart', fn: PM.DragStartEventHandler): this;
+        once(type: 'pm:dragstart', fn: PM.DragStartEventHandler): this;
         off(type: 'pm:dragstart', fn?: PM.DragStartEventHandler): this;
 
         /** Fired when a layer is dragged. */
         on(type: 'pm:drag', fn: PM.DragEventHandler): this;
+        once(type: 'pm:drag', fn: PM.DragEventHandler): this;
         off(type: 'pm:drag', fn?: PM.DragEventHandler): this;
 
         /** Fired when a layer stops being dragged. */
         on(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
+        once(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
         off(type: 'pm:dragend', fn?: PM.DragEndEventHandler): this;
-
-
 
         /****************************************** 
         * 
@@ -247,6 +278,7 @@ declare module 'leaflet' {
 
         /** Fired when Removal Mode is toggled. */
         on(type: 'pm:globalremovalmodetoggled', fn: PM.GlobalRemovalModeToggledEventHandler): this;
+        once(type: 'pm:globalremovalmodetoggled', fn: PM.GlobalRemovalModeToggledEventHandler): this;
         off(type: 'pm:globalremovalmodetoggled', fn?: PM.GlobalRemovalModeToggledEventHandler): this;
 
         /****************************************** 
@@ -257,6 +289,7 @@ declare module 'leaflet' {
 
         /** Fired when a layer is removed via Removal Mode. */
         on(type: 'pm:globalcutmodetoggled', fn: PM.GlobalCutModeToggledEventHandler): this;
+        once(type: 'pm:globalcutmodetoggled', fn: PM.GlobalCutModeToggledEventHandler): this;
         off(type: 'pm:globalcutmodetoggled', fn?: PM.GlobalCutModeToggledEventHandler): this;
 
 
@@ -268,6 +301,7 @@ declare module 'leaflet' {
 
         /** Fired when Rotate Mode is toggled. */
         on(type: 'pm:globalrotatemodetoggled', fn: PM.GlobalRotateModeToggledEventHandler): this;
+        once(type: 'pm:globalrotatemodetoggled', fn: PM.GlobalRotateModeToggledEventHandler): this;
         off(type: 'pm:globalrotatemodetoggled', fn?: PM.GlobalRotateModeToggledEventHandler): this;
 
 
@@ -279,6 +313,7 @@ declare module 'leaflet' {
 
         /** Standard Leaflet event. Fired when any layer is removed. */
         on(type: 'pm:langchange', fn: PM.LangChangeEventHandler): this;
+        once(type: 'pm:langchange', fn: PM.LangChangeEventHandler): this;
         off(type: 'pm:langchange', fn?: PM.LangChangeEventHandler): this;
 
         /****************************************** 
@@ -289,10 +324,12 @@ declare module 'leaflet' {
 
         /** Fired when a Toolbar button is clicked. */
         on(type: 'pm:buttonclick', fn: PM.ButtonClickEventHandler): this;
+        once(type: 'pm:buttonclick', fn: PM.ButtonClickEventHandler): this;
         off(type: 'pm:buttonclick', fn?: PM.ButtonClickEventHandler): this;
 
         /** Fired when a Toolbar action is clicked. */
         on(type: 'pm:actionclick', fn: PM.ActionClickEventHandler): this;
+        once(type: 'pm:actionclick', fn: PM.ActionClickEventHandler): this;
         off(type: 'pm:actionclick', fn?: PM.ActionClickEventHandler): this;
     }
 
