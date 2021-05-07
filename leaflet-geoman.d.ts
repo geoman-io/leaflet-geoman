@@ -49,21 +49,93 @@ declare module 'leaflet' {
 
         /****************************************** 
         * 
+        * AVAILABLE ON MAP + LAYER, THESE ARE OK ON EVENTED.
+        *
+        ********************************************/
+
+        /** Fired when a layer is removed via Removal Mode. */
+        on(type: 'pm:remove', fn: PM.RemoveEventHandler): this;
+        off(type: 'pm:remove', fn?: PM.RemoveEventHandler): this;
+
+        /** Fired when the layer being cut. Draw+Edit Mode*/
+        on(type: 'pm:cut', fn: PM.CutEventHandler): this;
+        off(type: 'pm:cut', fn?: PM.CutEventHandler): this;
+
+        /** Fired when rotation is enabled for a layer. */
+        on(type: 'pm:rotateenable', fn: PM.RotateEnableEventHandler): this;
+        off(type: 'pm:rotateenable', fn?: PM.RotateEnableEventHandler): this;
+
+        /** Fired when rotation is disabled for a layer. */
+        on(type: 'pm:rotatedisable', fn: PM.RotateDisableEventHandler): this;
+        off(type: 'pm:rotatedisable', fn?: PM.RotateDisableEventHandler): this;
+
+        /** Fired when rotation starts on a layer. */
+        on(type: 'pm:rotatestart', fn: PM.RotateStartEventHandler): this;
+        off(type: 'pm:rotatestart', fn?: PM.RotateStartEventHandler): this;
+
+        /** Fired when a layer is rotated. */
+        on(type: 'pm:rotate', fn: PM.RotateEventHandler): this;
+        off(type: 'pm:rotate', fn?: PM.RotateEventHandler): this;
+
+        /** Fired when rotation ends on a layer. */
+        on(type: 'pm:rotateend', fn: PM.RotateEndEventHandler): this;
+        off(type: 'pm:rotateend', fn?: PM.RotateEndEventHandler): this;
+
+
+        /****************************************** 
+        * 
+        * TODO: DRAW/EDIT MODE EVENTS LAYER ONLY
+        *
+        ********************************************/
+
+        /** Fired during a marker move/drag. */
+        on(type: 'pm:snapdrag', fn: PM.SnapEventHandler): this;
+        off(type: 'pm:snapdrag', fn?: PM.SnapEventHandler): this;
+
+        /** Fired when a vertex is snapped. */
+        on(type: 'pm:snap', fn: PM.SnapEventHandler): this;
+        off(type: 'pm:snap', fn?: PM.SnapEventHandler): this;
+
+        /** Fired when a vertex is unsnapped. */
+        on(type: 'pm:unsnap', fn: PM.SnapEventHandler): this;
+        off(type: 'pm:unsnap', fn?: PM.SnapEventHandler): this;
+
+        /** Called when the center of a circle is placed/moved. */
+        on(type: 'pm:centerplaced', fn: PM.CenterPlacedEventHandler): this;
+        off(type: 'pm:centerplaced', fn?: PM.CenterPlacedEventHandler): this;
+
+        /****************************************** 
+        * 
+        * TODO: CUT/EDIT MODE EVENTS LAYER ONLY
+        *
+        ********************************************/
+
+        /** Fired when a layer is edited. */
+        on(type: 'pm:edit', fn: PM.EditEventHandler): this;
+        off(type: 'pm:edit', fn?: PM.EditEventHandler): this;
+
+
+        /****************************************** 
+        * 
         * TODO: DRAW MODE EVENTS ON MAP ONLY
         *
         ********************************************/
 
         /** Fired when Drawing Mode is toggled. */
-        on(type: 'pm:globaldrawmodetoggled', fn: (event: { enabled: boolean, shape: PM.SUPPORTED_SHAPES, map: L.Map }) => void, context?: any): L.Evented;
+        on(type: 'pm:globaldrawmodetoggled', fn: PM.GlobalDrawModeToggledEventHandler, context?: any): L.Evented;
+        off(type: 'pm:globaldrawmodetoggled', fn?: PM.GlobalDrawModeToggledEventHandler, context?: any): L.Evented;
 
         /** Called when drawing mode is enabled. Payload includes the shape type and working layer. */
-        on(type: 'pm:drawstart', fn: (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer }) => void, context?: any): L.Evented;
+        on(type: 'pm:drawstart', fn: PM.DrawStartEventHandler, context?: any): L.Evented;
+        off(type: 'pm:drawstart', fn?: PM.DrawStartEventHandler, context?: any): L.Evented;
 
         /** Called when drawing mode is disabled. Payload includes the shape type. */
-        on(type: 'pm:drawend', fn: (e: { shape: PM.SUPPORTED_SHAPES }) => void, context?: any): L.Evented;
+        on(type: 'pm:drawend', fn: PM.DrawEndEventHandler, context?: any): L.Evented;
+        off(type: 'pm:drawend', fn?: PM.DrawEndEventHandler, context?: any): L.Evented;
 
         /** Called when drawing mode is disabled. Payload includes the shape type. */
-        on(type: 'pm:create', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void, context?: any): L.Evented;
+        on(type: 'pm:create', fn: PM.CreateEventHandler, context?: any): L.Evented;
+        off(type: 'pm:create', fn?: PM.CreateEventHandler, context?: any): L.Evented;
 
 
         /****************************************** 
@@ -73,19 +145,8 @@ declare module 'leaflet' {
          ********************************************/
 
         /** Called when a new vertex is added. */
-        on(type: 'pm:vertexadded', fn: (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer, marker: L.Marker, latLng: L.LatLng }) => void): this;
-
-        /** Fired during a marker move/drag. */
-        on(type: 'pm:snapdrag', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
-
-        /** Fired when a vertex is snapped. */
-        on(type: 'pm:snap', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
-
-        /** Fired when a vertex is unsnapped. */
-        on(type: 'pm:unsnap', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
-
-        /** Called when the center of a circle is placed/moved. */
-        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer, latLng: L.LatLng }) => void): this;
+        on(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler): this;
+        off(type: 'pm:vertexadded', fn?: PM.VertexAddedEventHandler): this;
 
         /****************************************** 
         * 
@@ -93,53 +154,49 @@ declare module 'leaflet' {
         *
         ********************************************/
 
-        /** Fired when a layer is edited. */
-        on(type: 'pm:edit', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void): this;
-
         /** Fired when edit mode is disabled and a layer is edited and its coordinates have changed. */
-        on(type: 'pm:update', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void): this;
+        on(type: 'pm:update', fn: PM.UpdateEventHandler): this;
+        off(type: 'pm:update', fn?: PM.UpdateEventHandler): this;
 
         /** Fired when edit mode on a layer is enabled. */
-        on(type: 'pm:enable', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void): this;
+        on(type: 'pm:enable', fn: PM.EnableEventHandler): this;
+        off(type: 'pm:enable', fn?: PM.EnableEventHandler): this;
 
         /** Fired when edit mode on a layer is disabled. */
-        on(type: 'pm:disable', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void): this;
+        on(type: 'pm:disable', fn: PM.DisableEventHandler): this;
+        off(type: 'pm:disable', fn?: PM.DisableEventHandler): this;
 
         /** Fired when a vertex is added. */
-        on(type: 'pm:vertexadded', fn: (e: { layer: L.Layer, indexPath: number, latLng: L.LatLng, marker: L.Marker, shape: PM.SUPPORTED_SHAPES }) => void): this;
+        on(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler2): this;
+        off(type: 'pm:vertexadded', fn?: PM.VertexAddedEventHandler2): this;
 
         /** Fired when a vertex is removed. */
-        on(type: 'pm:vertexremoved', fn: (e: { layer: L.Layer, indexPath: number, marker: L.Marker, shape: PM.SUPPORTED_SHAPES }) => void): this;
+        on(type: 'pm:vertexremoved', fn: PM.VertexRemovedEventHandler): this;
+        off(type: 'pm:vertexremoved', fn?: PM.VertexRemovedEventHandler): this;
 
         /** Fired when a vertex is clicked. */
-        on(type: 'pm:vertexclick', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: no any
+        on(type: 'pm:vertexclick', fn: PM.VertexClickEventHandler): this;
+        off(type: 'pm:vertexclick', fn?: PM.VertexClickEventHandler): this;
 
         /** Fired when dragging of a marker which corresponds to a vertex starts. */
-        on(type: 'pm:markerdragstart', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: no any
+        on(type: 'pm:markerdragstart', fn: PM.MarkerDragStartEventHandler): this;
+        off(type: 'pm:markerdragstart', fn?: PM.MarkerDragStartEventHandler): this;
 
         /** Fired when dragging a vertex-marker. */
-        on(type: 'pm:markerdrag', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: no any
+        on(type: 'pm:markerdrag', fn: PM.MarkerDragEventHandler): this;
+        off(type: 'pm:markerdrag', fn?: PM.MarkerDragEventHandler): this;
 
         /** Fired when dragging of a vertex-marker ends. */
-        on(type: 'pm:markerdragend', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES, intersectionRest: boolean }) => void): this;
+        on(type: 'pm:markerdragend', fn: PM.MarkerDragEndEventHandler): this;
+        off(type: 'pm:markerdragend', fn?: PM.MarkerDragEndEventHandler): this;
 
         /** Fired when coords of a layer are reset. E.g. by self-intersection.. */
-        on(type: 'pm:layerreset	', fn: (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: no any
-
-        /** Fired during a marker move/drag. */
-        on(type: 'pm:snapdrag', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
-
-        /** Fired when a vertex is snapped. */
-        on(type: 'pm:snap', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
-
-        /** Fired when a vertex is unsnapped. */
-        on(type: 'pm:unsnap', fn: (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void): this;
+        on(type: 'pm:layerreset', fn: PM.LayerResetEventHandler): this;
+        off(type: 'pm:layerreset', fn?: PM.LayerResetEventHandler): this;
 
         /** When allowSelfIntersection: false, this event is fired as soon as a self-intersection is detected. */
-        on(type: 'pm:intersect', fn: (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer, intersection: L.LatLng }) => void): this; // todo: uncertain about intersection
-
-        /** Called when the center of a circle is placed/moved. */
-        on(type: 'pm:centerplaced', fn: (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer, latLng: L.LatLng }) => void): this;
+        on(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
+        off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
 
 
         /****************************************** 
@@ -149,7 +206,8 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when Edit Mode is toggled. */
-        on(type: 'pm:globaleditmodetoggled', fn: (e: { enabled: boolean, map: L.Map }) => void): this;
+        on(type: 'pm:globaleditmodetoggled', fn: PM.GlobalEditModeToggledEventHandler): this;
+        off(type: 'pm:globaleditmodetoggled', fn?: PM.GlobalEditModeToggledEventHandler): this;
 
         /****************************************** 
         * 
@@ -158,7 +216,8 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when Drag Mode is toggled. */
-        on(type: 'pm:globaldragmodetoggled', fn: (e: { enabled: boolean, map: L.Map }) => void): this;
+        on(type: 'pm:globaldragmodetoggled', fn: PM.GlobalDragModeToggledEventHandler): this;
+        off(type: 'pm:globaldragmodetoggled', fn?: PM.GlobalDragModeToggledEventHandler): this;
 
         /****************************************** 
         * 
@@ -167,22 +226,18 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when a layer starts being dragged. */
-        on(type: 'pm:dragstart', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
+        on(type: 'pm:dragstart', fn: PM.DragStartEventHandler): this;
+        off(type: 'pm:dragstart', fn?: PM.DragStartEventHandler): this;
 
         /** Fired when a layer is dragged. */
-        on(type: 'pm:drag', fn: (e: { layer: L.Layer, containerPoint: any, latLng: L.LatLng, layerPoint: L.Point, originalEvent: any, shape: PM.SUPPORTED_SHAPES }) => void): this; // todo: any
+        on(type: 'pm:drag', fn: PM.DragEventHandler): this;
+        off(type: 'pm:drag', fn?: PM.DragEventHandler): this;
 
         /** Fired when a layer stops being dragged. */
-        on(type: 'pm:dragend', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
+        on(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
+        off(type: 'pm:dragend', fn?: PM.DragEndEventHandler): this;
 
-        /****************************************** 
-        * 
-        * TODO: REMOVE MODE EVENTS ON LAYER ONLY
-        *
-        ********************************************/
 
-        /** Fired when a layer is removed via Removal Mode. */
-        on(type: 'pm:remove', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
 
         /****************************************** 
         * 
@@ -191,10 +246,8 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when Removal Mode is toggled. */
-        on(type: 'pm:globalremovalmodetoggled', fn: (e: { enabled: boolean, map: L.Map }) => void): this;
-
-        /** Fired when a layer is removed via Removal Mode. */
-        on(type: 'pm:remove', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
+        on(type: 'pm:globalremovalmodetoggled', fn: PM.GlobalRemovalModeToggledEventHandler): this;
+        off(type: 'pm:globalremovalmodetoggled', fn?: PM.GlobalRemovalModeToggledEventHandler): this;
 
         /****************************************** 
         * 
@@ -203,43 +256,9 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when a layer is removed via Removal Mode. */
-        on(type: 'pm:globalcutmodetoggled', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
+        on(type: 'pm:globalcutmodetoggled', fn: PM.GlobalCutModeToggledEventHandler): this;
+        off(type: 'pm:globalcutmodetoggled', fn?: PM.GlobalCutModeToggledEventHandler): this;
 
-        /** Fired when a layer is edited / cut. */
-        on(type: 'pm:cut', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
-
-        /****************************************** 
-        * 
-        * TODO: CUT MODE EVENTS ON LAYER ONLY
-        *
-        ********************************************/
-
-        /** Fired when the layer being cut. */
-        on(type: 'pm:cut', fn: (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
-
-        /** Fired when a layer is edited / cut */
-        on(type: 'pm:edit', fn: (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void): this;
-
-        /****************************************** 
-        * 
-        * TODO: ROTATE MODE EVENTS ON LAYER ONLY
-        *
-        ********************************************/
-
-        /** Fired when rotation is enabled for a layer. */
-        on(type: 'pm:rotateenable', fn: (e: { layer: L.Layer, helpLayer: L.Layer }) => void): this;
-
-        /** Fired when rotation is disabled for a layer. */
-        on(type: 'pm:rotatedisable', fn: (e: { layer: L.Layer }) => void): this;
-
-        /** Fired when rotation starts on a layer. */
-        on(type: 'pm:rotatestart', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, originLatLngs: L.LatLng[] }) => void): this;
-
-        /** Fired when a layer is rotated. */
-        on(type: 'pm:rotate', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, angleDiff: number, oldLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void): this;
-
-        /** Fired when rotation ends on a layer. */
-        on(type: 'pm:rotateend', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, originLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void): this;
 
         /****************************************** 
         * 
@@ -248,22 +267,8 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when Rotate Mode is toggled. */
-        on(type: 'pm:globalrotatemodetoggled', fn: (e: { enabled: boolean, map: L.Map }) => void): this;
-
-        /** Fired when rotation is enabled for a layer. */
-        on(type: 'pm:rotateenable', fn: (e: { layer: L.Layer, helpLayer: L.Layer }) => void): this;
-
-        /** Fired when rotation is disabled for a layer. */
-        on(type: 'pm:rotatedisable', fn: (e: { layer: L.Layer }) => void): this;
-
-        /** Fired when rotation starts on a layer. */
-        on(type: 'pm:rotatestart', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, originLatLngs: L.LatLng[] }) => void): this;
-
-        /** Fired when a layer is rotated. */
-        on(type: 'pm:rotate', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, angleDiff: number, oldLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void): this;
-
-        /** Fired when rotation ends on a layer. */
-        on(type: 'pm:rotateend', fn: (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, originLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void): this;
+        on(type: 'pm:globalrotatemodetoggled', fn: PM.GlobalRotateModeToggledEventHandler): this;
+        off(type: 'pm:globalrotatemodetoggled', fn?: PM.GlobalRotateModeToggledEventHandler): this;
 
 
         /****************************************** 
@@ -273,7 +278,8 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Standard Leaflet event. Fired when any layer is removed. */
-        on(type: 'pm:langchange', fn: (e: { activeLang: string, oldLang: string, fallback: string, translations: PM.Translations }) => void): this;
+        on(type: 'pm:langchange', fn: PM.LangChangeEventHandler): this;
+        off(type: 'pm:langchange', fn?: PM.LangChangeEventHandler): this;
 
         /****************************************** 
         * 
@@ -282,10 +288,12 @@ declare module 'leaflet' {
         ********************************************/
 
         /** Fired when a Toolbar button is clicked. */
-        on(type: 'pm:buttonclick', fn: (e: { btnName: string, button: PM.Button }) => void): this;
+        on(type: 'pm:buttonclick', fn: PM.ButtonClickEventHandler): this;
+        off(type: 'pm:buttonclick', fn?: PM.ButtonClickEventHandler): this;
 
         /** Fired when a Toolbar action is clicked. */
-        on(type: 'pm:actionclick', fn: (e: { text: string; action: string; btnName: string; button: PM.Button }) => void): this;
+        on(type: 'pm:actionclick', fn: PM.ActionClickEventHandler): this;
+        off(type: 'pm:actionclick', fn?: PM.ActionClickEventHandler): this;
     }
 
     namespace PM {
@@ -512,7 +520,7 @@ declare module 'leaflet' {
             disabled?: boolean;
         }
 
-        type PANE = 'mapPane'|'tilePane'|'overlayPane'|'shadowPane'|'markerPane'|'tooltipPane'|'popupPane';
+        type PANE = 'mapPane' | 'tilePane' | 'overlayPane' | 'shadowPane' | 'markerPane' | 'tooltipPane' | 'popupPane';
 
         interface GlobalOptions extends DrawModeOptions, EditModeOptions {
             /** add the created layers to a layergroup instead to the map. */
@@ -894,6 +902,101 @@ declare module 'leaflet' {
             /** converts a circle into a polygon with default 60 sides */
             function circleToPolygon(circle: L.Circle, sides?: number): L.Polygon
         }
+
+
+        /** 
+         * DRAW MODE MAP EVENT HANDLERS
+         */
+
+        export type GlobalDrawModeToggledEventHandler = (event: { enabled: boolean, shape: PM.SUPPORTED_SHAPES, map: L.Map }) => void;
+        export type DrawStartEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer }) => void;
+        export type DrawEndEventHandler = (e: { shape: PM.SUPPORTED_SHAPES }) => void;
+        export type CreateEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void;
+
+        /**
+         * DRAW MODE LAYER EVENT HANDLERS
+         */
+
+        export type VertexAddedEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer, marker: L.Marker, latLng: L.LatLng }) => void;
+        export type SnapEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, distance: number, layer: L.Layer, workingLayer: L.Layer, marker: L.Marker, layerInteractedWith: L.Layer, segement: any, snapLatLng: L.LatLng }) => void;
+        export type CenterPlacedEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, workingLayer: L.Layer, latLng: L.LatLng }) => void;
+
+        /**
+         * EDIT MODE LAYER EVENT HANDLERS
+         */
+
+        export type EditEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void;
+        export type UpdateEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void;
+        export type EnableEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void;
+        export type DisableEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer }) => void;
+        export type VertexAddedEventHandler2 = (e: { layer: L.Layer, indexPath: number, latLng: L.LatLng, marker: L.Marker, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type VertexRemovedEventHandler = (e: { layer: L.Layer, indexPath: number, marker: L.Marker, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type VertexClickEventHandler = (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type MarkerDragStartEventHandler = (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type MarkerDragEventHandler = (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type MarkerDragEndEventHandler = (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES, intersectionRest: boolean }) => void;
+        export type LayerResetEventHandler = (e: { layer: L.Layer, indexPath: number, markerEvent: any, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type IntersectEventHandler = (e: { shape: PM.SUPPORTED_SHAPES, layer: L.Layer, intersection: L.LatLng }) => void;
+
+        /**
+         * EDIT MODE MAP EVENT HANDLERS
+         */
+        export type GlobalEditModeToggledEventHandler = (event: { enabled: boolean, map: L.Map }) => void;
+
+        /**
+         * DRAG MODE MAP EVENT HANDLERS
+         */
+        export type GlobalDragModeToggledEventHandler = (event: { enabled: boolean, map: L.Map }) => void;
+
+        /**
+         * DRAG MODE LAYER EVENT HANDLERS
+         */
+        export type DragStartEventHandler = (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type DragEventHandler = (e: { layer: L.Layer, containerPoint: any, latLng: L.LatLng, layerPoint: L.Point, originalEvent: any, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type DragEndEventHandler = (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void;
+
+        /**
+         * REMOVE MODE LAYER EVENT HANDLERS
+         */
+
+        export type RemoveEventHandler = (e: { layer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void;
+
+        /**
+         * REMOVE MODE MAP EVENT HANDLERS
+         */
+        export type GlobalRemovalModeToggledEventHandler = (e: { enabled: boolean, map: L.Map }) => void;
+
+        /**
+         * CUT MODE MAP EVENT HANDLERS
+         */
+        export type GlobalCutModeToggledEventHandler = (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void;
+        export type CutEventHandler = (e: { layer: L.Layer, originalLayer: L.Layer, shape: PM.SUPPORTED_SHAPES }) => void;
+
+        /**
+         * ROTATE MODE LAYER EVENT HANDLERS
+         */
+        export type RotateEnableEventHandler = (e: { layer: L.Layer, helpLayer: L.Layer }) => void;
+        export type RotateDisableEventHandler = (e: { layer: L.Layer }) => void;
+        export type RotateStartEventHandler = (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, originLatLngs: L.LatLng[] }) => void;
+        export type RotateEventHandler = (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, angleDiff: number, oldLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void;
+        export type RotateEndEventHandler = (e: { layer: L.Layer, helpLayer: L.Layer, startAngle: number, angle: number, originLatLngs: L.LatLng[], newLatLngs: L.LatLng[] }) => void;
+
+
+        /**
+         * ROTATE MODE MAP EVENT HANDLERS
+         */
+        export type GlobalRotateModeToggledEventHandler = (e: { enabled: boolean, map: L.Map }) => void;
+
+        /**
+         * TRANSLATION EVENT HANDLERS
+         */
+        export type LangChangeEventHandler = (e: { activeLang: string, oldLang: string, fallback: string, translations: PM.Translations }) => void;
+
+        /**
+         * CONTROL MAP EVENT HANDLERS
+         */
+        export type ButtonClickEventHandler = (e: { btnName: string, button: PM.Button }) => void;
+        export type ActionClickEventHandler = (e: { text: string; action: string; btnName: string; button: PM.Button }) => void;
     }
 }
 
