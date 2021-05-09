@@ -9,7 +9,7 @@
  */
 
 import './polyfills';
-import { version } from '../../package.json';
+import packageInfo from '../../package.json';
 
 import Map from './L.PM.Map';
 import Toolbar from './Toolbar/L.PM.Toolbar';
@@ -41,7 +41,7 @@ import './helpers/Matrix';
 import Utils from './L.PM.Utils';
 
 L.PM = L.PM || {
-  version,
+  version: packageInfo.version,
   Map,
   Toolbar,
   Draw,
