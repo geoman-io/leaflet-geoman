@@ -508,11 +508,13 @@ declare module 'leaflet' {
             /** CSS class with the Icon. */
             className: string;
 
-            /**  */
+            /** if true, other buttons will be disabled on click (default: true) */
             disableOtherButtons: boolean;
 
+            /** Control can be toggled. */
             doToggle: boolean;
 
+            /** Extending Class f. ex. Line, Polygon, ... L.PM.Draw.EXTENDINGCLASS */
             jsClass: string;
 
             /** Function fired when clicking the control. */
@@ -520,11 +522,13 @@ declare module 'leaflet' {
 
             position: L.ControlPosition;
 
+            /** Text showing when you hover the control. */
             title: string;
 
+            /** toggle state true -> enabled, false -> disabled (default: false) */
             toggleStatus: boolean;
 
-            /** tool. 'options' is ⭐ only. */
+            /** block of the control. 'options' is ⭐ only. */
             tool?: 'draw' | 'edit' | 'custom' | 'options';
         }
 
@@ -557,7 +561,7 @@ declare module 'leaflet' {
             disabled?: boolean;
         }
 
-        type PANE = 'mapPane' | 'tilePane' | 'overlayPane' | 'shadowPane' | 'markerPane' | 'tooltipPane' | 'popupPane';
+        type PANE = 'mapPane' | 'tilePane' | 'overlayPane' | 'shadowPane' | 'markerPane' | 'tooltipPane' | 'popupPane' | string;
 
         interface GlobalOptions extends DrawModeOptions, EditModeOptions {
             /** add the created layers to a layergroup instead to the map. */
@@ -876,7 +880,7 @@ declare module 'leaflet' {
 
         /** the position of each block. */
         interface BlockPositions {
-            /** draw control position (default:''). */
+            /** draw control position (default:''). '' also refers to this position. */
             draw?: ControlPosition;
 
             /** edit control position (default:''). */
