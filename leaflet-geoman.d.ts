@@ -39,19 +39,19 @@ declare module 'leaflet' {
 
     /**
      * Extends @types/leaflet events...
-     * 
+     *
      * todo: This is kind of a mess, and it makes all these event handlers show
      * up on Layers and Map. Leaflet itself is based around Evented, and @types/leaflet
      * makes this very hard to work around.
-     * 
+     *
      */
     interface Evented {
 
-        /****************************************** 
-        * 
-        * AVAILABLE ON MAP + LAYER, THESE ARE OK ON EVENTED.
-        *
-        ********************************************/
+        /******************************************
+         *
+         * AVAILABLE ON MAP + LAYER, THESE ARE OK ON EVENTED.
+         *
+         ********************************************/
 
         /** Fired when a layer is removed via Removal Mode. */
         on(type: 'pm:remove', fn: PM.RemoveEventHandler): this;
@@ -89,11 +89,11 @@ declare module 'leaflet' {
         off(type: 'pm:rotateend', fn?: PM.RotateEndEventHandler): this;
 
 
-        /****************************************** 
-        * 
-        * TODO: DRAW/EDIT MODE EVENTS LAYER ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: DRAW/EDIT MODE EVENTS LAYER ONLY
+         *
+         ********************************************/
 
         /** Fired during a marker move/drag. */
         on(type: 'pm:snapdrag', fn: PM.SnapEventHandler): this;
@@ -115,11 +115,11 @@ declare module 'leaflet' {
         once(type: 'pm:centerplaced', fn: PM.CenterPlacedEventHandler): this;
         off(type: 'pm:centerplaced', fn?: PM.CenterPlacedEventHandler): this;
 
-        /****************************************** 
-        * 
-        * TODO: CUT/EDIT MODE EVENTS LAYER ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: CUT/EDIT MODE EVENTS LAYER ONLY
+         *
+         ********************************************/
 
         /** Fired when a layer is edited. */
         on(type: 'pm:edit', fn: PM.EditEventHandler): this;
@@ -127,11 +127,11 @@ declare module 'leaflet' {
         off(type: 'pm:edit', fn?: PM.EditEventHandler): this;
 
 
-        /****************************************** 
-        * 
-        * TODO: DRAW MODE EVENTS ON MAP ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: DRAW MODE EVENTS ON MAP ONLY
+         *
+         ********************************************/
 
         /** Fired when Drawing Mode is toggled. */
         on(type: 'pm:globaldrawmodetoggled', fn: PM.GlobalDrawModeToggledEventHandler, context?: any): L.Evented;
@@ -154,8 +154,8 @@ declare module 'leaflet' {
         off(type: 'pm:create', fn?: PM.CreateEventHandler, context?: any): L.Evented;
 
 
-        /****************************************** 
-         * 
+        /******************************************
+         *
          * TODO: DRAW MODE EVENTS ON LAYER ONLY
          *
          ********************************************/
@@ -165,11 +165,11 @@ declare module 'leaflet' {
         once(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler): this;
         off(type: 'pm:vertexadded', fn?: PM.VertexAddedEventHandler): this;
 
-        /****************************************** 
-        * 
-        * TODO: EDIT MODE EVENTS ON LAYER ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: EDIT MODE EVENTS ON LAYER ONLY
+         *
+         ********************************************/
 
         /** Fired when edit mode is disabled and a layer is edited and its coordinates have changed. */
         on(type: 'pm:update', fn: PM.UpdateEventHandler): this;
@@ -227,33 +227,33 @@ declare module 'leaflet' {
         off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
 
 
-        /****************************************** 
-        * 
-        * TODO: EDIT MODE EVENTS ON MAP ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: EDIT MODE EVENTS ON MAP ONLY
+         *
+         ********************************************/
 
         /** Fired when Edit Mode is toggled. */
         on(type: 'pm:globaleditmodetoggled', fn: PM.GlobalEditModeToggledEventHandler): this;
         once(type: 'pm:globaleditmodetoggled', fn: PM.GlobalEditModeToggledEventHandler): this;
         off(type: 'pm:globaleditmodetoggled', fn?: PM.GlobalEditModeToggledEventHandler): this;
 
-        /****************************************** 
-        * 
-        * TODO: DRAG MODE EVENTS ON MAP ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: DRAG MODE EVENTS ON MAP ONLY
+         *
+         ********************************************/
 
         /** Fired when Drag Mode is toggled. */
         on(type: 'pm:globaldragmodetoggled', fn: PM.GlobalDragModeToggledEventHandler): this;
         once(type: 'pm:globaldragmodetoggled', fn: PM.GlobalDragModeToggledEventHandler): this;
         off(type: 'pm:globaldragmodetoggled', fn?: PM.GlobalDragModeToggledEventHandler): this;
 
-        /****************************************** 
-        * 
-        * TODO: DRAG MODE EVENTS ON LAYER ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: DRAG MODE EVENTS ON LAYER ONLY
+         *
+         ********************************************/
 
         /** Fired when a layer starts being dragged. */
         on(type: 'pm:dragstart', fn: PM.DragStartEventHandler): this;
@@ -270,22 +270,22 @@ declare module 'leaflet' {
         once(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
         off(type: 'pm:dragend', fn?: PM.DragEndEventHandler): this;
 
-        /****************************************** 
-        * 
-        * TODO: REMOVE MODE EVENTS ON MAP ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: REMOVE MODE EVENTS ON MAP ONLY
+         *
+         ********************************************/
 
         /** Fired when Removal Mode is toggled. */
         on(type: 'pm:globalremovalmodetoggled', fn: PM.GlobalRemovalModeToggledEventHandler): this;
         once(type: 'pm:globalremovalmodetoggled', fn: PM.GlobalRemovalModeToggledEventHandler): this;
         off(type: 'pm:globalremovalmodetoggled', fn?: PM.GlobalRemovalModeToggledEventHandler): this;
 
-        /****************************************** 
-        * 
-        * TODO: CUT MODE EVENTS ON MAP ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: CUT MODE EVENTS ON MAP ONLY
+         *
+         ********************************************/
 
         /** Fired when a layer is removed via Removal Mode. */
         on(type: 'pm:globalcutmodetoggled', fn: PM.GlobalCutModeToggledEventHandler): this;
@@ -293,11 +293,11 @@ declare module 'leaflet' {
         off(type: 'pm:globalcutmodetoggled', fn?: PM.GlobalCutModeToggledEventHandler): this;
 
 
-        /****************************************** 
-        * 
-        * TODO: ROTATE MODE EVENTS ON MAP ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: ROTATE MODE EVENTS ON MAP ONLY
+         *
+         ********************************************/
 
         /** Fired when Rotate Mode is toggled. */
         on(type: 'pm:globalrotatemodetoggled', fn: PM.GlobalRotateModeToggledEventHandler): this;
@@ -305,22 +305,22 @@ declare module 'leaflet' {
         off(type: 'pm:globalrotatemodetoggled', fn?: PM.GlobalRotateModeToggledEventHandler): this;
 
 
-        /****************************************** 
-        * 
-        * TODO: TRANSLATION EVENTS ON MAP ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: TRANSLATION EVENTS ON MAP ONLY
+         *
+         ********************************************/
 
         /** Standard Leaflet event. Fired when any layer is removed. */
         on(type: 'pm:langchange', fn: PM.LangChangeEventHandler): this;
         once(type: 'pm:langchange', fn: PM.LangChangeEventHandler): this;
         off(type: 'pm:langchange', fn?: PM.LangChangeEventHandler): this;
 
-        /****************************************** 
-        * 
-        * TODO: CONTROL EVENTS ON MAP ONLY
-        *
-        ********************************************/
+        /******************************************
+         *
+         * TODO: CONTROL EVENTS ON MAP ONLY
+         *
+         ********************************************/
 
         /** Fired when a Toolbar button is clicked. */
         on(type: 'pm:buttonclick', fn: PM.ButtonClickEventHandler): this;
@@ -348,10 +348,10 @@ declare module 'leaflet' {
             | string;
 
         /**
-        * Changes default registration of leaflet-geoman on leaflet layers.
-        *
-        * @param optIn - if true, a layers pmIgnore property has to be set to false to get initiated.
-        */
+         * Changes default registration of leaflet-geoman on leaflet layers.
+         *
+         * @param optIn - if true, a layers pmIgnore property has to be set to false to get initiated.
+         */
         function setOptIn(optIn: boolean): void;
 
         /**
@@ -779,14 +779,14 @@ declare module 'leaflet' {
 
             /** leaflet layer event to finish the drawn shape (default:null). */
             finishOn?:
-            | null
-            | 'click'
-            | 'dblclick'
-            | 'mousedown'
-            | 'mouseover'
-            | 'mouseout'
-            | 'contextmenu'
-            | 'snap';
+                | null
+                | 'click'
+                | 'dblclick'
+                | 'mousedown'
+                | 'mouseover'
+                | 'mouseout'
+                | 'contextmenu'
+                | 'snap';
 
             /** hide the middle Markers in edit mode from Polyline and Polygon. (default:false). */
             hideMiddleMarkers?: boolean;
@@ -945,7 +945,7 @@ declare module 'leaflet' {
         }
 
 
-        /** 
+        /**
          * DRAW MODE MAP EVENT HANDLERS
          */
 
