@@ -177,6 +177,53 @@ const EventMixin = {
     this.__fire(fireLayer,'pm:unsnap', eventInfo, source, customPayload);
   },
 
+  // Rotation Events
+  // Fired when rotation is enabled
+  _fireRotationEnable(fireLayer, helpLayer, source = "Rotation", customPayload = {}){
+    this.__fire(fireLayer,'pm:rotateenable', {
+      layer: this._layer,
+      helpLayer: this._rotatePoly
+    }, source, customPayload);
+  },
+  // Fired when rotation is disabled
+  _fireRotationDisable(fireLayer, source = "Rotation", customPayload = {}){
+    this.__fire(fireLayer,'pm:rotatedisable', {
+      layer: this._layer
+    }, source, customPayload);
+  },
+  // Fired when rotation starts
+  _fireRotationStart(fireLayer, originLatLngs, source = "Rotation", customPayload = {}){
+    this.__fire(fireLayer,'pm:rotatestart', {
+      layer: this._rotationLayer,
+      helpLayer: this._layer,
+      startAngle: this._startAngle,
+      originLatLngs
+    }, source, customPayload);
+  },
+  // Fired while rotation
+  _fireRotation(fireLayer, angleDiff, oldLatLngs, source = "Rotation", customPayload = {}){
+    this.__fire(fireLayer,'pm:rotate', {
+      layer: this._rotationLayer,
+      helpLayer: this._layer,
+      startAngle: this._startAngle,
+      angle: this._rotationLayer.pm.getAngle(),
+      angleDiff,
+      oldLatLngs,
+      newLatLngs: this._rotationLayer.getLatLngs()
+    }, source, customPayload);
+  },
+  // Fired when rotation ends
+  _fireRotationEnd(fireLayer, startAngle, originLatLngs, source = "Rotation", customPayload = {}){
+    this.__fire(fireLayer,'pm:rotateend', {
+      layer: this._rotationLayer,
+      helpLayer: this._layer,
+      startAngle,
+      angle: this._rotationLayer.pm.getAngle(),
+      originLatLngs,
+      newLatLngs: this._rotationLayer.getLatLngs()
+    }, source, customPayload);
+  },
+
   // Global Events
   // Fired when a Toolbar action is clicked
   _fireActionClick(action, btnName, button, source = "Toolbar", customPayload = {}){
