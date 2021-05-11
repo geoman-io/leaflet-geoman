@@ -42,7 +42,7 @@ Edit.CircleMarker = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
 
-    L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
+    this._fireEnable();
   },
   disable(layer = this._layer) {
     // prevent disabling if layer is being dragged
@@ -76,10 +76,10 @@ Edit.CircleMarker = Edit.extend({
     // only fire events if it was enabled before
     if (this.enabled()) {
       if (this._layerEdited) {
-        L.PM.Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
+        this._fireUpdate();
       }
       this._layerEdited = false;
-      L.PM.Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
+      this._fireDisable();
     }
 
     layer.pm._enabled = false;
@@ -223,11 +223,7 @@ Edit.CircleMarker = Edit.extend({
 
     this._updateHiddenPolyCircle();
 
-    L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
-      layer: this._layer,
-      latlng: center,
-      shape: this.getShape()
-    });
+    this._fireCenterPlaced("Edit");
   },
   _syncMarkers() {
     const center = this._layer.getLatLng();
@@ -269,41 +265,25 @@ Edit.CircleMarker = Edit.extend({
       this.disable();
     }
     this._layer.remove();
-    L.PM.Utils._fireEvent(this._layer,'pm:remove', { layer: this._layer, shape: this.getShape() });
-    L.PM.Utils._fireEvent(this._map,'pm:remove', { layer: this._layer, shape: this.getShape() });
+    this._fireRemove(this._layer);
+    this._fireRemove(this._map, this._layer);
   },
   _onDragStart(){
     this._map.pm.Draw.CircleMarker._layerIsDragging = true;
   },
   _onMarkerDragStart(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
-      markerEvent: e,
-      layer: this._layer,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
+    this._fireMarkerDragStart(e);
   },
   _onMarkerDrag(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
+    this._fireMarkerDrag(e);
   },
   _onMarkerDragEnd(e) {
     this._map.pm.Draw.CircleMarker._layerIsDragging = false;
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
-  },
-  _fireEdit() {
-    // fire edit event
-    L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
-    this._layerEdited = true;
+    if (this.options.editable) {
+      this._fireEdit();
+      this._layerEdited = true;
+    }
+    this._fireMarkerDragEnd(e);
   },
   // _initSnappableMarkers when option editable is not true
   _initSnappableMarkersDrag() {

@@ -1,6 +1,8 @@
 import { getTranslation } from '../helpers';
+import EventMixin from "../Mixins/Events";
 
 const PMButton = L.Control.extend({
+  includes: [EventMixin],
   options: {
     position: 'topleft',
   },
@@ -160,7 +162,7 @@ const PMButton = L.Control.extend({
                 break;
               }
             }
-            L.PM.Utils._fireEvent(this._map,'pm:actionclick', {text: action.text, action, btnName, button});
+            this._fireActionClick(action, btnName, button);
           };
 
           L.DomEvent.addListener(actionNode, 'click', actionClick, this);
@@ -201,7 +203,7 @@ const PMButton = L.Control.extend({
             break;
           }
         }
-        L.PM.Utils._fireEvent(this._map,'pm:buttonclick', {btnName, button});
+        this._fireButtonClick(btnName, button);
       });
       L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
     }

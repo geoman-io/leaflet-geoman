@@ -95,10 +95,7 @@ Draw.Line = Draw.extend({
 
 
     // fire drawstart event
-    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
+    this._fireDrawStart();
     this._setGlobalDrawMode();
   },
   disable() {
@@ -137,7 +134,7 @@ Draw.Line = Draw.extend({
     }
 
     // fire drawend event
-    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    this._fireDrawEnd();
     this._setGlobalDrawMode();
 
   },
@@ -260,12 +257,7 @@ Draw.Line = Draw.extend({
 
     this._hintline.setLatLngs([latlng, latlng]);
 
-    L.PM.Utils._fireEvent(this._layer,'pm:vertexadded', {
-      shape: this._shape,
-      workingLayer: this._layer,
-      marker: newMarker,
-      latlng,
-    });
+    this._fireVertexAdded(newMarker, undefined, latlng, "Draw");
 
     // check if we should finish on snap
     if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {
@@ -330,10 +322,7 @@ Draw.Line = Draw.extend({
     polylineLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      layer: polylineLayer,
-    });
+    this._fireCreate(polylineLayer);
 
     if (this.options.snappable) {
       this._cleanupSnapping();

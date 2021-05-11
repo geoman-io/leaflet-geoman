@@ -1,8 +1,9 @@
 import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
+import EventMixin from "../Mixins/Events";
 
 const Draw = L.Class.extend({
-  includes: [SnapMixin],
+  includes: [SnapMixin, EventMixin],
   options: {
     snappable: true,  //TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,
@@ -67,6 +68,10 @@ const Draw = L.Class.extend({
     // if somebody wants to know what shapes are available
     return this.shapes;
   },
+  getShape() {
+    // return the shape of the current drawing layer
+    return this._shape;
+  },
   enable(shape, options) {
     if (!shape) {
       throw new Error(
@@ -109,16 +114,9 @@ const Draw = L.Class.extend({
   _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
     if (this._shape === "Cut") {
-      L.PM.Utils._fireEvent(this._map,'pm:globalcutmodetoggled', {
-        enabled: !!this._enabled,
-        map: this._map,
-      });
+      this._fireGlobalCutModeToggled();
     } else {
-      L.PM.Utils._fireEvent(this._map,'pm:globaldrawmodetoggled', {
-        enabled: this._enabled,
-        shape: this._shape,
-        map: this._map,
-      });
+      this._fireGlobalDrawModeToggled();
     }
 
     const layers = L.PM.Utils.findLayers(this._map);

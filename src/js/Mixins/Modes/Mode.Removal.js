@@ -19,7 +19,7 @@ const GlobalRemovalMode = {
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
 
-    this._fireRemovalModeEvent(true);
+    this._fireGlobalRemovalModeToggled(true);
   },
   disableGlobalRemovalMode() {
     this._globalRemovalMode = false;
@@ -33,7 +33,7 @@ const GlobalRemovalMode = {
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
 
-    this._fireRemovalModeEvent(false);
+    this._fireGlobalRemovalModeToggled(false);
   },
   // TODO: Remove in the next major release
   globalRemovalEnabled() {
@@ -62,12 +62,6 @@ const GlobalRemovalMode = {
       this.enableGlobalRemovalMode();
     }
   },
-  _fireRemovalModeEvent(enabled) {
-    L.PM.Utils._fireEvent(this.map,'pm:globalremovalmodetoggled', {
-      enabled,
-      map: this.map,
-    });
-  },
   removeLayer(e) {
     const layer = e.target;
     // only remove layer, if it's handled by leaflet-geoman,
@@ -78,13 +72,12 @@ const GlobalRemovalMode = {
       layer.removeFrom(this.map.pm._getContainingLayer());
       layer.remove();
       if(layer instanceof L.LayerGroup){
-        L.PM.Utils._fireEvent(layer,'pm:remove', { layer, shape: undefined });
-        L.PM.Utils._fireEvent(this.map,'pm:remove', { layer, shape: undefined });
+        this._fireRemoveLayerGroup(layer);
+        this._fireRemoveLayerGroup(this.map, layer);
       }else{
-        L.PM.Utils._fireEvent(layer,'pm:remove', { layer, shape: layer.pm.getShape() });
-        L.PM.Utils._fireEvent(this.map,'pm:remove', { layer, shape: layer.pm.getShape() });
+        layer.pm._fireRemove(layer);
+        layer.pm._fireRemove(this.map, layer);
       }
-
     }
   },
   _isRelevant(layer){
