@@ -325,4 +325,29 @@ describe('Edit LayerGroup', () => {
     cy.hasVertexMarkers(0);
   });
 
+  it("re-init GeoJSON OptIn", ()=>{
+    let layerGroup;
+    cy.window().then(({ map, L }) => {
+      cy.fixture("LineString")
+        .as('poly')
+        .then(json => {
+          layerGroup = L.geoJson(json, {pmIgnore: true}).addTo(map);
+          const bounds = layerGroup.getBounds();
+          map.fitBounds(bounds);
+        });
+    });
+
+    cy.window().then(({map, L}) => {
+      expect(map.pm.getGeomanLayers().length).to.eq(0);
+
+      // enable all child layers of the group
+      layerGroup.setStyle({pmIgnore:false});
+      // enable the group self
+      layerGroup.options.pmIgnore = false;
+      L.PM.reInitLayer(layerGroup);
+
+      expect(layerGroup.pm).to.not.eq(undefined);
+      expect(map.pm.getGeomanLayers().length).to.eq(6);
+    })
+  });
 });
