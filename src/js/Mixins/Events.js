@@ -119,6 +119,7 @@ const EventMixin = {
   _fireVertexAdded(marker, indexPath, latlng, source = "Edit", customPayload = {}){
     this.__fire(this._layer,'pm:vertexadded', {
       layer: this._layer,
+      workingLayer: this._layer,
       marker,
       indexPath,
       latlng,
