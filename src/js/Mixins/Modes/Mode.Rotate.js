@@ -33,12 +33,6 @@ const GlobalRotateMode = {
       this.enableGlobalRotateMode();
     }
   },
-  _fireRotateModeEvent() {
-    L.PM.Utils._fireEvent(this.map, 'pm:globalrotatemodetoggled', {
-      enabled: this.globalRotateModeEnabled(),
-      map: this.map,
-    });
-  }
 
 };
 export default GlobalRotateMode;
