@@ -21,15 +21,8 @@ const RotateMixin = {
 
     const originLatLngs = L.polygon(this._rotationLayer.pm._rotateOrgLatLng).getLatLngs();
 
-    const data = {
-      layer: this._rotationLayer,
-      helpLayer: this._layer,
-      startAngle: this._startAngle,
-      originLatLngs
-    };
-    L.PM.Utils._fireEvent(this._rotationLayer,'pm:rotatestart',data);
-    L.PM.Utils._fireEvent(this._map,'pm:rotatestart',data);
-
+    this._fireRotationStart(this._rotationLayer, originLatLngs);
+    this._fireRotationStart(this._map, originLatLngs);
   },
   _onRotate(e) {
     const position = _toPoint(this._map, e.target.getLatLng());
@@ -80,8 +73,8 @@ const RotateMixin = {
       oldLatLngs,
       newLatLngs: this._rotationLayer.getLatLngs()
     };
-    L.PM.Utils._fireEvent(this._rotationLayer,'pm:rotate',data);
-    L.PM.Utils._fireEvent(this._map,'pm:rotate',data);
+    this._fireRotation(this._rotationLayer, angleDiff, oldLatLngs);
+    this._fireRotation(this._map, angleDiff, oldLatLngs);
   },
   _onRotateEnd(){
     const startAngle = this._startAngle;
@@ -95,16 +88,8 @@ const RotateMixin = {
     // store the new latlngs
     this._rotationLayer.pm._rotateOrgLatLng = L.polygon(this._rotationLayer.getLatLngs()).getLatLngs();
 
-    const data = {
-      layer: this._rotationLayer,
-      helpLayer: this._layer,
-      startAngle,
-      angle: this._rotationLayer.pm.getAngle(),
-      originLatLngs,
-      newLatLngs: this._rotationLayer.getLatLngs()
-    };
-    L.PM.Utils._fireEvent(this._rotationLayer,'pm:rotateend',data);
-    L.PM.Utils._fireEvent(this._map,'pm:rotateend',data);
+    this._fireRotationEnd(this._rotationLayer,startAngle,originLatLngs);
+    this._fireRotationEnd(this._map,startAngle,originLatLngs);
 
     this._preventRenderingMarkers(false);
   },
@@ -147,13 +132,9 @@ const RotateMixin = {
 
     this._rotateEnabled = true;
 
-    const data = {
-      layer: this._layer,
-      helpLayer: this._rotatePoly
-    };
-    L.PM.Utils._fireEvent(this._layer, 'pm:rotateenable', data);
+    this._fireRotationEnable(this._layer);
     // we need to use this._layer._map because this._map can be undefined if layer was never enabled for editing before
-    L.PM.Utils._fireEvent(this._layer._map, 'pm:rotateenable', data);
+    this._fireRotationEnable(this._layer._map);
   },
   disableRotate(){
     if(this.rotateEnabled()){
@@ -166,12 +147,9 @@ const RotateMixin = {
 
       this._rotateEnabled = false;
 
-      const data = {
-        layer: this._layer,
-      };
-      L.PM.Utils._fireEvent(this._layer, 'pm:rotatedisable', data);
+      this._fireRotationDisable(this._layer);
       // we need to use this._layer._map because this._map can be undefined if layer was never enabled for editing before
-      L.PM.Utils._fireEvent(this._layer._map, 'pm:rotatedisable', data);
+      this._fireRotationDisable(this._layer._map);
     }
   },
   rotateEnabled(){

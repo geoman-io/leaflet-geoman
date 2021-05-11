@@ -57,10 +57,7 @@ Draw.Marker = Draw.extend({
     }
 
     // fire drawstart event
-    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
+    this._fireDrawStart();
     this._setGlobalDrawMode();
   },
   disable() {
@@ -98,7 +95,7 @@ Draw.Marker = Draw.extend({
     }
 
     // fire drawend event
-    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    this._fireDrawEnd();
     this._setGlobalDrawMode();
   },
   enabled() {
@@ -168,11 +165,7 @@ Draw.Marker = Draw.extend({
     }
 
     // fire the pm:create event and pass shape and marker
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      marker, // DEPRECATED
-      layer: marker,
-    });
+    this._fireCreate(marker);
 
     this._cleanupSnapping();
 

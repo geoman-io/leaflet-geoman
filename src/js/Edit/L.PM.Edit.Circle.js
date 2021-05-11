@@ -35,7 +35,7 @@ Edit.Circle = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
 
-    L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
+    this._fireEnable();
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -62,11 +62,11 @@ Edit.Circle = Edit.extend({
 
 
     if (this._layerEdited) {
-      L.PM.Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
+      this._fireUpdate();
     }
     this._layerEdited = false;
 
-    L.PM.Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
+    this._fireDisable();
     return true;
   },
   enabled() {
@@ -181,11 +181,7 @@ Edit.Circle = Edit.extend({
 
     this._updateHiddenPolyCircle();
 
-    L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
-      layer: this._layer,
-      latlng: center,
-      shape: this.getShape()
-    });
+    this._fireCenterPlaced("Edit");
   },
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
@@ -221,46 +217,16 @@ Edit.Circle = Edit.extend({
     this._layer.off('pm:dragstart', this._unsnap, this);
   },
   _onMarkerDragStart(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
+    this._fireMarkerDragStart(e);
   },
   _onMarkerDrag(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
+    this._fireMarkerDrag(e);
   },
   _onMarkerDragEnd(e) {
     // fire edit event
     this._fireEdit();
-
-    // fire markerdragend event
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
-  },
-  _fireEdit() {
-    // fire edit event
-    L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
-  },
-  _fireDragStart() {
-    L.PM.Utils._fireEvent(this._layer,'pm:dragstart', { layer: this._layer, shape: this.getShape() });
-  },
-  _fireDrag(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
-  },
-  _fireDragEnd() {
-    L.PM.Utils._fireEvent(this._layer,'pm:dragend', { layer: this._layer, shape: this.getShape() });
+    this._fireMarkerDragEnd(e);
   },
   _updateHiddenPolyCircle() {
     if (this._hiddenPolyCircle) {
