@@ -14,6 +14,7 @@ const Edit = L.Class.extend({
     limitMarkersToCount: -1,
     hideMiddleMarkers: false,
     snapSegment: true,
+    syncLayersOnDrag: false,
     draggable: true,  //TODO: next major Release, rename it to allowDragging
     allowEditing: true, // disable all interactions on a layer which are activated with `enable()`. For example a Circle can't be dragged in Edit-Mode
     allowRemoval: true,

@@ -114,11 +114,12 @@ L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
   
 Enable leaflet-geoman on an ignored layer:  
 ```js  
-layer.options.pmIgnore = false;
+layer.setStyle({pmIgnore: false});
+// layer.options.pmIgnore = false; // If the layer is a LayerGroup / FeatureGroup / GeoJSON this line is needed too
 L.PM.reInitLayer(layer);  
 ```  
 If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.  
-  
+
   
 #### Opt-In  
   
@@ -366,7 +367,8 @@ See the available options in the table below.
 | allowSelfIntersection | `true`  | Allow/Disallow self-intersections on polygons and polylines.                                              |  
 | allowSelfIntersectionEdit | `false`  | Allow/Disallow to change vertices they are connected to a intersecting line. Only working if allowSelfIntersection is `true` and the layer is already self-intersecting while enabling edit mode.                                         |  
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
-| removeLayerBelowMinVertexCount       | `true` | If `true`, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If `false`, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons. |      
+| removeLayerBelowMinVertexCount       | `true` | If `true`, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If `false`, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons. |    
+| syncLayersOnDrag      | `false` | Defines which layers should dragged with this layer together. `true` syncs all layers in the same LayerGroup(s) or you pass an `Array` of layers to sync. |  
 | allowEditing          | `true`  | Edit-Mode for the layer can disabled (`pm.enable()`).                                                     |
 | allowRemoval          | `true`  | Removing can be disabled for the layer.                                                                   | 
 | allowCutting          | `true`  | Layer can be prevented from cutting.                                                                      | 
@@ -435,12 +437,12 @@ map.pm.enableGlobalDragMode();
   
 The following methods are available on `map.pm`:  
   
-| Method                  | Returns   | Description                                                           |  
-| :---------------------- | :-------- | :-------------------------------------------------------------------- |  
-| enableGlobalDragMode()  | -         | Enables global drag mode.                                             |  
-| disableGlobalDragMode() | -         | Disables global drag mode.                                            |  
-| toggleGlobalDragMode()  | -         | Toggles global drag mode.                                             |  
-| globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled. |  
+| Method                  | Returns   | Description                                                                     |  
+| :---------------------- | :-------- | :------------------------------------------------------------------------------ |  
+| enableGlobalDragMode()  | -         | Enables global drag mode.                                                       |  
+| disableGlobalDragMode() | -         | Disables global drag mode.                                                      |  
+| toggleGlobalDragMode()  | -         | Toggles global drag mode.                                                       |  
+| globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled.           |  
   
 The following events are available on a layer instance:  
   
@@ -721,7 +723,7 @@ Change the language of user-facing copy in leaflet-geoman
 map.pm.setLang('de');  
 ```  
   
-Currently available languages are `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `tr`, `ua`, `zh` and `zh_tw`.  
+Currently available languages are `cz`, `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `tr`, `ua`, `zh` and `zh_tw`.  
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.  
   
 You can also provide your own custom translations.  

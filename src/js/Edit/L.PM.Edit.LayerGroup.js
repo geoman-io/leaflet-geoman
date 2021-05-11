@@ -142,6 +142,32 @@ Edit.LayerGroup = L.Class.extend({
   _getMap(){
     return this._map || this._layers.find(l => !!l._map)?._map || null;
   },
+  getLayers(deep = false, filterGroupsOut = true, _layerIds = []){
+    let layers = [];
+    if(deep){
+      // get the layers of LayerGroup childs
+      this._layerGroup.getLayers().forEach((layer)=>{
+        layers.push(layer);
+        if (layer instanceof L.LayerGroup) {
+          if (_layerIds.indexOf(layer._leaflet_id) === -1) {
+            _layerIds.push(layer._leaflet_id);
+            layers = layers.concat(layer.pm._getLayers(true, true, _layerIds));
+          }
+        }
+      });
+      if(filterGroupsOut) {
+        layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
+      }
+    }else {
+      // get all layers of the layer group
+      layers = this._layerGroup.getLayers();
+    }
+
+    if(filterGroupsOut) {
+      layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
+    }
+    return layers;
+  },
   applyOptionsToAllChilds(options, _layerIds = []) {
     this._options = options;
     this._layers.forEach(layer => {
