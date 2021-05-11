@@ -210,8 +210,11 @@ Edit.CircleMarker = Edit.extend({
     this._layer.setLatLng(center);
 
     const radius = this._layer._radius;
+
     const outer = this._getLatLngOnCircle(center, radius);
-    this._outerMarker.setLatLng(outer);
+    // don't call .setLatLng() because it fires the `move` event and then the radius is changed because of _syncCircleRadius #892
+    this._outerMarker._latlng = outer;
+    this._outerMarker.update();
     this._syncHintLine();
 
     this._updateHiddenPolyCircle();
