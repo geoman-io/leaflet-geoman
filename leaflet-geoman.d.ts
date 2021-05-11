@@ -383,6 +383,7 @@ declare module 'leaflet' {
 
             setLang(
                 lang:
+                    | 'cz'
                     | 'da'
                     | 'de'
                     | 'el'
