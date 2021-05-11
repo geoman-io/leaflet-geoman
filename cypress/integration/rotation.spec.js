@@ -148,4 +148,56 @@ describe('Rotation', () => {
       expect(layer.getLatLngs()[0][1].equals(L.latLng([51.48267237710426, -0.08847595304329439]))).to.equal(true);
     });
   });
+
+  it('rotates polygon', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.pm.enableRotate();
+      const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
+      marker1.fire('dragstart',{target: marker1});
+      marker1.setLatLng(map.containerPointToLatLng([200,210]));
+      marker1.fire('drag',{target: marker1});
+      marker1.fire('dragend',{target: marker1});
+
+      expect(Math.ceil(layer.pm.getAngle())).to.eq(70);
+    });
+  });
+
+  it('rotates multi-polygon', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(600, 350);
+
+    cy.toolbarButton('cut')
+      .click();
+    cy.get(mapSelector)
+      .click(400, 150)
+      .click(450, 400)
+      .click(500, 400)
+      .click(400, 150);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.pm.enableRotate();
+      const marker1 = layer.pm._rotatePoly.pm._markers[0][0][0];
+      marker1.fire('dragstart',{target: marker1});
+      marker1.setLatLng(map.containerPointToLatLng([200,210]));
+      marker1.fire('drag',{target: marker1});
+      marker1.fire('dragend',{target: marker1});
+      expect(Math.ceil(layer.pm.getAngle())).to.eq(64);
+    });
+  });
 });
