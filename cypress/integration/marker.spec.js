@@ -17,7 +17,7 @@ describe('Draw Marker', () => {
 
       map.eachLayer((layer) => {
         if (layer instanceof L.Marker) {
-          assert.isTrue(layer.dragging._enabled)
+          assert.isTrue(layer.pm.layerDragEnabled())
         }
       })
     });
@@ -214,7 +214,7 @@ describe('Draw Marker', () => {
   });
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true});
+      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
     });
 
     cy.toolbarButton('polygon').click();

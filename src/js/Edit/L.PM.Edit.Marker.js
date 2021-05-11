@@ -73,7 +73,7 @@ Edit.Marker = Edit.extend({
     this._fireRemove(marker);
     this._fireRemove(this._map, marker);
   },
-  _onDragEnd(e) {
+  _onDragEnd() {
     this._fireEdit();
     this._layerEdited = true;
   },
@@ -82,20 +82,21 @@ Edit.Marker = Edit.extend({
     const marker = this._layer;
 
     this.options.snapDistance = this.options.snapDistance || 30;
+    this.options.snapSegment = this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
-    marker.off('drag', this._handleSnapping, this);
-    marker.on('drag', this._handleSnapping, this);
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.on('pm:drag', this._handleSnapping, this);
 
-    marker.off('dragend', this._cleanupSnapping, this);
-    marker.on('dragend', this._cleanupSnapping, this);
+    marker.off('pm:dragend', this._cleanupSnapping, this);
+    marker.on('pm:dragend', this._cleanupSnapping, this);
 
     marker.off('pm:dragstart', this._unsnap, this);
     marker.on('pm:dragstart', this._unsnap, this);
   },
   _disableSnapping() {
     const marker = this._layer;
-    marker.off('drag', this._handleSnapping, this);
-    marker.off('dragend', this._cleanupSnapping, this);
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.off('pm:dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
   }
 });
