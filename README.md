@@ -366,6 +366,7 @@ See the available options in the table below.
 | allowSelfIntersectionEdit | `false`  | Allow/Disallow to change vertices they are connected to a intersecting line. Only working if allowSelfIntersection is `true` and the layer is already self-intersecting while enabling edit mode.                                         |  
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
 | removeLayerBelowMinVertexCount       | `true` | If `true`, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If `false`, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons. |    
+| syncLayersOnDrag      | `false` | Defines which layers should dragged with this layer together. `true` syncs all layers in the same LayerGroup(s) or you pass an `Array` of layers to sync. |  
 | limitMarkersToCount   | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |  
 | limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                           |  
 | limitMarkersToViewport| `false` | Shows only markers in the viewport ⭐                                                                      |  
@@ -429,12 +430,12 @@ map.pm.enableGlobalDragMode();
   
 The following methods are available on `map.pm`:  
   
-| Method                  | Returns   | Description                                                           |  
-| :---------------------- | :-------- | :-------------------------------------------------------------------- |  
-| enableGlobalDragMode()  | -         | Enables global drag mode.                                             |  
-| disableGlobalDragMode() | -         | Disables global drag mode.                                            |  
-| toggleGlobalDragMode()  | -         | Toggles global drag mode.                                             |  
-| globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled. |  
+| Method                  | Returns   | Description                                                                     |  
+| :---------------------- | :-------- | :------------------------------------------------------------------------------ |  
+| enableGlobalDragMode()  | -         | Enables global drag mode.                                                       |  
+| disableGlobalDragMode() | -         | Disables global drag mode.                                                      |  
+| toggleGlobalDragMode()  | -         | Toggles global drag mode.                                                       |  
+| globalDragModeEnabled() | `Boolean` | Returns `true` if global drag mode is enabled. `false` when disabled.           |  
   
 The following events are available on a layer instance:  
   

@@ -303,6 +303,7 @@ Edit.CircleMarker = Edit.extend({
     const marker = this._layer;
 
     this.options.snapDistance = this.options.snapDistance || 30;
+    this.options.snapSegment = this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
     marker.off('pm:drag', this._handleSnapping, this);
     marker.on('pm:drag', this._handleSnapping, this);
