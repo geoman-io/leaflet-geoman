@@ -62,7 +62,7 @@ const GlobalEditMode = {
     // set status
     this._globalEditMode = status;
     // fire event
-    this._fireEditModeEvent(this._globalEditMode);
+    this._fireGlobalEditModeToggled(this._globalEditMode);
   },
   toggleGlobalEditMode(options = this.globalOptions) {
     if (this.globalEditModeEnabled()) {
@@ -93,12 +93,6 @@ const GlobalEditMode = {
   },
   _layerAdded({layer}){
     this._addedLayers.push(layer);
-  },
-  _fireEditModeEvent(enabled) {
-    L.PM.Utils._fireEvent(this.map,'pm:globaleditmodetoggled', {
-      enabled,
-      map: this.map,
-    });
   },
 };
 

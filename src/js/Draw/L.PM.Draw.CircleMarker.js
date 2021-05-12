@@ -120,10 +120,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     this._layer.bringToBack();
 
     // fire drawstart event
-    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
+    this._fireDrawStart();
     this._setGlobalDrawMode();
   },
   disable() {
@@ -172,7 +169,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire drawend event
-    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    this._fireDrawEnd();
     this._setGlobalDrawMode();
   },
   _placeCenterMarker(e) {
@@ -206,11 +203,7 @@ Draw.CircleMarker = Draw.Marker.extend({
         getTranslation('tooltips.finishCircle')
       );
 
-      L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
-        shape: this._shape,
-        workingLayer: this._layer,
-        latlng,
-      });
+      this._fireCenterPlaced();
     }
   },
   _syncHintLine() {
@@ -284,11 +277,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire the pm:create event and pass shape and marker
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      marker, // DEPRECATED
-      layer: marker,
-    });
+    this._fireCreate(marker);
 
     this._cleanupSnapping();
 
@@ -337,10 +326,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     // fire the pm:create event and pass shape and layer
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      layer: circleLayer,
-    });
+    this._fireCreate(circleLayer);
 
     // disable drawing
     this.disable();

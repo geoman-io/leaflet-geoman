@@ -87,10 +87,7 @@ Draw.Circle = Draw.extend({
     this._otherSnapLayers = [];
 
     // fire drawstart event
-    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
+    this._fireDrawStart();
     this._setGlobalDrawMode();
   },
   disable() {
@@ -124,7 +121,7 @@ Draw.Circle = Draw.extend({
     }
 
     // fire drawend event
-    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    this._fireDrawEnd();
     this._setGlobalDrawMode();
   },
   enabled() {
@@ -209,11 +206,7 @@ Draw.Circle = Draw.extend({
         getTranslation('tooltips.finishCircle')
       );
 
-      L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
-        workingLayer: this._layer,
-        latlng,
-        shape: this._shape
-      });
+      this._fireCenterPlaced();
     }
   },
   _finishShape(e) {
@@ -260,10 +253,7 @@ Draw.Circle = Draw.extend({
     }
 
     // fire the pm:create event and pass shape and layer
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      layer: circleLayer,
-    });
+    this._fireCreate(circleLayer);
 
     // disable drawing
     this.disable();
