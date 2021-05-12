@@ -481,7 +481,7 @@ declare module 'leaflet' {
             getControlOrder(): TOOLBAR_CONTROL_ORDER[];
 
             /** The position of a block (draw, edit, custom, options⭐) in the Toolbar can be changed. If not set, the value from position of the Toolbar is taken. */
-            setBlockPosition(block: 'draw' | 'edit' | 'custom' | 'options', position: ControlPosition): void;
+            setBlockPosition(block: 'draw' | 'edit' | 'custom' | 'options', position: L.ControlPosition): void;
 
             /** Returns a Object with the positions for all blocks */
             getBlockPositions(): BlockPositions;
@@ -723,7 +723,7 @@ declare module 'leaflet' {
             removeLayerBelowMinVertexCount?: boolean;
 
             /** Defines which layers should dragged with this layer together. true syncs all layers in the same LayerGroup(s) or you pass an `Array` of layers to sync. (default:false). */
-            syncLayersOnDrag?: [] | boolean;
+            syncLayersOnDrag?: L.Layer[] | boolean;
 
             /** Edit-Mode for the layer can disabled (`pm.enable()`). (default:true). */
             allowEditing?: boolean;
@@ -835,7 +835,7 @@ declare module 'leaflet' {
             rectangleAngle?: number;
 
             /** Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again. (Default: []) */
-            layersToCut?: [];
+            layersToCut?: L.Layer[];
         }
 
         /**
@@ -903,16 +903,16 @@ declare module 'leaflet' {
         /** the position of each block. */
         interface BlockPositions {
             /** draw control position (default:''). '' also refers to this position. */
-            draw?: ControlPosition;
+            draw?: L.ControlPosition;
 
             /** edit control position (default:''). */
-            edit?: ControlPosition;
+            edit?: L.ControlPosition;
 
             /** custom control position (default:''). */
-            custom?: ControlPosition;
+            custom?: L.ControlPosition;
 
             /** options control position (default:'') ⭐ */
-            options?: ControlPosition;
+            options?: L.ControlPosition;
         }
 
         interface PMEditLayer {
