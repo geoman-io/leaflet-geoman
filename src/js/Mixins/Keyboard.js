@@ -17,7 +17,7 @@ const KeyboardMixins = {
     this._lastEvents[e.type] = data;
     this._lastEvents.current = data;
 
-    L.PM.Utils._fireEvent(this.map, 'pm:keyevent',data);
+    this._fireKeyeventEvent(e,e.type,focusOn);
   },
   getLastKeyEvent(type = 'current') {
     return this._lastEvents[type];

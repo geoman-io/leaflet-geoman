@@ -296,6 +296,15 @@ const EventMixin = {
   _fireRemoveLayerGroup(fireLayer, refLayer = fireLayer, source = "Edit", customPayload = {}) {
     this.__fire(fireLayer,'pm:remove', { layer: refLayer, shape: undefined }, source, customPayload);
   },
+  // Fired when `keydown` or `keyup` on the document is fired.
+  _fireKeyeventEvent(event, eventType, focusOn, source = "Global", customPayload = {}){
+    this.__fire(this.map,'pm:keyevent', {
+      event,
+      eventType,
+      focusOn
+    }, source, customPayload);
+  },
+
 
   // private (very private) fire function
   __fire(fireLayer, type, payload, source, customPayload = {}){

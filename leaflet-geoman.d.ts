@@ -331,6 +331,17 @@ declare module 'leaflet' {
         on(type: 'pm:actionclick', fn: PM.ActionClickEventHandler): this;
         once(type: 'pm:actionclick', fn: PM.ActionClickEventHandler): this;
         off(type: 'pm:actionclick', fn?: PM.ActionClickEventHandler): this;
+
+        /******************************************
+         *
+         * TODO: Keyboard EVENT ON MAP ONLY
+         *
+         ********************************************/
+
+        /** Fired when `keydown` or `keyup` on the document is fired. */
+        on(type: 'pm:keyevent', fn: PM.KeyboardKeyEventHandler): this;
+        once(type: 'pm:keyevent', fn: PM.KeyboardKeyEventHandler): this;
+        off(type: 'pm:keyevent', fn?: PM.KeyboardKeyEventHandler): this;
     }
 
     namespace PM {
@@ -368,6 +379,8 @@ declare module 'leaflet' {
         interface PMMap extends PMDrawMap, PMEditMap, PMDragMap, PMRemoveMap, PMCutMap, PMRotateMap {
 
             Toolbar: PMMapToolbar;
+
+            Keyboard: PMMapKeyboard;
 
             /** Adds the Toolbar to the map. */
             addControls(options?: ToolbarOptions): void;
@@ -497,6 +510,32 @@ declare module 'leaflet' {
 
             /** disable button by control name */
             setButtonDisabled(name: TOOLBAR_CONTROL_ORDER, state: boolean): void;
+        }
+
+        type KEYBOARD_EVENT_TYPE =
+            | 'current'
+            | 'keydown'
+            | 'keyup';
+
+        interface PMMapKeyboard {
+
+            /** Pass an array of button names to reorder the buttons in the Toolbar. */
+            getLastKeyEvent(type: KEYBOARD_EVENT_TYPE[]): KeyboardKeyEventHandler;
+
+            /** Returns the current pressed key. [KeyboardEvent.key](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key). */
+            getPressedKey(): string;
+
+            /** Returns true if the `Shift` key is currently pressed. */
+            isShiftKeyPressed(): boolean;
+
+            /** Returns true if the `Alt` key is currently pressed. */
+            isAltKeyPressed(): boolean;
+
+            /** Returns true if the `Ctrl` key is currently pressed. */
+            isCtrlKeyPressed(): boolean;
+
+            /** Returns true if the `Meta` key is currently pressed. */
+            isMetaKeyPressed(): boolean;
         }
 
         interface Button {
@@ -703,6 +742,8 @@ declare module 'leaflet' {
             allowSelfIntersection?: boolean;
         }
 
+        type VertexValidationHandler = (e: { layer: L.Layer, marker: L.Marker, event: any }) => boolean;
+
         interface EditModeOptions {
             /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
             snappable?: boolean;
@@ -716,11 +757,38 @@ declare module 'leaflet' {
             /** allow self intersections (default:true). */
             allowSelfIntersectionEdit?: boolean;
 
-            /** Disable the removal of markers/vertexes via right click. (default:false). */
+            /** Disable the removal of markers via right click / vertices via removeVertexOn. (default:false). */
             preventMarkerRemoval?: boolean;
 
             /** If true, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If false, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons (default:true). */
             removeLayerBelowMinVertexCount?: boolean;
+
+            /** Leaflet layer event to add a vertex to a Line or Polygon, like dblclick. (default:click). */
+            addVertexOn?:
+                | 'click'
+                | 'dblclick'
+                | 'mousedown'
+                | 'mouseover'
+                | 'mouseout'
+                | 'contextmenu';
+
+            /** A function for validation if a vertex (of a Line / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. (default:undefined). */
+            addVertexValidation?: undefined | VertexValidationHandler;
+
+            /** Leaflet layer event to remove a vertex from a Line or Polygon, like dblclick. (default:contextmenu). */
+            removeVertexOn?:
+                | 'click'
+                | 'dblclick'
+                | 'mousedown'
+                | 'mouseover'
+                | 'mouseout'
+                | 'contextmenu';
+
+            /** A function for validation if a vertex (of a Line / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
+            removeVertexValidation?: undefined | VertexValidationHandler;
+
+            /** A function for validation if a vertex / helper-marker is allowed to move / drag. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
+            moveVertexValidation?: undefined | VertexValidationHandler;
 
             /** Shows only n markers closest to the cursor. Use -1 for no limit (default:-1). */
             limitMarkersToCount?: number;
@@ -1039,6 +1107,12 @@ declare module 'leaflet' {
          */
         export type ButtonClickEventHandler = (e: { btnName: string, button: PM.Button }) => void;
         export type ActionClickEventHandler = (e: { text: string; action: string; btnName: string; button: PM.Button }) => void;
+
+        /**
+         * KEYBOARD EVENT HANDLERS
+         */
+        export type KeyboardKeyEventHandler = (e: { focusOn: 'document' | 'map', eventType: 'keydown' | 'keyup', event: any }) => void;
+
     }
 }
 
