@@ -10,7 +10,7 @@ const GlobalRotateMode = {
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
-    this._fireRotateModeEvent();
+    this._fireGlobalRotateModeToggled();
   },
   disableGlobalRotateMode() {
     this._globalRotateModeEnabled = false;
@@ -21,7 +21,7 @@ const GlobalRotateMode = {
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
-    this._fireRotateModeEvent();
+    this._fireGlobalRotateModeToggled();
   },
   globalRotateModeEnabled() {
     return !!this._globalRotateModeEnabled;
