@@ -723,7 +723,7 @@ declare module 'leaflet' {
             removeLayerBelowMinVertexCount?: boolean;
 
             /** Defines which layers should dragged with this layer together. true syncs all layers in the same LayerGroup(s) or you pass an `Array` of layers to sync. (default:false). */
-            syncLayersOnDrag?: boolean;
+            syncLayersOnDrag?: [] | boolean;
 
             /** Edit-Mode for the layer can disabled (`pm.enable()`). (default:true). */
             allowEditing?: boolean;
@@ -835,7 +835,7 @@ declare module 'leaflet' {
             rectangleAngle?: number;
 
             /** Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again. (Default: []) */
-            layersToCut?: [] | boolean;
+            layersToCut?: [];
         }
 
         /**
