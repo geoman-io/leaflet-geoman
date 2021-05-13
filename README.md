@@ -263,6 +263,7 @@ See the available options in the table below.
 | markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them)                              |
 | continueDrawing       | `false` / `true`                      | Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.       |             
 | rectangleAngle        | `0`                                   | Rectangle can drawn with a rotation angle 0-360 degrees                                                                                               |
+| layersToCut           | `[]`                                  | Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again. |  
   
   
   
@@ -351,9 +352,10 @@ The following methods are available for layers under `layer.pm`:
 | :-------------------- | :-------- | :-------------------------------------------------------------------------------------------------- |  
 | enable(`options`)     | -         | Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar. `options` is optional |  
 | disable()             | -         | Disables edit mode.                                                                                 |  
-| toggleEdit(`options`) | -         | Toggles edit mode. Passed options are preserved. `options` is optional                                                    |  
+| toggleEdit(`options`) | -         | Toggles edit mode. Passed options are preserved. `options` is optional                              |  
 | enabled()             | `Boolean` | Returns `true` if edit mode is enabled. `false` when disabled.                                      |  
-| hasSelfIntersection() | `Boolean` | Returns `true` if `Line` or `Polygon` has a self intersection.                                                |  
+| hasSelfIntersection() | `Boolean` | Returns `true` if `Line` or `Polygon` has a self intersection.                                      |  
+| remove()              | -         | Removes the layer with the same checks as GlobalRemovalMode                                         |  
    
   
 See the available options in the table below.  
@@ -367,6 +369,11 @@ See the available options in the table below.
 | preventMarkerRemoval  | `false` | Disable the removal of markers/vertexes via right click.                                                  |
 | removeLayerBelowMinVertexCount       | `true` | If `true`, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If `false`, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons. |    
 | syncLayersOnDrag      | `false` | Defines which layers should dragged with this layer together. `true` syncs all layers in the same LayerGroup(s) or you pass an `Array` of layers to sync. |  
+| allowEditing          | `true`  | Edit-Mode for the layer can disabled (`pm.enable()`).                                                     |
+| allowRemoval          | `true`  | Removing can be disabled for the layer.                                                                   | 
+| allowCutting          | `true`  | Layer can be prevented from cutting.                                                                      | 
+| allowRotation         | `true`  | Layer can be prevented from rotation.                                                                     | 
+| draggable             | `true`  | Dragging can be disabled for the layer.                                                                   |  
 | limitMarkersToCount   | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit                                       |  
 | limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level ⭐                                                           |  
 | limitMarkersToViewport| `false` | Shows only markers in the viewport ⭐                                                                      |  
@@ -518,7 +525,8 @@ map.pm.enableGlobalCutMode({
 });  
 ```  
   
-Available options are the same as in [Draw Mode](#draw-mode).  
+Available options are the same as in [Draw Mode](#draw-mode).
+If the option `layersToCut: [layer1, layer2]` is passed, only this certain layers will be cutted.
   
 The following methods are available on `map.pm`:  
   

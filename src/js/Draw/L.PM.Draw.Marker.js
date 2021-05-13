@@ -145,12 +145,11 @@ Draw.Marker = Draw.extend({
     const marker = new L.Marker(latlng, this.options.markerStyle);
     this._setPane(marker,'markerPane');
     this._finishLayer(marker);
-    marker.addTo(this._map.pm._getContainingLayer());
 
     if(!marker.pm){
+      // if pm is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
       marker.options.draggable = false;
     }
-
     // add marker to the map
     marker.addTo(this._map.pm._getContainingLayer());
 

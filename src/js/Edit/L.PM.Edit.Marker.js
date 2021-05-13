@@ -10,10 +10,17 @@ Edit.Marker = Edit.extend({
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
   },
+  //TODO: remove default option in next major Release
   enable(options = { draggable: true }) {
     L.Util.setOptions(this, options);
 
     this._map = this._layer._map;
+
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
+      return;
+    }
 
     if (this.enabled()) {
       return;

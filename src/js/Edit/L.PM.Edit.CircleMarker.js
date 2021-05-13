@@ -9,6 +9,7 @@ Edit.CircleMarker = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
   },
+  //TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
@@ -16,6 +17,12 @@ Edit.CircleMarker = Edit.extend({
 
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {
+      return;
+    }
+
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
       return;
     }
 

@@ -19,6 +19,7 @@ const EventMixin = {
   _fireCreate(layer, source = "Draw", customPayload = {}){
     this.__fire(this._map,'pm:create', {
       shape: this._shape,
+      marker: layer, // TODO: Deprecated
       layer,
     }, source, customPayload);
   },

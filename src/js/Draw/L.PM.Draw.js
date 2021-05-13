@@ -5,7 +5,7 @@ import EventMixin from "../Mixins/Events";
 const Draw = L.Class.extend({
   includes: [SnapMixin, EventMixin],
   options: {
-    snappable: true,
+    snappable: true,  //TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,
     snapMiddle: false,
     allowSelfIntersection: true,
