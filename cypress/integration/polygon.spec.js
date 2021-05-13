@@ -772,6 +772,8 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit')
       .click();
 
+    cy.wait(1000);
+
     cy.hasVertexMarkers(2);
   });
 
