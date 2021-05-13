@@ -287,11 +287,11 @@ const EventMixin = {
     }, source, customPayload);
   },
   // Fired when Rotation Mode is toggled.
-  _fireRotateModeEvent() {
-    L.PM.Utils._fireEvent(this.map, 'pm:globalrotatemodetoggled', {
+  _fireGlobalRotateModeToggled(source = "Global", customPayload = {}){
+    this.__fire(this.map,'pm:globalrotatemodetoggled', {
       enabled: this.globalRotateModeEnabled(),
       map: this.map,
-    });
+    }, source, customPayload);
   },
   // Fired when LayerGroup is removed
   _fireRemoveLayerGroup(fireLayer, refLayer = fireLayer, source = "Edit", customPayload = {}) {
