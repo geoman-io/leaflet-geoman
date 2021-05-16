@@ -4,7 +4,7 @@ const GlobalRemovalMode = {
     this._globalRemovalModeEnabled = true;
     // handle existing layers
     this.map.eachLayer(layer => {
-      if (this._isRelevant(layer)) {
+      if (this._isRelevantForRemoval(layer)) {
         layer.pm.disable();
         layer.on('click', this.removeLayer, this);
       }
@@ -53,7 +53,7 @@ const GlobalRemovalMode = {
   },
   reinitGlobalRemovalMode({ layer }) {
     // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-    if (!this._isRelevant(layer)) {
+    if (!this._isRelevantForRemoval(layer)) {
       return;
     }
 
@@ -67,7 +67,7 @@ const GlobalRemovalMode = {
     const layer = e.target;
     // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
-    const removeable = this._isRelevant(layer) && !layer.pm.dragging();
+    const removeable = this._isRelevantForRemoval(layer) && !layer.pm.dragging();
 
     if (removeable) {
       layer.removeFrom(this.map.pm._getContainingLayer());
@@ -81,7 +81,7 @@ const GlobalRemovalMode = {
       }
     }
   },
-  _isRelevant(layer){
+  _isRelevantForRemoval(layer){
     return layer.pm
       && !(layer instanceof L.LayerGroup)
       && (

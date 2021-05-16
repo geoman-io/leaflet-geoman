@@ -4,7 +4,9 @@ const GlobalRotateMode = {
     this._globalRotateModeEnabled = true;
     const layers = L.PM.Utils.findLayers(this.map).filter(l => l instanceof L.Polyline);
     layers.forEach(layer => {
-      layer.pm.enableRotate();
+      if(this._isRelevantForRotate(layer)) {
+        layer.pm.enableRotate();
+      }
     });
 
     if (!this.throttledReInitRotate) {
@@ -43,7 +45,7 @@ const GlobalRotateMode = {
   },
   _reinitGlobalRotateMode({ layer }) {
     // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-    if (!this._isRelevant(layer)) {
+    if (!this._isRelevantForRotate(layer)) {
       return;
     }
 
@@ -53,7 +55,7 @@ const GlobalRotateMode = {
       this.enableGlobalRotateMode();
     }
   },
-  _isRelevant(layer){
+  _isRelevantForRotate(layer){
     return layer.pm
       && !(layer instanceof L.LayerGroup)
       && (
