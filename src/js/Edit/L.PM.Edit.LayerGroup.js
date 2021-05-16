@@ -131,18 +131,18 @@ Edit.LayerGroup = L.Class.extend({
   },
   getLayers(deep = false, filterGeoman = true, filterGroupsOut = true, _layerIds = []){
     let layers = [];
-    if(deep){
+    if(deep) {
       // get the layers of LayerGroup children
       this._layerGroup.getLayers().forEach((layer)=>{
         layers.push(layer);
         if (layer instanceof L.LayerGroup) {
           if (_layerIds.indexOf(layer._leaflet_id) === -1) {
             _layerIds.push(layer._leaflet_id);
-            layers = layers.concat(layer.pm.getLayers(true, true, _layerIds));
+            layers = layers.concat(layer.pm.getLayers(true, true, true, _layerIds));
           }
         }
       });
-    }else {
+    } else {
       // get all layers of the layer group
       layers = this._layerGroup.getLayers();
     }
