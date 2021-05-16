@@ -26,6 +26,12 @@ declare module 'leaflet' {
     interface Layer {
         pm: PM.PMLayer;
     }
+    /**
+     * Extends built in leaflet layergroup.
+     */
+    interface LayerGroup {
+        pm: PM.PMLayerGroup;
+    }
 
     interface Polygon {
         /** Returns true if Line or Polygon has a self intersection. */
@@ -696,7 +702,13 @@ declare module 'leaflet' {
             getActiveShape(): SUPPORTED_SHAPES;
 
             /** Set path options */
-            setPathOptions(options: L.PathOptions);
+            setPathOptions(options: L.PathOptions): void;
+
+            /** Set options */
+            setOptions(options: DrawModeOptions): void;
+
+            /** Get options */
+            getOptions(): DrawModeOptions;
         }
 
         interface CutModeOptions {
@@ -922,6 +934,9 @@ declare module 'leaflet' {
             /** sets layer options */
             setOptions(options?: EditModeOptions): void;
 
+            /** gets layer options */
+            getOptions(): EditModeOptions;
+
             /** Disables edit mode. */
             disable(): void;
 
@@ -954,16 +969,42 @@ declare module 'leaflet' {
 
 
         interface PMLayer extends PMRotateLayer, PMEditLayer, PMDragLayer {
-            /** get shape */
+            /** get shape of the layer. */
             getShape(): SUPPORTED_SHAPES;
         }
 
+        interface PMLayerGroup {
+            /** Enables edit mode for all child layers. The passed options are preserved, even when the mode is enabled via the Toolbar */
+            enable(options?: EditModeOptions): void;
+
+            /** Disable edit mode for all child layers.*/
+            disable(): void;
+
+            /** Returns if minimum one layer is enabled. */
+            enabled(): boolean;
+
+            /** Toggle enable / disable on all layers. */
+            toggleEdit(options?: EditModeOptions): void;
+
+            /** Returns the layers of the LayerGroup. `deep=true` return also the children of LayerGroup children. `filterGeoman=true` filter out layers that don't have Leaflet-Geoman or temporary stuff. `filterGroupsOut=true` does not return the LayerGroup layers self. (Default: `deep=false`,`filterGeoman=true`, `filterGroupsOut=true` ) */
+            getLayers(deep?: boolean, filterGeoman?: boolean, filterGroupsOut?: boolean): L.Layer[]
+
+            /** Apply Leaflet-Geoman options to all children. The passed options are preserved, even when the mode is enabled via the Toolbar */
+            setOptions(options?: EditModeOptions): void;
+
+            /** Returns the options of the LayerGroup. */
+            getOptions(): EditModeOptions;
+
+            /** Returns if currently a layer in the LayerGroup is dragging. */
+            dragging(): boolean;
+        }
+
         namespace Utils {
-            /**  path = json string f.ex. tooltips.placeMarker */
+            /**  Returns the translation of the passed path. path = json-string f.ex. tooltips.placeMarker */
             function getTranslation(path: string): string;
 
-            /** returns the middle latlng between two points */
-            function calcMiddleLatLng(map: L.Map, latlng1: L.LatLng, latlng2: L.LatLng);
+            /** returns the middle LatLng between two LatLngs */
+            function calcMiddleLatLng(map: L.Map, latlng1: L.LatLng, latlng2: L.LatLng): L.LatLng;
 
             /** returns all layers that are available for Geoman */
             function findLayers(map: L.Map): L.Layer[];

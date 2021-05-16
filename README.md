@@ -48,10 +48,16 @@ Features marked with ⭐ in this documentation are available in Leaflet-Geoman P
 - [Drag Mode](#drag-mode)  
 - [Removal Mode](#removal-mode)  
 - [Cut Mode](#cut-mode)  
+- [Split Mode ⭐](#split-mode)
 - [Options](#options)  
+  - [Snapping](#snapping)
+  - [Pinning ⭐](#pinning-)
+  - [Measurement ⭐](#measurement-)
+- [LayerGroup](#layergroup)
 - [Customization](#customize)  
 - [Toolbar](#toolbar)  
-- [Need a feature? | Existing Feature Requests](https://github.com/geoman-io/leaflet-geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)  
+- [Utils](#utils)  
+- [Need a feature? | Existing Feature Requests](https://github.com/geoman-io/Leaflet-Geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)  
   
   
 ### Installation  
@@ -102,17 +108,17 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
   
 ### Getting Started  
   
-#### Init leaflet-geoman  
+#### Init Leaflet-Geoman  
   
 Just include `leaflet-geoman.min.js` right after Leaflet. It initializes itself. If  
-you want certain layers to be ignored by leaflet-geoman, pass `pmIgnore: true` to  
+you want certain layers to be ignored by Leaflet-Geoman, pass `pmIgnore: true` to  
 their options when creating them. Example:  
   
 ```js  
 L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);  
 ```  
   
-Enable leaflet-geoman on an ignored layer:  
+Enable Leaflet-Geoman on an ignored layer:  
 ```js  
 layer.setStyle({pmIgnore: false});
 // layer.options.pmIgnore = false; // If the layer is a LayerGroup / FeatureGroup / GeoJSON this line is needed too
@@ -123,7 +129,7 @@ If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set t
   
 #### Opt-In  
   
-If you want to use leaflet-geoman as opt-in, call the following function right after importing:  
+If you want to use Leaflet-Geoman as opt-in, call the following function right after importing:  
   
 ```js  
 L.PM.setOptIn(true);  
@@ -134,21 +140,21 @@ And to disable it:
 L.PM.setOptIn(false);  
 ```  
   
-All layers will be ignored by leaflet-geoman, unless you specify `pmIgnore: false` on a layer:  
+All layers will be ignored by Leaflet-Geoman, unless you specify `pmIgnore: false` on a layer:  
   
 ```js  
 L.marker([51.50915, -0.096112], { pmIgnore: false }).addTo(map);  
 ```  
   
   
-#### leaflet-geoman Toolbar  
+#### Leaflet-Geoman Toolbar  
   
-<img align="left" height="200" src="https://file-ffrjxxowri.now.sh/" alt="leaflet-geoman Toolbar">  
+<img align="left" height="200" src="https://file-ffrjxxowri.now.sh/" alt="Leaflet-Geoman Toolbar">  
   
-You can add a toolbar to the map to use leaflet-geoman features via a user interface.  
+You can add a toolbar to the map to use Leaflet-Geoman features via a user interface.  
   
 ```js  
-// add leaflet-geoman controls with some options to the map  
+// add Leaflet-Geoman controls with some options to the map  
 map.pm.addControls({  
   position: 'topleft',  
   drawCircle: false,  
@@ -350,13 +356,15 @@ The following methods are available for layers under `layer.pm`:
   
 | Method                | Returns   | Description                                                                                         |  
 | :-------------------- | :-------- | :-------------------------------------------------------------------------------------------------- |  
-| enable(`options`)     | -         | Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar. `options` is optional |  
+| enable(`options`)     | -         | Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar. `options` is optional. |  
 | disable()             | -         | Disables edit mode.                                                                                 |  
-| toggleEdit(`options`) | -         | Toggles edit mode. Passed options are preserved. `options` is optional                              |  
+| toggleEdit(`options`) | -         | Toggles edit mode. Passed options are preserved. `options` is optional.                             |  
 | enabled()             | `Boolean` | Returns `true` if edit mode is enabled. `false` when disabled.                                      |  
 | hasSelfIntersection() | `Boolean` | Returns `true` if `Line` or `Polygon` has a self intersection.                                      |  
-| remove()              | -         | Removes the layer with the same checks as GlobalRemovalMode                                         |  
-   
+| remove()              | -         | Removes the layer with the same checks as GlobalRemovalMode.                                        |  
+| getShape()            | `String`  | Returns the shape of the layer.                                                                     |  
+| setOptions(`options`) | -         | Set the options on the layer.                                                                       |  
+| getOptions()          | `Object`  | Returns the options of the layer.                                                                   |
   
 See the available options in the table below.  
   
@@ -433,7 +441,22 @@ You can enable Drag Mode for all layers on a map like this:
 ```js  
 // enable drag mode like this:  
 map.pm.enableGlobalDragMode();  
-```  
+```
+
+Or you enable dragging for a specific layer:
+```js
+layer.pm.enableLayerDrag();
+```
+
+  
+The following methods are available on `layer.pm`:  
+  
+| Method                  | Returns   | Description                                                                     |  
+| :---------------------- | :-------- | :------------------------------------------------------------------------------ |  
+| enableLayerDrag()       | -         | Enables dragging for the layer.                                                 |  
+| disableLayerDrag()      | -         | Disables dragging for the layer.                                                |  
+| layerDragEnabled()      | `Boolean` | Returns if drag mode is enabled for the layer.                                  |   
+| dragging()              | `Boolean` | Returns if the layer is currently dragging.                                     | 
   
 The following methods are available on `map.pm`:  
   
@@ -714,10 +737,50 @@ See the available options in the table below.
 | coordinates           | `true`   | Shows the coordinates in the tooltip `Marker`, `CircleMarker` and the current dragged marker while drawing / editing  |
 
 
+### LayerGroup
+
+Geoman can only work correct with `L.FeatureGroup` and `L.GeoJSON` (the extended versions of L.LayerGroup) we need the events `layeradd` and `layerremove`.
+
+The following methods are available for LayerGroups on `layergroup.pm`:
+
+| Method                           | Returns   | Description          |
+| :------------------------------- | :-------- | :------------------- |
+| enable(`options`)                | -         | Enable all layers in the LayerGroup. |
+| disable()                        | -         | Disable all layers in the LayerGroup. |
+| enabled()                        | `Boolean` | Returns if minimum one layer is enabled. |
+| toggleEdit(`options`)            | -         | Toggle enable / disable on all layers. |
+| getLayers(`deep=false`,`filterGeoman=true`, `filterGroupsOut=true`)         | `Array`   | Returns the layers of the LayerGroup. `deep=true` return also the children of LayerGroup children. `filterGeoman=true` filter out layers that don't have Leaflet-Geoman or temporary stuff. `filterGroupsOut=true` does not return the LayerGroup layers self. |
+| setOptions(`options`)            | -         | Apply Leaflet-Geoman options to all children. |
+| getOptions()                     | `Object`  | Returns the options of the LayerGroup. |
+| dragging()                       | -         | Returns if currently a layer in the LayerGroup is dragging. |
+
+<details>
+<summary>Workaround to work with L.LayerGroup (Click to expand)</summary>
+
+We are adding the same code to L.LayerGroup as in [L.FeatureGroup](https://github.com/Leaflet/Leaflet/blob/master/src/layer/FeatureGroup.js#L28)
+
+```js
+L.LayerGroup.prototype.addLayerOrg = L.LayerGroup.prototype.addLayer;
+L.LayerGroup.prototype.addLayer = function (layer) {
+  layer.addEventParent(this);
+  this.addLayerOrg(layer);
+  return this.fire('layeradd', {layer: layer});
+};
+
+L.LayerGroup.prototype.removeLayerOrg = L.LayerGroup.prototype.removeLayer;
+L.LayerGroup.prototype.removeLayer= function (layer) {
+  layer.removeEventParent(this);
+  this.removeLayerOrg(layer);
+  return this.fire('layerremove', {layer: layer});
+};
+```
+
+</details>
+
 ### Customize  
   
 #### Customize Language  
-Change the language of user-facing copy in leaflet-geoman  
+Change the language of user-facing copy in Leaflet-Geoman  
   
 ```js  
 map.pm.setLang('de');  
@@ -905,7 +968,16 @@ The following events are available on a map instance:
 | pm:buttonclick | `e`    | Fired when a Toolbar button is clicked    | `btnName`, `button`                                  |  
 | pm:actionclick | `e`    | Fired when a Toolbar action is clicked    | `text`, `action`, `btnName`, `button`                |  
   
+### Utils
+
+The following methods are available on `L.PM.Utils`:  
   
+| Method                                           | Returns   | Description                                                                                    |  
+| :----------------------------------------------- | :-------- | :--------------------------------------------------------------------------------------------- |  
+| calcMiddleLatLng(`map`, `latlng1`, `latlng2`)    | `LatLng`  | Returns the middle LatLng between two LatLngs.                                                 |  
+| getTranslation(`path`)                           | `String`  | Returns the translation of the passed `path`. path = json-string f.ex. `tooltips.placeMarker`. |  
+| findLayers(`map`)                                | `Array`   | Returns all layers that are available for Geoman.                                              |  
+| circleToPolygon(`circle`, `sides = 60`)          | `Polygon` | Converts a circle into a polygon with default 60 sides.                                        |  
   
 ### Feature Requests  
   
@@ -954,6 +1026,10 @@ npm run lint
 Take a look into [CONTRIBUTING](./CONTRIBUTING.md)  
   
 ### Credit  
+
+A big thanks goes to @Falke-Design, he invests a lot of time and takes good care of Leaflet-Geoman.
+
+Thanks to @ryan-morris for the implementation of Typescript and support with Typescript questions.
   
 As I never built a leaflet plugin before, I looked heavily into the code of leaflet.draw to find out how to do stuff. So don't be surprised to see some familiar code.  
   

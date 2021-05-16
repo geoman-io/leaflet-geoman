@@ -36,6 +36,9 @@ const Draw = L.Class.extend({
   setOptions(options) {
     L.Util.setOptions(this, options);
   },
+  getOptions() {
+    return this.options;
+  },
   initialize(map) {
     // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon
     // Issue https://github.com/Leaflet/Leaflet/issues/7302 - Leaflet v1.7.1
