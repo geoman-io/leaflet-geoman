@@ -57,6 +57,7 @@ const GlobalEditMode = {
   globalEditModeEnabled() {
     return this._globalEditModeEnabled;
   },
+  // TODO: this should maybe removed, it will overwrite explicit options on the layers
   toggleGlobalEditMode(options = this.globalOptions) {
     if (this.globalEditModeEnabled()) {
       // disable
