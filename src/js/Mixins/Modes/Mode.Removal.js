@@ -1,6 +1,7 @@
 const GlobalRemovalMode = {
+  _globalRemovalModeEnabled: false,
   enableGlobalRemovalMode() {
-    this._globalRemovalMode = true;
+    this._globalRemovalModeEnabled = true;
     // handle existing layers
     this.map.eachLayer(layer => {
       if (this._isRelevant(layer)) {
@@ -13,16 +14,16 @@ const GlobalRemovalMode = {
       this.throttledReInitRemoval = L.Util.throttle(this.reinitGlobalRemovalMode, 100, this)
     }
 
-    // handle layers that are added while in removal  xmode
+    // handle layers that are added while in removal mode
     this.map.on('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
-    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+    this.Toolbar.toggleButton('deleteLayer', this.globalRemovalModeEnabled());
 
     this._fireGlobalRemovalModeToggled(true);
   },
   disableGlobalRemovalMode() {
-    this._globalRemovalMode = false;
+    this._globalRemovalModeEnabled = false;
     this.map.eachLayer(layer => {
       layer.off('click', this.removeLayer, this);
     });
@@ -31,7 +32,7 @@ const GlobalRemovalMode = {
     this.map.off('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
-    this.Toolbar.toggleButton('deleteLayer', this._globalRemovalMode);
+    this.Toolbar.toggleButton('deleteLayer', this.globalRemovalModeEnabled());
 
     this._fireGlobalRemovalModeToggled(false);
   },
@@ -40,7 +41,7 @@ const GlobalRemovalMode = {
     return this.globalRemovalModeEnabled();
   },
   globalRemovalModeEnabled() {
-    return !!this._globalRemovalMode;
+    return !!this._globalRemovalModeEnabled;
   },
   toggleGlobalRemovalMode() {
     // toggle global edit mode

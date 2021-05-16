@@ -1,5 +1,4 @@
 const GlobalRotateMode = {
-
   _globalRotateModeEnabled: false,
   enableGlobalRotateMode() {
     this._globalRotateModeEnabled = true;
@@ -7,6 +6,12 @@ const GlobalRotateMode = {
     layers.forEach(layer => {
       layer.pm.enableRotate();
     });
+
+    if (!this.throttledReInitRotate) {
+      this.throttledReInitRotate = L.Util.throttle(this._reinitGlobalRotateMode, 100, this)
+    }
+    // handle layers that are added while in rotate mode
+    this.map.on('layeradd', this.throttledReInitRotate, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
@@ -18,6 +23,9 @@ const GlobalRotateMode = {
     layers.forEach(layer => {
       layer.pm.disableRotate();
     });
+
+    // remove map handler
+    this.map.off('layeradd', this.throttledReInitRotate, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
@@ -33,6 +41,28 @@ const GlobalRotateMode = {
       this.enableGlobalRotateMode();
     }
   },
+  _reinitGlobalRotateMode({ layer }) {
+    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
+    if (!this._isRelevant(layer)) {
+      return;
+    }
+
+    // re-enable global rotation mode if it's enabled already
+    if (this.globalRotateModeEnabled()) {
+      this.disableGlobalRotateMode();
+      this.enableGlobalRotateMode();
+    }
+  },
+  _isRelevant(layer){
+    return layer.pm
+      && !(layer instanceof L.LayerGroup)
+      && (
+        (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
+      )
+      && !layer._pmTempLayer
+      && layer.pm.options.allowRotation
+  }
 
 };
 export default GlobalRotateMode;
