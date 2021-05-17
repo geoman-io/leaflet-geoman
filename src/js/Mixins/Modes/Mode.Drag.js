@@ -1,9 +1,9 @@
-
 const GlobalDragMode = {
+  _globalDragModeEnabled: false,
   enableGlobalDragMode() {
     const layers = L.PM.Utils.findLayers(this.map);
 
-    this._globalDragMode = true;
+    this._globalDragModeEnabled = true;
 
     layers.forEach(layer => {
       layer.pm.enableLayerDrag();
@@ -17,14 +17,14 @@ const GlobalDragMode = {
     this.map.on('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
-    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+    this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
 
     this._fireGlobalDragModeToggled(true);
   },
   disableGlobalDragMode() {
     const layers = L.PM.Utils.findLayers(this.map);
 
-    this._globalDragMode = false;
+    this._globalDragModeEnabled = false;
 
     layers.forEach(layer => {
       layer.pm.disableLayerDrag();
@@ -34,12 +34,12 @@ const GlobalDragMode = {
     this.map.off('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
-    this.Toolbar.toggleButton('dragMode', this._globalDragMode);
+    this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
 
     this._fireGlobalDragModeToggled(false);
   },
   globalDragModeEnabled() {
-    return !!this._globalDragMode;
+    return !!this._globalDragModeEnabled;
   },
   toggleGlobalDragMode() {
     if (this.globalDragModeEnabled()) {

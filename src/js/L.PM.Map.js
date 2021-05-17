@@ -13,8 +13,6 @@ const Map = L.Class.extend({
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
 
-    this._globalRemovalMode = false;
-
     this.globalOptions = {
       snappable: true,
       layerGroup: undefined,

@@ -1015,12 +1015,29 @@ describe('Draw & Edit Poly', () => {
       .click(180, 230)
       .click(190, 70)
       .click(230, 70)
-      .click(180, 230)
+      .click(180, 230);
 
     cy.window().then(({ map }) => {
       const layer2 = map.pm.getGeomanDrawLayers()[0];
       expect(layer).to.eq(layer2);
     });
+  });
+
+  it('disable Rotate-Mode for layer with allowRotate: false', () => {
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({allowRotation: false});
+    });
+
+    cy.toolbarButton('rotate').click();
+
+    cy.hasVertexMarkers(0);
   });
 
   it('cut only certain layers', () => {
