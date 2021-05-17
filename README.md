@@ -626,6 +626,8 @@ The following events are available on a map instance:
 
 ### Split Mode ⭐
 
+![Split Mode Demo](https://user-images.githubusercontent.com/2399810/118527306-721a1000-b741-11eb-86ce-da6caeba8214.gif)
+
 Enable drawing for the shape "Split" to draw a line that splits all underlying Polygons and Polylines.
 
 Important: the splitted layer will be replaced, not updated. Listen to the `pm:split` event to update your layer references in your code. The `pm:split` event will provide you with the original layer and returns the resulting layer(s) that is/are added to the map as a Polygon / MultiPolygon or Polyline / MultiPolyline.
@@ -705,6 +707,8 @@ When dragging a vertex/marker, you can pin all other Markers/Vertices that have 
 ![Pinning Option](https://user-images.githubusercontent.com/2399810/65375984-288ece80-dc9b-11e9-930e-bca03ad7cb56.gif)
 
 ##### Measurement ⭐
+
+![Measurement Demo](https://user-images.githubusercontent.com/2399810/118528582-ce316400-b742-11eb-8c1a-8c656a5138d1.gif)
 
 Calculates the measurement of a layer while drawing and editing. Exclusive for Leaflet-Geoman Pro ⭐
 
