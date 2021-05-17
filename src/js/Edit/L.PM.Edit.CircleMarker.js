@@ -37,6 +37,7 @@ Edit.CircleMarker = Edit.extend({
     this._enabled = true;
 
     this._layer.on('pm:dragstart', this._onDragStart, this);
+    this._layer.on('pm:drag', this._onMarkerDrag, this);
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
 
     // create polygon around the circle border
@@ -271,17 +272,36 @@ Edit.CircleMarker = Edit.extend({
     this._fireRemove(this._layer);
     this._fireRemove(this._map, this._layer);
   },
-  _onDragStart(){
+  _onDragStart(e){
     this._map.pm.Draw.CircleMarker._layerIsDragging = true;
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
   },
   _onMarkerDragStart(e) {
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
+
     this._fireMarkerDragStart(e);
   },
   _onMarkerDrag(e) {
+    // dragged marker
+    const draggedMarker = e.target;
+    if(draggedMarker instanceof L.Marker && !this._vertexValidationDrag(draggedMarker)){
+      return;
+    }
+
     this._fireMarkerDrag(e);
   },
   _onMarkerDragEnd(e) {
     this._map.pm.Draw.CircleMarker._layerIsDragging = false;
+
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDragEnd(draggedMarker)){
+      return;
+    }
     if (this.options.editable) {
       this._fireEdit();
       this._layerEdited = true;

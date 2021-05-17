@@ -5,6 +5,7 @@ import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from "./Mixins/Modes/Mode.Rotate";
 import EventMixin from "./Mixins/Events";
+import KeyboardMixins from "./Mixins/Keyboard";
 
 const Map = L.Class.extend({
   includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode, GlobalRotateMode, EventMixin],
@@ -12,6 +13,7 @@ const Map = L.Class.extend({
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
+    this.Keyboard = KeyboardMixins;
 
     this.globalOptions = {
       snappable: true,
@@ -23,6 +25,8 @@ const Map = L.Class.extend({
         markerPane: 'markerPane'
       }
     };
+
+    this.Keyboard._initKeyListener(map);
   },
   setLang(lang = 'en', t, fallback = 'en') {
     const oldLang = L.PM.activeLang;

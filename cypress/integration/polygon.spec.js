@@ -1080,4 +1080,80 @@ describe('Draw & Edit Poly', () => {
       expect(map.hasLayer(layer)).to.eq(false);
     });
   });
+  it('addVertexOn contextmenu / removeVertexOn click', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({addVertexOn: 'contextmenu', removeVertexOn: 'click'});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('edit').click();
+
+    // Add Vertex
+    cy.get(mapSelector)
+      .click(205, 50);
+    cy.hasVertexMarkers(3);
+
+    cy.get(mapSelector)
+      .rightclick(205, 50);
+    cy.hasVertexMarkers(4);
+
+    // Remove Vertex
+    cy.get(mapSelector)
+      .rightclick(205, 50);
+    cy.hasVertexMarkers(4);
+
+    cy.get(mapSelector)
+      .click(205, 50);
+    cy.hasVertexMarkers(3);
+
+  });
+
+  it('addVertexValidation / removeVertexValidation', () => {
+    cy.window().then(({ map }) => {
+      const check = ({layer})=>layer._valid;
+      map.pm.setGlobalOptions({addVertexValidation: check, removeVertexValidation: check});
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('edit').click();
+
+    // Add Vertex
+    cy.get(mapSelector)
+      .click(205, 50);
+    cy.hasVertexMarkers(3);
+
+    // Remove Vertex
+    cy.get(mapSelector)
+      .rightclick(150, 250);
+    cy.hasVertexMarkers(3);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer._valid = true;
+    });
+
+    // Add Vertex
+    cy.get(mapSelector)
+      .click(205, 50);
+    cy.hasVertexMarkers(4);
+
+    // Remove Vertex
+    cy.get(mapSelector)
+      .rightclick(205, 50);
+    cy.hasVertexMarkers(3);
+
+  });
+
 });

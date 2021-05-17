@@ -382,6 +382,11 @@ See the available options in the table below.
 | allowCutting          | `true`  | Layer can be prevented from cutting.                                                                      | 
 | allowRotation         | `true`  | Layer can be prevented from rotation.                                                                     | 
 | draggable             | `true`  | Dragging can be disabled for the layer.                                                                   |  
+| addVertexOn           | `click`       | Leaflet layer event to add a vertex to a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click).                                   | 
+| addVertexValidation   | `undefined`   | A function for validation if a vertex (of a Line / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.     | 
+| removeVertexOn        | `contextmenu` | Leaflet layer event to remove a vertex from a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click).                              | 
+| removeVertexValidation| `undefined`   | A function for validation if a vertex (of a Line / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.  | 
+| moveVertexValidation  | `undefined`   | A function for validation if a vertex / helper-marker is allowed to move / drag. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.  | 
 | limitMarkersToCount   | `-1`    | Shows only `n` markers closest to the cursor. Use `-1` for no limit.                                      |  
 | limitMarkersToZoom    | `-1`    | Shows markers when under the given zoom level. ⭐                                                          |  
 | limitMarkersToViewport| `false` | Shows only markers in the viewport. ⭐                                                                     |  
@@ -691,6 +696,7 @@ Some details about a few more powerful options:
   
 Snap the dragged marker/vertex to other layers for precision drawing.  
 Snapping can be disabled for layers with the layer option `snapIgnore: true`. With `snapIgnore: false` it will be always snappable, also if `pmIgnore` is set.
+Can also be disabled by holding the `ALT` key.
   
 ![Snapping Options](https://files-r7ezk18qq.now.sh/snapping.gif)  
   
@@ -768,7 +774,7 @@ L.LayerGroup.prototype.removeLayer= function (layer) {
 
 </details>
 
-### Customize  
+### Customize
   
 #### Customize Language  
 Change the language of user-facing copy in Leaflet-Geoman  
@@ -969,7 +975,29 @@ The following methods are available on `L.PM.Utils`:
 | getTranslation(`path`)                           | `String`  | Returns the translation of the passed `path`. path = json-string f.ex. `tooltips.placeMarker`. |  
 | findLayers(`map`)                                | `Array`   | Returns all layers that are available for Leaflet-Geoman.                                      |  
 | circleToPolygon(`circle`, `sides = 60`)          | `Polygon` | Converts a circle into a polygon with default 60 sides.                                        |  
+
+
+### Keyboard
+We implemented a built-in keyboard listener to make one central place where keyboard events can be accessed (without adding self a listener).
+
+The following methods are available on `map.pm.Keyboard`:  
   
+| Method                                 | Returns   | Description                                                                                                                          |  
+| :------------------------------------- | :-------- | :----------------------------------------------------------------------------------------------------------------------------------- |  
+| getLastKeyEvent(`type = 'current'`)    | `Object`  | Returns the last event. Also `keydown` and `keyup` can be passed, to get the specific one.                                           | 
+| getPressedKey()                        | `String`  | Returns the current pressed key. [KeyboardEvent.key](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)             |    
+| isShiftKeyPressed()                    | `Boolean` | Returns true if the `Shift` key is currently pressed.                                                                                |  
+| isAltKeyPressed()                      | `Boolean` | Returns true if the `Alt` key is currently pressed.                                                                                  |  
+| isCtrlKeyPressed()                     | `Boolean` | Returns true if the `Ctrl` key is currently pressed.                                                                                 |  
+| isMetaKeyPressed()                     | `Boolean` | Returns true if the `Meta` key is currently pressed.                                                                                 | 
+
+The following events are available on a map instance:  
+  
+| Event          | Params | Description                                                                                                                 | Output                            |  
+| :------------- | :----- | :-------------------------------------------------------------------------------------------------------------------------- | :-------------------------------- |  
+| pm:keyevent    | `e`    | Fired when `keydown` or `keyup` on the document is fired. `eventType` = `keydown / keyup`, `focusOn` = `document / map`     | `event`, `eventType`, `focusOn`   |  
+
+
 ### Feature Requests  
   
 I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.  

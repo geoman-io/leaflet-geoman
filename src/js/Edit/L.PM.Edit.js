@@ -21,6 +21,11 @@ const Edit = L.Class.extend({
     allowRemoval: true,
     allowCutting: true,
     allowRotation: true,
+    addVertexOn: 'click',
+    removeVertexOn: 'contextmenu',
+    removeVertexValidation: undefined,
+    addVertexValidation: undefined,
+    moveVertexValidation: undefined,
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
@@ -48,7 +53,48 @@ const Edit = L.Class.extend({
   remove(){
     const map = this._map || this._layer._map;
     map.pm.removeLayer({target: this._layer});
+  },
+  _vertexValidation(type, e){
+    const marker = e.target;
+    const args = {layer: this._layer, marker, event: e };
+
+    let validationFnc = "";
+    if(type === 'move') {
+      validationFnc = "moveVertexValidation";
+    } else if(type === 'add') {
+      validationFnc = "addVertexValidation";
+    } else if(type === 'remove') {
+      validationFnc = "removeVertexValidation";
+    }
+
+    // if validation goes wrong, we return false
+    if (this.options[validationFnc] && typeof this.options[validationFnc] === "function" && !this.options[validationFnc](args)) {
+      if(type === 'move') {
+        marker._cancelDragEventChain = marker.getLatLng();
+      }
+      return false;
+    }
+
+    marker._cancelDragEventChain = null;
+    return true;
+  },
+  _vertexValidationDrag(marker){
+    // we reset the marker to the place before it was dragged. We need this, because we can't stop the drag process in a `dragstart` | `movestart` listener
+    if(marker._cancelDragEventChain){
+      marker._latlng = marker._cancelDragEventChain;
+      marker.update();
+      return false;
+    }
+    return true;
+  },
+  _vertexValidationDragEnd(marker){
+    if(marker._cancelDragEventChain){
+      marker._cancelDragEventChain = null;
+      return false;
+    }
+    return true;
   }
+
 });
 
 export default Edit;

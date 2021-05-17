@@ -67,7 +67,7 @@ const SnapMixin = {
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
-    if (e.originalEvent.altKey) {
+    if (this._map.pm.Keyboard.isAltKeyPressed()) {
       return false;
     }
 

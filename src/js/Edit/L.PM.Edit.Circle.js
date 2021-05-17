@@ -54,9 +54,9 @@ Edit.Circle = Edit.extend({
       return false;
     }
 
-    this._centerMarker.off('dragstart', this._fireDragStart, this);
-    this._centerMarker.off('drag', this._fireDrag, this);
-    this._centerMarker.off('dragend', this._fireDragEnd, this);
+    this._centerMarker.off('dragstart', this._onCircleDragStart, this);
+    this._centerMarker.off('drag', this._onCircleDrag, this);
+    this._centerMarker.off('dragend', this._onCircleDragEnd, this);
     this._outerMarker.off('drag',this._handleOuterMarkerSnapping, this);
 
     layer.pm._enabled = false;
@@ -138,9 +138,9 @@ Edit.Circle = Edit.extend({
     // https://github.com/Leaflet/Leaflet/issues/6492
     marker.on('drag', this._moveCircle, this);
 
-    marker.on('dragstart', this._fireDragStart, this);
-    marker.on('drag', this._fireDrag, this);
-    marker.on('dragend', this._fireDragEnd, this);
+    marker.on('dragstart', this._onCircleDragStart, this);
+    marker.on('drag', this._onCircleDrag, this);
+    marker.on('dragend', this._onCircleDragEnd, this);
     // marker.on('contextmenu', this._removeMarker, this);
 
     return marker;
@@ -176,6 +176,11 @@ Edit.Circle = Edit.extend({
     this._syncCircleRadius();
   },
   _moveCircle(e) {
+    const draggedMarker = e.target;
+    if(draggedMarker._cancelDragEventChain) {
+      return;
+    }
+
     const center = e.latlng;
     this._layer.setLatLng(center);
 
@@ -225,16 +230,52 @@ Edit.Circle = Edit.extend({
     this._layer.off('pm:dragstart', this._unsnap, this);
   },
   _onMarkerDragStart(e) {
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
     this._fireMarkerDragStart(e);
   },
   _onMarkerDrag(e) {
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDrag(draggedMarker)){
+      return;
+    }
     this._fireMarkerDrag(e);
   },
   _onMarkerDragEnd(e) {
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDragEnd(draggedMarker)){
+      return;
+    }
+
     // fire edit event
     this._fireEdit();
     this._layerEdited = true;
     this._fireMarkerDragEnd(e);
+  },
+  _onCircleDragStart(e) {
+    if(!this._vertexValidationDrag(e.target)){
+      // we create a new flag, because the other flag is cleared before _fireDragEnd is called
+      this._vertexValidationReset = true;
+      return;
+    }
+    delete this._vertexValidationReset;
+    this._fireDragStart(e);
+  },
+  _onCircleDrag(e) {
+    if(this._vertexValidationReset){
+      return;
+    }
+    this._fireDrag(e);
+  },
+  _onCircleDragEnd() {
+    if(this._vertexValidationReset){
+      delete this._vertexValidationReset;
+      return;
+    }
+    this._fireDragEnd();
   },
   _updateHiddenPolyCircle() {
     if (this._hiddenPolyCircle) {
