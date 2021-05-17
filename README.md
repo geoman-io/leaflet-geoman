@@ -48,7 +48,7 @@ Features marked with ⭐ in this documentation are available in Leaflet-Geoman P
 - [Drag Mode](#drag-mode)  
 - [Removal Mode](#removal-mode)  
 - [Cut Mode](#cut-mode)  
-- [Rotation Mode](#rotate-mode)  
+- [Rotation Mode](#rotation-mode)  
 - [Split Mode ⭐](#split-mode)
 - [Options](#options)  
   - [Snapping](#snapping)
