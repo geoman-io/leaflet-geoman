@@ -25,6 +25,9 @@ const Edit = L.Class.extend({
   setOptions(options) {
     L.Util.setOptions(this, options);
   },
+  getOptions() {
+    return this.options;
+  },
   applyOptions() { },
   isPolygon() {
     // if it's a polygon, it means the coordinates array is multi dimensional
