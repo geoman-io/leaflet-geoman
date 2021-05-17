@@ -67,7 +67,7 @@ const SnapMixin = {
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
-    if (e.originalEvent.altKey) {
+    if (this._map.pm.Keyboard.isAltKeyPressed()) {
       return false;
     }
 
@@ -127,8 +127,8 @@ const SnapMixin = {
       distance: closestLayer.distance,
     };
 
-    L.PM.Utils._fireEvent(eventInfo.marker,'pm:snapdrag', eventInfo);
-    L.PM.Utils._fireEvent(this._layer,'pm:snapdrag', eventInfo);
+    this._fireSnapDrag(eventInfo.marker, eventInfo);
+    this._fireSnapDrag(this._layer, eventInfo);
 
     if (closestLayer.distance < minDistance) {
       // snap the marker
@@ -140,8 +140,8 @@ const SnapMixin = {
 
       const triggerSnap = () => {
         this._snapLatLng = snapLatLng;
-        L.PM.Utils._fireEvent(marker,'pm:snap', eventInfo);
-        L.PM.Utils._fireEvent(this._layer,'pm:snap', eventInfo);
+        this._fireSnap(marker, eventInfo);
+        this._fireSnap(this._layer, eventInfo);
       };
 
       // check if the snapping position differs from the last snap
@@ -162,8 +162,8 @@ const SnapMixin = {
       marker._snapped = false;
 
       // and fire unsnap event
-      L.PM.Utils._fireEvent(eventInfo.marker,'pm:unsnap', eventInfo);
-      L.PM.Utils._fireEvent(this._layer,'pm:unsnap', eventInfo);
+      this._fireUnsnap(eventInfo.marker, eventInfo);
+      this._fireUnsnap(this._layer, eventInfo);
     }
 
     return true;

@@ -3,15 +3,17 @@ import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
+import GlobalRotateMode from "./Mixins/Modes/Mode.Rotate";
+import EventMixin from "./Mixins/Events";
+import KeyboardMixins from "./Mixins/Keyboard";
 
 const Map = L.Class.extend({
-  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode],
+  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode, GlobalRotateMode, EventMixin],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
-
-    this._globalRemovalMode = false;
+    this.Keyboard = KeyboardMixins;
 
     this.globalOptions = {
       snappable: true,
@@ -23,6 +25,8 @@ const Map = L.Class.extend({
         markerPane: 'markerPane'
       }
     };
+
+    this.Keyboard._initKeyListener(map);
   },
   setLang(lang = 'en', t, fallback = 'en') {
     const oldLang = L.PM.activeLang;
@@ -32,12 +36,7 @@ const Map = L.Class.extend({
 
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
-    L.PM.Utils._fireEvent(this.map,"pm:langchange", {
-      oldLang,
-      activeLang: lang,
-      fallback,
-      translations: translations[lang]
-    });
+    this._fireLangChange(oldLang, lang, fallback, translations[lang]);
   },
   addControls(options) {
     this.Toolbar.addControls(options);
@@ -67,13 +66,14 @@ const Map = L.Class.extend({
 
     this.Draw.disable(shape);
   },
-  // optionsModifier for spezial options like ignoreShapes
+  // optionsModifier for special options like ignoreShapes or merge
   setPathOptions(options, optionsModifier = {}) {
     const ignore = optionsModifier.ignoreShapes || [];
+    const mergeOptions = optionsModifier.merge || false;
 
     this.map.pm.Draw.shapes.forEach(shape => {
       if (ignore.indexOf(shape) === -1) {
-        this.map.pm.Draw[shape].setPathOptions(options)
+        this.map.pm.Draw[shape].setPathOptions(options, mergeOptions);
       }
     })
   },

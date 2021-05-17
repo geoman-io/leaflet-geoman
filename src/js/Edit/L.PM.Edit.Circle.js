@@ -14,6 +14,12 @@ Edit.Circle = Edit.extend({
 
     this._map = this._layer._map;
 
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
+      return;
+    }
+
     if (!this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
@@ -35,7 +41,7 @@ Edit.Circle = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
 
-    L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
+    this._fireEnable();
   },
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -48,9 +54,9 @@ Edit.Circle = Edit.extend({
       return false;
     }
 
-    this._centerMarker.off('dragstart', this._fireDragStart, this);
-    this._centerMarker.off('drag', this._fireDrag, this);
-    this._centerMarker.off('dragend', this._fireDragEnd, this);
+    this._centerMarker.off('dragstart', this._onCircleDragStart, this);
+    this._centerMarker.off('drag', this._onCircleDrag, this);
+    this._centerMarker.off('dragend', this._onCircleDragEnd, this);
     this._outerMarker.off('drag',this._handleOuterMarkerSnapping, this);
 
     layer.pm._enabled = false;
@@ -62,11 +68,11 @@ Edit.Circle = Edit.extend({
 
 
     if (this._layerEdited) {
-      L.PM.Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
+      this._fireUpdate();
     }
     this._layerEdited = false;
 
-    L.PM.Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
+    this._fireDisable();
     return true;
   },
   enabled() {
@@ -132,9 +138,9 @@ Edit.Circle = Edit.extend({
     // https://github.com/Leaflet/Leaflet/issues/6492
     marker.on('drag', this._moveCircle, this);
 
-    marker.on('dragstart', this._fireDragStart, this);
-    marker.on('drag', this._fireDrag, this);
-    marker.on('dragend', this._fireDragEnd, this);
+    marker.on('dragstart', this._onCircleDragStart, this);
+    marker.on('drag', this._onCircleDrag, this);
+    marker.on('dragend', this._onCircleDragEnd, this);
     // marker.on('contextmenu', this._removeMarker, this);
 
     return marker;
@@ -170,22 +176,25 @@ Edit.Circle = Edit.extend({
     this._syncCircleRadius();
   },
   _moveCircle(e) {
+    const draggedMarker = e.target;
+    if(draggedMarker._cancelDragEventChain) {
+      return;
+    }
+
     const center = e.latlng;
     this._layer.setLatLng(center);
 
     const radius = this._layer._radius;
 
     const outer = this._getLatLngOnCircle(center, radius);
-    this._outerMarker.setLatLng(outer);
+    // don't call .setLatLng() because it fires the `move` event and then the radius is changed because of _syncCircleRadius #892
+    this._outerMarker._latlng = outer;
+    this._outerMarker.update();
     this._syncHintLine();
 
     this._updateHiddenPolyCircle();
 
-    L.PM.Utils._fireEvent(this._layer,'pm:centerplaced', {
-      layer: this._layer,
-      latlng: center,
-      shape: this.getShape()
-    });
+    this._fireCenterPlaced("Edit");
   },
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
@@ -221,46 +230,52 @@ Edit.Circle = Edit.extend({
     this._layer.off('pm:dragstart', this._unsnap, this);
   },
   _onMarkerDragStart(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
+    this._fireMarkerDragStart(e);
   },
   _onMarkerDrag(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDrag(draggedMarker)){
+      return;
+    }
+    this._fireMarkerDrag(e);
   },
   _onMarkerDragEnd(e) {
+    // dragged marker
+    const draggedMarker = e.target;
+    if(!this._vertexValidationDragEnd(draggedMarker)){
+      return;
+    }
+
     // fire edit event
     this._fireEdit();
-
-    // fire markerdragend event
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath: undefined
-    });
-  },
-  _fireEdit() {
-    // fire edit event
-    L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
     this._layerEdited = true;
+    this._fireMarkerDragEnd(e);
   },
-  _fireDragStart() {
-    L.PM.Utils._fireEvent(this._layer,'pm:dragstart', { layer: this._layer, shape: this.getShape() });
+  _onCircleDragStart(e) {
+    if(!this._vertexValidationDrag(e.target)){
+      // we create a new flag, because the other flag is cleared before _fireDragEnd is called
+      this._vertexValidationReset = true;
+      return;
+    }
+    delete this._vertexValidationReset;
+    this._fireDragStart(e);
   },
-  _fireDrag(e) {
-    L.PM.Utils._fireEvent(this._layer,'pm:drag', Object.assign({},e, {shape:this.getShape()}));
+  _onCircleDrag(e) {
+    if(this._vertexValidationReset){
+      return;
+    }
+    this._fireDrag(e);
   },
-  _fireDragEnd() {
-    L.PM.Utils._fireEvent(this._layer,'pm:dragend', { layer: this._layer, shape: this.getShape() });
+  _onCircleDragEnd() {
+    if(this._vertexValidationReset){
+      delete this._vertexValidationReset;
+      return;
+    }
+    this._fireDragEnd();
   },
   _updateHiddenPolyCircle() {
     if (this._hiddenPolyCircle) {

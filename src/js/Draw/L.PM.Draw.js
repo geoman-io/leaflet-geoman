@@ -1,9 +1,11 @@
+import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
+import EventMixin from "../Mixins/Events";
 
 const Draw = L.Class.extend({
-  includes: [SnapMixin],
+  includes: [SnapMixin, EventMixin],
   options: {
-    snappable: true,
+    snappable: true,  //TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,
     snapMiddle: false,
     allowSelfIntersection: true,
@@ -28,9 +30,14 @@ const Draw = L.Class.extend({
     editable: false,
     markerEditable: true,
     continueDrawing: false,
+    snapSegment: true,
+    requireSnapToFinish: false,
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
+  },
+  getOptions() {
+    return this.options;
   },
   initialize(map) {
     // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon
@@ -53,12 +60,20 @@ const Draw = L.Class.extend({
     this.Marker.setOptions({continueDrawing: true});
     this.CircleMarker.setOptions({continueDrawing: true});
   },
-  setPathOptions(options) {
-    this.options.pathOptions = options;
+  setPathOptions(options, mergeOptions = false) {
+    if(!mergeOptions) {
+      this.options.pathOptions = options;
+    }else{
+      this.options.pathOptions = merge(this.options.pathOptions,options);
+    }
   },
   getShapes() {
     // if somebody wants to know what shapes are available
     return this.shapes;
+  },
+  getShape() {
+    // return the shape of the current drawing layer
+    return this._shape;
   },
   enable(shape, options) {
     if (!shape) {
@@ -102,16 +117,9 @@ const Draw = L.Class.extend({
   _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
     if (this._shape === "Cut") {
-      L.PM.Utils._fireEvent(this._map,'pm:globalcutmodetoggled', {
-        enabled: !!this._enabled,
-        map: this._map,
-      });
+      this._fireGlobalCutModeToggled();
     } else {
-      L.PM.Utils._fireEvent(this._map,'pm:globaldrawmodetoggled', {
-        enabled: this._enabled,
-        shape: this._shape,
-        map: this._map,
-      });
+      this._fireGlobalDrawModeToggled();
     }
 
     const layers = L.PM.Utils.findLayers(this._map);
@@ -164,7 +172,8 @@ const Draw = L.Class.extend({
       "editMode": "Edit",
       "dragMode": "Drag",
       "cutPolygon": "Cut",
-      "removalMode": "Removal"
+      "removalMode": "Removal",
+      "rotateMode": "Rotate",
     };
 
     if (shapeMapping[name]) {
@@ -178,6 +187,8 @@ const Draw = L.Class.extend({
       layer.pm.setOptions(this.options);
       // set the shape (can be a custom shape)
       layer.pm._shape = this._shape;
+      // apply the map to the new created layer in the pm object
+      layer.pm._map = this._map;
     }
     this._addDrawnLayerProp(layer);
   },

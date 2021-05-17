@@ -97,10 +97,7 @@ Draw.Rectangle = Draw.extend({
     this._otherSnapLayers = [];
 
     // fire drawstart event
-    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
+    this._fireDrawStart();
     this._setGlobalDrawMode();
 
   },
@@ -133,7 +130,7 @@ Draw.Rectangle = Draw.extend({
       this._cleanupSnapping();
     }
     // fire drawend event
-    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    this._fireDrawEnd();
     this._setGlobalDrawMode();
 
   },
@@ -201,15 +198,15 @@ Draw.Rectangle = Draw.extend({
     }
   },
   _syncRectangleSize() {
-    // Create a box using corners A & B (A = Starting Position, B = Current Mouse Position)
     const A = this._startMarker.getLatLng();
     const B = this._hintMarker.getLatLng();
 
-    this._layer.setBounds([A, B]);
+    // Create a (maybe rotated) box using corners A & B (A = Starting Position, B = Current Mouse Position)
+    const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectangleAngle || 0, this._map);
+    this._layer.setLatLngs(corners);
 
     // Add matching style markers, if cursor marker is shown
     if (this.options.cursorMarker && this._styleMarkers) {
-      const corners = this._findCorners();
       const unmarkedCorners = [];
 
       // Find two corners not currently occupied by starting marker and hint marker
@@ -257,15 +254,22 @@ Draw.Rectangle = Draw.extend({
 
     // create the final rectangle layer, based on opposite corners A & B
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
+
+    // rectangle can only initialized with bounds (not working with rotation) so we update the latlngs
+    if(this.options.rectangleAngle){
+      const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectangleAngle || 0, this._map);
+      rectangleLayer.setLatLngs(corners);
+      if(rectangleLayer.pm){
+        rectangleLayer.pm._setAngle(this.options.rectangleAngle || 0);
+      }
+    }
+
     this._setPane(rectangleLayer,'layerPane');
     this._finishLayer(rectangleLayer);
     rectangleLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      layer: rectangleLayer,
-    });
+    this._fireCreate(rectangleLayer);
 
     // disable drawing
     this.disable();

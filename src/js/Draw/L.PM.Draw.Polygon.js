@@ -1,5 +1,4 @@
 import Draw from './L.PM.Draw';
-
 import { getTranslation } from '../helpers';
 
 Draw.Polygon = Draw.Line.extend({
@@ -83,10 +82,7 @@ Draw.Polygon = Draw.Line.extend({
     polygonLayer.addTo(this._map.pm._getContainingLayer());
 
     // fire the pm:create event and pass shape and layer
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      layer: polygonLayer,
-    });
+    this._fireCreate(polygonLayer);
 
     // clean up snapping states
     this._cleanupSnapping();

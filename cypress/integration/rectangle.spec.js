@@ -358,7 +358,7 @@ describe('Draw Rectangle', () => {
 
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true});
+      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
     });
 
     cy.toolbarButton('polygon').click();
@@ -387,7 +387,7 @@ describe('Draw Rectangle', () => {
 
   it('requireSnapToFinish not applied for first layer', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true});
+      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
     });
 
     cy.toolbarButton('rectangle').click();
@@ -407,5 +407,163 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ map }) => {
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
+  });
+
+  it('map property is added after creation', () => {
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(350, 250)
+      .click(190, 60);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      expect(layer.pm._map).to.not.eq(undefined);
+    });
+  });
+
+  it('drags a whole LayerGroup', () => {
+    cy.window().then(({ map, L }) => {
+      const fg = L.featureGroup().addTo(map);
+      map.pm.setGlobalOptions({layerGroup: fg, syncLayersOnDrag: true});
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(191,216)
+      .click(608,323);
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(230, 230)
+      .click(350, 350);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map }) => {
+      const layers = map.pm.getGeomanDrawLayers();
+      const center1 = layers[0].getCenter();
+      const center2 = layers[1].getCenter();
+
+      const layer = layers[0];
+      layer.pm._dragMixinOnMouseDown({originalEvent: {button: 0}, target: layer, latlng: map.containerPointToLatLng([290,290]) });
+      layer.pm._dragMixinOnMouseMove({originalEvent: {button: 0}, target: layer, latlng: map.containerPointToLatLng([500,320]) });
+      layer.pm._dragMixinOnMouseUp({originalEvent: {button: 0}, target: layer, latlng: map.containerPointToLatLng([320,320]) });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(false);
+      expect(center2.equals(layers[1].getCenter())).to.eq(false);
+    });
+  });
+
+  it('drags syncLayers', () => {
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(191,216)
+      .click(608,323);
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector)
+      .click(230, 230)
+      .click(350, 350);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map}) => {
+      const layers = map.pm.getGeomanDrawLayers();
+      let center1 = layers[0].getCenter();
+      let center2 = layers[1].getCenter();
+
+      const layer = layers[0];
+      // if this layer is dragged, all layers on the map should dragged too
+      layer.pm.options.syncLayersOnDrag = layers;
+
+      // Drag both layers
+      layer.pm._dragMixinOnMouseDown({originalEvent: {button: 0}, target: layer, latlng: map.containerPointToLatLng([290,290]) });
+      layer.pm._dragMixinOnMouseMove({originalEvent: {button: 0}, target: layer, latlng: map.containerPointToLatLng([500,320]) });
+      layer.pm._dragMixinOnMouseUp({originalEvent: {button: 0}, target: layer, latlng: map.containerPointToLatLng([320,320]) });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(false);
+      expect(center2.equals(layers[1].getCenter())).to.eq(false);
+
+
+      center1 = layers[0].getCenter();
+      center2 = layers[1].getCenter();
+
+      const layer2 = layers[1];
+      // Drag only layer2
+      layer2.pm._dragMixinOnMouseDown({originalEvent: {button: 0}, target: layer2, latlng: map.containerPointToLatLng([290,290]) });
+      layer2.pm._dragMixinOnMouseMove({originalEvent: {button: 0}, target: layer2, latlng: map.containerPointToLatLng([500,320]) });
+      layer2.pm._dragMixinOnMouseUp({originalEvent: {button: 0}, target: layer2, latlng: map.containerPointToLatLng([320,320]) });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(true);
+      expect(center2.equals(layers[1].getCenter())).to.eq(false);
+    });
+  });
+
+
+  it('allows only one of two rectangles to be editable', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+
+    cy.window().then(({ map }) => {
+      map.pm.getGeomanDrawLayers()[0].pm.options.allowEditing = false;
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(500, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(4);
+    cy.hasMiddleMarkers(0);
+  });
+
+
+  it('allows only one of two rectangles to be rotateable', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+
+    cy.window().then(({ map }) => {
+      map.pm.getGeomanDrawLayers()[0].pm.options.allowRotation = false;
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(500, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('rotate')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(4);
+    cy.hasMiddleMarkers(0);
   });
 });

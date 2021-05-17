@@ -21,6 +21,7 @@ import no from './no.json';
 import fa from './fa.json';
 import ua from './ua.json';
 import tr from './tr.json';
+import cz from './cz.json';
 
 export default {
   en,
@@ -43,5 +44,6 @@ export default {
   no,
   fa,
   ua,
-  tr
+  tr,
+  cz
 };

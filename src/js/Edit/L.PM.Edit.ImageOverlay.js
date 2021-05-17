@@ -16,6 +16,7 @@ Edit.ImageOverlay = Edit.extend({
   enabled() {
     return this._enabled;
   },
+  //TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
     this._map = this._layer._map;
@@ -23,6 +24,13 @@ Edit.ImageOverlay = Edit.extend({
     if (!this._map) {
       return;
     }
+
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
+      return;
+    }
+
     if (!this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
@@ -35,9 +43,9 @@ Edit.ImageOverlay = Edit.extend({
     this._enabled = true;
 
     // create markers for four corners of ImageOverlay
-    this._otherSnapLayers = L.PM.Edit.Rectangle.prototype._findCorners.apply(this);
+    this._otherSnapLayers = this._findCorners();
 
-    L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
+    this._fireEnable();
   },
   disable(layer = this._layer) {
     // prevent disabling if layer is being dragged
@@ -55,19 +63,24 @@ Edit.ImageOverlay = Edit.extend({
     // only fire events if it was enabled before
     if (!this.enabled()) {
       if (this._layerEdited) {
-        L.PM.Utils._fireEvent(layer,'pm:update', { layer, shape: this.getShape() });
+        this._fireUpdate();
       }
       this._layerEdited = false;
-      L.PM.Utils._fireEvent(layer,'pm:disable', { layer, shape: this.getShape() });
+      this._fireDisable();
     }
 
     this._layer.off('contextmenu', this._removeMarker, this);
     layer.pm._enabled = false;
     return true;
   },
-  _fireEdit() {
-    // fire edit event
-    L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
-    this._layerEdited = true;
+  _findCorners() {
+    const corners = this._layer.getBounds();
+
+    const northwest = corners.getNorthWest();
+    const northeast = corners.getNorthEast();
+    const southeast = corners.getSouthEast();
+    const southwest = corners.getSouthWest();
+
+    return [northwest, northeast, southeast, southwest];
   },
 });

@@ -1,16 +1,12 @@
 // this mixin adds a global edit mode to the map
 const GlobalEditMode = {
-  _globalEditMode: false,
-  enableGlobalEditMode(o) {
-    const options = {
-      snappable: this._globalSnappingEnabled,
-      ...o
-    };
-
-    const status = true;
+  _globalEditModeEnabled: false,
+  enableGlobalEditMode(options) {
+    // set status
+    this._globalEditModeEnabled = true;
 
     // Set toolbar button to currect status
-    this.Toolbar.toggleButton('editMode', status);
+    this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
 
     // find all layers handled by leaflet-geoman
     const layers = L.PM.Utils.findLayers(this.map);
@@ -30,10 +26,12 @@ const GlobalEditMode = {
     // handle layers that are added while in removal mode
     this.map.on('layeradd', this.throttledReInitEdit, this);
 
-    this.setGlobalEditStatus(status);
+    // fire event
+    this._fireGlobalEditModeToggled(true);
   },
   disableGlobalEditMode() {
-    const status = false;
+    // set status
+    this._globalEditModeEnabled = false;
 
     // find all layers handles by leaflet-geoman
     const layers = L.PM.Utils.findLayers(this.map);
@@ -47,23 +45,19 @@ const GlobalEditMode = {
     this.map.off('layeradd', this.throttledReInitEdit, this);
 
     // Set toolbar button to currect status
-    this.Toolbar.toggleButton('editMode', status);
+    this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
 
-    this.setGlobalEditStatus(status);
+    // fire event
+    this._fireGlobalEditModeToggled(false);
   },
   // TODO: Remove in the next major release
   globalEditEnabled() {
     return this.globalEditModeEnabled();
   },
   globalEditModeEnabled() {
-    return this._globalEditMode;
+    return this._globalEditModeEnabled;
   },
-  setGlobalEditStatus(status) {
-    // set status
-    this._globalEditMode = status;
-    // fire event
-    this._fireEditModeEvent(this._globalEditMode);
-  },
+  // TODO: this should maybe removed, it will overwrite explicit options on the layers
   toggleGlobalEditMode(options = this.globalOptions) {
     if (this.globalEditModeEnabled()) {
       // disable
@@ -93,12 +87,6 @@ const GlobalEditMode = {
   },
   _layerAdded({layer}){
     this._addedLayers.push(layer);
-  },
-  _fireEditModeEvent(enabled) {
-    L.PM.Utils._fireEvent(this.map,'pm:globaleditmodetoggled', {
-      enabled,
-      map: this.map,
-    });
   },
 };
 

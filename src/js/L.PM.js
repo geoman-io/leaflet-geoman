@@ -36,6 +36,8 @@ import './Edit/L.PM.Edit.ImageOverlay';
 import '../css/layers.css';
 import '../css/controls.css';
 
+import './helpers/Matrix';
+
 import Utils from './L.PM.Utils';
 
 L.PM = L.PM || {
@@ -186,7 +188,8 @@ L.PM = L.PM || {
       layer.eachLayer((_layer)=>{
         this.reInitLayer(_layer);
       })
-    }else if(layer.pm){
+    }
+    if(layer.pm){
       // PM is already added to the layer
     }else if(L.PM.optIn && layer.options.pmIgnore !== false){
       // Opt-In is true and pmIgnore is not false
@@ -206,6 +209,10 @@ L.PM = L.PM || {
       layer.pm = new L.PM.Edit.Polygon(layer);
     }else if(layer instanceof L.Polyline){
       layer.pm = new L.PM.Edit.Line(layer);
+    }else if(layer instanceof L.LayerGroup){
+      layer.pm = new L.PM.Edit.LayerGroup(layer);
+    }else if(layer instanceof L.ImageOverlay){
+      layer.pm = new L.PM.Edit.ImageOverlay(layer);
     }
   }
 };

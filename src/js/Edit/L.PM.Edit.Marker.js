@@ -10,10 +10,17 @@ Edit.Marker = Edit.extend({
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
   },
+  //TODO: remove default option in next major Release
   enable(options = { draggable: true }) {
     L.Util.setOptions(this, options);
 
     this._map = this._layer._map;
+
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
+      return;
+    }
 
     if (this.enabled()) {
       return;
@@ -21,7 +28,7 @@ Edit.Marker = Edit.extend({
     this.applyOptions();
     this._enabled = true;
 
-    L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
+    this._fireEnable();
   },
   disable() {
     this._enabled = false;
@@ -31,12 +38,13 @@ Edit.Marker = Edit.extend({
 
     this._layer.off('contextmenu', this._removeMarker, this);
 
-    L.PM.Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
-
-    if (this._layerEdited) {
-      L.PM.Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
+    if (this.enabled()) {
+      if (this._layerEdited) {
+        this._fireUpdate();
+      }
+      this._layerEdited = false;
+      this._fireDisable();
     }
-    this._layerEdited = false;
   },
   enabled() {
     return this._enabled;
@@ -69,14 +77,11 @@ Edit.Marker = Edit.extend({
     const marker = e.target;
     marker.remove();
     // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
-    L.PM.Utils._fireEvent(marker,'pm:remove', { layer: marker, shape: this.getShape() });
-    L.PM.Utils._fireEvent(this._map,'pm:remove', { layer: marker, shape: this.getShape() });
+    this._fireRemove(marker);
+    this._fireRemove(this._map, marker);
   },
-  _onDragEnd(e) {
-    const marker = e.target;
-
-    // fire the pm:edit event and pass shape and marker
-    L.PM.Utils._fireEvent(marker,'pm:edit', { layer: this._layer, shape: this.getShape() });
+  _onDragEnd() {
+    this._fireEdit();
     this._layerEdited = true;
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin
@@ -84,20 +89,21 @@ Edit.Marker = Edit.extend({
     const marker = this._layer;
 
     this.options.snapDistance = this.options.snapDistance || 30;
+    this.options.snapSegment = this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
-    marker.off('drag', this._handleSnapping, this);
-    marker.on('drag', this._handleSnapping, this);
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.on('pm:drag', this._handleSnapping, this);
 
-    marker.off('dragend', this._cleanupSnapping, this);
-    marker.on('dragend', this._cleanupSnapping, this);
+    marker.off('pm:dragend', this._cleanupSnapping, this);
+    marker.on('pm:dragend', this._cleanupSnapping, this);
 
     marker.off('pm:dragstart', this._unsnap, this);
     marker.on('pm:dragstart', this._unsnap, this);
   },
   _disableSnapping() {
     const marker = this._layer;
-    marker.off('drag', this._handleSnapping, this);
-    marker.off('dragend', this._cleanupSnapping, this);
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.off('pm:dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
   }
 });

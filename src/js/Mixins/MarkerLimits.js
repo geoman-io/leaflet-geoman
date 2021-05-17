@@ -20,7 +20,7 @@ const MarkerLimits = {
 
     // add markers closest to the mouse
     if (this.options.limitMarkersToCount > -1) {
-      // re-init markers when a vertex is removed. 
+      // re-init markers when a vertex is removed.
       // The reason is that syncing this cache with a removed marker was impossible to do
       this._layer.on('pm:vertexremoved', this._initMarkers, this)
 
@@ -47,6 +47,9 @@ const MarkerLimits = {
     })
   },
   applyLimitFilters({ latlng = { lat: 0, lng: 0 } }) {
+    if(this._preventRenderMarkers){
+      return;
+    }
     // find markers near the cursor
     const makersNearCursor = this._filterClosestMarkers(latlng)
 
@@ -71,6 +74,10 @@ const MarkerLimits = {
     const closest = markers.filter((l, i) => limit > -1 ? i < limit : true)
 
     return closest;
+  },
+  _preventRenderMarkers: false,
+  _preventRenderingMarkers(value){
+    this._preventRenderMarkers = !!value;
   }
 }
 

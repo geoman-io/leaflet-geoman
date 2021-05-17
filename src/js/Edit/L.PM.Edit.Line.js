@@ -2,7 +2,7 @@ import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
-import { isEmptyDeep, removeEmptyCoordRings } from '../helpers';
+import {isEmptyDeep, removeEmptyCoordRings} from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -31,8 +31,13 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    // TODO: this is wrong: if already enable then go into the if
-    if (!this.enabled()) {
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
+      return;
+    }
+
+    if (this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
       this.disable();
@@ -68,7 +73,7 @@ Edit.Line = Edit.extend({
     }else{
       this.cachedColor = undefined;
     }
-    L.PM.Utils._fireEvent(this._layer,'pm:enable', { layer: this._layer, shape: this.getShape() });
+    this._fireEnable();
   },
   disable(poly = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
@@ -105,10 +110,10 @@ Edit.Line = Edit.extend({
     }
 
     if (this._layerEdited) {
-      L.PM.Utils._fireEvent(this._layer,'pm:update', { layer: this._layer, shape: this.getShape() });
+      this._fireUpdate();
     }
     this._layerEdited = false;
-    L.PM.Utils._fireEvent(this._layer,'pm:disable', { layer: this._layer, shape: this.getShape() });
+    this._fireDisable();
     return true;
   },
   enabled() {
@@ -188,14 +193,21 @@ Edit.Line = Edit.extend({
 
     marker._pmTempLayer = true;
 
-    marker.on('click', this._onVertexClick, this);
-    marker.on('dragstart', this._onMarkerDragStart, this);
-    marker.on('move', this._onMarkerDrag, this);
-    marker.on('dragend', this._onMarkerDragEnd, this);
+    if (this.options.rotate) {
+      marker.on('dragstart', this._onRotateStart, this);
+      marker.on('drag', this._onRotate, this);
+      marker.on('dragend', this._onRotateEnd, this);
+    } else {
+      marker.on('click', this._onVertexClick, this);
+      marker.on('dragstart', this._onMarkerDragStart, this);
+      marker.on('move', this._onMarkerDrag, this);
+      marker.on('dragend', this._onMarkerDragEnd, this);
 
-    if (!this.options.preventMarkerRemoval) {
-      marker.on('contextmenu', this._removeMarker, this);
+      if (!this.options.preventMarkerRemoval) {
+        marker.on(this.options.removeVertexOn, this._removeMarker, this);
+      }
     }
+
 
     this._markerGroup.addLayer(marker);
 
@@ -227,13 +239,17 @@ Edit.Line = Edit.extend({
     leftM._middleMarkerNext = middleMarker;
     rightM._middleMarkerPrev = middleMarker;
 
-    middleMarker.on('click', this._onMiddleMarkerClick, this);
+    middleMarker.on(this.options.addVertexOn, this._onMiddleMarkerClick, this);
     middleMarker.on('movestart',this._onMiddleMarkerMoveStart, this);
 
     return middleMarker;
   },
   _onMiddleMarkerClick(e){
     const middleMarker = e.target;
+
+    if(!this._vertexValidation('add',e)) {
+      return;
+    }
     // TODO: move the next two lines inside _addMarker() as soon as
     // https://github.com/Leaflet/Leaflet/issues/4484
     // is fixed
@@ -243,18 +259,31 @@ Edit.Line = Edit.extend({
   },
   _onMiddleMarkerMoveStart(e){
     const middleMarker = e.target;
+    middleMarker.on('moveend', this._onMiddleMarkerMoveEnd, this);
+    if(!this._vertexValidation('add',e)) {
+      middleMarker.on('move', this._onMiddleMarkerMovePrevent, this);
+      return;
+    }
+
     middleMarker._dragging = true;
     // TODO: This is a workaround. Remove the moveend listener and
     // callback as soon as this is fixed:
     // https://github.com/Leaflet/Leaflet/issues/4484
-    middleMarker.on('moveend', this._onMiddleMarkerMoveEnd, this);
     this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
+  },
+  _onMiddleMarkerMovePrevent(e) {
+    const middleMarker = e.target;
+    this._vertexValidationDrag(middleMarker);
   },
   _onMiddleMarkerMoveEnd(e){
     const middleMarker = e.target;
+    middleMarker.off('move', this._onMiddleMarkerMovePrevent, this);
+    middleMarker.off('moveend', this._onMiddleMarkerMoveEnd, this);
+    if(!this._vertexValidationDragEnd(middleMarker)) {
+      return;
+    }
     const icon = L.divIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
-    middleMarker.off('moveend', this._onMiddleMarkerMoveEnd, this);
     // timeout is needed else this._onVertexClick fires the event because it is called after deleting the flag
     setTimeout(()=> {
       delete middleMarker._dragging;
@@ -264,7 +293,7 @@ Edit.Line = Edit.extend({
   _addMarker(newM, leftM, rightM) {
     // first, make this middlemarker a regular marker
     newM.off('movestart',this._onMiddleMarkerMoveStart, this);
-    newM.off('click', this._onMiddleMarkerClick, this);
+    newM.off(this.options.addVertexOn, this._onMiddleMarkerClick, this);
     // now, create the polygon coordinate point for that marker
     // and push into marker array
     // and associate polygon coordinate with marker coordinate
@@ -305,14 +334,9 @@ Edit.Line = Edit.extend({
 
     // fire edit event
     this._fireEdit();
+    this._layerEdited = true;
 
-    L.PM.Utils._fireEvent(this._layer,'pm:vertexadded', {
-      layer: this._layer,
-      marker: newM,
-      indexPath: this.findDeepMarkerIndex(this._markers, newM).indexPath,
-      latlng,
-      shape: this.getShape()
-    });
+    this._fireVertexAdded(newM,this.findDeepMarkerIndex(this._markers, newM).indexPath, latlng);
 
     if (this.options.snappable) {
       this._initSnappableMarkers();
@@ -359,12 +383,9 @@ Edit.Line = Edit.extend({
         this.isRed = true;
       }
 
+      // TODO: call kinks only once (hasSelfIntersection)
       // fire intersect event
-      L.PM.Utils._fireEvent(this._layer,'pm:intersect', {
-        layer: this._layer,
-        intersection: kinks(this._layer.toGeoJSON(15)),
-        shape: this.getShape()
-      });
+      this._fireIntersect(kinks(this._layer.toGeoJSON(15)));
     } else {
       // if not, reset the style to the default color
       layer.setStyle({ color: this.cachedColor });
@@ -402,17 +423,20 @@ Edit.Line = Edit.extend({
       }
     });
   },
-
   _removeMarker(e) {
+    // the marker that should be removed
+    const marker = e.target;
+
+    if(!this._vertexValidation('remove',e)) {
+        return;
+    }
+
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
     if (!this.options.allowSelfIntersection) {
       const c = this._layer.getLatLngs();
       this._coordsBeforeEdit = JSON.parse(JSON.stringify(c));
     }
-
-    // the marker that should be removed
-    const marker = e.target;
 
     // coords of the layer
     let coords = this._layer.getLatLngs();
@@ -529,15 +553,11 @@ Edit.Line = Edit.extend({
 
     // fire edit event
     this._fireEdit();
+    this._layerEdited = true;
 
     // fire vertex removal event
-    L.PM.Utils._fireEvent(this._layer,'pm:vertexremoved', {
-      layer: this._layer,
-      marker,
-      indexPath,
-      shape: this.getShape()
-      // TODO: maybe add latlng as well?
-    });
+    // TODO: maybe fire latlng as well?
+    this._fireVertexRemoved(marker, indexPath);
   },
   findDeepMarkerIndex(arr, marker) {
     // thanks for the function, Felix Heck
@@ -633,26 +653,25 @@ Edit.Line = Edit.extend({
   },
   _onMarkerDragStart(e) {
     const marker = e.target;
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
-
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragstart', {
-      layer: this._layer,
-      markerEvent: e,
-      indexPath,
-      shape: this.getShape()
-    });
-
-    // if self intersection isn't allowed, save the coords upon dragstart
-    // in case we need to reset the layer
-    if (!this.options.allowSelfIntersection) {
-      this._coordsBeforeEdit = this._layer.getLatLngs();
-    }
 
     // When intersection is true while calling enable(), the cachedColor is already set
     if (!this.cachedColor) {
       this.cachedColor = this._layer.options.color;
     }
 
+    if(!this._vertexValidation('move',e)){
+      return;
+    }
+
+    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
+
+    this._fireMarkerDragStart(e, indexPath);
+
+    // if self intersection isn't allowed, save the coords upon dragstart
+    // in case we need to reset the layer
+    if (!this.options.allowSelfIntersection) {
+      this._coordsBeforeEdit = this._layer.getLatLngs();
+    }
 
     if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
       this._markerAllowedToDrag = this._checkMarkerAllowedToDrag(marker);
@@ -663,6 +682,10 @@ Edit.Line = Edit.extend({
   _onMarkerDrag(e) {
     // dragged marker
     const marker = e.target;
+
+    if(!this._vertexValidationDrag(marker)){
+      return;
+    }
 
     const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
       this._markers,
@@ -723,15 +746,15 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._handleLayerStyle();
     }
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdrag', {
-      layer: this._layer,
-      markerEvent: e,
-      shape: this.getShape(),
-      indexPath
-    });
+    this._fireMarkerDrag(e, indexPath);
   },
   _onMarkerDragEnd(e) {
     const marker = e.target;
+
+    if(!this._vertexValidationDragEnd(marker)){
+      return;
+    }
+
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
 
@@ -744,13 +767,7 @@ Edit.Line = Edit.extend({
 
     const intersectionReset = !this.options.allowSelfIntersection && intersection;
 
-    L.PM.Utils._fireEvent(this._layer,'pm:markerdragend', {
-      layer: this._layer,
-      markerEvent: e,
-      indexPath,
-      shape: this.getShape(),
-      intersectionReset
-    });
+    this._fireMarkerDragEnd(e, indexPath, intersectionReset);
 
     if (intersectionReset) {
       // reset coordinates
@@ -767,12 +784,7 @@ Edit.Line = Edit.extend({
       // check for selfintersection again (mainly to reset the style)
       this._handleLayerStyle();
 
-      L.PM.Utils._fireEvent(this._layer,'pm:layerreset', {
-        layer: this._layer,
-        markerEvent: e,
-        indexPath,
-        shape: this.getShape()
-      });
+      this._fireLayerReset(e,indexPath);
       return;
     }
     if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
@@ -780,6 +792,7 @@ Edit.Line = Edit.extend({
     }
     // fire edit event
     this._fireEdit();
+    this._layerEdited = true;
   },
   _onVertexClick(e) {
     const vertex = e.target;
@@ -789,16 +802,6 @@ Edit.Line = Edit.extend({
 
     const { indexPath } = this.findDeepMarkerIndex(this._markers, vertex);
 
-    L.PM.Utils._fireEvent(this._layer,'pm:vertexclick', {
-      layer: this._layer,
-      markerEvent: e,
-      indexPath,
-      shape: this.getShape()
-    });
-  },
-  _fireEdit() {
-    // fire edit event
-    this._layerEdited = true;
-    L.PM.Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
+    this._fireVertexClick(e,indexPath);
   },
 });

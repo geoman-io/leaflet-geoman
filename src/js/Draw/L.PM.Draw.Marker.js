@@ -57,10 +57,7 @@ Draw.Marker = Draw.extend({
     }
 
     // fire drawstart event
-    L.PM.Utils._fireEvent(this._map,'pm:drawstart', {
-      shape: this._shape,
-      workingLayer: this._layer,
-    });
+    this._fireDrawStart();
     this._setGlobalDrawMode();
   },
   disable() {
@@ -98,7 +95,7 @@ Draw.Marker = Draw.extend({
     }
 
     // fire drawend event
-    L.PM.Utils._fireEvent(this._map,'pm:drawend', { shape: this._shape });
+    this._fireDrawEnd();
     this._setGlobalDrawMode();
   },
   enabled() {
@@ -148,12 +145,11 @@ Draw.Marker = Draw.extend({
     const marker = new L.Marker(latlng, this.options.markerStyle);
     this._setPane(marker,'markerPane');
     this._finishLayer(marker);
-    marker.addTo(this._map.pm._getContainingLayer());
 
     if(!marker.pm){
+      // if pm is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
       marker.options.draggable = false;
     }
-
     // add marker to the map
     marker.addTo(this._map.pm._getContainingLayer());
 
@@ -168,11 +164,7 @@ Draw.Marker = Draw.extend({
     }
 
     // fire the pm:create event and pass shape and marker
-    L.PM.Utils._fireEvent(this._map,'pm:create', {
-      shape: this._shape,
-      marker, // DEPRECATED
-      layer: marker,
-    });
+    this._fireCreate(marker);
 
     this._cleanupSnapping();
 
