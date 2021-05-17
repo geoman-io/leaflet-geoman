@@ -171,7 +171,7 @@ Edit.Circle = Edit.extend({
   },
   _moveCircle(e) {
     const draggedMarker = e.target;
-    if(draggedMarker._vertexResetLatLng) {
+    if(draggedMarker._cancelDragEventChain) {
       return;
     }
 

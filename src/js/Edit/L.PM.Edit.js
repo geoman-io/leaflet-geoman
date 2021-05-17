@@ -59,26 +59,26 @@ const Edit = L.Class.extend({
     // if validation goes wrong, we return false
     if (this.options[validationFnc] && typeof this.options[validationFnc] === "function" && !this.options[validationFnc](args)) {
       if(type === 'move') {
-        marker._vertexResetLatLng = marker.getLatLng();
+        marker._cancelDragEventChain = marker.getLatLng();
       }
       return false;
     }
 
-    marker._vertexResetLatLng = null;
+    marker._cancelDragEventChain = null;
     return true;
   },
   _vertexValidationDrag(marker){
     // we reset the marker to the place before it was dragged. We need this, because we can't stop the drag process in a `dragstart` | `movestart` listener
-    if(marker._vertexResetLatLng){
-      marker._latlng = marker._vertexResetLatLng;
+    if(marker._cancelDragEventChain){
+      marker._latlng = marker._cancelDragEventChain;
       marker.update();
       return false;
     }
     return true;
   },
   _vertexValidationDragEnd(marker){
-    if(marker._vertexResetLatLng){
-      marker._vertexResetLatLng = null;
+    if(marker._cancelDragEventChain){
+      marker._cancelDragEventChain = null;
       return false;
     }
     return true;
