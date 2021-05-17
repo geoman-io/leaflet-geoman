@@ -2,7 +2,7 @@
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -50,14 +50,19 @@ module.exports = {
                 { from: 'leaflet-geoman.d.ts', to: 'leaflet-geoman.d.ts' },
             ],
         }),
-        new UglifyJsPlugin({
-            uglifyOptions: {
-                ie8: true,
-                warnings: false, // Suppress uglification warnings
-                output: {
-                    comments: false,
-                },
-            },
-        })
     ],
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    ie8: true,
+                    format: {
+                        comments: false
+                    }
+                },
+                extractComments: false,
+            }),
+        ],
+    },
 };
