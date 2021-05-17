@@ -26,6 +26,12 @@ declare module 'leaflet' {
     interface Layer {
         pm: PM.PMLayer;
     }
+    /**
+     * Extends built in leaflet layergroup.
+     */
+    interface LayerGroup {
+        pm: PM.PMLayerGroup;
+    }
 
     interface Polygon {
         /** Returns true if Line or Polygon has a self intersection. */
@@ -494,7 +500,7 @@ declare module 'leaflet' {
             getControlOrder(): TOOLBAR_CONTROL_ORDER[];
 
             /** The position of a block (draw, edit, custom, options⭐) in the Toolbar can be changed. If not set, the value from position of the Toolbar is taken. */
-            setBlockPosition(block: 'draw' | 'edit' | 'custom' | 'options', position: ControlPosition): void;
+            setBlockPosition(block: 'draw' | 'edit' | 'custom' | 'options', position: L.ControlPosition): void;
 
             /** Returns a Object with the positions for all blocks */
             getBlockPositions(): BlockPositions;
@@ -735,7 +741,13 @@ declare module 'leaflet' {
             getActiveShape(): SUPPORTED_SHAPES;
 
             /** Set path options */
-            setPathOptions(options: L.PathOptions);
+            setPathOptions(options: L.PathOptions): void;
+
+            /** Set options */
+            setOptions(options: DrawModeOptions): void;
+
+            /** Get options */
+            getOptions(): DrawModeOptions;
         }
 
         interface CutModeOptions {
@@ -762,6 +774,24 @@ declare module 'leaflet' {
 
             /** If true, vertex removal that cause a layer to fall below their minimum required vertices will remove the entire layer. If false, these vertices can't be removed. Minimum vertices are 2 for Lines and 3 for Polygons (default:true). */
             removeLayerBelowMinVertexCount?: boolean;
+
+            /** Defines which layers should dragged with this layer together. true syncs all layers in the same LayerGroup(s) or you pass an `Array` of layers to sync. (default:false). */
+            syncLayersOnDrag?: L.Layer[] | boolean;
+
+            /** Edit-Mode for the layer can disabled (`pm.enable()`). (default:true). */
+            allowEditing?: boolean;
+
+            /** Removing can be disabled for the layer. (default:true). */
+            allowRemoval?: boolean;
+
+            /** Layer can be prevented from cutting. (default:true). */
+            allowCutting?: boolean;
+
+            /** Layer can be prevented from rotation. (default:true). */
+            allowRotation?: boolean;
+
+            /** Dragging can be disabled for the layer. (default:true). */
+            draggable?: boolean;
 
             /** Leaflet layer event to add a vertex to a Line or Polygon, like dblclick. (default:click). */
             addVertexOn?:
@@ -883,6 +913,9 @@ declare module 'leaflet' {
 
             /** angel of rectangle. */
             rectangleAngle?: number;
+
+            /** Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again. (Default: []) */
+            layersToCut?: L.Layer[];
         }
 
         /**
@@ -950,16 +983,16 @@ declare module 'leaflet' {
         /** the position of each block. */
         interface BlockPositions {
             /** draw control position (default:''). '' also refers to this position. */
-            draw?: ControlPosition;
+            draw?: L.ControlPosition;
 
             /** edit control position (default:''). */
-            edit?: ControlPosition;
+            edit?: L.ControlPosition;
 
             /** custom control position (default:''). */
-            custom?: ControlPosition;
+            custom?: L.ControlPosition;
 
             /** options control position (default:'') ⭐ */
-            options?: ControlPosition;
+            options?: L.ControlPosition;
         }
 
         interface PMEditLayer {
@@ -968,6 +1001,9 @@ declare module 'leaflet' {
 
             /** sets layer options */
             setOptions(options?: EditModeOptions): void;
+
+            /** gets layer options */
+            getOptions(): EditModeOptions;
 
             /** Disables edit mode. */
             disable(): void;
@@ -980,6 +1016,9 @@ declare module 'leaflet' {
 
             /** Returns true if Line or Polygon has a self intersection. */
             hasSelfIntersection(): boolean;
+
+            /** Removes the layer with the same checks as GlobalRemovalMode. */
+            remove(): void;
         }
 
         interface PMDragLayer {
@@ -991,20 +1030,49 @@ declare module 'leaflet' {
 
             /** returns if the layer is currently dragging. */
             dragging(): boolean;
+
+            /** returns if drag mode is enabled for the layer. */
+            layerDragEnabled(): boolean;
         }
 
 
         interface PMLayer extends PMRotateLayer, PMEditLayer, PMDragLayer {
-            /** get shape */
+            /** get shape of the layer. */
             getShape(): SUPPORTED_SHAPES;
         }
 
+        interface PMLayerGroup {
+            /** Enables edit mode for all child layers. The passed options are preserved, even when the mode is enabled via the Toolbar */
+            enable(options?: EditModeOptions): void;
+
+            /** Disable edit mode for all child layers.*/
+            disable(): void;
+
+            /** Returns if minimum one layer is enabled. */
+            enabled(): boolean;
+
+            /** Toggle enable / disable on all layers. */
+            toggleEdit(options?: EditModeOptions): void;
+
+            /** Returns the layers of the LayerGroup. `deep=true` return also the children of LayerGroup children. `filterGeoman=true` filter out layers that don't have Leaflet-Geoman or temporary stuff. `filterGroupsOut=true` does not return the LayerGroup layers self. (Default: `deep=false`,`filterGeoman=true`, `filterGroupsOut=true` ) */
+            getLayers(deep?: boolean, filterGeoman?: boolean, filterGroupsOut?: boolean): L.Layer[]
+
+            /** Apply Leaflet-Geoman options to all children. The passed options are preserved, even when the mode is enabled via the Toolbar */
+            setOptions(options?: EditModeOptions): void;
+
+            /** Returns the options of the LayerGroup. */
+            getOptions(): EditModeOptions;
+
+            /** Returns if currently a layer in the LayerGroup is dragging. */
+            dragging(): boolean;
+        }
+
         namespace Utils {
-            /**  path = json string f.ex. tooltips.placeMarker */
+            /**  Returns the translation of the passed path. path = json-string f.ex. tooltips.placeMarker */
             function getTranslation(path: string): string;
 
-            /** returns the middle latlng between two points */
-            function calcMiddleLatLng(map: L.Map, latlng1: L.LatLng, latlng2: L.LatLng);
+            /** returns the middle LatLng between two LatLngs */
+            function calcMiddleLatLng(map: L.Map, latlng1: L.LatLng, latlng2: L.LatLng): L.LatLng;
 
             /** returns all layers that are available for Geoman */
             function findLayers(map: L.Map): L.Layer[];

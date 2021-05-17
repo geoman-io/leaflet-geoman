@@ -15,8 +15,6 @@ const Map = L.Class.extend({
     this.Toolbar = new L.PM.Toolbar(map);
     this.Keyboard = KeyboardMixins;
 
-    this._globalRemovalMode = false;
-
     this.globalOptions = {
       snappable: true,
       layerGroup: undefined,

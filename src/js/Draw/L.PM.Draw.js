@@ -5,7 +5,7 @@ import EventMixin from "../Mixins/Events";
 const Draw = L.Class.extend({
   includes: [SnapMixin, EventMixin],
   options: {
-    snappable: true,
+    snappable: true,  //TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,
     snapMiddle: false,
     allowSelfIntersection: true,
@@ -35,6 +35,9 @@ const Draw = L.Class.extend({
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
+  },
+  getOptions() {
+    return this.options;
   },
   initialize(map) {
     // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon

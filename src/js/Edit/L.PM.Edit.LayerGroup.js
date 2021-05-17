@@ -6,7 +6,7 @@ import Edit from './L.PM.Edit';
 Edit.LayerGroup = L.Class.extend({
   initialize(layerGroup) {
     this._layerGroup = layerGroup;
-    this._layers = this.findLayers();
+    this._layers = this.getLayers();
     this._getMap();
 
     // init all layers of the group
@@ -20,7 +20,7 @@ Edit.LayerGroup = L.Class.extend({
       if (e.target._pmTempLayer) {
         return;
       }
-      this._layers = this.findLayers();
+      this._layers = this.getLayers();
       const _initLayers = this._layers.filter((layer) => !layer.pm._parentLayerGroup || !(this._layerGroup._leaflet_id in layer.pm._parentLayerGroup));
       // init the newly added layers (can be multiple because of the throttle)
       _initLayers.forEach((layer) => {
@@ -45,7 +45,7 @@ Edit.LayerGroup = L.Class.extend({
       if (e.target._pmTempLayer) {
         return;
       }
-      this._layers = this.findLayers();
+      this._layers = this.getLayers();
     };
     // if a layer is removed from the group, calc the layers list again.
     // we run this as throttle because the findLayers() is a larger function
@@ -77,7 +77,6 @@ Edit.LayerGroup = L.Class.extend({
     });
   },
   enabled(_layerIds = []) {
-
     const enabled = this._layers.find((layer) => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
@@ -86,10 +85,8 @@ Edit.LayerGroup = L.Class.extend({
         }
         return false; // enabled is already returned because this is not the first time, so we can return always false
       }
-        return layer.pm.enabled();
-
+      return layer.pm.enabled();
     });
-
     return !!enabled;
   },
   toggleEdit(options, _layerIds = []) {
@@ -119,16 +116,6 @@ Edit.LayerGroup = L.Class.extend({
       delete layer.pm._layerGroup[id];
     }
   },
-  findLayers() {
-    // get all layers of the layer group
-    let layers = this._layerGroup.getLayers();
-    // filter out layers that don't have leaflet-geoman
-    layers = layers.filter(layer => !!layer.pm);
-    // filter out everything that's leaflet-geoman specific temporary stuff
-    layers = layers.filter(layer => !layer._pmTempLayer);
-    // return them
-    return layers;
-  },
   dragging() {
     if (this._layers) {
       const dragging = this._layers.find(layer => layer.pm.dragging());
@@ -142,23 +129,20 @@ Edit.LayerGroup = L.Class.extend({
   _getMap(){
     return this._map || this._layers.find(l => !!l._map)?._map || null;
   },
-  getLayers(deep = false, filterGroupsOut = true, _layerIds = []){
+  getLayers(deep = false, filterGeoman = true, filterGroupsOut = true, _layerIds = []){
     let layers = [];
-    if(deep){
-      // get the layers of LayerGroup childs
+    if(deep) {
+      // get the layers of LayerGroup children
       this._layerGroup.getLayers().forEach((layer)=>{
         layers.push(layer);
         if (layer instanceof L.LayerGroup) {
           if (_layerIds.indexOf(layer._leaflet_id) === -1) {
             _layerIds.push(layer._leaflet_id);
-            layers = layers.concat(layer.pm._getLayers(true, true, _layerIds));
+            layers = layers.concat(layer.pm.getLayers(true, true, true, _layerIds));
           }
         }
       });
-      if(filterGroupsOut) {
-        layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
-      }
-    }else {
+    } else {
       // get all layers of the layer group
       layers = this._layerGroup.getLayers();
     }
@@ -166,6 +150,27 @@ Edit.LayerGroup = L.Class.extend({
     if(filterGroupsOut) {
       layers = layers.filter(layer => !(layer instanceof L.LayerGroup));
     }
+    if(filterGeoman) {
+      // filter out layers that don't have leaflet-geoman
+      layers = layers.filter(layer => !!layer.pm);
+      // filter out everything that's leaflet-geoman specific temporary stuff
+      layers = layers.filter(layer => !layer._pmTempLayer);
+    }
     return layers;
-  }
+  },
+  setOptions(options, _layerIds = []) {
+    this._options = options;
+    this._layers.forEach(layer => {
+      if(layer.pm) {
+        if (layer instanceof L.LayerGroup) {
+          if (_layerIds.indexOf(layer._leaflet_id) === -1) {
+            _layerIds.push(layer._leaflet_id);
+            layer.pm.setOptions(options, _layerIds);
+          }
+        } else {
+          layer.pm.setOptions(options);
+        }
+      }
+    });
+  },
 });

@@ -498,4 +498,72 @@ describe('Draw Rectangle', () => {
       expect(center2.equals(layers[1].getCenter())).to.eq(false);
     });
   });
+
+
+  it('allows only one of two rectangles to be editable', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+
+    cy.window().then(({ map }) => {
+      map.pm.getGeomanDrawLayers()[0].pm.options.allowEditing = false;
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(500, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(4);
+    cy.hasMiddleMarkers(0);
+  });
+
+
+  it('allows only one of two rectangles to be rotateable', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+
+    cy.window().then(({ map }) => {
+      map.pm.getGeomanDrawLayers()[0].pm.options.allowRotation = false;
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(500, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('rotate')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(4);
+    cy.hasMiddleMarkers(0);
+  });
 });

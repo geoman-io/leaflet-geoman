@@ -14,6 +14,12 @@ Edit.Circle = Edit.extend({
 
     this._map = this._layer._map;
 
+    // layer is not allowed to edit
+    if(!this.options.allowEditing){
+      this.disable();
+      return;
+    }
+
     if (!this.enabled()) {
       // if it was already enabled, disable first
       // we don't block enabling again because new options might be passed
@@ -181,7 +187,9 @@ Edit.Circle = Edit.extend({
     const radius = this._layer._radius;
 
     const outer = this._getLatLngOnCircle(center, radius);
-    this._outerMarker.setLatLng(outer);
+    // don't call .setLatLng() because it fires the `move` event and then the radius is changed because of _syncCircleRadius #892
+    this._outerMarker._latlng = outer;
+    this._outerMarker.update();
     this._syncHintLine();
 
     this._updateHiddenPolyCircle();
