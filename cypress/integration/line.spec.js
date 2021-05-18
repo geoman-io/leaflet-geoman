@@ -273,4 +273,15 @@ describe('Draw & Edit Line', () => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
   });
+
+  it('vertex marker overlapping', () => {
+    cy.toolbarButton('polyline').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(155, 255);
+
+    cy.hasVertexMarkers(0);
+  });
 });

@@ -30,7 +30,7 @@ Draw.Rectangle = Draw.extend({
     this._startMarker = L.marker([0, 0], {
       icon: L.divIcon({ className: 'marker-icon rect-start-marker' }),
       draggable: false,
-      zIndexOffset: 100,
+      zIndexOffset: -100,
       opacity: this.options.cursorMarker ? 1 : 0,
     });
     this._setPane(this._startMarker,'vertexPane');
@@ -39,6 +39,7 @@ Draw.Rectangle = Draw.extend({
 
     // this is the hintmarker on the mouse cursor
     this._hintMarker = L.marker([0, 0], {
+      zIndexOffset: 150,
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker,'vertexPane');

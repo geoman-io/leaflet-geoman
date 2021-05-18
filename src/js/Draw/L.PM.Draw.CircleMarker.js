@@ -46,6 +46,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
       // this is the hintmarker on the mouse cursor
       this._hintMarker = L.marker([0, 0], {
+        zIndexOffset: 110,
         icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
       });
       this._setPane(this._hintMarker,'vertexPane');
