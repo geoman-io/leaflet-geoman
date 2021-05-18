@@ -35,7 +35,7 @@ Draw.Line = Draw.extend({
 
     // this is the hintmarker on the mouse cursor
     this._hintMarker = L.marker(this._map.getCenter(),{
-      interactive: false, // always vertex marker blow will be triggered from the click event -> finishShape #911
+      interactive: false, // always vertex marker below will be triggered from the click event -> _finishShape #911
       zIndexOffset: 100,
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
