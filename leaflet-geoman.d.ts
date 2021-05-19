@@ -21,12 +21,19 @@ declare module 'leaflet' {
     }
 
     /**
-     * Extends built in leaflet layer.
+     * Extends built in leaflet path.
      */
-    interface Layer {
-        pm: PM.PMLayer;
+    interface Path  {
+      pm: PM.PMLayer;
     }
     /**
+     * Extends built in leaflet imageoverlay.
+     */
+    interface ImageOverlay  {
+      pm: PM.PMLayer
+    }
+
+     /**
      * Extends built in leaflet layergroup.
      */
     interface LayerGroup {
