@@ -3,48 +3,51 @@ import * as L from 'leaflet';
 // redeclare module, maintains compatibility with @types/leaflet
 declare module 'leaflet' {
 
-    /** Extends built in leaflet layer options. */
+    /**
+     * Extends built in leaflet Layer Options.
+     */
     interface LayerOptions {
         pmIgnore?: boolean;
         snapIgnore?: boolean;
     }
 
+    /**
+     * Extends built in leaflet Map Options.
+     */
     interface MapOptions {
         pmIgnore?: boolean;
     }
 
     /**
-     * Extends built in leaflet map.
+     * Extends built in leaflet Map.
      */
     interface Map {
         pm: PM.PMMap;
     }
 
     /**
-     * Extends built in leaflet path.
+     * Extends built in leaflet Path.
      */
     interface Path  {
       pm: PM.PMLayer;
     }
     /**
-     * Extends built in leaflet imageoverlay.
+     * Extends built in leaflet ImageOverlay.
      */
     interface ImageOverlay  {
       pm: PM.PMLayer
     }
 
      /**
-     * Extends built in leaflet layergroup.
+     * Extends built in leaflet LayerGroup.
      */
     interface LayerGroup {
         pm: PM.PMLayerGroup;
     }
 
-    interface Polygon {
-        /** Returns true if Line or Polygon has a self intersection. */
-        hasSelfIntersection(): boolean;
-    }
-
+    /**
+     * Extends built in leaflet Polyline.
+     */
     interface Polyline {
         /** Returns true if Line or Polygon has a self intersection. */
         hasSelfIntersection(): boolean;
@@ -496,12 +499,13 @@ declare module 'leaflet' {
             | 'dragMode'
             | 'cutPolygon'
             | 'removalMode'
+            | 'rotateMode'
             | string;
 
         interface PMMapToolbar {
 
             /** Pass an array of button names to reorder the buttons in the Toolbar. */
-            changeControlOrder(order: TOOLBAR_CONTROL_ORDER[]): void;
+            changeControlOrder(order?: TOOLBAR_CONTROL_ORDER[]): void;
 
             /** Receive the current order with. */
             getControlOrder(): TOOLBAR_CONTROL_ORDER[];
@@ -632,7 +636,7 @@ declare module 'leaflet' {
             enableDraw(shape: SUPPORTED_SHAPES, options?: DrawModeOptions): void;
 
             /** disable all drawing */
-            disableDraw(): void;
+            disableDraw(shape?: SUPPORTED_SHAPES): void;
 
             /** Draw */
             Draw: Draw;
@@ -640,8 +644,8 @@ declare module 'leaflet' {
             /** Returns true if global Draw Mode is enabled. false when disabled. */
             globalDrawModeEnabled(): boolean;
 
-            /** Customize the style of the drawn layer. Only for L.Path layers. Shapes can be excluded with a ignoreShapes array in optionsModifier. */
-            setPathOptions(options: L.PathOptions, optionsModifier: { ignoreShapes: SUPPORTED_SHAPES[] }): void;
+            /** Customize the style of the drawn layer. Only for L.Path layers. Shapes can be excluded with a ignoreShapes array or merged with the current style with merge: true in  optionsModifier. */
+            setPathOptions(options: L.PathOptions, optionsModifier?: { ignoreShapes?: SUPPORTED_SHAPES[], merge?: boolean}): void;
 
             /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
             getGeomanLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
@@ -964,6 +968,9 @@ declare module 'leaflet' {
 
             /** adds a button to remove layers (default:true) */
             removalMode?: boolean;
+
+            /** adds a button to rotate layers (default:true) */
+            rotateMode?: boolean;
 
             /** all buttons will be displayed as one block Customize Controls (default:false) */
             oneBlock?: boolean;
