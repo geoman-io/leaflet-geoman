@@ -8,7 +8,7 @@
 </h1>  
 <p align="center">  
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>  
-  Draw, Edit, Drag, Cut, Split⭐, Measure⭐, Snap and Pin⭐ Layers<br>  
+  Draw, Edit, Drag, Cut, Rotate, Split⭐, Measure⭐, Snap and Pin⭐ Layers<br>  
   Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON, MultiLineStrings and MultiPolygons  
 </p>  
 <p align="center">  
@@ -186,6 +186,7 @@ See the available options in the table below.
 | dragMode           | `true`      | Adds button to toggle Drag Mode for all layers.                                                  |  
 | cutPolygon         | `true`      | Adds button to cut a hole in a Polygon or Line.                                                  |  
 | removalMode        | `true`      | Adds a button to remove layers.                                                                  | 
+| rotateMode         | `true`      | Adds a button to rotate layers.                                                                  | 
 | oneBlock           | `false`     | All buttons will be displayed as one block [Customize Controls](#customize-controls).            |
 | drawControls       | `true`      | Shows all draw buttons / buttons in the `draw` block.                                            |
 | editControls       | `true`      | Shows all edit buttons / buttons in the `edit` block.                                            |
