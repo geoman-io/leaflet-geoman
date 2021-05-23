@@ -137,7 +137,7 @@ Edit.LayerGroup = L.Class.extend({
     return false;
   },
   getOptions() {
-    return this._options;
+    return this.options;
   },
   _getMap(){
     return this._map || this._layers.find(l => !!l._map)?._map || null;
@@ -181,7 +181,7 @@ Edit.LayerGroup = L.Class.extend({
     if(_layerIds.length === 0) {
       this._layers = this.getLayers();
     }
-    this._options = options;
+    this.options = options;
     this._layers.forEach(layer => {
       if(layer.pm) {
         if (layer instanceof L.LayerGroup) {
