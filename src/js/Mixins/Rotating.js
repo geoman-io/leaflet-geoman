@@ -64,15 +64,6 @@ const RotateMixin = {
     this._setAngle(angle);
     this._rotationLayer.pm._setAngle(angle);
 
-    const data = {
-      layer: this._rotationLayer,
-      helpLayer: this._layer,
-      startAngle: this._startAngle,
-      angle: this._rotationLayer.pm.getAngle(),
-      angleDiff,
-      oldLatLngs,
-      newLatLngs: this._rotationLayer.getLatLngs()
-    };
     this._fireRotation(this._rotationLayer, angleDiff, oldLatLngs);
     this._fireRotation(this._map, angleDiff, oldLatLngs);
   },
@@ -106,7 +97,10 @@ const RotateMixin = {
     this._angle = angle % 360;
   },
   _getRotationCenter(){
-    return this._layer.getCenter();
+    var polygon = L.polygon(this._layer.getLatLngs(),{stroke: false, fill: false, pmIgnore: true}).addTo(this._layer._map);
+    const center = polygon.getCenter();
+    polygon.removeFrom(this._layer._map);
+    return center;
   },
 
   /*
