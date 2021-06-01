@@ -202,3 +202,11 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
     return order === 'desc' ? (result * -1) : result;
   }
 }
+
+export function copyLatLngs(layer, latlngs = layer.getLatLngs()){
+  if(layer instanceof L.Polygon) {
+    return L.polygon(latlngs).getLatLngs();
+  }else{
+    return L.polyline(latlngs).getLatLngs();
+  }
+}

@@ -8,7 +8,7 @@
 </h1>  
 <p align="center">  
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>  
-  Draw, Edit, Drag, Cut, Split⭐, Measure⭐, Snap and Pin⭐ Layers<br>  
+  Draw, Edit, Drag, Cut, Rotate, Split⭐, Measure⭐, Snap and Pin⭐ Layers<br>  
   Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON, MultiLineStrings and MultiPolygons  
 </p>  
 <p align="center">  
@@ -186,6 +186,7 @@ See the available options in the table below.
 | dragMode           | `true`      | Adds button to toggle Drag Mode for all layers.                                                  |  
 | cutPolygon         | `true`      | Adds button to cut a hole in a Polygon or Line.                                                  |  
 | removalMode        | `true`      | Adds a button to remove layers.                                                                  | 
+| rotateMode         | `true`      | Adds a button to rotate layers.                                                                  | 
 | oneBlock           | `false`     | All buttons will be displayed as one block [Customize Controls](#customize-controls).            |
 | drawControls       | `true`      | Shows all draw buttons / buttons in the `draw` block.                                            |
 | editControls       | `true`      | Shows all edit buttons / buttons in the `edit` block.                                            |
@@ -587,21 +588,21 @@ The following methods are available on `map.pm`:
 
 | Method                    | Returns   | Description                                                             |
 | :------------------------ | :-------- | :---------------------------------------------------------------------- |
-| enableGlobalRotateMode()  | -         | Enables global rotate mode.                                             |
-| disableGlobalRotateMode() | -         | Disables global rotate mode.                                            |
-| toggleGlobalRotateMode()  | -         | Toggles global rotate mode.                                             |
-| globalRotateModeEnabled() | `Boolean` | Returns `true` if global rotate mode is enabled. `false` when disabled. |
+| enableGlobalRotateMode()  | -         | Enables global Rotate Mode.                                             |
+| disableGlobalRotateMode() | -         | Disables global Rotate Mode.                                            |
+| toggleGlobalRotateMode()  | -         | Toggles global Rotate Mode.                                             |
+| globalRotateModeEnabled() | `Boolean` | Returns `true` if global Rotate Mode is enabled. `false` when disabled. |
 
 The following methods are available for layers under `layer.pm`:
 
-| Method                        | Returns   | Description                                |
-| :---------------------------- | :-------- | :----------------------------------------- |
-| enableRotate()                | -         | Enables rotate mode on the layer.          |
-| disableRotate()               | -         | Disables rotate mode on the layer.         |
-| rotateEnabled()               | -         | Toggles rotate mode on the layer.          |
-| rotateLayer(`degrees`)        | -         | Rotates the layer by `x` degrees.          |
-| rotateLayerToAngle(`degrees`) | -         | Rotates the layer to `x` degrees.          |
-| getAngle()                    | `Degrees` | Returns the angle of the layer in degrees. |
+| Method                        | Returns   | Description                                      |
+| :---------------------------- | :-------- | :----------------------------------------------- |
+| enableRotate()                | -         | Enables Rotate Mode on the layer.                |
+| disableRotate()               | -         | Disables Rotate Mode on the layer.               |
+| rotateEnabled()               | `Boolean` | Returns if Rotate Mode is enabled for the layer. |
+| rotateLayer(`degrees`)        | -         | Rotates the layer by `x` degrees.                |
+| rotateLayerToAngle(`degrees`) | -         | Rotates the layer to `x` degrees.                |
+| getAngle()                    | `Degrees` | Returns the angle of the layer in degrees.       |
 
 The following events are available on a layer instance:
 
