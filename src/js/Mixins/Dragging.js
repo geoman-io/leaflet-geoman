@@ -313,6 +313,13 @@ const DragMixin = {
       if(L.Util.isArray(this.options.syncLayersOnDrag)){
         // layers
         layersToSync = this.options.syncLayersOnDrag;
+
+        this.options.syncLayersOnDrag.forEach((layer)=>{
+          if(layer instanceof L.LayerGroup){
+            layersToSync = layersToSync.concat(layer.pm.getLayers(true));
+          }
+        })
+
       }else if(this.options.syncLayersOnDrag === true){
         // LayerGroup
         if(this._parentLayerGroup){
@@ -326,10 +333,11 @@ const DragMixin = {
       }
 
       if(L.Util.isArray(layersToSync) && layersToSync.length > 0) {
-        // filter out layers that don't have leaflet-geoman
-        layersToSync = layersToSync.filter(layer => !!layer.pm);
+        // filter out layers that don't have leaflet-geoman and not allowed to drag
+        layersToSync = layersToSync.filter(layer => !!layer.pm)
+          .filter(layer => !!layer.pm.options.draggable);
         layersToSync.forEach((layer) => {
-          if (layer !== this._layer) {
+          if (layer !== this._layer && layer.pm[fnc]) {
             layer._snapped = false;
             layer.pm[fnc](e);
           }

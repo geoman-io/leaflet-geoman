@@ -350,4 +350,29 @@ describe('Edit LayerGroup', () => {
       expect(map.pm.getGeomanLayers().length).to.eq(6);
     })
   });
+
+  it('adds options to layers before throlle is fired', () => {
+    cy.toolbarButton('rectangle')
+      .click();
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 350);
+
+    cy.toolbarButton('rectangle')
+      .click();
+    cy.get(mapSelector)
+      .click(350, 200)
+      .click(400, 400);
+
+    cy.window().then(({map, L}) => {
+      const fg = L.featureGroup().addTo(map);
+      var layers = map.pm.getGeomanDrawLayers();
+      layers.forEach((layer)=>{
+        fg.addLayer(layer);
+      });
+      fg.pm.setOptions({syncLayersOnDrag: true});
+
+      expect(layers[1].pm.options.syncLayersOnDrag).to.eq(true);
+    });
+  });
 });

@@ -17,7 +17,7 @@ Edit.LayerGroup = L.Class.extend({
     // https://github.com/Leaflet/Leaflet/issues/4861
 
     const addThrottle = (e) => {
-      if (e.target._pmTempLayer) {
+      if (e.layer._pmTempLayer) {
         return;
       }
       this._layers = this.getLayers();
@@ -52,6 +52,9 @@ Edit.LayerGroup = L.Class.extend({
     this._layerGroup.on('layerremove', L.Util.throttle(removeThrottle, 100, this), this);
   },
   enable(options, _layerIds = []) {
+    if(_layerIds.length === 0) {
+      this._layers = this.getLayers();
+    }
     this._options = options;
     this._layers.forEach(layer => {
       if (layer instanceof L.LayerGroup) {
@@ -65,6 +68,9 @@ Edit.LayerGroup = L.Class.extend({
     });
   },
   disable(_layerIds = []) {
+    if(_layerIds.length === 0) {
+      this._layers = this.getLayers();
+    }
     this._layers.forEach(layer => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
@@ -77,6 +83,9 @@ Edit.LayerGroup = L.Class.extend({
     });
   },
   enabled(_layerIds = []) {
+    if(_layerIds.length === 0) {
+      this._layers = this.getLayers();
+    }
     const enabled = this._layers.find((layer) => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
@@ -90,6 +99,9 @@ Edit.LayerGroup = L.Class.extend({
     return !!enabled;
   },
   toggleEdit(options, _layerIds = []) {
+    if(_layerIds.length === 0) {
+      this._layers = this.getLayers();
+    }
     this._options = options;
     this._layers.forEach(layer => {
       if (layer instanceof L.LayerGroup) {
@@ -117,6 +129,7 @@ Edit.LayerGroup = L.Class.extend({
     }
   },
   dragging() {
+    this._layers = this.getLayers();
     if (this._layers) {
       const dragging = this._layers.find(layer => layer.pm.dragging());
       return !!dragging;
@@ -124,7 +137,7 @@ Edit.LayerGroup = L.Class.extend({
     return false;
   },
   getOptions() {
-    return this._options;
+    return this.options;
   },
   _getMap(){
     return this._map || this._layers.find(l => !!l._map)?._map || null;
@@ -155,11 +168,20 @@ Edit.LayerGroup = L.Class.extend({
       layers = layers.filter(layer => !!layer.pm);
       // filter out everything that's leaflet-geoman specific temporary stuff
       layers = layers.filter(layer => !layer._pmTempLayer);
+      // filter out everything that ignore leaflet-geoman
+      layers = layers.filter(layer => (
+          (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+          (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+        )
+      );
     }
     return layers;
   },
   setOptions(options, _layerIds = []) {
-    this._options = options;
+    if(_layerIds.length === 0) {
+      this._layers = this.getLayers();
+    }
+    this.options = options;
     this._layers.forEach(layer => {
       if(layer.pm) {
         if (layer instanceof L.LayerGroup) {
