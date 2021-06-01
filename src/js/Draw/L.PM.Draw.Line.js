@@ -34,7 +34,9 @@ Draw.Line = Draw.extend({
     this._layerGroup.addLayer(this._hintline);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(this._map.getCenter(), {
+    this._hintMarker = L.marker(this._map.getCenter(),{
+      interactive: false, // always vertex marker below will be triggered from the click event -> _finishShape #911
+      zIndexOffset: 100,
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker,'vertexPane');
