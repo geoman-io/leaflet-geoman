@@ -147,7 +147,6 @@ Draw.Cut = Draw.Polygon.extend({
       }
       this._setPane(resultLayer,'layerPane');
       const resultingLayer = resultLayer.addTo(this._map.pm._getContainingLayer());
-      this._addDrawnLayerProp(resultingLayer);
       // give the new layer the original options
       resultingLayer.pm.enable(l.pm.options);
       resultingLayer.pm.disable();
@@ -167,7 +166,14 @@ Draw.Cut = Draw.Polygon.extend({
         this._map.pm.removeLayer({ target: resultingLayer });
       }
 
-      this._addDrawnLayerProp(resultingLayer);
+      if(resultingLayer instanceof L.LayerGroup) {
+        resultingLayer.eachLayer((_layer)=>{
+          this._addDrawnLayerProp(_layer);
+        });
+        this._addDrawnLayerProp(resultingLayer);
+      }else{
+        this._addDrawnLayerProp(resultingLayer);
+      }
 
       if(this.options.layersToCut && L.Util.isArray(this.options.layersToCut) && this.options.layersToCut.length > 0){
         const idx = this.options.layersToCut.indexOf(l);
@@ -180,9 +186,7 @@ Draw.Cut = Draw.Polygon.extend({
         layer: resultingLayer,
         originalLayer: l
       });
-
     });
-
   },
   _cutLayer(layer,l){
     const fg = L.geoJSON();
