@@ -1,6 +1,6 @@
 import Draw from './L.PM.Draw';
 
-import {destinationOnLine, getTranslation} from '../helpers';
+import { destinationOnLine, getTranslation } from '../helpers';
 
 Draw.Circle = Draw.extend({
   initialize(map) {
@@ -24,7 +24,7 @@ Draw.Circle = Draw.extend({
 
     // this is the circle we want to draw
     this._layer = L.circle([0, 0], this.options.templineStyle);
-    this._setPane(this._layer,'layerPane');
+    this._setPane(this._layer, 'layerPane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
@@ -34,7 +34,7 @@ Draw.Circle = Draw.extend({
       draggable: false,
       zIndexOffset: 100,
     });
-    this._setPane(this._centerMarker,'vertexPane');
+    this._setPane(this._centerMarker, 'vertexPane');
     this._centerMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._centerMarker);
 
@@ -43,7 +43,7 @@ Draw.Circle = Draw.extend({
       zIndexOffset: 110,
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
-    this._setPane(this._hintMarker,'vertexPane');
+    this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
@@ -66,7 +66,7 @@ Draw.Circle = Draw.extend({
 
     // this is the hintline from the hint marker to the center marker
     this._hintline = L.polyline([], this.options.hintlineStyle);
-    this._setPane(this._hintline,'layerPane');
+    this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
@@ -78,7 +78,6 @@ Draw.Circle = Draw.extend({
 
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
-
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -111,7 +110,6 @@ Draw.Circle = Draw.extend({
 
     // remove helping layers
     this._map.removeLayer(this._layerGroup);
-
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -153,11 +151,17 @@ Draw.Circle = Draw.extend({
       distance = A.distanceTo(B);
     }
 
-    if(this.options.minRadiusCircle && distance < this.options.minRadiusCircle) {
+    if (
+      this.options.minRadiusCircle &&
+      distance < this.options.minRadiusCircle
+    ) {
       this._layer.setRadius(this.options.minRadiusCircle);
-    }else if(this.options.maxRadiusCircle && distance > this.options.maxRadiusCircle) {
+    } else if (
+      this.options.maxRadiusCircle &&
+      distance > this.options.maxRadiusCircle
+    ) {
       this._layer.setRadius(this.options.maxRadiusCircle);
-    }else{
+    } else {
       this._layer.setRadius(distance);
     }
   },
@@ -212,7 +216,11 @@ Draw.Circle = Draw.extend({
   },
   _finishShape(e) {
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
-    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+    if (
+      this.options.requireSnapToFinish &&
+      !this._hintMarker._snapped &&
+      !this._isFirstLayer()
+    ) {
       return;
     }
 
@@ -234,9 +242,12 @@ Draw.Circle = Draw.extend({
       radius = center.distanceTo(latlng);
     }
 
-    if(this.options.minRadiusCircle && radius < this.options.minRadiusCircle){
+    if (this.options.minRadiusCircle && radius < this.options.minRadiusCircle) {
       radius = this.options.minRadiusCircle;
-    }else if(this.options.maxRadiusCircle && radius > this.options.maxRadiusCircle){
+    } else if (
+      this.options.maxRadiusCircle &&
+      radius > this.options.maxRadiusCircle
+    ) {
       radius = this.options.maxRadiusCircle;
     }
 
@@ -244,11 +255,11 @@ Draw.Circle = Draw.extend({
 
     // create the final circle layer
     const circleLayer = L.circle(center, options);
-    this._setPane(circleLayer,'layerPane');
+    this._setPane(circleLayer, 'layerPane');
     this._finishLayer(circleLayer);
     circleLayer.addTo(this._map.pm._getContainingLayer());
 
-    if(circleLayer.pm) {
+    if (circleLayer.pm) {
       // create polygon around the circle border
       circleLayer.pm._updateHiddenPolyCircle();
     }
@@ -258,34 +269,56 @@ Draw.Circle = Draw.extend({
 
     // disable drawing
     this.disable();
-    if(this.options.continueDrawing){
+    if (this.options.continueDrawing) {
       this.enable();
     }
   },
-  _getNewDestinationOfHintMarker(){
+  _getNewDestinationOfHintMarker() {
     const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._hintMarker.getLatLng();
     const distance = latlng.distanceTo(secondLatLng);
 
-    if(this.options.minRadiusCircle && distance < this.options.minRadiusCircle) {
-      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this.options.minRadiusCircle);
-    }else if(this.options.maxRadiusCircle && distance > this.options.maxRadiusCircle) {
-      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this.options.maxRadiusCircle);
+    if (
+      this.options.minRadiusCircle &&
+      distance < this.options.minRadiusCircle
+    ) {
+      secondLatLng = destinationOnLine(
+        this._map,
+        latlng,
+        secondLatLng,
+        this.options.minRadiusCircle
+      );
+    } else if (
+      this.options.maxRadiusCircle &&
+      distance > this.options.maxRadiusCircle
+    ) {
+      secondLatLng = destinationOnLine(
+        this._map,
+        latlng,
+        secondLatLng,
+        this.options.maxRadiusCircle
+      );
     }
     return secondLatLng;
   },
-  _handleHintMarkerSnapping(){
-    if(this._hintMarker._snapped) {
+  _handleHintMarkerSnapping() {
+    if (this._hintMarker._snapped) {
       const latlng = this._centerMarker.getLatLng();
       const secondLatLng = this._hintMarker.getLatLng();
       const distance = latlng.distanceTo(secondLatLng);
-      if(this.options.minRadiusCircle && distance < this.options.minRadiusCircle) {
+      if (
+        this.options.minRadiusCircle &&
+        distance < this.options.minRadiusCircle
+      ) {
         this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
-      } else if(this.options.maxRadiusCircle && distance > this.options.maxRadiusCircle) {
+      } else if (
+        this.options.maxRadiusCircle &&
+        distance > this.options.maxRadiusCircle
+      ) {
         this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
       }
     }
     // calculate the new latlng of marker if the snapped latlng radius is out of min/max
     this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
-  }
+  },
 });

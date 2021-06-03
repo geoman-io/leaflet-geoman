@@ -1,11 +1,11 @@
 import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
-import EventMixin from "../Mixins/Events";
+import EventMixin from '../Mixins/Events';
 
 const Draw = L.Class.extend({
   includes: [SnapMixin, EventMixin],
   options: {
-    snappable: true,  //TODO: next major Release, rename it to allowSnapping
+    snappable: true, //TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,
     snapMiddle: false,
     allowSelfIntersection: true,
@@ -20,7 +20,7 @@ const Draw = L.Class.extend({
     finishOn: null,
     markerStyle: {
       draggable: true,
-      icon: L.icon()
+      icon: L.icon(),
     },
     hideMiddleMarkers: false,
     minRadiusCircle: null,
@@ -43,28 +43,36 @@ const Draw = L.Class.extend({
     // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon
     // Issue https://github.com/Leaflet/Leaflet/issues/7302 - Leaflet v1.7.1
     const defaultIcon = new L.Icon.Default();
-    defaultIcon.options.tooltipAnchor = [0,0];
+    defaultIcon.options.tooltipAnchor = [0, 0];
     this.options.markerStyle.icon = defaultIcon;
 
     // save the map
     this._map = map;
 
     // define all possible shapes that can be drawn
-    this.shapes = ['Marker', 'CircleMarker', 'Line', 'Polygon', 'Rectangle', 'Circle', 'Cut'];
+    this.shapes = [
+      'Marker',
+      'CircleMarker',
+      'Line',
+      'Polygon',
+      'Rectangle',
+      'Circle',
+      'Cut',
+    ];
 
     // initiate drawing class for our shapes
-    this.shapes.forEach(shape => {
+    this.shapes.forEach((shape) => {
       this[shape] = new L.PM.Draw[shape](this._map);
     });
 
-    this.Marker.setOptions({continueDrawing: true});
-    this.CircleMarker.setOptions({continueDrawing: true});
+    this.Marker.setOptions({ continueDrawing: true });
+    this.CircleMarker.setOptions({ continueDrawing: true });
   },
   setPathOptions(options, mergeOptions = false) {
-    if(!mergeOptions) {
+    if (!mergeOptions) {
       this.options.pathOptions = options;
-    }else{
-      this.options.pathOptions = merge(this.options.pathOptions,options);
+    } else {
+      this.options.pathOptions = merge(this.options.pathOptions, options);
     }
   },
   getShapes() {
@@ -94,20 +102,20 @@ const Draw = L.Class.extend({
     // there can only be one drawing mode active at a time on a map
     // so it doesn't matter which one should be disabled.
     // just disable all of them
-    this.shapes.forEach(shape => {
+    this.shapes.forEach((shape) => {
       this[shape].disable();
     });
   },
   addControls() {
     // add control buttons for our shapes
-    this.shapes.forEach(shape => {
+    this.shapes.forEach((shape) => {
       this[shape].addButton();
     });
   },
   getActiveShape() {
     // returns the active shape
     let enabledShape;
-    this.shapes.forEach(shape => {
+    this.shapes.forEach((shape) => {
       if (this[shape]._enabled) {
         enabledShape = shape;
       }
@@ -116,7 +124,7 @@ const Draw = L.Class.extend({
   },
   _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
-    if (this._shape === "Cut") {
+    if (this._shape === 'Cut') {
       this._fireGlobalCutModeToggled();
     } else {
       this._fireGlobalDrawModeToggled();
@@ -126,25 +134,21 @@ const Draw = L.Class.extend({
     if (this._enabled) {
       layers.forEach((layer) => {
         L.PM.Utils.disablePopup(layer);
-      })
+      });
     } else {
       layers.forEach((layer) => {
         L.PM.Utils.enablePopup(layer);
-      })
+      });
     }
   },
 
   createNewDrawInstance(name, jsClass) {
     const instance = this._getShapeFromBtnName(jsClass);
     if (this[name]) {
-      throw new TypeError(
-        "Draw Type already exists"
-      );
+      throw new TypeError('Draw Type already exists');
     }
     if (!L.PM.Draw[instance]) {
-      throw new TypeError(
-        `There is no class L.PM.Draw.${instance}`
-      );
+      throw new TypeError(`There is no class L.PM.Draw.${instance}`);
     }
 
     this[name] = new L.PM.Draw[instance](this._map);
@@ -163,17 +167,17 @@ const Draw = L.Class.extend({
   },
   _getShapeFromBtnName(name) {
     const shapeMapping = {
-      "drawMarker": "Marker",
-      "drawCircle": "Circle",
-      "drawPolygon": "Polygon",
-      "drawPolyline": "Line",
-      "drawRectangle": "Rectangle",
-      "drawCircleMarker": "CircleMarker",
-      "editMode": "Edit",
-      "dragMode": "Drag",
-      "cutPolygon": "Cut",
-      "removalMode": "Removal",
-      "rotateMode": "Rotate",
+      drawMarker: 'Marker',
+      drawCircle: 'Circle',
+      drawPolygon: 'Polygon',
+      drawPolyline: 'Line',
+      drawRectangle: 'Rectangle',
+      drawCircleMarker: 'CircleMarker',
+      editMode: 'Edit',
+      dragMode: 'Drag',
+      cutPolygon: 'Cut',
+      removalMode: 'Removal',
+      rotateMode: 'Rotate',
     };
 
     if (shapeMapping[name]) {
@@ -181,7 +185,7 @@ const Draw = L.Class.extend({
     }
     return this[name] ? this[name]._shape : name;
   },
-  _finishLayer(layer){
+  _finishLayer(layer) {
     if (layer.pm) {
       // add the pm options from drawing to the new layer (edit)
       layer.pm.setOptions(this.options);
@@ -192,22 +196,31 @@ const Draw = L.Class.extend({
     }
     this._addDrawnLayerProp(layer);
   },
-  _addDrawnLayerProp(layer){
+  _addDrawnLayerProp(layer) {
     layer._drawnByGeoman = true;
   },
-  _setPane(layer,type){
-    if(type === "layerPane"){
-      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.layerPane || 'overlayPane';
-    }else if(type === "vertexPane"){
-      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.vertexPane || 'markerPane';
-    }else if(type === "markerPane"){
-      layer.options.pane = this._map.pm.globalOptions.panes && this._map.pm.globalOptions.panes.markerPane || 'markerPane';
+  _setPane(layer, type) {
+    if (type === 'layerPane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          this._map.pm.globalOptions.panes.layerPane) ||
+        'overlayPane';
+    } else if (type === 'vertexPane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          this._map.pm.globalOptions.panes.vertexPane) ||
+        'markerPane';
+    } else if (type === 'markerPane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          this._map.pm.globalOptions.panes.markerPane) ||
+        'markerPane';
     }
   },
-  _isFirstLayer(){
+  _isFirstLayer() {
     const map = this._map || this._layer._map;
     return map.pm.getGeomanLayers().length === 0;
-  }
+  },
 });
 
 export default Draw;

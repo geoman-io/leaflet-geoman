@@ -29,13 +29,12 @@ Edit.Rectangle = Edit.Polygon.extend({
     [this._cornerMarkers] = this._markers;
 
     // Update the marker latlngs if the rectangle is rotated
-    this._layer.getLatLngs()[0].forEach((latlng,index)=>{
-      const marker = this._cornerMarkers.find((m)=> m._index === index);
-      if(marker){
+    this._layer.getLatLngs()[0].forEach((latlng, index) => {
+      const marker = this._cornerMarkers.find((m) => m._index === index);
+      if (marker) {
         marker.setLatLng(latlng);
       }
     });
-
   },
   applyOptions() {
     if (this.options.snappable) {
@@ -52,7 +51,7 @@ Edit.Rectangle = Edit.Polygon.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
-    this._setPane(marker,'vertexPane');
+    this._setPane(marker, 'vertexPane');
 
     marker._origLatLng = latlng;
     marker._index = index;
@@ -63,11 +62,11 @@ Edit.Rectangle = Edit.Polygon.extend({
     return marker;
   },
   // Add marker events after adding the snapping events to the markers, beacause of the execution order
-  _addMarkerEvents(){
-    this._markers[0].forEach((marker)=>{
-        marker.on('dragstart', this._onMarkerDragStart, this);
-        marker.on('drag', this._onMarkerDrag, this);
-        marker.on('dragend', this._onMarkerDragEnd, this);
+  _addMarkerEvents() {
+    this._markers[0].forEach((marker) => {
+      marker.on('dragstart', this._onMarkerDragStart, this);
+      marker.on('drag', this._onMarkerDrag, this);
+      marker.on('dragend', this._onMarkerDragEnd, this);
 
       // TODO: Can we remove this? The _removeMarker Event is a empty function
       if (!this.options.preventMarkerRemoval) {
@@ -83,7 +82,7 @@ Edit.Rectangle = Edit.Polygon.extend({
   },
 
   _onMarkerDragStart(e) {
-    if(!this._vertexValidation('move',e)){
+    if (!this._vertexValidation('move', e)) {
       return;
     }
 
@@ -91,7 +90,9 @@ Edit.Rectangle = Edit.Polygon.extend({
     const draggedMarker = e.target;
     // Store/update a reference to marker in opposite corner
     const corners = this._cornerMarkers;
-    draggedMarker._oppositeCornerLatLng = corners.find((m)=> m._index === ((draggedMarker._index + 2) % 4)).getLatLng();
+    draggedMarker._oppositeCornerLatLng = corners
+      .find((m) => m._index === (draggedMarker._index + 2) % 4)
+      .getLatLng();
 
     // Automatically unsnap all markers on drag start (they'll snap back if close enough to another snappable object)
     // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
@@ -104,7 +105,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     // dragged marker
     const draggedMarker = e.target;
 
-    if(!this._vertexValidationDrag(draggedMarker)){
+    if (!this._vertexValidationDrag(draggedMarker)) {
       return;
     }
 
@@ -121,12 +122,12 @@ Edit.Rectangle = Edit.Polygon.extend({
   _onMarkerDragEnd(e) {
     // dragged marker
     const draggedMarker = e.target;
-    if(!this._vertexValidationDragEnd(draggedMarker)){
+    if (!this._vertexValidationDragEnd(draggedMarker)) {
       return;
     }
 
     // Clean-up data attributes
-    this._cornerMarkers.forEach(m => {
+    this._cornerMarkers.forEach((m) => {
       delete m._oppositeCornerLatLng;
     });
 
@@ -144,7 +145,12 @@ Edit.Rectangle = Edit.Polygon.extend({
     L.extend(movedMarker._origLatLng, movedMarker._latlng);
 
     // update rectangle boundaries, based on moved marker's new LatLng and cached opposite corner's LatLng
-    const corners = L.PM.Utils._getRotatedRectangle(movedMarker.getLatLng(),movedMarker._oppositeCornerLatLng, this._angle || 0, this._map);
+    const corners = L.PM.Utils._getRotatedRectangle(
+      movedMarker.getLatLng(),
+      movedMarker._oppositeCornerLatLng,
+      this._angle || 0,
+      this._map
+    );
     this._layer.setLatLngs(corners);
 
     // Reposition the markers at each corner
@@ -159,37 +165,45 @@ Edit.Rectangle = Edit.Polygon.extend({
   _adjustAllMarkers() {
     const markerLatLngs = this._layer.getLatLngs()[0];
 
-    if(markerLatLngs && markerLatLngs.length !== 4 && markerLatLngs.length > 0){
+    if (
+      markerLatLngs &&
+      markerLatLngs.length !== 4 &&
+      markerLatLngs.length > 0
+    ) {
       // The layers is currently to small and has not enough latlngs.
       // Leaflet destroys the valid Rectangle by removing the last latlng if the last and first latlng are equal. See: Leaflet#7464 V1.7.1
 
       // update all possible markers
-      markerLatLngs.forEach((latlng, index)=>{
+      markerLatLngs.forEach((latlng, index) => {
         this._cornerMarkers[index].setLatLng(latlng);
       });
 
       // apply to all markers with no latlng on the layer, the first latlng
       const restMarkers = this._cornerMarkers.slice(markerLatLngs.length);
-      restMarkers.forEach((marker)=>{
+      restMarkers.forEach((marker) => {
         marker.setLatLng(markerLatLngs[0]);
       });
     } else if (!markerLatLngs || !markerLatLngs.length) {
-      console.error("The layer has no LatLngs");
+      console.error('The layer has no LatLngs');
     } else {
       this._cornerMarkers.forEach((marker) => {
         marker.setLatLng(markerLatLngs[marker._index]);
       });
     }
-
   },
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
   _findCorners() {
-    //TODO What should we do here????
+    // TODO What should we do here????
 
     const corners = this._layer.getBounds();
     const latlngs = this._layer.getLatLngs()[0];
-    return L.PM.Utils._getRotatedRectangle(latlngs[0],latlngs[2], this._angle || 0, this._map);
+    return L.PM.Utils._getRotatedRectangle(
+      latlngs[0],
+      latlngs[2],
+      this._angle || 0,
+      this._map
+    );
 
     const northwest = corners.getNorthWest();
     const northeast = corners.getNorthEast();
@@ -198,5 +212,4 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     return [northwest, northeast, southeast, southwest];
   },
-
 });

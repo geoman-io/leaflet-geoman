@@ -26,7 +26,7 @@ Edit.ImageOverlay = Edit.extend({
     }
 
     // layer is not allowed to edit
-    if(!this.options.allowEditing){
+    if (!this.options.allowEditing) {
       this.disable();
       return;
     }

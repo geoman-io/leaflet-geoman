@@ -37,4 +37,3 @@ export function _toLatLng(map, point) {
   }
   return map.unproject(point, zoom);
 }
-

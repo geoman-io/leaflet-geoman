@@ -13,7 +13,7 @@ Draw.Polygon = Draw.Line.extend({
       draggable: false,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
-    this._setPane(marker,'vertexPane');
+    this._setPane(marker, 'vertexPane');
 
     // mark this marker as temporary
     marker._pmTempLayer = true;
@@ -35,19 +35,19 @@ Draw.Polygon = Draw.Line.extend({
       // add a click event w/ no handler to the marker
       // event won't bubble so prevents creation of identical markers in same polygon
       // fixes issue where double click during poly creation when allowSelfIntersection: false caused it to break
-      marker.on('click', () => (1));
+      marker.on('click', () => 1);
     }
 
     return marker;
   },
-  _setTooltipText(){
-    const {length} = this._layer.getLatLngs().flat();
-    let text = "";
+  _setTooltipText() {
+    const { length } = this._layer.getLatLngs().flat();
+    let text = '';
 
     // handle tooltip text
-    if(length <= 2){
+    if (length <= 2) {
       text = getTranslation('tooltips.continueLine');
-    }else{
+    } else {
       text = getTranslation('tooltips.finishPoly');
     }
     this._hintMarker.setTooltipContent(text);
@@ -64,7 +64,11 @@ Draw.Polygon = Draw.Line.extend({
     }
 
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
-    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+    if (
+      this.options.requireSnapToFinish &&
+      !this._hintMarker._snapped &&
+      !this._isFirstLayer()
+    ) {
       return;
     }
 
@@ -77,7 +81,7 @@ Draw.Polygon = Draw.Line.extend({
     }
 
     const polygonLayer = L.polygon(coords, this.options.pathOptions);
-    this._setPane(polygonLayer,'layerPane');
+    this._setPane(polygonLayer, 'layerPane');
     this._finishLayer(polygonLayer);
     polygonLayer.addTo(this._map.pm._getContainingLayer());
 
@@ -93,7 +97,7 @@ Draw.Polygon = Draw.Line.extend({
 
     // disable drawing
     this.disable();
-    if(this.options.continueDrawing){
+    if (this.options.continueDrawing) {
       this.enable();
     }
   },
