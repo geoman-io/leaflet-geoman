@@ -48,8 +48,8 @@ const EventMixin = {
 
   // Edit Events
   // Fired when layer is edited / changed
-  _fireEdit(source = "Edit", customPayload = {}) {
-    this.__fire(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() }, source, customPayload);
+  _fireEdit(fireLayer = this._layer, source = "Edit", customPayload = {}) {
+    this.__fire(fireLayer,'pm:edit', { layer: this._layer, shape: this.getShape() }, source, customPayload);
   },
   // Fired when layer is enabled for editing
   _fireEnable(source = "Edit", customPayload = {}){
