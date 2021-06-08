@@ -82,6 +82,7 @@ const RotateMixin = {
 
     this._fireRotationEnd(this._rotationLayer,startAngle,originLatLngs);
     this._fireRotationEnd(this._map,startAngle,originLatLngs);
+    this._rotationLayer.pm._fireEdit(this._rotationLayer,"Rotation");
 
     this._preventRenderingMarkers(false);
   },
