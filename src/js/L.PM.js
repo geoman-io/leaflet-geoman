@@ -36,7 +36,7 @@ import './Edit/L.PM.Edit.ImageOverlay';
 import '../css/layers.css';
 import '../css/controls.css';
 
-import './helpers/Matrix';
+import Matrix from './helpers/Matrix';
 
 import Utils from './L.PM.Utils';
 
@@ -47,6 +47,7 @@ L.PM = L.PM || {
   Draw,
   Edit,
   Utils,
+  Matrix,
   activeLang: 'en',
   optIn: false,
   initialize(options) {
