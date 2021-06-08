@@ -1,27 +1,33 @@
-const tiles1 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-});
+const tiles1 = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }
+);
 
-const tiles2 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-});
+const tiles2 = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }
+);
 
-const tiles3 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-});
+const tiles3 = L.tileLayer(
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }
+);
 
-const map2 = L.map('example2')
-  .setView([51.505, -0.09], 13)
-  .addLayer(tiles1);
-const map3 = L.map('example3')
-  .setView([51.505, -0.09], 13)
-  .addLayer(tiles2);
-const map4 = L.map('example4')
-  .setView([51.505, -0.09], 13)
-  .addLayer(tiles3);
+const map2 = L.map('example2').setView([51.505, -0.09], 13).addLayer(tiles1);
+const map3 = L.map('example3').setView([51.505, -0.09], 13).addLayer(tiles2);
+const map4 = L.map('example4').setView([51.505, -0.09], 13).addLayer(tiles3);
 // map2.dragging.disable();
 
 // map2.on('pm:create', function(e) {
@@ -93,7 +99,7 @@ map2.pm.addControls({
 // map2.pm.enableDraw('Line', { allowSelfIntersection: false });
 // map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
 
-map2.on('pm:globaleditmodetoggled', function(e) {
+map2.on('pm:globaleditmodetoggled', function (e) {
   // console.log(e);
 });
 
@@ -205,11 +211,11 @@ map2.fitBounds(b);
 
 console.log(theCollection);
 
-theCollection.on('pm:edit', function(e) {
+theCollection.on('pm:edit', function (e) {
   console.log(e);
 });
 
-theCollection.on('pm:dragstart', function(e) {
+theCollection.on('pm:dragstart', function (e) {
   console.log(e);
 });
 
@@ -257,8 +263,18 @@ map3.pm.enableDraw('Polygon', {
 });
 
 var scotland = L.polygon([
-  [[60, -13], [60, 0], [50, 4], [50, -13]],
-  [[55.7, -4.5], [56, -4.5], [56, -4], [55.7, -4]],
+  [
+    [60, -13],
+    [60, 0],
+    [50, 4],
+    [50, -13],
+  ],
+  [
+    [55.7, -4.5],
+    [56, -4.5],
+    [56, -4],
+    [55.7, -4],
+  ],
 ]);
 scotland.addTo(map3);
 
@@ -274,17 +290,17 @@ map3.fitBounds(bounds);
 //     console.log(e);
 // });
 
-map2.on('pm:drawstart', function(e) {
+map2.on('pm:drawstart', function (e) {
   var layer = e.workingLayer;
   // console.log(layer);
-  layer.on('pm:centerplaced', function(e) {
+  layer.on('pm:centerplaced', function (e) {
     // console.log(e);
   });
 });
-map2.on('pm:create', function(e) {
+map2.on('pm:create', function (e) {
   var layer = e.layer;
   // console.log(layer);
-  layer.on('pm:centerplaced', function(e) {
+  layer.on('pm:centerplaced', function (e) {
     // console.log(e);
   });
 });
@@ -305,11 +321,11 @@ const polygonLayer = L.polygon([
 //     preventMarkerRemoval: false,
 // });
 
-polygonLayer.on('pm:update', function(e) {
+polygonLayer.on('pm:update', function (e) {
   console.log(e);
 });
 
-polygonLayer.on('pm:intersect', function(e) {
+polygonLayer.on('pm:intersect', function (e) {
   console.log(e);
 });
 
@@ -325,47 +341,51 @@ map2.pm.disableDraw('Polygon');
 map2.pm.enableDraw('Line', { allowSelfIntersection: false });
 map2.pm.disableDraw('Line');
 
-map2.on('pm:create', function(e) {
+map2.on('pm:create', function (e) {
   // e.layer.pm.enable({ allowSelfIntersection: false });
   // e.layer.pm.disable();
   // console.log(e.layer.pm.hasSelfIntersection());
 
-  e.layer.on('pm:markerdragend', function(e) {
+  e.layer.on('pm:markerdragend', function (e) {
     // console.log(e);
   });
 
-  e.layer.on('pm:update', function(e) {
+  e.layer.on('pm:update', function (e) {
     console.log(e);
   });
 
-  e.layer.on('pm:cut', function(e) {
+  e.layer.on('pm:cut', function (e) {
     console.log(e);
   });
 });
 
-map2.on('pm:drawstart', function(e) {
+map2.on('pm:drawstart', function (e) {
   var layer = e.workingLayer;
-  layer.on('pm:vertexadded', function(e) {
+  layer.on('pm:vertexadded', function (e) {
     // console.log(e);
     // console.log(e.workingLayer.pm.hasSelfIntersection());
   });
 });
 
-polygonLayer.on('pm:vertexadded', function(e) {
+polygonLayer.on('pm:vertexadded', function (e) {
   // console.log(e);
 });
-polygonLayer.on('pm:vertexremoved', function(e) {
+polygonLayer.on('pm:vertexremoved', function (e) {
   // console.log(e);
 });
 
-polygonLayer.on('pm:markerdragstart', function(e) {
+polygonLayer.on('pm:markerdragstart', function (e) {
   // console.log(e);
 });
 
 // Layer Group Example
 
 const layerGroupItem1 = L.polyline(
-  [[51.51, -0.09], [51.513, -0.08], [51.514, -0.11]],
+  [
+    [51.51, -0.09],
+    [51.513, -0.08],
+    [51.514, -0.11],
+  ],
   { pmIgnore: true }
 );
 const layerGroupItem2 = L.polygon([
@@ -409,11 +429,11 @@ layerGroup.addLayer(someLayer);
 
 someLayer.addData(feature);
 
-layerGroup.on('pm:snap', function(e) {
+layerGroup.on('pm:snap', function (e) {
   console.log('snap');
   console.log(e);
 });
-layerGroup.on('pm:unsnap', function(e) {
+layerGroup.on('pm:unsnap', function (e) {
   console.log('unsnap');
   console.log(e);
 });
@@ -443,19 +463,19 @@ layerGroup.addLayer(layerGroupItem3);
 // layerGroup.addLayer(layerGroupItem4);
 // layerGroup.addLayer(layerGroupItem5);
 
-layerGroup.on('pm:dragstart', function(e) {
+layerGroup.on('pm:dragstart', function (e) {
   console.log(e);
 });
-layerGroup.on('pm:drag', function(e) {
+layerGroup.on('pm:drag', function (e) {
   console.log(e);
 });
-layerGroup.on('pm:dragend', function(e) {
+layerGroup.on('pm:dragend', function (e) {
   console.log(e);
 });
-layerGroup.on('pm:markerdragstart', function(e) {
+layerGroup.on('pm:markerdragstart', function (e) {
   console.log(e);
 });
-layerGroup.on('pm:markerdragend', function(e) {
+layerGroup.on('pm:markerdragend', function (e) {
   console.log(e);
 });
 

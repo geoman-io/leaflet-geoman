@@ -12,12 +12,16 @@ const GlobalEditMode = {
     const layers = L.PM.Utils.findLayers(this.map);
 
     // enable all layers
-    layers.forEach(layer => {
+    layers.forEach((layer) => {
       layer.pm.enable(options);
     });
 
     if (!this.throttledReInitEdit) {
-      this.throttledReInitEdit = L.Util.throttle(this.handleLayerAdditionInGlobalEditMode, 100, this)
+      this.throttledReInitEdit = L.Util.throttle(
+        this.handleLayerAdditionInGlobalEditMode,
+        100,
+        this
+      );
     }
 
     // save the added layers into the _addedLayers array, to read it later out
@@ -37,7 +41,7 @@ const GlobalEditMode = {
     const layers = L.PM.Utils.findLayers(this.map);
 
     // disable all layers
-    layers.forEach(layer => {
+    layers.forEach((layer) => {
       layer.pm.disable();
     });
 
@@ -70,7 +74,7 @@ const GlobalEditMode = {
   handleLayerAdditionInGlobalEditMode() {
     const layers = this._addedLayers;
     this._addedLayers = [];
-    layers.forEach((layer)=> {
+    layers.forEach((layer) => {
       // when global edit mode is enabled and a layer is added to the map,
       // enable edit for that layer if it's relevant
 
@@ -81,13 +85,13 @@ const GlobalEditMode = {
       }
 
       if (this.globalEditModeEnabled()) {
-        layer.pm.enable({...this.globalOptions});
+        layer.pm.enable({ ...this.globalOptions });
       }
     });
   },
-  _layerAdded({layer}){
+  _layerAdded({ layer }) {
     this._addedLayers.push(layer);
   },
 };
 
-export default GlobalEditMode
+export default GlobalEditMode;

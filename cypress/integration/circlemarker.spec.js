@@ -1,7 +1,7 @@
 describe('Draw Circle Marker', () => {
   const mapSelector = '#map';
 
-  Cypress.Commands.add('hasCircleLayers', count => {
+  Cypress.Commands.add('hasCircleLayers', (count) => {
     cy.window().then(({ map, L }) => {
       const layerCount = Object.values(map._layers).reduce((total, layer) => {
         if (layer instanceof L.CircleMarker) {
@@ -56,7 +56,7 @@ describe('Draw Circle Marker', () => {
     createMarkers();
 
     cy.window().then(({ map, L }) => {
-      map.eachLayer(layer => {
+      map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isFalse(
             L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
@@ -69,7 +69,7 @@ describe('Draw Circle Marker', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map, L }) => {
-      map.eachLayer(layer => {
+      map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isTrue(
             L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
@@ -82,7 +82,7 @@ describe('Draw Circle Marker', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map, L }) => {
-      map.eachLayer(layer => {
+      map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isFalse(
             L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
@@ -124,9 +124,7 @@ describe('Draw Circle Marker', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector)
-      .click(200, 200)
-      .click(250, 250);
+    cy.get(mapSelector).click(200, 200).click(250, 250);
 
     cy.hasCircleLayers(1);
 
@@ -147,9 +145,7 @@ describe('Draw Circle Marker', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector)
-      .click(200, 200)
-      .click(400, 350);
+    cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.toolbarButton('edit')
       .click()
@@ -232,7 +228,7 @@ describe('Draw Circle Marker', () => {
         .click(410, 190)
         .then(() => {
           const layers = map.pm.getGeomanDrawLayers();
-          layers.forEach(layer => {
+          layers.forEach((layer) => {
             if (layer instanceof L.CircleMarker) {
               expect(layer.getRadius()).to.equal(150);
             }
@@ -258,7 +254,7 @@ describe('Draw Circle Marker', () => {
         .click(300, 200)
         .then(() => {
           const layers = map.pm.getGeomanDrawLayers();
-          layers.forEach(layer => {
+          layers.forEach((layer) => {
             if (layer instanceof L.CircleMarker) {
               expect(layer.getRadius()).to.equal(150);
             }
@@ -268,7 +264,10 @@ describe('Draw Circle Marker', () => {
   });
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
+      map.pm.setGlobalOptions({
+        requireSnapToFinish: true,
+        snapSegment: false,
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -279,16 +278,13 @@ describe('Draw Circle Marker', () => {
       .click(150, 250);
 
     cy.toolbarButton('circle-marker').click();
-    cy.get(mapSelector)
-      .click(350, 250)
-      .click(190, 60);
+    cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
 
-    cy.get(mapSelector)
-      .click(250, 50);
+    cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
@@ -296,7 +292,11 @@ describe('Draw Circle Marker', () => {
   });
   it('requireSnapToFinish editable', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true, editable: true, snapSegment: false});
+      map.pm.setGlobalOptions({
+        requireSnapToFinish: true,
+        editable: true,
+        snapSegment: false,
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -307,16 +307,13 @@ describe('Draw Circle Marker', () => {
       .click(150, 250);
 
     cy.toolbarButton('circle-marker').click();
-    cy.get(mapSelector)
-      .click(350, 250)
-      .click(190, 60);
+    cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
 
-    cy.get(mapSelector)
-      .click(250, 50);
+    cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);

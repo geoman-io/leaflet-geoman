@@ -9,7 +9,7 @@ describe('Shows Tooltips', () => {
     });
 
     cy.toolbarButton('polygon').click();
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Platziere den ersten Marker mit Klick');
     });
   });
@@ -25,7 +25,7 @@ describe('Shows Tooltips', () => {
     });
 
     cy.toolbarButton('marker').click();
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Custom Marker Translation');
     });
   });
@@ -36,13 +36,13 @@ describe('Shows Tooltips', () => {
 
     cy.get('.leaflet-tooltip-bottom').should('exist');
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to place marker');
     });
 
     cy.get(mapSelector).click(290, 250);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to place marker');
     });
 
@@ -57,13 +57,13 @@ describe('Shows Tooltips', () => {
 
     cy.get('.leaflet-tooltip-bottom').should('exist');
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to place first vertex');
     });
 
     cy.get(mapSelector).click(290, 250);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to finish');
     });
 
@@ -78,13 +78,13 @@ describe('Shows Tooltips', () => {
 
     cy.get('.leaflet-tooltip-bottom').should('exist');
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to place circle center');
     });
 
     cy.get(mapSelector).click(290, 250);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to finish circle');
     });
 
@@ -101,20 +101,20 @@ describe('Shows Tooltips', () => {
 
     cy.get('.leaflet-tooltip-bottom').should('exist');
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to place first vertex');
     });
 
     // draw a polygon
     cy.get(mapSelector).click(290, 250);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to continue drawing');
     });
 
     cy.get(mapSelector).click(300, 50);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click any existing marker to finish');
     });
 
@@ -131,7 +131,7 @@ describe('Shows Tooltips', () => {
 
     cy.get('.leaflet-tooltip-bottom').should('exist');
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to place first vertex');
     });
 
@@ -143,7 +143,7 @@ describe('Shows Tooltips', () => {
       .click(350, 150)
       .click(400, 150);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click first marker to finish');
     });
 
@@ -198,13 +198,13 @@ describe('Shows Tooltips', () => {
 
     cy.get('.leaflet-tooltip-bottom').should('exist');
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Presiona para colocar un marcador de circulo');
     });
 
     cy.get(mapSelector).click(290, 250);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Presiona para colocar un marcador de circulo');
     });
 
@@ -216,12 +216,9 @@ describe('Shows Tooltips', () => {
   it('Reset tooltip after remove vertex', () => {
     cy.toolbarButton('polygon').click();
 
-    cy.get(mapSelector)
-      .click(90, 250)
-      .click(100, 350)
-      .click(200, 350);
+    cy.get(mapSelector).click(90, 250).click(100, 350).click(200, 350);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click first marker to finish');
     });
 
@@ -229,14 +226,13 @@ describe('Shows Tooltips', () => {
       map.pm.Draw.Polygon._removeLastVertex();
     });
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to continue drawing');
     });
 
-    cy.get(mapSelector)
-      .click(200, 350);
+    cy.get(mapSelector).click(200, 350);
 
-    cy.get('.leaflet-tooltip-bottom').then(el => {
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click first marker to finish');
     });
   });

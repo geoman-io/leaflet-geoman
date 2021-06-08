@@ -1,29 +1,19 @@
 {
-    "type":"FeatureCollection",
-    "features":[
-        {
-            "type":"Feature",
-            "geometry":{
-                "type":"MultiPoint",
-                "coordinates":[
-                    [
-                        32.83604819,
-                        40.0169319
-                    ]
-                ]
-            }
-        },
-        {
-            "type":"Feature",
-            "geometry":{
-                "type":"MultiPoint",
-                "coordinates":[
-                    [
-                        32.8298979,
-                        40.02567418
-                    ]
-                ]
-            }
-        }
-    ]
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [[32.83604819, 40.0169319]]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "MultiPoint",
+        "coordinates": [[32.8298979, 40.02567418]]
+      }
+    }
+  ]
 }

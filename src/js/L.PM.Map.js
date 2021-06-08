@@ -3,12 +3,18 @@ import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
-import GlobalRotateMode from "./Mixins/Modes/Mode.Rotate";
-import EventMixin from "./Mixins/Events";
-import KeyboardMixins from "./Mixins/Keyboard";
+import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
+import EventMixin from './Mixins/Events';
+import KeyboardMixins from './Mixins/Keyboard';
 
 const Map = L.Class.extend({
-  includes: [GlobalEditMode, GlobalDragMode, GlobalRemovalMode, GlobalRotateMode, EventMixin],
+  includes: [
+    GlobalEditMode,
+    GlobalDragMode,
+    GlobalRemovalMode,
+    GlobalRotateMode,
+    EventMixin,
+  ],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);
@@ -18,12 +24,19 @@ const Map = L.Class.extend({
     this.globalOptions = {
       snappable: true,
       layerGroup: undefined,
-      snappingOrder: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle'],
+      snappingOrder: [
+        'Marker',
+        'CircleMarker',
+        'Circle',
+        'Line',
+        'Polygon',
+        'Rectangle',
+      ],
       panes: {
         vertexPane: 'markerPane',
         layerPane: 'overlayPane',
-        markerPane: 'markerPane'
-      }
+        markerPane: 'markerPane',
+      },
     };
 
     this.Keyboard._initKeyListener(map);
@@ -71,11 +84,11 @@ const Map = L.Class.extend({
     const ignore = optionsModifier.ignoreShapes || [];
     const mergeOptions = optionsModifier.merge || false;
 
-    this.map.pm.Draw.shapes.forEach(shape => {
+    this.map.pm.Draw.shapes.forEach((shape) => {
       if (ignore.indexOf(shape) === -1) {
         this.map.pm.Draw[shape].setPathOptions(options, mergeOptions);
       }
-    })
+    });
   },
 
   getGlobalOptions() {
@@ -83,27 +96,30 @@ const Map = L.Class.extend({
   },
   setGlobalOptions(o) {
     // merge passed and existing options
-    const options = merge(this.globalOptions,o);
+    const options = merge(this.globalOptions, o);
 
     // check if switched the editable mode for CircleMarker while drawing
     let reenableCircleMarker = false;
-    if(this.map.pm.Draw.CircleMarker.enabled() && this.map.pm.Draw.CircleMarker.options.editable !== options.editable){
+    if (
+      this.map.pm.Draw.CircleMarker.enabled() &&
+      this.map.pm.Draw.CircleMarker.options.editable !== options.editable
+    ) {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
     }
 
     // enable options for Drawing Shapes
-    this.map.pm.Draw.shapes.forEach(shape => {
-      this.map.pm.Draw[shape].setOptions(options)
+    this.map.pm.Draw.shapes.forEach((shape) => {
+      this.map.pm.Draw[shape].setOptions(options);
     });
 
-    if(reenableCircleMarker){
+    if (reenableCircleMarker) {
       this.map.pm.Draw.CircleMarker.enable();
     }
 
     // enable options for Editing
     const layers = L.PM.Utils.findLayers(this.map);
-    layers.forEach(layer => {
+    layers.forEach((layer) => {
       layer.pm.setOptions(options);
     });
 
@@ -115,7 +131,7 @@ const Map = L.Class.extend({
   },
   applyGlobalOptions() {
     const layers = L.PM.Utils.findLayers(this.map);
-    layers.forEach(layer => {
+    layers.forEach((layer) => {
       if (layer.pm.enabled()) {
         layer.pm.applyOptions();
       }
@@ -136,9 +152,9 @@ const Map = L.Class.extend({
   disableGlobalCutMode() {
     return this.Draw.Cut.disable();
   },
-  getGeomanLayers(asGroup = false){
+  getGeomanLayers(asGroup = false) {
     const layers = L.PM.Utils.findLayers(this.map);
-    if(!asGroup) {
+    if (!asGroup) {
       return layers;
     }
     const group = L.featureGroup();
@@ -148,9 +164,11 @@ const Map = L.Class.extend({
     });
     return group;
   },
-  getGeomanDrawLayers(asGroup = false){
-    const layers = L.PM.Utils.findLayers(this.map).filter(l => l._drawnByGeoman === true);
-    if(!asGroup) {
+  getGeomanDrawLayers(asGroup = false) {
+    const layers = L.PM.Utils.findLayers(this.map).filter(
+      (l) => l._drawnByGeoman === true
+    );
+    if (!asGroup) {
       return layers;
     }
     const group = L.featureGroup();
@@ -161,10 +179,12 @@ const Map = L.Class.extend({
     return group;
   },
   // returns the map instance by default or a layergroup is set through global options
-  _getContainingLayer(){
-    return this.globalOptions.layerGroup && this.globalOptions.layerGroup instanceof L.LayerGroup ? this.globalOptions.layerGroup : this.map;
-  }
-
+  _getContainingLayer() {
+    return this.globalOptions.layerGroup &&
+      this.globalOptions.layerGroup instanceof L.LayerGroup
+      ? this.globalOptions.layerGroup
+      : this.map;
+  },
 });
 
 export default Map;

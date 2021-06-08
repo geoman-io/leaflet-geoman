@@ -1,5 +1,4 @@
 .leaflet-pm-toolbar {
-
 }
 
 .leaflet-pm-toolbar .leaflet-buttons-control-button {
@@ -9,8 +8,12 @@
   z-index: 3;
 }
 
-.leaflet-pm-toolbar .leaflet-pm-actions-container a.leaflet-pm-action:first-child:not(.pos-right),
-.leaflet-pm-toolbar .leaflet-pm-actions-container a.leaflet-pm-action:last-child.pos-right {
+.leaflet-pm-toolbar
+  .leaflet-pm-actions-container
+  a.leaflet-pm-action:first-child:not(.pos-right),
+.leaflet-pm-toolbar
+  .leaflet-pm-actions-container
+  a.leaflet-pm-action:last-child.pos-right {
   border-radius: 0;
 }
 
@@ -18,15 +21,21 @@
   border-radius: 0;
 }
 
-.leaflet-pm-toolbar .button-container:last-child a.leaflet-buttons-control-button {
+.leaflet-pm-toolbar
+  .button-container:last-child
+  a.leaflet-buttons-control-button {
   border-radius: 0 0 2px 2px;
 }
 
-.leaflet-pm-toolbar .button-container:first-child a.leaflet-buttons-control-button {
+.leaflet-pm-toolbar
+  .button-container:first-child
+  a.leaflet-buttons-control-button {
   border-radius: 2px 2px 0 0;
 }
 
-.leaflet-pm-toolbar .button-container:last-child a.leaflet-buttons-control-button {
+.leaflet-pm-toolbar
+  .button-container:last-child
+  a.leaflet-buttons-control-button {
   border-bottom: none;
 }
 
@@ -81,7 +90,8 @@
   background-image: url('../assets/icons/Rotate.svg');
 }
 
-.leaflet-buttons-control-button:hover,.leaflet-buttons-control-button:focus {
+.leaflet-buttons-control-button:hover,
+.leaflet-buttons-control-button:focus {
   cursor: pointer;
   background-color: #f4f4f4;
 }
@@ -107,7 +117,10 @@
   direction: ltr;
 }
 
-.leaflet-right .leaflet-pm-toolbar .button-container .leaflet-pm-actions-container {
+.leaflet-right
+  .leaflet-pm-toolbar
+  .button-container
+  .leaflet-pm-actions-container {
   right: 100%;
   left: auto;
 }
@@ -116,14 +129,20 @@
   display: block;
 }
 
-.button-container .leaflet-pm-actions-container:not(.pos-right) a.leaflet-pm-action:last-child {
+.button-container
+  .leaflet-pm-actions-container:not(.pos-right)
+  a.leaflet-pm-action:last-child {
   border-radius: 0 3px 3px 0;
   border-right: 0;
 }
-.button-container .leaflet-pm-actions-container.pos-right a.leaflet-pm-action:first-child {
+.button-container
+  .leaflet-pm-actions-container.pos-right
+  a.leaflet-pm-action:first-child {
   border-radius: 3px 0 0 3px;
 }
-.button-container .leaflet-pm-actions-container.pos-right a.leaflet-pm-action:last-child {
+.button-container
+  .leaflet-pm-actions-container.pos-right
+  a.leaflet-pm-action:last-child {
   border-right: 0;
 }
 .button-container .leaflet-pm-actions-container .leaflet-pm-action {
@@ -138,27 +157,32 @@
   height: 29px;
   line-height: 29px;
 }
-.leaflet-pm-toolbar .button-container:first-child.pos-right.active a.leaflet-buttons-control-button {
+.leaflet-pm-toolbar
+  .button-container:first-child.pos-right.active
+  a.leaflet-buttons-control-button {
   border-top-left-radius: 0;
 }
-.leaflet-pm-toolbar .button-container:first-child.active:not(.pos-right) a.leaflet-buttons-control-button {
+.leaflet-pm-toolbar
+  .button-container:first-child.active:not(.pos-right)
+  a.leaflet-buttons-control-button {
   border-top-right-radius: 0;
 }
 
-.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover, .button-container .leaflet-pm-actions-container .leaflet-pm-action:focus {
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover,
+.button-container .leaflet-pm-actions-container .leaflet-pm-action:focus {
   cursor: pointer;
   background-color: #777;
 }
 
 /* That the active control is always over the other controls */
-.leaflet-pm-toolbar.activeChild{
+.leaflet-pm-toolbar.activeChild {
   z-index: 801;
 }
 
-.leaflet-buttons-control-button.pm-disabled{
+.leaflet-buttons-control-button.pm-disabled {
   background-color: #f4f4f4;
 }
 
-.control-icon.pm-disabled{
+.control-icon.pm-disabled {
   filter: opacity(0.6);
 }
