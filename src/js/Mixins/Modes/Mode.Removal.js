@@ -3,7 +3,7 @@ const GlobalRemovalMode = {
   enableGlobalRemovalMode() {
     this._globalRemovalModeEnabled = true;
     // handle existing layers
-    this.map.eachLayer(layer => {
+    this.map.eachLayer((layer) => {
       if (this._isRelevantForRemoval(layer)) {
         layer.pm.disable();
         layer.on('click', this.removeLayer, this);
@@ -11,7 +11,11 @@ const GlobalRemovalMode = {
     });
 
     if (!this.throttledReInitRemoval) {
-      this.throttledReInitRemoval = L.Util.throttle(this.reinitGlobalRemovalMode, 100, this)
+      this.throttledReInitRemoval = L.Util.throttle(
+        this.reinitGlobalRemovalMode,
+        100,
+        this
+      );
     }
 
     // handle layers that are added while in removal mode
@@ -24,7 +28,7 @@ const GlobalRemovalMode = {
   },
   disableGlobalRemovalMode() {
     this._globalRemovalModeEnabled = false;
-    this.map.eachLayer(layer => {
+    this.map.eachLayer((layer) => {
       layer.off('click', this.removeLayer, this);
     });
 
@@ -67,30 +71,31 @@ const GlobalRemovalMode = {
     const layer = e.target;
     // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
-    const removeable = this._isRelevantForRemoval(layer) && !layer.pm.dragging();
+    const removeable =
+      this._isRelevantForRemoval(layer) && !layer.pm.dragging();
 
     if (removeable) {
       layer.removeFrom(this.map.pm._getContainingLayer());
       layer.remove();
-      if(layer instanceof L.LayerGroup){
+      if (layer instanceof L.LayerGroup) {
         this._fireRemoveLayerGroup(layer);
         this._fireRemoveLayerGroup(this.map, layer);
-      }else{
+      } else {
         layer.pm._fireRemove(layer);
         layer.pm._fireRemove(this.map, layer);
       }
     }
   },
-  _isRelevantForRemoval(layer){
-    return layer.pm
-      && !(layer instanceof L.LayerGroup)
-      && (
-        (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
-      )
-      && !layer._pmTempLayer
-      && layer.pm.options.allowRemoval
-  }
+  _isRelevantForRemoval(layer) {
+    return (
+      layer.pm &&
+      !(layer instanceof L.LayerGroup) &&
+      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      !layer._pmTempLayer &&
+      layer.pm.options.allowRemoval
+    );
+  },
 };
 
-export default GlobalRemovalMode
+export default GlobalRemovalMode;

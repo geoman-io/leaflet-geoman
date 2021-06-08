@@ -1,5 +1,5 @@
 import Edit from './L.PM.Edit';
-import {destinationOnLine} from "../helpers";
+import { destinationOnLine } from '../helpers';
 
 Edit.CircleMarker = Edit.extend({
   _shape: 'CircleMarker',
@@ -9,7 +9,7 @@ Edit.CircleMarker = Edit.extend({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
   },
-  //TODO: remove default option in next major Release
+  // TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
@@ -21,7 +21,7 @@ Edit.CircleMarker = Edit.extend({
     }
 
     // layer is not allowed to edit
-    if(!this.options.allowEditing){
+    if (!this.options.allowEditing) {
       this.disable();
       return;
     }
@@ -62,7 +62,7 @@ Edit.CircleMarker = Edit.extend({
 
     if (this.options.editable) {
       this._map.off('move', this._syncMarkers, this);
-      if(this._outerMarker) {
+      if (this._outerMarker) {
         // update marker latlng when snapped latlng radius is out of min/max
         this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
       }
@@ -123,9 +123,9 @@ Edit.CircleMarker = Edit.extend({
         // https://github.com/Leaflet/Leaflet/issues/6492
         this._centerMarker.on('drag', this._moveCircle, this);
 
-        if(this.options.editable){
+        if (this.options.editable) {
           // update marker latlng when snapped latlng radius is out of min/max
-          this._outerMarker.on('drag',this._handleOuterMarkerSnapping, this);
+          this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
         }
         // sync the hintline with hint marker
         this._outerMarker.on('move', this._syncHintLine, this);
@@ -177,7 +177,7 @@ Edit.CircleMarker = Edit.extend({
     const A = markerA.getLatLng();
     const B = markerB.getLatLng();
     this._hintline = L.polyline([A, B], this.options.hintlineStyle);
-    this._setPane(this._hintline,'layerPane');
+    this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
   },
@@ -200,7 +200,7 @@ Edit.CircleMarker = Edit.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
-    this._setPane(marker,'vertexPane');
+    this._setPane(marker, 'vertexPane');
 
     marker._origLatLng = latlng;
     marker._pmTempLayer = true;
@@ -227,7 +227,7 @@ Edit.CircleMarker = Edit.extend({
 
     this._updateHiddenPolyCircle();
 
-    this._fireCenterPlaced("Edit");
+    this._fireCenterPlaced('Edit');
   },
   _syncMarkers() {
     const center = this._layer.getLatLng();
@@ -248,11 +248,17 @@ Edit.CircleMarker = Edit.extend({
     const B = this._outerMarker.getLatLng();
 
     const distance = this._map.project(A).distanceTo(this._map.project(B));
-    if(this.options.minRadiusCircleMarker && distance < this.options.minRadiusCircleMarker) {
+    if (
+      this.options.minRadiusCircleMarker &&
+      distance < this.options.minRadiusCircleMarker
+    ) {
       this._layer.setRadius(this.options.minRadiusCircleMarker);
-    }else if(this.options.maxRadiusCircleMarker && distance > this.options.maxRadiusCircleMarker) {
+    } else if (
+      this.options.maxRadiusCircleMarker &&
+      distance > this.options.maxRadiusCircleMarker
+    ) {
       this._layer.setRadius(this.options.maxRadiusCircleMarker);
-    }else{
+    } else {
       this._layer.setRadius(distance);
     }
 
@@ -272,14 +278,13 @@ Edit.CircleMarker = Edit.extend({
     this._fireRemove(this._layer);
     this._fireRemove(this._map, this._layer);
   },
-  _onDragStart(e){
+  _onDragStart(e) {
     this._map.pm.Draw.CircleMarker._layerIsDragging = true;
-    if(!this._vertexValidation('move',e)){
-      return;
+    if (!this._vertexValidation('move', e)) {
     }
   },
   _onMarkerDragStart(e) {
-    if(!this._vertexValidation('move',e)){
+    if (!this._vertexValidation('move', e)) {
       return;
     }
 
@@ -288,7 +293,10 @@ Edit.CircleMarker = Edit.extend({
   _onMarkerDrag(e) {
     // dragged marker
     const draggedMarker = e.target;
-    if(draggedMarker instanceof L.Marker && !this._vertexValidationDrag(draggedMarker)){
+    if (
+      draggedMarker instanceof L.Marker &&
+      !this._vertexValidationDrag(draggedMarker)
+    ) {
       return;
     }
 
@@ -299,7 +307,7 @@ Edit.CircleMarker = Edit.extend({
 
     // dragged marker
     const draggedMarker = e.target;
-    if(!this._vertexValidationDragEnd(draggedMarker)){
+    if (!this._vertexValidationDragEnd(draggedMarker)) {
       return;
     }
     if (this.options.editable) {
@@ -313,7 +321,8 @@ Edit.CircleMarker = Edit.extend({
     const marker = this._layer;
 
     this.options.snapDistance = this.options.snapDistance || 30;
-    this.options.snapSegment = this.options.snapSegment === undefined ? true : this.options.snapSegment;
+    this.options.snapSegment =
+      this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
     marker.off('pm:drag', this._handleSnapping, this);
     marker.on('pm:drag', this._handleSnapping, this);
@@ -334,7 +343,7 @@ Edit.CircleMarker = Edit.extend({
   },
   _updateHiddenPolyCircle() {
     const map = this._layer._map || this._map;
-    if(map) {
+    if (map) {
       const pointA = map.project(this._layer.getLatLng());
       const pointB = L.point(pointA.x + this._layer.getRadius(), pointA.y);
       const radius = this._layer.getLatLng().distanceTo(map.unproject(pointB));
@@ -343,45 +352,73 @@ Edit.CircleMarker = Edit.extend({
       _layer.setRadius(radius);
 
       if (this._hiddenPolyCircle) {
-        this._hiddenPolyCircle.setLatLngs(L.PM.Utils.circleToPolygon(_layer, 200).getLatLngs());
+        this._hiddenPolyCircle.setLatLngs(
+          L.PM.Utils.circleToPolygon(_layer, 200).getLatLngs()
+        );
       } else {
         this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(_layer, 200);
       }
 
       if (!this._hiddenPolyCircle._parentCopy) {
-        this._hiddenPolyCircle._parentCopy = this._layer
+        this._hiddenPolyCircle._parentCopy = this._layer;
       }
     }
   },
-  _getNewDestinationOfOuterMarker(){
+  _getNewDestinationOfOuterMarker() {
     const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._outerMarker.getLatLng();
-    const distance = this._map.project(latlng).distanceTo(this._map.project(secondLatLng));
-    if(this.options.minRadiusCircleMarker && distance < this.options.minRadiusCircleMarker) {
-      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this._pxRadiusToMeter(this.options.minRadiusCircleMarker));
-    }else if(this.options.maxRadiusCircleMarker && distance > this.options.maxRadiusCircleMarker) {
-      secondLatLng = destinationOnLine(this._map,latlng,secondLatLng,this._pxRadiusToMeter(this.options.maxRadiusCircleMarker));
+    const distance = this._map
+      .project(latlng)
+      .distanceTo(this._map.project(secondLatLng));
+    if (
+      this.options.minRadiusCircleMarker &&
+      distance < this.options.minRadiusCircleMarker
+    ) {
+      secondLatLng = destinationOnLine(
+        this._map,
+        latlng,
+        secondLatLng,
+        this._pxRadiusToMeter(this.options.minRadiusCircleMarker)
+      );
+    } else if (
+      this.options.maxRadiusCircleMarker &&
+      distance > this.options.maxRadiusCircleMarker
+    ) {
+      secondLatLng = destinationOnLine(
+        this._map,
+        latlng,
+        secondLatLng,
+        this._pxRadiusToMeter(this.options.maxRadiusCircleMarker)
+      );
     }
     return secondLatLng;
   },
-  _handleOuterMarkerSnapping(){
-    if(this._outerMarker._snapped) {
+  _handleOuterMarkerSnapping() {
+    if (this._outerMarker._snapped) {
       const latlng = this._centerMarker.getLatLng();
       const secondLatLng = this._outerMarker.getLatLng();
-      const distance = this._map.project(latlng).distanceTo(this._map.project(secondLatLng));
-      if(this.options.minRadiusCircleMarker && distance < this.options.minRadiusCircleMarker) {
+      const distance = this._map
+        .project(latlng)
+        .distanceTo(this._map.project(secondLatLng));
+      if (
+        this.options.minRadiusCircleMarker &&
+        distance < this.options.minRadiusCircleMarker
+      ) {
         this._outerMarker.setLatLng(this._outerMarker._orgLatLng);
-      } else if(this.options.maxRadiusCircleMarker && distance > this.options.maxRadiusCircleMarker) {
+      } else if (
+        this.options.maxRadiusCircleMarker &&
+        distance > this.options.maxRadiusCircleMarker
+      ) {
         this._outerMarker.setLatLng(this._outerMarker._orgLatLng);
       }
     }
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
   },
-  _pxRadiusToMeter(radius){
+  _pxRadiusToMeter(radius) {
     const center = this._centerMarker.getLatLng();
     const pointA = this._map.project(center);
     const pointB = L.point(pointA.x + radius, pointA.y);
     return this._map.unproject(pointB).distanceTo(center);
-  }
+  },
 });

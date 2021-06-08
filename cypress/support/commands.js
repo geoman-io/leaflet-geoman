@@ -25,16 +25,18 @@ import 'cypress-wait-until';
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('hasLayers', count => {
+Cypress.Commands.add('hasLayers', (count) => {
   cy.window().then(({ map }) => {
     const layerCount = Object.keys(map._layers).length;
     cy.wrap(layerCount).should('eq', count);
   });
 });
 
-Cypress.Commands.add('hasDrawnLayers', count => {
+Cypress.Commands.add('hasDrawnLayers', (count) => {
   cy.window().then(({ map }) => {
-    const layerCount = Object.keys(map._layers).filter(l => map._layers[l]._drawnByGeoman).length;
+    const layerCount = Object.keys(map._layers).filter(
+      (l) => map._layers[l]._drawnByGeoman
+    ).length;
     cy.wrap(layerCount).should('eq', count);
   });
 });
@@ -46,15 +48,16 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
     t0 = performance.now();
 
     function getRandomLatLng() {
-      const bounds = map.getBounds()
-      const southWest = bounds.getSouthWest()
-      const northEast = bounds.getNorthEast()
-      const lngSpan = northEast.lng - southWest.lng
+      const bounds = map.getBounds();
+      const southWest = bounds.getSouthWest();
+      const northEast = bounds.getNorthEast();
+      const lngSpan = northEast.lng - southWest.lng;
       const latSpan = northEast.lat - southWest.lat;
 
       return new L.LatLng(
         southWest.lat + latSpan * Math.random(),
-        southWest.lng + lngSpan * Math.random());
+        southWest.lng + lngSpan * Math.random()
+      );
     }
 
     const terminals = [];
@@ -62,24 +65,23 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
 
     for (let i = 0; i < 3500; i += 1) {
       locations.push(L.circleMarker(getRandomLatLng(map)));
-
     }
 
     for (let i = 0; i < 2500; i += 1) {
       terminals.push(L.circleMarker(getRandomLatLng(map)));
     }
 
-    const t = L.layerGroup(terminals).addTo(map)
-    const l = L.layerGroup(locations).addTo(map)
+    const t = L.layerGroup(terminals).addTo(map);
+    const l = L.layerGroup(locations).addTo(map);
 
-    const base = {}
+    const base = {};
 
     const overlays = {
-      "Locations": t,
-      "Terminals": l
-    }
+      Locations: t,
+      Terminals: l,
+    };
 
-    L.control.layers(base, overlays).addTo(map)
+    L.control.layers(base, overlays).addTo(map);
   });
 
   cy.window().then(() => {
@@ -91,30 +93,30 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
   });
 });
 
-Cypress.Commands.add('hasMiddleMarkers', count => {
-  cy.get('.marker-icon-middle').should($p => {
+Cypress.Commands.add('hasMiddleMarkers', (count) => {
+  cy.get('.marker-icon-middle').should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
-Cypress.Commands.add('hasVertexMarkers', count => {
-  cy.get('.marker-icon:not(.marker-icon-middle)').should($p => {
+Cypress.Commands.add('hasVertexMarkers', (count) => {
+  cy.get('.marker-icon:not(.marker-icon-middle)').should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
-Cypress.Commands.add('hasTotalVertexMarkers', count => {
-  cy.get('.marker-icon').should($p => {
+Cypress.Commands.add('hasTotalVertexMarkers', (count) => {
+  cy.get('.marker-icon').should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
-Cypress.Commands.add('toolbarButton', name =>
+Cypress.Commands.add('toolbarButton', (name) =>
   cy.get(`.leaflet-pm-icon-${name}`)
 );
 
 Cypress.Commands.add('toolbarButtonContainer', (name, map) => {
-  cy.get(map.pm.Toolbar.buttons[name]._container.children[0])
+  cy.get(map.pm.Toolbar.buttons[name]._container.children[0]);
 });
 
 Cypress.Commands.add('drawShape', (shape, ignore) => {
@@ -122,7 +124,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     if (shape === 'PolygonPart1') {
       cy.fixture(shape)
         .as('poly')
-        .then(json => {
+        .then((json) => {
           const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
@@ -131,7 +133,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     if (shape === 'PolygonPart2') {
       cy.fixture(shape)
         .as('poly')
-        .then(json => {
+        .then((json) => {
           const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
@@ -140,7 +142,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     if (shape === 'MultiPolygon') {
       cy.fixture(shape)
         .as('poly')
-        .then(json => {
+        .then((json) => {
           const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
@@ -151,18 +153,17 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     if (shape === 'LineString') {
       cy.fixture(shape)
         .as('poly')
-        .then(json => {
+        .then((json) => {
           const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
     }
 
-
     if (shape === 'MultiLineString') {
       cy.fixture(shape)
         .as('poly')
-        .then(json => {
+        .then((json) => {
           const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
@@ -172,18 +173,19 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     if (shape === 'MonsterPolygon') {
       cy.fixture(shape)
         .as('poly')
-        .then(json => {
-          const layer = L.polygon(json.data.points, { pmIgnore: ignore }).addTo(map);
+        .then((json) => {
+          const layer = L.polygon(json.data.points, { pmIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
     }
 
-
     if (shape === 'PolygonIntersects') {
       cy.fixture(shape)
         .as('poly')
-        .then(json => {
+        .then((json) => {
           //
           const layer = L.geoJSON(json).addTo(map);
           const bounds = layer.getBounds();
@@ -193,7 +195,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
 
     if (shape === 'FeatureCollectionEventFire') {
       cy.fixture(shape)
-        .then(json => {
+        .then((json) => {
           //
           const layer = L.geoJSON(json).addTo(map);
           const bounds = layer.getBounds();
@@ -206,7 +208,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
 
     if (shape === 'FeatureCollectionWithCircles') {
       cy.fixture(shape, ignore)
-        .then(json => {
+        .then((json) => {
           const layer = L.geoJson(json, {
             pmIgnore: ignore,
             pointToLayer: (feature, latlng) => {
@@ -232,6 +234,3 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     }
   });
 });
-
-
-

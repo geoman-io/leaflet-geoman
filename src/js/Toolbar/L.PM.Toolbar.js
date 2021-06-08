@@ -29,7 +29,7 @@ const Toolbar = L.Class.extend({
       edit: '',
       options: '',
       custom: '',
-    }
+    },
   },
   customButtons: [],
   initialize(map) {
@@ -69,9 +69,9 @@ const Toolbar = L.Class.extend({
 
     this._defineButtons();
   },
-  _createContainer(name){
+  _createContainer(name) {
     const container = `${name}Container`;
-    if(!this[container]) {
+    if (!this[container]) {
       this[container] = L.DomUtil.create(
         'div',
         `leaflet-pm-toolbar leaflet-pm-${name} leaflet-bar leaflet-control`
@@ -162,7 +162,7 @@ const Toolbar = L.Class.extend({
     // the options toolbar should not be disabled during the different modes
     // TODO: probably need to abstract this a bit so different options are automatically
     // disabled for different modes, like pinning for circles
-    const exceptOptionButtons = ['snappingOption']
+    const exceptOptionButtons = ['snappingOption'];
 
     for (const name in this.buttons) {
       if (
@@ -205,7 +205,7 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-marker',
       title: getTranslation('buttonTitles.drawMarkerButton'),
       jsClass: 'Marker',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
@@ -221,7 +221,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawPolyButton'),
       className: 'control-icon leaflet-pm-icon-polygon',
       jsClass: 'Polygon',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
@@ -237,7 +237,7 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-polyline',
       title: getTranslation('buttonTitles.drawLineButton'),
       jsClass: 'Line',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
@@ -253,7 +253,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawCircleButton'),
       className: 'control-icon leaflet-pm-icon-circle',
       jsClass: 'Circle',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
@@ -269,7 +269,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawCircleMarkerButton'),
       className: 'control-icon leaflet-pm-icon-circle-marker',
       jsClass: 'CircleMarker',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
@@ -285,7 +285,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawRectButton'),
       className: 'control-icon leaflet-pm-icon-rectangle',
       jsClass: 'Rectangle',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
@@ -300,7 +300,7 @@ const Toolbar = L.Class.extend({
     const editButton = {
       title: getTranslation('buttonTitles.editButton'),
       className: 'control-icon leaflet-pm-icon-edit',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: () => {
         this.map.pm.toggleGlobalEditMode();
       },
@@ -315,7 +315,7 @@ const Toolbar = L.Class.extend({
     const dragButton = {
       title: getTranslation('buttonTitles.dragButton'),
       className: 'control-icon leaflet-pm-icon-drag',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: () => {
         this.map.pm.toggleGlobalDragMode();
       },
@@ -331,7 +331,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.cutButton'),
       className: 'control-icon leaflet-pm-icon-cut',
       jsClass: 'Cut',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: (e, ctx) => {
         // enable polygon drawing mode without snap
         this.map.pm.Draw[ctx.button._button.jsClass].toggle({
@@ -351,7 +351,7 @@ const Toolbar = L.Class.extend({
     const deleteButton = {
       title: getTranslation('buttonTitles.deleteButton'),
       className: 'control-icon leaflet-pm-icon-delete',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: () => {
         this.map.pm.toggleGlobalRemovalMode();
       },
@@ -366,7 +366,7 @@ const Toolbar = L.Class.extend({
     const rotateButton = {
       title: getTranslation('buttonTitles.rotateButton'),
       className: 'control-icon leaflet-pm-icon-rotate',
-      onClick: () => { },
+      onClick: () => {},
       afterClick: () => {
         this.map.pm.toggleGlobalRotateMode();
       },
@@ -383,7 +383,10 @@ const Toolbar = L.Class.extend({
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
     this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
-    this._addButton('drawCircleMarker', new L.Control.PMButton(drawCircleMarkerButton));
+    this._addButton(
+      'drawCircleMarker',
+      new L.Control.PMButton(drawCircleMarkerButton)
+    );
     this._addButton('editMode', new L.Control.PMButton(editButton));
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
@@ -400,23 +403,37 @@ const Toolbar = L.Class.extend({
     let ignoreBtns = [];
 
     if (this.options.drawControls === false) {
-      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => !buttons[btn]._button.tool));
+      ignoreBtns = ignoreBtns.concat(
+        Object.keys(buttons).filter((btn) => !buttons[btn]._button.tool)
+      );
     }
     if (this.options.editControls === false) {
-      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool === 'edit'));
+      ignoreBtns = ignoreBtns.concat(
+        Object.keys(buttons).filter(
+          (btn) => buttons[btn]._button.tool === 'edit'
+        )
+      );
     }
     if (this.options.optionsControls === false) {
-      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool === 'options'));
+      ignoreBtns = ignoreBtns.concat(
+        Object.keys(buttons).filter(
+          (btn) => buttons[btn]._button.tool === 'options'
+        )
+      );
     }
     if (this.options.customControls === false) {
-      ignoreBtns = ignoreBtns.concat(Object.keys(buttons).filter(btn => buttons[btn]._button.tool === 'custom'));
+      ignoreBtns = ignoreBtns.concat(
+        Object.keys(buttons).filter(
+          (btn) => buttons[btn]._button.tool === 'custom'
+        )
+      );
     }
 
     for (const btn in buttons) {
       if (this.options[btn] && ignoreBtns.indexOf(btn) === -1) {
         // if options say the button should be visible, add it to the map
         let block = buttons[btn]._button.tool;
-        if(!block) {
+        if (!block) {
           // undefined is the draw block
           block = 'draw';
         }
@@ -425,64 +442,59 @@ const Toolbar = L.Class.extend({
       }
     }
   },
-  _getBtnPosition(block){
-    return this.options.positions && this.options.positions[block] ? this.options.positions[block] : this.options.position;
+  _getBtnPosition(block) {
+    return this.options.positions && this.options.positions[block]
+      ? this.options.positions[block]
+      : this.options.position;
   },
-  setBlockPosition(block,position){
+  setBlockPosition(block, position) {
     this.options.positions[block] = position;
     this._showHideButtons();
     this.changeControlOrder();
   },
-  getBlockPositions(){
+  getBlockPositions() {
     return this.options.positions;
   },
   copyDrawControl(copyInstance, options) {
-
     if (!options) {
-      throw new TypeError(
-        "Button has no name"
-      );
-    } else if (typeof options !== 'object') { // if only the name is passed and no options object
+      throw new TypeError('Button has no name');
+    } else if (typeof options !== 'object') {
+      // if only the name is passed and no options object
       options = { name: options };
     }
 
     const instance = this._btnNameMapping(copyInstance);
 
     if (!options.name) {
-      throw new TypeError(
-        "Button has no name"
-      );
+      throw new TypeError('Button has no name');
     }
 
     if (this.buttons[options.name]) {
-      throw new TypeError(
-        "Button with this name already exists"
-      )
+      throw new TypeError('Button with this name already exists');
     }
-    const drawInstance = this.map.pm.Draw.createNewDrawInstance(options.name, instance);
+    const drawInstance = this.map.pm.Draw.createNewDrawInstance(
+      options.name,
+      instance
+    );
 
     const btn = this.buttons[instance]._button;
-    options = Object.assign({}, btn, options);
+    options = { ...btn, ...options };
     const control = this.createCustomControl(options);
     return { drawInstance, control };
   },
   createCustomControl(options) {
     if (!options.name) {
-      throw new TypeError(
-        "Button has no name"
-      );
+      throw new TypeError('Button has no name');
     }
 
     if (this.buttons[options.name]) {
-      throw new TypeError(
-        "Button with this name already exists"
-      )
+      throw new TypeError('Button with this name already exists');
     }
     if (!options.onClick) {
-      options.onClick = () => { };
+      options.onClick = () => {};
     }
     if (!options.afterClick) {
-      options.afterClick = () => { };
+      options.afterClick = () => {};
     }
     if (options.toggle !== false) {
       options.toggle = true;
@@ -491,13 +503,13 @@ const Toolbar = L.Class.extend({
     if (options.block) {
       options.block = options.block.toLowerCase();
     }
-    if (!options.block || options.block === "draw") {
-      options.block = "";
+    if (!options.block || options.block === 'draw') {
+      options.block = '';
     }
 
-    if (!options.className){
+    if (!options.className) {
       options.className = 'control-icon';
-    }else if(options.className.indexOf('control-icon') === -1) {
+    } else if (options.className.indexOf('control-icon') === -1) {
       options.className = `control-icon ${options.className}`;
     }
 
@@ -521,7 +533,10 @@ const Toolbar = L.Class.extend({
       this.options[options.name] = true;
     }
 
-    const control = this._addButton(options.name, new L.Control.PMButton(_options));
+    const control = this._addButton(
+      options.name,
+      new L.Control.PMButton(_options)
+    );
     this.changeControlOrder();
     return control;
   },
@@ -548,25 +563,33 @@ const Toolbar = L.Class.extend({
       }
     });
 
-    const drawBtns = Object.keys(buttons).filter(btn => !buttons[btn]._button.tool);
+    const drawBtns = Object.keys(buttons).filter(
+      (btn) => !buttons[btn]._button.tool
+    );
     drawBtns.forEach((btn) => {
       if (_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
-    const editBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "edit");
+    const editBtns = Object.keys(buttons).filter(
+      (btn) => buttons[btn]._button.tool === 'edit'
+    );
     editBtns.forEach((btn) => {
       if (_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
-    const optionsBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "options");
+    const optionsBtns = Object.keys(buttons).filter(
+      (btn) => buttons[btn]._button.tool === 'options'
+    );
     optionsBtns.forEach((btn) => {
       if (_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
       }
     });
-    const customBtns = Object.keys(buttons).filter(btn => buttons[btn]._button.tool === "custom");
+    const customBtns = Object.keys(buttons).filter(
+      (btn) => buttons[btn]._button.tool === 'custom'
+    );
     customBtns.forEach((btn) => {
       if (_order.indexOf(btn) === -1) {
         newbtnorder[btn] = buttons[btn];
@@ -594,49 +617,43 @@ const Toolbar = L.Class.extend({
     const btnName = this._btnNameMapping(name);
 
     if (!btnName) {
-      throw new TypeError(
-        "No name passed"
-      );
+      throw new TypeError('No name passed');
     }
     if (!actions) {
-      throw new TypeError(
-        "No actions passed"
-      );
+      throw new TypeError('No actions passed');
     }
 
     if (!this.buttons[btnName]) {
-      throw new TypeError(
-        "Button with this name not exists"
-      )
+      throw new TypeError('Button with this name not exists');
     }
     this.buttons[btnName]._button.actions = actions;
     this.changeControlOrder();
   },
-  setButtonDisabled(name,state){
+  setButtonDisabled(name, state) {
     const btnName = this._btnNameMapping(name);
     this.buttons[btnName]._button.disabled = !!state;
     this._showHideButtons();
   },
-  _shapeMapping(){
+  _shapeMapping() {
     return {
-      "Marker": "drawMarker",
-      "Circle": "drawCircle",
-      "Polygon": "drawPolygon",
-      "Rectangle": "drawRectangle",
-      "Polyline": "drawPolyline",
-      "Line": "drawPolyline",
-      "CircleMarker": "drawCircleMarker",
-      "Edit": "editMode",
-      "Drag": "dragMode",
-      "Cut": "cutPolygon",
-      "Removal": "removalMode",
-      "Rotate": "rotateMode",
-    }
+      Marker: 'drawMarker',
+      Circle: 'drawCircle',
+      Polygon: 'drawPolygon',
+      Rectangle: 'drawRectangle',
+      Polyline: 'drawPolyline',
+      Line: 'drawPolyline',
+      CircleMarker: 'drawCircleMarker',
+      Edit: 'editMode',
+      Drag: 'dragMode',
+      Cut: 'cutPolygon',
+      Removal: 'removalMode',
+      Rotate: 'rotateMode',
+    };
   },
-  _btnNameMapping(name){
+  _btnNameMapping(name) {
     const shapeMapping = this._shapeMapping();
     return shapeMapping[name] ? shapeMapping[name] : name;
-  }
+  },
 });
 
 export default Toolbar;

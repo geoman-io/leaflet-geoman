@@ -2,15 +2,21 @@ const GlobalRotateMode = {
   _globalRotateModeEnabled: false,
   enableGlobalRotateMode() {
     this._globalRotateModeEnabled = true;
-    const layers = L.PM.Utils.findLayers(this.map).filter(l => l instanceof L.Polyline);
-    layers.forEach(layer => {
-      if(this._isRelevantForRotate(layer)) {
+    const layers = L.PM.Utils.findLayers(this.map).filter(
+      (l) => l instanceof L.Polyline
+    );
+    layers.forEach((layer) => {
+      if (this._isRelevantForRotate(layer)) {
         layer.pm.enableRotate();
       }
     });
 
     if (!this.throttledReInitRotate) {
-      this.throttledReInitRotate = L.Util.throttle(this._reinitGlobalRotateMode, 100, this)
+      this.throttledReInitRotate = L.Util.throttle(
+        this._reinitGlobalRotateMode,
+        100,
+        this
+      );
     }
     // handle layers that are added while in rotate mode
     this.map.on('layeradd', this.throttledReInitRotate, this);
@@ -21,8 +27,10 @@ const GlobalRotateMode = {
   },
   disableGlobalRotateMode() {
     this._globalRotateModeEnabled = false;
-    const layers = L.PM.Utils.findLayers(this.map).filter(l => l instanceof L.Polyline);
-    layers.forEach(layer => {
+    const layers = L.PM.Utils.findLayers(this.map).filter(
+      (l) => l instanceof L.Polyline
+    );
+    layers.forEach((layer) => {
       layer.pm.disableRotate();
     });
 
@@ -55,16 +63,15 @@ const GlobalRotateMode = {
       this.enableGlobalRotateMode();
     }
   },
-  _isRelevantForRotate(layer){
-    return layer.pm
-      && !(layer instanceof L.LayerGroup)
-      && (
-        (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false
-      )
-      && !layer._pmTempLayer
-      && layer.pm.options.allowRotation
-  }
-
+  _isRelevantForRotate(layer) {
+    return (
+      layer.pm &&
+      !(layer instanceof L.LayerGroup) &&
+      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      !layer._pmTempLayer &&
+      layer.pm.options.allowRotation
+    );
+  },
 };
 export default GlobalRotateMode;

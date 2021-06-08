@@ -6,9 +6,7 @@ describe('Draw & Edit Line', () => {
   it('doesnt finish single point lines', () => {
     cy.toolbarButton('polyline').click();
 
-    cy.get(mapSelector)
-      .click(90, 250)
-      .click(90, 250);
+    cy.get(mapSelector).click(90, 250).click(90, 250);
 
     cy.toolbarButton('edit').click();
 
@@ -36,17 +34,16 @@ describe('Draw & Edit Line', () => {
   });
 
   it('respects custom style', () => {
-
     cy.window().then(({ map }) => {
       map.on('pm:create', (e) => {
         e.layer.pm.enable({
           allowSelfIntersection: false,
           snappable: false,
-          snapDistance: 20
+          snapDistance: 20,
         });
 
         e.layer.setStyle({ color: 'black' });
-      })
+      });
 
       map.pm.enableDraw('Polygon', {
         snappable: false,
@@ -56,7 +53,7 @@ describe('Draw & Edit Line', () => {
         templineStyle: {
           color: 'orange',
           dashArray: [10, 10],
-          weight: 5
+          weight: 5,
         },
         hintlineStyle: {
           color: 'orange',
@@ -69,8 +66,8 @@ describe('Draw & Edit Line', () => {
           dashArray: [10, 10],
           weight: 5,
           fillOpacity: 1,
-          opacity: 1
-        }
+          opacity: 1,
+        },
       });
     });
 
@@ -81,7 +78,7 @@ describe('Draw & Edit Line', () => {
       .click(300, 200)
       .click(120, 150);
 
-    cy.toolbarButton('polygon').click()
+    cy.toolbarButton('polygon').click();
 
     cy.get(mapSelector)
       .click(320, 150)
@@ -90,17 +87,14 @@ describe('Draw & Edit Line', () => {
       .click(400, 200)
       .click(320, 150);
 
-    cy.toolbarButton('edit').click()
+    cy.toolbarButton('edit').click();
 
     cy.window().then(({ map, L }) => {
       map.eachLayer((l) => {
-        if (l instanceof L.Polygon)
-          expect(l.options.color).to.equal('black');
-      })
+        if (l instanceof L.Polygon) expect(l.options.color).to.equal('black');
+      });
     });
   });
-
-
 
   it('draws and edits a line', () => {
     cy.hasLayers(1);
@@ -133,9 +127,7 @@ describe('Draw & Edit Line', () => {
     cy.hasMiddleMarkers(3);
 
     // press a middle marker
-    cy.get('.marker-icon-middle')
-      .first()
-      .click();
+    cy.get('.marker-icon-middle').first().click();
 
     // now there should be one more vertex
     cy.hasVertexMarkers(5);
@@ -175,18 +167,17 @@ describe('Draw & Edit Line', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({hideMiddleMarkers: true});
+      map.pm.setGlobalOptions({ hideMiddleMarkers: true });
     });
 
-    cy.toolbarButton('edit')
-      .click();
+    cy.toolbarButton('edit').click();
 
     cy.hasMiddleMarkers(0);
   });
 
   it('enable continueDrawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({continueDrawing: true});
+      map.pm.setGlobalOptions({ continueDrawing: true });
     });
 
     cy.toolbarButton('polyline').click();
@@ -198,11 +189,7 @@ describe('Draw & Edit Line', () => {
       .click(250, 50)
       .click(250, 50);
 
-    cy.get(mapSelector)
-      .click(200, 200)
-      .click(250, 250)
-      .click(250, 250);
-
+    cy.get(mapSelector).click(200, 200).click(250, 250).click(250, 250);
 
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(5);
@@ -213,9 +200,7 @@ describe('Draw & Edit Line', () => {
 
     cy.toolbarButton('edit').click();
 
-    cy.get(mapSelector)
-    .rightclick(641,462)
-    .rightclick(702,267);
+    cy.get(mapSelector).rightclick(641, 462).rightclick(702, 267);
 
     cy.hasVertexMarkers(3);
     cy.hasMiddleMarkers(2);
@@ -226,10 +211,10 @@ describe('Draw & Edit Line', () => {
 
     cy.toolbarButton('cut').click();
     cy.get(mapSelector)
-      .click(394,203)
-      .click(333,77)
-      .click(607,112)
-      .click(394,203);
+      .click(394, 203)
+      .click(333, 77)
+      .click(607, 112)
+      .click(394, 203);
 
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(10);
@@ -244,7 +229,10 @@ describe('Draw & Edit Line', () => {
 
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
+      map.pm.setGlobalOptions({
+        requireSnapToFinish: true,
+        snapSegment: false,
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -255,18 +243,14 @@ describe('Draw & Edit Line', () => {
       .click(150, 250);
 
     cy.toolbarButton('polyline').click();
-    cy.get(mapSelector)
-      .click(350, 250)
-      .click(190, 160)
-      .click(190, 60);
+    cy.get(mapSelector).click(350, 250).click(190, 160).click(190, 60);
 
     cy.window().then(({ map }) => {
       map.pm.Draw.Line._finishShape();
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
 
-    cy.get(mapSelector)
-      .click(250, 50);
+    cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
       map.pm.Draw.Line._finishShape();

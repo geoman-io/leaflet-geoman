@@ -1,5 +1,5 @@
 import { getTranslation } from '../helpers';
-import EventMixin from "../Mixins/Events";
+import EventMixin from '../Mixins/Events';
 
 const PMButton = L.Control.extend({
   includes: [EventMixin],
@@ -9,7 +9,7 @@ const PMButton = L.Control.extend({
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
     // replaced setOptions with this because classNames returned undefined 🤔
-    this._button = Object.assign({}, this.options, options);
+    this._button = { ...this.options, ...options };
   },
   onAdd(map) {
     this._map = map;
@@ -24,7 +24,9 @@ const PMButton = L.Control.extend({
         this._container = this._map.pm.Toolbar.drawContainer;
       }
     } else {
-      this._container = this._map.pm.Toolbar._createContainer(this.options.position);
+      this._container = this._map.pm.Toolbar._createContainer(
+        this.options.position
+      );
     }
     this.buttonsDomNode = this._makeButton(this._button);
     this._container.appendChild(this.buttonsDomNode);
@@ -63,7 +65,7 @@ const PMButton = L.Control.extend({
     this.toggle(false);
   },
   _triggerClick(e) {
-    if(e) {
+    if (e) {
       // is needed to prevent scrolling when clicking on a-element with href="a"
       e.preventDefault();
     }
@@ -73,7 +75,7 @@ const PMButton = L.Control.extend({
     this._button.afterClick(e, { button: this, event: e });
   },
   _makeButton(button) {
-    const pos = this.options.position.indexOf("right") > -1 ? "pos-right" : "";
+    const pos = this.options.position.indexOf('right') > -1 ? 'pos-right' : '';
 
     // button container
     const buttonContainer = L.DomUtil.create(
@@ -88,8 +90,8 @@ const PMButton = L.Control.extend({
       'leaflet-buttons-control-button',
       buttonContainer
     );
-    newButton.setAttribute('role','button');
-    newButton.setAttribute('tabindex','0');
+    newButton.setAttribute('role', 'button');
+    newButton.setAttribute('tabindex', '0');
     newButton.href = '#';
 
     // the buttons actions
@@ -128,8 +130,8 @@ const PMButton = L.Control.extend({
       },
     };
 
-    activeActions.forEach(_action => {
-      const name = typeof _action === "string" ? _action : _action.name;
+    activeActions.forEach((_action) => {
+      const name = typeof _action === 'string' ? _action : _action.name;
       let action;
       if (actions[name]) {
         action = actions[name];
@@ -143,19 +145,19 @@ const PMButton = L.Control.extend({
         `leaflet-pm-action ${pos} action-${name}`,
         actionContainer
       );
-      actionNode.setAttribute('role','button');
-      actionNode.setAttribute('tabindex','0');
+      actionNode.setAttribute('role', 'button');
+      actionNode.setAttribute('tabindex', '0');
       actionNode.href = '#';
 
       actionNode.innerHTML = action.text;
 
-      if(!button.disabled) {
+      if (!button.disabled) {
         if (action.onClick) {
           const actionClick = (e) => {
             // is needed to prevent scrolling when clicking on a-element with href="a"
             e.preventDefault();
-            let btnName = "";
-            const {buttons} = this._map.pm.Toolbar;
+            let btnName = '';
+            const { buttons } = this._map.pm.Toolbar;
             for (const btn in buttons) {
               if (buttons[btn]._button === button) {
                 btnName = btn;
@@ -188,15 +190,15 @@ const PMButton = L.Control.extend({
     if (button.className) {
       L.DomUtil.addClass(image, button.className);
     }
-    if(!button.disabled) {
+    if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
       L.DomEvent.addListener(newButton, 'click', () => {
         if (this._button.disableOtherButtons) {
           this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
         }
-        let btnName = "";
-        const {buttons} = this._map.pm.Toolbar;
+        let btnName = '';
+        const { buttons } = this._map.pm.Toolbar;
         for (const btn in buttons) {
           if (buttons[btn]._button === button) {
             btnName = btn;
@@ -208,7 +210,7 @@ const PMButton = L.Control.extend({
       L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
     }
 
-    if(button.disabled){
+    if (button.disabled) {
       L.DomUtil.addClass(newButton, 'pm-disabled');
       L.DomUtil.addClass(image, 'pm-disabled');
     }

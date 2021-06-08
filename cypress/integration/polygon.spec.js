@@ -13,11 +13,9 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('marker').click();
 
-    cy.get(mapSelector)
-      .click(300, 100)
+    cy.get(mapSelector).click(300, 100);
 
     cy.toolbarButton('edit').click();
-
   });
 
   it('works without pmIgnore', () => {
@@ -70,9 +68,9 @@ describe('Draw & Edit Poly', () => {
 
   it('pmIgnore:true disable editing', () => {
     cy.window().then(({ map }) => {
-      map.on('pm:create',(e)=> {
+      map.on('pm:create', (e) => {
         e.layer.options.pmIgnore = true;
-      })
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -88,12 +86,11 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(0);
   });
 
-
   it('pmIgnore:true disable deleting', () => {
     cy.window().then(({ map }) => {
-      map.on('pm:create',(e)=> {
+      map.on('pm:create', (e) => {
         e.layer.options.pmIgnore = true;
-      })
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -106,8 +103,7 @@ describe('Draw & Edit Poly', () => {
 
     cy.hasDrawnLayers(1);
     cy.toolbarButton('delete').click();
-    cy.get(mapSelector)
-      .click(220, 160);
+    cy.get(mapSelector).click(220, 160);
     cy.hasDrawnLayers(1);
   });
 
@@ -125,11 +121,11 @@ describe('Draw & Edit Poly', () => {
   it('respects optIn and reinit layer', () => {
     cy.window().then(({ L }) => {
       L.PM.setOptIn(true);
-      cy.drawShape('MultiPolygon').then((poly)=>{
+      cy.drawShape('MultiPolygon').then((poly) => {
         cy.hasVertexMarkers(0); // Not allowed because optIn
         L.PM.setOptIn(false);
         L.PM.reInitLayer(poly);
-      })
+      });
     });
     cy.toolbarButton('edit').click();
 
@@ -139,19 +135,19 @@ describe('Draw & Edit Poly', () => {
   it('respects optIn and reinit layer with pmIgnore', () => {
     cy.window().then(({ L }) => {
       L.PM.setOptIn(true);
-      cy.drawShape('MultiPolygon',true).then((poly)=>{
+      cy.drawShape('MultiPolygon', true).then((poly) => {
         cy.hasVertexMarkers(0); // Not allowed because optIn
-        L.PM.reInitLayer(poly);// Not allowed because pmIgnore is not false
+        L.PM.reInitLayer(poly); // Not allowed because pmIgnore is not false
         cy.hasVertexMarkers(0);
         L.PM.setOptIn(false);
-        L.PM.reInitLayer(poly);// Not allowed because pmIgnore is true
+        L.PM.reInitLayer(poly); // Not allowed because pmIgnore is true
         cy.hasVertexMarkers(0);
         poly.options.pmIgnore = false;
-        poly.eachLayer((layer)=>{
+        poly.eachLayer((layer) => {
           layer.options.pmIgnore = false;
         });
-        L.PM.reInitLayer(poly);// Allowed because pmIgnore is not true
-      })
+        L.PM.reInitLayer(poly); // Allowed because pmIgnore is not true
+      });
     });
     cy.toolbarButton('edit').click();
 
@@ -162,10 +158,10 @@ describe('Draw & Edit Poly', () => {
     cy.window().then(({ L }) => {
       L.PM.setOptIn(true);
       cy.drawShape('MultiPolygon');
-      cy.drawShape('MultiPolygon',false).then(()=>{
+      cy.drawShape('MultiPolygon', false).then(() => {
         L.PM.setOptIn(false);
         cy.drawShape('MultiPolygon');
-      })
+      });
     });
 
     cy.toolbarButton('edit').click();
@@ -176,9 +172,7 @@ describe('Draw & Edit Poly', () => {
   it('doesnt finish single point polys', () => {
     cy.toolbarButton('polygon').click();
 
-    cy.get(mapSelector)
-      .click(90, 250)
-      .click(90, 250);
+    cy.get(mapSelector).click(90, 250).click(90, 250);
 
     cy.toolbarButton('edit').click();
 
@@ -190,10 +184,9 @@ describe('Draw & Edit Poly', () => {
   it('handles polygon additions mid-drawing', () => {
     // for manual testing
     cy.toolbarButton('polygon').click();
-    cy.get(mapSelector)
-      .click(90, 250);
+    cy.get(mapSelector).click(90, 250);
 
-    cy.wait(2000)
+    cy.wait(2000);
     cy.drawShape('LineString', true);
 
     // manual test if snapping works here
@@ -202,9 +195,7 @@ describe('Draw & Edit Poly', () => {
   it('doesnt finish two point polys', () => {
     cy.toolbarButton('polygon').click();
 
-    cy.get(mapSelector)
-      .click(90, 250)
-      .click(100, 350);
+    cy.get(mapSelector).click(90, 250).click(100, 350);
 
     cy.get('.active .action-finish').click();
 
@@ -343,7 +334,6 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('prevent creation while self intersection', () => {
-
     cy.window().then(({ map }) => {
       map.pm.enableDraw('Polygon', {
         allowSelfIntersection: false,
@@ -351,11 +341,11 @@ describe('Draw & Edit Poly', () => {
     });
 
     cy.get(mapSelector)
-      .click(470,100)
-      .click(320,220)
-      .click(600,220)
+      .click(470, 100)
+      .click(320, 220)
+      .click(600, 220)
       .click(470, 350)
-      .click(470,100);
+      .click(470, 100);
 
     cy.toolbarButton('polygon').click();
 
@@ -407,7 +397,7 @@ describe('Draw & Edit Poly', () => {
         .click(90, 250)
         .then(() => {
           let l;
-          map.eachLayer(layer => {
+          map.eachLayer((layer) => {
             if (layer instanceof L.Polygon) {
               layer.pm.enable();
               l = layer;
@@ -416,11 +406,11 @@ describe('Draw & Edit Poly', () => {
           return l;
         })
         .as('poly')
-        .then(poly => poly._latlngs[0][0])
+        .then((poly) => poly._latlngs[0][0])
         .as('firstLatLng');
     });
 
-    cy.get('@poly').then(poly => {
+    cy.get('@poly').then((poly) => {
       Cypress.$(poly).on('pm:vertexadded', ({ originalEvent: event }) => {
         const { layer, indexPath, latlng } = event;
         const newLatLng = Cypress._.get(layer._latlngs, indexPath);
@@ -431,8 +421,8 @@ describe('Draw & Edit Poly', () => {
 
     cy.get('.marker-icon-middle').click({ multiple: true });
 
-    cy.get('@poly').then(poly => {
-      cy.get('@firstLatLng').then(oldFirst => {
+    cy.get('@poly').then((poly) => {
+      cy.get('@firstLatLng').then((oldFirst) => {
         const newFirst = poly._latlngs[0][0];
         expect(oldFirst.lat).to.equal(newFirst.lat);
         expect(oldFirst.lng).to.equal(newFirst.lng);
@@ -510,9 +500,7 @@ describe('Draw & Edit Poly', () => {
     cy.hasMiddleMarkers(5);
 
     // press a middle marker
-    cy.get('.marker-icon-middle')
-      .first()
-      .click();
+    cy.get('.marker-icon-middle').first().click();
 
     // now there should be one more vertex
     cy.hasVertexMarkers(6);
@@ -548,22 +536,20 @@ describe('Draw & Edit Poly', () => {
 
   it('fire pm:cut AFTER the actual cut is visible on the map', () => {
     cy.window().then(({ map, L }) => {
-
       Cypress.$(map).on('pm:cut', () => {
         const layers = [];
 
         map.eachLayer((layer) => {
           if (layer instanceof L.Polygon) {
-            layers.push(layer)
+            layers.push(layer);
           }
-        })
+        });
 
         expect(layers).to.have.lengthOf(1);
       });
     });
 
-    cy.toolbarButton('polygon')
-      .click()
+    cy.toolbarButton('polygon').click();
 
     cy.get(mapSelector)
       .click(90, 250)
@@ -573,9 +559,7 @@ describe('Draw & Edit Poly', () => {
       .click(300, 350)
       .click(90, 250);
 
-
-    cy.toolbarButton('cut')
-      .click();
+    cy.toolbarButton('cut').click();
 
     // draw a polygon to cut
     cy.get(mapSelector)
@@ -585,9 +569,7 @@ describe('Draw & Edit Poly', () => {
       .click(390, 140)
       .click(390, 100)
       .click(450, 100);
-
-
-  })
+  });
 
   it('draws a polygon with a hole', () => {
     // activate polygon drawing
@@ -689,12 +671,10 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
   });
 
-
   it('allowSelfIntersectionEdit on polygon', () => {
-
-    cy.window().then(({ map, L,Hand }) => {
-      cy.fixture("PolygonIntersects")
-        .then(json => {
+    cy.window().then(({ map, L, Hand }) => {
+      cy.fixture('PolygonIntersects')
+        .then((json) => {
           const layer = L.geoJSON(json).getLayers()[0].addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
@@ -702,13 +682,13 @@ describe('Draw & Edit Poly', () => {
         })
         .as('poly');
 
-      cy.get("@poly").then((poly)=>{
+      cy.get('@poly').then((poly) => {
         let handFinish = false;
 
         expect(poly.pm.hasSelfIntersection()).to.equal(true);
         const handSelfIntersectionFalse = new Hand({
           timing: 'frame',
-          onStop () {
+          onStop() {
             expect(poly.pm.hasSelfIntersection()).to.equal(false);
 
             // Map shouldn't be dragged
@@ -716,37 +696,71 @@ describe('Draw & Edit Poly', () => {
             expect(center.lat).to.equal(48.77492609799526);
             expect(center.lng).to.equal(4.847301999999988);
             handFinish = true;
-          }
+          },
         });
         const handSelfIntersectionTrue = new Hand({
           timing: 'frame',
-          onStop () {
+          onStop() {
             expect(poly.pm.hasSelfIntersection()).to.equal(true);
 
-            const toucherSelfIntersectionFalse = handSelfIntersectionFalse.growFinger('mouse');
-            toucherSelfIntersectionFalse.wait(100).moveTo(504, 337, 100).down().wait(500).moveTo(780, 259, 400).up().wait(100) // allowed
-            // No intersection anymore
-              .moveTo(294, 114, 100).down().wait(500).moveTo(752, 327, 800).up().wait(500) // Not allowed
-          }
+            const toucherSelfIntersectionFalse = handSelfIntersectionFalse.growFinger(
+              'mouse'
+            );
+            toucherSelfIntersectionFalse
+              .wait(100)
+              .moveTo(504, 337, 100)
+              .down()
+              .wait(500)
+              .moveTo(780, 259, 400)
+              .up()
+              .wait(100) // allowed
+              // No intersection anymore
+              .moveTo(294, 114, 100)
+              .down()
+              .wait(500)
+              .moveTo(752, 327, 800)
+              .up()
+              .wait(500); // Not allowed
+          },
         });
 
         cy.wait(1000);
 
-        map.pm.enableGlobalEditMode({ allowSelfIntersection: false,  allowSelfIntersectionEdit: true, });
-
-        const toucherSelfIntersectionTrue = handSelfIntersectionTrue.growFinger('mouse');
-        toucherSelfIntersectionTrue.wait(100).moveTo(294, 114, 100).down().wait(500).moveTo(782, 127, 400).up().wait(100) // Not allowed
-        .moveTo(313, 345, 100).down().wait(500).moveTo(256, 311, 400).up().wait(100) // allowed
-        .moveTo(317, 252, 100).down().wait(500).moveTo(782, 127, 400).up().wait(500); // allowed
-
-
-        // wait until hand is finished
-        cy.waitUntil(() => cy.window().then(() => handFinish),{
-          timeout: 9000,
-        }).then( ()=> {
-          expect(handFinish).to.equal(true);
+        map.pm.enableGlobalEditMode({
+          allowSelfIntersection: false,
+          allowSelfIntersectionEdit: true,
         });
 
+        const toucherSelfIntersectionTrue = handSelfIntersectionTrue.growFinger(
+          'mouse'
+        );
+        toucherSelfIntersectionTrue
+          .wait(100)
+          .moveTo(294, 114, 100)
+          .down()
+          .wait(500)
+          .moveTo(782, 127, 400)
+          .up()
+          .wait(100) // Not allowed
+          .moveTo(313, 345, 100)
+          .down()
+          .wait(500)
+          .moveTo(256, 311, 400)
+          .up()
+          .wait(100) // allowed
+          .moveTo(317, 252, 100)
+          .down()
+          .wait(500)
+          .moveTo(782, 127, 400)
+          .up()
+          .wait(500); // allowed
+
+        // wait until hand is finished
+        cy.waitUntil(() => cy.window().then(() => handFinish), {
+          timeout: 9000,
+        }).then(() => {
+          expect(handFinish).to.equal(true);
+        });
       });
     });
   });
@@ -763,21 +777,15 @@ describe('Draw & Edit Poly', () => {
       .should('have.class', 'active');
 
     // draw a line
-    cy.get(mapSelector)
-      .click(150, 250)
-      .click(160, 50)
-      .click(160, 50);
+    cy.get(mapSelector).click(150, 250).click(160, 50).click(160, 50);
 
-
-    cy.toolbarButton('edit')
-      .click();
+    cy.toolbarButton('edit').click();
 
     cy.hasVertexMarkers(2);
   });
 
-  it('don\'t Cut if it has selfIntersection on finish', () => {
-    cy.toolbarButton('polygon')
-      .click();
+  it("don't Cut if it has selfIntersection on finish", () => {
+    cy.toolbarButton('polygon').click();
 
     cy.get(mapSelector)
       .click(90, 250)
@@ -787,9 +795,7 @@ describe('Draw & Edit Poly', () => {
       .click(300, 350)
       .click(90, 250);
 
-
-    cy.toolbarButton('cut')
-      .click();
+    cy.toolbarButton('cut').click();
 
     // draw a polygon to cut
     cy.get(mapSelector)
@@ -799,15 +805,14 @@ describe('Draw & Edit Poly', () => {
       .click(450, 200)
       .click(200, 100);
 
-    cy.toolbarButton('edit')
-      .click();
+    cy.toolbarButton('edit').click();
 
     cy.hasVertexMarkers(5);
   });
 
   it('enable continueDrawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({continueDrawing: true});
+      map.pm.setGlobalOptions({ continueDrawing: true });
     });
 
     cy.toolbarButton('polygon').click();
@@ -832,7 +837,9 @@ describe('Draw & Edit Poly', () => {
   it('pane support', () => {
     cy.window().then(({ map }) => {
       map.createPane('draw');
-      map.pm.setGlobalOptions({panes: {layerPane: 'draw', vertexPane: 'draw'}})
+      map.pm.setGlobalOptions({
+        panes: { layerPane: 'draw', vertexPane: 'draw' },
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -853,7 +860,7 @@ describe('Draw & Edit Poly', () => {
 
   it('disable snapping on segment', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({snapSegment: false});
+      map.pm.setGlobalOptions({ snapSegment: false });
     });
 
     cy.toolbarButton('polygon').click();
@@ -865,9 +872,7 @@ describe('Draw & Edit Poly', () => {
 
     // if snapping is not disabled, the point will be placed at 190|50
     cy.toolbarButton('polygon').click();
-    cy.get(mapSelector)
-      .click(350, 250)
-      .click(190, 60);
+    cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
       const lastLatLng = map.pm.Draw.Polygon._layer.getLatLngs()[1];
@@ -878,7 +883,7 @@ describe('Draw & Edit Poly', () => {
 
   it('finishOn snap', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({finishOn: 'snap'});
+      map.pm.setGlobalOptions({ finishOn: 'snap' });
     });
 
     cy.toolbarButton('polygon').click();
@@ -890,10 +895,7 @@ describe('Draw & Edit Poly', () => {
 
     // if snapping is not disabled, the point will be placed at 190|50
     cy.toolbarButton('polygon').click();
-    cy.get(mapSelector)
-      .click(350, 250)
-      .click(190, 90)
-      .click(250, 50);
+    cy.get(mapSelector).click(350, 250).click(190, 90).click(250, 50);
 
     cy.window().then(({ map }) => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
@@ -902,7 +904,10 @@ describe('Draw & Edit Poly', () => {
 
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
+      map.pm.setGlobalOptions({
+        requireSnapToFinish: true,
+        snapSegment: false,
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -913,18 +918,14 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.toolbarButton('polygon').click();
-    cy.get(mapSelector)
-      .click(350, 250)
-      .click(190, 160)
-      .click(190, 60);
+    cy.get(mapSelector).click(350, 250).click(190, 160).click(190, 60);
 
     cy.window().then(({ map }) => {
       map.pm.Draw.Polygon._finishShape();
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
 
-    cy.get(mapSelector)
-      .click(250, 50);
+    cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
       map.pm.Draw.Polygon._finishShape();
@@ -941,12 +942,11 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({allowEditing: false});
+      map.pm.setGlobalOptions({ allowEditing: false });
     });
 
     cy.toolbarButton('edit').click();
-    cy.get(mapSelector)
-      .rightclick(160, 50);
+    cy.get(mapSelector).rightclick(160, 50);
 
     cy.window().then(({ map }) => {
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
@@ -962,12 +962,11 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({allowRemoval: false});
+      map.pm.setGlobalOptions({ allowRemoval: false });
     });
 
     cy.toolbarButton('delete').click();
-    cy.get(mapSelector)
-      .click(160, 50);
+    cy.get(mapSelector).click(160, 50);
 
     cy.window().then(({ map }) => {
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
@@ -983,12 +982,11 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({draggable: false});
+      map.pm.setGlobalOptions({ draggable: false });
     });
 
     cy.toolbarButton('drag').click();
-    cy.get(mapSelector)
-      .click(160, 50);
+    cy.get(mapSelector).click(160, 50);
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[0];
@@ -1007,7 +1005,7 @@ describe('Draw & Edit Poly', () => {
     let layer;
     cy.window().then(({ map }) => {
       layer = map.pm.getGeomanDrawLayers()[0];
-      map.pm.setGlobalOptions({allowCutting: false});
+      map.pm.setGlobalOptions({ allowCutting: false });
     });
 
     cy.toolbarButton('cut').click();
@@ -1032,7 +1030,7 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({allowRotation: false});
+      map.pm.setGlobalOptions({ allowRotation: false });
     });
 
     cy.toolbarButton('rotate').click();
@@ -1042,20 +1040,16 @@ describe('Draw & Edit Poly', () => {
 
   it('cut only certain layers', () => {
     cy.toolbarButton('rectangle').click();
-    cy.get(mapSelector)
-      .click(450, 250)
-      .click(390, 60);
+    cy.get(mapSelector).click(450, 250).click(390, 60);
 
     cy.toolbarButton('rectangle').click();
-    cy.get(mapSelector)
-      .click(250, 250)
-      .click(390, 60);
+    cy.get(mapSelector).click(250, 250).click(390, 60);
 
     let layer;
     cy.window().then(({ map }) => {
       const cutlayer = map.pm.getGeomanDrawLayers()[0];
       layer = map.pm.getGeomanDrawLayers()[1];
-      map.pm.enableDraw('Cut',{layersToCut: [cutlayer]});
+      map.pm.enableDraw('Cut', { layersToCut: [cutlayer] });
     });
 
     cy.get(mapSelector)
@@ -1082,7 +1076,10 @@ describe('Draw & Edit Poly', () => {
   });
   it('addVertexOn contextmenu / removeVertexOn click', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({addVertexOn: 'contextmenu', removeVertexOn: 'click'});
+      map.pm.setGlobalOptions({
+        addVertexOn: 'contextmenu',
+        removeVertexOn: 'click',
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -1095,29 +1092,27 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
 
     // Add Vertex
-    cy.get(mapSelector)
-      .click(205, 50);
+    cy.get(mapSelector).click(205, 50);
     cy.hasVertexMarkers(3);
 
-    cy.get(mapSelector)
-      .rightclick(205, 50);
+    cy.get(mapSelector).rightclick(205, 50);
     cy.hasVertexMarkers(4);
 
     // Remove Vertex
-    cy.get(mapSelector)
-      .rightclick(205, 50);
+    cy.get(mapSelector).rightclick(205, 50);
     cy.hasVertexMarkers(4);
 
-    cy.get(mapSelector)
-      .click(205, 50);
+    cy.get(mapSelector).click(205, 50);
     cy.hasVertexMarkers(3);
-
   });
 
   it('addVertexValidation / removeVertexValidation', () => {
     cy.window().then(({ map }) => {
-      const check = ({layer})=>layer._valid;
-      map.pm.setGlobalOptions({addVertexValidation: check, removeVertexValidation: check});
+      const check = ({ layer }) => layer._valid;
+      map.pm.setGlobalOptions({
+        addVertexValidation: check,
+        removeVertexValidation: check,
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -1130,13 +1125,11 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
 
     // Add Vertex
-    cy.get(mapSelector)
-      .click(205, 50);
+    cy.get(mapSelector).click(205, 50);
     cy.hasVertexMarkers(3);
 
     // Remove Vertex
-    cy.get(mapSelector)
-      .rightclick(150, 250);
+    cy.get(mapSelector).rightclick(150, 250);
     cy.hasVertexMarkers(3);
 
     cy.window().then(({ map }) => {
@@ -1145,15 +1138,11 @@ describe('Draw & Edit Poly', () => {
     });
 
     // Add Vertex
-    cy.get(mapSelector)
-      .click(205, 50);
+    cy.get(mapSelector).click(205, 50);
     cy.hasVertexMarkers(4);
 
     // Remove Vertex
-    cy.get(mapSelector)
-      .rightclick(205, 50);
+    cy.get(mapSelector).rightclick(205, 50);
     cy.hasVertexMarkers(3);
-
   });
-
 });

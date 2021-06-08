@@ -6,7 +6,7 @@ describe('Testing the Toolbar', () => {
       .parent('.leaflet-top.leaflet-left')
       .should('exist');
 
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.addControls({
         position: 'topright',
       });
@@ -24,7 +24,7 @@ describe('Testing the Toolbar', () => {
 
     cy.get('.button-container.active .action-cancel').click();
 
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.addControls({
         position: 'bottomright',
       });
@@ -34,7 +34,7 @@ describe('Testing the Toolbar', () => {
       .parent('.leaflet-bottom.leaflet-right')
       .should('exist');
 
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.addControls({
         position: 'bottomleft',
       });
@@ -44,7 +44,7 @@ describe('Testing the Toolbar', () => {
       .parent('.leaflet-bottom.leaflet-left')
       .should('exist');
 
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.addControls({
         position: 'topleft',
       });
@@ -95,7 +95,7 @@ describe('Testing the Toolbar', () => {
   });
 
   it('Reacts to programmatic state change', () => {
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.enableGlobalEditMode();
     });
 
@@ -103,7 +103,7 @@ describe('Testing the Toolbar', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.toggleGlobalRemovalMode();
     });
 
@@ -114,7 +114,7 @@ describe('Testing the Toolbar', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.toggleGlobalRemovalMode();
       map.pm.toggleGlobalRemovalMode();
       map.pm.toggleGlobalRemovalMode();
@@ -124,7 +124,7 @@ describe('Testing the Toolbar', () => {
       .closest('.button-container')
       .should('have.not.class', 'active');
 
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.toggleGlobalEditMode();
       map.pm.toggleGlobalRemovalMode();
 
@@ -147,12 +147,13 @@ describe('Testing the Toolbar', () => {
   });
 
   it('Has Working translation for circle marker toolbar button', () => {
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.setLang('es');
     });
 
     cy.get('.leaflet-buttons-control-button .leaflet-pm-icon-circle-marker')
-      .should('have.attr', 'title').and('include', 'Dibujar Marcador de Circulo');
+      .should('have.attr', 'title')
+      .and('include', 'Dibujar Marcador de Circulo');
   });
 
   it('has functioning actions', () => {
@@ -188,74 +189,81 @@ describe('Testing the Toolbar', () => {
     cy.hasVertexMarkers(0);
   });
 
-
   it('Custom Controls - new button', () => {
     cy.get('.leaflet-pm-toolbar')
       .parent('.leaflet-top.leaflet-left')
       .should('exist');
 
-
-    cy.window().then(({map, L}) => {
-      let testresult = "";
+    cy.window().then(({ map, L }) => {
+      let testresult = '';
 
       // Click button -> toggle disabled
       map.pm.Toolbar.createCustomControl({
-        name: "clickButton",
-        block: "custom",
-        className: "leaflet-pm-icon-marker",
-        title: "Count layers",
+        name: 'clickButton',
+        block: 'custom',
+        className: 'leaflet-pm-icon-marker',
+        title: 'Count layers',
         onClick: () => {
-          testresult = "clickButton clicked";
+          testresult = 'clickButton clicked';
         },
-        toggle: false
+        toggle: false,
       });
       cy.toolbarButtonContainer('clickButton', map).then((container) => {
-        cy.get(container[0].children[0].children[0]).should('have.attr', 'title').and('include', 'Count layers');
+        cy.get(container[0].children[0].children[0])
+          .should('have.attr', 'title')
+          .and('include', 'Count layers');
         container[0].children[0].click(); // button
-        expect(testresult).to.equal("clickButton clicked");
+        expect(testresult).to.equal('clickButton clicked');
         cy.get(container).should('not.have.class', 'active');
       });
     });
   });
-
 
   it('Custom Controls - new draw instance', () => {
     cy.get('.leaflet-pm-toolbar')
       .parent('.leaflet-top.leaflet-left')
       .should('exist');
 
-
-    cy.window().then(({map}) => {
-      let testresult = "";
+    cy.window().then(({ map }) => {
+      let testresult = '';
       let testlayer;
 
       // Copy of Polygon Button
-      const actions = ['cancel', {text: 'Custom text, no click'}, {
-        text: 'Click event', onClick: () => {
-          testresult = 'click';
-        }
-      }];
-      map.pm.Toolbar.copyDrawControl("Polygon", {
-        name: "PolygonCopy",
-        block: "custom",
-        className: "leaflet-pm-icon-polygon",
-        title: "Display text on hover button",
-        actions
+      const actions = [
+        'cancel',
+        { text: 'Custom text, no click' },
+        {
+          text: 'Click event',
+          onClick: () => {
+            testresult = 'click';
+          },
+        },
+      ];
+      map.pm.Toolbar.copyDrawControl('Polygon', {
+        name: 'PolygonCopy',
+        block: 'custom',
+        className: 'leaflet-pm-icon-polygon',
+        title: 'Display text on hover button',
+        actions,
       });
-      map.pm.Draw.PolygonCopy.setPathOptions({color :'red'});
+      map.pm.Draw.PolygonCopy.setPathOptions({ color: 'red' });
 
       cy.toolbarButtonContainer('PolygonCopy', map).then((container) => {
-        cy.get(container[0].children[0].children[0]).should('have.attr', 'title').and('include', 'Display text on hover button');
+        cy.get(container[0].children[0].children[0])
+          .should('have.attr', 'title')
+          .and('include', 'Display text on hover button');
         cy.get(container[0].children[0]).click(); // button
         cy.get(container).should('have.class', 'active');
         const actions = container[0].children[1].children;
         const actioncount = actions.length;
         expect(actioncount).to.equal(3);
 
-        cy.get(actions[2]).click().then(() => {
-          expect(testresult).to.equal("click");
-          expect(actions[1].innerHTML).to.equal("Custom text, no click");
-        });
+        cy.get(actions[2])
+          .click()
+          .then(() => {
+            expect(testresult).to.equal('click');
+            expect(actions[1].innerHTML).to.equal('Custom text, no click');
+          });
 
         cy.get(actions[0]).click();
         cy.get(container).should('not.have.class', 'active');
@@ -263,8 +271,8 @@ describe('Testing the Toolbar', () => {
           map.pm.enableDraw('PolygonCopy');
           map.on('pm:create', (e) => {
             expect(e.shape).to.equal('PolygonCopy');
-            e.layer.on('click', (l) => testlayer = l.target)
-          })
+            e.layer.on('click', (l) => (testlayer = l.target));
+          });
         });
         cy.get(container).should('have.class', 'active');
         // draw a polygon
@@ -276,46 +284,47 @@ describe('Testing the Toolbar', () => {
           .click(390, 100)
           .click(450, 100);
 
-
-        cy.get(mapSelector).click(390, 140).then(() => {
-          expect(testlayer.options.color).to.equal("red");
-        })
-      })
+        cy.get(mapSelector)
+          .click(390, 140)
+          .then(() => {
+            expect(testlayer.options.color).to.equal('red');
+          });
+      });
     });
   });
-
 
   it('Custom Controls - Custom order', () => {
-    cy.window().then(({map}) => {
-      map.pm.Toolbar.changeControlOrder(["Rectangle"]);
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.changeControlOrder(['Rectangle']);
       cy.get('.leaflet-pm-toolbar.leaflet-pm-draw').then((container) => {
         cy.get(container[0].children[0]).then((e) => {
-          cy.get(e[0].children[0].children[0]).should('have.class', 'leaflet-pm-icon-rectangle');
-        })
-      })
-
+          cy.get(e[0].children[0].children[0]).should(
+            'have.class',
+            'leaflet-pm-icon-rectangle'
+          );
+        });
+      });
     });
   });
 
-
   it('Custom Controls - One Block', () => {
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.addControls({
-        oneBlock: true
+        oneBlock: true,
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
         expect(container[0].children.length).to.equal(11);
-      })
+      });
     });
   });
 
   it('Different block positions', () => {
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.addControls({
         positions: {
           draw: 'topright',
-          edit: 'topleft'
-        }
+          edit: 'topleft',
+        },
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-edit')
         .parent('.leaflet-top.leaflet-left')
@@ -327,21 +336,21 @@ describe('Testing the Toolbar', () => {
   });
 
   it('Different block positions - One Block', () => {
-    cy.window().then(({map}) => {
+    cy.window().then(({ map }) => {
       map.pm.addControls({
         oneBlock: true,
         positions: {
           draw: 'topright',
           edit: 'topleft',
           custom: 'topleft',
-        }
+        },
       });
 
-      map.pm.Toolbar.copyDrawControl("Polygon", {
-        name: "PolygonCopy",
-        block: "custom",
-        className: "leaflet-pm-icon-polygon",
-        title: "Display text on hover button",
+      map.pm.Toolbar.copyDrawControl('Polygon', {
+        name: 'PolygonCopy',
+        block: 'custom',
+        className: 'leaflet-pm-icon-polygon',
+        title: 'Display text on hover button',
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-topright').then((container) => {
         expect(container[0].children.length).to.equal(6);
@@ -352,10 +361,14 @@ describe('Testing the Toolbar', () => {
     });
   });
   it('Listen on pm:buttonclick and pm:actionclick', () => {
-    let eventFired = "";
-    cy.window().then(({map}) => {
-      map.on('pm:buttonclick', ({btnName})=>{eventFired = btnName});
-      map.on('pm:actionclick', ({text})=>{eventFired = text});
+    let eventFired = '';
+    cy.window().then(({ map }) => {
+      map.on('pm:buttonclick', ({ btnName }) => {
+        eventFired = btnName;
+      });
+      map.on('pm:actionclick', ({ text }) => {
+        eventFired = text;
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -371,10 +384,12 @@ describe('Testing the Toolbar', () => {
     });
   });
   it('Disable button', () => {
-    let eventFired = "";
-    cy.window().then(({map}) => {
-      map.on('pm:buttonclick', ({btnName})=>{eventFired = btnName});
-      map.pm.Toolbar.setButtonDisabled('drawPolygon',true);
+    let eventFired = '';
+    cy.window().then(({ map }) => {
+      map.on('pm:buttonclick', ({ btnName }) => {
+        eventFired = btnName;
+      });
+      map.pm.Toolbar.setButtonDisabled('drawPolygon', true);
     });
 
     cy.toolbarButton('polygon').click();

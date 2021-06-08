@@ -13,7 +13,8 @@ export function _convertLatLngs(latlng, matrix, map) {
       latlngs.push(_convertLatLngs(x, matrix, map));
     });
     return latlngs;
-  } else if (latlng instanceof L.LatLng) {
+  }
+  if (latlng instanceof L.LatLng) {
     return _convertLatLng(latlng, matrix, map, zoom);
   }
   return null;
@@ -37,4 +38,3 @@ export function _toLatLng(map, point) {
   }
   return map.unproject(point, zoom);
 }
-
