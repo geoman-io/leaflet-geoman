@@ -49,8 +49,8 @@ Features marked with ⭐ in this documentation are available in Leaflet-Geoman P
 - [Removal Mode](#removal-mode)  
 - [Cut Mode](#cut-mode)  
 - [Rotation Mode](#rotation-mode)  
-- [Split Mode ⭐](#split-mode)
-- [Scale Mode ⭐](#scale-mode)
+- [Split Mode ⭐](#split-mode-)
+- [Scale Mode ⭐](#scale-mode-)
 - [Options](#options)  
   - [Snapping](#snapping)
   - [Pinning ⭐](#pinning-)
@@ -393,8 +393,8 @@ See the available options in the table below.
 | limitMarkersToViewport         | `false`       | Shows only markers in the viewport. ⭐                                                                                                                                                                                        |
 | limitMarkersToClick            | `false`       | Shows markers only after the layer was clicked. ⭐                                                                                                                                                                            |
 | pinning                        | `false`       | Pin shared vertices/markers together during edit [Details](#pinning-⭐). ⭐                                                                                                                                                   |
-| centerScaling         | `true`  | Scale origin is the center, else it is the opposite corner. If `false` Alt-Key can be used. [Scale Mode](#scale-mode). ⭐ | 
-| uniformScaling        | `true`  | Width and height are scaled with the same ratio. If `false` Shift-Key can be used. [Scale Mode](#scale-mode). ⭐          | 
+| centerScaling         | `true`  | Scale origin is the center, else it is the opposite corner. If `false` Alt-Key can be used. [Scale Mode](#scale-mode-). ⭐ | 
+| uniformScaling        | `true`  | Width and height are scaled with the same ratio. If `false` Shift-Key can be used. [Scale Mode](#scale-mode-). ⭐          | 
 
 You can listen to events related to editing on events like this:
 
