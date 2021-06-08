@@ -35,7 +35,7 @@ const RotateMixin = {
       Math.atan2(previous.y - origin.y, previous.x - origin.x);
 
     // rotate the temp polygon
-    this._layer.setLatLngs(this._rotateLayer(angleDiffRadiant, this._initialRotateLatLng, this._rotationOriginLatLng, L.Matrix.init(), this._map));
+    this._layer.setLatLngs(this._rotateLayer(angleDiffRadiant, this._initialRotateLatLng, this._rotationOriginLatLng, L.PM.Matrix.init(), this._map));
     // move the helper markers
     const that = this;
     function forEachLatLng(latlng,path = [], _i = -1){
@@ -56,7 +56,7 @@ const RotateMixin = {
 
     const oldLatLngs = copyLatLngs(this._rotationLayer);
     // rotate the origin layer
-    this._rotationLayer.setLatLngs(this._rotateLayer(angleDiffRadiant, this._rotationLayer.pm._rotateOrgLatLng, this._rotationOriginLatLng, L.Matrix.init(), this._map));
+    this._rotationLayer.setLatLngs(this._rotateLayer(angleDiffRadiant, this._rotationLayer.pm._rotateOrgLatLng, this._rotationOriginLatLng, L.PM.Matrix.init(), this._map));
 
     // convert the difference radiant to degrees and add it to the angle before rotation starts
     let angleDiff = (angleDiffRadiant * 180 / Math.PI);
@@ -159,12 +159,12 @@ const RotateMixin = {
   // angle is clockwise (0-360)
   rotateLayer(angle){
     const rads = angle * (Math.PI / 180);
-    this._layer.setLatLngs(this._rotateLayer(rads,this._layer.getLatLngs(), this._getRotationCenter(), L.Matrix.init(), this._layer._map));
+    this._layer.setLatLngs(this._rotateLayer(rads,this._layer.getLatLngs(), this._getRotationCenter(), L.PM.Matrix.init(), this._layer._map));
     // store the new latlngs
     this._rotateOrgLatLng = L.polygon(this._layer.getLatLngs()).getLatLngs();
     this._setAngle(this.getAngle() + angle);
     if(this.rotateEnabled() && this._rotatePoly && this._rotatePoly.pm.enabled()){
-      this._rotatePoly.setLatLngs(this._rotateLayer(rads,this._rotatePoly.getLatLngs(), this._getRotationCenter(), L.Matrix.init(), this._rotatePoly._map));
+      this._rotatePoly.setLatLngs(this._rotateLayer(rads,this._rotatePoly.getLatLngs(), this._getRotationCenter(), L.PM.Matrix.init(), this._rotatePoly._map));
       this._rotatePoly.pm._initMarkers();
     }
   },

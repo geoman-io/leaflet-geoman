@@ -52,11 +52,10 @@ L.PM = L.PM || {
   initialize(options) {
     this.addInitHooks(options);
   },
-  setOptIn(value){
+  setOptIn(value) {
     this.optIn = !!value;
   },
   addInitHooks(options = {}) {
-
     function initMap() {
       this.pm = undefined;
 
@@ -110,7 +109,6 @@ L.PM = L.PM || {
     }
     L.CircleMarker.addInitHook(initCircleMarker);
 
-
     function initPolyline() {
       this.pm = undefined;
 
@@ -135,7 +133,6 @@ L.PM = L.PM || {
       } else if (!this.options.pmIgnore) {
         this.pm = new L.PM.Edit.Polygon(this);
       }
-
     }
 
     L.Polygon.addInitHook(initPolygon);
@@ -168,7 +165,6 @@ L.PM = L.PM || {
 
     L.Circle.addInitHook(initCircle);
 
-
     function initImageOverlay() {
       this.pm = undefined;
 
@@ -183,38 +179,38 @@ L.PM = L.PM || {
 
     L.ImageOverlay.addInitHook(initImageOverlay);
   },
-  reInitLayer(layer){
-    if(layer instanceof L.LayerGroup){
-      layer.eachLayer((_layer)=>{
+  reInitLayer(layer) {
+    if (layer instanceof L.LayerGroup) {
+      layer.eachLayer((_layer) => {
         this.reInitLayer(_layer);
-      })
+      });
     }
-    if(layer.pm){
+    if (layer.pm) {
       // PM is already added to the layer
-    }else if(L.PM.optIn && layer.options.pmIgnore !== false){
+    } else if (L.PM.optIn && layer.options.pmIgnore !== false) {
       // Opt-In is true and pmIgnore is not false
-    }else if(layer.options.pmIgnore){
+    } else if (layer.options.pmIgnore) {
       // pmIgnore is true
-    }else if(layer instanceof L.Map){
+    } else if (layer instanceof L.Map) {
       layer.pm = new L.PM.Map(layer);
-    }else if(layer instanceof L.Marker){
+    } else if (layer instanceof L.Marker) {
       layer.pm = new L.PM.Edit.Marker(layer);
-    }else if(layer instanceof L.Circle){
+    } else if (layer instanceof L.Circle) {
       layer.pm = new L.PM.Edit.Circle(layer);
-    }else if(layer instanceof L.CircleMarker){
+    } else if (layer instanceof L.CircleMarker) {
       layer.pm = new L.PM.Edit.CircleMarker(layer);
-    }else if(layer instanceof L.Rectangle){
+    } else if (layer instanceof L.Rectangle) {
       layer.pm = new L.PM.Edit.Rectangle(layer);
-    }else if(layer instanceof L.Polygon){
+    } else if (layer instanceof L.Polygon) {
       layer.pm = new L.PM.Edit.Polygon(layer);
-    }else if(layer instanceof L.Polyline){
+    } else if (layer instanceof L.Polyline) {
       layer.pm = new L.PM.Edit.Line(layer);
-    }else if(layer instanceof L.LayerGroup){
+    } else if (layer instanceof L.LayerGroup) {
       layer.pm = new L.PM.Edit.LayerGroup(layer);
-    }else if(layer instanceof L.ImageOverlay){
+    } else if (layer instanceof L.ImageOverlay) {
       layer.pm = new L.PM.Edit.ImageOverlay(layer);
     }
-  }
+  },
 };
 
 // initialize leaflet-geoman

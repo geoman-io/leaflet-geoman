@@ -6,7 +6,7 @@
 
 
 /**
- * @class  L.Matrix
+ * @class  L.PM.Matrix
  *
  * @param {Number} a
  * @param {Number} b
@@ -15,18 +15,18 @@
  * @param {Number} e
  * @param {Number} f
  */
-L.Matrix = function(a, b, c, d, e, f) {
+L.PM.Matrix = function(a, b, c, d, e, f) {
   /**
    * @type {Array.<Number>}
    */
   this._matrix = [a, b, c, d, e, f];
 };
 
-L.Matrix.init = function(){
-  return new L.Matrix(1, 0, 0, 1, 0, 0);
+L.PM.Matrix.init = function(){
+  return new L.PM.Matrix(1, 0, 0, 1, 0, 0);
 };
 
-L.Matrix.prototype = {
+L.PM.Matrix.prototype = {
   /**
    * @param  {L.Point} point
    * @return {L.Point}
@@ -66,11 +66,11 @@ L.Matrix.prototype = {
   },
 
   /**
-   * @return {L.Matrix}
+   * @return {L.PM.Matrix}
    */
   clone() {
     const matrix = this._matrix;
-    return new L.Matrix(
+    return new L.PM.Matrix(
       matrix[0], matrix[1], matrix[2],
       matrix[3], matrix[4], matrix[5]
     );
@@ -78,7 +78,7 @@ L.Matrix.prototype = {
 
   /**
    * @param {L.Point|Number} translate
-   * @return {L.Matrix|L.Point}
+   * @return {L.PM.Matrix|L.Point}
    */
   translate(translate) {
     if (translate === undefined) {
@@ -101,7 +101,7 @@ L.Matrix.prototype = {
   /**
    * @param {L.Point|Number} scale
    * @param {L.Point|Number} origin
-   * @return {L.Matrix|L.Point}
+   * @return {L.PM.Matrix|L.Point}
    */
   scale(scale, origin) {
     if (scale === undefined) {
@@ -130,7 +130,7 @@ L.Matrix.prototype = {
    * m10  m11  y - m10 * x - m11 * y
    * @param {Number}   angle
    * @param {L.Point=} origin
-   * @return {L.Matrix}
+   * @return {L.PM.Matrix}
    */
   rotate(angle, origin) {
     const cos = Math.cos(angle);
@@ -145,7 +145,7 @@ L.Matrix.prototype = {
 
   /**
    * Invert rotation
-   * @return {L.Matrix}
+   * @return {L.PM.Matrix}
    */
   flip() {
     this._matrix[1] *= -1;
@@ -154,7 +154,7 @@ L.Matrix.prototype = {
   },
 
   /**
-   * @param {Number|L.Matrix} a
+   * @param {Number|L.PM.Matrix} a
    * @param {Number} b
    * @param {Number} c
    * @param {Number} d
@@ -176,7 +176,7 @@ L.Matrix.prototype = {
     ];
     let val;
 
-    if (a && a instanceof L.Matrix) {
+    if (a && a instanceof L.PM.Matrix) {
       src = a._matrix;
       other = [
         [src[0], src[2], src[4]],
@@ -203,6 +203,6 @@ L.Matrix.prototype = {
 };
 
 L.matrix = function(a, b, c, d, e, f) {
-  return new L.Matrix(a, b, c, d, e, f);
+  return new L.PM.Matrix(a, b, c, d, e, f);
 };
 
