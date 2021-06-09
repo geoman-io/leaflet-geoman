@@ -45,5 +45,5 @@ export default {
   fa,
   ua,
   tr,
-  cz
+  cz,
 };

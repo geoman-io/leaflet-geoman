@@ -2,7 +2,7 @@ import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
-import {isEmptyDeep, removeEmptyCoordRings} from '../helpers';
+import { isEmptyDeep, removeEmptyCoordRings } from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -32,7 +32,7 @@ Edit.Line = Edit.extend({
     }
 
     // layer is not allowed to edit
-    if(!this.options.allowEditing){
+    if (!this.options.allowEditing) {
       this.disable();
       return;
     }
@@ -63,14 +63,14 @@ Edit.Line = Edit.extend({
     }
 
     if (!this.options.allowSelfIntersection) {
-      if(this._layer.options.color !== '#f00000ff') {
+      if (this._layer.options.color !== '#f00000ff') {
         this.cachedColor = this._layer.options.color;
         this.isRed = false;
-      }else{
+      } else {
         this.isRed = true;
       }
       this._handleLayerStyle();
-    }else{
+    } else {
       this.cachedColor = undefined;
     }
     this._fireEnable();
@@ -151,7 +151,7 @@ Edit.Line = Edit.extend({
     this._markerGroup._pmTempLayer = true;
 
     // handle coord-rings (outer, inner, etc)
-    const handleRing = coordsArr => {
+    const handleRing = (coordsArr) => {
       // if there is another coords ring, go a level deep and do this again
       if (Array.isArray(coordsArr[0])) {
         return coordsArr.map(handleRing, this);
@@ -164,7 +164,9 @@ Edit.Line = Edit.extend({
         // create small markers in the middle of the regular markers
         coordsArr.map((v, k) => {
           // find the next index fist
-          const nextIndex = this.isPolygon() ? (k + 1) % coordsArr.length : k + 1;
+          const nextIndex = this.isPolygon()
+            ? (k + 1) % coordsArr.length
+            : k + 1;
           // create the marker
           return this._createMiddleMarker(ringArr[k], ringArr[nextIndex]);
         });
@@ -189,7 +191,7 @@ Edit.Line = Edit.extend({
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
-    this._setPane(marker,'vertexPane');
+    this._setPane(marker, 'vertexPane');
 
     marker._pmTempLayer = true;
 
@@ -207,7 +209,6 @@ Edit.Line = Edit.extend({
         marker.on(this.options.removeVertexOn, this._removeMarker, this);
       }
     }
-
 
     this._markerGroup.addLayer(marker);
 
@@ -240,14 +241,14 @@ Edit.Line = Edit.extend({
     rightM._middleMarkerPrev = middleMarker;
 
     middleMarker.on(this.options.addVertexOn, this._onMiddleMarkerClick, this);
-    middleMarker.on('movestart',this._onMiddleMarkerMoveStart, this);
+    middleMarker.on('movestart', this._onMiddleMarkerMoveStart, this);
 
     return middleMarker;
   },
-  _onMiddleMarkerClick(e){
+  _onMiddleMarkerClick(e) {
     const middleMarker = e.target;
 
-    if(!this._vertexValidation('add',e)) {
+    if (!this._vertexValidation('add', e)) {
       return;
     }
     // TODO: move the next two lines inside _addMarker() as soon as
@@ -257,10 +258,10 @@ Edit.Line = Edit.extend({
     middleMarker.setIcon(icon);
     this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
   },
-  _onMiddleMarkerMoveStart(e){
+  _onMiddleMarkerMoveStart(e) {
     const middleMarker = e.target;
     middleMarker.on('moveend', this._onMiddleMarkerMoveEnd, this);
-    if(!this._vertexValidation('add',e)) {
+    if (!this._vertexValidation('add', e)) {
       middleMarker.on('move', this._onMiddleMarkerMovePrevent, this);
       return;
     }
@@ -275,24 +276,24 @@ Edit.Line = Edit.extend({
     const middleMarker = e.target;
     this._vertexValidationDrag(middleMarker);
   },
-  _onMiddleMarkerMoveEnd(e){
+  _onMiddleMarkerMoveEnd(e) {
     const middleMarker = e.target;
     middleMarker.off('move', this._onMiddleMarkerMovePrevent, this);
     middleMarker.off('moveend', this._onMiddleMarkerMoveEnd, this);
-    if(!this._vertexValidationDragEnd(middleMarker)) {
+    if (!this._vertexValidationDragEnd(middleMarker)) {
       return;
     }
     const icon = L.divIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
     // timeout is needed else this._onVertexClick fires the event because it is called after deleting the flag
-    setTimeout(()=> {
+    setTimeout(() => {
       delete middleMarker._dragging;
-    },100);
+    }, 100);
   },
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {
     // first, make this middlemarker a regular marker
-    newM.off('movestart',this._onMiddleMarkerMoveStart, this);
+    newM.off('movestart', this._onMiddleMarkerMoveStart, this);
     newM.off(this.options.addVertexOn, this._onMiddleMarkerClick, this);
     // now, create the polygon coordinate point for that marker
     // and push into marker array
@@ -336,7 +337,11 @@ Edit.Line = Edit.extend({
     this._fireEdit();
     this._layerEdited = true;
 
-    this._fireVertexAdded(newM,this.findDeepMarkerIndex(this._markers, newM).indexPath, latlng);
+    this._fireVertexAdded(
+      newM,
+      this.findDeepMarkerIndex(this._markers, newM).indexPath,
+      latlng
+    );
 
     if (this.options.snappable) {
       this._initSnappableMarkers();
@@ -367,7 +372,10 @@ Edit.Line = Edit.extend({
     const layer = this._layer;
 
     if (this.hasSelfIntersection()) {
-      if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+      if (
+        !this.options.allowSelfIntersection &&
+        this.options.allowSelfIntersectionEdit
+      ) {
         this._updateDisabledMarkerStyle(this._markers, true);
       }
 
@@ -390,13 +398,16 @@ Edit.Line = Edit.extend({
       // if not, reset the style to the default color
       layer.setStyle({ color: this.cachedColor });
       this.isRed = false;
-      if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+      if (
+        !this.options.allowSelfIntersection &&
+        this.options.allowSelfIntersectionEdit
+      ) {
         this._updateDisabledMarkerStyle(this._markers, false);
       }
     }
   },
-  _flashLayer(){
-    if(!this.cachedColor){
+  _flashLayer() {
+    if (!this.cachedColor) {
       this.cachedColor = this._layer.options.color;
     }
 
@@ -416,9 +427,9 @@ Edit.Line = Edit.extend({
 
       if (marker._icon) {
         if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
-          L.DomUtil.addClass(marker._icon, "vertexmarker-disabled");
+          L.DomUtil.addClass(marker._icon, 'vertexmarker-disabled');
         } else {
-          L.DomUtil.removeClass(marker._icon, "vertexmarker-disabled");
+          L.DomUtil.removeClass(marker._icon, 'vertexmarker-disabled');
         }
       }
     });
@@ -427,8 +438,8 @@ Edit.Line = Edit.extend({
     // the marker that should be removed
     const marker = e.target;
 
-    if(!this._vertexValidation('remove',e)) {
-        return;
+    if (!this._vertexValidation('remove', e)) {
+      return;
     }
 
     // if self intersection isn't allowed, save the coords upon dragstart
@@ -459,11 +470,13 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-
     // prevent removal of the layer if the vertex count is below minimum
-    if(!this.options.removeLayerBelowMinVertexCount) {
+    if (!this.options.removeLayerBelowMinVertexCount) {
       // if on a line only 2 vertices left or on a polygon 3 vertices left, don't allow to delete
-      if (coordsRing.length <= 2 || (this.isPolygon() && coordsRing.length <= 3)) {
+      if (
+        coordsRing.length <= 2 ||
+        (this.isPolygon() && coordsRing.length <= 3)
+      ) {
         this._flashLayer();
         return;
       }
@@ -507,9 +520,10 @@ Edit.Line = Edit.extend({
     this._markers = removeEmptyCoordRings(this._markers);
 
     // No need to calculate the middle marker when the layer was removed
-    if(!layerRemoved) {
+    if (!layerRemoved) {
       // get new markerArr because we cleaned up coords and markers array
-      markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
+      markerArr =
+        indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
       // now handle the middle markers
       // remove the marker and the middlemarkers next to it from the map
@@ -534,7 +548,8 @@ Edit.Line = Edit.extend({
         } else {
           // find neighbor marker-indexes
           leftMarkerIndex = index - 1 < 0 ? undefined : index - 1;
-          rightMarkerIndex = index + 1 >= markerArr.length ? undefined : index + 1;
+          rightMarkerIndex =
+            index + 1 >= markerArr.length ? undefined : index + 1;
         }
 
         // don't create middlemarkers if there is only one marker left
@@ -563,7 +578,7 @@ Edit.Line = Edit.extend({
     // thanks for the function, Felix Heck
     let result;
 
-    const run = path => (v, i) => {
+    const run = (path) => (v, i) => {
       const iRes = path.concat(i);
 
       if (v._leaflet_id === marker._leaflet_id) {
@@ -615,12 +630,12 @@ Edit.Line = Edit.extend({
     );
 
     // the markers neighbors
-    const markerArr = indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
+    const markerArr =
+      indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
     // find the indizes of next and previous markers
     const nextMarkerIndex = (index + 1) % markerArr.length;
     const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
-
 
     // get prev and next marker
     const prevMarker = markerArr[prevMarkerIndex];
@@ -634,13 +649,22 @@ Edit.Line = Edit.extend({
     const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
     const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
 
-    let prevLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), prevLine.toGeoJSON(15)).features.length;
-    let nextLineIntersectionLen = lineIntersect(this._layer.toGeoJSON(15), nextLine.toGeoJSON(15)).features.length;
+    let prevLineIntersectionLen = lineIntersect(
+      this._layer.toGeoJSON(15),
+      prevLine.toGeoJSON(15)
+    ).features.length;
+    let nextLineIntersectionLen = lineIntersect(
+      this._layer.toGeoJSON(15),
+      nextLine.toGeoJSON(15)
+    ).features.length;
 
     // The first and last line has one intersection fewer because they are not connected
     if (marker.getLatLng() === this._markers[0][0].getLatLng()) {
       nextLineIntersectionLen += 1;
-    } else if (marker.getLatLng() === this._markers[0][this._markers[0].length - 1].getLatLng()) {
+    } else if (
+      marker.getLatLng() ===
+      this._markers[0][this._markers[0].length - 1].getLatLng()
+    ) {
       prevLineIntersectionLen += 1;
     }
 
@@ -649,7 +673,6 @@ Edit.Line = Edit.extend({
       return false;
     }
     return true;
-
   },
   _onMarkerDragStart(e) {
     const marker = e.target;
@@ -659,7 +682,7 @@ Edit.Line = Edit.extend({
       this.cachedColor = this._layer.options.color;
     }
 
-    if(!this._vertexValidation('move',e)){
+    if (!this._vertexValidation('move', e)) {
       return;
     }
 
@@ -673,7 +696,11 @@ Edit.Line = Edit.extend({
       this._coordsBeforeEdit = this._layer.getLatLngs();
     }
 
-    if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection()) {
+    if (
+      !this.options.allowSelfIntersection &&
+      this.options.allowSelfIntersectionEdit &&
+      this.hasSelfIntersection()
+    ) {
       this._markerAllowedToDrag = this._checkMarkerAllowedToDrag(marker);
     } else {
       this._markerAllowedToDrag = null;
@@ -683,7 +710,7 @@ Edit.Line = Edit.extend({
     // dragged marker
     const marker = e.target;
 
-    if(!this._vertexValidationDrag(marker)){
+    if (!this._vertexValidationDrag(marker)) {
       return;
     }
 
@@ -697,7 +724,12 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit && this.hasSelfIntersection() && this._markerAllowedToDrag === false) {
+    if (
+      !this.options.allowSelfIntersection &&
+      this.options.allowSelfIntersectionEdit &&
+      this.hasSelfIntersection() &&
+      this._markerAllowedToDrag === false
+    ) {
       this._layer.setLatLngs(this._coordsBeforeEdit);
       // re-enable markers for the new coords
       this._initMarkers();
@@ -751,21 +783,25 @@ Edit.Line = Edit.extend({
   _onMarkerDragEnd(e) {
     const marker = e.target;
 
-    if(!this._vertexValidationDragEnd(marker)){
+    if (!this._vertexValidationDragEnd(marker)) {
       return;
     }
 
     const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
 
-
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
     let intersection = this.hasSelfIntersection();
-    if (intersection && this.options.allowSelfIntersectionEdit && this._markerAllowedToDrag) {
+    if (
+      intersection &&
+      this.options.allowSelfIntersectionEdit &&
+      this._markerAllowedToDrag
+    ) {
       intersection = false;
     }
 
-    const intersectionReset = !this.options.allowSelfIntersection && intersection;
+    const intersectionReset =
+      !this.options.allowSelfIntersection && intersection;
 
     this._fireMarkerDragEnd(e, indexPath, intersectionReset);
 
@@ -784,10 +820,13 @@ Edit.Line = Edit.extend({
       // check for selfintersection again (mainly to reset the style)
       this._handleLayerStyle();
 
-      this._fireLayerReset(e,indexPath);
+      this._fireLayerReset(e, indexPath);
       return;
     }
-    if (!this.options.allowSelfIntersection && this.options.allowSelfIntersectionEdit) {
+    if (
+      !this.options.allowSelfIntersection &&
+      this.options.allowSelfIntersectionEdit
+    ) {
       this._handleLayerStyle();
     }
     // fire edit event
@@ -796,12 +835,12 @@ Edit.Line = Edit.extend({
   },
   _onVertexClick(e) {
     const vertex = e.target;
-    if(vertex._dragging){
+    if (vertex._dragging) {
       return;
     }
 
     const { indexPath } = this.findDeepMarkerIndex(this._markers, vertex);
 
-    this._fireVertexClick(e,indexPath);
+    this._fireVertexClick(e, indexPath);
   },
 });

@@ -8,7 +8,7 @@
 </h1>  
 <p align="center">  
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>  
-  Draw, Edit, Drag, Cut, Split⭐, Measure⭐, Snap and Pin⭐ Layers<br>  
+  Draw, Edit, Drag, Cut, Rotate, Split⭐, Scale⭐, Measure⭐, Snap and Pin⭐ Layers<br>  
   Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON, MultiLineStrings and MultiPolygons  
 </p>  
 <p align="center">  
@@ -49,7 +49,8 @@ Features marked with ⭐ in this documentation are available in Leaflet-Geoman P
 - [Removal Mode](#removal-mode)  
 - [Cut Mode](#cut-mode)  
 - [Rotation Mode](#rotation-mode)  
-- [Split Mode ⭐](#split-mode)
+- [Split Mode ⭐](#split-mode-)
+- [Scale Mode ⭐](#scale-mode-)
 - [Options](#options)  
   - [Snapping](#snapping)
   - [Pinning ⭐](#pinning-)
@@ -186,6 +187,7 @@ See the available options in the table below.
 | dragMode           | `true`      | Adds button to toggle Drag Mode for all layers.                                                  |  
 | cutPolygon         | `true`      | Adds button to cut a hole in a Polygon or Line.                                                  |  
 | removalMode        | `true`      | Adds a button to remove layers.                                                                  | 
+| rotateMode         | `true`      | Adds a button to rotate layers.                                                                  | 
 | oneBlock           | `false`     | All buttons will be displayed as one block [Customize Controls](#customize-controls).            |
 | drawControls       | `true`      | Shows all draw buttons / buttons in the `draw` block.                                            |
 | editControls       | `true`      | Shows all edit buttons / buttons in the `edit` block.                                            |
@@ -193,7 +195,9 @@ See the available options in the table below.
 | optionsControls    | `true`      | Shows all options buttons / buttons in the `option` block ⭐.                                     |
 | pinningOption      | `true`      | Adds a button to toggle the Pinning Option ⭐.                                                    |  
 | snappingOption     | `true`      | Adds a button to toggle the Snapping Option ⭐.                                                   |  
- 
+| splitMode          | `true`      | Adds a button to toggle the Split Mode for all layers ⭐.                                         |  
+| scaleMode          | `true`      | Adds a button to toggle the Scale Mode for all layers ⭐.                                         |  
+  
 To pass options to the buttons you have two ways:
 ```js
 // make polygon not snappable during draw  
@@ -389,6 +393,8 @@ See the available options in the table below.
 | limitMarkersToViewport         | `false`       | Shows only markers in the viewport. ⭐                                                                                                                                                                                        |
 | limitMarkersToClick            | `false`       | Shows markers only after the layer was clicked. ⭐                                                                                                                                                                            |
 | pinning                        | `false`       | Pin shared vertices/markers together during edit [Details](#pinning-⭐). ⭐                                                                                                                                                   |
+| centerScaling         | `true`  | Scale origin is the center, else it is the opposite corner. If `false` Alt-Key can be used. [Scale Mode](#scale-mode-). ⭐ | 
+| uniformScaling        | `true`  | Width and height are scaled with the same ratio. If `false` Shift-Key can be used. [Scale Mode](#scale-mode-). ⭐          | 
 
 You can listen to events related to editing on events like this:
 
@@ -587,21 +593,21 @@ The following methods are available on `map.pm`:
 
 | Method                    | Returns   | Description                                                             |
 | :------------------------ | :-------- | :---------------------------------------------------------------------- |
-| enableGlobalRotateMode()  | -         | Enables global rotate mode.                                             |
-| disableGlobalRotateMode() | -         | Disables global rotate mode.                                            |
-| toggleGlobalRotateMode()  | -         | Toggles global rotate mode.                                             |
-| globalRotateModeEnabled() | `Boolean` | Returns `true` if global rotate mode is enabled. `false` when disabled. |
+| enableGlobalRotateMode()  | -         | Enables global Rotate Mode.                                             |
+| disableGlobalRotateMode() | -         | Disables global Rotate Mode.                                            |
+| toggleGlobalRotateMode()  | -         | Toggles global Rotate Mode.                                             |
+| globalRotateModeEnabled() | `Boolean` | Returns `true` if global Rotate Mode is enabled. `false` when disabled. |
 
 The following methods are available for layers under `layer.pm`:
 
-| Method                        | Returns   | Description                                |
-| :---------------------------- | :-------- | :----------------------------------------- |
-| enableRotate()                | -         | Enables rotate mode on the layer.          |
-| disableRotate()               | -         | Disables rotate mode on the layer.         |
-| rotateEnabled()               | -         | Toggles rotate mode on the layer.          |
-| rotateLayer(`degrees`)        | -         | Rotates the layer by `x` degrees.          |
-| rotateLayerToAngle(`degrees`) | -         | Rotates the layer to `x` degrees.          |
-| getAngle()                    | `Degrees` | Returns the angle of the layer in degrees. |
+| Method                        | Returns   | Description                                      |
+| :---------------------------- | :-------- | :----------------------------------------------- |
+| enableRotate()                | -         | Enables Rotate Mode on the layer.                |
+| disableRotate()               | -         | Disables Rotate Mode on the layer.               |
+| rotateEnabled()               | `Boolean` | Returns if Rotate Mode is enabled for the layer. |
+| rotateLayer(`degrees`)        | -         | Rotates the layer by `x` degrees.                |
+| rotateLayerToAngle(`degrees`) | -         | Rotates the layer to `x` degrees.                |
+| getAngle()                    | `Degrees` | Returns the angle of the layer in degrees.       |
 
 The following events are available on a layer instance:
 
@@ -658,7 +664,7 @@ The following events are available on a layer instance:
 
 | Event    | Params | Description                       | Output                                           |
 | :------- | :----- | :-------------------------------- | :----------------------------------------------- |
-| pm:split | `e`    | Fired when the layer being split. | `shape`, `splitLayer`, `layers`, `originalLayer` |
+| pm:split | `e`    | Fired when the layer being split. Returns a LayerGroup containing all resulting layers in `layers`. | `shape`, `splitLayer`, `layers`, `originalLayer` |
 
 The following events are available on a map instance:
 
@@ -666,6 +672,55 @@ The following events are available on a map instance:
 | :------------------------ | :----- | :----------------------------------- | :----------------------------------------------- |
 | pm:globalsplitmodetoggled | `e`    | Fired when Split Mode is toggled.    | `enabled`, `map`                                 |
 | pm:split                  | `e`    | Fired when any layer is being split. | `shape`, `splitLayer`, `layers`, `originalLayer` |
+
+### Scale Mode ⭐
+You can enable Scale Mode for all layers on a map like this:
+```js  
+map.pm.enableGlobalScaleMode();  
+```  
+
+With the option `centerScaling` the scale origin cen be the center of the layer or the opposite corner of the dragged marker. If `false` Alt-Key can be used.
+The option `uniformScaling` the scales the width and the height with the same ratio. If `false` Shift-Key can be used.
+
+The following methods are available on `map.pm`:  
+  
+| Method                    | Returns   | Description                                                             |  
+| :------------------------ | :-------- | :---------------------------------------------------------------------- |  
+| enableGlobalScaleMode()   | -         | Enables global Scale Mode.                                              |  
+| disableGlobalScaleMode()  | -         | Disables global Scale Mode.                                             |  
+| toggleGlobalScaleMode()   | -         | Toggles global Scale Mode.                                              |  
+| globalScaleModeEnabled()  | `Boolean` | Returns `true` if global Scale Mode is enabled. `false` when disabled.  |  
+
+The following methods are available for layers under `layer.pm`:
+  
+| Method                       | Returns   | Description                                                                                                                   |  
+| :--------------------------- | :-------- | :---------------------------------------------------------------------------------------------------------------------------- |  
+| enableScale()                | -         | Enables Scale Mode on the layer.                                                                                              |  
+| disableScale()               | -         | Disables Scale Mode on the layer.                                                                                             |
+| scaleEnabled()               | `Boolean` | Returns if Scale Mode is enabled for the layer.                                                                               |  
+| scaleLayer(`percent`)        | -         | Scale the layer by `x` percent. Also an Object with `{w: width, h: height}` can be passed. Scale up `> 0` , scale down `< 0`. | 
+
+  
+The following events are available on a layer instance:  
+  
+| Event            | Params | Description                                           | Output                                                                                 |  
+| :--------------- | :----- | :---------------------------------------------------- | :------------------------------------------------------------------------------------- |  
+| pm:scaleenable   | `e`    | Fired when scale is enabled for a layer.              | `layer`, `helpLayer`                                                                   |  
+| pm:scaledisable  | `e`    | Fired when scale is disabled for a layer.             | `layer`                                                                                |  
+| pm:scalestart    | `e`    | Fired when scale starts on a layer.                   | `layer`, `helpLayer`, `originLatLngs`, `originLatLngs`                                 |  
+| pm:scale         | `e`    | Fired when a layer is scaled.                         | `layer`, `helpLayer`, `oldLatLngs`, `newLatLngs`                                       |  
+| pm:scaleend      | `e`    | Fired when scale ends on a layer.                     | `layer`, `helpLayer`, `originLatLngs`, `newLatLngs`                                    |  
+  
+The following events are available on a map instance:  
+  
+| Event                         | Params | Description                                           | Output                                                                                 |  
+| :---------------------------- | :----- | :---------------------------------------------------- | :------------------------------------------------------------------------------------- |   
+| pm:globalscalemodetoggled     | `e`    | Fired when Scale Mode is toggled.                    | `enabled`, `map`                                                                       | 
+| pm:scaleenable                | `e`    | Fired when scale is enabled for a layer.              | `layer`, `helpLayer`                                                                   |  
+| pm:scaledisable               | `e`    | Fired when scale is disabled for a layer.             | `layer`                                                                                |  
+| pm:scalestart                 | `e`    | Fired when scale starts on a layer.                   | `layer`, `helpLayer`, `originLatLngs`, `originLatLngs`                                 |  
+| pm:scale                      | `e`    | Fired when a layer is scaled.                         | `layer`, `helpLayer`, `oldLatLngs`, `newLatLngs`                                       |  
+| pm:scaleend                   | `e`    | Fired when scale ends on a layer.                     | `layer`, `helpLayer`, `originLatLngs`, `newLatLngs`                                    |   
 
 ### Options
 

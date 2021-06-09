@@ -92,7 +92,6 @@ if (typeof Object.assign != 'function') {
 if (!Array.prototype.includes) {
   Object.defineProperty(Array.prototype, 'includes', {
     value: function (searchElement, fromIndex) {
-
       if (this == null) {
         throw new TypeError('"this" is null or not defined');
       }
@@ -120,7 +119,13 @@ if (!Array.prototype.includes) {
       var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
 
       function sameValueZero(x, y) {
-        return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
+        return (
+          x === y ||
+          (typeof x === 'number' &&
+            typeof y === 'number' &&
+            isNaN(x) &&
+            isNaN(y))
+        );
       }
 
       // 7. Repeat, while k < len
@@ -130,12 +135,12 @@ if (!Array.prototype.includes) {
         if (sameValueZero(o[k], searchElement)) {
           return true;
         }
-        // c. Increase k by 1. 
+        // c. Increase k by 1.
         k++;
       }
 
       // 8. Return false
       return false;
-    }
+    },
   });
 }

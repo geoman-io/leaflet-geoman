@@ -1,5 +1,5 @@
 const KeyboardMixins = {
-  _lastEvents: {keydown: undefined, keyup: undefined, current: undefined},
+  _lastEvents: { keydown: undefined, keyup: undefined, current: undefined },
   _initKeyListener(map) {
     this.map = map;
     L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
@@ -9,15 +9,15 @@ const KeyboardMixins = {
 
     // .contains only supported since IE9, if you want to use Geoman with IE8 or lower you need to implement a polyfill for .contains
     // with focusOn the user can add a check if the key was pressed while the user interacts with the map
-    if (this.map.getContainer().contains(e.target)){
+    if (this.map.getContainer().contains(e.target)) {
       focusOn = 'map';
     }
 
-    const data = {event: e, eventType: e.type, focusOn};
+    const data = { event: e, eventType: e.type, focusOn };
     this._lastEvents[e.type] = data;
     this._lastEvents.current = data;
 
-    this.map.pm._fireKeyeventEvent(e,e.type,focusOn);
+    this.map.pm._fireKeyeventEvent(e, e.type, focusOn);
   },
   getLastKeyEvent(type = 'current') {
     return this._lastEvents[type];
@@ -34,9 +34,9 @@ const KeyboardMixins = {
   isMetaKeyPressed() {
     return this._lastEvents.current?.event.metaKey;
   },
-  getPressedKey(){
+  getPressedKey() {
     return this._lastEvents.current?.event.key;
-  }
+  },
 };
 
 export default KeyboardMixins;

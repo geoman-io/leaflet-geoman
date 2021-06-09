@@ -1,6 +1,6 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
-  "version": "2.11.1",
+  "version": "2.11.2",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -31,6 +31,7 @@
   "devDependencies": {
     "@babel/core": "7.14.0",
     "@babel/preset-env": "7.14.1",
+    "@types/leaflet": "^1.7.0",
     "babel-loader": "8.2.2",
     "copy-webpack-plugin": "8.1.1",
     "css-loader": "5.2.4",

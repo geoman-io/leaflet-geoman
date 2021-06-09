@@ -23,21 +23,23 @@ Draw.Line = Draw.extend({
 
     // this is the polyLine that'll make up the polygon
     this._layer = L.polyline([], this.options.templineStyle);
-    this._setPane(this._layer,'layerPane');
+    this._setPane(this._layer, 'layerPane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
     // this is the hintline from the mouse cursor to the last marker
     this._hintline = L.polyline([], this.options.hintlineStyle);
-    this._setPane(this._hintline,'layerPane');
+    this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
     // this is the hintmarker on the mouse cursor
     this._hintMarker = L.marker(this._map.getCenter(), {
+      interactive: false, // always vertex marker below will be triggered from the click event -> _finishShape #911
+      zIndexOffset: 100,
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
-    this._setPane(this._hintMarker,'vertexPane');
+    this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
@@ -93,7 +95,6 @@ Draw.Line = Draw.extend({
     // TODO: think about moving this somewhere else?
     this._otherSnapLayers = [];
 
-
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
@@ -136,7 +137,6 @@ Draw.Line = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-
   },
   enabled() {
     return this._enabled;
@@ -248,7 +248,7 @@ Draw.Line = Draw.extend({
     this._layer._latlngInfo = this._layer._latlngInfo || [];
     this._layer._latlngInfo.push({
       latlng,
-      snapInfo: this._hintMarker._snapInfo
+      snapInfo: this._hintMarker._snapInfo,
     });
 
     this._layer.addLatLng(latlng);
@@ -257,7 +257,7 @@ Draw.Line = Draw.extend({
 
     this._hintline.setLatLngs([latlng, latlng]);
 
-    this._fireVertexAdded(newMarker, undefined, latlng, "Draw");
+    this._fireVertexAdded(newMarker, undefined, latlng, 'Draw');
 
     // check if we should finish on snap
     if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {
@@ -278,9 +278,9 @@ Draw.Line = Draw.extend({
     // find corresponding marker
     const marker = this._layerGroup
       .getLayers()
-      .filter(l => l instanceof L.Marker)
-      .filter(l => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
-      .find(l => l.getLatLng() === removedCoord);
+      .filter((l) => l instanceof L.Marker)
+      .filter((l) => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
+      .find((l) => l.getLatLng() === removedCoord);
 
     // remove that marker
     this._layerGroup.removeLayer(marker);
@@ -303,7 +303,11 @@ Draw.Line = Draw.extend({
     }
 
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
-    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+    if (
+      this.options.requireSnapToFinish &&
+      !this._hintMarker._snapped &&
+      !this._isFirstLayer()
+    ) {
       return;
     }
 
@@ -317,7 +321,7 @@ Draw.Line = Draw.extend({
 
     // create the leaflet shape and add it to the map
     const polylineLayer = L.polyline(coords, this.options.pathOptions);
-    this._setPane(polylineLayer,'layerPane');
+    this._setPane(polylineLayer, 'layerPane');
     this._finishLayer(polylineLayer);
     polylineLayer.addTo(this._map.pm._getContainingLayer());
 
@@ -330,7 +334,7 @@ Draw.Line = Draw.extend({
 
     // disable drawing
     this.disable();
-    if(this.options.continueDrawing){
+    if (this.options.continueDrawing) {
       this.enable();
     }
   },
@@ -340,7 +344,7 @@ Draw.Line = Draw.extend({
       draggable: false,
       icon: L.divIcon({ className: 'marker-icon' }),
     });
-    this._setPane(marker,'vertexPane');
+    this._setPane(marker, 'vertexPane');
     marker._pmTempLayer = true;
 
     // add it to the map
@@ -351,16 +355,16 @@ Draw.Line = Draw.extend({
 
     return marker;
   },
-  _setTooltipText(){
-    const {length} = this._layer.getLatLngs().flat();
-    let text = "";
+  _setTooltipText() {
+    const { length } = this._layer.getLatLngs().flat();
+    let text = '';
 
     // handle tooltip text
-    if(length <= 1){
+    if (length <= 1) {
       text = getTranslation('tooltips.continueLine');
-    }else{
+    } else {
       text = getTranslation('tooltips.finishLine');
     }
     this._hintMarker.setTooltipContent(text);
-  }
+  },
 });

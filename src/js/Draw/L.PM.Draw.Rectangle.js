@@ -21,8 +21,14 @@ Draw.Rectangle = Draw.extend({
     this._layerGroup.addTo(this._map);
 
     // the rectangle we want to draw
-    this._layer = L.rectangle([[0, 0], [0, 0]], this.options.pathOptions);
-    this._setPane(this._layer,'layerPane');
+    this._layer = L.rectangle(
+      [
+        [0, 0],
+        [0, 0],
+      ],
+      this.options.pathOptions
+    );
+    this._setPane(this._layer, 'layerPane');
     this._layer._pmTempLayer = true;
 
     // this is the marker at the origin of the rectangle
@@ -30,18 +36,19 @@ Draw.Rectangle = Draw.extend({
     this._startMarker = L.marker([0, 0], {
       icon: L.divIcon({ className: 'marker-icon rect-start-marker' }),
       draggable: false,
-      zIndexOffset: 100,
+      zIndexOffset: -100,
       opacity: this.options.cursorMarker ? 1 : 0,
     });
-    this._setPane(this._startMarker,'vertexPane');
+    this._setPane(this._startMarker, 'vertexPane');
     this._startMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._startMarker);
 
     // this is the hintmarker on the mouse cursor
     this._hintMarker = L.marker([0, 0], {
+      zIndexOffset: 150,
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
-    this._setPane(this._hintMarker,'vertexPane');
+    this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
@@ -72,7 +79,7 @@ Draw.Rectangle = Draw.extend({
           draggable: false,
           zIndexOffset: 100,
         });
-        this._setPane(styleMarker,'vertexPane');
+        this._setPane(styleMarker, 'vertexPane');
         styleMarker._pmTempLayer = true;
         this._layerGroup.addLayer(styleMarker);
 
@@ -99,7 +106,6 @@ Draw.Rectangle = Draw.extend({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-
   },
   disable() {
     // disable drawing mode
@@ -132,7 +138,6 @@ Draw.Rectangle = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-
   },
   enabled() {
     return this._enabled;
@@ -160,7 +165,7 @@ Draw.Rectangle = Draw.extend({
 
     // if we have the other two visibilty markers, show and place them now
     if (this.options.cursorMarker && this._styleMarkers) {
-      this._styleMarkers.forEach(styleMarker => {
+      this._styleMarkers.forEach((styleMarker) => {
         L.DomUtil.addClass(styleMarker._icon, 'visible');
         styleMarker.setLatLng(latlng);
       });
@@ -202,7 +207,12 @@ Draw.Rectangle = Draw.extend({
     const B = this._hintMarker.getLatLng();
 
     // Create a (maybe rotated) box using corners A & B (A = Starting Position, B = Current Mouse Position)
-    const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectangleAngle || 0, this._map);
+    const corners = L.PM.Utils._getRotatedRectangle(
+      A,
+      B,
+      this.options.rectangleAngle || 0,
+      this._map
+    );
     this._layer.setLatLngs(corners);
 
     // Add matching style markers, if cursor marker is shown
@@ -210,7 +220,7 @@ Draw.Rectangle = Draw.extend({
       const unmarkedCorners = [];
 
       // Find two corners not currently occupied by starting marker and hint marker
-      corners.forEach(corner => {
+      corners.forEach((corner) => {
         if (
           !corner.equals(this._startMarker.getLatLng()) &&
           !corner.equals(this._hintMarker.getLatLng())
@@ -248,7 +258,11 @@ Draw.Rectangle = Draw.extend({
     const A = this._startMarker.getLatLng();
 
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
-    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+    if (
+      this.options.requireSnapToFinish &&
+      !this._hintMarker._snapped &&
+      !this._isFirstLayer()
+    ) {
       return;
     }
 
@@ -256,15 +270,20 @@ Draw.Rectangle = Draw.extend({
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
 
     // rectangle can only initialized with bounds (not working with rotation) so we update the latlngs
-    if(this.options.rectangleAngle){
-      const corners = L.PM.Utils._getRotatedRectangle(A, B, this.options.rectangleAngle || 0, this._map);
+    if (this.options.rectangleAngle) {
+      const corners = L.PM.Utils._getRotatedRectangle(
+        A,
+        B,
+        this.options.rectangleAngle || 0,
+        this._map
+      );
       rectangleLayer.setLatLngs(corners);
-      if(rectangleLayer.pm){
+      if (rectangleLayer.pm) {
         rectangleLayer.pm._setAngle(this.options.rectangleAngle || 0);
       }
     }
 
-    this._setPane(rectangleLayer,'layerPane');
+    this._setPane(rectangleLayer, 'layerPane');
     this._finishLayer(rectangleLayer);
     rectangleLayer.addTo(this._map.pm._getContainingLayer());
 
@@ -273,7 +292,7 @@ Draw.Rectangle = Draw.extend({
 
     // disable drawing
     this.disable();
-    if(this.options.continueDrawing){
+    if (this.options.continueDrawing) {
       this.enable();
     }
   },

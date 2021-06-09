@@ -5,12 +5,16 @@ const GlobalDragMode = {
 
     this._globalDragModeEnabled = true;
 
-    layers.forEach(layer => {
+    layers.forEach((layer) => {
       layer.pm.enableLayerDrag();
     });
 
     if (!this.throttledReInitDrag) {
-      this.throttledReInitDrag = L.Util.throttle(this.reinitGlobalDragMode, 100, this)
+      this.throttledReInitDrag = L.Util.throttle(
+        this.reinitGlobalDragMode,
+        100,
+        this
+      );
     }
 
     // add map handler
@@ -26,7 +30,7 @@ const GlobalDragMode = {
 
     this._globalDragModeEnabled = false;
 
-    layers.forEach(layer => {
+    layers.forEach((layer) => {
       layer.pm.disableLayerDrag();
     });
 
@@ -61,6 +65,6 @@ const GlobalDragMode = {
       this.enableGlobalDragMode();
     }
   },
-}
+};
 
-export default GlobalDragMode
+export default GlobalDragMode;

@@ -7,9 +7,7 @@ describe('Draw Circle', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector)
-      .click(200, 200)
-      .click(250, 250);
+    cy.get(mapSelector).click(200, 200).click(250, 250);
 
     cy.toolbarButton('edit')
       .click()
@@ -51,7 +49,7 @@ describe('Draw Circle', () => {
         .click(200, 200)
         .click(250, 250)
         .then(() => {
-          map.eachLayer(layer => {
+          map.eachLayer((layer) => {
             if (layer instanceof L.Circle) {
               expect(layer.options.color).to.equal('red');
               expect(layer.options.fillColor).to.equal('orange');
@@ -76,7 +74,7 @@ describe('Draw Circle', () => {
         .click(200, 200)
         .click(250, 250)
         .then(() => {
-          map.eachLayer(layer => {
+          map.eachLayer((layer) => {
             if (layer instanceof L.Circle) {
               expect(layer.options.color).to.equal('yellow');
             }
@@ -87,7 +85,7 @@ describe('Draw Circle', () => {
 
   it('enable continueDrawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({continueDrawing: true});
+      map.pm.setGlobalOptions({ continueDrawing: true });
     });
 
     cy.toolbarButton('circle')
@@ -96,14 +94,10 @@ describe('Draw Circle', () => {
       .should('have.class', 'active');
 
     // draw first circle
-    cy.get(mapSelector)
-      .click(200, 200)
-      .click(250, 250);
+    cy.get(mapSelector).click(200, 200).click(250, 250);
 
     // draw with continueDrawing: ture the second circle
-    cy.get(mapSelector)
-      .click(300, 200)
-      .click(350, 250);
+    cy.get(mapSelector).click(300, 200).click(350, 250);
 
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(4);
@@ -126,7 +120,7 @@ describe('Draw Circle', () => {
         .click(400, 190)
         .then(() => {
           const layers = map.pm.getGeomanDrawLayers();
-          layers.forEach(layer => {
+          layers.forEach((layer) => {
             if (layer instanceof L.Circle) {
               expect(layer.getRadius()).to.equal(1500);
             }
@@ -147,11 +141,11 @@ describe('Draw Circle', () => {
         maxRadiusCircle: 3000,
       });
       cy.get(mapSelector)
-        .click(250,200)
-        .click(300,190)
+        .click(250, 200)
+        .click(300, 190)
         .then(() => {
           const layers = map.pm.getGeomanDrawLayers();
-          layers.forEach(layer => {
+          layers.forEach((layer) => {
             if (layer instanceof L.Circle) {
               expect(layer.getRadius()).to.equal(1500);
             }
@@ -161,7 +155,10 @@ describe('Draw Circle', () => {
   });
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({requireSnapToFinish: true, snapSegment: false});
+      map.pm.setGlobalOptions({
+        requireSnapToFinish: true,
+        snapSegment: false,
+      });
     });
 
     cy.toolbarButton('polygon').click();
@@ -172,16 +169,13 @@ describe('Draw Circle', () => {
       .click(150, 250);
 
     cy.toolbarButton('circle').click();
-    cy.get(mapSelector)
-      .click(350, 250)
-      .click(190, 60);
+    cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
 
-    cy.get(mapSelector)
-      .click(250, 50);
+    cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);

@@ -23,7 +23,7 @@ Draw.Marker = Draw.extend({
 
     // this is the hintmarker on the mouse cursor
     this._hintMarker = L.marker([0, 0], this.options.markerStyle);
-    this._setPane(this._hintMarker,'markerPane');
+    this._setPane(this._hintMarker, 'markerPane');
     this._hintMarker._pmTempLayer = true;
     this._hintMarker.addTo(this._map);
 
@@ -46,10 +46,9 @@ Draw.Marker = Draw.extend({
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
-
     // enable edit mode for existing markers
-    if(this.options.markerEditable) {
-      this._map.eachLayer(layer => {
+    if (this.options.markerEditable) {
+      this._map.eachLayer((layer) => {
         if (this.isRelevantMarker(layer)) {
           layer.pm.enable();
         }
@@ -79,12 +78,11 @@ Draw.Marker = Draw.extend({
     this._map.off('mousemove', this._syncHintMarker, this);
 
     // disable dragging and removing for all markers
-    this._map.eachLayer(layer => {
+    this._map.eachLayer((layer) => {
       if (this.isRelevantMarker(layer)) {
         layer.pm.disable();
       }
     });
-
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -128,7 +126,11 @@ Draw.Marker = Draw.extend({
     }
 
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
-    if (this.options.requireSnapToFinish && !this._hintMarker._snapped && !this._isFirstLayer()) {
+    if (
+      this.options.requireSnapToFinish &&
+      !this._hintMarker._snapped &&
+      !this._isFirstLayer()
+    ) {
       return;
     }
 
@@ -143,24 +145,21 @@ Draw.Marker = Draw.extend({
 
     // create marker
     const marker = new L.Marker(latlng, this.options.markerStyle);
-    this._setPane(marker,'markerPane');
+    this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 
-    if(!marker.pm){
+    if (!marker.pm) {
       // if pm is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
       marker.options.draggable = false;
     }
     // add marker to the map
     marker.addTo(this._map.pm._getContainingLayer());
 
-
-    if(marker.pm && this.options.markerEditable) {
+    if (marker.pm && this.options.markerEditable) {
       // enable editing for the marker
       marker.pm.enable();
-    }else{
-      if(marker.dragging) {
-        marker.dragging.disable();
-      }
+    } else if (marker.dragging) {
+      marker.dragging.disable();
     }
 
     // fire the pm:create event and pass shape and marker
@@ -168,7 +167,7 @@ Draw.Marker = Draw.extend({
 
     this._cleanupSnapping();
 
-    if(!this.options.continueDrawing){
+    if (!this.options.continueDrawing) {
       this.disable();
     }
   },

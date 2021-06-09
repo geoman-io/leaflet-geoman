@@ -10,14 +10,14 @@ Edit.Marker = Edit.extend({
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
   },
-  //TODO: remove default option in next major Release
+  // TODO: remove default option in next major Release
   enable(options = { draggable: true }) {
     L.Util.setOptions(this, options);
 
     this._map = this._layer._map;
 
     // layer is not allowed to edit
-    if(!this.options.allowEditing){
+    if (!this.options.allowEditing) {
       this.disable();
       return;
     }
@@ -89,7 +89,8 @@ Edit.Marker = Edit.extend({
     const marker = this._layer;
 
     this.options.snapDistance = this.options.snapDistance || 30;
-    this.options.snapSegment = this.options.snapSegment === undefined ? true : this.options.snapSegment;
+    this.options.snapSegment =
+      this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
     marker.off('pm:drag', this._handleSnapping, this);
     marker.on('pm:drag', this._handleSnapping, this);
@@ -105,5 +106,5 @@ Edit.Marker = Edit.extend({
     marker.off('pm:drag', this._handleSnapping, this);
     marker.off('pm:dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
-  }
+  },
 });
