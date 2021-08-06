@@ -35,6 +35,7 @@ Draw.Circle = Draw.extend({
     });
     this._setPane(this._centerMarker, 'vertexPane');
     this._centerMarker._pmTempLayer = true;
+    this._layerGroup.addLayer(this._centerMarker);
 
     // this is the hintmarker on the mouse cursor
     this._hintMarker = L.marker([0, 0], {
@@ -188,7 +189,6 @@ Draw.Circle = Draw.extend({
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();
     this._layerGroup.addLayer(this._layer);
-    this._layerGroup.addLayer(this._centerMarker);
     this._centerMarker.setLatLng(latlng);
 
     this._map.off('click', this._placeCenterMarker, this);

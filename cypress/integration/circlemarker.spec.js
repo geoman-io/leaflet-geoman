@@ -135,6 +135,27 @@ describe('Draw Circle Marker', () => {
 
     cy.hasVertexMarkers(2);
   });
+
+  it('enable continueDrawing #2', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ continueDrawing: true, editable: true });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw first circle
+    cy.get(mapSelector).click(200, 200).click(250, 250);
+
+    // draw with continueDrawing: ture the second circle
+    cy.get(mapSelector).click(300, 200).click(350, 250);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(4);
+  });
+
   it('snapping to CircleMarker with pmIgnore:true', () => {
     cy.window().then(({ map, L }) => {
       L.circleMarker(map.getCenter(), { pmIgnore: true }).addTo(map);
