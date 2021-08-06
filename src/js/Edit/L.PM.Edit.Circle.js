@@ -199,7 +199,7 @@ Edit.Circle = Edit.extend({
     const A = this._centerMarker.getLatLng();
     const B = this._outerMarker.getLatLng();
 
-    const distance = A.distanceTo(B);
+    const distance = this._map.distance(A,B);
 
     if (
       this.options.minRadiusCircle &&
@@ -304,7 +304,7 @@ Edit.Circle = Edit.extend({
   _getNewDestinationOfOuterMarker() {
     const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._outerMarker.getLatLng();
-    const distance = latlng.distanceTo(secondLatLng);
+    const distance = this._map.distance(latlng,secondLatLng);
     if (
       this.options.minRadiusCircle &&
       distance < this.options.minRadiusCircle
@@ -332,7 +332,7 @@ Edit.Circle = Edit.extend({
     if (this._outerMarker._snapped) {
       const latlng = this._centerMarker.getLatLng();
       const secondLatLng = this._outerMarker.getLatLng();
-      const distance = latlng.distanceTo(secondLatLng);
+      const distance = this._map.distance(latlng,secondLatLng);
       if (
         this.options.minRadiusCircle &&
         distance < this.options.minRadiusCircle
