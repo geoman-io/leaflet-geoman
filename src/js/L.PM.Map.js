@@ -185,6 +185,9 @@ const Map = L.Class.extend({
       ? this.globalOptions.layerGroup
       : this.map;
   },
+  _isCRSSimple() {
+    return this.map.options.crs === L.CRS.Simple;
+  },
 });
 
 export default Map;

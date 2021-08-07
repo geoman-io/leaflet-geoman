@@ -107,7 +107,13 @@ function destinationVincenty(lonlat, brng, dist) {
   return L.latLng(lamFunc, lat2a);
 }
 
-export function createGeodesicPolygon(origin, radius, sides, rotation) {
+export function createGeodesicPolygon(
+  origin,
+  radius,
+  sides,
+  rotation,
+  withBearing = true
+) {
   let angle;
   let newLonlat;
   let geomPoint;
@@ -115,8 +121,14 @@ export function createGeodesicPolygon(origin, radius, sides, rotation) {
 
   for (let i = 0; i < sides; i += 1) {
     angle = (i * 360) / sides + rotation;
-    newLonlat = destinationVincenty(origin, angle, radius);
-    geomPoint = L.latLng(newLonlat.lng, newLonlat.lat);
+    if (withBearing) {
+      newLonlat = destinationVincenty(origin, angle, radius);
+      geomPoint = L.latLng(newLonlat.lng, newLonlat.lat);
+    } else {
+      const pLat = origin.lat + Math.cos(angle) * radius;
+      const pLng = origin.lng + Math.sin(angle) * radius;
+      geomPoint = L.latLng(pLat, pLng);
+    }
     points.push(geomPoint);
   }
 

@@ -39,10 +39,10 @@ const Utils = {
 
     return layers;
   },
-  circleToPolygon(circle, sides = 60) {
+  circleToPolygon(circle, sides = 60, withBearing = true) {
     const origin = circle.getLatLng();
     const radius = circle.getRadius();
-    const polys = createGeodesicPolygon(origin, radius, sides, 0); // these are the points that make up the circle
+    const polys = createGeodesicPolygon(origin, radius, sides, 0, withBearing); // these are the points that make up the circle
     const polygon = [];
     for (let i = 0; i < polys.length; i += 1) {
       const geometry = [polys[i].lat, polys[i].lng];
