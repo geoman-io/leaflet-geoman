@@ -199,7 +199,7 @@ Edit.Circle = Edit.extend({
     const A = this._centerMarker.getLatLng();
     const B = this._outerMarker.getLatLng();
 
-    const distance = this._map.distance(A,B);
+    const distance = this._map.distance(A, B);
 
     if (
       this.options.minRadiusCircle &&
@@ -283,12 +283,17 @@ Edit.Circle = Edit.extend({
     this._fireDragEnd();
   },
   _updateHiddenPolyCircle() {
+    const crsSimple = this._map && this._map.pm._isCRSSimple();
     if (this._hiddenPolyCircle) {
       this._hiddenPolyCircle.setLatLngs(
-        L.PM.Utils.circleToPolygon(this._layer, 200).getLatLngs()
+        L.PM.Utils.circleToPolygon(this._layer, 200, !crsSimple).getLatLngs()
       );
     } else {
-      this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(this._layer, 200);
+      this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(
+        this._layer,
+        200,
+        !crsSimple
+      );
     }
 
     if (!this._hiddenPolyCircle._parentCopy) {
@@ -304,7 +309,7 @@ Edit.Circle = Edit.extend({
   _getNewDestinationOfOuterMarker() {
     const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._outerMarker.getLatLng();
-    const distance = this._map.distance(latlng,secondLatLng);
+    const distance = this._map.distance(latlng, secondLatLng);
     if (
       this.options.minRadiusCircle &&
       distance < this.options.minRadiusCircle
@@ -332,7 +337,7 @@ Edit.Circle = Edit.extend({
     if (this._outerMarker._snapped) {
       const latlng = this._centerMarker.getLatLng();
       const secondLatLng = this._outerMarker.getLatLng();
-      const distance = this._map.distance(latlng,secondLatLng);
+      const distance = this._map.distance(latlng, secondLatLng);
       if (
         this.options.minRadiusCircle &&
         distance < this.options.minRadiusCircle

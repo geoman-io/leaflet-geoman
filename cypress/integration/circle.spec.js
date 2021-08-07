@@ -188,15 +188,13 @@ describe('Draw Circle', () => {
       map.remove();
       mapSimple = L.map('map', {
         crs: L.CRS.Simple,
-        minZoom: -2
-      }).setView([0,0], 0);
+        minZoom: -2,
+      }).setView([0, 0], 0);
       mapSimple.pm.addControls();
     });
 
     cy.toolbarButton('circle').click();
-    cy.get(mapSelector)
-      .click(350, 250)
-      .click(450, 250);
+    cy.get(mapSelector).click(350, 250).click(450, 250);
 
     cy.toolbarButton('edit').click();
 
@@ -207,8 +205,32 @@ describe('Draw Circle', () => {
 
       // move marker
       const marker = circle.pm._markers[1];
-      marker.setLatLng([marker.getLatLng().lng,marker.getLatLng().lat+10]);
+      marker.setLatLng([marker.getLatLng().lng, marker.getLatLng().lat + 10]);
       expect(167).to.eq(Math.floor(circle.getRadius()));
+    });
+  });
+
+  it('Snapping to circle border on CRS Simple Map', () => {
+    let mapSimple;
+    cy.window().then(({ map, L }) => {
+      map.remove();
+      mapSimple = L.map('map', {
+        crs: L.CRS.Simple,
+        minZoom: -2,
+      }).setView([0, 0], 0);
+      mapSimple.pm.addControls();
+    });
+
+    cy.toolbarButton('circle').click();
+    cy.get(mapSelector).click(350, 250).click(450, 250);
+
+    cy.toolbarButton('circle').click();
+    cy.get(mapSelector).click(350, 450).click(465, 250);
+
+    cy.window().then(() => {
+      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      expect(radius).to.greaterThan(223);
+      expect(radius).to.below(226);
     });
   });
 });

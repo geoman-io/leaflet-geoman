@@ -340,4 +340,50 @@ describe('Draw Circle Marker', () => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
   });
+
+  it('Snapping to CircleMarker border on CRS Simple Map', () => {
+    let mapSimple;
+    cy.window().then(({ map, L }) => {
+      map.remove();
+      mapSimple = L.map('map', {
+        crs: L.CRS.Simple,
+        minZoom: -2,
+      }).setView([0, 0], 0);
+      mapSimple.pm.addControls();
+
+      mapSimple.pm.enableDraw('CircleMarker', { pathOptions: { radius: 40 } });
+    });
+
+    cy.get(mapSelector).click(350, 250);
+    cy.get(mapSelector).click(350, 300);
+
+    cy.window().then(() => {
+      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      expect(radius).to.eq(40);
+    });
+  });
+
+  it('Snapping to CircleMarker (editable) border on CRS Simple Map', () => {
+    let mapSimple;
+    cy.window().then(({ map, L }) => {
+      map.remove();
+      mapSimple = L.map('map', {
+        crs: L.CRS.Simple,
+        minZoom: -2,
+      }).setView([0, 0], 0);
+      mapSimple.pm.addControls();
+
+      mapSimple.pm.enableDraw('CircleMarker', { editable: true });
+    });
+
+    cy.get(mapSelector).click(350, 250).click(450, 250);
+
+    cy.get(mapSelector).click(350, 450).click(465, 250);
+
+    cy.window().then(() => {
+      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      expect(radius).to.greaterThan(223);
+      expect(radius).to.below(226);
+    });
+  });
 });
