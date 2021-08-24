@@ -1234,7 +1234,7 @@ declare module 'leaflet' {
       shape: PM.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
       marker: L.Marker;
-      latLng: L.LatLng;
+      latlng: L.LatLng;
     }) => void;
     export type SnapEventHandler = (e: {
       shape: PM.SUPPORTED_SHAPES;
@@ -1249,7 +1249,7 @@ declare module 'leaflet' {
     export type CenterPlacedEventHandler = (e: {
       shape: PM.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
-      latLng: L.LatLng;
+      latlng: L.LatLng;
     }) => void;
 
     /**
@@ -1275,7 +1275,7 @@ declare module 'leaflet' {
     export type VertexAddedEventHandler2 = (e: {
       layer: L.Layer;
       indexPath: number;
-      latLng: L.LatLng;
+      latlng: L.LatLng;
       marker: L.Marker;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
@@ -1348,7 +1348,7 @@ declare module 'leaflet' {
     export type DragEventHandler = (e: {
       layer: L.Layer;
       containerPoint: any;
-      latLng: L.LatLng;
+      latlng: L.LatLng;
       layerPoint: L.Point;
       originalEvent: any;
       shape: PM.SUPPORTED_SHAPES;
