@@ -69,7 +69,6 @@ Edit.ImageOverlay = Edit.extend({
       this._fireDisable();
     }
 
-    this._layer.off('contextmenu', this._removeMarker, this);
     layer.pm._enabled = false;
     return true;
   },
