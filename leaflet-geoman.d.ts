@@ -778,7 +778,7 @@ declare module 'leaflet' {
       toggleGlobalDragMode(): void;
 
       /** Returns true if global drag mode is enabled. false when disabled. */
-      globalDragEnabled(): boolean;
+      globalDragModeEnabled(): boolean;
     }
 
     interface PMRemoveMap {
