@@ -70,30 +70,30 @@ mGroup.pm.enable();
 map2.pm.addControls({
   drawMarker: false,
   drawPolygon: true,
-  editPolygon: false,
+  editMode: false,
   drawPolyline: false,
-  deleteLayer: true,
+  removalMode: true,
 });
 // map2.pm.addControls({
 //     drawMarker: false,
 //     drawPolygon: true,
-//     editPolygon: false,
+//     editMode: false,
 //     drawPolyline: false,
-//     deleteLayer: false,
+//     removalMode: false,
 // });
 // map2.pm.addControls({
 //     drawMarker: true,
 //     drawPolygon: false,
-//     editPolygon: false,
+//     editMode: false,
 //     drawPolyline: false,
-//     deleteLayer: true,
+//     removalMode: true,
 // });
 map2.pm.addControls({
   drawMarker: true,
   drawPolygon: true,
-  editPolygon: true,
+  editMode: true,
   drawPolyline: true,
-  deleteLayer: true,
+  removalMode: true,
 });
 
 map2.pm.disableDraw('Polygon');
@@ -147,8 +147,8 @@ geoJsonLayer.addData(geoJsonData);
 map3.pm.addControls({
   drawMarker: true,
   drawPolygon: true,
-  editPolygon: true,
-  deleteLayer: true,
+  editMode: true,
+  removalMode: true,
   drawPolyline: true,
 });
 
