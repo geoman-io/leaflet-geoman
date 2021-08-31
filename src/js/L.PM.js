@@ -32,6 +32,12 @@ import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Circle';
 import './Edit/L.PM.Edit.CircleMarker';
 import './Edit/L.PM.Edit.ImageOverlay';
+import './Edit/L.PM.Edit.AdvancedImageOverlay';
+
+import AdvancedImageOverlay from "./Layer/AdvancedImageOverlay";
+import MatrixUtil from "./MatrixUtil";
+import DomUtil from "./DomUtil";
+import TrigUtil from './TrigUtil';
 
 import '../css/layers.css';
 import '../css/controls.css';
@@ -48,6 +54,10 @@ L.PM = L.PM || {
   Edit,
   Utils,
   Matrix,
+  AdvancedImageOverlay,
+  MatrixUtil,
+  DomUtil,
+  TrigUtil,
   activeLang: 'en',
   optIn: false,
   initialize(options) {
@@ -165,6 +175,20 @@ L.PM = L.PM || {
     }
 
     L.Circle.addInitHook(initCircle);
+
+    function initAdvancedImageOverlay() {
+      this.pm = undefined;
+
+      if (L.PM.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.AdvancedImageOverlay(this);
+        }
+      } else if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.AdvancedImageOverlay(this);
+      }
+    }
+
+    L.AdvancedImageOverlay.addInitHook(initAdvancedImageOverlay);
 
     function initImageOverlay() {
       this.pm = undefined;
