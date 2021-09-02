@@ -27,6 +27,7 @@
     "deleteButton": "Supprimer des calques",
     "drawCircleMarkerButton": "Dessiner un marqueur circulaire",
     "snappingButton": "Glisser le marqueur vers d'autres couches et sommets",
-    "pinningButton": "Épingler ensemble les sommets partagés"
+    "pinningButton": "Épingler ensemble les sommets partagés",
+    "rotateButton": "Tourner des calques"
   }
 }
