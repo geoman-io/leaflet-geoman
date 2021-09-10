@@ -66,13 +66,6 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('cut').click();
     cy.get(mapSelector)
-      .click(226, 389)
-      .click(230, 105)
-      .click(270, 396)
-      .click(226, 389);
-
-    cy.toolbarButton('cut').click();
-    cy.get(mapSelector)
       .click(293, 356)
       .click(293, 122)
       .click(340, 367)
@@ -86,7 +79,7 @@ describe('Draw Rectangle', () => {
       .click(364, 345);
 
     cy.toolbarButton('edit').click();
-    cy.hasVertexMarkers(16);
+    cy.hasVertexMarkers(12);
   });
 
   it('goes back to blue after self-intersection removed', () => {

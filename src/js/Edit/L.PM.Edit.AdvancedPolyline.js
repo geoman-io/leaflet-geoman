@@ -2,8 +2,9 @@ import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
-import {formatArea, formatDistance, getTranslation, isEmptyDeep, removeEmptyCoordRings} from '../helpers';
 import Utils from '../L.PM.Utils';
+
+import { isEmptyDeep, removeEmptyCoordRings } from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -15,9 +16,9 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 // So I can get 'b' with: arr[0][0][1].
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
-Edit.Line = Edit.extend({
+Edit.AdvancedPolyline = Edit.extend({
   includes: [MarkerLimits],
-  _shape: 'Line',
+  _shape: 'AdvancedPolyline',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
@@ -29,10 +30,6 @@ Edit.Line = Edit.extend({
     // take perimeter from leaflet layer
     this._perimeter = this._layer.perimeter;
 
-    // take area from leaflet polygon layer
-    if (this.isPolygon()) {
-      this._area = this._layer.area;
-    }
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {
       return;
@@ -119,8 +116,6 @@ Edit.Line = Edit.extend({
     if (this._layerEdited) {
       // save updated parameters to leaflet layer
       this._layer.perimeter = this._perimeter;
-      this._layer.area = this._area;
-
       this._fireUpdate();
     }
     this._layerEdited = false;
@@ -687,8 +682,7 @@ Edit.Line = Edit.extend({
   },
   _onMarkerDragStart(e) {
     const marker = e.target;
-    // get initial marker coords
-    this._initialMarkerCoords = marker.getLatLng();
+
     // When intersection is true while calling enable(), the cachedColor is already set
     if (!this.cachedColor) {
       this.cachedColor = this._layer.options.color;
@@ -707,25 +701,7 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._coordsBeforeEdit = this._layer.getLatLngs();
     }
-    // get neighbor markers
-    const connectedMarkers = this._getConnectedNeighborMarkers(marker);
-    // set hint on neighbor markers
-    connectedMarkers.forEach(neighborMarker => {
-      neighborMarker.bindTooltip('neighborMarker', {
-        permanent: true,
-        offset: L.point(0, 10),
-        direction: 'bottom',
-        opacity: 0.8,
-      }).openTooltip();
-    });
 
-    // set tooltip on dragged marker
-    marker.bindTooltip('center', {
-      permanent: true,
-      offset: L.point(0, 10),
-      direction: 'bottom',
-      opacity: 0.8,
-    }).openTooltip();
     if (
       !this.options.allowSelfIntersection &&
       this.options.allowSelfIntersectionEdit &&
@@ -754,13 +730,6 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    // set tooltip on dragged marker
-    marker.bindTooltip('center', {
-      permanent: true,
-      offset: L.point(0, 10),
-      direction: 'bottom',
-      opacity: 0.8,
-    }).openTooltip();
     if (
       !this.options.allowSelfIntersection &&
       this.options.allowSelfIntersectionEdit &&
@@ -810,34 +779,6 @@ Edit.Line = Edit.extend({
       );
       marker._middleMarkerPrev.setLatLng(middleMarkerPrevLatLng);
     }
-// get neighbor markers
-    const connectedMarkers = this._getConnectedNeighborMarkers(marker);
-    const neighborMarkerInitialDistance = [0, 0];
-    const neighborMarkerDistance = [0, 0];
-    let neighborMarkerIndex = 0;
-
-
-    connectedMarkers.forEach(neighborMarker => {
-      // calculate actual distance between neighbor and center marker
-      neighborMarkerDistance[neighborMarkerIndex] = neighborMarker.getLatLng().distanceTo(marker.getLatLng());
-      // calculate initial distance between neighbor and center marker
-      neighborMarkerInitialDistance[neighborMarkerIndex] = neighborMarker.getLatLng().distanceTo(this._initialMarkerCoords);
-      // update hint on neighbor marker
-      neighborMarker.setTooltipContent(`<b>${getTranslation('tooltips.distance')}:</b> ${formatDistance(neighborMarkerDistance[neighborMarkerIndex])}`);
-      // update index for next measurements
-      neighborMarkerIndex += 1;
-    });
-
-    // calculate actual perimeter
-    const actualPerimeter = this._perimeter + neighborMarkerDistance[0] - neighborMarkerInitialDistance[0] + neighborMarkerDistance[1] - neighborMarkerInitialDistance[1];
-    let markerTooltip = `<b>${getTranslation('tooltips.perimeter')}:</b> ${formatDistance(actualPerimeter)}`;
-    // calculate actual area if polygon
-    if (this.isPolygon()) {
-      this._area = Utils.calculatePolygonArea(this._layer.getLatLngs()[0]);
-      markerTooltip += `<br><b>${getTranslation('tooltips.area')}:</b> ${formatArea(this._area)}`;
-    }
-    // update center marker hint
-    marker.setTooltipContent(markerTooltip);
 
     // if self intersection is not allowed, handle it
     if (!this.options.allowSelfIntersection) {
@@ -901,46 +842,44 @@ Edit.Line = Edit.extend({
     this._fireEdit();
     this._layerEdited = true;
   },
-
   _fireEdit() {
-  // fire edit event
-  this._layerEdited = true;
-  // update layer's params
-  this._calculateFigureParams();
-  Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
-},
-_calculateFigureParams() {
-  this._recalculatePerimeter();
-},
-_recalculatePerimeter() {
-  this._perimeter = 0;
-  this._layer.getLatLngs().forEach((value, index, array) => {
-    if (index !== array.length - 1)
-      this._perimeter += value.distanceTo(array[index + 1]);
-  });
-},
-_getConnectedNeighborMarkers(marker)
-{
-  const result = [];
-  const {indexPath, index, parentPath} = this.findDeepMarkerIndex(
-    this._markers,
-    marker
-  );
-  const markerArr =
-    indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
+    // fire edit event
+    this._layerEdited = true;
+    // update layer's params
+    this._calculateFigureParams();
+    Utils._fireEvent(this._layer,'pm:edit', { layer: this._layer, shape: this.getShape() });
+  },
+  _calculateFigureParams() {
+    this._recalculatePerimeter();
+  },
+  _recalculatePerimeter() {
+    this._perimeter = 0;
+    this._layer.getLatLngs().forEach((value, index, array) => {
+      if (index !== array.length - 1)
+        this._perimeter += value.distanceTo(array[index + 1]);
+    });
+  },
+  _getConnectedNeighborMarkers(marker) {
+    const result = [];
+    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+      this._markers,
+      marker
+    );
+    const markerArr =
+      indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-  // find the indices of next and previous markers
-  const nextMarkerIndex = (index + 1) % markerArr.length;
-  const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
+    // find the indices of next and previous markers
+    const nextMarkerIndex = (index + 1) % markerArr.length;
+    const prevMarkerIndex = (index + (markerArr.length - 1)) % markerArr.length;
 
-  const {prevMarker, nextMarker} = this._getNeighborMarkers(marker);
-  // add if editing marker not last in polyline
-  if (nextMarkerIndex !== 0)
-    result.push(nextMarker);
-  // add if editing marker not first in polyline
-  if (prevMarkerIndex === index - 1)
-    result.push(prevMarker)
-  return result;
+    const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
+    // add if editing marker not last in polyline
+    if (nextMarkerIndex !== 0)
+      result.push(nextMarker);
+    // add if editing marker not first in polyline
+    if (prevMarkerIndex === index - 1)
+      result.push(prevMarker)
+    return result;
   },
   _onVertexClick(e) {
     const vertex = e.target;

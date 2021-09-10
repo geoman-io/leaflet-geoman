@@ -123,6 +123,39 @@ export function createGeodesicPolygon(origin, radius, sides, rotation) {
   return points;
 }
 
+export function formatDistance(distance) {
+  let answer = distance.toFixed(2);
+  let units = getTranslation(`units.m`);
+  // if distance more than 1000m convert to kms
+  if (distance > 1000) {
+    answer = (distance / 1000).toFixed(3);
+    units = getTranslation(`units.km`);
+  }
+  return answer + units;
+}
+
+export function formatArea(area) {
+  let result;
+  let units = getTranslation(`units.m`);
+  switch (true) {
+    case (area > 1000000): // convert to square km
+      units = getTranslation(`units.km`);
+      result = (area / 1000000).toFixed(3) + units;
+      break;
+    case (area > 10000): // convert to hectares
+      units = getTranslation(`units.ha`);
+      result = (area / 10000).toFixed(2) + units;
+      break;
+    case (area > 100): // convert to ares
+      units = getTranslation(`units.a`);
+      result = (area / 100).toFixed(1) + units;
+      break
+    default: // keep in meters
+      result = area.toFixed(2) + units;
+  }
+  return result;
+}
+
 /* Copied from L.GeometryUtil */
 function destination(latlng, heading, distance) {
   heading = (heading + 360) % 360;

@@ -1,36 +1,37 @@
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
-import Utils from "../L.PM.Utils";
-
 import {formatDistance, getTranslation} from '../helpers';
 
-Draw.Line = Draw.extend({
+Draw.AdvancedPolyline = Draw.extend({
   initialize(map) {
     this._map = map;
-    this._shape = 'Line';
-    this.toolbarButtonName = 'drawPolyline';
+    this._shape = 'AdvancedPolyline';
+    this.toolbarButtonName = 'drawAdvancedPolyline';
     this._doesSelfIntersect = false;
   },
   enable(options) {
+
     L.Util.setOptions(this, options);
 
     // enable draw mode
     this._enabled = true;
+
     // set initial perimeter
     this._perimeter = 0;
+
     // create a new layergroup
     this._layerGroup = new L.LayerGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
 
     // this is the polyLine that'll make up the polygon
-    this._layer = L.polyline([], this.options.templineStyle);
+    this._layer = L.advancedPolyline([],this.options.templineStyle);
     this._setPane(this._layer, 'layerPane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
     // this is the hintline from the mouse cursor to the last marker
-    this._hintline = L.polyline([], this.options.hintlineStyle);
+    this._hintline = L.advancedPolyline([], this.options.hintlineStyle);
     this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
@@ -166,8 +167,10 @@ Draw.Line = Draw.extend({
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
+
     // update marker hint
     this._updateHintMarkerContent();
+
     // if snapping is enabled, do it
     if (this.options.snappable) {
       const fakeDragEvent = e;
@@ -193,7 +196,7 @@ Draw.Line = Draw.extend({
     // intersection on the clone. Phew... - let's do it 💪
 
     // clone layer (polyline is enough, even when it's a polygon)
-    const clone = L.polyline(this._layer.getLatLngs());
+    const clone = L.advancedPolyline(this._layer.getLatLngs());
 
     if (addVertex) {
       // get vertex from param or from hintmarker
@@ -249,11 +252,13 @@ Draw.Line = Draw.extend({
     }
     // is this the first point?
     const first = this._layer.getLatLngs().length === 0;
+
     this._layer._latlngInfo = this._layer._latlngInfo || [];
     this._layer._latlngInfo.push({
       latlng,
       snapInfo: this._hintMarker._snapInfo,
     });
+
     // add distance between vertices
     if (!first) {
       this._perimeter += latlng.distanceTo(this._layer.getLatLngs()[this._layer.getLatLngs().length - 1]);
@@ -329,7 +334,7 @@ Draw.Line = Draw.extend({
     }
 
     // create the leaflet shape and add it to the map
-    const polylineLayer = L.polyline(coords, this.options.pathOptions);
+    const polylineLayer = L.advancedPolyline(coords, this.options.pathOptions);
     this._setPane(polylineLayer, 'layerPane');
     this._finishLayer(polylineLayer);
     polylineLayer.addTo(this._map.pm._getContainingLayer());

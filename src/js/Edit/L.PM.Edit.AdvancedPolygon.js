@@ -2,8 +2,9 @@ import lineIntersect from '@turf/line-intersect';
 import Edit from './L.PM.Edit';
 import Utils from "../L.PM.Utils";
 
-Edit.Polygon = Edit.Line.extend({
-  _shape: 'Polygon',
+
+Edit.AdvancedPolygon = Edit.AdvancedPolyline.extend({
+  _shape: 'AdvancedPolygon',
   _checkMarkerAllowedToDrag(marker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
@@ -37,6 +38,7 @@ Edit.Polygon = Edit.Line.extend({
       else
         this._perimeter += value.distanceTo(array[0]); // edge between first and last vertices
     });
+
   },
   _getConnectedNeighborMarkers(marker) {
     const result = [];

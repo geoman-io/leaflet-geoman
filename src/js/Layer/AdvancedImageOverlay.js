@@ -39,7 +39,6 @@ L.AdvancedImageOverlay = L.ImageOverlay.extend({
         this.setAngle(value, units);
       }
     });
-
     this._map.on('zoomanim', this._animateZoom, this);
   },
   _reset() {
@@ -107,8 +106,6 @@ L.AdvancedImageOverlay = L.ImageOverlay.extend({
     return this;
   },
   getAngle(unit = 'deg') {
-    console.log('getAngle');
-    console.log(this.getElement().style.cssText)
     const matrixBeforesplice = this.getElement().style[L.DomUtil.TRANSFORM]
       .split('matrix3d')[1];
     // if (matrixBeforesplice === undefined)
@@ -253,3 +250,5 @@ L.AdvancedImageOverlay = L.ImageOverlay.extend({
 });
 
 L.advancedImageOverlay = (url, bounds, options) => new L.AdvancedImageOverlay(url, bounds, options);
+
+

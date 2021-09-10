@@ -8,7 +8,10 @@
     "finishRect": "Click to finish",
     "startCircle": "Click to place circle center",
     "finishCircle": "Click to finish circle",
-    "placeCircleMarker": "Click to place circle marker"
+    "placeCircleMarker": "Click to place circle marker",
+    "distance": "Distance",
+    "perimeter": "Perimeter",
+    "area": "Area"
   },
   "actions": {
     "finish": "Finish",
@@ -19,6 +22,7 @@
     "drawMarkerButton": "Draw Marker",
     "drawPolyButton": "Draw Polygons",
     "drawLineButton": "Draw Polyline",
+    "drawAdvancedPolylineButton": "Draw Advanced Polyline",
     "drawCircleButton": "Draw Circle",
     "drawRectButton": "Draw Rectangle",
     "editButton": "Edit Layers",
@@ -29,5 +33,11 @@
     "snappingButton": "Snap dragged marker to other layers and vertices",
     "pinningButton": "Pin shared vertices together",
     "rotateButton": "Rotate Layers"
+  },
+  "units": {
+    "m": "m",
+    "km": "km",
+    "ha": "ha",
+    "a": "a"
   }
 }

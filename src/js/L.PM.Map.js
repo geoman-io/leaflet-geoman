@@ -29,6 +29,8 @@ const Map = L.Class.extend({
         'CircleMarker',
         'Circle',
         'Line',
+        'AdvancedPolyline',
+        'AdvancedPolygon',
         'Polygon',
         'Rectangle',
       ],

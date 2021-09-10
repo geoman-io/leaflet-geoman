@@ -3,11 +3,11 @@ import Utils from "../L.PM.Utils";
 
 import {formatDistance, getTranslation} from '../helpers';
 
-Draw.Polygon = Draw.Line.extend({
+Draw.AdvancedPolygon = Draw.AdvancedPolyline.extend({
   initialize(map) {
     this._map = map;
-    this._shape = 'Polygon';
-    this.toolbarButtonName = 'drawPolygon';
+    this._shape = 'AdvancedPolygon';
+    this.toolbarButtonName = 'drawAdvancedPolygon';
   },
   _createMarker(latlng) {
     // create the new marker
@@ -78,7 +78,7 @@ Draw.Polygon = Draw.Line.extend({
     if (coords.length <= 2) {
       return;
     }
-    const polygonLayer = L.polygon(coords, this.options.pathOptions).addTo(
+    const polygonLayer = L.advancedPolygon(coords, this.options.pathOptions).addTo(
       this._map.pm._getContainingLayer()
     );
 

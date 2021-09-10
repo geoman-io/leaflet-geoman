@@ -10,6 +10,8 @@ const Toolbar = L.Class.extend({
     drawRectangle: true,
     drawPolyline: true,
     drawPolygon: true,
+    drawAdvancedPolyline: true,
+    drawAdvancedPolygon: true,
     drawCircle: true,
     drawCircleMarker: true,
     editMode: true,
@@ -110,6 +112,8 @@ const Toolbar = L.Class.extend({
       geomanIcons: {
         drawMarker: 'control-icon leaflet-pm-icon-marker',
         drawPolyline: 'control-icon leaflet-pm-icon-polyline',
+        drawAdvancedPolyline: 'control-icon leaflet-pm-icon-rectangle',
+        drawAdvancedPolygon: 'control-icon leaflet-pm-icon-rectangle',
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
@@ -237,6 +241,38 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-polyline',
       title: getTranslation('buttonTitles.drawLineButton'),
       jsClass: 'Line',
+      onClick: () => {},
+      afterClick: (e, ctx) => {
+        // toggle drawing mode
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['finish', 'removeLastVertex', 'cancel'],
+    };
+
+    const drawAdvancedPolylineButton = {
+      title: getTranslation('buttonTitles.drawAdvancedPolylineButton'),
+      jsClass: 'AdvancedPolyline',
+
+      onClick: () => {},
+      afterClick: (e, ctx) => {
+        // toggle drawing mode
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['finish', 'removeLastVertex', 'cancel'],
+    };
+
+    const drawAdvancedPolygonButton = {
+      title: getTranslation('buttonTitles.drawAdvancedPolylineButton'),
+      jsClass: 'AdvancedPolygon',
+
       onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
@@ -380,6 +416,8 @@ const Toolbar = L.Class.extend({
 
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
     this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
+    this._addButton('drawAdvancedPolyline', new L.Control.PMButton(drawAdvancedPolylineButton));
+    this._addButton('drawAdvancedPolygon', new L.Control.PMButton(drawAdvancedPolygonButton));
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
     this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
@@ -642,6 +680,8 @@ const Toolbar = L.Class.extend({
       Rectangle: 'drawRectangle',
       Polyline: 'drawPolyline',
       Line: 'drawPolyline',
+      AdvancedPolyline: 'drawAdvancedPolyline',
+      AdvancedPolygon: 'drawAdvancedPolygon',
       CircleMarker: 'drawCircleMarker',
       Edit: 'editMode',
       Drag: 'dragMode',
