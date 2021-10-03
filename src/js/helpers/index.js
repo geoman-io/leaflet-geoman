@@ -237,3 +237,12 @@ export function copyLatLngs(layer, latlngs = layer.getLatLngs()) {
   }
   return L.polyline(latlngs).getLatLngs();
 }
+
+// Replaces the lat value with the MAX_LATITUDE of CRS if it is lower / higher
+export function fixLatOffset(latlng, map) {
+  if (map.options.crs?.projection?.MAX_LATITUDE) {
+    const max = map.options.crs?.projection?.MAX_LATITUDE;
+    latlng.lat = Math.max(Math.min(max, latlng.lat), -max);
+  }
+  return latlng;
+}

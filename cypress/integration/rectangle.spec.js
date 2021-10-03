@@ -533,4 +533,39 @@ describe('Draw Rectangle', () => {
     cy.hasVertexMarkers(4);
     cy.hasMiddleMarkers(0);
   });
+
+  it('check if MAX_LATITUDE of CRS is used', () => {
+    cy.window().then(({ map }) => {
+      map.setZoom(0);
+    });
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(350, 250);
+
+    cy.window().then(({ L, map }) => {
+      // move the hintMarker outside of the map bounds (max is 85.0511287798)
+      map.pm.Draw.Rectangle._hintMarker.setLatLng(L.latLng(87, -302));
+
+      const drawRect = map.pm.Draw.Rectangle;
+
+      const markers = [
+        drawRect._hintMarker,
+        drawRect._startMarker,
+        ...drawRect._styleMarkers,
+      ];
+      const latlngs = markers.map((m) => m.getLatLng());
+
+      // check if the two top markers has the maximum lat of 85.0511287798 (and not 87)
+      let maxLatUsed = 0;
+      latlngs.forEach((latlng) => {
+        if (
+          latlng.lat.toFixed(9) ===
+          map.options.crs.projection.MAX_LATITUDE.toFixed(9)
+        ) {
+          maxLatUsed += 1;
+        }
+      });
+
+      expect(maxLatUsed).to.eq(2);
+    });
+  });
 });
