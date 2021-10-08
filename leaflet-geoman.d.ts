@@ -1379,9 +1379,8 @@ declare module 'leaflet' {
      * CUT MODE MAP EVENT HANDLERS
      */
     export type GlobalCutModeToggledEventHandler = (e: {
-      layer: L.Layer;
-      originalLayer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      enabled: boolean;
+      map: L.Map;
     }) => void;
     export type CutEventHandler = (e: {
       layer: L.Layer;
