@@ -363,6 +363,11 @@ Draw.CircleMarker = Draw.Marker.extend({
     let secondLatLng = this._hintMarker.getLatLng();
     if (this.options.editable) {
       const latlng = this._centerMarker.getLatLng();
+
+      if (latlng.equals(L.latLng([0, 0]))) {
+        return secondLatLng;
+      }
+
       const distance = this._map
         .project(latlng)
         .distanceTo(this._map.project(secondLatLng));

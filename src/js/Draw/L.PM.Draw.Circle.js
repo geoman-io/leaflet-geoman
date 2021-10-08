@@ -277,6 +277,10 @@ Draw.Circle = Draw.extend({
     let secondLatLng = this._hintMarker.getLatLng();
     const distance = latlng.distanceTo(secondLatLng);
 
+    if (latlng.equals(L.latLng([0, 0]))) {
+      return secondLatLng;
+    }
+
     if (
       this.options.minRadiusCircle &&
       distance < this.options.minRadiusCircle
