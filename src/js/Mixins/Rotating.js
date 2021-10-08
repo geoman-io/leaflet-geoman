@@ -235,11 +235,6 @@ const RotateMixin = {
   getAngle() {
     return this._angle || 0;
   },
-  _onLayerRemoveWhileRotation() {
-    if (this._rotatePoly) {
-      this.disableRotate();
-    }
-  },
 };
 
 export default RotateMixin;
