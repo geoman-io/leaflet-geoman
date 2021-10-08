@@ -136,7 +136,7 @@ describe('Draw Circle Marker', () => {
     cy.hasVertexMarkers(2);
   });
 
-  it.only('enable continueDrawing #2', () => {
+  it('enable continueDrawing #2', () => {
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({ continueDrawing: true, editable: true });
     });
