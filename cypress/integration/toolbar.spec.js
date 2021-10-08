@@ -300,7 +300,7 @@ describe('Testing the Toolbar', () => {
     cy.get('.leaflet-pm-toolbar').should('not.exist');
 
     cy.window().then(({ map }) => {
-      map.pm.Toolbar.copyDrawControl('Polygon', {name: 'PolygonCopy'});
+      map.pm.Toolbar.copyDrawControl('Polygon', { name: 'PolygonCopy' });
     });
 
     cy.get('.leaflet-pm-toolbar').should('not.exist');
