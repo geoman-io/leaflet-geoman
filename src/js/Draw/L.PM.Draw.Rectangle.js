@@ -1,5 +1,5 @@
 import Draw from './L.PM.Draw';
-import { getTranslation } from '../helpers';
+import { fixLatOffset, getTranslation } from '../helpers';
 
 Draw.Rectangle = Draw.extend({
   initialize(map) {
@@ -203,8 +203,8 @@ Draw.Rectangle = Draw.extend({
     }
   },
   _syncRectangleSize() {
-    const A = this._startMarker.getLatLng();
-    const B = this._hintMarker.getLatLng();
+    const A = fixLatOffset(this._startMarker.getLatLng(), this._map);
+    const B = fixLatOffset(this._hintMarker.getLatLng(), this._map);
 
     // Create a (maybe rotated) box using corners A & B (A = Starting Position, B = Current Mouse Position)
     const corners = L.PM.Utils._getRotatedRectangle(
@@ -221,17 +221,19 @@ Draw.Rectangle = Draw.extend({
 
       // Find two corners not currently occupied by starting marker and hint marker
       corners.forEach((corner) => {
-        if (
-          !corner.equals(this._startMarker.getLatLng()) &&
-          !corner.equals(this._hintMarker.getLatLng())
-        ) {
+        // the default equals margin is 1.0e-9 but in other crs projections the latlng equality can be slightly different after `_getRotatedRectangle`, so we make the precession a little bit lower
+        if (!corner.equals(A, 1.0e-8) && !corner.equals(B, 1.0e-8)) {
           unmarkedCorners.push(corner);
         }
       });
 
       // Reposition style markers
       unmarkedCorners.forEach((unmarkedCorner, index) => {
-        this._styleMarkers[index].setLatLng(unmarkedCorner);
+        try {
+          this._styleMarkers[index].setLatLng(unmarkedCorner);
+        } catch (e) {
+          // ignore error - should be fixed with the next mousemove
+        }
       });
     }
   },
