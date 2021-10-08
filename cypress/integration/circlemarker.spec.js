@@ -319,4 +319,14 @@ describe('Draw Circle Marker', () => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
   });
+  it('checks if circle is hidden before drawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({editable: true});
+    });
+    cy.toolbarButton('circle-marker').click();
+    cy.window().then(({ map }) => {
+      // if map property is null, then it is not visible
+      expect(!!map.pm.Draw.CircleMarker._layer._map).to.eq(false);
+    });
+  });
 });
