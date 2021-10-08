@@ -237,7 +237,7 @@ const RotateMixin = {
   },
   _onLayerRemoveWhileRotation() {
     if (this._rotatePoly) {
-      this._rotatePoly.remove();
+      this.disableRotate();
     }
   },
 };
