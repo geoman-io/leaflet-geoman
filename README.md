@@ -1065,7 +1065,7 @@ The following methods are available on `L.PM.Utils`:
 | calcMiddleLatLng(`map`, `latlng1`, `latlng2`) | `LatLng`  | Returns the middle LatLng between two LatLngs.                                                 |
 | getTranslation(`path`)                        | `String`  | Returns the translation of the passed `path`. path = json-string f.ex. `tooltips.placeMarker`. |
 | findLayers(`map`)                             | `Array`   | Returns all layers that are available for Leaflet-Geoman.                                      |
-| circleToPolygon(`circle`, `sides = 60`)       | `Polygon` | Converts a circle into a polygon with default 60 sides.                                        |
+| circleToPolygon(`circle`, `sides = 60`, `withBearing = true`) | `Polygon` | Converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false. |
 
 ### Keyboard
 

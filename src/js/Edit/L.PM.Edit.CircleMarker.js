@@ -346,17 +346,25 @@ Edit.CircleMarker = Edit.extend({
     if (map) {
       const pointA = map.project(this._layer.getLatLng());
       const pointB = L.point(pointA.x + this._layer.getRadius(), pointA.y);
-      const radius = this._layer.getLatLng().distanceTo(map.unproject(pointB));
+      const radius = map.distance(
+        this._layer.getLatLng(),
+        map.unproject(pointB)
+      );
 
       const _layer = L.circle(this._layer.getLatLng(), this._layer.options);
       _layer.setRadius(radius);
 
+      const crsSimple = map && map.pm._isCRSSimple();
       if (this._hiddenPolyCircle) {
         this._hiddenPolyCircle.setLatLngs(
-          L.PM.Utils.circleToPolygon(_layer, 200).getLatLngs()
+          L.PM.Utils.circleToPolygon(_layer, 200, !crsSimple).getLatLngs()
         );
       } else {
-        this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(_layer, 200);
+        this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(
+          _layer,
+          200,
+          !crsSimple
+        );
       }
 
       if (!this._hiddenPolyCircle._parentCopy) {

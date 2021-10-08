@@ -135,6 +135,27 @@ describe('Draw Circle Marker', () => {
 
     cy.hasVertexMarkers(2);
   });
+
+  it('enable continueDrawing #2', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ continueDrawing: true, editable: true });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw first circle
+    cy.get(mapSelector).click(200, 200).click(250, 250);
+
+    // draw with continueDrawing: ture the second circle
+    cy.get(mapSelector).click(300, 200).click(350, 250);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(4);
+  });
+
   it('snapping to CircleMarker with pmIgnore:true', () => {
     cy.window().then(({ map, L }) => {
       L.circleMarker(map.getCenter(), { pmIgnore: true }).addTo(map);
@@ -317,6 +338,52 @@ describe('Draw Circle Marker', () => {
 
     cy.window().then(({ map }) => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
+
+  it('Snapping to CircleMarker border on CRS Simple Map', () => {
+    let mapSimple;
+    cy.window().then(({ map, L }) => {
+      map.remove();
+      mapSimple = L.map('map', {
+        crs: L.CRS.Simple,
+        minZoom: -2,
+      }).setView([0, 0], 0);
+      mapSimple.pm.addControls();
+
+      mapSimple.pm.enableDraw('CircleMarker', { pathOptions: { radius: 40 } });
+    });
+
+    cy.get(mapSelector).click(350, 250);
+    cy.get(mapSelector).click(350, 300);
+
+    cy.window().then(() => {
+      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      expect(radius).to.eq(40);
+    });
+  });
+
+  it('Snapping to CircleMarker (editable) border on CRS Simple Map', () => {
+    let mapSimple;
+    cy.window().then(({ map, L }) => {
+      map.remove();
+      mapSimple = L.map('map', {
+        crs: L.CRS.Simple,
+        minZoom: -2,
+      }).setView([0, 0], 0);
+      mapSimple.pm.addControls();
+
+      mapSimple.pm.enableDraw('CircleMarker', { editable: true });
+    });
+
+    cy.get(mapSelector).click(350, 250).click(450, 250);
+
+    cy.get(mapSelector).click(350, 450).click(465, 250);
+
+    cy.window().then(() => {
+      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      expect(radius).to.greaterThan(223);
+      expect(radius).to.below(226);
     });
   });
 });
