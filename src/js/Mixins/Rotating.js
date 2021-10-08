@@ -183,7 +183,7 @@ const RotateMixin = {
       this._rotatePoly = undefined;
       this._rotateOrgLatLng = undefined;
 
-      this._layer.off('remove', this._onLayerRemoveWhileRotation, this);
+      this._layer.off('remove', this.disableRotate, this);
 
       this._rotateEnabled = false;
 
