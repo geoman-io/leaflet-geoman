@@ -168,7 +168,7 @@ const RotateMixin = {
 
     this._rotateEnabled = true;
 
-    this._layer.on('remove', this._onLayerRemoveWhileRotation, this);
+    this._layer.on('remove', this.disableRotate, this);
 
     this._fireRotationEnable(this._layer);
     // we need to use this._layer._map because this._map can be undefined if layer was never enabled for editing before
