@@ -26,7 +26,6 @@ Draw.Circle = Draw.extend({
     this._layer = L.circle([0, 0], this.options.templineStyle);
     this._setPane(this._layer, 'layerPane');
     this._layer._pmTempLayer = true;
-    this._layerGroup.addLayer(this._layer);
 
     // this is the marker in the center of the circle
     this._centerMarker = L.marker([0, 0], {
@@ -36,7 +35,6 @@ Draw.Circle = Draw.extend({
     });
     this._setPane(this._centerMarker, 'vertexPane');
     this._centerMarker._pmTempLayer = true;
-    this._layerGroup.addLayer(this._centerMarker);
 
     // this is the hintmarker on the mouse cursor
     this._hintMarker = L.marker([0, 0], {
@@ -181,6 +179,8 @@ Draw.Circle = Draw.extend({
     this._handleHintMarkerSnapping();
   },
   _placeCenterMarker(e) {
+    this._layerGroup.addLayer(this._layer);
+    this._layerGroup.addLayer(this._centerMarker);
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
