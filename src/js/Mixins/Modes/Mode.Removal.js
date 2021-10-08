@@ -22,7 +22,7 @@ const GlobalRemovalMode = {
     this.map.on('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
-    this.Toolbar.toggleButton('deleteLayer', this.globalRemovalModeEnabled());
+    this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
 
     this._fireGlobalRemovalModeToggled(true);
   },
@@ -36,7 +36,7 @@ const GlobalRemovalMode = {
     this.map.off('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
-    this.Toolbar.toggleButton('deleteLayer', this.globalRemovalModeEnabled());
+    this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
 
     this._fireGlobalRemovalModeToggled(false);
   },
