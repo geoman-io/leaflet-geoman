@@ -99,6 +99,8 @@ describe('Draw Circle', () => {
     // draw with continueDrawing: true the second circle
     cy.get(mapSelector).click(300, 200).click(350, 250);
 
+    // additional click because cypress lose the focus on the window ... wtf ...
+    cy.get(mapSelector).click();
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(4);
   });
