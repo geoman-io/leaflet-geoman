@@ -136,7 +136,7 @@ describe('Draw Circle Marker', () => {
     cy.hasVertexMarkers(2);
   });
 
-  it('enable continueDrawing #2', () => {
+  it.only('enable continueDrawing #2', () => {
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({ continueDrawing: true, editable: true });
     });
@@ -151,6 +151,9 @@ describe('Draw Circle Marker', () => {
 
     // draw with continueDrawing: ture the second circle
     cy.get(mapSelector).click(300, 200).click(350, 250);
+
+    // additional click because cypress lose the focus on the window ... wtf ...
+    cy.get(mapSelector).click();
 
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(4);
