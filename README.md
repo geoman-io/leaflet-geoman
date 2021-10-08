@@ -142,10 +142,27 @@ And to disable it:
 L.PM.setOptIn(false);
 ```
 
+If you have enabled opt-in before you init the map, you need to specify `pmIgnore: false` in the map options:
+
+```js
+const map = L.map('map', { pmIgnore: false })
+```
+
 All layers will be ignored by Leaflet-Geoman, unless you specify `pmIgnore: false` on a layer:
 
 ```js
 L.marker([51.50915, -0.096112], { pmIgnore: false }).addTo(map);
+```
+
+Newly drawn layers will be ignored as well.
+
+To prevent this you can add the following event handler:
+
+```js
+map.on('pm:create', (e) => {
+  e.layer.setStyle({ pmIgnore: false });
+  L.PM.reInitLayer(e.layer);
+});
 ```
 
 #### Leaflet-Geoman Toolbar
@@ -1048,7 +1065,7 @@ The following methods are available on `L.PM.Utils`:
 | calcMiddleLatLng(`map`, `latlng1`, `latlng2`) | `LatLng`  | Returns the middle LatLng between two LatLngs.                                                 |
 | getTranslation(`path`)                        | `String`  | Returns the translation of the passed `path`. path = json-string f.ex. `tooltips.placeMarker`. |
 | findLayers(`map`)                             | `Array`   | Returns all layers that are available for Leaflet-Geoman.                                      |
-| circleToPolygon(`circle`, `sides = 60`)       | `Polygon` | Converts a circle into a polygon with default 60 sides.                                        |
+| circleToPolygon(`circle`, `sides = 60`, `withBearing = true`) | `Polygon` | Converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false. |
 
 ### Keyboard
 

@@ -23,7 +23,7 @@ Draw.Circle = Draw.extend({
     this._layerGroup.addTo(this._map);
 
     // this is the circle we want to draw
-    this._layer = L.circle([0, 0], this.options.templineStyle);
+    this._layer = L.circle([0, 0], {...this.options.templineStyle, radius: 0});
     this._setPane(this._layer, 'layerPane');
     this._layer._pmTempLayer = true;
 
@@ -189,7 +189,7 @@ Draw.Circle = Draw.extend({
 
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();
-
+    this._layerGroup.addLayer(this._layer);
     this._centerMarker.setLatLng(latlng);
 
     this._map.off('click', this._placeCenterMarker, this);
@@ -277,6 +277,10 @@ Draw.Circle = Draw.extend({
     const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._hintMarker.getLatLng();
     const distance = latlng.distanceTo(secondLatLng);
+
+    if (latlng.equals(L.latLng([0, 0]))) {
+      return secondLatLng;
+    }
 
     if (
       this.options.minRadiusCircle &&

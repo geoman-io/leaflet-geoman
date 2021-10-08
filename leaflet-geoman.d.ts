@@ -778,7 +778,7 @@ declare module 'leaflet' {
       toggleGlobalDragMode(): void;
 
       /** Returns true if global drag mode is enabled. false when disabled. */
-      globalDragEnabled(): boolean;
+      globalDragModeEnabled(): boolean;
     }
 
     interface PMRemoveMap {
@@ -1201,8 +1201,8 @@ declare module 'leaflet' {
       /** returns all layers that are available for Geoman */
       function findLayers(map: L.Map): L.Layer[];
 
-      /** converts a circle into a polygon with default 60 sides */
-      function circleToPolygon(circle: L.Circle, sides?: number): L.Polygon;
+      /** converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false */
+      function circleToPolygon(circle: L.Circle, sides?: number, withBearing?: boolean): L.Polygon;
     }
 
     /**
@@ -1234,7 +1234,7 @@ declare module 'leaflet' {
       shape: PM.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
       marker: L.Marker;
-      latLng: L.LatLng;
+      latlng: L.LatLng;
     }) => void;
     export type SnapEventHandler = (e: {
       shape: PM.SUPPORTED_SHAPES;
@@ -1249,7 +1249,7 @@ declare module 'leaflet' {
     export type CenterPlacedEventHandler = (e: {
       shape: PM.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
-      latLng: L.LatLng;
+      latlng: L.LatLng;
     }) => void;
 
     /**
@@ -1275,7 +1275,7 @@ declare module 'leaflet' {
     export type VertexAddedEventHandler2 = (e: {
       layer: L.Layer;
       indexPath: number;
-      latLng: L.LatLng;
+      latlng: L.LatLng;
       marker: L.Marker;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
@@ -1348,7 +1348,7 @@ declare module 'leaflet' {
     export type DragEventHandler = (e: {
       layer: L.Layer;
       containerPoint: any;
-      latLng: L.LatLng;
+      latlng: L.LatLng;
       layerPoint: L.Point;
       originalEvent: any;
       shape: PM.SUPPORTED_SHAPES;
@@ -1379,9 +1379,8 @@ declare module 'leaflet' {
      * CUT MODE MAP EVENT HANDLERS
      */
     export type GlobalCutModeToggledEventHandler = (e: {
-      layer: L.Layer;
-      originalLayer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      enabled: boolean;
+      map: L.Map;
     }) => void;
     export type CutEventHandler = (e: {
       layer: L.Layer;

@@ -99,9 +99,9 @@ const Toolbar = L.Class.extend({
 
     this.applyIconStyle();
 
+    this.isVisible = true;
     // now show the specified buttons
     this._showHideButtons();
-    this.isVisible = true;
   },
   applyIconStyle() {
     const buttons = this.getButtons();
@@ -395,9 +395,17 @@ const Toolbar = L.Class.extend({
   },
 
   _showHideButtons() {
+
+    // if Toolbar is not visible, we don't need to update button positions
+    if(!this.isVisible){
+      return;
+    }
+
     // remove all buttons, that's because the Toolbar can be added again with
     // different options so it's basically a reset and add again
     this.removeControls();
+    // we need to set isVisible = true again, because removeControls() set it to false
+    this.isVisible = true;
 
     const buttons = this.getButtons();
     let ignoreBtns = [];
@@ -441,6 +449,7 @@ const Toolbar = L.Class.extend({
         buttons[btn].addTo(this.map);
       }
     }
+
   },
   _getBtnPosition(block) {
     return this.options.positions && this.options.positions[block]
