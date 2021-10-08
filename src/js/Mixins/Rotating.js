@@ -168,6 +168,8 @@ const RotateMixin = {
 
     this._rotateEnabled = true;
 
+    this._layer.on('remove', this._onLayerRemoveWhileRotation, this);
+
     this._fireRotationEnable(this._layer);
     // we need to use this._layer._map because this._map can be undefined if layer was never enabled for editing before
     this._fireRotationEnable(this._layer._map);
@@ -180,6 +182,8 @@ const RotateMixin = {
       this._rotatePoly.pm.setOptions({ rotate: false });
       this._rotatePoly = undefined;
       this._rotateOrgLatLng = undefined;
+
+      this._layer.off('remove', this._onLayerRemoveWhileRotation, this);
 
       this._rotateEnabled = false;
 
@@ -230,6 +234,11 @@ const RotateMixin = {
   // angle is clockwise (0-360)
   getAngle() {
     return this._angle || 0;
+  },
+  _onLayerRemoveWhileRotation() {
+    if (this._rotatePoly) {
+      this._rotatePoly.remove();
+    }
   },
 };
 
