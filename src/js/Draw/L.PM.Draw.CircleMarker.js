@@ -31,7 +31,6 @@ Draw.CircleMarker = Draw.Marker.extend({
       this._layer = L.circleMarker([0, 0], this.options.templineStyle);
       this._setPane(this._layer, 'layerPane');
       this._layer._pmTempLayer = true;
-      this._layerGroup.addLayer(this._layer);
 
       // this is the marker in the center of the circle
       this._centerMarker = L.marker([0, 0], {
@@ -181,6 +180,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();
+    this._layerGroup.addLayer(this._layer);
 
     this._centerMarker.setLatLng(latlng);
 
@@ -363,6 +363,11 @@ Draw.CircleMarker = Draw.Marker.extend({
     let secondLatLng = this._hintMarker.getLatLng();
     if (this.options.editable) {
       const latlng = this._centerMarker.getLatLng();
+
+      if (latlng.equals(L.latLng([0, 0]))) {
+        return secondLatLng;
+      }
+
       const distance = this._map
         .project(latlng)
         .distanceTo(this._map.project(secondLatLng));
