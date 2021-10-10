@@ -1202,7 +1202,11 @@ declare module 'leaflet' {
       function findLayers(map: L.Map): L.Layer[];
 
       /** converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false */
-      function circleToPolygon(circle: L.Circle, sides?: number, withBearing?: boolean): L.Polygon;
+      function circleToPolygon(
+        circle: L.Circle,
+        sides?: number,
+        withBearing?: boolean
+      ): L.Polygon;
     }
 
     /**

@@ -302,9 +302,9 @@ const DragMixin = {
     };
 
     // move the coordinates by the delta
-    const moveCoords = coords =>
+    const moveCoords = (coords) =>
       // alter the coordinates
-      coords.map(currentLatLng => {
+      coords.map((currentLatLng) => {
         if (Array.isArray(currentLatLng)) {
           // do this recursively as coords might be nested
           return moveCoords(currentLatLng);
@@ -414,7 +414,7 @@ const DragMixin = {
         // layers
         layersToSync = this.options.syncLayersOnDrag;
 
-        this.options.syncLayersOnDrag.forEach(layer => {
+        this.options.syncLayersOnDrag.forEach((layer) => {
           if (layer instanceof L.LayerGroup) {
             layersToSync = layersToSync.concat(layer.pm.getLayers(true));
           }
@@ -434,9 +434,9 @@ const DragMixin = {
       if (L.Util.isArray(layersToSync) && layersToSync.length > 0) {
         // filter out layers that don't have leaflet-geoman and not allowed to drag
         layersToSync = layersToSync
-          .filter(layer => !!layer.pm)
-          .filter(layer => !!layer.pm.options.draggable);
-        layersToSync.forEach(layer => {
+          .filter((layer) => !!layer.pm)
+          .filter((layer) => !!layer.pm.options.draggable);
+        layersToSync.forEach((layer) => {
           if (layer !== this._layer && layer.pm[fnc]) {
             layer._snapped = false;
             layer.pm[fnc](e);

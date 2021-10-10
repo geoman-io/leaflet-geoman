@@ -23,7 +23,10 @@ Draw.Circle = Draw.extend({
     this._layerGroup.addTo(this._map);
 
     // this is the circle we want to draw
-    this._layer = L.circle([0, 0], {...this.options.templineStyle, radius: 0});
+    this._layer = L.circle([0, 0], {
+      ...this.options.templineStyle,
+      radius: 0,
+    });
     this._setPane(this._layer, 'layerPane');
     this._layer._pmTempLayer = true;
 
