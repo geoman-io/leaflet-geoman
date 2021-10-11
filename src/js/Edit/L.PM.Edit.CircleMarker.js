@@ -386,7 +386,7 @@ Edit.CircleMarker = Edit.extend({
         this._map,
         latlng,
         secondLatLng,
-        this._pxRadiusToMeter(this.options.minRadiusCircleMarker)
+        L.PM.Utils.pxRadiusToMeterRadius(this.options.minRadiusCircleMarker, this._map, latlng)
       );
     } else if (
       this.options.maxRadiusCircleMarker &&
@@ -396,7 +396,7 @@ Edit.CircleMarker = Edit.extend({
         this._map,
         latlng,
         secondLatLng,
-        this._pxRadiusToMeter(this.options.maxRadiusCircleMarker)
+        L.PM.Utils.pxRadiusToMeterRadius(this.options.maxRadiusCircleMarker, this._map, latlng)
       );
     }
     return secondLatLng;
@@ -422,11 +422,5 @@ Edit.CircleMarker = Edit.extend({
     }
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
-  },
-  _pxRadiusToMeter(radius) {
-    const center = this._centerMarker.getLatLng();
-    const pointA = this._map.project(center);
-    const pointB = L.point(pointA.x + radius, pointA.y);
-    return this._map.unproject(pointB).distanceTo(center);
-  },
+  }
 });

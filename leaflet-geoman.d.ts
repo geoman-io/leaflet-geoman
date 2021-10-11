@@ -1207,6 +1207,13 @@ declare module 'leaflet' {
         sides?: number,
         withBearing?: boolean
       ): L.Polygon;
+
+      /** Converts a px-radius (CircleMarker) to meter-radius (Circle). The center LatLng is needed because the earth has different projections on different places. **/
+      function pxRadiusToMeterRadius(
+        radiusInPx: number,
+        map: L.Map,
+        center: L.LatLng
+      ): number;
     }
 
     /**
