@@ -344,13 +344,11 @@ Edit.CircleMarker = Edit.extend({
   _updateHiddenPolyCircle() {
     const map = this._layer._map || this._map;
     if (map) {
-      const pointA = map.project(this._layer.getLatLng());
-      const pointB = L.point(pointA.x + this._layer.getRadius(), pointA.y);
-      const radius = map.distance(
-        this._layer.getLatLng(),
-        map.unproject(pointB)
+      const radius = L.PM.Utils.pxRadiusToMeterRadius(
+        this._layer.getRadius(),
+        map,
+        this._layer.getLatLng()
       );
-
       const _layer = L.circle(this._layer.getLatLng(), this._layer.options);
       _layer.setRadius(radius);
 
@@ -386,7 +384,11 @@ Edit.CircleMarker = Edit.extend({
         this._map,
         latlng,
         secondLatLng,
-        L.PM.Utils.pxRadiusToMeterRadius(this.options.minRadiusCircleMarker, this._map, latlng)
+        L.PM.Utils.pxRadiusToMeterRadius(
+          this.options.minRadiusCircleMarker,
+          this._map,
+          latlng
+        )
       );
     } else if (
       this.options.maxRadiusCircleMarker &&
@@ -396,7 +398,11 @@ Edit.CircleMarker = Edit.extend({
         this._map,
         latlng,
         secondLatLng,
-        L.PM.Utils.pxRadiusToMeterRadius(this.options.maxRadiusCircleMarker, this._map, latlng)
+        L.PM.Utils.pxRadiusToMeterRadius(
+          this.options.maxRadiusCircleMarker,
+          this._map,
+          latlng
+        )
       );
     }
     return secondLatLng;
@@ -422,5 +428,5 @@ Edit.CircleMarker = Edit.extend({
     }
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
-  }
+  },
 });
