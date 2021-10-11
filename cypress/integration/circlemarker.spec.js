@@ -152,6 +152,9 @@ describe('Draw Circle Marker', () => {
     // draw with continueDrawing: ture the second circle
     cy.get(mapSelector).click(300, 200).click(350, 250);
 
+    // additional click because cypress lose the focus on the window ... wtf ...
+    cy.get(mapSelector).click();
+
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(4);
   });
@@ -384,6 +387,16 @@ describe('Draw Circle Marker', () => {
       const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
       expect(radius).to.greaterThan(223);
       expect(radius).to.below(226);
+    });
+  });
+  it('checks if circle is hidden before drawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({editable: true});
+    });
+    cy.toolbarButton('circle-marker').click();
+    cy.window().then(({ map }) => {
+      // if map property is null, then it is not visible
+      expect(!!map.pm.Draw.CircleMarker._layer._map).to.eq(false);
     });
   });
 });
