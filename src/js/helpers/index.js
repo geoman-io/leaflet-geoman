@@ -120,13 +120,13 @@ export function createGeodesicPolygon(
   const points = [];
 
   for (let i = 0; i < sides; i += 1) {
-    angle = (i * 360) / sides + rotation;
     if (withBearing) {
+      angle = (i * 360) / sides + rotation;
       newLonlat = destinationVincenty(origin, angle, radius);
       geomPoint = L.latLng(newLonlat.lng, newLonlat.lat);
     } else {
-      const pLat = origin.lat + Math.cos(angle) * radius;
-      const pLng = origin.lng + Math.sin(angle) * radius;
+      const pLat = origin.lat + Math.cos((2 * i * Math.PI) / sides) * radius;
+      const pLng = origin.lng + Math.sin((2 * i * Math.PI) / sides) * radius;
       geomPoint = L.latLng(pLat, pLng);
     }
     points.push(geomPoint);
