@@ -55,7 +55,7 @@ declare module 'leaflet' {
   /**
    * Extends @types/leaflet events...
    *
-   * todo: This is kind of a mess, and it makes all these event handlers show
+   * Todo: This is kind of a mess, and it makes all these event handlers show
    * up on Layers and Map. Leaflet itself is based around Evented, and @types/leaflet
    * makes this very hard to work around.
    *
@@ -442,7 +442,7 @@ declare module 'leaflet' {
   }
 
   namespace PM {
-    /** supported shape names. 'ImageOverlay' is in Edit Mode only. Also accepts custom shape name. */
+    /** Supported shape names. 'ImageOverlay' is in Edit Mode only. Also accepts custom shape name. */
     type SUPPORTED_SHAPES =
       | 'Marker'
       | 'Circle'
@@ -617,7 +617,7 @@ declare module 'leaflet' {
         actions: (ACTION_NAMES | Action)[]
       ): void;
 
-      /** disable button by control name */
+      /** Disable button by control name */
       setButtonDisabled(name: TOOLBAR_CONTROL_ORDER, state: boolean): void;
     }
 
@@ -644,7 +644,7 @@ declare module 'leaflet' {
     }
 
     interface Button {
-      /** actions */
+      /** Actions */
       actions: (ACTION_NAMES | Action)[];
 
       /** Function fired after clicking the control. */
@@ -653,7 +653,7 @@ declare module 'leaflet' {
       /** CSS class with the Icon. */
       className: string;
 
-      /** if true, other buttons will be disabled on click (default: true) */
+      /** If true, other buttons will be disabled on click (default: true) */
       disableOtherButtons: boolean;
 
       /** Control can be toggled. */
@@ -670,10 +670,10 @@ declare module 'leaflet' {
       /** Text showing when you hover the control. */
       title: string;
 
-      /** toggle state true -> enabled, false -> disabled (default: false) */
+      /** Toggle state true -> enabled, false -> disabled (default: false) */
       toggleStatus: boolean;
 
-      /** block of the control. 'options' is ⭐ only. */
+      /** Block of the control. 'options' is ⭐ only. */
       tool?: 'draw' | 'edit' | 'custom' | 'options';
     }
 
@@ -681,7 +681,7 @@ declare module 'leaflet' {
       /** Name of the control */
       name: string;
 
-      /** block of the control. 'options' is ⭐ only. */
+      /** Block of the control. 'options' is ⭐ only. */
       block?: 'draw' | 'edit' | 'custom' | 'options';
 
       /** Text showing when you hover the control. */
@@ -696,7 +696,7 @@ declare module 'leaflet' {
       /** Function fired after clicking the control. */
       afterClick?: () => void;
 
-      /** actions */
+      /** Actions */
       actions?: (ACTION_NAMES | Action)[];
 
       /** Control can be toggled. */
@@ -717,7 +717,7 @@ declare module 'leaflet' {
       | string;
 
     interface GlobalOptions extends DrawModeOptions, EditModeOptions {
-      /** add the created layers to a layergroup instead to the map. */
+      /** Add the created layers to a layergroup instead to the map. */
       layerGroup?: L.Map | L.LayerGroup;
 
       /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']. */
@@ -731,7 +731,7 @@ declare module 'leaflet' {
       /** Enable Draw Mode with the passed shape. */
       enableDraw(shape: SUPPORTED_SHAPES, options?: DrawModeOptions): void;
 
-      /** disable all drawing */
+      /** Disable all drawing */
       disableDraw(shape?: SUPPORTED_SHAPES): void;
 
       /** Draw */
@@ -874,13 +874,13 @@ declare module 'leaflet' {
       /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
       snappable?: boolean;
 
-      /** the distance to another vertex when a snap should happen (default:20). */
+      /** The distance to another vertex when a snap should happen (default:20). */
       snapDistance?: number;
 
-      /** allow self intersections (default:true). */
+      /** Allow self intersections (default:true). */
       allowSelfIntersection?: boolean;
 
-      /** allow self intersections (default:true). */
+      /** Allow self intersections (default:true). */
       allowSelfIntersectionEdit?: boolean;
 
       /** Disable the removal of markers via right click / vertices via removeVertexOn. (default:false). */
@@ -949,48 +949,48 @@ declare module 'leaflet' {
       /** Pin shared vertices/markers together during edit ⭐ */
       pinning?: boolean;
 
-      /** hide the middle Markers in edit mode from Polyline and Polygon. */
+      /** Hide the middle Markers in edit mode from Polyline and Polygon. */
       hideMiddleMarkers?: boolean;
     }
 
     interface DrawModeOptions {
-      /** enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
+      /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
       snappable?: boolean;
 
-      /** the distance to another vertex when a snap should happen (default:20). */
+      /** The distance to another vertex when a snap should happen (default:20). */
       snapDistance?: number;
 
-      /** allow snapping in the middle of two vertices (middleMarker)(default:false). */
+      /** Allow snapping in the middle of two vertices (middleMarker)(default:false). */
       snapMiddle?: boolean;
 
-      /** allow snapping between two vertices. (default: true)*/
+      /** Allow snapping between two vertices. (default: true)*/
       snapSegment?: boolean;
 
-      /** require the last point of a shape to be snapped. (default: false). */
+      /** Require the last point of a shape to be snapped. (default: false). */
       requireSnapToFinish?: boolean;
 
-      /** show helpful tooltips for your user (default:true). */
+      /** Show helpful tooltips for your user (default:true). */
       tooltips?: boolean;
 
-      /** allow self intersections (default:true). */
+      /** Allow self intersections (default:true). */
       allowSelfIntersection?: boolean;
 
-      /** leaflet path options for the lines between drawn vertices/markers. (default:{color:'red'}). */
+      /** Leaflet path options for the lines between drawn vertices/markers. (default:{color:'red'}). */
       templineStyle?: L.PathOptions;
 
-      /** leaflet path options for the helper line between last drawn vertex and the cursor. (default:{color:'red',dashArray:[5,5]}). */
+      /** Leaflet path options for the helper line between last drawn vertex and the cursor. (default:{color:'red',dashArray:[5,5]}). */
       hintlineStyle?: L.PathOptions;
 
-      /** leaflet path options for the drawn layer (Only for L.Path layers). (default:null). */
+      /** Leaflet path options for the drawn layer (Only for L.Path layers). (default:null). */
       pathOptions?: L.PathOptions;
 
-      /** leaflet marker options (only for drawing markers). (default:{draggable:true}). */
+      /** Leaflet marker options (only for drawing markers). (default:{draggable:true}). */
       markerStyle?: L.MarkerOptions;
 
-      /** show a marker at the cursor (default:true). */
+      /** Show a marker at the cursor (default:true). */
       cursorMarker?: boolean;
 
-      /** leaflet layer event to finish the drawn shape (default:null). */
+      /** Leaflet layer event to finish the drawn shape (default:null). */
       finishOn?:
         | null
         | 'click'
@@ -1001,22 +1001,22 @@ declare module 'leaflet' {
         | 'contextmenu'
         | 'snap';
 
-      /** hide the middle Markers in edit mode from Polyline and Polygon. (default:false). */
+      /** Hide the middle Markers in edit mode from Polyline and Polygon. (default:false). */
       hideMiddleMarkers?: boolean;
 
-      /** set the min radius of a Circle. (default:null). */
+      /** Set the min radius of a Circle. (default:null). */
       minRadiusCircle?: number;
 
-      /** set the max radius of a Circle. (default:null). */
+      /** Set the max radius of a Circle. (default:null). */
       maxRadiusCircle?: number;
 
-      /** set the min radius of a CircleMarker when editable is active. (default:null). */
+      /** Set the min radius of a CircleMarker when editable is active. (default:null). */
       minRadiusCircleMarker?: number;
 
-      /** set the max radius of a CircleMarker when editable is active. (default:null). */
+      /** Set the max radius of a CircleMarker when editable is active. (default:null). */
       maxRadiusCircleMarker?: number;
 
-      /** makes a CircleMarker editable like a Circle (default:false). */
+      /** Makes a CircleMarker editable like a Circle (default:false). */
       editable?: boolean;
 
       /** Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them) (default:true). */
@@ -1025,7 +1025,7 @@ declare module 'leaflet' {
       /** Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to true for Markers and CircleMarkers and false for all other layers. */
       continueDrawing?: boolean;
 
-      /** angel of rectangle. */
+      /** Angel of rectangle. */
       rectangleAngle?: number;
 
       /** Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again. (Default: []) */
@@ -1036,79 +1036,79 @@ declare module 'leaflet' {
      * PM toolbar options.
      */
     interface ToolbarOptions {
-      /** toolbar position. */
+      /** Toolbar position. */
       position?: L.ControlPosition;
 
-      /** the position of each block can be customized. If not set, the value from position is taken. */
+      /** The position of each block can be customized. If not set, the value from position is taken. */
       positions?: BlockPositions;
 
-      /** adds button to draw Markers (default:true) */
+      /** Adds button to draw Markers (default:true) */
       drawMarker?: boolean;
 
-      /** adds button to draw CircleMarkers (default:true) */
+      /** Adds button to draw CircleMarkers (default:true) */
       drawCircleMarker?: boolean;
 
-      /** adds button to draw Line (default:true) */
+      /** Adds button to draw Line (default:true) */
       drawPolyline?: boolean;
 
-      /** adds button to draw Rectangle (default:true) */
+      /** Adds button to draw Rectangle (default:true) */
       drawRectangle?: boolean;
 
-      /** adds button to draw Polygon (default:true) */
+      /** Adds button to draw Polygon (default:true) */
       drawPolygon?: boolean;
 
-      /** adds button to draw Circle (default:true) */
+      /** Adds button to draw Circle (default:true) */
       drawCircle?: boolean;
 
-      /** adds button to toggle edit mode for all layers (default:true) */
+      /** Adds button to toggle edit mode for all layers (default:true) */
       editMode?: boolean;
 
-      /** adds button to toggle drag mode for all layers (default:true) */
+      /** Adds button to toggle drag mode for all layers (default:true) */
       dragMode?: boolean;
 
-      /** adds button to cut a hole in a polygon or line (default:true) */
+      /** Adds button to cut a hole in a polygon or line (default:true) */
       cutPolygon?: boolean;
 
-      /** adds a button to remove layers (default:true) */
+      /** Adds a button to remove layers (default:true) */
       removalMode?: boolean;
 
-      /** adds a button to rotate layers (default:true) */
+      /** Adds a button to rotate layers (default:true) */
       rotateMode?: boolean;
 
-      /** all buttons will be displayed as one block Customize Controls (default:false) */
+      /** All buttons will be displayed as one block Customize Controls (default:false) */
       oneBlock?: boolean;
 
-      /** shows all draw buttons / buttons in the draw block (default:true) */
+      /** Shows all draw buttons / buttons in the draw block (default:true) */
       drawControls?: boolean;
 
-      /** shows all edit buttons / buttons in the edit block (default:true) */
+      /** Shows all edit buttons / buttons in the edit block (default:true) */
       editControls?: boolean;
 
-      /** shows all buttons in the custom block (default:true) */
+      /** Shows all buttons in the custom block (default:true) */
       customControls?: boolean;
 
-      /** shows all options buttons / buttons in the option block ⭐ */
+      /** Shows all options buttons / buttons in the option block ⭐ */
       optionsControls?: boolean;
 
-      /** adds a button to toggle the Pinning Option ⭐ */
+      /** Adds a button to toggle the Pinning Option ⭐ */
       pinningOption?: boolean;
 
-      /** adds a button to toggle the Snapping Option ⭐ */
+      /** Adds a button to toggle the Snapping Option ⭐ */
       snappingOption?: boolean;
     }
 
     /** the position of each block. */
     interface BlockPositions {
-      /** draw control position (default:''). '' also refers to this position. */
+      /** Draw control position (default:''). '' also refers to this position. */
       draw?: L.ControlPosition;
 
-      /** edit control position (default:''). */
+      /** Edit control position (default:''). */
       edit?: L.ControlPosition;
 
-      /** custom control position (default:''). */
+      /** Custom control position (default:''). */
       custom?: L.ControlPosition;
 
-      /** options control position (default:'') ⭐ */
+      /** Options control position (default:'') ⭐ */
       options?: L.ControlPosition;
     }
 
@@ -1116,10 +1116,10 @@ declare module 'leaflet' {
       /** Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar */
       enable(options?: EditModeOptions): void;
 
-      /** sets layer options */
+      /** Sets layer options */
       setOptions(options?: EditModeOptions): void;
 
-      /** gets layer options */
+      /** Gets layer options */
       getOptions(): EditModeOptions;
 
       /** Disables edit mode. */
@@ -1139,21 +1139,21 @@ declare module 'leaflet' {
     }
 
     interface PMDragLayer {
-      /** enables dragging for the layer. */
+      /** Enables dragging for the layer. */
       enableLayerDrag(): void;
 
-      /** disables dragging for the layer. */
+      /** Disables dragging for the layer. */
       disableLayerDrag(): void;
 
-      /** returns if the layer is currently dragging. */
+      /** Returns if the layer is currently dragging. */
       dragging(): boolean;
 
-      /** returns if drag mode is enabled for the layer. */
+      /** Returns if drag mode is enabled for the layer. */
       layerDragEnabled(): boolean;
     }
 
     interface PMLayer extends PMRotateLayer, PMEditLayer, PMDragLayer {
-      /** get shape of the layer. */
+      /** Get shape of the layer. */
       getShape(): SUPPORTED_SHAPES;
     }
 
@@ -1191,22 +1191,29 @@ declare module 'leaflet' {
       /**  Returns the translation of the passed path. path = json-string f.ex. tooltips.placeMarker */
       function getTranslation(path: string): string;
 
-      /** returns the middle LatLng between two LatLngs */
+      /** Returns the middle LatLng between two LatLngs */
       function calcMiddleLatLng(
         map: L.Map,
         latlng1: L.LatLng,
         latlng2: L.LatLng
       ): L.LatLng;
 
-      /** returns all layers that are available for Geoman */
+      /** Returns all layers that are available for Geoman */
       function findLayers(map: L.Map): L.Layer[];
 
-      /** converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false */
+      /** Converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false */
       function circleToPolygon(
         circle: L.Circle,
         sides?: number,
         withBearing?: boolean
       ): L.Polygon;
+
+      /** Converts a px-radius (CircleMarker) to meter-radius (Circle). The center LatLng is needed because the earth has different projections on different places. **/
+      function pxRadiusToMeterRadius(
+        radiusInPx: number,
+        map: L.Map,
+        center: L.LatLng
+      ): number;
     }
 
     /**

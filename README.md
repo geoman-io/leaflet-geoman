@@ -1061,12 +1061,13 @@ The following events are available on a map instance:
 
 The following methods are available on `L.PM.Utils`:
 
-| Method                                                        | Returns   | Description                                                                                                  |
-| :------------------------------------------------------------ | :-------- | :----------------------------------------------------------------------------------------------------------- |
-| calcMiddleLatLng(`map`, `latlng1`, `latlng2`)                 | `LatLng`  | Returns the middle LatLng between two LatLngs.                                                               |
-| getTranslation(`path`)                                        | `String`  | Returns the translation of the passed `path`. path = json-string f.ex. `tooltips.placeMarker`.               |
-| findLayers(`map`)                                             | `Array`   | Returns all layers that are available for Leaflet-Geoman.                                                    |
-| circleToPolygon(`circle`, `sides = 60`, `withBearing = true`) | `Polygon` | Converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false. |
+| Method                                                        | Returns   | Description                                                                                                                                                |
+| :------------------------------------------------------------ | :-------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| calcMiddleLatLng(`map`, `latlng1`, `latlng2`)                 | `LatLng`  | Returns the middle LatLng between two LatLngs.                                                                                                             |
+| getTranslation(`path`)                                        | `String`  | Returns the translation of the passed `path`. path = json-string f.ex. `tooltips.placeMarker`.                                                             |
+| findLayers(`map`)                                             | `Array`   | Returns all layers that are available for Leaflet-Geoman.                                                                                                  |
+| circleToPolygon(`circle`, `sides = 60`, `withBearing = true`) | `Polygon` | Converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false.                                               |
+| pxRadiusToMeterRadius(`radiusInPx`, `map`, `center`)          | `Number`  | Converts a px-radius (CircleMarker) to meter-radius (Circle). The center LatLng is needed because the earth has different projections on different places. |
 
 ### Keyboard
 
