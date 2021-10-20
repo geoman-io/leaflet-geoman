@@ -1069,7 +1069,6 @@ let map = L.Map()
 
 /* map created and display on webpage */
 
-
 ...
 
 
@@ -1078,7 +1077,7 @@ let map = L.Map()
 /* at this point map.pm is undefined */ 
 
 if (!map.pm) {
-  await import('@geoman-io/leaflet-geoman-free')
+  await import(/* webpackChunkName: "leaflet-geoman" */ '@geoman-io/leaflet-geoman-free')
 
   L.PM.reInitLayer(map)
 
