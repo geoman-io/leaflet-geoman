@@ -1051,7 +1051,6 @@ The following methods are available on `L.PM.Utils`:
 | findLayers(`map`)                             | `Array`   | Returns all layers that are available for Leaflet-Geoman.                                      |
 | circleToPolygon(`circle`, `sides = 60`)       | `Polygon` | Converts a circle into a polygon with default 60 sides.                                        |
 
-
 ### Lazy Loading
 
 If you want to keep your initial webpage loading size low you might want to deferre Geoman javascript to load only when actually needed on the webpage. In that case if the L.Map object is already initialized when the Geoman javascript is loaded, Geoman won't attach to the existing map object and the `pm` property on the map object will be undefined. In order for Geoman to attach it self to your map object you need to run the following command after Geoman javascript file was loaded.
@@ -1062,32 +1061,21 @@ L.PM.reInitLayer(map)
 
 Using ES6 Module, a simple example would look something like this:
 ```js
-
 import * as L from 'leaflet'
 
 let map = L.Map()
 
-/* map created and display on webpage */
-
+// map created and display on webpage
 ...
 
-
-/* drawing script */ 
-
-/* at this point map.pm is undefined */ 
-
+/* drawing script */
+// at this point map.pm is undefined
 if (!map.pm) {
   await import(/* webpackChunkName: "leaflet-geoman" */ '@geoman-io/leaflet-geoman-free')
-
   L.PM.reInitLayer(map)
-
 }
-
-
-/* map.pm is now defined and can be used to draw on map */
-
+// map.pm is now defined and can be used to draw on map
 ```
-
 
 ### Keyboard
 
