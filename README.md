@@ -1056,7 +1056,7 @@ The following methods are available on `L.PM.Utils`:
 
 If you want to keep your initial webpage loading size low you might want to deferre Geoman javascript to load only when actually needed on the webpage. In that case if the L.Map object is already initialized when the Geoman javascript is loaded, Geoman won't attach to the existing map object and the `pm` property on the map object will be undefined. In order for Geoman to attach it self to your map object you need to run the following command after Geoman javascript file was loaded.
 
-```
+```js
 L.PM.reInitLayer(map)
 ```
 
