@@ -142,10 +142,27 @@ And to disable it:
 L.PM.setOptIn(false);
 ```
 
+If you have enabled opt-in before you init the map, you need to specify `pmIgnore: false` in the map options:
+
+```js
+const map = L.map('map', { pmIgnore: false });
+```
+
 All layers will be ignored by Leaflet-Geoman, unless you specify `pmIgnore: false` on a layer:
 
 ```js
 L.marker([51.50915, -0.096112], { pmIgnore: false }).addTo(map);
+```
+
+Newly drawn layers will be ignored as well.
+
+To prevent this you can add the following event handler:
+
+```js
+map.on('pm:create', (e) => {
+  e.layer.setStyle({ pmIgnore: false });
+  L.PM.reInitLayer(e.layer);
+});
 ```
 
 #### Leaflet-Geoman Toolbar
@@ -282,7 +299,7 @@ This options can only set over `map.pm.setGlobalOptions({})`:
 You can listen to map events to hook into the drawing procedure like this:
 
 ```js
-map.on('pm:drawstart', e => {
+map.on('pm:drawstart', (e) => {
   console.log(e);
 });
 ```
@@ -301,7 +318,7 @@ There are also several events for layers during draw. Register an event like thi
 ```js
 // listen to vertexes being added to currently drawn layer (called workingLayer)
 map.on('pm:drawstart', ({ workingLayer }) => {
-  workingLayer.on('pm:vertexadded', e => {
+  workingLayer.on('pm:vertexadded', (e) => {
     console.log(e);
   });
 });
@@ -393,14 +410,14 @@ See the available options in the table below.
 | limitMarkersToViewport         | `false`       | Shows only markers in the viewport. ⭐                                                                                                                                                                                        |
 | limitMarkersToClick            | `false`       | Shows markers only after the layer was clicked. ⭐                                                                                                                                                                            |
 | pinning                        | `false`       | Pin shared vertices/markers together during edit [Details](#pinning-⭐). ⭐                                                                                                                                                   |
-| centerScaling         | `true`  | Scale origin is the center, else it is the opposite corner. If `false` Alt-Key can be used. [Scale Mode](#scale-mode-). ⭐ | 
-| uniformScaling        | `true`  | Width and height are scaled with the same ratio. If `false` Shift-Key can be used. [Scale Mode](#scale-mode-). ⭐          | 
+| centerScaling                  | `true`        | Scale origin is the center, else it is the opposite corner. If `false` Alt-Key can be used. [Scale Mode](#scale-mode-). ⭐                                                                                                    |
+| uniformScaling                 | `true`        | Width and height are scaled with the same ratio. If `false` Shift-Key can be used. [Scale Mode](#scale-mode-). ⭐                                                                                                             |
 
 You can listen to events related to editing on events like this:
 
 ```js
 // listen to when a layer is changed in Edit Mode
-layer.on('pm:edit', e => {
+layer.on('pm:edit', (e) => {
   console.log(e);
 });
 ```
@@ -435,7 +452,7 @@ The following events are available on a map instance:
 You can also listen to specific Edit Mode events on the map instance like this:
 
 ```js
-map.on('pm:globaleditmodetoggled', e => {
+map.on('pm:globaleditmodetoggled', (e) => {
   console.log(e);
 });
 ```
@@ -490,7 +507,7 @@ The following events are available on a map instance:
 You can also listen to specific Drag Mode events on the map instance like this:
 
 ```js
-map.on('pm:globaldragmodetoggled', e => {
+map.on('pm:globaldragmodetoggled', (e) => {
   console.log(e);
 });
 ```
@@ -530,7 +547,7 @@ The following events are available on a map instance:
 You can also listen to specific removal mode events on the map instance like this:
 
 ```js
-map.on('pm:globalremovalmodetoggled', e => {
+map.on('pm:globalremovalmodetoggled', (e) => {
   console.log(e);
 });
 ```
@@ -662,8 +679,8 @@ The following methods are available on `map.pm`:
 
 The following events are available on a layer instance:
 
-| Event    | Params | Description                       | Output                                           |
-| :------- | :----- | :-------------------------------- | :----------------------------------------------- |
+| Event    | Params | Description                                                                                         | Output                                           |
+| :------- | :----- | :-------------------------------------------------------------------------------------------------- | :----------------------------------------------- |
 | pm:split | `e`    | Fired when the layer being split. Returns a LayerGroup containing all resulting layers in `layers`. | `shape`, `splitLayer`, `layers`, `originalLayer` |
 
 The following events are available on a map instance:
@@ -674,53 +691,54 @@ The following events are available on a map instance:
 | pm:split                  | `e`    | Fired when any layer is being split. | `shape`, `splitLayer`, `layers`, `originalLayer` |
 
 ### Scale Mode ⭐
+
 You can enable Scale Mode for all layers on a map like this:
-```js  
-map.pm.enableGlobalScaleMode();  
-```  
+
+```js
+map.pm.enableGlobalScaleMode();
+```
 
 With the option `centerScaling` the scale origin cen be the center of the layer or the opposite corner of the dragged marker. If `false` Alt-Key can be used.
 The option `uniformScaling` the scales the width and the height with the same ratio. If `false` Shift-Key can be used.
 
-The following methods are available on `map.pm`:  
-  
-| Method                    | Returns   | Description                                                             |  
-| :------------------------ | :-------- | :---------------------------------------------------------------------- |  
-| enableGlobalScaleMode()   | -         | Enables global Scale Mode.                                              |  
-| disableGlobalScaleMode()  | -         | Disables global Scale Mode.                                             |  
-| toggleGlobalScaleMode()   | -         | Toggles global Scale Mode.                                              |  
-| globalScaleModeEnabled()  | `Boolean` | Returns `true` if global Scale Mode is enabled. `false` when disabled.  |  
+The following methods are available on `map.pm`:
+
+| Method                   | Returns   | Description                                                            |
+| :----------------------- | :-------- | :--------------------------------------------------------------------- |
+| enableGlobalScaleMode()  | -         | Enables global Scale Mode.                                             |
+| disableGlobalScaleMode() | -         | Disables global Scale Mode.                                            |
+| toggleGlobalScaleMode()  | -         | Toggles global Scale Mode.                                             |
+| globalScaleModeEnabled() | `Boolean` | Returns `true` if global Scale Mode is enabled. `false` when disabled. |
 
 The following methods are available for layers under `layer.pm`:
-  
-| Method                       | Returns   | Description                                                                                                                   |  
-| :--------------------------- | :-------- | :---------------------------------------------------------------------------------------------------------------------------- |  
-| enableScale()                | -         | Enables Scale Mode on the layer.                                                                                              |  
-| disableScale()               | -         | Disables Scale Mode on the layer.                                                                                             |
-| scaleEnabled()               | `Boolean` | Returns if Scale Mode is enabled for the layer.                                                                               |  
-| scaleLayer(`percent`)        | -         | Scale the layer by `x` percent. Also an Object with `{w: width, h: height}` can be passed. Scale up `> 0` , scale down `< 0`. | 
 
-  
-The following events are available on a layer instance:  
-  
-| Event            | Params | Description                                           | Output                                                                                 |  
-| :--------------- | :----- | :---------------------------------------------------- | :------------------------------------------------------------------------------------- |  
-| pm:scaleenable   | `e`    | Fired when scale is enabled for a layer.              | `layer`, `helpLayer`                                                                   |  
-| pm:scaledisable  | `e`    | Fired when scale is disabled for a layer.             | `layer`                                                                                |  
-| pm:scalestart    | `e`    | Fired when scale starts on a layer.                   | `layer`, `helpLayer`, `originLatLngs`, `originLatLngs`                                 |  
-| pm:scale         | `e`    | Fired when a layer is scaled.                         | `layer`, `helpLayer`, `oldLatLngs`, `newLatLngs`                                       |  
-| pm:scaleend      | `e`    | Fired when scale ends on a layer.                     | `layer`, `helpLayer`, `originLatLngs`, `newLatLngs`                                    |  
-  
-The following events are available on a map instance:  
-  
-| Event                         | Params | Description                                           | Output                                                                                 |  
-| :---------------------------- | :----- | :---------------------------------------------------- | :------------------------------------------------------------------------------------- |   
-| pm:globalscalemodetoggled     | `e`    | Fired when Scale Mode is toggled.                    | `enabled`, `map`                                                                       | 
-| pm:scaleenable                | `e`    | Fired when scale is enabled for a layer.              | `layer`, `helpLayer`                                                                   |  
-| pm:scaledisable               | `e`    | Fired when scale is disabled for a layer.             | `layer`                                                                                |  
-| pm:scalestart                 | `e`    | Fired when scale starts on a layer.                   | `layer`, `helpLayer`, `originLatLngs`, `originLatLngs`                                 |  
-| pm:scale                      | `e`    | Fired when a layer is scaled.                         | `layer`, `helpLayer`, `oldLatLngs`, `newLatLngs`                                       |  
-| pm:scaleend                   | `e`    | Fired when scale ends on a layer.                     | `layer`, `helpLayer`, `originLatLngs`, `newLatLngs`                                    |   
+| Method                | Returns   | Description                                                                                                                   |
+| :-------------------- | :-------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| enableScale()         | -         | Enables Scale Mode on the layer.                                                                                              |
+| disableScale()        | -         | Disables Scale Mode on the layer.                                                                                             |
+| scaleEnabled()        | `Boolean` | Returns if Scale Mode is enabled for the layer.                                                                               |
+| scaleLayer(`percent`) | -         | Scale the layer by `x` percent. Also an Object with `{w: width, h: height}` can be passed. Scale up `> 0` , scale down `< 0`. |
+
+The following events are available on a layer instance:
+
+| Event           | Params | Description                               | Output                                                 |
+| :-------------- | :----- | :---------------------------------------- | :----------------------------------------------------- |
+| pm:scaleenable  | `e`    | Fired when scale is enabled for a layer.  | `layer`, `helpLayer`                                   |
+| pm:scaledisable | `e`    | Fired when scale is disabled for a layer. | `layer`                                                |
+| pm:scalestart   | `e`    | Fired when scale starts on a layer.       | `layer`, `helpLayer`, `originLatLngs`, `originLatLngs` |
+| pm:scale        | `e`    | Fired when a layer is scaled.             | `layer`, `helpLayer`, `oldLatLngs`, `newLatLngs`       |
+| pm:scaleend     | `e`    | Fired when scale ends on a layer.         | `layer`, `helpLayer`, `originLatLngs`, `newLatLngs`    |
+
+The following events are available on a map instance:
+
+| Event                     | Params | Description                               | Output                                                 |
+| :------------------------ | :----- | :---------------------------------------- | :----------------------------------------------------- |
+| pm:globalscalemodetoggled | `e`    | Fired when Scale Mode is toggled.         | `enabled`, `map`                                       |
+| pm:scaleenable            | `e`    | Fired when scale is enabled for a layer.  | `layer`, `helpLayer`                                   |
+| pm:scaledisable           | `e`    | Fired when scale is disabled for a layer. | `layer`                                                |
+| pm:scalestart             | `e`    | Fired when scale starts on a layer.       | `layer`, `helpLayer`, `originLatLngs`, `originLatLngs` |
+| pm:scale                  | `e`    | Fired when a layer is scaled.             | `layer`, `helpLayer`, `oldLatLngs`, `newLatLngs`       |
+| pm:scaleend               | `e`    | Fired when scale ends on a layer.         | `layer`, `helpLayer`, `originLatLngs`, `newLatLngs`    |
 
 ### Options
 
@@ -812,14 +830,14 @@ We are adding the same code to L.LayerGroup as in [L.FeatureGroup](https://githu
 
 ```js
 L.LayerGroup.prototype.addLayerOrg = L.LayerGroup.prototype.addLayer;
-L.LayerGroup.prototype.addLayer = function(layer) {
+L.LayerGroup.prototype.addLayer = function (layer) {
   layer.addEventParent(this);
   this.addLayerOrg(layer);
   return this.fire('layeradd', { layer: layer });
 };
 
 L.LayerGroup.prototype.removeLayerOrg = L.LayerGroup.prototype.removeLayer;
-L.LayerGroup.prototype.removeLayer = function(layer) {
+L.LayerGroup.prototype.removeLayer = function (layer) {
   layer.removeEventParent(this);
   this.removeLayerOrg(layer);
   return this.fire('layerremove', { layer: layer });
@@ -1043,12 +1061,13 @@ The following events are available on a map instance:
 
 The following methods are available on `L.PM.Utils`:
 
-| Method                                        | Returns   | Description                                                                                    |
-| :-------------------------------------------- | :-------- | :--------------------------------------------------------------------------------------------- |
-| calcMiddleLatLng(`map`, `latlng1`, `latlng2`) | `LatLng`  | Returns the middle LatLng between two LatLngs.                                                 |
-| getTranslation(`path`)                        | `String`  | Returns the translation of the passed `path`. path = json-string f.ex. `tooltips.placeMarker`. |
-| findLayers(`map`)                             | `Array`   | Returns all layers that are available for Leaflet-Geoman.                                      |
-| circleToPolygon(`circle`, `sides = 60`)       | `Polygon` | Converts a circle into a polygon with default 60 sides.                                        |
+| Method                                                        | Returns   | Description                                                                                                                                                |
+| :------------------------------------------------------------ | :-------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| calcMiddleLatLng(`map`, `latlng1`, `latlng2`)                 | `LatLng`  | Returns the middle LatLng between two LatLngs.                                                                                                             |
+| getTranslation(`path`)                                        | `String`  | Returns the translation of the passed `path`. path = json-string f.ex. `tooltips.placeMarker`.                                                             |
+| findLayers(`map`)                                             | `Array`   | Returns all layers that are available for Leaflet-Geoman.                                                                                                  |
+| circleToPolygon(`circle`, `sides = 60`, `withBearing = true`) | `Polygon` | Converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false.                                               |
+| pxRadiusToMeterRadius(`radiusInPx`, `map`, `center`)          | `Number`  | Converts a px-radius (CircleMarker) to meter-radius (Circle). The center LatLng is needed because the earth has different projections on different places. |
 
 ### Keyboard
 

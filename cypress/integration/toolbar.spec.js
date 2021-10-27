@@ -194,7 +194,7 @@ describe('Testing the Toolbar', () => {
       .parent('.leaflet-top.leaflet-left')
       .should('exist');
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({ map }) => {
       let testresult = '';
 
       // Click button -> toggle disabled
@@ -291,6 +291,19 @@ describe('Testing the Toolbar', () => {
           });
       });
     });
+  });
+
+  it('Add new draw instance and keep Toolbar hidden', () => {
+    cy.window().then(({ map }) => {
+      map.pm.removeControls();
+    });
+    cy.get('.leaflet-pm-toolbar').should('not.exist');
+
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.copyDrawControl('Polygon', { name: 'PolygonCopy' });
+    });
+
+    cy.get('.leaflet-pm-toolbar').should('not.exist');
   });
 
   it('Custom Controls - Custom order', () => {

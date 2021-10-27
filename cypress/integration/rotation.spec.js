@@ -191,4 +191,20 @@ describe('Rotation', () => {
       expect(Math.ceil(layer.pm.getAngle())).to.eq(64);
     });
   });
+
+  it('removes hidden rotatePoly if layer is removed', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+    cy.get(mapSelector).click(200, 200).click(600, 350);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.pm.enableRotate();
+      const rotatePoly = layer.pm._rotatePoly;
+      layer.remove();
+      expect(!!rotatePoly._map).to.eq(false);
+    });
+  });
 });

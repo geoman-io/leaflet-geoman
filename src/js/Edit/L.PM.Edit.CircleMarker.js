@@ -344,19 +344,25 @@ Edit.CircleMarker = Edit.extend({
   _updateHiddenPolyCircle() {
     const map = this._layer._map || this._map;
     if (map) {
-      const pointA = map.project(this._layer.getLatLng());
-      const pointB = L.point(pointA.x + this._layer.getRadius(), pointA.y);
-      const radius = this._layer.getLatLng().distanceTo(map.unproject(pointB));
-
+      const radius = L.PM.Utils.pxRadiusToMeterRadius(
+        this._layer.getRadius(),
+        map,
+        this._layer.getLatLng()
+      );
       const _layer = L.circle(this._layer.getLatLng(), this._layer.options);
       _layer.setRadius(radius);
 
+      const crsSimple = map && map.pm._isCRSSimple();
       if (this._hiddenPolyCircle) {
         this._hiddenPolyCircle.setLatLngs(
-          L.PM.Utils.circleToPolygon(_layer, 200).getLatLngs()
+          L.PM.Utils.circleToPolygon(_layer, 200, !crsSimple).getLatLngs()
         );
       } else {
-        this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(_layer, 200);
+        this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(
+          _layer,
+          200,
+          !crsSimple
+        );
       }
 
       if (!this._hiddenPolyCircle._parentCopy) {
@@ -378,7 +384,11 @@ Edit.CircleMarker = Edit.extend({
         this._map,
         latlng,
         secondLatLng,
-        this._pxRadiusToMeter(this.options.minRadiusCircleMarker)
+        L.PM.Utils.pxRadiusToMeterRadius(
+          this.options.minRadiusCircleMarker,
+          this._map,
+          latlng
+        )
       );
     } else if (
       this.options.maxRadiusCircleMarker &&
@@ -388,7 +398,11 @@ Edit.CircleMarker = Edit.extend({
         this._map,
         latlng,
         secondLatLng,
-        this._pxRadiusToMeter(this.options.maxRadiusCircleMarker)
+        L.PM.Utils.pxRadiusToMeterRadius(
+          this.options.maxRadiusCircleMarker,
+          this._map,
+          latlng
+        )
       );
     }
     return secondLatLng;
@@ -414,11 +428,5 @@ Edit.CircleMarker = Edit.extend({
     }
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
-  },
-  _pxRadiusToMeter(radius) {
-    const center = this._centerMarker.getLatLng();
-    const pointA = this._map.project(center);
-    const pointB = L.point(pointA.x + radius, pointA.y);
-    return this._map.unproject(pointB).distanceTo(center);
   },
 });

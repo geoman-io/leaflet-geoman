@@ -3,6 +3,7 @@ const KeyboardMixins = {
   _initKeyListener(map) {
     this.map = map;
     L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
+    L.DomEvent.on(document, 'blur', this._onKeyListener, this);
   },
   _onKeyListener(e) {
     let focusOn = 'document';
