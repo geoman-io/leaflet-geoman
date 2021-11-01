@@ -45,8 +45,7 @@ const DragMixin = {
     // (if the mouse up event happens outside the container, then the map can become undraggable)
     this._safeToCacheDragState = true;
 
-    const container =
-      this._layer instanceof L.Marker ? this._layer._icon : this._layer._path;
+    const container = this._getDOMElem();
 
     // check if DOM element exists
     if (container) {
@@ -81,8 +80,7 @@ const DragMixin = {
       this._layer.dragging.disable();
     }
 
-    const container =
-      this._layer instanceof L.Marker ? this._layer._icon : this._layer._path;
+    const container = this._getDOMElem();
     // check if DOM element exists
     if (container) {
       // disable mousedown event
