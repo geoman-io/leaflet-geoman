@@ -447,6 +447,7 @@ declare module 'leaflet' {
       | 'Marker'
       | 'Circle'
       | 'Line'
+      | 'Curve'
       | 'Rectangle'
       | 'Polygon'
       | 'Cut'
@@ -577,6 +578,7 @@ declare module 'leaflet' {
       | 'drawMarker'
       | 'drawCircleMarker'
       | 'drawPolyline'
+      | 'drawCurve'
       | 'drawRectangle'
       | 'drawPolygon'
       | 'drawCircle'
@@ -721,7 +723,7 @@ declare module 'leaflet' {
       /** Add the created layers to a layergroup instead to the map. */
       layerGroup?: L.Map | L.LayerGroup;
 
-      /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']. */
+      /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle','Curve']. */
       snappingOrder: SUPPORTED_SHAPES[];
 
       /** Defines in which panes the layers and helper vertices are created. Default: { vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' } */
@@ -1057,6 +1059,9 @@ declare module 'leaflet' {
 
       /** Adds button to draw Polygon (default:true) */
       drawPolygon?: boolean;
+
+      /** Adds button to draw Curve (default:true) */
+      drawCurve?: boolean;
 
       /** Adds button to draw Circle (default:true) */
       drawCircle?: boolean;

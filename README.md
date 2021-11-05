@@ -9,7 +9,7 @@
 <p align="center">  
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>  
   Draw, Edit, Drag, Cut, Rotate, Split⭐, Scale⭐, Measure⭐, Snap and Pin⭐ Layers<br>  
-  Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON, MultiLineStrings and MultiPolygons  
+  Supports Markers, CircleMarkers, Polylines, Curves, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON, MultiLineStrings and MultiPolygons  
 </p>  
 <p align="center">  
   <a href="https://badge.fury.io/js/%40geoman-io%2Fleaflet-geoman-free">  
@@ -199,6 +199,7 @@ See the available options in the table below.
 | drawPolyline       | `true`      | Adds button to draw Line.                                                                        |  
 | drawRectangle      | `true`      | Adds button to draw Rectangle.                                                                   |  
 | drawPolygon        | `true`      | Adds button to draw Polygon.                                                                     |  
+| drawCurve          | `true`      | Adds button to draw Curve.                                                                     |  
 | drawCircle         | `true`      | Adds button to draw Circle.                                                                      |  
 | editMode           | `true`      | Adds button to toggle Edit Mode for all layers.                                                  |  
 | dragMode           | `true`      | Adds button to toggle Drag Mode for all layers.                                                  |  
@@ -229,6 +230,11 @@ The options will persist, even when the mode is enabled/disabled via the toolbar
   
 All available options for drawing and editing are specified in the sections below.
 
+#### Drawing curves
+The drawing of curves is enabled by default, if Leaflet.curve (https://github.com/elfalem/Leaflet.curve) is imported. Otherwise the tool will not be available.
+At the moment, the feature to detect self intersection is not available for curves. Similarly, the cutting tool won't work on them.
+
+
 ### Draw Mode
 
 Use Draw Mode on a map like this:
@@ -244,7 +250,7 @@ map.pm.enableDraw('Polygon', {
 map.pm.disableDraw();
 ```
 
-Currently available shapes are `Marker`, `CircleMarker`, `Circle`, `Line`, `Rectangle`, `Polygon` and `Cut`.
+Currently available shapes are `Marker`, `CircleMarker`, `Circle`, `Line`, `Curve`, `Rectangle`, `Polygon` and `Cut`.
 
 The following methods are available on `map.pm`:
 
@@ -759,7 +765,7 @@ The following options are additionally to the [Draw](#draw-mode) and [Edit Mode]
 
 | Option        | Default  | Description                                                                                                                                                                                                            |
 | :------------ | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| snappingOrder | `Array`  | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`.                                                                                                          |
+| snappingOrder | `Array`  | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle','Curve']`.                                                                                                          |
 | layerGroup    | `map`    | add the created layers to a layergroup instead to the map.                                                                                                                                                             |
 | panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference-1.7.1.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' }`. |
 
