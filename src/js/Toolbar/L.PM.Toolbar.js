@@ -9,6 +9,7 @@ const Toolbar = L.Class.extend({
     drawMarker: true,
     drawRectangle: true,
     drawPolyline: true,
+    drawCurve: true,
     drawPolygon: true,
     drawCircle: true,
     drawCircleMarker: true,
@@ -112,6 +113,7 @@ const Toolbar = L.Class.extend({
         drawPolyline: 'control-icon leaflet-pm-icon-polyline',
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
+        drawCurve: 'control-icon leaflet-pm-icon-curve',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
         drawCircleMarker: 'control-icon leaflet-pm-icon-circle-marker',
         editMode: 'control-icon leaflet-pm-icon-edit',
@@ -123,7 +125,6 @@ const Toolbar = L.Class.extend({
 
     for (const name in buttons) {
       const button = buttons[name];
-
       L.Util.setOptions(button, {
         className: iconClasses.geomanIcons[name],
       });
@@ -221,6 +222,22 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.drawPolyButton'),
       className: 'control-icon leaflet-pm-icon-polygon',
       jsClass: 'Polygon',
+      onClick: () => {},
+      afterClick: (e, ctx) => {
+        // toggle drawing mode
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['finish', 'removeLastVertex', 'cancel'],
+    };
+
+    const drawCurveButton = {
+      title: getTranslation('buttonTitles.drawCurveButton'),
+      className: 'control-icon leaflet-pm-icon-curve',
+      jsClass: 'Curve',
       onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
@@ -380,6 +397,7 @@ const Toolbar = L.Class.extend({
 
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
     this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
+    if (L.Curve !== undefined) this._addButton('drawCurve', new L.Control.PMButton(drawCurveButton));
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
     this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));

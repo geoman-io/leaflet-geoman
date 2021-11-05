@@ -3,6 +3,7 @@
     "placeMarker": "Clique para posicionar o marcador",
     "firstVertex": "Clique para posicionar o primeiro vértice",
     "continueLine": "Clique para continuar desenhando",
+    "dragCurve": "Arraste para ajustar a curva",
     "finishLine": "Clique em qualquer marcador existente para finalizar",
     "finishPoly": "Clique no primeiro ponto para fechar o polígono",
     "finishRect": "Clique para finalizar",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Desenhar um marcador",
     "drawPolyButton": "Desenhar um polígono",
+    "drawCurveButton": "Desenhe uma curva ",
     "drawLineButton": "Desenhar uma polilinha",
     "drawCircleButton": "Desenhar um círculo",
     "drawRectButton": "Desenhar um retângulo",

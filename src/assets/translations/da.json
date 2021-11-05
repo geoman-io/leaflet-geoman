@@ -3,6 +3,7 @@
     "placeMarker": "Tryk for at placere en markør",
     "firstVertex": "Tryk for at placere det første punkt",
     "continueLine": "Tryk for at fortsætte linjen",
+    "dragCurve": "Træk for at justere kurven",
     "finishLine": "Tryk på et eksisterende punkt for at afslutte",
     "finishPoly": "Tryk på det første punkt for at afslutte",
     "finishRect": "Tryk for at afslutte",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Placer markør",
     "drawPolyButton": "Tegn polygon",
+    "drawCurveButton": "Tegn bezier",
     "drawLineButton": "Tegn linje",
     "drawCircleButton": "Tegn cirkel",
     "drawRectButton": "Tegn firkant",

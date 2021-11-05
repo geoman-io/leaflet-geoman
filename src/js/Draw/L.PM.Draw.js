@@ -54,6 +54,7 @@ const Draw = L.Class.extend({
       'Marker',
       'CircleMarker',
       'Line',
+      'Curve',
       'Polygon',
       'Rectangle',
       'Circle',
@@ -91,10 +92,8 @@ const Draw = L.Class.extend({
         )}`
       );
     }
-
     // disable drawing for all shapes
     this.disable();
-
     // enable draw for a shape
     this[shape].enable(options);
   },

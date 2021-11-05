@@ -17,6 +17,7 @@ import Toolbar from './Toolbar/L.PM.Toolbar';
 import Draw from './Draw/L.PM.Draw';
 import './Draw/L.PM.Draw.Marker';
 import './Draw/L.PM.Draw.Line';
+import './Draw/L.PM.Draw.Curve';
 import './Draw/L.PM.Draw.Polygon';
 import './Draw/L.PM.Draw.Rectangle';
 import './Draw/L.PM.Draw.Circle';
@@ -27,6 +28,7 @@ import Edit from './Edit/L.PM.Edit';
 import './Edit/L.PM.Edit.LayerGroup';
 import './Edit/L.PM.Edit.Marker';
 import './Edit/L.PM.Edit.Line';
+import './Edit/L.PM.Edit.Curve';
 import './Edit/L.PM.Edit.Polygon';
 import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Circle';
@@ -123,6 +125,22 @@ L.PM = L.PM || {
     }
 
     L.Polyline.addInitHook(initPolyline);
+
+    function initCurve() {
+      this.pm = undefined;
+      if (L.PM.optIn) {
+        if (this.options.pmIgnore === false) {
+          this.pm = new L.PM.Edit.Curve(this);
+        }
+      } else if (!this.options.pmIgnore) {
+        this.pm = new L.PM.Edit.Curve(this);
+      }
+    }
+
+    if (L.Curve) {
+      L.Curve.addInitHook(initCurve);
+    }
+
 
     function initPolygon() {
       this.pm = undefined;

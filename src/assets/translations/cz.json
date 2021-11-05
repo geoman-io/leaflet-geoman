@@ -3,6 +3,7 @@
     "placeMarker": "Kliknutím vytvoříte značku",
     "firstVertex": "Kliknutím vytvoříte první objekt",
     "continueLine": "Kliknutím pokračujte v kreslení",
+    "dragCurve": "Tažením upravte křivku ",
     "finishLine": "Kliknutí na libovolnou existující značku pro dokončení",
     "finishPoly": "Vyberte první bod pro dokončení",
     "finishRect": "Klikněte pro dokončení",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Přidat značku",
     "drawPolyButton": "Nakreslit polygon",
+    "drawCurveButton": "Nakreslit bezier",
     "drawLineButton": "Nakreslit křivku",
     "drawCircleButton": "Nakreslit kruh",
     "drawRectButton": "Nakreslit obdélník",

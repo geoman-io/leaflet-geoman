@@ -3,6 +3,7 @@
     "placeMarker": "İşaretçi yerleştirmek için tıklayın",
     "firstVertex": "İlk tepe noktasını yerleştirmek için tıklayın",
     "continueLine": "Çizime devam etmek için tıklayın",
+    "dragCurve": "Eğriyi ayarlamak için sürükleyin",
     "finishLine": "Bitirmek için mevcut herhangi bir işaretçiyi tıklayın",
     "finishPoly": "Bitirmek için ilk işaretçiyi tıklayın",
     "finishRect": "Bitirmek için tıklayın",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Çizim İşaretçisi",
     "drawPolyButton": "Çokgenler çiz",
+    "drawCurveButton": "Eğriler çiz",
     "drawLineButton": "Çoklu çizgi çiz",
     "drawCircleButton": "Çember çiz",
     "drawRectButton": "Dikdörtgen çiz",

@@ -825,10 +825,10 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.get(mapSelector)
-      .click(230, 230)
+      .click(230, 250)
       .click(250, 250)
       .click(250, 300)
-      .click(230, 230);
+      .click(230, 250);
 
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(6);

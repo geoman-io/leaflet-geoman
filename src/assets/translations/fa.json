@@ -3,6 +3,7 @@
     "placeMarker": "کلیک برای جانمایی نشان",
     "firstVertex": "کلیک برای رسم اولین رأس",
     "continueLine": "کلیک برای ادامه رسم",
+    "dragCurve": "برای تنظیم منحنی بکشید",
     "finishLine": "کلیک روی هر نشان موجود برای پایان",
     "finishPoly": "کلیک روی اولین نشان برای پایان",
     "finishRect": "کلیک برای پایان",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "درج نشان",
     "drawPolyButton": "رسم چندضلعی",
+    "drawCurveButton": "یک منحنی بکشید ",
     "drawLineButton": "رسم خط",
     "drawCircleButton": "رسم دایره",
     "drawRectButton": "رسم چهارضلعی",

@@ -12,15 +12,15 @@ Draw.Line = Draw.extend({
   },
   enable(options) {
     L.Util.setOptions(this, options);
-
+    
     // enable draw mode
     this._enabled = true;
-
+    
     // create a new layergroup
     this._layerGroup = new L.LayerGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
-
+    
     // this is the polyLine that'll make up the polygon
     this._layer = L.polyline([], this.options.templineStyle);
     this._setPane(this._layer, 'layerPane');

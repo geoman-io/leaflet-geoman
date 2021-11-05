@@ -1,4 +1,4 @@
-import { isEmptyDeep, prioritiseSort } from '../helpers';
+import { isEmptyDeep, prioritiseSort, getPointsOnCurve } from '../helpers';
 
 const SnapMixin = {
   _initSnappableMarkers() {
@@ -186,7 +186,8 @@ const SnapMixin = {
         (layer instanceof L.Polyline ||
           layer instanceof L.Marker ||
           layer instanceof L.CircleMarker ||
-          layer instanceof L.ImageOverlay) &&
+          layer instanceof L.ImageOverlay ||
+          (L.Curve && layer instanceof L.Curve)) &&
         layer.options.snapIgnore !== true
       ) {
         // if snapIgnore === false the layer will be always snappable
@@ -222,14 +223,13 @@ const SnapMixin = {
         // debugLine.addTo(map);
       }
     });
-
     // ...except myself
     layers = layers.filter((layer) => this._layer !== layer);
-
+    
     // also remove everything that has no coordinates yet
     layers = layers.filter(
       (layer) =>
-        layer._latlng || (layer._latlngs && !isEmptyDeep(layer._latlngs))
+      layer._coords || layer._latlng || (layer._latlngs && !isEmptyDeep(layer._latlngs))
     );
 
     // finally remove everything that's leaflet-geoman specific temporary stuff
@@ -301,7 +301,7 @@ const SnapMixin = {
     // is this a marker?
     const isMarker =
       layer instanceof L.Marker || layer instanceof L.CircleMarker;
-
+    const isCurve = L.Curve && layer instanceof L.Curve;
     // is it a polygon?
     const isPolygon = layer instanceof L.Polygon;
 
@@ -309,7 +309,10 @@ const SnapMixin = {
     const P = latlng;
 
     // the coords of the layer
-    const latlngs = isMarker ? layer.getLatLng() : layer.getLatLngs();
+    let latlngs;
+    if (isMarker) latlngs = layer.getLatLng();
+    else if (isCurve) latlngs = getPointsOnCurve(layer);
+    else latlngs = layer.getLatLngs();
 
     if (isMarker) {
       // return the info for the marker, no more calculations needed

@@ -1,3 +1,5 @@
+import { pathToCoordsOnly, reconciliateCoords } from '../helpers';
+
 const DragMixin = {
   enableLayerDrag() {
     // layer is not allowed to dragged
@@ -309,7 +311,6 @@ const DragMixin = {
           // do this recursively as coords might be nested
           return moveCoords(currentLatLng);
         }
-
         // move the coord and return it
         return {
           lat: currentLatLng.lat + deltaLatLng.lat,
@@ -346,6 +347,11 @@ const DragMixin = {
       ]);
       // set new coordinates and redraw
       this._layer.setBounds(newCoords);
+    } else if (L.Curve && this._layer instanceof L.Curve) {
+      // create the new coordinates array, picking coorinates attributes, filtering the instructions
+      const newCoords = moveCoords(pathToCoordsOnly(this._layer));
+      // apply new coordinates 
+      reconciliateCoords(this._layer, newCoords);
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());

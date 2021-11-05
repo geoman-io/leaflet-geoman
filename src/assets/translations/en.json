@@ -3,6 +3,7 @@
     "placeMarker": "Click to place marker",
     "firstVertex": "Click to place first vertex",
     "continueLine": "Click to continue drawing",
+    "dragCurve": "Drag to adjust the curve",
     "finishLine": "Click any existing marker to finish",
     "finishPoly": "Click first marker to finish",
     "finishRect": "Click to finish",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Draw Marker",
     "drawPolyButton": "Draw Polygons",
+    "drawCurveButton": "Draw curve",
     "drawLineButton": "Draw Polyline",
     "drawCircleButton": "Draw Circle",
     "drawRectButton": "Draw Rectangle",

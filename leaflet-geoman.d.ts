@@ -554,6 +554,7 @@ declare module 'leaflet' {
       buttonTitles?: {
         drawMarkerButton?: string;
         drawPolyButton?: string;
+        drawCurveButton?: string;
         drawLineButton?: string;
         drawCircleButton?: string;
         drawRectButton?: string;

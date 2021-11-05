@@ -15,6 +15,7 @@ const Utils = {
     map.eachLayer((layer) => {
       if (
         layer instanceof L.Polyline ||
+        (L.Curve && layer instanceof L.Curve) ||
         layer instanceof L.Marker ||
         layer instanceof L.Circle ||
         layer instanceof L.CircleMarker ||
@@ -23,10 +24,9 @@ const Utils = {
         layers.push(layer);
       }
     });
-
     // filter out layers that don't have the leaflet-geoman instance
     layers = layers.filter((layer) => !!layer.pm);
-
+    
     // filter out everything that's leaflet-geoman specific temporary stuff
     layers = layers.filter((layer) => !layer._pmTempLayer);
 
@@ -186,6 +186,11 @@ const Utils = {
     const pointA = map.project(center);
     const pointB = L.point(pointA.x + radiusInPx, pointA.y);
     return map.distance(map.unproject(pointB), center);
+  },
+  getPointSymetric(ref, point) {
+    const lat = 2 * ref[0] - point[0];
+    const lng = 2 * ref[1] - point[1];
+    return [lat, lng]
   },
 };
 

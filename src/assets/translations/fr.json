@@ -3,6 +3,7 @@
     "placeMarker": "Cliquez pour placer un marqueur",
     "firstVertex": "Cliquez pour placer le premier sommet",
     "continueLine": "Cliquez pour continuer à dessiner",
+    "dragCurve": "Faites glisser pour ajuster la courbe",
     "finishLine": "Cliquez sur n'importe quel marqueur pour terminer",
     "finishPoly": "Cliquez sur le premier marqueur pour terminer",
     "finishRect": "Cliquez pour terminer",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Placer des marqueurs",
     "drawPolyButton": "Dessiner des polygones",
+    "drawCurveButton": "Dessiner des courbes",
     "drawLineButton": "Dessiner des polylignes",
     "drawCircleButton": "Dessiner un cercle",
     "drawRectButton": "Dessiner un rectangle",

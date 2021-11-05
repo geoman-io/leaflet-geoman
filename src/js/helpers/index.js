@@ -243,9 +243,46 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
   };
 }
 
+// set new coords for the layer based in newCoords, based on current layer coords, ommiting non-coords elements (for curve)
+// new coords must be an array of L.LatLng
+export function reconciliateCoords(layer, newCoords) {
+  const isCurve = !L.Curve || layer instanceof L.Curve;
+  let index = 0;
+  if (!isCurve) return layer.setLatLngs(newCoords);
+  // for curve, array is always one-dimensional (no nesting)
+  if (newCoords.length == 1 && !newCoords[0].lat) newCoords = newCoords[0];
+  layer.setLatLngs(layer.getLatLngs().map(point => {
+    if (typeof point === 'string') return point;
+    const coords = [newCoords[index].lat, newCoords[index].lng];
+    index += 1;
+    return coords;
+  }));
+}
+
+// retrieve the coordinates only from a curve definition, converting them to L.LatLng objects
+export function pathToCoordsOnly(curveLayer) {
+  return curveLayer.getLatLngs().reduce((filtered, point) => {
+    if (Array.isArray(point)) filtered.push(L.latLng(point))
+    return filtered
+  }, []);
+}
+
+// returns points on the curve that correspond to the marker locations, converting them to L.LatLng
+export function getPointsOnCurve(curveLayer) {
+  return curveLayer.getLatLngs().reduce((coords, command, index, allVals) => {
+    if (Array.isArray(command) && (index === (allVals.length - 1) || !Array.isArray(allVals[index + 1]))) {
+      coords.push(L.latLng(command));
+    }
+    return coords;
+  }, []);
+}
+
 export function copyLatLngs(layer, latlngs = layer.getLatLngs()) {
   if (layer instanceof L.Polygon) {
     return L.polygon(latlngs).getLatLngs();
+  }
+  else if (L.Curve && layer instanceof L.Curve) {
+    return [pathToCoordsOnly(layer)];
   }
   return L.polyline(latlngs).getLatLngs();
 }

@@ -3,6 +3,7 @@
     "placeMarker": "Klik untuk menempatkan marker",
     "firstVertex": "Klik untuk menempatkan vertex pertama",
     "continueLine": "Klik untuk meneruskan digitasi",
+    "dragCurve": "Seret untuk melaraskan lengkung",
     "finishLine": "Klik pada sembarang marker yang ada untuk mengakhiri",
     "finishPoly": "Klik marker pertama untuk mengakhiri",
     "finishRect": "Klik untuk mengakhiri",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Digitasi Marker",
     "drawPolyButton": "Digitasi Polygon",
+    "drawCurveButton": "Digitasi Curve",
     "drawLineButton": "Digitasi Polyline",
     "drawCircleButton": "Digitasi Lingkaran",
     "drawRectButton": "Digitasi Segi Empat",

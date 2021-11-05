@@ -3,6 +3,7 @@
     "placeMarker": "Klik om een marker te plaatsen",
     "firstVertex": "Klik om het eerste punt te plaatsen",
     "continueLine": "Klik om te blijven tekenen",
+    "dragCurve": "Sleep om de curve aan te passen",
     "finishLine": "Klik op een bestaand punt om te beëindigen",
     "finishPoly": "Klik op het eerst punt om te beëindigen",
     "finishRect": "Klik om te beëindigen",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Plaats Marker",
     "drawPolyButton": "Teken een vlak",
+    "drawCurveButton": "Teken een curve",
     "drawLineButton": "Teken een lijn",
     "drawCircleButton": "Teken een cirkel",
     "drawRectButton": "Teken een vierkant",

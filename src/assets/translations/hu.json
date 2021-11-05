@@ -3,6 +3,7 @@
     "placeMarker": "Kattintson a jelölő elhelyezéséhez",
     "firstVertex": "Kattintson az első pont elhelyezéséhez",
     "continueLine": "Kattintson a következő pont elhelyezéséhez",
+    "dragCurve": "Húzza a görbe beállításához",
     "finishLine": "A befejezéshez kattintson egy meglévő pontra",
     "finishPoly": "A befejezéshez kattintson az első pontra",
     "finishRect": "Kattintson a befejezéshez",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Jelölő rajzolása",
     "drawPolyButton": "Poligon rajzolása",
+    "drawCurveButton": "Görbék rajzolása",
     "drawLineButton": "Vonal rajzolása",
     "drawCircleButton": "Kör rajzolása",
     "drawRectButton": "Négyzet rajzolása",

@@ -1,12 +1,12 @@
 import get from 'lodash/get';
 import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
-import { copyLatLngs } from '../helpers';
+import { copyLatLngs, reconciliateCoords, getPointsOnCurve } from '../helpers';
+import { all } from 'bluebird';
 
 /**
  * We create a temporary polygon with the same latlngs as the layer that we want to rotate.
  * Why polygon? Because then we have the correct center also for polylines with `layer.getCenter()`.
  * We reference the origin layer as `_rotationLayer`. The rotate listeners (`_onRotate...()`) are only applied to the temp polygon and from there we need to rotate the `_rotationLayer` too.
- *
  */
 
 const RotateMixin = {
@@ -37,7 +37,6 @@ const RotateMixin = {
     const angleDiffRadiant =
       Math.atan2(position.y - origin.y, position.x - origin.x) -
       Math.atan2(previous.y - origin.y, previous.x - origin.x);
-
     // rotate the temp polygon
     this._layer.setLatLngs(
       this._rotateLayer(
@@ -68,15 +67,13 @@ const RotateMixin = {
 
     const oldLatLngs = copyLatLngs(this._rotationLayer);
     // rotate the origin layer
-    this._rotationLayer.setLatLngs(
-      this._rotateLayer(
-        angleDiffRadiant,
-        this._rotationLayer.pm._rotateOrgLatLng,
-        this._rotationOriginLatLng,
-        L.PM.Matrix.init(),
-        this._map
-      )
-    );
+    reconciliateCoords(this._rotationLayer, this._rotateLayer(
+      angleDiffRadiant,
+      this._rotationLayer.pm._rotateOrgLatLng,
+      this._rotationOriginLatLng,
+      L.PM.Matrix.init(),
+      this._map
+    ));
 
     // convert the difference radiant to degrees and add it to the angle before rotation starts
     let angleDiff = (angleDiffRadiant * 180) / Math.PI;
@@ -129,6 +126,10 @@ const RotateMixin = {
     return center;
   },
 
+  getLatLngs(layer) {
+    if (!L.Curve || !(layer instanceof L.Curve)) return layer.getLatLngs();
+    return getPointsOnCurve(layer);
+  },
   /*
    *
    * Public functions f.ex. to disable and enable rotation on the layer directly
@@ -149,7 +150,7 @@ const RotateMixin = {
     };
 
     // we create a temp polygon for rotation
-    this._rotatePoly = L.polygon(this._layer.getLatLngs(), options).addTo(
+    this._rotatePoly = L.polygon(this.getLatLngs(this._layer), options).addTo(
       this._layer._map
     );
     this._rotatePoly.pm._setAngle(this.getAngle());
@@ -182,7 +183,7 @@ const RotateMixin = {
       this._rotatePoly.pm.setOptions({ rotate: false });
       this._rotatePoly = undefined;
       this._rotateOrgLatLng = undefined;
-
+      
       this._layer.off('remove', this.disableRotate, this);
 
       this._rotateEnabled = false;

@@ -3,6 +3,7 @@
     "placeMarker": "Klicka för att placera markör",
     "firstVertex": "Klicka för att placera första hörnet",
     "continueLine": "Klicka för att fortsätta rita",
+    "dragCurve": "Dra för att justera kurvan",
     "finishLine": "Klicka på en existerande punkt för att slutföra",
     "finishPoly": "Klicka på den första punkten för att slutföra",
     "finishRect": "Klicka för att slutföra",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Rita Markör",
     "drawPolyButton": "Rita Polygoner",
+    "drawCurveButton": "Rita kurvor",
     "drawLineButton": "Rita Linje",
     "drawCircleButton": "Rita Cirkel",
     "drawRectButton": "Rita Rektangel",

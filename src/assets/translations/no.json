@@ -3,6 +3,7 @@
     "placeMarker": "Klikk for å plassere punkt",
     "firstVertex": "Klikk for å plassere første punkt",
     "continueLine": "Klikk for å tegne videre",
+    "dragCurve": "Dra for å justere kurven",
     "finishLine": "Klikk på et eksisterende punkt for å fullføre",
     "finishPoly": "Klikk første punkt for å fullføre",
     "finishRect": "Klikk for å fullføre",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Tegn Punkt",
     "drawPolyButton": "Tegn Flate",
+    "drawCurveButton": "Tegn Curve",
     "drawLineButton": "Tegn Linje",
     "drawCircleButton": "Tegn Sirkel",
     "drawRectButton": "Tegn rektangel",

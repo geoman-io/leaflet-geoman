@@ -3,6 +3,7 @@
     "placeMarker": "單擊放置標記",
     "firstVertex": "單擊放置第一個頂點",
     "continueLine": "單擊繼續繪製",
+    "dragCurve": "拖動以調整曲線",
     "finishLine": "單擊任何存在的標記以完成",
     "finishPoly": "單擊第一個標記以完成",
     "finishRect": "單擊完成",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "放置標記",
     "drawPolyButton": "繪製多邊形",
+    "drawCurveButton": "绘制曲线",
     "drawLineButton": "繪製線段",
     "drawCircleButton": "繪製圓形",
     "drawRectButton": "繪製方形",

@@ -3,6 +3,7 @@
     "placeMarker": "Platziere den Marker mit Klick",
     "firstVertex": "Platziere den ersten Marker mit Klick",
     "continueLine": "Klicke, um weiter zu zeichnen",
+    "dragCurve": "Ziehen Sie, um die Kurve anzupassen",
     "finishLine": "Beende mit Klick auf existierenden Marker",
     "finishPoly": "Beende mit Klick auf ersten Marker",
     "finishRect": "Beende mit Klick",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Marker zeichnen",
     "drawPolyButton": "Polygon zeichnen",
+    "drawCurveButton": "Bezier zeichnen",
     "drawLineButton": "Polyline zeichnen",
     "drawCircleButton": "Kreis zeichnen",
     "drawRectButton": "Rechteck zeichnen",

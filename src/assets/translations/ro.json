@@ -3,6 +3,7 @@
     "placeMarker": "Adaugă un punct",
     "firstVertex": "Apasă aici pentru a adăuga primul Vertex",
     "continueLine": "Apasă aici pentru a continua desenul",
+    "dragCurve": "Trageți pentru a ajusta curba",
     "finishLine": "Apasă pe orice obiect pentru a finisa desenul",
     "finishPoly": "Apasă pe primul obiect pentru a finisa",
     "finishRect": "Apasă pentru a finisa",
@@ -18,6 +19,7 @@
   "buttonTitles": {
     "drawMarkerButton": "Adaugă o bulină",
     "drawPolyButton": "Desenează un poligon",
+    "drawCurveButton": "Desenează o curbă",
     "drawLineButton": "Desenează o linie",
     "drawCircleButton": "Desenează un cerc",
     "drawRectButton": "Desenează un dreptunghi",

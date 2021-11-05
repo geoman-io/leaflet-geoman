@@ -59,6 +59,9 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-polygon {
   background-image: url('../assets/icons/Polygon.svg');
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-curve {
+  background-image: url('../assets/icons/Curve.svg');
+}
 .leaflet-pm-toolbar .leaflet-pm-icon-polyline {
   background-image: url('../assets/icons/Line.svg');
 }
