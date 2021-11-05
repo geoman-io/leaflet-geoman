@@ -231,7 +231,7 @@ The options will persist, even when the mode is enabled/disabled via the toolbar
 All available options for drawing and editing are specified in the sections below.
 
 #### Drawing curves
-The drawing of curves is enabled by default, if Leaflet.curve (https://github.com/elfalem/Leaflet.curve) is imported. Otherwise the tool will not be available.
+The drawing of curves is enabled by default, if [Leaflet.curve](https://github.com/elfalem/Leaflet.curve) is imported. Otherwise the tool will not be available.
 At the moment, the feature to detect self intersection is not available for curves. Similarly, the cutting tool won't work on them.
 
 
