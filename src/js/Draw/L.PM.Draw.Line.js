@@ -285,6 +285,8 @@ Draw.Line = Draw.extend({
     // remove that marker
     this._layerGroup.removeLayer(marker);
 
+    this._fireVertexRemoved(marker, undefined);
+
     // update layer with new coords
     this._layer.setLatLngs(coords);
 
