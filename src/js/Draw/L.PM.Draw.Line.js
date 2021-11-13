@@ -285,14 +285,14 @@ Draw.Line = Draw.extend({
     // remove that marker
     this._layerGroup.removeLayer(marker);
 
-    this._fireVertexRemoved(marker, undefined);
-
     // update layer with new coords
     this._layer.setLatLngs(coords);
 
     // sync the hintline again
     this._syncHintLine();
     this._setTooltipText();
+
+    this._fireVertexRemoved(marker, undefined, 'Draw');
   },
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
