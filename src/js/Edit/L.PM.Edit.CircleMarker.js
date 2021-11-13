@@ -13,18 +13,15 @@ Edit.CircleMarker = Edit.extend({
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
-
-    // cancel when map isn't available, this happens when the polygon is removed before this fires
-    if (!this._map) {
-      return;
-    }
 
     // layer is not allowed to edit
-    if (!this.options.allowEditing) {
+    // cancel when map isn't available, this happens when it is removed before this fires
+    if (!this.options.allowEditing || !this._layer._map) {
       this.disable();
       return;
     }
+
+    this._map = this._layer._map;
 
     if (this.enabled()) {
       // if it was already enabled, disable first
@@ -60,14 +57,16 @@ Edit.CircleMarker = Edit.extend({
       this._map = this._layer._map;
     }
 
-    if (this.options.editable) {
-      this._map.off('move', this._syncMarkers, this);
-      if (this._outerMarker) {
-        // update marker latlng when snapped latlng radius is out of min/max
-        this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
+    if (!this._map) {
+      if (this.options.editable) {
+        this._map.off('move', this._syncMarkers, this);
+        if (this._outerMarker) {
+          // update marker latlng when snapped latlng radius is out of min/max
+          this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
+        }
+      } else {
+        this._map.off('move', this._updateHiddenPolyCircle, this);
       }
-    } else {
-      this._map.off('move', this._updateHiddenPolyCircle, this);
     }
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
@@ -83,9 +82,7 @@ Edit.CircleMarker = Edit.extend({
       this._fireDisable();
     }
 
-    layer.pm._enabled = false;
-
-    return true;
+    this._enabled = false;
   },
   enabled() {
     return this._enabled;

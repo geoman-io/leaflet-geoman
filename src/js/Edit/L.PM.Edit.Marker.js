@@ -14,16 +14,16 @@ Edit.Marker = Edit.extend({
   enable(options = { draggable: true }) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
-
     // layer is not allowed to edit
-    if (!this.options.allowEditing) {
+    if (!this.options.allowEditing || !this._layer._map) {
       this.disable();
       return;
     }
 
+    this._map = this._layer._map;
+
     if (this.enabled()) {
-      return;
+      this.disable();
     }
     this.applyOptions();
     this._enabled = true;
@@ -31,7 +31,6 @@ Edit.Marker = Edit.extend({
     this._fireEnable();
   },
   disable() {
-    this._enabled = false;
 
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
@@ -45,6 +44,8 @@ Edit.Marker = Edit.extend({
       this._layerEdited = false;
       this._fireDisable();
     }
+
+    this._enabled = false;
   },
   enabled() {
     return this._enabled;
