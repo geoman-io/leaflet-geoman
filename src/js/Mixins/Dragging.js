@@ -236,7 +236,7 @@ const DragMixin = {
     }
 
     // if _tempDragCoord is null add the current latlng to prevent throwing a error. This can happen when for example the layer is removed and added to the map while dragging (MarkerCluster)
-    if(!this._tempDragCoord){
+    if (!this._tempDragCoord) {
       this._tempDragCoord = e.latlng;
     }
 
@@ -291,7 +291,7 @@ const DragMixin = {
       // set state
       this._dragging = false;
       // if the layer is not on the map, we have no DOM element
-      if(el) {
+      if (el) {
         L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
       }
 

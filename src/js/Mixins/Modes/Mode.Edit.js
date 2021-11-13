@@ -74,7 +74,7 @@ const GlobalEditMode = {
   handleLayerAdditionInGlobalEditMode() {
     const layers = this._addedLayers;
     this._addedLayers = {};
-    for(const id in layers){
+    for (const id in layers) {
       const layer = layers[id];
       // when global edit mode is enabled and a layer is added to the map,
       // enable edit for that layer if it's relevant

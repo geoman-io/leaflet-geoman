@@ -18,7 +18,9 @@ describe('Opens Testing Environment', () => {
 
       map.on('pm:drawstart', (e) => {
         const layer = e.workingLayer;
-        layer.on('pm:snap',  (x) => {eventcalled = x.type});
+        layer.on('pm:snap', (x) => {
+          eventcalled = x.type;
+        });
       });
     });
 

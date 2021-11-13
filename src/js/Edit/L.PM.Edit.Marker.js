@@ -35,7 +35,6 @@ Edit.Marker = Edit.extend({
     this._fireEnable();
   },
   disable() {
-
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
 

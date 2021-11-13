@@ -101,7 +101,9 @@ Edit.Line = Edit.extend({
     }
 
     // remove draggable class
-    const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
+    const el = this._layer._path
+      ? this._layer._path
+      : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
     // remove invalid class if layer has self intersection

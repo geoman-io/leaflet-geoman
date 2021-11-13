@@ -248,9 +248,7 @@ describe('Draw Circle', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector)
-      .click(200, 200)
-      .click(250, 250);
+    cy.get(mapSelector).click(200, 200).click(250, 250);
 
     cy.toolbarButton('edit').click();
 

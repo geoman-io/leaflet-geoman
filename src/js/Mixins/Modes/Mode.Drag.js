@@ -57,7 +57,7 @@ const GlobalDragMode = {
   reinitGlobalDragMode() {
     const layers = this._addedLayersDrag;
     this._addedLayersDrag = {};
-    for(const id in layers) {
+    for (const id in layers) {
       const layer = layers[id];
       // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
       const isRelevant = !!layer.pm && !layer._pmTempLayer;

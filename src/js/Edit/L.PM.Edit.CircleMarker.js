@@ -13,7 +13,6 @@ Edit.CircleMarker = Edit.extend({
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
-
     // layer is not allowed to edit
     // cancel when map isn't available, this happens when it is removed before this fires
     if (!this.options.allowEditing || !this._layer._map) {
