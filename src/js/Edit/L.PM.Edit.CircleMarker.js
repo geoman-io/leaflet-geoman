@@ -30,6 +30,9 @@ Edit.CircleMarker = Edit.extend({
     }
     this.applyOptions();
 
+    // if shape gets removed from map, disable edit mode
+    this._layer.on('remove', this.disable, this);
+
     // change state
     this._enabled = true;
 
@@ -42,14 +45,14 @@ Edit.CircleMarker = Edit.extend({
 
     this._fireEnable();
   },
-  disable(layer = this._layer) {
+  disable() {
     // prevent disabling if layer is being dragged
-    if (layer.pm._dragging) {
+    if (this._dragging) {
       return;
     }
 
-    if (layer.pm._helperLayers) {
-      layer.pm._helperLayers.clearLayers();
+    if (this._helperLayers) {
+      this._helperLayers.clearLayers();
     }
 
     // Add map if it is not already set. This happens when disable() is called before enable()
@@ -72,6 +75,7 @@ Edit.CircleMarker = Edit.extend({
     this.disableLayerDrag();
 
     this._layer.off('contextmenu', this._removeMarker, this);
+    this._layer.off('remove', this.disable, this);
 
     // only fire events if it was enabled before
     if (this.enabled()) {

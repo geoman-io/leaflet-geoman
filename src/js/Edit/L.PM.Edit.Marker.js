@@ -26,6 +26,10 @@ Edit.Marker = Edit.extend({
       this.disable();
     }
     this.applyOptions();
+
+    // if shape gets removed from map, disable edit mode
+    this._layer.on('remove', this.disable, this);
+
     this._enabled = true;
 
     this._fireEnable();
@@ -35,6 +39,8 @@ Edit.Marker = Edit.extend({
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
 
+    // remove listener
+    this._layer.off('remove', this.disable, this);
     this._layer.off('contextmenu', this._removeMarker, this);
 
     if (this.enabled()) {

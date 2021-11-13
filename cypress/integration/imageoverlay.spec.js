@@ -18,7 +18,7 @@ describe('Opens Testing Environment', () => {
 
       map.on('pm:drawstart', (e) => {
         const layer = e.workingLayer;
-        layer.on('pm:snap', (x) => (eventcalled = x.type));
+        layer.on('pm:snap',  (x) => {eventcalled = x.type});
       });
     });
 
@@ -29,7 +29,7 @@ describe('Opens Testing Environment', () => {
       cy.get(mapSelector).click(point);
     });
 
-    cy.window().then(({}) => {
+    cy.window().then(() => {
       expect(eventcalled).to.equal('pm:snap');
     });
   });

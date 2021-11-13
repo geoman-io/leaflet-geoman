@@ -34,23 +34,22 @@ Edit.Circle = Edit.extend({
 
     this.applyOptions();
 
-    // if circle gets removed from map, disable edit mode
-    this._layer.on('remove', (e) => {
-      this.disable(e.target);
-    });
+    // if shape gets removed from map, disable edit mode
+    this._layer.on('remove', this.disable, this);
+
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
 
     this._fireEnable();
   },
-  disable(layer = this._layer) {
+  disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
       return;
     }
 
     // prevent disabling if layer is being dragged
-    if (layer.pm._dragging) {
+    if (this._dragging) {
       return;
     }
 
@@ -59,11 +58,13 @@ Edit.Circle = Edit.extend({
     this._centerMarker.off('dragend', this._onCircleDragEnd, this);
     this._outerMarker.off('drag', this._handleOuterMarkerSnapping, this);
 
-    layer.pm._enabled = false;
-    layer.pm._helperLayers.clearLayers();
+    this._layer.off('remove', this.disable, this);
+
+    this._enabled = false;
+    this._helperLayers.clearLayers();
 
     // remove draggable class
-    const el = layer._path ? layer._path : this._layer._renderer._container;
+    const el = this._layer._path ? this._layer._path : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
     if (this._layerEdited) {
