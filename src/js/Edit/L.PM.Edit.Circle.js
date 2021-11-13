@@ -34,7 +34,7 @@ Edit.Circle = Edit.extend({
 
     this.applyOptions();
 
-    // if polygon gets removed from map, disable edit mode
+    // if circle gets removed from map, disable edit mode
     this._layer.on('remove', (e) => {
       this.disable(e.target);
     });
@@ -46,12 +46,12 @@ Edit.Circle = Edit.extend({
   disable(layer = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
-      return false;
+      return;
     }
 
     // prevent disabling if layer is being dragged
     if (layer.pm._dragging) {
-      return false;
+      return;
     }
 
     this._centerMarker.off('dragstart', this._onCircleDragStart, this);
@@ -72,7 +72,6 @@ Edit.Circle = Edit.extend({
     this._layerEdited = false;
 
     this._fireDisable();
-    return true;
   },
   enabled() {
     return this._enabled;

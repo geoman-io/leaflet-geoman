@@ -50,7 +50,7 @@ Edit.ImageOverlay = Edit.extend({
   disable(layer = this._layer) {
     // prevent disabling if layer is being dragged
     if (layer.pm._dragging) {
-      return false;
+      return;
     }
 
     // Add map if it is not already set. This happens when disable() is called before enable()
@@ -70,7 +70,6 @@ Edit.ImageOverlay = Edit.extend({
     }
 
     layer.pm._enabled = false;
-    return true;
   },
   _findCorners() {
     const corners = this._layer.getBounds();

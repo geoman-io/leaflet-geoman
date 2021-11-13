@@ -45,7 +45,7 @@ Edit.CircleMarker = Edit.extend({
   disable(layer = this._layer) {
     // prevent disabling if layer is being dragged
     if (layer.pm._dragging) {
-      return false;
+      return;
     }
 
     if (layer.pm._helperLayers) {

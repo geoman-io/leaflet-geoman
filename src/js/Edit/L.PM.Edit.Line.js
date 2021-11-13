@@ -78,12 +78,12 @@ Edit.Line = Edit.extend({
   disable(poly = this._layer) {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
-      return false;
+      return;
     }
 
     // prevent disabling if polygon is being dragged
     if (poly.pm._dragging) {
-      return false;
+      return;
     }
     poly.pm._enabled = false;
     poly.pm._markerGroup.clearLayers();
@@ -114,7 +114,6 @@ Edit.Line = Edit.extend({
     }
     this._layerEdited = false;
     this._fireDisable();
-    return true;
   },
   enabled() {
     return this._enabled;
