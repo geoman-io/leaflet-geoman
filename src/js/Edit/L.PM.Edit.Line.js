@@ -51,8 +51,8 @@ Edit.Line = Edit.extend({
 
     this.applyOptions();
 
-    // if polygon gets removed from map, disable edit mode
-    this._layer.on('remove', this._onLayerRemove, this);
+    // if shape gets removed from map, disable edit mode
+    this._layer.on('remove', this.disable, this);
 
     if (!this.options.allowSelfIntersection) {
       this._layer.on(
@@ -75,22 +75,22 @@ Edit.Line = Edit.extend({
     }
     this._fireEnable();
   },
-  disable(poly = this._layer) {
+  disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
-      return false;
+      return;
     }
 
     // prevent disabling if polygon is being dragged
-    if (poly.pm._dragging) {
-      return false;
+    if (this._dragging) {
+      return;
     }
-    poly.pm._enabled = false;
-    poly.pm._markerGroup.clearLayers();
-    poly.pm._markerGroup.removeFrom(this._map);
+    this._enabled = false;
+    this._markerGroup.clearLayers();
+    this._markerGroup.removeFrom(this._map);
 
-    // remove onRemove listener
-    this._layer.off('remove', this._onLayerRemove, this);
+    // remove listener
+    this._layer.off('remove', this.disable, this);
 
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
@@ -101,7 +101,9 @@ Edit.Line = Edit.extend({
     }
 
     // remove draggable class
-    const el = poly._path ? poly._path : this._layer._renderer._container;
+    const el = this._layer._path
+      ? this._layer._path
+      : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
     // remove invalid class if layer has self intersection
@@ -114,7 +116,6 @@ Edit.Line = Edit.extend({
     }
     this._layerEdited = false;
     this._fireDisable();
-    return true;
   },
   enabled() {
     return this._enabled;
@@ -133,9 +134,6 @@ Edit.Line = Edit.extend({
     } else {
       this._disableSnapping();
     }
-  },
-  _onLayerRemove(e) {
-    this.disable(e.target);
   },
   _initMarkers() {
     const map = this._map;
@@ -422,10 +420,8 @@ Edit.Line = Edit.extend({
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
       if (Array.isArray(marker)) {
-        return this._updateDisabledMarkerStyle(marker, disabled);
-      }
-
-      if (marker._icon) {
+        this._updateDisabledMarkerStyle(marker, disabled);
+      } else if (marker._icon) {
         if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
           L.DomUtil.addClass(marker._icon, 'vertexmarker-disabled');
         } else {
