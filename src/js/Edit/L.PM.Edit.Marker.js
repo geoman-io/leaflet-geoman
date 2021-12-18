@@ -35,6 +35,11 @@ Edit.Marker = Edit.extend({
     this._fireEnable();
   },
   disable() {
+    // if it's not enabled, it doesn't need to be disabled
+    if (!this.enabled()) {
+      return;
+    }
+
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
 
@@ -42,13 +47,11 @@ Edit.Marker = Edit.extend({
     this._layer.off('remove', this.disable, this);
     this._layer.off('contextmenu', this._removeMarker, this);
 
-    if (this.enabled()) {
-      if (this._layerEdited) {
-        this._fireUpdate();
-      }
-      this._layerEdited = false;
-      this._fireDisable();
+    if (this._layerEdited) {
+      this._fireUpdate();
     }
+    this._layerEdited = false;
+    this._fireDisable();
 
     this._enabled = false;
   },
