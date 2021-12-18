@@ -339,7 +339,7 @@ Edit.Line = Edit.extend({
 
     this._fireVertexAdded(
       newM,
-      this.L.PM.Utils.findDeepMarkerIndex(this._markers, newM).indexPath,
+      L.PM.Utils.findDeepMarkerIndex(this._markers, newM).indexPath,
       latlng
     );
 
@@ -453,7 +453,7 @@ Edit.Line = Edit.extend({
     let coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = this.L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -582,7 +582,7 @@ Edit.Line = Edit.extend({
     const latlng = marker.getLatLng();
 
     // get indexPath of Marker
-    const { indexPath, index, parentPath } = this.L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -596,7 +596,7 @@ Edit.Line = Edit.extend({
   },
 
   _getNeighborMarkers(marker) {
-    const { indexPath, index, parentPath } = this.L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -658,7 +658,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
 
     this._fireMarkerDragStart(e, indexPath);
 
@@ -686,7 +686,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath, index, parentPath } = this.L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -759,7 +759,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
@@ -811,7 +811,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.L.PM.Utils.findDeepMarkerIndex(this._markers, vertex);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, vertex);
 
     this._fireVertexClick(e, indexPath);
   },
