@@ -140,6 +140,34 @@ const Utils = {
 
     return returnVal;
   },
+  findDeepMarkerIndex(arr, marker) {
+    // thanks for the function, Felix Heck
+    let result;
+
+    const run = (path) => (v, i) => {
+      const iRes = path.concat(i);
+
+      if (v._leaflet_id === marker._leaflet_id) {
+        result = iRes;
+        return true;
+      }
+
+      return Array.isArray(v) && v.some(run(iRes));
+    };
+    arr.some(run([]));
+
+    let returnVal = {};
+
+    if (result) {
+      returnVal = {
+        indexPath: result,
+        index: result[result.length - 1],
+        parentPath: result.slice(0, result.length - 1),
+      };
+    }
+
+    return returnVal;
+  },
   _getIndexFromSegment(coords, segment) {
     if (segment && segment.length === 2) {
       const indexA = this.findDeepCoordIndex(coords, segment[0]);

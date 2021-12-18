@@ -14,6 +14,15 @@ describe('Draw & Edit Line', () => {
   });
 
   it('removes last vertex', () => {
+    let eventCalled = false;
+    cy.window().then(({ map }) => {
+      map.on('pm:drawstart', (e) => {
+        e.workingLayer.on('pm:vertexremoved', () => {
+          eventCalled = true;
+        });
+      });
+    });
+
     cy.toolbarButton('polyline').click();
 
     cy.get(mapSelector)
@@ -31,6 +40,9 @@ describe('Draw & Edit Line', () => {
     cy.get('.button-container.active .action-removeLastVertex').click();
 
     cy.hasVertexMarkers(3);
+    cy.window().then(() => {
+      expect(eventCalled).to.eq(true);
+    });
   });
 
   it('respects custom style', () => {
