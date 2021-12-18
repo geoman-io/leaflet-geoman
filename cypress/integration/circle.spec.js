@@ -242,4 +242,21 @@ describe('Draw Circle', () => {
       expect(!!map.pm.Draw.Circle._layer._map).to.eq(false);
     });
   });
+  it('removes circle if enabled', () => {
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200).click(250, 250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasLayers(7);
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.remove();
+    });
+    cy.hasLayers(3);
+  });
 });

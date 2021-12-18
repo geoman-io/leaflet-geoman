@@ -14,18 +14,22 @@ Edit.Marker = Edit.extend({
   enable(options = { draggable: true }) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
-
     // layer is not allowed to edit
-    if (!this.options.allowEditing) {
+    if (!this.options.allowEditing || !this._layer._map) {
       this.disable();
       return;
     }
 
+    this._map = this._layer._map;
+
     if (this.enabled()) {
-      return;
+      this.disable();
     }
     this.applyOptions();
+
+    // if shape gets removed from map, disable edit mode
+    this._layer.on('remove', this.disable, this);
+
     this._enabled = true;
 
     this._fireEnable();
@@ -36,11 +40,11 @@ Edit.Marker = Edit.extend({
       return;
     }
 
-    this._enabled = false;
-
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
 
+    // remove listener
+    this._layer.off('remove', this.disable, this);
     this._layer.off('contextmenu', this._removeMarker, this);
 
     if (this._layerEdited) {
@@ -48,6 +52,8 @@ Edit.Marker = Edit.extend({
     }
     this._layerEdited = false;
     this._fireDisable();
+
+    this._enabled = false;
   },
   enabled() {
     return this._enabled;
