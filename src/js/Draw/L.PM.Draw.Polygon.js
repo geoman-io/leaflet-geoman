@@ -1,5 +1,4 @@
 import Draw from './L.PM.Draw';
-import { getTranslation } from '../helpers';
 
 Draw.Polygon = Draw.Line.extend({
   initialize(map) {
@@ -46,9 +45,9 @@ Draw.Polygon = Draw.Line.extend({
 
     // handle tooltip text
     if (length <= 2) {
-      text = getTranslation('tooltips.continueLine');
+      text = L.PM.Translation.getTranslation('tooltips.continueLine');
     } else {
-      text = getTranslation('tooltips.finishPoly');
+      text = L.PM.Translation.getTranslation('tooltips.finishPoly');
     }
     this._hintMarker.setTooltipContent(text);
   },

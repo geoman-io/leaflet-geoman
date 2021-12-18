@@ -183,10 +183,7 @@ const SnapMixin = {
     // temporary markers of polygon-edits
     map.eachLayer((layer) => {
       if (
-        (layer instanceof L.Polyline ||
-          layer instanceof L.Marker ||
-          layer instanceof L.CircleMarker ||
-          layer instanceof L.ImageOverlay) &&
+        map.pm._allowedSnappingTypes.find((x)=> layer instanceof x) &&
         layer.options.snapIgnore !== true
       ) {
         // if snapIgnore === false the layer will be always snappable
@@ -229,7 +226,7 @@ const SnapMixin = {
     // also remove everything that has no coordinates yet
     layers = layers.filter(
       (layer) =>
-        layer._latlng || (layer._latlngs && !isEmptyDeep(layer._latlngs))
+        this._map.pm._snappingFilters.find((filter)=>filter(layer))
     );
 
     // finally remove everything that's leaflet-geoman specific temporary stuff
@@ -309,7 +306,7 @@ const SnapMixin = {
     const P = latlng;
 
     // the coords of the layer
-    const latlngs = isMarker ? layer.getLatLng() : layer.getLatLngs();
+    const latlngs = L.PM.Utils._getCoords(map, layer);
 
     if (isMarker) {
       // return the info for the marker, no more calculations needed

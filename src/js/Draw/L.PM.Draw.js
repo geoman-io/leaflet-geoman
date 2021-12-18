@@ -221,6 +221,10 @@ const Draw = L.Class.extend({
     const map = this._map || this._layer._map;
     return map.pm.getGeomanLayers().length === 0;
   },
+  addShape(name) {
+    this.shapes.push(name);
+    this[name] = new L.PM.Draw[name](this._map);
+  }
 });
 
 export default Draw;

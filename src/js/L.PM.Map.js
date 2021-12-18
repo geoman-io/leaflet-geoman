@@ -1,11 +1,11 @@
 import merge from 'lodash/merge';
-import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
 import KeyboardMixins from './Mixins/Keyboard';
+import { isEmptyDeep } from './helpers';
 
 const Map = L.Class.extend({
   includes: [
@@ -40,16 +40,30 @@ const Map = L.Class.extend({
     };
 
     this.Keyboard._initKeyListener(map);
+
+    this._allowedTypes = [L.Polyline, L.Marker, L.Circle, L.CircleMarker, L.ImageOverlay];
+    this._allowedSnappingTypes = [L.Polyline, L.Marker, L.Circle, L.CircleMarker, L.ImageOverlay];
+    this._allowedRotateTypes = [L.Polyline];
+    this._latlngFunctions = [
+      {type: L.Marker, fnc: L.Marker.prototype.getLatLng},
+      {type: L.CircleMarker, fnc: L.CircleMarker.prototype.getLatLng},
+      {type: L.Polyline, fnc: L.Polyline.prototype.getLatLngs},
+    ];
+    this._snappingFilters = [
+      (layer)=>layer._latlng,
+      (layer)=>layer._latlngs && !isEmptyDeep(layer._latlngs),
+    ]
+
   },
   setLang(lang = 'en', t, fallback = 'en') {
     const oldLang = L.PM.activeLang;
     if (t) {
-      translations[lang] = merge(translations[fallback], t);
+      L.PM.Translation.translations[lang] = merge(L.PM.Translation.translations[fallback], t);
     }
 
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
-    this._fireLangChange(oldLang, lang, fallback, translations[lang]);
+    this._fireLangChange(oldLang, lang, fallback, L.PM.Translation.translations);
   },
   addControls(options) {
     this.Toolbar.addControls(options);

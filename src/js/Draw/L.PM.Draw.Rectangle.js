@@ -1,5 +1,5 @@
 import Draw from './L.PM.Draw';
-import { fixLatOffset, getTranslation } from '../helpers';
+import { fixLatOffset } from '../helpers';
 
 Draw.Rectangle = Draw.extend({
   initialize(map) {
@@ -55,7 +55,7 @@ Draw.Rectangle = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip(getTranslation('tooltips.firstVertex'), {
+        .bindTooltip(L.PM.Translation.getTranslation('tooltips.firstVertex'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
@@ -175,7 +175,7 @@ Draw.Rectangle = Draw.extend({
     this._map.on('click', this._finishShape, this);
 
     // change tooltip text
-    this._hintMarker.setTooltipContent(getTranslation('tooltips.finishRect'));
+    this._hintMarker.setTooltipContent(L.PM.Translation.getTranslation('tooltips.finishRect'));
 
     this._setRectangleOrigin();
   },

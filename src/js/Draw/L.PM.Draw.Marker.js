@@ -1,5 +1,4 @@
 import Draw from './L.PM.Draw';
-import { getTranslation } from '../helpers';
 
 Draw.Marker = Draw.extend({
   initialize(map) {
@@ -30,7 +29,7 @@ Draw.Marker = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip(getTranslation('tooltips.placeMarker'), {
+        .bindTooltip(L.PM.Translation.getTranslation('tooltips.placeMarker'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',

@@ -1,4 +1,4 @@
-import { createGeodesicPolygon, getTranslation } from './helpers';
+import { createGeodesicPolygon } from './helpers';
 import { _toLatLng, _toPoint } from './helpers/ModeHelper';
 
 const Utils = {
@@ -13,13 +13,8 @@ const Utils = {
   findLayers(map) {
     let layers = [];
     map.eachLayer((layer) => {
-      if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle ||
-        layer instanceof L.CircleMarker ||
-        layer instanceof L.ImageOverlay
-      ) {
+
+      if (map.pm._allowedTypes.find((x)=> layer instanceof x)) {
         layers.push(layer);
       }
     });
@@ -110,7 +105,7 @@ const Utils = {
     };
   },
   createGeodesicPolygon,
-  getTranslation,
+  getTranslation: (path)=>L.PM.Translation.getTranslation(path),
   findDeepCoordIndex(arr, latlng) {
     // find latlng in arr and return its location as path
     // thanks for the function, Felix Heck
@@ -182,6 +177,26 @@ const Utils = {
     const p3 = _toLatLng(map, { x: x1, y: y1 });
     return [p0, p1, p2, p3];
   },
+  // move the coordinates by the delta
+  moveCoordsByDelta(deltaLatLng, coords) {
+    // alter the coordinates
+    return coords.map((currentLatLng) => {
+      if (Array.isArray(currentLatLng)) {
+        // do this recursively as coords might be nested
+        return L.PM.Utils.moveCoordsByDelta(deltaLatLng, currentLatLng);
+      }
+
+      // move the coord and return it
+      return {
+        lat: currentLatLng.lat + deltaLatLng.lat,
+        lng: currentLatLng.lng + deltaLatLng.lng,
+      };
+    });
+  },
+  _getCoords(map, layer) {
+    const obj = map.pm._latlngFunctions.find((f)=> layer instanceof f.type);
+    return obj.fnc.call(layer, layer);
+  }
 };
 
 export default Utils;

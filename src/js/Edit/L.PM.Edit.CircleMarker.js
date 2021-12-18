@@ -429,4 +429,25 @@ Edit.CircleMarker = Edit.extend({
     const pointB = L.point(pointA.x + radius, pointA.y);
     return this._map.unproject(pointB).distanceTo(center);
   },
+  _handleDrag(deltaLatLng) {
+    if(this._layer instanceof L.CircleMarker && this._layer.options.editable){
+      // create the new coordinates array
+      const newCoords = L.PM.Utils.moveCoordsByDelta(deltaLatLng,[this._layer.getLatLng()]);
+      // set new coordinates and redraw
+      this._layer.setLatLng(newCoords[0]);
+    }else {
+      let coordsRefernce = this._layer.getLatLng();
+      if (this._layer._snapped) {
+        // if layer is snapped we use the original latlng for re-calculation, else the layer will not be "unsnappable" anymore
+        coordsRefernce = this._layer._orgLatLng;
+      }
+      // create the new coordinates array
+      const newCoords = L.PM.Utils.moveCoordsByDelta(deltaLatLng, [coordsRefernce]);
+      // set new coordinates and redraw
+      this._layer.setLatLng(newCoords[0]);
+    }
+  },
+  _getCoords(){
+    return this._layer.getLatLng();
+  }
 });

@@ -68,7 +68,7 @@ const RotateMixin = {
 
     const oldLatLngs = copyLatLngs(this._rotationLayer);
     // rotate the origin layer
-    this._rotationLayer.setLatLngs(
+    this._rotationLayer.pm._handleRotate(
       this._rotateLayer(
         angleDiffRadiant,
         this._rotationLayer.pm._rotateOrgLatLng,
@@ -149,7 +149,7 @@ const RotateMixin = {
     };
 
     // we create a temp polygon for rotation
-    this._rotatePoly = L.polygon(this._layer.getLatLngs(), options).addTo(
+    this._rotatePoly = L.polygon(L.PM.Utils._getCoords(this._layer._map, this._layer), options).addTo(
       this._layer._map
     );
     this._rotatePoly.pm._setAngle(this.getAngle());

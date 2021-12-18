@@ -1,8 +1,6 @@
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
 
-import { getTranslation } from '../helpers';
-
 Draw.Line = Draw.extend({
   initialize(map) {
     this._map = map;
@@ -51,7 +49,7 @@ Draw.Line = Draw.extend({
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip(getTranslation('tooltips.firstVertex'), {
+        .bindTooltip(L.PM.Translation.getTranslation('tooltips.firstVertex'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
@@ -361,9 +359,9 @@ Draw.Line = Draw.extend({
 
     // handle tooltip text
     if (length <= 1) {
-      text = getTranslation('tooltips.continueLine');
+      text = L.PM.Translation.getTranslation('tooltips.continueLine');
     } else {
-      text = getTranslation('tooltips.finishLine');
+      text = L.PM.Translation.getTranslation('tooltips.finishLine');
     }
     this._hintMarker.setTooltipContent(text);
   },

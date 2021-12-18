@@ -107,6 +107,9 @@ const Edit = L.Class.extend({
     }
     return true;
   },
+  _handleRotate(latlngs) {
+    this._layer.setLatLngs(latlngs);
+  },
 });
 
 export default Edit;
