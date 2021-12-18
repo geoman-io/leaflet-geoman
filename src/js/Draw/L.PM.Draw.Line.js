@@ -282,9 +282,16 @@ Draw.Line = Draw.extend({
       .filter((l) => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
       .find((l) => l.getLatLng() === removedCoord);
 
+
+    const markers = this._layerGroup.getLayers().filter((l)=>l instanceof L.Marker);
+    // the index path to the marker inside the multidimensional marker array
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+      markers,
+      marker
+    );
+
     // remove that marker
     this._layerGroup.removeLayer(marker);
-
     // update layer with new coords
     this._layer.setLatLngs(coords);
 
@@ -292,7 +299,7 @@ Draw.Line = Draw.extend({
     this._syncHintLine();
     this._setTooltipText();
 
-    this._fireVertexRemoved(marker, undefined, 'Draw');
+    this._fireVertexRemoved(marker, indexPath, 'Draw');
   },
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!

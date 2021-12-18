@@ -306,7 +306,7 @@ Edit.Line = Edit.extend({
     delete newM.rightM;
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       leftM
     );
@@ -339,7 +339,7 @@ Edit.Line = Edit.extend({
 
     this._fireVertexAdded(
       newM,
-      this.findDeepMarkerIndex(this._markers, newM).indexPath,
+      this.L.PM.Utils.findDeepMarkerIndex(this._markers, newM).indexPath,
       latlng
     );
 
@@ -453,7 +453,7 @@ Edit.Line = Edit.extend({
     let coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -574,34 +574,6 @@ Edit.Line = Edit.extend({
     // TODO: maybe fire latlng as well?
     this._fireVertexRemoved(marker, indexPath);
   },
-  findDeepMarkerIndex(arr, marker) {
-    // thanks for the function, Felix Heck
-    let result;
-
-    const run = (path) => (v, i) => {
-      const iRes = path.concat(i);
-
-      if (v._leaflet_id === marker._leaflet_id) {
-        result = iRes;
-        return true;
-      }
-
-      return Array.isArray(v) && v.some(run(iRes));
-    };
-    arr.some(run([]));
-
-    let returnVal = {};
-
-    if (result) {
-      returnVal = {
-        indexPath: result,
-        index: result[result.length - 1],
-        parentPath: result.slice(0, result.length - 1),
-      };
-    }
-
-    return returnVal;
-  },
   updatePolygonCoordsFromMarkerDrag(marker) {
     // update polygon coords
     const coords = this._layer.getLatLngs();
@@ -610,7 +582,7 @@ Edit.Line = Edit.extend({
     const latlng = marker.getLatLng();
 
     // get indexPath of Marker
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -624,7 +596,7 @@ Edit.Line = Edit.extend({
   },
 
   _getNeighborMarkers(marker) {
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -686,7 +658,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = this.L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
 
     this._fireMarkerDragStart(e, indexPath);
 
@@ -714,7 +686,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = this.L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -787,7 +759,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = this.L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
@@ -839,7 +811,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, vertex);
+    const { indexPath } = this.L.PM.Utils.findDeepMarkerIndex(this._markers, vertex);
 
     this._fireVertexClick(e, indexPath);
   },
