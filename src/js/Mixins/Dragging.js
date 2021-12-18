@@ -45,20 +45,28 @@ const DragMixin = {
     // (if the mouse up event happens outside the container, then the map can become undraggable)
     this._safeToCacheDragState = true;
 
-    const container =
-      this._layer instanceof L.Marker ? this._layer._icon : this._layer._path;
+    const container = this._getDOMElem();
 
     // check if DOM element exists
     if (container) {
       // add mousedown event to trigger drag
-      // We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
-      // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
-      L.DomEvent.on(
-        container,
-        'touchstart mousedown',
-        this._simulateMouseDownEvent,
-        this
-      );
+      if (this._layer._map?.options.preferCanvas && this._layer._renderer) {
+        this._layer.on(
+          'touchstart mousedown',
+          this._dragMixinOnMouseDown,
+          this
+        );
+        this._map.pm._addTouchEvents(container);
+      } else {
+        // We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
+        // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
+        L.DomEvent.on(
+          container,
+          'touchstart mousedown',
+          this._simulateMouseDownEvent,
+          this
+        );
+      }
     }
 
     // TODO: should we add Events "enabledrag" / "disabledrag"?
@@ -87,17 +95,25 @@ const DragMixin = {
       this._layer.dragging.disable();
     }
 
-    const container =
-      this._layer instanceof L.Marker ? this._layer._icon : this._layer._path;
+    const container = this._getDOMElem();
     // check if DOM element exists
     if (container) {
-      // disable mousedown event
-      L.DomEvent.off(
-        container,
-        'touchstart mousedown',
-        this._simulateMouseDownEvent,
-        this
-      );
+      if (this._layer._map?.options.preferCanvas && this._layer._renderer) {
+        this._layer.off(
+          'touchstart mousedown',
+          this._dragMixinOnMouseDown,
+          this
+        );
+        this._map.pm._removeTouchEvents(container);
+      } else {
+        // disable mousedown event
+        L.DomEvent.off(
+          container,
+          'touchstart mousedown',
+          this._simulateMouseDownEvent,
+          this
+        );
+      }
     }
   },
   // TODO: make this private in the next major release
@@ -114,8 +130,9 @@ const DragMixin = {
       originalEvent: e,
       target: this._layer,
     };
+    var first = e.touches ? e.touches[0] : e;
     // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+    evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
 
     this._dragMixinOnMouseDown(evt);
@@ -126,8 +143,9 @@ const DragMixin = {
       originalEvent: e,
       target: this._layer,
     };
+    var first = e.touches ? e.touches[0] : e;
     // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+    evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
 
     this._dragMixinOnMouseMove(evt);
@@ -138,10 +156,11 @@ const DragMixin = {
       originalEvent: e,
       target: this._layer,
     };
-    // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
-    evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-
+    if (e.type.indexOf('touch') === -1) {
+      // we expect in the function to get the clicked latlng / point
+      evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+      evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
+    }
     this._dragMixinOnMouseUp(evt);
     return false;
   },
