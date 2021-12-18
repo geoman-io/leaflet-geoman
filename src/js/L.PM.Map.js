@@ -37,6 +37,7 @@ const Map = L.Class.extend({
         layerPane: 'overlayPane',
         markerPane: 'markerPane',
       },
+      draggable: true,
     };
 
     this.Keyboard._initKeyListener(map);
