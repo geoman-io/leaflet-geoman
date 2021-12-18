@@ -192,11 +192,12 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
   // change the keys to lowercase
   const keys = Object.keys(_sortingOrder);
   let objKey;
-  const n = keys.length;
+  let n = keys.length;
   const sortingOrder = {};
-  while (n - 1) {
+  while (n > 0) {
     objKey = keys[n];
     sortingOrder[objKey.toLowerCase()] = _sortingOrder[objKey];
+    n -= 1;
   }
 
   function getShape(layer) {
