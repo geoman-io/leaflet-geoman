@@ -18,13 +18,16 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=16.13 <17"
+  },
   "main": "dist/leaflet-geoman.min.js",
   "types": "dist/leaflet-geoman.d.ts",
   "dependencies": {
-    "@turf/boolean-contains": "6.3.0",
-    "@turf/kinks": "6.3.0",
-    "@turf/line-intersect": "6.3.0",
-    "@turf/line-split": "6.3.0",
+    "@turf/boolean-contains": "^6.5.0",
+    "@turf/kinks": "^6.5.0",
+    "@turf/line-intersect": "^6.5.0",
+    "@turf/line-split": "^6.5.0",
     "lodash": "4.17.21",
     "polygon-clipping": "0.15.3"
   },
