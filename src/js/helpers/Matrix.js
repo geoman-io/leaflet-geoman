@@ -14,7 +14,7 @@
  * @param {Number} e
  * @param {Number} f
  */
-const Matrix = (a, b, c, d, e, f) => {
+const Matrix = function Matrix(a, b, c, d, e, f) {
   /**
    * @type {Array.<Number>}
    */
