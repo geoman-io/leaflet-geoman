@@ -51,8 +51,8 @@ Edit.Line = Edit.extend({
 
     this.applyOptions();
 
-    // if polygon gets removed from map, disable edit mode
-    this._layer.on('remove', this._onLayerRemove, this);
+    // if shape gets removed from map, disable edit mode
+    this._layer.on('remove', this.disable, this);
 
     if (!this.options.allowSelfIntersection) {
       this._layer.on(
@@ -75,22 +75,22 @@ Edit.Line = Edit.extend({
     }
     this._fireEnable();
   },
-  disable(poly = this._layer) {
+  disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
-      return false;
+      return;
     }
 
     // prevent disabling if polygon is being dragged
-    if (poly.pm._dragging) {
-      return false;
+    if (this._dragging) {
+      return;
     }
-    poly.pm._enabled = false;
-    poly.pm._markerGroup.clearLayers();
-    poly.pm._markerGroup.removeFrom(this._map);
+    this._enabled = false;
+    this._markerGroup.clearLayers();
+    this._markerGroup.removeFrom(this._map);
 
-    // remove onRemove listener
-    this._layer.off('remove', this._onLayerRemove, this);
+    // remove listener
+    this._layer.off('remove', this.disable, this);
 
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
@@ -101,7 +101,9 @@ Edit.Line = Edit.extend({
     }
 
     // remove draggable class
-    const el = poly._path ? poly._path : this._layer._renderer._container;
+    const el = this._layer._path
+      ? this._layer._path
+      : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
     // remove invalid class if layer has self intersection
@@ -114,7 +116,6 @@ Edit.Line = Edit.extend({
     }
     this._layerEdited = false;
     this._fireDisable();
-    return true;
   },
   enabled() {
     return this._enabled;
@@ -133,9 +134,6 @@ Edit.Line = Edit.extend({
     } else {
       this._disableSnapping();
     }
-  },
-  _onLayerRemove(e) {
-    this.disable(e.target);
   },
   _initMarkers() {
     const map = this._map;
@@ -306,7 +304,7 @@ Edit.Line = Edit.extend({
     delete newM.rightM;
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       leftM
     );
@@ -339,7 +337,7 @@ Edit.Line = Edit.extend({
 
     this._fireVertexAdded(
       newM,
-      this.findDeepMarkerIndex(this._markers, newM).indexPath,
+      L.PM.Utils.findDeepMarkerIndex(this._markers, newM).indexPath,
       latlng
     );
 
@@ -422,10 +420,8 @@ Edit.Line = Edit.extend({
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
       if (Array.isArray(marker)) {
-        return this._updateDisabledMarkerStyle(marker, disabled);
-      }
-
-      if (marker._icon) {
+        this._updateDisabledMarkerStyle(marker, disabled);
+      } else if (marker._icon) {
         if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
           L.DomUtil.addClass(marker._icon, 'vertexmarker-disabled');
         } else {
@@ -453,7 +449,7 @@ Edit.Line = Edit.extend({
     let coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -574,34 +570,6 @@ Edit.Line = Edit.extend({
     // TODO: maybe fire latlng as well?
     this._fireVertexRemoved(marker, indexPath);
   },
-  findDeepMarkerIndex(arr, marker) {
-    // thanks for the function, Felix Heck
-    let result;
-
-    const run = (path) => (v, i) => {
-      const iRes = path.concat(i);
-
-      if (v._leaflet_id === marker._leaflet_id) {
-        result = iRes;
-        return true;
-      }
-
-      return Array.isArray(v) && v.some(run(iRes));
-    };
-    arr.some(run([]));
-
-    let returnVal = {};
-
-    if (result) {
-      returnVal = {
-        indexPath: result,
-        index: result[result.length - 1],
-        parentPath: result.slice(0, result.length - 1),
-      };
-    }
-
-    return returnVal;
-  },
   updatePolygonCoordsFromMarkerDrag(marker) {
     // update polygon coords
     const coords = this._layer.getLatLngs();
@@ -610,7 +578,7 @@ Edit.Line = Edit.extend({
     const latlng = marker.getLatLng();
 
     // get indexPath of Marker
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -624,7 +592,7 @@ Edit.Line = Edit.extend({
   },
 
   _getNeighborMarkers(marker) {
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -686,7 +654,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
 
     this._fireMarkerDragStart(e, indexPath);
 
@@ -714,7 +682,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath, index, parentPath } = this.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -787,7 +755,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
@@ -839,7 +807,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = this.findDeepMarkerIndex(this._markers, vertex);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, vertex);
 
     this._fireVertexClick(e, indexPath);
   },

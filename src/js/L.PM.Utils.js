@@ -140,6 +140,34 @@ const Utils = {
 
     return returnVal;
   },
+  findDeepMarkerIndex(arr, marker) {
+    // thanks for the function, Felix Heck
+    let result;
+
+    const run = (path) => (v, i) => {
+      const iRes = path.concat(i);
+
+      if (v._leaflet_id === marker._leaflet_id) {
+        result = iRes;
+        return true;
+      }
+
+      return Array.isArray(v) && v.some(run(iRes));
+    };
+    arr.some(run([]));
+
+    let returnVal = {};
+
+    if (result) {
+      returnVal = {
+        indexPath: result,
+        index: result[result.length - 1],
+        parentPath: result.slice(0, result.length - 1),
+      };
+    }
+
+    return returnVal;
+  },
   _getIndexFromSegment(coords, segment) {
     if (segment && segment.length === 2) {
       const indexA = this.findDeepCoordIndex(coords, segment[0]);
@@ -181,6 +209,11 @@ const Utils = {
     const p2 = _toLatLng(map, endPoint);
     const p3 = _toLatLng(map, { x: x1, y: y1 });
     return [p0, p1, p2, p3];
+  },
+  pxRadiusToMeterRadius(radiusInPx, map, center) {
+    const pointA = map.project(center);
+    const pointB = L.point(pointA.x + radiusInPx, pointA.y);
+    return map.distance(map.unproject(pointB), center);
   },
 };
 
