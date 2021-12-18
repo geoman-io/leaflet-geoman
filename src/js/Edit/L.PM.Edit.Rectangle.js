@@ -184,6 +184,7 @@ Edit.Rectangle = Edit.Polygon.extend({
         marker.setLatLng(markerLatLngs[0]);
       });
     } else if (!markerLatLngs || !markerLatLngs.length) {
+      // eslint-disable-next-line
       console.error('The layer has no LatLngs');
     } else {
       this._cornerMarkers.forEach((marker) => {
@@ -194,9 +195,6 @@ Edit.Rectangle = Edit.Polygon.extend({
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
   _findCorners() {
-    // TODO What should we do here????
-
-    const corners = this._layer.getBounds();
     const latlngs = this._layer.getLatLngs()[0];
     return L.PM.Utils._getRotatedRectangle(
       latlngs[0],
@@ -204,12 +202,5 @@ Edit.Rectangle = Edit.Polygon.extend({
       this._angle || 0,
       this._map
     );
-
-    const northwest = corners.getNorthWest();
-    const northeast = corners.getNorthEast();
-    const southeast = corners.getSouthEast();
-    const southwest = corners.getSouthWest();
-
-    return [northwest, northeast, southeast, southwest];
   },
 });
