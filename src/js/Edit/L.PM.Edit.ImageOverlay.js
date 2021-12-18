@@ -39,6 +39,9 @@ Edit.ImageOverlay = Edit.extend({
 
     this.enableLayerDrag();
 
+    // if shape gets removed from map, disable edit mode
+    this._layer.on('remove', this.disable, this);
+
     // change state
     this._enabled = true;
 
@@ -47,10 +50,10 @@ Edit.ImageOverlay = Edit.extend({
 
     this._fireEnable();
   },
-  disable(layer = this._layer) {
+  disable() {
     // prevent disabling if layer is being dragged
-    if (layer.pm._dragging) {
-      return false;
+    if (this._dragging) {
+      return;
     }
 
     // Add map if it is not already set. This happens when disable() is called before enable()
@@ -59,6 +62,9 @@ Edit.ImageOverlay = Edit.extend({
     }
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
+
+    // remove listener
+    this._layer.off('remove', this.disable, this);
 
     // only fire events if it was enabled before
     if (!this.enabled()) {
@@ -69,8 +75,7 @@ Edit.ImageOverlay = Edit.extend({
       this._fireDisable();
     }
 
-    layer.pm._enabled = false;
-    return true;
+    this._enabled = false;
   },
   _findCorners() {
     const corners = this._layer.getBounds();

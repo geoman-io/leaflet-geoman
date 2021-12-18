@@ -1,7 +1,7 @@
 const DragMixin = {
   enableLayerDrag() {
-    // layer is not allowed to dragged
-    if (!this.options.draggable) {
+    // layer is not allowed to dragged or is not on the map
+    if (!this.options.draggable || !this._layer._map) {
       return;
     }
 
@@ -73,6 +73,12 @@ const DragMixin = {
     } else {
       this.removeDraggingClass();
     }
+
+    // if the layer is dragged but now disabled
+    if (this._originalMapDragState && this._dragging) {
+      this._map.dragging.enable();
+    }
+
     // no longer save the drag state
     this._safeToCacheDragState = false;
 
@@ -222,11 +228,16 @@ const DragMixin = {
 
       // disbale map drag
       if (this._originalMapDragState) {
-        this._layer._map.dragging.disable();
+        this._map.dragging.disable();
       }
 
       // fire pm:dragstart event
       this._fireDragStart();
+    }
+
+    // if _tempDragCoord is null add the current latlng to prevent throwing a error. This can happen when for example the layer is removed and added to the map while dragging (MarkerCluster)
+    if (!this._tempDragCoord) {
+      this._tempDragCoord = e.latlng;
     }
 
     this._onLayerDrag(e);
@@ -243,7 +254,7 @@ const DragMixin = {
 
     // re-enable map drag
     if (this._originalMapDragState) {
-      this._layer._map.dragging.enable();
+      this._map.dragging.enable();
     }
 
     // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
@@ -279,7 +290,10 @@ const DragMixin = {
     window.setTimeout(() => {
       // set state
       this._dragging = false;
-      L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+      // if the layer is not on the map, we have no DOM element
+      if (el) {
+        L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+      }
 
       // fire pm:dragend event
       this._fireDragEnd();
