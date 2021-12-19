@@ -14,6 +14,15 @@ describe('Draw & Edit Line', () => {
   });
 
   it('removes last vertex', () => {
+    let eventCalled = false;
+    cy.window().then(({ map }) => {
+      map.on('pm:drawstart', (e) => {
+        e.workingLayer.on('pm:vertexremoved', () => {
+          eventCalled = true;
+        });
+      });
+    });
+
     cy.toolbarButton('polyline').click();
 
     cy.get(mapSelector)
@@ -31,6 +40,9 @@ describe('Draw & Edit Line', () => {
     cy.get('.button-container.active .action-removeLastVertex').click();
 
     cy.hasVertexMarkers(3);
+    cy.window().then(() => {
+      expect(eventCalled).to.eq(true);
+    });
   });
 
   it('respects custom style', () => {
@@ -267,5 +279,23 @@ describe('Draw & Edit Line', () => {
       .click(155, 255);
 
     cy.hasVertexMarkers(0);
+  });
+
+  it('remove line if enabled', () => {
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200).click(250, 250).click(250, 250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasLayers(7);
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.remove();
+    });
+    cy.hasLayers(2);
   });
 });

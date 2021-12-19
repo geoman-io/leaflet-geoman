@@ -4,6 +4,7 @@ const GlobalDragMode = {
     const layers = L.PM.Utils.findLayers(this.map);
 
     this._globalDragModeEnabled = true;
+    this._addedLayersDrag = {};
 
     layers.forEach((layer) => {
       layer.pm.enableLayerDrag();
@@ -19,6 +20,7 @@ const GlobalDragMode = {
 
     // add map handler
     this.map.on('layeradd', this.throttledReInitDrag, this);
+    this.map.on('layeradd', this._layerAddedDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
@@ -52,18 +54,22 @@ const GlobalDragMode = {
       this.enableGlobalDragMode();
     }
   },
-  reinitGlobalDragMode({ layer }) {
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-    const isRelevant = !!layer.pm && !layer._pmTempLayer;
-    if (!isRelevant) {
-      return;
+  reinitGlobalDragMode() {
+    const layers = this._addedLayersDrag;
+    this._addedLayersDrag = {};
+    for (const id in layers) {
+      const layer = layers[id];
+      // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
+      const isRelevant = !!layer.pm && !layer._pmTempLayer;
+      if (isRelevant) {
+        if (this.globalDragModeEnabled()) {
+          layer.pm.enableLayerDrag();
+        }
+      }
     }
-
-    // re-enable global drag mode if it's enabled already
-    if (this.globalDragModeEnabled()) {
-      this.disableGlobalDragMode();
-      this.enableGlobalDragMode();
-    }
+  },
+  _layerAddedDrag({ layer }) {
+    this._addedLayersDrag[L.stamp(layer)] = layer;
   },
 };
 

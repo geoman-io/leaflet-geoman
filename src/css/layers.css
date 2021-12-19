@@ -47,10 +47,6 @@
   opacity: 1 !important;
 }
 
-.hidden {
-  display: none;
-}
-
 .vertexmarker-disabled {
   opacity: 0.7;
 }

@@ -239,4 +239,23 @@ describe('Draw Marker', () => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
   });
+  it('fires pm:update after edit', () => {
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector).click(350, 250);
+
+    let updateFired = false;
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      marker.on('pm:update', () => {
+        updateFired = true;
+      });
+      marker.pm.enable();
+      marker.pm._layerEdited = true;
+      marker.pm.disable();
+    });
+
+    cy.window().then(() => {
+      expect(updateFired).to.eq(true);
+    });
+  });
 });
