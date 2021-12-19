@@ -194,7 +194,7 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
   let objKey;
   let n = keys.length - 1;
   const sortingOrder = {};
-  while (n > 0) {
+  while (n >= 0) {
     objKey = keys[n];
     sortingOrder[objKey.toLowerCase()] = _sortingOrder[objKey];
     n -= 1;
