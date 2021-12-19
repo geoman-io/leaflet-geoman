@@ -282,13 +282,11 @@ Draw.Line = Draw.extend({
       .filter((l) => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
       .find((l) => l.getLatLng() === removedCoord);
 
-
-    const markers = this._layerGroup.getLayers().filter((l)=>l instanceof L.Marker);
+    const markers = this._layerGroup
+      .getLayers()
+      .filter((l) => l instanceof L.Marker);
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
-      markers,
-      marker
-    );
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(markers, marker);
 
     // remove that marker
     this._layerGroup.removeLayer(marker);

@@ -1,5 +1,8 @@
 {
   "extends": ["airbnb-base", "prettier"],
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "rules": {
     "no-underscore-dangle": 0,
     "import/prefer-default-export": 0,
