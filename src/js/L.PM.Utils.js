@@ -13,8 +13,7 @@ const Utils = {
   findLayers(map) {
     let layers = [];
     map.eachLayer((layer) => {
-
-      if (map.pm._allowedTypes.find((x)=> layer instanceof x)) {
+      if (map.pm._allowedTypes.find((x) => layer instanceof x)) {
         layers.push(layer);
       }
     });
@@ -105,7 +104,7 @@ const Utils = {
     };
   },
   createGeodesicPolygon,
-  getTranslation: (path)=>L.PM.Translation.getTranslation(path),
+  getTranslation: (path) => L.PM.Translation.getTranslation(path),
   findDeepCoordIndex(arr, latlng) {
     // find latlng in arr and return its location as path
     // thanks for the function, Felix Heck
@@ -115,6 +114,34 @@ const Utils = {
       const iRes = path.concat(i);
 
       if (v.lat && v.lat === latlng.lat && v.lng === latlng.lng) {
+        result = iRes;
+        return true;
+      }
+
+      return Array.isArray(v) && v.some(run(iRes));
+    };
+    arr.some(run([]));
+
+    let returnVal = {};
+
+    if (result) {
+      returnVal = {
+        indexPath: result,
+        index: result[result.length - 1],
+        parentPath: result.slice(0, result.length - 1),
+      };
+    }
+
+    return returnVal;
+  },
+  findDeepMarkerIndex(arr, marker) {
+    // thanks for the function, Felix Heck
+    let result;
+
+    const run = (path) => (v, i) => {
+      const iRes = path.concat(i);
+
+      if (v._leaflet_id === marker._leaflet_id) {
         result = iRes;
         return true;
       }
@@ -177,6 +204,11 @@ const Utils = {
     const p3 = _toLatLng(map, { x: x1, y: y1 });
     return [p0, p1, p2, p3];
   },
+  pxRadiusToMeterRadius(radiusInPx, map, center) {
+    const pointA = map.project(center);
+    const pointB = L.point(pointA.x + radiusInPx, pointA.y);
+    return map.distance(map.unproject(pointB), center);
+  },
   // move the coordinates by the delta
   moveCoordsByDelta(deltaLatLng, coords) {
     // alter the coordinates
@@ -194,9 +226,9 @@ const Utils = {
     });
   },
   _getCoords(map, layer) {
-    const obj = map.pm._latlngFunctions.find((f)=> layer instanceof f.type);
+    const obj = map.pm._latlngFunctions.find((f) => layer instanceof f.type);
     return obj.fnc.call(layer, layer);
-  }
+  },
 };
 
 export default Utils;

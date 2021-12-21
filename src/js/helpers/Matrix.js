@@ -14,16 +14,14 @@
  * @param {Number} e
  * @param {Number} f
  */
-const Matrix = function (a, b, c, d, e, f) {
+const Matrix = function Matrix(a, b, c, d, e, f) {
   /**
    * @type {Array.<Number>}
    */
   this._matrix = [a, b, c, d, e, f];
 };
 
-Matrix.init = function () {
-  return new L.PM.Matrix(1, 0, 0, 1, 0, 0);
-};
+Matrix.init = () => new L.PM.Matrix(1, 0, 0, 1, 0, 0);
 
 Matrix.prototype = {
   /**

@@ -51,7 +51,7 @@ Draw.Polygon = Draw.Line.extend({
     }
     this._hintMarker.setTooltipContent(text);
   },
-  _finishShape(e) {
+  _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
       // Check if polygon intersects when is completed and the line between the last and the first point is drawn

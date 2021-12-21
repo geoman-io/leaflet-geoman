@@ -1,6 +1,6 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
-  "version": "2.11.2",
+  "version": "2.11.4",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -18,13 +18,16 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=16.13 <17"
+  },
   "main": "dist/leaflet-geoman.min.js",
   "types": "dist/leaflet-geoman.d.ts",
   "dependencies": {
-    "@turf/boolean-contains": "6.3.0",
-    "@turf/kinks": "6.3.0",
-    "@turf/line-intersect": "6.3.0",
-    "@turf/line-split": "6.3.0",
+    "@turf/boolean-contains": "^6.5.0",
+    "@turf/kinks": "^6.5.0",
+    "@turf/line-intersect": "^6.5.0",
+    "@turf/line-split": "^6.5.0",
     "lodash": "4.17.21",
     "polygon-clipping": "0.15.3"
   },
@@ -57,10 +60,10 @@
   },
   "scripts": {
     "start": "npm run dev",
-    "dev": "./node_modules/.bin/webpack --config=webpack.dev.js",
-    "test": "./node_modules/.bin/cypress run",
-    "cypress": "./node_modules/.bin/cypress open",
-    "build": "./node_modules/.bin/webpack --config=webpack.build.js",
+    "dev": "webpack --config=webpack.dev.js",
+    "test": "cypress run",
+    "cypress": "cypress open",
+    "build": "webpack --config=webpack.build.js",
     "prepare": "npm run build",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
     "eslint": "eslint src/ --fix",

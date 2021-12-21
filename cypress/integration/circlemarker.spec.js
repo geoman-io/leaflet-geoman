@@ -391,12 +391,40 @@ describe('Draw Circle Marker', () => {
   });
   it('checks if circle is hidden before drawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({editable: true});
+      map.pm.setGlobalOptions({ editable: true });
     });
     cy.toolbarButton('circle-marker').click();
     cy.window().then(({ map }) => {
       // if map property is null, then it is not visible
       expect(!!map.pm.Draw.CircleMarker._layer._map).to.eq(false);
     });
+  });
+
+  it('removes circleMarker if enabled', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ editable: true });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(350, 250).click(190, 60);
+
+    // TODO: Remove this in the next cypress version. Not reasonable why 'circle' button is clicked instead of 'edit'. With first disable 'circle-marker' draw, it works to select 'edit'
+    cy.toolbarButton('circle-marker').click();
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasLayers(7);
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.remove();
+    });
+    cy.hasLayers(3);
   });
 });

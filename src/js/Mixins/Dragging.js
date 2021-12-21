@@ -1,7 +1,7 @@
 const DragMixin = {
   enableLayerDrag() {
-    // layer is not allowed to dragged
-    if (!this.options.draggable) {
+    // layer is not allowed to dragged or is not on the map
+    if (!this.options.draggable || !this._layer._map) {
       return;
     }
 
@@ -45,20 +45,28 @@ const DragMixin = {
     // (if the mouse up event happens outside the container, then the map can become undraggable)
     this._safeToCacheDragState = true;
 
-    const container =
-      this._layer instanceof L.Marker ? this._layer._icon : this._layer._path;
+    const container = this._getDOMElem();
 
     // check if DOM element exists
     if (container) {
       // add mousedown event to trigger drag
-      // We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
-      // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
-      L.DomEvent.on(
-        container,
-        'touchstart mousedown',
-        this._simulateMouseDownEvent,
-        this
-      );
+      if (this._layer._map?.options.preferCanvas && this._layer._renderer) {
+        this._layer.on(
+          'touchstart mousedown',
+          this._dragMixinOnMouseDown,
+          this
+        );
+        this._map.pm._addTouchEvents(container);
+      } else {
+        // We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
+        // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
+        L.DomEvent.on(
+          container,
+          'touchstart mousedown',
+          this._simulateMouseDownEvent,
+          this
+        );
+      }
     }
 
     // TODO: should we add Events "enabledrag" / "disabledrag"?
@@ -73,6 +81,12 @@ const DragMixin = {
     } else {
       this.removeDraggingClass();
     }
+
+    // if the layer is dragged but now disabled
+    if (this._originalMapDragState && this._dragging) {
+      this._map.dragging.enable();
+    }
+
     // no longer save the drag state
     this._safeToCacheDragState = false;
 
@@ -81,17 +95,25 @@ const DragMixin = {
       this._layer.dragging.disable();
     }
 
-    const container =
-      this._layer instanceof L.Marker ? this._layer._icon : this._layer._path;
+    const container = this._getDOMElem();
     // check if DOM element exists
     if (container) {
-      // disable mousedown event
-      L.DomEvent.off(
-        container,
-        'touchstart mousedown',
-        this._simulateMouseDownEvent,
-        this
-      );
+      if (this._layer._map?.options.preferCanvas && this._layer._renderer) {
+        this._layer.off(
+          'touchstart mousedown',
+          this._dragMixinOnMouseDown,
+          this
+        );
+        this._map.pm._removeTouchEvents(container);
+      } else {
+        // disable mousedown event
+        L.DomEvent.off(
+          container,
+          'touchstart mousedown',
+          this._simulateMouseDownEvent,
+          this
+        );
+      }
     }
   },
   // TODO: make this private in the next major release
@@ -108,8 +130,9 @@ const DragMixin = {
       originalEvent: e,
       target: this._layer,
     };
+    const first = e.touches ? e.touches[0] : e;
     // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+    evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
 
     this._dragMixinOnMouseDown(evt);
@@ -120,8 +143,9 @@ const DragMixin = {
       originalEvent: e,
       target: this._layer,
     };
+    const first = e.touches ? e.touches[0] : e;
     // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+    evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
 
     this._dragMixinOnMouseMove(evt);
@@ -132,10 +156,11 @@ const DragMixin = {
       originalEvent: e,
       target: this._layer,
     };
-    // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
-    evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-
+    if (e.type.indexOf('touch') === -1) {
+      // we expect in the function to get the clicked latlng / point
+      evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+      evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
+    }
     this._dragMixinOnMouseUp(evt);
     return false;
   },
@@ -168,12 +193,10 @@ const DragMixin = {
         if (!this._layer.pm.options.editable) {
           this._initSnappableMarkersDrag();
         }
+      } else if (this._layer.pm.options.editable) {
+        this._layer.pm._disableSnapping();
       } else {
-        if (this._layer.pm.options.editable) {
-          this._layer.pm._disableSnapping();
-        } else {
-          this._layer.pm._disableSnappingDrag();
-        }
+        this._layer.pm._disableSnappingDrag();
       }
     }
 
@@ -222,11 +245,16 @@ const DragMixin = {
 
       // disbale map drag
       if (this._originalMapDragState) {
-        this._layer._map.dragging.disable();
+        this._map.dragging.disable();
       }
 
       // fire pm:dragstart event
       this._fireDragStart();
+    }
+
+    // if _tempDragCoord is null add the current latlng to prevent throwing a error. This can happen when for example the layer is removed and added to the map while dragging (MarkerCluster)
+    if (!this._tempDragCoord) {
+      this._tempDragCoord = e.latlng;
     }
 
     this._onLayerDrag(e);
@@ -243,7 +271,7 @@ const DragMixin = {
 
     // re-enable map drag
     if (this._originalMapDragState) {
-      this._layer._map.dragging.enable();
+      this._map.dragging.enable();
     }
 
     // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
@@ -279,7 +307,10 @@ const DragMixin = {
     window.setTimeout(() => {
       // set state
       this._dragging = false;
-      L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+      // if the layer is not on the map, we have no DOM element
+      if (el) {
+        L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+      }
 
       // fire pm:dragend event
       this._fireDragEnd();
@@ -412,9 +443,8 @@ const DragMixin = {
         });
       }
       return layersToSync.length > 0;
-    } else {
-      return false;
     }
+    return false;
   },
   _stopDOMImageDrag(e) {
     e.preventDefault();
