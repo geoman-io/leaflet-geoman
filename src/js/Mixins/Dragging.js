@@ -130,7 +130,7 @@ const DragMixin = {
       originalEvent: e,
       target: this._layer,
     };
-    var first = e.touches ? e.touches[0] : e;
+    const first = e.touches ? e.touches[0] : e;
     // we expect in the function to get the clicked latlng / point
     evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
@@ -143,7 +143,7 @@ const DragMixin = {
       originalEvent: e,
       target: this._layer,
     };
-    var first = e.touches ? e.touches[0] : e;
+    const first = e.touches ? e.touches[0] : e;
     // we expect in the function to get the clicked latlng / point
     evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
@@ -193,12 +193,10 @@ const DragMixin = {
         if (!this._layer.pm.options.editable) {
           this._initSnappableMarkersDrag();
         }
+      } else if (this._layer.pm.options.editable) {
+        this._layer.pm._disableSnapping();
       } else {
-        if (this._layer.pm.options.editable) {
-          this._layer.pm._disableSnapping();
-        } else {
-          this._layer.pm._disableSnappingDrag();
-        }
+        this._layer.pm._disableSnappingDrag();
       }
     }
 
@@ -477,9 +475,8 @@ const DragMixin = {
         });
       }
       return layersToSync.length > 0;
-    } else {
-      return false;
     }
+    return false;
   },
   _stopDOMImageDrag(e) {
     e.preventDefault();

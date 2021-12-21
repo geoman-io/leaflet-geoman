@@ -56,7 +56,7 @@ L.PM = L.PM || {
   setOptIn(value) {
     this.optIn = !!value;
   },
-  addInitHooks(options = {}) {
+  addInitHooks() {
     function initMap() {
       this.pm = undefined;
 
@@ -218,12 +218,12 @@ if (L.version === '1.7.1') {
   // Canvas Mode: After dragging the map the target layer can't be dragged anymore until it is clicked
   // https://github.com/Leaflet/Leaflet/issues/7775 a fix is already merged for the Leaflet 1.8.0 version
   L.Canvas.include({
-    _onClick: function (e) {
-      var point = this._map.mouseEventToLayerPoint(e),
-        layer,
-        clickedLayer;
+    _onClick(e) {
+      const point = this._map.mouseEventToLayerPoint(e);
+      let layer;
+      let clickedLayer;
 
-      for (var order = this._drawFirst; order; order = order.next) {
+      for (let order = this._drawFirst; order; order = order.next) {
         layer = order.layer;
         if (layer.options.interactive && layer._containsPoint(point)) {
           // changing e.type !== 'preclick' to e.type === 'preclick' fix the issue

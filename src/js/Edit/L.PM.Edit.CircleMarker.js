@@ -278,10 +278,10 @@ Edit.CircleMarker = Edit.extend({
     this._fireRemove(this._layer);
     this._fireRemove(this._map, this._layer);
   },
-  _onDragStart(e) {
+  _onDragStart() {
     this._map.pm.Draw.CircleMarker._layerIsDragging = true;
-    if (!this._vertexValidation('move', e)) {
-    }
+    // if (!this._vertexValidation('move', e)) {
+    // }
   },
   _onMarkerDragStart(e) {
     if (!this._vertexValidation('move', e)) {
