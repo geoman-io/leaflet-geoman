@@ -1,5 +1,5 @@
 import Draw from './L.PM.Draw';
-import { destinationOnLine, } from '../helpers';
+import { destinationOnLine } from '../helpers';
 
 Draw.CircleMarker = Draw.Marker.extend({
   initialize(map) {
@@ -58,13 +58,16 @@ Draw.CircleMarker = Draw.Marker.extend({
       // add tooltip to hintmarker
       if (this.options.tooltips) {
         this._hintMarker
-          .bindTooltip(L.PM.Translation.getTranslation('tooltips.startCircle'), {
-            permanent: true,
-            offset: L.point(0, 10),
-            direction: 'bottom',
+          .bindTooltip(
+            L.PM.Translation.getTranslation('tooltips.startCircle'),
+            {
+              permanent: true,
+              offset: L.point(0, 10),
+              direction: 'bottom',
 
-            opacity: 0.8,
-          })
+              opacity: 0.8,
+            }
+          )
           .openTooltip();
       }
 
@@ -92,13 +95,16 @@ Draw.CircleMarker = Draw.Marker.extend({
       // add tooltip to hintmarker
       if (this.options.tooltips) {
         this._hintMarker
-          .bindTooltip(L.PM.Translation.getTranslation('tooltips.placeCircleMarker'), {
-            permanent: true,
-            offset: L.point(0, 10),
-            direction: 'bottom',
+          .bindTooltip(
+            L.PM.Translation.getTranslation('tooltips.placeCircleMarker'),
+            {
+              permanent: true,
+              offset: L.point(0, 10),
+              direction: 'bottom',
 
-            opacity: 0.8,
-          })
+              opacity: 0.8,
+            }
+          )
           .openTooltip();
       }
     }

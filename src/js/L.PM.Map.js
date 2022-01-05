@@ -63,6 +63,9 @@ const Map = L.Class.extend({
       { type: L.Polyline, fnc: L.Polyline.prototype.getLatLngs },
       { type: L.ImageOverlay, fnc: L.ImageOverlay.prototype.getBounds },
     ];
+    this._latlngRotationOverlayFunctions = [];
+    this._snappingDistanceFunctions = [];
+
     this._snappingFilters = [
       (layer) => layer._latlng,
       (layer) => layer._latlngs && !isEmptyDeep(layer._latlngs),

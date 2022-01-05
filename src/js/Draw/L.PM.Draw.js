@@ -224,7 +224,7 @@ const Draw = L.Class.extend({
   addShape(name) {
     this.shapes.push(name);
     this[name] = new L.PM.Draw[name](this._map);
-  }
+  },
 });
 
 export default Draw;

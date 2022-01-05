@@ -175,7 +175,9 @@ Draw.Rectangle = Draw.extend({
     this._map.on('click', this._finishShape, this);
 
     // change tooltip text
-    this._hintMarker.setTooltipContent(L.PM.Translation.getTranslation('tooltips.finishRect'));
+    this._hintMarker.setTooltipContent(
+      L.PM.Translation.getTranslation('tooltips.finishRect')
+    );
 
     this._setRectangleOrigin();
   },

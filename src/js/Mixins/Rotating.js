@@ -1,6 +1,5 @@
 import get from 'lodash/get';
 import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
-import { copyLatLngs } from '../helpers';
 
 /**
  * We create a temporary polygon with the same latlngs as the layer that we want to rotate.
@@ -17,11 +16,14 @@ const RotateMixin = {
     this._rotationOriginPoint = _toPoint(this._map, this._rotationOriginLatLng);
     this._rotationStartPoint = _toPoint(this._map, e.target.getLatLng());
     // we need to store the initial latlngs so we can always re-calc from the origin latlngs
-    this._initialRotateLatLng = copyLatLngs(this._layer);
+    this._initialRotateLatLng = L.PM.Utils._getCoords(
+      this._layer._map,
+      this._layer,
+      true
+    );
     this._startAngle = this.getAngle();
 
-    const originLatLngs = copyLatLngs(
-      this._rotationLayer,
+    const originLatLngs = L.PM.Utils.cloneLatLngs(
       this._rotationLayer.pm._rotateOrgLatLng
     );
 
@@ -66,7 +68,11 @@ const RotateMixin = {
     }
     forEachLatLng(this._layer.getLatLngs());
 
-    const oldLatLngs = copyLatLngs(this._rotationLayer);
+    const oldLatLngs = L.PM.Utils._getCoords(
+      this._rotationLayer._map,
+      this._rotationLayer,
+      true
+    );
     // rotate the origin layer
     this._rotationLayer.pm._handleRotate(
       this._rotateLayer(
@@ -96,12 +102,15 @@ const RotateMixin = {
     delete this._initialRotateLatLng;
     delete this._startAngle;
 
-    const originLatLngs = copyLatLngs(
-      this._rotationLayer,
+    const originLatLngs = L.PM.Utils.cloneLatLngs(
       this._rotationLayer.pm._rotateOrgLatLng
     );
     // store the new latlngs
-    this._rotationLayer.pm._rotateOrgLatLng = copyLatLngs(this._rotationLayer);
+    this._rotationLayer.pm._rotateOrgLatLng = L.PM.Utils._getCoords(
+      this._rotationLayer._map,
+      this._rotationLayer,
+      true
+    );
 
     this._fireRotationEnd(this._rotationLayer, startAngle, originLatLngs);
     this._fireRotationEnd(this._map, startAngle, originLatLngs);
@@ -149,9 +158,10 @@ const RotateMixin = {
     };
 
     // we create a temp polygon for rotation
-    this._rotatePoly = L.polygon(L.PM.Utils._getCoords(this._layer._map, this._layer), options).addTo(
-      this._layer._map
-    );
+    this._rotatePoly = L.polygon(
+      L.PM.Utils._getRotationOverlayCoords(this._layer._map, this._layer),
+      options
+    ).addTo(this._layer._map);
     this._rotatePoly.pm._setAngle(this.getAngle());
     this._rotatePoly.pm.setOptions(this._layer._map.pm.getGlobalOptions());
     this._rotatePoly.pm.setOptions({
@@ -164,7 +174,11 @@ const RotateMixin = {
     this._rotatePoly.pm.enable();
 
     // store the original latlngs
-    this._rotateOrgLatLng = copyLatLngs(this._layer);
+    this._rotateOrgLatLng = L.PM.Utils._getCoords(
+      this._layer._map,
+      this._layer,
+      true
+    );
 
     this._rotateEnabled = true;
 
@@ -201,14 +215,18 @@ const RotateMixin = {
     this._layer.setLatLngs(
       this._rotateLayer(
         rads,
-        this._layer.getLatLngs(),
+        L.PM.Utils._getCoords(this._layer._map, this._layer),
         this._getRotationCenter(),
         L.PM.Matrix.init(),
         this._layer._map
       )
     );
     // store the new latlngs
-    this._rotateOrgLatLng = L.polygon(this._layer.getLatLngs()).getLatLngs();
+    this._rotateOrgLatLng = L.PM.Utils._getCoords(
+      this._layer._map,
+      this._layer,
+      true
+    );
     this._setAngle(this.getAngle() + angle);
     if (
       this.rotateEnabled() &&

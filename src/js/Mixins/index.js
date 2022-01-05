@@ -11,5 +11,5 @@ export default {
   RotateMixin,
   EventMixin,
   Keyboard,
-  MarkerLimits
-}
+  MarkerLimits,
+};

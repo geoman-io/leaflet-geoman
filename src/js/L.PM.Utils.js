@@ -225,9 +225,34 @@ const Utils = {
       };
     });
   },
-  _getCoords(map, layer) {
+  _getCoords(map, layer, clone = false) {
     const obj = map.pm._latlngFunctions.find((f) => layer instanceof f.type);
+    if (clone) {
+      return L.PM.Utils.cloneLatLngs(obj.fnc.call(layer, layer));
+    }
     return obj.fnc.call(layer, layer);
+  },
+  _getRotationOverlayCoords(map, layer) {
+    const obj = map.pm._latlngRotationOverlayFunctions.find(
+      (f) => layer instanceof f.type
+    );
+    if (!obj) {
+      return L.PM.Utils._getCoords(map, layer);
+    }
+    return obj.fnc.call(layer, layer);
+  },
+  cloneLatLngs(latlngs) {
+    const result = [];
+    const flat = L.LineUtil.isFlat(latlngs);
+
+    for (let i = 0, len = latlngs.length; i < len; i += 1) {
+      if (flat) {
+        result[i] = L.latLng(latlngs[i]).clone();
+      } else {
+        result[i] = L.PM.Utils.cloneLatLngs(latlngs[i]);
+      }
+    }
+    return result;
   },
 };
 

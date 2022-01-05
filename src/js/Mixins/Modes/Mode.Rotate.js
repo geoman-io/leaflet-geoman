@@ -2,8 +2,8 @@ const GlobalRotateMode = {
   _globalRotateModeEnabled: false,
   enableGlobalRotateMode() {
     this._globalRotateModeEnabled = true;
-    const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l) => this.map.pm._allowedRotateTypes.find((x)=> l instanceof x)
+    const layers = L.PM.Utils.findLayers(this.map).filter((l) =>
+      this.map.pm._allowedRotateTypes.find((x) => l instanceof x)
     );
     layers.forEach((layer) => {
       if (this._isRelevantForRotate(layer)) {
@@ -27,8 +27,8 @@ const GlobalRotateMode = {
   },
   disableGlobalRotateMode() {
     this._globalRotateModeEnabled = false;
-    const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l) => l instanceof L.Polyline
+    const layers = L.PM.Utils.findLayers(this.map).filter((l) =>
+      this.map.pm._allowedRotateTypes.find((x) => l instanceof x)
     );
     layers.forEach((layer) => {
       layer.pm.disableRotate();

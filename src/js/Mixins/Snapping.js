@@ -183,7 +183,7 @@ const SnapMixin = {
     // temporary markers of polygon-edits
     map.eachLayer((layer) => {
       if (
-        map.pm._allowedSnappingTypes.find((x)=> layer instanceof x) &&
+        map.pm._allowedSnappingTypes.find((x) => layer instanceof x) &&
         layer.options.snapIgnore !== true
       ) {
         // if snapIgnore === false the layer will be always snappable
@@ -224,9 +224,8 @@ const SnapMixin = {
     layers = layers.filter((layer) => this._layer !== layer);
 
     // also remove everything that has no coordinates yet
-    layers = layers.filter(
-      (layer) =>
-        this._map.pm._snappingFilters.find((filter)=>filter(layer))
+    layers = layers.filter((layer) =>
+      this._map.pm._snappingFilters.find((filter) => filter(layer))
     );
 
     // finally remove everything that's leaflet-geoman specific temporary stuff
@@ -267,7 +266,15 @@ const SnapMixin = {
         return;
       }
       // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
-      const results = this._calcLayerDistances(latlng, layer);
+      //const results = this._calcLayerDistances(latlng, layer);
+
+      const snappingDistanceFnc = this._map.pm._snappingDistanceFunctions.find(
+        (x) => layer instanceof x.type
+      );
+
+      const results = snappingDistanceFnc
+        ? snappingDistanceFnc.fnc(this, latlng, layer)
+        : this._calcLayerDistances(latlng, layer);
 
       if (this.debugIndicatorLines[index]) {
         // show indicator lines, it's for debugging
@@ -305,8 +312,17 @@ const SnapMixin = {
     // the point P which we want to snap (probpably the marker that is dragged)
     const P = latlng;
 
+    let tracedLatlngs;
+    if (layer instanceof L.Curve) {
+      const traceArray = [];
+      for (let i = 0; i < 1; i += 0.0001) {
+        traceArray.push(i);
+      }
+      tracedLatlngs = layer.trace(traceArray);
+    }
+
     // the coords of the layer
-    const latlngs = L.PM.Utils._getCoords(map, layer);
+    const latlngs = tracedLatlngs || L.PM.Utils._getCoords(map, layer);
 
     if (isMarker) {
       // return the info for the marker, no more calculations needed
@@ -427,10 +443,17 @@ const SnapMixin = {
   // receives priority over C as the snapping point. Let's check this here
   _checkPrioritiySnapping(closestLayer) {
     const map = this._map;
+    if (!closestLayer.segment) {
+      return { ...closestLayer.latlng };
+    }
 
     // A and B are the points of the closest segment to P (the marker position we want to snap)
     const A = closestLayer.segment[0];
     const B = closestLayer.segment[1];
+
+    if (!A || !B) {
+      return { ...closestLayer.latlng };
+    }
 
     // C is the point we would snap to on the segment.
     // The closest point on the closest segment of the closest polygon to P. That's right.
