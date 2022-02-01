@@ -87,4 +87,13 @@ Edit.ImageOverlay = Edit.extend({
 
     return [northwest, northeast, southeast, southwest];
   },
+  _handleDrag(deltaLatLng) {
+    // create the new coordinates array
+    const newCoords = L.PM.Utils.moveCoordsByDelta(deltaLatLng, [
+      this._layer.getBounds().getNorthWest(),
+      this._layer.getBounds().getSouthEast(),
+    ]);
+    // set new coordinates and redraw
+    this._layer.setBounds(newCoords);
+  },
 });

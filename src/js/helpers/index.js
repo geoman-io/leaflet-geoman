@@ -1,16 +1,6 @@
 import get from 'lodash/get';
 import has from 'lodash/has';
-import translations from '../../assets/translations';
-
-export function getTranslation(path) {
-  let lang = L.PM.activeLang;
-
-  if (!has(translations, lang)) {
-    lang = 'en';
-  }
-
-  return get(translations[lang], path);
-}
+import merge from 'lodash/merge';
 
 export function isEmptyDeep(l) {
   // thanks for the function, Felix Heck
@@ -219,6 +209,9 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
     if (layer instanceof L.Polyline) {
       return 'Line';
     }
+    if (layer instanceof L.Curve) {
+      return 'Curve';
+    }
     return undefined;
   }
 
@@ -247,13 +240,6 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
     else if (first > second) result = 1;
     return order === 'desc' ? result * -1 : result;
   };
-}
-
-export function copyLatLngs(layer, latlngs = layer.getLatLngs()) {
-  if (layer instanceof L.Polygon) {
-    return L.polygon(latlngs).getLatLngs();
-  }
-  return L.polyline(latlngs).getLatLngs();
 }
 
 // Replaces the lat value with the MAX_LATITUDE of CRS if it is lower / higher

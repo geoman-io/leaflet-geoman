@@ -39,6 +39,8 @@ import '../css/controls.css';
 import Matrix from './helpers/Matrix';
 
 import Utils from './L.PM.Utils';
+import Translation from './L.PM.Translation';
+import Mixins from './Mixins/index';
 
 L.PM = L.PM || {
   version: packageInfo.version,
@@ -48,6 +50,8 @@ L.PM = L.PM || {
   Edit,
   Utils,
   Matrix,
+  Mixins,
+  Translation,
   activeLang: 'en',
   optIn: false,
   initialize(options) {

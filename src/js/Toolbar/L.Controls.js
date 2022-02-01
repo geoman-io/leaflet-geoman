@@ -1,4 +1,3 @@
-import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
 const PMButton = L.Control.extend({
@@ -105,25 +104,25 @@ const PMButton = L.Control.extend({
 
     const actions = {
       cancel: {
-        text: getTranslation('actions.cancel'),
+        text: L.PM.Translation.getTranslation('actions.cancel'),
         onClick() {
           this._triggerClick();
         },
       },
       finishMode: {
-        text: getTranslation('actions.finish'),
+        text: L.PM.Translation.getTranslation('actions.finish'),
         onClick() {
           this._triggerClick();
         },
       },
       removeLastVertex: {
-        text: getTranslation('actions.removeLastVertex'),
+        text: L.PM.Translation.getTranslation('actions.removeLastVertex'),
         onClick() {
           this._map.pm.Draw[button.jsClass]._removeLastVertex();
         },
       },
       finish: {
-        text: getTranslation('actions.finish'),
+        text: L.PM.Translation.getTranslation('actions.finish'),
         onClick(e) {
           this._map.pm.Draw[button.jsClass]._finishShape(e);
         },

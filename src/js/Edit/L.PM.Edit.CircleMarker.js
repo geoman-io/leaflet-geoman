@@ -429,4 +429,26 @@ Edit.CircleMarker = Edit.extend({
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
   },
+  _handleDrag(deltaLatLng) {
+    if (this._layer instanceof L.CircleMarker && this._layer.options.editable) {
+      // create the new coordinates array
+      const newCoords = L.PM.Utils.moveCoordsByDelta(deltaLatLng, [
+        this._layer.getLatLng(),
+      ]);
+      // set new coordinates and redraw
+      this._layer.setLatLng(newCoords[0]);
+    } else {
+      let coordsRefernce = this._layer.getLatLng();
+      if (this._layer._snapped) {
+        // if layer is snapped we use the original latlng for re-calculation, else the layer will not be "unsnappable" anymore
+        coordsRefernce = this._layer._orgLatLng;
+      }
+      // create the new coordinates array
+      const newCoords = L.PM.Utils.moveCoordsByDelta(deltaLatLng, [
+        coordsRefernce,
+      ]);
+      // set new coordinates and redraw
+      this._layer.setLatLng(newCoords[0]);
+    }
+  },
 });

@@ -1,4 +1,4 @@
-import { createGeodesicPolygon, getTranslation } from './helpers';
+import { createGeodesicPolygon } from './helpers';
 import { _toLatLng, _toPoint } from './helpers/ModeHelper';
 
 const Utils = {
@@ -13,13 +13,7 @@ const Utils = {
   findLayers(map) {
     let layers = [];
     map.eachLayer((layer) => {
-      if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle ||
-        layer instanceof L.CircleMarker ||
-        layer instanceof L.ImageOverlay
-      ) {
+      if (map.pm._allowedTypes.find((x) => layer instanceof x)) {
         layers.push(layer);
       }
     });
@@ -110,7 +104,7 @@ const Utils = {
     };
   },
   createGeodesicPolygon,
-  getTranslation,
+  getTranslation: (path) => L.PM.Translation.getTranslation(path),
   findDeepCoordIndex(arr, latlng) {
     // find latlng in arr and return its location as path
     // thanks for the function, Felix Heck
@@ -214,6 +208,51 @@ const Utils = {
     const pointA = map.project(center);
     const pointB = L.point(pointA.x + radiusInPx, pointA.y);
     return map.distance(map.unproject(pointB), center);
+  },
+  // move the coordinates by the delta
+  moveCoordsByDelta(deltaLatLng, coords) {
+    // alter the coordinates
+    return coords.map((currentLatLng) => {
+      if (Array.isArray(currentLatLng)) {
+        // do this recursively as coords might be nested
+        return L.PM.Utils.moveCoordsByDelta(deltaLatLng, currentLatLng);
+      }
+
+      // move the coord and return it
+      return {
+        lat: currentLatLng.lat + deltaLatLng.lat,
+        lng: currentLatLng.lng + deltaLatLng.lng,
+      };
+    });
+  },
+  _getCoords(map, layer, clone = false) {
+    const obj = map.pm._latlngFunctions.find((f) => layer instanceof f.type);
+    if (clone) {
+      return L.PM.Utils.cloneLatLngs(obj.fnc.call(layer, layer));
+    }
+    return obj.fnc.call(layer, layer);
+  },
+  _getRotationOverlayCoords(map, layer) {
+    const obj = map.pm._latlngRotationOverlayFunctions.find(
+      (f) => layer instanceof f.type
+    );
+    if (!obj) {
+      return L.PM.Utils._getCoords(map, layer);
+    }
+    return obj.fnc.call(layer, layer);
+  },
+  cloneLatLngs(latlngs) {
+    const result = [];
+    const flat = L.LineUtil.isFlat(latlngs);
+
+    for (let i = 0, len = latlngs.length; i < len; i += 1) {
+      if (flat) {
+        result[i] = L.latLng(latlngs[i]).clone();
+      } else {
+        result[i] = L.PM.Utils.cloneLatLngs(latlngs[i]);
+      }
+    }
+    return result;
   },
 };
 

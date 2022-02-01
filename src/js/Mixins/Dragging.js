@@ -332,57 +332,25 @@ const DragMixin = {
       lng: latlng.lng - this._tempDragCoord.lng,
     };
 
-    // move the coordinates by the delta
-    const moveCoords = (coords) =>
-      // alter the coordinates
-      coords.map((currentLatLng) => {
-        if (Array.isArray(currentLatLng)) {
-          // do this recursively as coords might be nested
-          return moveCoords(currentLatLng);
-        }
-
-        // move the coord and return it
-        return {
-          lat: currentLatLng.lat + deltaLatLng.lat,
-          lng: currentLatLng.lng + deltaLatLng.lng,
-        };
-      });
-
-    if (
-      this._layer instanceof L.Circle ||
-      (this._layer instanceof L.CircleMarker && this._layer.options.editable)
-    ) {
-      // create the new coordinates array
-      const newCoords = moveCoords([this._layer.getLatLng()]);
-      // set new coordinates and redraw
-      this._layer.setLatLng(newCoords[0]);
-    } else if (
-      this._layer instanceof L.CircleMarker ||
-      this._layer instanceof L.Marker
-    ) {
-      let coordsRefernce = this._layer.getLatLng();
-      if (this._layer._snapped) {
-        // if layer is snapped we use the original latlng for re-calculation, else the layer will not be "unsnappable" anymore
-        coordsRefernce = this._layer._orgLatLng;
-      }
-      // create the new coordinates array
-      const newCoords = moveCoords([coordsRefernce]);
-      // set new coordinates and redraw
-      this._layer.setLatLng(newCoords[0]);
-    } else if (this._layer instanceof L.ImageOverlay) {
-      // create the new coordinates array
-      const newCoords = moveCoords([
-        this._layer.getBounds().getNorthWest(),
-        this._layer.getBounds().getSouthEast(),
-      ]);
-      // set new coordinates and redraw
-      this._layer.setBounds(newCoords);
+    if(this._handleDrag){
+      this._handleDrag(deltaLatLng);
     } else {
-      // create the new coordinates array
-      const newCoords = moveCoords(this._layer.getLatLngs());
-
-      // set new coordinates and redraw
-      this._layer.setLatLngs(newCoords);
+      if (this._layer.getLatLng) {
+        let coordsRefernce = this._layer.getLatLng();
+        if (this._layer._snapped) {
+          // if layer is snapped we use the original latlng for re-calculation, else the layer will not be "unsnappable" anymore
+          coordsRefernce = this._layer._orgLatLng;
+        }
+        // create the new coordinates array
+        const newCoords = L.PM.Utils.moveCoordsByDelta(deltaLatLng,[coordsRefernce]);
+        // set new coordinates and redraw
+        this._layer.setLatLng(newCoords[0]);
+      } else {
+        // create the new coordinates array
+        const newCoords = L.PM.Utils.moveCoordsByDelta(deltaLatLng, this._layer.getLatLngs());
+        // set new coordinates and redraw
+        this._layer.setLatLngs(newCoords);
+      }
     }
 
     // save current latlng for next delta calculation

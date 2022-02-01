@@ -355,4 +355,12 @@ Edit.Circle = Edit.extend({
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
   },
+  _handleDrag(deltaLatLng) {
+    // create the new coordinates array
+    const newCoords = L.PM.Utils.moveCoordsByDelta(deltaLatLng, [
+      this._layer.getLatLng(),
+    ]);
+    // set new coordinates and redraw
+    this._layer.setLatLng(newCoords[0]);
+  },
 });

@@ -811,4 +811,14 @@ Edit.Line = Edit.extend({
 
     this._fireVertexClick(e, indexPath);
   },
+  _handleDrag(deltaLatLng) {
+    // create the new coordinates array
+    const newCoords = L.PM.Utils.moveCoordsByDelta(
+      deltaLatLng,
+      this._layer.getLatLngs()
+    );
+
+    // set new coordinates and redraw
+    this._layer.setLatLngs(newCoords);
+  },
 });
