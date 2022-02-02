@@ -413,9 +413,6 @@ describe('Testing the Toolbar', () => {
   });
   it('Disable active button', () => {
     let eventFired = '';
-
-    cy.toolbarButton('polygon').click();
-
     cy.window().then(({ map }) => {
       map.on('pm:buttonclick', ({ btnName }) => {
         eventFired = btnName;
