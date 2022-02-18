@@ -342,10 +342,15 @@ const DragMixin = {
         }
 
         // move the coord and return it
-        return {
+        const newLatlng = {
           lat: currentLatLng.lat + deltaLatLng.lat,
           lng: currentLatLng.lng + deltaLatLng.lng,
         };
+
+        if (currentLatLng.alt || currentLatLng.alt === 0) {
+          newLatlng.alt = currentLatLng.alt;
+        }
+        return newLatlng;
       });
 
     if (
