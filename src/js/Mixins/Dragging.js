@@ -69,7 +69,7 @@ const DragMixin = {
       }
     }
 
-    // TODO: should we add Events "enabledrag" / "disabledrag"?
+    this._fireDragEnable();
   },
   disableLayerDrag() {
     this._layerDragEnabled = false;
@@ -115,6 +115,13 @@ const DragMixin = {
         );
       }
     }
+
+    if (this._layerDragged) {
+      this._fireUpdate();
+    }
+    this._layerDragged = false;
+
+    this._fireDragDisable();
   },
   // TODO: make this private in the next major release
   dragging() {
@@ -302,6 +309,8 @@ const DragMixin = {
       this._layer.pm._updateHiddenPolyCircle();
     }
 
+    this._layerDragged = true;
+
     // timeout to prevent click event after drag :-/
     // TODO: do it better as soon as leaflet has a way to do it better :-)
     window.setTimeout(() => {
@@ -317,7 +326,6 @@ const DragMixin = {
 
       // fire edit
       this._fireEdit();
-      this._layerEdited = true;
     }, 10);
 
     return true;
@@ -356,6 +364,7 @@ const DragMixin = {
       const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
+      this._firePositionChange(this._layer.getLatLng(), 'Edit');
     } else if (
       this._layer instanceof L.CircleMarker ||
       this._layer instanceof L.Marker
@@ -369,6 +378,7 @@ const DragMixin = {
       const newCoords = moveCoords([coordsRefernce]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
+      this._firePositionChange(this._layer.getLatLng(), 'Edit');
     } else if (this._layer instanceof L.ImageOverlay) {
       // create the new coordinates array
       const newCoords = moveCoords([
@@ -377,12 +387,14 @@ const DragMixin = {
       ]);
       // set new coordinates and redraw
       this._layer.setBounds(newCoords);
+      this._firePositionChange(this._layer.getBounds(), 'Edit');
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
 
       // set new coordinates and redraw
       this._layer.setLatLngs(newCoords);
+      this._firePositionChange(this._layer.getLatLngs(), 'Edit');
     }
 
     // save current latlng for next delta calculation

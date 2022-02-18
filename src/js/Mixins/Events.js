@@ -224,6 +224,26 @@ const EventMixin = {
       customPayload
     );
   },
+  // Fired when layer is enabled for editing
+  _fireDragEnable(source = 'Edit', customPayload = {}) {
+    this.__fire(
+      this._layer,
+      'pm:dragenable',
+      { layer: this._layer, shape: this.getShape() },
+      source,
+      customPayload
+    );
+  },
+  // Fired when layer is disabled for editing
+  _fireDragDisable(source = 'Edit', customPayload = {}) {
+    this.__fire(
+      this._layer,
+      'pm:dragdisable',
+      { layer: this._layer, shape: this.getShape() },
+      source,
+      customPayload
+    );
+  },
   // Fired when a layer is removed
   _fireRemove(
     fireLayer,
@@ -323,6 +343,21 @@ const EventMixin = {
     );
   },
 
+  // Fired when position / coordinates of a layer changed
+  _firePositionChange(latlng, source = 'Edit', customPayload = {}) {
+    this.__fire(
+      this._layer,
+      'pm:positionchange',
+      {
+        layer: this._layer,
+        latlng,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
+
   // Snapping Events
   // Fired during a marker move/drag and other layers are existing
   _fireSnapDrag(fireLayer, eventInfo, source = 'Snapping', customPayload = {}) {
@@ -351,6 +386,7 @@ const EventMixin = {
       {
         layer: this._layer,
         helpLayer: this._rotatePoly,
+        shape: this.getShape(),
       },
       source,
       customPayload
@@ -363,6 +399,7 @@ const EventMixin = {
       'pm:rotatedisable',
       {
         layer: this._layer,
+        shape: this.getShape(),
       },
       source,
       customPayload
@@ -393,6 +430,7 @@ const EventMixin = {
     fireLayer,
     angleDiff,
     oldLatLngs,
+    rotationLayer = this._rotationLayer,
     source = 'Rotation',
     customPayload = {}
   ) {
@@ -400,13 +438,13 @@ const EventMixin = {
       fireLayer,
       'pm:rotate',
       {
-        layer: this._rotationLayer,
+        layer: rotationLayer,
         helpLayer: this._layer,
         startAngle: this._startAngle,
-        angle: this._rotationLayer.pm.getAngle(),
+        angle: rotationLayer.pm.getAngle(),
         angleDiff,
         oldLatLngs,
-        newLatLngs: this._rotationLayer.getLatLngs(),
+        newLatLngs: rotationLayer.getLatLngs(),
       },
       source,
       customPayload

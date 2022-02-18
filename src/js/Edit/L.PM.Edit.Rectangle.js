@@ -117,6 +117,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     this._adjustRectangleForMarkerMove(draggedMarker);
 
     this._fireMarkerDrag(e);
+    this._firePositionChange(this._layer.getLatLngs(), 'Edit');
   },
 
   _onMarkerDragEnd(e) {
@@ -136,6 +137,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     // fire edit event
     this._fireEdit();
     this._layerEdited = true;
+    this._firePositionChange(this._layer.getLatLngs(), 'Edit');
   },
 
   // adjusts the rectangle's size and bounds whenever a marker is moved

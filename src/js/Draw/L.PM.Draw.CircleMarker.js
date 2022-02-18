@@ -22,13 +22,18 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // Draw the CircleMarker like a Circle
     if (this.options.editable) {
+      // we need to set the radius to 0 without overwriting the CircleMarker style
+      const templineStyle = {};
+      L.setOptions(templineStyle, this.options.templineStyle);
+      templineStyle.radius = 0;
+
       // create a new layergroup
       this._layerGroup = new L.LayerGroup();
       this._layerGroup._pmTempLayer = true;
       this._layerGroup.addTo(this._map);
 
       // this is the circle we want to draw
-      this._layer = L.circleMarker([0, 0], this.options.templineStyle);
+      this._layer = L.circleMarker([0, 0], templineStyle);
       this._setPane(this._layer, 'layerPane');
       this._layer._pmTempLayer = true;
 
@@ -205,6 +210,7 @@ Draw.CircleMarker = Draw.Marker.extend({
       );
 
       this._fireCenterPlaced();
+      this._firePositionChange(this._layer.getLatLng(), 'Draw');
     }
   },
   _syncHintLine() {
@@ -247,6 +253,12 @@ Draw.CircleMarker = Draw.Marker.extend({
     }
 
     this._handleHintMarkerSnapping();
+
+    const latlng =
+      this._layerGroup && this._layerGroup.hasLayer(this._centerMarker)
+        ? this._centerMarker.getLatLng()
+        : this._hintMarker.getLatLng();
+    this._firePositionChange(latlng, 'Draw');
   },
   isRelevantMarker(layer) {
     return (

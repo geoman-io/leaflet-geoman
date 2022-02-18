@@ -201,6 +201,12 @@ Draw.Rectangle = Draw.extend({
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
     }
+
+    const latlngs =
+      this._layerGroup && this._layerGroup.hasLayer(this._layer)
+        ? this._layer.getLatLngs()
+        : [this._hintMarker.getLatLng()];
+    this._firePositionChange(latlngs, 'Draw');
   },
   _syncRectangleSize() {
     const A = fixLatOffset(this._startMarker.getLatLng(), this._map);
