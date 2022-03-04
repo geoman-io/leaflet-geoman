@@ -50,3 +50,39 @@
 .vertexmarker-disabled {
   opacity: 0.7;
 }
+
+.pm-text-marker {
+  width: 0;
+  height: 0;
+}
+
+.pm-textarea {
+  resize: none;
+  background: transparent;
+  border: none;
+  outline: 0;
+  color: #000;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.leaflet-pm-draggable .pm-textarea {
+  cursor: move;
+}
+
+.pm-textarea:focus,
+.pm-textarea:focus-within,
+.pm-textarea:focus-visible,
+.pm-textarea:active {
+  border: 2px solid #000;
+  outline: 0;
+}
+
+.pm-textarea.pm-disabled {
+  border: none;
+  user-select: none;
+}
+
+.pm-textarea.pm-hasfocus {
+  cursor: auto;
+}

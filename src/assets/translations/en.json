@@ -8,7 +8,8 @@
     "finishRect": "Click to finish",
     "startCircle": "Click to place circle center",
     "finishCircle": "Click to finish circle",
-    "placeCircleMarker": "Click to place circle marker"
+    "placeCircleMarker": "Click to place circle marker",
+    "placeText": "Click to place text"
   },
   "actions": {
     "finish": "Finish",
@@ -28,6 +29,7 @@
     "drawCircleMarkerButton": "Draw Circle Marker",
     "snappingButton": "Snap dragged marker to other layers and vertices",
     "pinningButton": "Pin shared vertices together",
-    "rotateButton": "Rotate Layers"
+    "rotateButton": "Rotate Layers",
+    "drawTextButton": "Draw Text"
   }
 }

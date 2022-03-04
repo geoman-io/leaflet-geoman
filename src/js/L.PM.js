@@ -22,6 +22,7 @@ import './Draw/L.PM.Draw.Rectangle';
 import './Draw/L.PM.Draw.Circle';
 import './Draw/L.PM.Draw.CircleMarker';
 import './Draw/L.PM.Draw.Cut';
+import './Draw/L.PM.Draw.Text';
 
 import Edit from './Edit/L.PM.Edit';
 import './Edit/L.PM.Edit.LayerGroup';
@@ -32,6 +33,7 @@ import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Circle';
 import './Edit/L.PM.Edit.CircleMarker';
 import './Edit/L.PM.Edit.ImageOverlay';
+import './Edit/L.PM.Edit.Text';
 
 import '../css/layers.css';
 import '../css/controls.css';
@@ -89,10 +91,22 @@ L.PM = L.PM || {
 
       if (L.PM.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Marker(this);
+          if (this.options.textMarker) {
+            this.pm = new L.PM.Edit.Text(this);
+          } else {
+            this.pm = new L.PM.Edit.Marker(this);
+          }
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Marker(this);
+        if (this.options.textMarker) {
+          this.pm = new L.PM.Edit.Text(this);
+        } else {
+          this.pm = new L.PM.Edit.Marker(this);
+        }
+      }
+
+      if (this.pm && this.options.text && this.pm._initTextMarker) {
+        this.pm._initTextMarker();
       }
     }
     L.Marker.addInitHook(initMarker);

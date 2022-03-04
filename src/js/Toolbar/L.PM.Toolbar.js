@@ -12,6 +12,7 @@ const Toolbar = L.Class.extend({
     drawPolygon: true,
     drawCircle: true,
     drawCircleMarker: true,
+    drawText: true,
     editMode: true,
     dragMode: true,
     cutPolygon: true,
@@ -118,6 +119,7 @@ const Toolbar = L.Class.extend({
         dragMode: 'control-icon leaflet-pm-icon-drag',
         cutPolygon: 'control-icon leaflet-pm-icon-cut',
         removalMode: 'control-icon leaflet-pm-icon-delete',
+        drawText: 'control-icon leaflet-pm-icon-text',
       },
     };
 
@@ -378,6 +380,22 @@ const Toolbar = L.Class.extend({
       actions: ['finishMode'],
     };
 
+    const drawTextButton = {
+      className: 'control-icon leaflet-pm-icon-text',
+      title: getTranslation('buttonTitles.drawTextButton'),
+      jsClass: 'Text',
+      onClick: () => {},
+      afterClick: (e, ctx) => {
+        // toggle drawing mode
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['cancel'],
+    };
+
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
     this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
@@ -392,6 +410,7 @@ const Toolbar = L.Class.extend({
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
     this._addButton('removalMode', new L.Control.PMButton(deleteButton));
     this._addButton('rotateMode', new L.Control.PMButton(rotateButton));
+    this._addButton('drawText', new L.Control.PMButton(drawTextButton));
   },
 
   _showHideButtons() {
@@ -655,6 +674,7 @@ const Toolbar = L.Class.extend({
       Cut: 'cutPolygon',
       Removal: 'removalMode',
       Rotate: 'rotateMode',
+      Text: 'drawText',
     };
   },
   _btnNameMapping(name) {
