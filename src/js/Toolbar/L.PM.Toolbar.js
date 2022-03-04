@@ -405,12 +405,12 @@ const Toolbar = L.Class.extend({
       'drawCircleMarker',
       new L.Control.PMButton(drawCircleMarkerButton)
     );
+    this._addButton('drawText', new L.Control.PMButton(drawTextButton));
     this._addButton('editMode', new L.Control.PMButton(editButton));
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
     this._addButton('removalMode', new L.Control.PMButton(deleteButton));
     this._addButton('rotateMode', new L.Control.PMButton(rotateButton));
-    this._addButton('drawText', new L.Control.PMButton(drawTextButton));
   },
 
   _showHideButtons() {

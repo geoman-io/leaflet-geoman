@@ -326,7 +326,7 @@ describe('Testing the Toolbar', () => {
         oneBlock: true,
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
-        expect(container[0].children.length).to.equal(11);
+        expect(container[0].children.length).to.equal(12);
       });
     });
   });
@@ -366,7 +366,7 @@ describe('Testing the Toolbar', () => {
         title: 'Display text on hover button',
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-topright').then((container) => {
-        expect(container[0].children.length).to.equal(6);
+        expect(container[0].children.length).to.equal(7);
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
         expect(container[0].children.length).to.equal(6);
