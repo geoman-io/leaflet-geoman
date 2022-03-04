@@ -93,6 +93,10 @@ L.PM = L.PM || {
         if (this.options.pmIgnore === false) {
           if (this.options.textMarker) {
             this.pm = new L.PM.Edit.Text(this);
+            if (!this.options._textMarkerOverPM) {
+              this.pm._initTextMarker();
+            }
+            delete this.options._textMarkerOverPM;
           } else {
             this.pm = new L.PM.Edit.Marker(this);
           }
@@ -100,13 +104,13 @@ L.PM = L.PM || {
       } else if (!this.options.pmIgnore) {
         if (this.options.textMarker) {
           this.pm = new L.PM.Edit.Text(this);
+          if (!this.options._textMarkerOverPM) {
+            this.pm._initTextMarker();
+          }
+          delete this.options._textMarkerOverPM;
         } else {
           this.pm = new L.PM.Edit.Marker(this);
         }
-      }
-
-      if (this.pm && this.options.text && this.pm._initTextMarker) {
-        this.pm._initTextMarker();
       }
     }
     L.Marker.addInitHook(initMarker);

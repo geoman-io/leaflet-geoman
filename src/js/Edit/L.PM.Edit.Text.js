@@ -122,6 +122,7 @@ Edit.Text = Edit.extend({
 
   _disableOnBlur() {
     this._disableOnBlurActive = true;
+    // we need this timeout because else the place click event is triggered here too.
     setTimeout(() => {
       if (this.enabled()) {
         L.DomEvent.on(document, 'click', this._documentClick, this);

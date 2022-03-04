@@ -144,6 +144,7 @@ Draw.Text = Draw.extend({
 
     const marker = new L.Marker(latlng, {
       textMarker: true,
+      _textMarkerOverPM: true, // we need to put this into the options, else we can't catch this in the init method
       icon: textAreaIcon,
     });
     this._setPane(marker, 'markerPane');
@@ -183,7 +184,8 @@ Draw.Text = Draw.extend({
   _createTextArea() {
     const textArea = document.createElement('textarea');
     textArea.autofocus = true;
-    textArea.classList.add('pm-textarea');
+    textArea.readOnly = true;
+    textArea.classList.add('pm-textarea', 'pm-disabled');
     return textArea;
   },
 
