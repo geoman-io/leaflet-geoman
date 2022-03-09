@@ -417,12 +417,14 @@ describe('Testing the Toolbar', () => {
       map.on('pm:buttonclick', ({ btnName }) => {
         eventFired = btnName;
       });
-    });
 
-    cy.toolbarButton('polygon').click();
-
-    cy.window().then(({ map }) => {
-      map.pm.Toolbar.setButtonDisabled('drawPolygon', true);
+      cy.toolbarButton('polygon')
+        .click()
+        .closest('.button-container')
+        .should('have.class', 'active')
+        .then(() => {
+          map.pm.Toolbar.setButtonDisabled('drawPolygon', true);
+        });
     });
 
     cy.window().then(() => {
