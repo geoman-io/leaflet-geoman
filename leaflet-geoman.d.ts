@@ -968,6 +968,20 @@ declare module 'leaflet' {
       hideMiddleMarkers?: boolean;
     }
 
+    interface TextOptions {
+      /** Predefined text for Text-Layer. */
+      text?: string;
+
+      /** Directly after placing the Text-Layer text editing is activated. */
+      focusAfterDraw?: boolean;
+
+      /** The text layer is removed if no text is written. */
+      removeIfEmpty?: boolean;
+
+      /** Custom CSS Classes for Text-Layer. Separated by a space. */
+      className?: string;
+    }
+
     interface DrawModeOptions {
       /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
       snappable?: boolean;
@@ -1046,17 +1060,7 @@ declare module 'leaflet' {
       /** Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again. (Default: []) */
       layersToCut?: L.Layer[];
 
-      /** Predefined text for Text-Layer. */
-      text?: string;
-
-      /** Directly after placing the Text-Layer text editing is activated. */
-      focusAfterDraw?: boolean;
-
-      /** The text layer is removed if no text is written. */
-      removeIfEmpty?: boolean;
-
-      /** Custom CSS Classes for Text-Layer. Separated by a space. */
-      className?: string;
+      textOptions?: TextOptions;
     }
 
     /**
