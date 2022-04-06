@@ -163,25 +163,29 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
-      if (action.onClick) {
-        const actionClick = (e) => {
-          // is needed to prevent scrolling when clicking on a-element with href="a"
-          e.preventDefault();
-          let btnName = '';
-          const { buttons } = this._map.pm.Toolbar;
-          for (const btn in buttons) {
-            if (buttons[btn]._button === button) {
-              btnName = btn;
-              break;
-            }
-          }
-          this._fireActionClick(action, btnName, button);
-        };
-
-        L.DomEvent.addListener(actionNode, 'click', actionClick, this);
-        L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
-      }
       L.DomEvent.disableClickPropagation(actionNode);
+      L.DomEvent.on(actionNode, 'click', L.DomEvent.stop);
+
+      if (!button.disabled) {
+        if (action.onClick) {
+          const actionClick = (e) => {
+            // is needed to prevent scrolling when clicking on a-element with href="a"
+            e.preventDefault();
+            let btnName = '';
+            const { buttons } = this._map.pm.Toolbar;
+            for (const btn in buttons) {
+              if (buttons[btn]._button === button) {
+                btnName = btn;
+                break;
+              }
+            }
+            this._fireActionClick(action, btnName, button);
+          };
+
+          L.DomEvent.addListener(actionNode, 'click', actionClick, this);
+          L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+        }
+      }
     });
 
     if (button.toggleStatus) {
@@ -200,30 +204,35 @@ const PMButton = L.Control.extend({
     if (button.className) {
       L.DomUtil.addClass(image, button.className);
     }
-    // before the actual click, trigger a click on currently toggled buttons to
-    // untoggle them and their functionality
-    L.DomEvent.addListener(newButton, 'click', () => {
-      if (this._button.disableOtherButtons) {
-        this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
-      }
-      let btnName = '';
-      const { buttons } = this._map.pm.Toolbar;
-      for (const btn in buttons) {
-        if (buttons[btn]._button === button) {
-          btnName = btn;
-          break;
+
+    L.DomEvent.disableClickPropagation(newButton);
+    L.DomEvent.on(newButton, 'click', L.DomEvent.stop);
+
+    if (!button.disabled) {
+      // before the actual click, trigger a click on currently toggled buttons to
+      // untoggle them and their functionality
+      L.DomEvent.addListener(newButton, 'click', () => {
+        if (this._button.disableOtherButtons) {
+          this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
         }
-      }
-      this._fireButtonClick(btnName, button);
-    });
-    L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
+        let btnName = '';
+        const { buttons } = this._map.pm.Toolbar;
+        for (const btn in buttons) {
+          if (buttons[btn]._button === button) {
+            btnName = btn;
+            break;
+          }
+        }
+        this._fireButtonClick(btnName, button);
+      });
+      L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
+    }
 
     if (button.disabled) {
       L.DomUtil.addClass(newButton, 'pm-disabled');
       newButton.setAttribute('aria-disabled', 'true');
     }
 
-    L.DomEvent.disableClickPropagation(newButton);
     return buttonContainer;
   },
 

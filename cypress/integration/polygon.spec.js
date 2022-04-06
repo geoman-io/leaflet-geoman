@@ -224,7 +224,7 @@ describe('Draw & Edit Poly', () => {
 
         /* eslint no-unused-expressions: 0 */
         expect(layer._map).to.be.null;
-        expect(layer.options.cypress).to.be.true;
+        expect(layer.options.cypress).to.equal(true);
       });
     });
 
