@@ -181,12 +181,12 @@ map.pm.addControls({
 ```  
 The following methods are available on `map.pm`:  
   
-| Method                        | Returns   | Description                                                                                     |  
-| :---------------------------- | :-------- | :---------------------------------------------------------------------------------------------- |  
-| addControls(`options`)        | -         | Adds the Toolbar to the map. The `options` are optional.                                        |  
-| removeControls()              | -         | Removes the Toolbar from the map.                                                               |  
-| toggleControls()              | -         | Toggle the visiblity of the Toolbar.                                                            |  
-| controlsVisible()             | `Boolean` | Returns `true` if the Toolbar is visible on the map.                                            |
+| Method                        | Returns   | Description                                                                                                   |  
+| :---------------------------- | :-------- | :------------------------------------------------------------------------------------------------------------ |  
+| addControls(`options`)        | -         | Adds the Toolbar to the map. The `options` are optional. Buttons can be removed with setting them to `false`. |  
+| removeControls()              | -         | Removes the Toolbar from the map.                                                                             |  
+| toggleControls()              | -         | Toggle the visiblity of the Toolbar.                                                                          |  
+| controlsVisible()             | `Boolean` | Returns `true` if the Toolbar is visible on the map.                                                          |
   
   
 See the available options in the table below.  

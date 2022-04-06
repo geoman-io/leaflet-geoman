@@ -1095,6 +1095,10 @@ declare module 'leaflet' {
 
       /** Adds a button to toggle the Snapping Option ⭐ */
       snappingOption?: boolean;
+
+      /** Adds custom button (default:true) */
+      // The type of custom buttons are always boolean but TS needs the other types defined too.
+      [key: string]: L.ControlPosition | BlockPositions | boolean;
     }
 
     /** the position of each block. */
