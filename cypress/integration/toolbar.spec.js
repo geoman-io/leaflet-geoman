@@ -419,6 +419,9 @@ describe('Testing the Toolbar', () => {
 
     cy.window().then(() => {
       expect(eventFired).to.not.equal('drawPolygon');
+      cy.url().then((url) => {
+        expect(url.endsWith('#')).to.equal(false);
+      });
     });
   });
 });

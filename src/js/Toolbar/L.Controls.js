@@ -151,6 +151,9 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
+      L.DomEvent.disableClickPropagation(actionNode);
+      L.DomEvent.on(actionNode, 'click', L.DomEvent.stop);
+
       if (!button.disabled) {
         if (action.onClick) {
           const actionClick = (e) => {
@@ -171,7 +174,6 @@ const PMButton = L.Control.extend({
           L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
         }
       }
-      L.DomEvent.disableClickPropagation(actionNode);
     });
 
     if (button.toggleStatus) {
@@ -190,6 +192,10 @@ const PMButton = L.Control.extend({
     if (button.className) {
       L.DomUtil.addClass(image, button.className);
     }
+
+    L.DomEvent.disableClickPropagation(newButton);
+    L.DomEvent.on(newButton, 'click', L.DomEvent.stop);
+
     if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
@@ -215,7 +221,6 @@ const PMButton = L.Control.extend({
       L.DomUtil.addClass(image, 'pm-disabled');
     }
 
-    L.DomEvent.disableClickPropagation(newButton);
     return buttonContainer;
   },
 
