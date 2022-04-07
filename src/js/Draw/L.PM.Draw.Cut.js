@@ -254,5 +254,5 @@ Draw.Cut = Draw.Polygon.extend({
     }
     return diff;
   },
-  _positionChange: L.Util.falseFn,
+  _change: L.Util.falseFn,
 });

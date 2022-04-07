@@ -178,7 +178,7 @@ Draw.Line = Draw.extend({
     }
     const latlngs = this._layer._defaultShape().slice();
     latlngs.push(this._hintMarker.getLatLng());
-    this._positionChange(latlngs);
+    this._change(latlngs);
   },
   hasSelfIntersection() {
     // check for self intersection of the layer and return true/false
@@ -261,7 +261,7 @@ Draw.Line = Draw.extend({
     this._hintline.setLatLngs([latlng, latlng]);
 
     this._fireVertexAdded(newMarker, undefined, latlng, 'Draw');
-    this._positionChange(this._layer.getLatLngs());
+    this._change(this._layer.getLatLngs());
     // check if we should finish on snap
     if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {
       this._finishShape(e);
@@ -301,7 +301,7 @@ Draw.Line = Draw.extend({
     this._setTooltipText();
 
     this._fireVertexRemoved(marker, indexPath, 'Draw');
-    this._positionChange(this._layer.getLatLngs());
+    this._change(this._layer.getLatLngs());
   },
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
@@ -378,7 +378,7 @@ Draw.Line = Draw.extend({
     }
     this._hintMarker.setTooltipContent(text);
   },
-  _positionChange(latlngs) {
+  _change(latlngs) {
     this._fireChange(latlngs, 'Draw');
   },
 });

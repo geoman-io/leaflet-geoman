@@ -343,7 +343,7 @@ const EventMixin = {
     );
   },
 
-  // Fired when position / coordinates of a layer changed
+  // Fired coordinates of the layer changed
   _fireChange(latlngs, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
