@@ -282,9 +282,9 @@ declare module 'leaflet' {
     off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
 
     /** Fired coordinates of the layer changed. */
-    on(type: 'pm:change', fn: PM.PositionChangeEventHandler): this;
-    once(type: 'pm:change', fn: PM.PositionChangeEventHandler): this;
-    off(type: 'pm:change', fn?: PM.PositionChangeEventHandler): this;
+    on(type: 'pm:change', fn: PM.ChangeEventHandler): this;
+    once(type: 'pm:change', fn: PM.ChangeEventHandler): this;
+    off(type: 'pm:change', fn?: PM.ChangeEventHandler): this;
 
     /******************************************
      *
@@ -1347,10 +1347,10 @@ declare module 'leaflet' {
       layer: L.Layer;
       intersection: L.LatLng;
     }) => void;
-    export type PositionChangeEventHandler = (e: {
+    export type ChangeEventHandler = (e: {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
-      latlng: L.LatLng | L.LatLng[];
+      latlngs: L.LatLng | L.LatLng[];
     }) => void;
 
     /**
