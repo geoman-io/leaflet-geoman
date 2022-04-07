@@ -436,12 +436,14 @@ describe('Testing the Toolbar', () => {
         .closest('.button-container')
         .should('have.class', 'active')
         .then(() => {
+          expect(eventFired).to.equal('drawPolygon');
+          eventFired = '';
           map.pm.Toolbar.setButtonDisabled('drawPolygon', true);
         });
     });
 
     cy.window().then(() => {
-      expect(eventFired).to.equal('drawPolygon');
+      expect(eventFired).to.not.equal('drawPolygon');
       cy.toolbarButton('polygon')
         .closest('.button-container')
         .should('have.not.class', 'active');

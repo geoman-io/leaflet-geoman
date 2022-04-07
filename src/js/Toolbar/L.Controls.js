@@ -211,20 +211,7 @@ const PMButton = L.Control.extend({
     if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
-      L.DomEvent.addListener(newButton, 'click', () => {
-        if (this._button.disableOtherButtons) {
-          this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
-        }
-        let btnName = '';
-        const { buttons } = this._map.pm.Toolbar;
-        for (const btn in buttons) {
-          if (buttons[btn]._button === button) {
-            btnName = btn;
-            break;
-          }
-        }
-        this._fireButtonClick(btnName, button);
-      });
+      L.DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
       L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
     }
 
@@ -250,6 +237,21 @@ const PMButton = L.Control.extend({
     }
   },
 
+  _onBtnClick() {
+    if (this._button.disableOtherButtons) {
+      this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
+    }
+    let btnName = '';
+    const { buttons } = this._map.pm.Toolbar;
+    for (const btn in buttons) {
+      if (buttons[btn]._button === this._button) {
+        btnName = btn;
+        break;
+      }
+    }
+    this._fireButtonClick(btnName, this._button);
+  },
+
   _clicked() {
     if (this._button.doToggle) {
       this.toggle();
@@ -263,6 +265,8 @@ const PMButton = L.Control.extend({
     if (this._button.disabled) {
       L.DomUtil.addClass(button, className);
       button.setAttribute('aria-disabled', 'true');
+      L.DomEvent.off(button, 'click', this._triggerClick, this);
+      L.DomEvent.off(button, 'click', this._onBtnClick, this);
     } else {
       L.DomUtil.removeClass(button, className);
       button.setAttribute('aria-disabled', 'false');
