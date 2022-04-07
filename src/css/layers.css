@@ -25,11 +25,11 @@
 .cursor-marker {
   cursor: crosshair;
   pointer-events: none;
-  display: none;
+  opacity: 0;
 }
 
 .cursor-marker.visible {
-  display: block !important;
+  opacity: 1 !important;
 }
 
 .leaflet-pm-invalid {

@@ -1,3 +1,5 @@
+import { getRenderer } from '../helpers';
+
 const DragMixin = {
   enableLayerDrag() {
     // layer is not allowed to dragged or is not on the map
@@ -32,7 +34,7 @@ const DragMixin = {
     this._tempDragCoord = null;
 
     // add CSS class
-    if (this._layer._map?.options.preferCanvas) {
+    if (getRenderer(this._layer) instanceof L.Canvas) {
       this._layer.on('mouseout', this.removeDraggingClass, this);
       this._layer.on('mouseover', this.addDraggingClass, this);
     } else {
@@ -50,7 +52,7 @@ const DragMixin = {
     // check if DOM element exists
     if (container) {
       // add mousedown event to trigger drag
-      if (this._layer._map?.options.preferCanvas && this._layer._renderer) {
+      if (getRenderer(this._layer) instanceof L.Canvas) {
         this._layer.on(
           'touchstart mousedown',
           this._dragMixinOnMouseDown,
@@ -75,7 +77,7 @@ const DragMixin = {
     this._layerDragEnabled = false;
 
     // remove CSS class
-    if (this._layer._map?.options.preferCanvas) {
+    if (getRenderer(this._layer) instanceof L.Canvas) {
       this._layer.off('mouseout', this.removeDraggingClass, this);
       this._layer.off('mouseover', this.addDraggingClass, this);
     } else {
@@ -98,7 +100,7 @@ const DragMixin = {
     const container = this._getDOMElem();
     // check if DOM element exists
     if (container) {
-      if (this._layer._map?.options.preferCanvas && this._layer._renderer) {
+      if (getRenderer(this._layer) instanceof L.Canvas) {
         this._layer.off(
           'touchstart mousedown',
           this._dragMixinOnMouseDown,
@@ -342,10 +344,15 @@ const DragMixin = {
         }
 
         // move the coord and return it
-        return {
+        const newLatlng = {
           lat: currentLatLng.lat + deltaLatLng.lat,
           lng: currentLatLng.lng + deltaLatLng.lng,
         };
+
+        if (currentLatLng.alt || currentLatLng.alt === 0) {
+          newLatlng.alt = currentLatLng.alt;
+        }
+        return newLatlng;
       });
 
     if (

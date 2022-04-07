@@ -321,12 +321,12 @@ describe('Testing the Toolbar', () => {
   });
 
   it('Custom Controls - One Block', () => {
-    cy.window().then(({ map }) => {
+    cy.window().then(({ map, ONE_BLOCK_CONTROL_COUNT }) => {
       map.pm.addControls({
         oneBlock: true,
       });
       cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
-        expect(container[0].children.length).to.equal(11);
+        expect(container[0].children.length).to.equal(ONE_BLOCK_CONTROL_COUNT);
       });
     });
   });
@@ -349,29 +349,39 @@ describe('Testing the Toolbar', () => {
   });
 
   it('Different block positions - One Block', () => {
-    cy.window().then(({ map }) => {
-      map.pm.addControls({
-        oneBlock: true,
-        positions: {
-          draw: 'topright',
-          edit: 'topleft',
-          custom: 'topleft',
-        },
-      });
+    cy.window().then(
+      ({
+        map,
+        TOP_RIGHT_BLOCK_CONTROL_COUNT,
+        TOP_LEFT_BLOCK_CONTROL_COUNT,
+      }) => {
+        map.pm.addControls({
+          oneBlock: true,
+          positions: {
+            draw: 'topright',
+            edit: 'topleft',
+            custom: 'topleft',
+          },
+        });
 
-      map.pm.Toolbar.copyDrawControl('Polygon', {
-        name: 'PolygonCopy',
-        block: 'custom',
-        className: 'leaflet-pm-icon-polygon',
-        title: 'Display text on hover button',
-      });
-      cy.get('.leaflet-pm-toolbar.leaflet-pm-topright').then((container) => {
-        expect(container[0].children.length).to.equal(6);
-      });
-      cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
-        expect(container[0].children.length).to.equal(6);
-      });
-    });
+        map.pm.Toolbar.copyDrawControl('Polygon', {
+          name: 'PolygonCopy',
+          block: 'custom',
+          className: 'leaflet-pm-icon-polygon',
+          title: 'Display text on hover button',
+        });
+        cy.get('.leaflet-pm-toolbar.leaflet-pm-topright').then((container) => {
+          expect(container[0].children.length).to.equal(
+            TOP_RIGHT_BLOCK_CONTROL_COUNT
+          );
+        });
+        cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
+          expect(container[0].children.length).to.equal(
+            TOP_LEFT_BLOCK_CONTROL_COUNT
+          );
+        });
+      }
+    );
   });
   it('Listen on pm:buttonclick and pm:actionclick', () => {
     let eventFired = '';
@@ -409,6 +419,9 @@ describe('Testing the Toolbar', () => {
 
     cy.window().then(() => {
       expect(eventFired).to.not.equal('drawPolygon');
+      cy.url().then((url) => {
+        expect(url.endsWith('#')).to.equal(false);
+      });
     });
   });
 });

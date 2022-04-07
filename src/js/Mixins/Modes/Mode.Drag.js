@@ -59,9 +59,8 @@ const GlobalDragMode = {
     this._addedLayersDrag = {};
     for (const id in layers) {
       const layer = layers[id];
-      // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-      const isRelevant = !!layer.pm && !layer._pmTempLayer;
-      if (isRelevant) {
+
+      if (this._isRelevantForDrag(layer)) {
         if (this.globalDragModeEnabled()) {
           layer.pm.enableLayerDrag();
         }
@@ -70,6 +69,16 @@ const GlobalDragMode = {
   },
   _layerAddedDrag({ layer }) {
     this._addedLayersDrag[L.stamp(layer)] = layer;
+  },
+  _isRelevantForDrag(layer) {
+    return (
+      layer.pm &&
+      !(layer instanceof L.LayerGroup) &&
+      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      !layer._pmTempLayer &&
+      layer.pm.options.draggable
+    );
   },
 };
 
