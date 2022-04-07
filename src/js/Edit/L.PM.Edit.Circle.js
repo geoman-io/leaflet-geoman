@@ -196,7 +196,7 @@ Edit.Circle = Edit.extend({
     this._updateHiddenPolyCircle();
 
     this._fireCenterPlaced('Edit');
-    this._firePositionChange(this._layer.getLatLng(), 'Edit');
+    this._fireChange(this._layer.getLatLng(), 'Edit');
   },
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
@@ -219,7 +219,7 @@ Edit.Circle = Edit.extend({
     }
 
     this._updateHiddenPolyCircle();
-    this._firePositionChange(this._layer.getLatLng(), 'Edit');
+    this._fireChange(this._layer.getLatLng(), 'Edit');
   },
   _syncHintLine() {
     const A = this._centerMarker.getLatLng();

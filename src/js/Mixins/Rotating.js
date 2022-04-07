@@ -87,7 +87,7 @@ const RotateMixin = {
 
     this._fireRotation(this._rotationLayer, angleDiff, oldLatLngs);
     this._fireRotation(this._map, angleDiff, oldLatLngs);
-    this._rotationLayer.pm._firePositionChange(
+    this._rotationLayer.pm._fireChange(
       this._rotationLayer.getLatLngs(),
       'Rotation'
     );
@@ -247,7 +247,7 @@ const RotateMixin = {
     this._fireRotation(this._layer, angleDiff, oldLatLngs, this._layer);
     this._fireRotation(this._map, angleDiff, oldLatLngs, this._layer);
     delete this._startAngle;
-    this._firePositionChange(this._layer.getLatLngs(), 'Rotation');
+    this._fireChange(this._layer.getLatLngs(), 'Rotation');
   },
   rotateLayerToAngle(angle) {
     const newAnlge = angle - this.getAngle();

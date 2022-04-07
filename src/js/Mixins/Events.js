@@ -344,13 +344,13 @@ const EventMixin = {
   },
 
   // Fired when position / coordinates of a layer changed
-  _firePositionChange(latlng, source = 'Edit', customPayload = {}) {
+  _fireChange(latlngs, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:positionchange',
+      'pm:change',
       {
         layer: this._layer,
-        latlng,
+        latlngs,
         shape: this.getShape(),
       },
       source,

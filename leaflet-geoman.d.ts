@@ -281,10 +281,10 @@ declare module 'leaflet' {
     once(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
     off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
 
-    /** Fired when position / coordinates of a layer changed. */
-    on(type: 'pm:positionchange', fn: PM.PositionChangeEventHandler): this;
-    once(type: 'pm:positionchange', fn: PM.PositionChangeEventHandler): this;
-    off(type: 'pm:positionchange', fn?: PM.PositionChangeEventHandler): this;
+    /** Fired coordinates of the layer changed. */
+    on(type: 'pm:change', fn: PM.PositionChangeEventHandler): this;
+    once(type: 'pm:change', fn: PM.PositionChangeEventHandler): this;
+    off(type: 'pm:change', fn?: PM.PositionChangeEventHandler): this;
 
     /******************************************
      *

@@ -364,7 +364,7 @@ const DragMixin = {
       const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
-      this._firePositionChange(this._layer.getLatLng(), 'Edit');
+      this._fireChange(this._layer.getLatLng(), 'Edit');
     } else if (
       this._layer instanceof L.CircleMarker ||
       this._layer instanceof L.Marker
@@ -378,7 +378,7 @@ const DragMixin = {
       const newCoords = moveCoords([coordsRefernce]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
-      this._firePositionChange(this._layer.getLatLng(), 'Edit');
+      this._fireChange(this._layer.getLatLng(), 'Edit');
     } else if (this._layer instanceof L.ImageOverlay) {
       // create the new coordinates array
       const newCoords = moveCoords([
@@ -387,14 +387,14 @@ const DragMixin = {
       ]);
       // set new coordinates and redraw
       this._layer.setBounds(newCoords);
-      this._firePositionChange(this._layer.getBounds(), 'Edit');
+      this._fireChange(this._layer.getBounds(), 'Edit');
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
 
       // set new coordinates and redraw
       this._layer.setLatLngs(newCoords);
-      this._firePositionChange(this._layer.getLatLngs(), 'Edit');
+      this._fireChange(this._layer.getLatLngs(), 'Edit');
     }
 
     // save current latlng for next delta calculation

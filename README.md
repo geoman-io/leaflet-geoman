@@ -334,7 +334,7 @@ Here's a list of layer events you can listen to:
 | pm:snap           | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`.                                                 | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:unsnap         | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`.                                               | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:centerplaced   | `e`    | Called when the center of a circle is placed/moved.                                                                   | `shape`, `workingLayer`, `latlng`                                                                       |
-| pm:positionchange | `e`    | Fired when position / coordinates of a layer changed.                                                                 | `layer`, `latlng`, `shape`                                                                              |
+| pm:change         | `e`    | Fired coordinates of the layer changed.                                                                               | `layer`, `latlngs`, `shape`                                                                             |
 
 For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
 
@@ -444,7 +444,7 @@ The following events are available on a layer instance:
 | pm:unsnap          | `e`    | Fired when a vertex-marker is unsnapped from a vertex. Also fired on the marker itself.                | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
 | pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected.   | `layer`, `intersection`, `shape`                                                                        |
 | pm:centerplaced    | `e`    | Fired when the center of a circle is moved.                                                            | `layer`, `latlng`, `shape`                                                                              |
-| pm:positionchange  | `e`    | Fired when position / coordinates of a layer changed.                                                  | `layer`, `latlng`, `shape`                                                                              |
+| pm:change          | `e`    | Fired coordinates of the layer changed.                                                                | `layer`, `latlngs`, `shape`                                                                             |
 The following events are available on a map instance:
 
 | Event                    | Params | Description                      | Output           |
@@ -501,7 +501,7 @@ The following events are available on a layer instance:
 | pm:dragend        | `e`    | Fired when a layer stops being dragged.                   | `layer`, `shape`                                                          |
 | pm:dragenable     | `e`    | Fired when Drag Mode on a layer is enabled.               | `layer`, `shape`                                                          |
 | pm:dragdisable    | `e`    | Fired when Drag Mode on a layer is disabled.              | `layer`, `shape`                                                          |
-| pm:positionchange | `e`    | Fired when position / coordinates of a layer changed.     | `layer`, `latlng`, `shape`                                                |
+| pm:change         | `e`    | Fired coordinates of the layer changed.                   | `layer`, `latlngs`, `shape`                                                |
 
 The following events are available on a map instance:
 
@@ -640,7 +640,7 @@ The following events are available on a layer instance:
 | pm:rotatestart    | `e`    | Fired when rotation starts on a layer.                | `layer`, `helpLayer`, `startAngle`, `originLatLngs`                                  |
 | pm:rotate         | `e`    | Fired when a layer is rotated.                        | `layer`, `helpLayer`, `startAngle`, `angle`, `angleDiff`, `oldLatLngs`, `newLatLngs` |
 | pm:rotateend      | `e`    | Fired when rotation ends on a layer.                  | `layer`, `helpLayer`, `startAngle`, `angle`, `originLatLngs`, `newLatLngs`           |
-| pm:positionchange | `e`    | Fired when position / coordinates of a layer changed. | `layer`, `latlng`, `shape`                                                           |
+| pm:change         | `e`    | Fired coordinates of the layer changed.               | `layer`, `latlngs`, `shape`                                                           |
 
 The following events are available on a map instance:
 

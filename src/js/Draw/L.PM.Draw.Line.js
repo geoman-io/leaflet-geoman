@@ -379,6 +379,6 @@ Draw.Line = Draw.extend({
     this._hintMarker.setTooltipContent(text);
   },
   _positionChange(latlngs) {
-    this._firePositionChange(latlngs, 'Draw');
+    this._fireChange(latlngs, 'Draw');
   },
 });

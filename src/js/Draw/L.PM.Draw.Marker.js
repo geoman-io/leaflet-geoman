@@ -120,7 +120,7 @@ Draw.Marker = Draw.extend({
       this._handleSnapping(fakeDragEvent);
     }
 
-    this._firePositionChange(this._hintMarker.getLatLng(), 'Draw');
+    this._fireChange(this._hintMarker.getLatLng(), 'Draw');
   },
   _createMarker(e) {
     if (!e.latlng) {

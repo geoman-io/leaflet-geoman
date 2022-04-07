@@ -210,7 +210,7 @@ Draw.CircleMarker = Draw.Marker.extend({
       );
 
       this._fireCenterPlaced();
-      this._firePositionChange(this._layer.getLatLng(), 'Draw');
+      this._fireChange(this._layer.getLatLng(), 'Draw');
     }
   },
   _syncHintLine() {
@@ -258,7 +258,7 @@ Draw.CircleMarker = Draw.Marker.extend({
       this._layerGroup && this._layerGroup.hasLayer(this._centerMarker)
         ? this._centerMarker.getLatLng()
         : this._hintMarker.getLatLng();
-    this._firePositionChange(latlng, 'Draw');
+    this._fireChange(latlng, 'Draw');
   },
   isRelevantMarker(layer) {
     return (
