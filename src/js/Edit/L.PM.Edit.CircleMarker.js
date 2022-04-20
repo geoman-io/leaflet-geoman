@@ -228,6 +228,7 @@ Edit.CircleMarker = Edit.extend({
     this._updateHiddenPolyCircle();
 
     this._fireCenterPlaced('Edit');
+    this._fireChange(this._layer.getLatLng(), 'Edit');
   },
   _syncMarkers() {
     const center = this._layer.getLatLng();
@@ -263,6 +264,7 @@ Edit.CircleMarker = Edit.extend({
     }
 
     this._updateHiddenPolyCircle();
+    this._fireChange(this._layer.getLatLng(), 'Edit');
   },
   _syncHintLine() {
     const A = this._centerMarker.getLatLng();

@@ -196,6 +196,7 @@ Edit.Circle = Edit.extend({
     this._updateHiddenPolyCircle();
 
     this._fireCenterPlaced('Edit');
+    this._fireChange(this._layer.getLatLng(), 'Edit');
   },
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
@@ -218,6 +219,7 @@ Edit.Circle = Edit.extend({
     }
 
     this._updateHiddenPolyCircle();
+    this._fireChange(this._layer.getLatLng(), 'Edit');
   },
   _syncHintLine() {
     const A = this._centerMarker.getLatLng();
@@ -269,7 +271,7 @@ Edit.Circle = Edit.extend({
       return;
     }
     delete this._vertexValidationReset;
-    this._fireDragStart(e);
+    this._fireDragStart();
   },
   _onCircleDrag(e) {
     if (this._vertexValidationReset) {

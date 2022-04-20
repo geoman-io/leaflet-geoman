@@ -87,6 +87,10 @@ const RotateMixin = {
 
     this._fireRotation(this._rotationLayer, angleDiff, oldLatLngs);
     this._fireRotation(this._map, angleDiff, oldLatLngs);
+    this._rotationLayer.pm._fireChange(
+      this._rotationLayer.getLatLngs(),
+      'Rotation'
+    );
   },
   _onRotateEnd() {
     const startAngle = this._startAngle;
@@ -108,6 +112,8 @@ const RotateMixin = {
     this._rotationLayer.pm._fireEdit(this._rotationLayer, 'Rotation');
 
     this._preventRenderingMarkers(false);
+
+    this._layerRotated = true;
   },
   _rotateLayer(radiant, latlngs, origin, _matrix, map) {
     const originPoint = _toPoint(map, origin);
@@ -176,6 +182,10 @@ const RotateMixin = {
   },
   disableRotate() {
     if (this.rotateEnabled()) {
+      if (this._rotatePoly.pm._layerRotated) {
+        this._fireUpdate();
+      }
+      this._rotatePoly.pm._layerRotated = false;
       // delete the temp polygon
       this._rotatePoly.pm.disable();
       this._rotatePoly.remove();
@@ -197,6 +207,8 @@ const RotateMixin = {
   },
   // angle is clockwise (0-360)
   rotateLayer(angle) {
+    const oldAngle = this.getAngle();
+    const oldLatLngs = this._layer.getLatLngs();
     const rads = angle * (Math.PI / 180);
     this._layer.setLatLngs(
       this._rotateLayer(
@@ -226,6 +238,16 @@ const RotateMixin = {
       );
       this._rotatePoly.pm._initMarkers();
     }
+
+    // TODO: for negative angle change the difference is always (360 - angle), do we want this?
+    let angleDiff = this.getAngle() - oldAngle;
+    angleDiff = angleDiff < 0 ? angleDiff + 360 : angleDiff;
+
+    this._startAngle = oldAngle;
+    this._fireRotation(this._layer, angleDiff, oldLatLngs, this._layer);
+    this._fireRotation(this._map, angleDiff, oldLatLngs, this._layer);
+    delete this._startAngle;
+    this._fireChange(this._layer.getLatLngs(), 'Rotation');
   },
   rotateLayerToAngle(angle) {
     const newAnlge = angle - this.getAngle();

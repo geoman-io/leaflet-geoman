@@ -119,6 +119,8 @@ Draw.Marker = Draw.extend({
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
     }
+
+    this._fireChange(this._hintMarker.getLatLng(), 'Draw');
   },
   _createMarker(e) {
     if (!e.latlng) {
