@@ -219,6 +219,7 @@ describe('Draw Circle', () => {
       mapSimple = L.map('map', {
         crs: L.CRS.Simple,
         minZoom: -2,
+        doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([0, 0], 0);
       mapSimple.pm.addControls();
     });

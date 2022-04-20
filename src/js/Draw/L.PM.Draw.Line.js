@@ -68,7 +68,7 @@ Draw.Line = Draw.extend({
     this._map.on('click', this._createVertex, this);
 
     // finish on layer event
-    // #http://leafletjs.com/reference-1.2.0.html#interactive-layer-click
+    // #http://leafletjs.com/reference.html#interactive-layer-click
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.on(this.options.finishOn, this._finishShape, this);
     }
