@@ -183,6 +183,6 @@
   background-color: #f4f4f4;
 }
 
-.control-icon.pm-disabled {
+.leaflet-buttons-control-button.pm-disabled > .control-icon {
   filter: opacity(0.6);
 }

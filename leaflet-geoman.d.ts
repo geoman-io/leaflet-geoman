@@ -281,6 +281,11 @@ declare module 'leaflet' {
     once(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
     off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
 
+    /** Fired coordinates of the layer changed. */
+    on(type: 'pm:change', fn: PM.ChangeEventHandler): this;
+    once(type: 'pm:change', fn: PM.ChangeEventHandler): this;
+    off(type: 'pm:change', fn?: PM.ChangeEventHandler): this;
+
     /******************************************
      *
      * TODO: EDIT MODE EVENTS ON MAP ONLY
@@ -341,6 +346,16 @@ declare module 'leaflet' {
     on(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
     once(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
     off(type: 'pm:dragend', fn?: PM.DragEndEventHandler): this;
+
+    /** Fired when drag mode on a layer is enabled. */
+    on(type: 'pm:dragenable', fn: PM.DragEnableEventHandler): this;
+    once(type: 'pm:dragenable', fn: PM.DragEnableEventHandler): this;
+    off(type: 'pm:dragenable', fn?: PM.DragEnableEventHandler): this;
+
+    /** Fired when drag mode on a layer is disabled. */
+    on(type: 'pm:dragdisable', fn: PM.DragDisableEventHandler): this;
+    once(type: 'pm:dragdisable', fn: PM.DragDisableEventHandler): this;
+    off(type: 'pm:dragdisable', fn?: PM.DragDisableEventHandler): this;
 
     /******************************************
      *
@@ -1336,6 +1351,11 @@ declare module 'leaflet' {
       layer: L.Layer;
       intersection: L.LatLng;
     }) => void;
+    export type ChangeEventHandler = (e: {
+      shape: PM.SUPPORTED_SHAPES;
+      layer: L.Layer;
+      latlngs: L.LatLng | L.LatLng[];
+    }) => void;
 
     /**
      * EDIT MODE MAP EVENT HANDLERS
@@ -1372,6 +1392,15 @@ declare module 'leaflet' {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
+    export type DragEnableEventHandler = (e: {
+      layer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
+    export type DragDisableEventHandler = (e: {
+      layer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
+
 
     /**
      * REMOVE MODE LAYER EVENT HANDLERS
@@ -1409,8 +1438,12 @@ declare module 'leaflet' {
     export type RotateEnableEventHandler = (e: {
       layer: L.Layer;
       helpLayer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type RotateDisableEventHandler = (e: { layer: L.Layer }) => void;
+    export type RotateDisableEventHandler = (e: {
+      layer: L.Layer
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
     export type RotateStartEventHandler = (e: {
       layer: L.Layer;
       helpLayer: L.Layer;
