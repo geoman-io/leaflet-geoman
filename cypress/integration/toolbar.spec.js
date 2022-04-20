@@ -424,4 +424,29 @@ describe('Testing the Toolbar', () => {
       });
     });
   });
+  it('Disable active button', () => {
+    let eventFired = '';
+    cy.window().then(({ map }) => {
+      map.on('pm:buttonclick', ({ btnName }) => {
+        eventFired = btnName;
+      });
+
+      cy.toolbarButton('polygon')
+        .click()
+        .closest('.button-container')
+        .should('have.class', 'active')
+        .then(() => {
+          expect(eventFired).to.equal('drawPolygon');
+          eventFired = '';
+          map.pm.Toolbar.setButtonDisabled('drawPolygon', true);
+        });
+    });
+
+    cy.window().then(() => {
+      expect(eventFired).to.not.equal('drawPolygon');
+      cy.toolbarButton('polygon')
+        .closest('.button-container')
+        .should('have.not.class', 'active');
+    });
+  });
 });
