@@ -36,6 +36,7 @@ beforeEach(() => {
       // create the map
       const map = L.map('map', {
         preferCanvas: false,
+        doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       })
         .setView([51.505, -0.09], 13)
         .addLayer(tiles);

@@ -274,12 +274,12 @@ See the available options in the table below.
 | requireSnapToFinish   | `false`                               | Require the last point of a shape to be snapped.                                                                                                                                                                |
 | tooltips              | `true`                                | Show helpful tooltips for your user.                                                                                                                                                                            |
 | allowSelfIntersection | `true`                                | Allow self intersections.                                                                                                                                                                                       |
-| templineStyle         | `{ color: 'red' },`                   | [Leaflet path options](https://leafletjs.com/reference-1.7.1.html#path) for the lines between drawn vertices/markers.                                                                                           |
-| hintlineStyle         | `{ color: 'red', dashArray: [5, 5] }` | [Leaflet path options](https://leafletjs.com/reference-1.7.1.html#path) for the helper line between last drawn vertex and the cursor.                                                                           |
-| pathOptions           | `null`                                | [Leaflet path options](https://leafletjs.com/reference-1.7.1.html#path) for the drawn layer (Only for L.Path layers).                                                                                           |
-| markerStyle           | `{ draggable: true }`                 | [Leaflet marker options](https://leafletjs.com/reference-1.7.1.html#marker-icon) (only for drawing markers).                                                                                                    |
+| templineStyle         | `{ color: 'red' },`                   | [Leaflet path options](https://leafletjs.com/reference.html#path) for the lines between drawn vertices/markers.                                                                                           |
+| hintlineStyle         | `{ color: 'red', dashArray: [5, 5] }` | [Leaflet path options](https://leafletjs.com/reference.html#path) for the helper line between last drawn vertex and the cursor.                                                                           |
+| pathOptions           | `null`                                | [Leaflet path options](https://leafletjs.com/reference.html#path) for the drawn layer (Only for L.Path layers).                                                                                           |
+| markerStyle           | `{ draggable: true }`                 | [Leaflet marker options](https://leafletjs.com/reference.html#marker-icon) (only for drawing markers).                                                                                                    |
 | cursorMarker          | `true`                                | Show a marker at the cursor.                                                                                                                                                                                    |
-| finishOn              | `null`                                | Leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click). `snap` is also an option for Line, Polygon and Rectangle. |
+| finishOn              | `null`                                | Leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click). `snap` is also an option for Line, Polygon and Rectangle. |
 | hideMiddleMarkers     | `false`                               | Hide the middle Markers in Edit Mode from Polyline and Polygon.                                                                                                                                                 |
 | minRadiusCircle       | `null`                                | Set the min radius of a `Circle`.                                                                                                                                                                               |
 | maxRadiusCircle       | `null`                                | Set the max radius of a `Circle`.                                                                                                                                                                               |
@@ -402,9 +402,9 @@ See the available options in the table below.
 | allowCutting                   | `true`        | Layer can be prevented from cutting.                                                                                                                                                                                          |
 | allowRotation                  | `true`        | Layer can be prevented from rotation.                                                                                                                                                                                         |
 | draggable                      | `true`        | Dragging can be disabled for the layer.                                                                                                                                                                                       |
-| addVertexOn                    | `click`       | Leaflet layer event to add a vertex to a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click).                                                              |
+| addVertexOn                    | `click`       | Leaflet layer event to add a vertex to a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click).                                                              |
 | addVertexValidation            | `undefined`   | A function for validation if a vertex (of a Line / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.    |
-| removeVertexOn                 | `contextmenu` | Leaflet layer event to remove a vertex from a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference-1.7.1.html#interactive-layer-click).                                                         |
+| removeVertexOn                 | `contextmenu` | Leaflet layer event to remove a vertex from a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click).                                                         |
 | removeVertexValidation         | `undefined`   | A function for validation if a vertex (of a Line / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. |
 | moveVertexValidation           | `undefined`   | A function for validation if a vertex / helper-marker is allowed to move / drag. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.  |
 | limitMarkersToCount            | `-1`          | Shows only `n` markers closest to the cursor. Use `-1` for no limit.                                                                                                                                                          |
@@ -767,7 +767,7 @@ The following options are additionally to the [Draw](#draw-mode) and [Edit Mode]
 | :------------ | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | snappingOrder | `Array`  | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`.                                                                                                          |
 | layerGroup    | `map`    | add the created layers to a layergroup instead to the map.                                                                                                                                                             |
-| panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference-1.7.1.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' }`. |
+| panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' }`. |
 
 Some details about a few more powerful options:
 
@@ -1088,7 +1088,7 @@ Using ES6 Module, a simple example would look something like this:
 ```js
 import * as L from 'leaflet'
 
-let map = L.Map()
+let map = L.Map();
 
 // map created and display on webpage
 ...
@@ -1096,7 +1096,7 @@ let map = L.Map()
 /* drawing script */
 // at this point map.pm is undefined
 if (!map.pm) {
-  await import(/* webpackChunkName: "leaflet-geoman" */ '@geoman-io/leaflet-geoman-free')
+  await import(/* webpackChunkName: "leaflet-geoman" */ '@geoman-io/leaflet-geoman-free');
   L.PM.reInitLayer(map)
 }
 // map.pm is now defined and can be used to draw on map
