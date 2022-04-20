@@ -180,6 +180,12 @@ Draw.Circle = Draw.extend({
     }
 
     this._handleHintMarkerSnapping();
+
+    const latlng =
+      this._layerGroup && this._layerGroup.hasLayer(this._centerMarker)
+        ? this._centerMarker.getLatLng()
+        : this._hintMarker.getLatLng();
+    this._fireChange(latlng, 'Draw');
   },
   _placeCenterMarker(e) {
     this._layerGroup.addLayer(this._layer);
@@ -215,6 +221,7 @@ Draw.Circle = Draw.extend({
       );
 
       this._fireCenterPlaced();
+      this._fireChange(this._layer.getLatLng(), 'Draw');
     }
   },
   _finishShape(e) {

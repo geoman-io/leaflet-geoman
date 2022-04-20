@@ -334,6 +334,7 @@ Edit.Line = Edit.extend({
     // fire edit event
     this._fireEdit();
     this._layerEdited = true;
+    this._fireChange(this._layer.getLatLngs(), 'Edit');
 
     this._fireVertexAdded(
       newM,
@@ -569,6 +570,7 @@ Edit.Line = Edit.extend({
     // fire vertex removal event
     // TODO: maybe fire latlng as well?
     this._fireVertexRemoved(marker, indexPath);
+    this._fireChange(this._layer.getLatLngs(), 'Edit');
   },
   updatePolygonCoordsFromMarkerDrag(marker) {
     // update polygon coords
@@ -747,6 +749,7 @@ Edit.Line = Edit.extend({
       this._handleLayerStyle();
     }
     this._fireMarkerDrag(e, indexPath);
+    this._fireChange(this._layer.getLatLngs(), 'Edit');
   },
   _onMarkerDragEnd(e) {
     const marker = e.target;
@@ -800,6 +803,7 @@ Edit.Line = Edit.extend({
     // fire edit event
     this._fireEdit();
     this._layerEdited = true;
+    this._fireChange(this._layer.getLatLngs(), 'Edit');
   },
   _onVertexClick(e) {
     const vertex = e.target;
