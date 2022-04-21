@@ -453,23 +453,11 @@ describe('Testing the Toolbar', () => {
     cy.window().then(({ map, L }) => {
       map.remove();
 
-      const tiles = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        }
-      );
-
       // create the map
       map = L.map('map', {
         preferCanvas: false,
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
-      })
-        .setView([51.505, -0.09], 13)
-        .addLayer(tiles);
-
-      cy.window.map = map;
+      }).setView([51.505, -0.09], 13);
 
       map.pm.Toolbar.setButtonDisabled('drawMarker', true);
 
