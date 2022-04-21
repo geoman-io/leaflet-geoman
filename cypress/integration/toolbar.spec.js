@@ -449,4 +449,40 @@ describe('Testing the Toolbar', () => {
         .should('have.not.class', 'active');
     });
   });
+  it('Disable button before init controller', () => {
+    cy.window().then(({ map, L }) => {
+      map.remove();
+
+      const tiles = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      );
+
+      // create the map
+      map = L.map('map', {
+        preferCanvas: false,
+        doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
+      })
+        .setView([51.505, -0.09], 13)
+        .addLayer(tiles);
+
+      cy.window.map = map;
+
+      cy.window.ONE_BLOCK_CONTROL_COUNT = 11;
+      cy.window.TOP_RIGHT_BLOCK_CONTROL_COUNT = 6;
+      cy.window.TOP_LEFT_BLOCK_CONTROL_COUNT = 6;
+
+      map.pm.Toolbar.setButtonDisabled('drawMarker', true);
+
+      // add leaflet-geoman toolbar
+      map.pm.addControls();
+
+      cy.get('.leaflet-pm-toolbar')
+        .parent('.leaflet-top.leaflet-left')
+        .should('exist');
+    });
+  });
 });
