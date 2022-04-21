@@ -471,10 +471,6 @@ describe('Testing the Toolbar', () => {
 
       cy.window.map = map;
 
-      cy.window.ONE_BLOCK_CONTROL_COUNT = 11;
-      cy.window.TOP_RIGHT_BLOCK_CONTROL_COUNT = 6;
-      cy.window.TOP_LEFT_BLOCK_CONTROL_COUNT = 6;
-
       map.pm.Toolbar.setButtonDisabled('drawMarker', true);
 
       // add leaflet-geoman toolbar
