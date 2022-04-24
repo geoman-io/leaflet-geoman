@@ -45,11 +45,10 @@ declare module 'leaflet' {
   }
 
   /**
-   * Extends built in leaflet Polyline.
+   * Extends built in leaflet Marker.
    */
-  interface Polyline {
-    /** Returns true if Line or Polygon has a self intersection. */
-    hasSelfIntersection(): boolean;
+  interface Marker {
+    pm: PM.PMLayer;
   }
 
   /**
