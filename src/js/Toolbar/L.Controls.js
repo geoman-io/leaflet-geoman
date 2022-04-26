@@ -192,11 +192,11 @@ const PMButton = L.Control.extend({
       L.DomUtil.addClass(buttonContainer, 'active');
     }
 
-    const image = L.DomUtil.create('div', 'control-icon', newButton);
-
     if (button.title) {
-      image.setAttribute('title', button.title);
+      buttonContainer.setAttribute('title', button.title);
     }
+
+    const image = L.DomUtil.create('div', 'control-icon', newButton);
 
     if (button.iconUrl) {
       image.setAttribute('src', button.iconUrl);
