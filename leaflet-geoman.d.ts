@@ -1112,7 +1112,7 @@ declare module 'leaflet' {
 
       /** Adds custom button (default:true) */
       // The type of custom buttons are always boolean but TS needs the other types defined too.
-      [key: string]: L.ControlPosition | BlockPositions | boolean;
+      [key: string]: L.ControlPosition | BlockPositions | boolean | undefined;
     }
 
     /** the position of each block. */
