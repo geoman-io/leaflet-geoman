@@ -266,10 +266,19 @@ export function fixLatOffset(latlng, map) {
 }
 
 export function getRenderer(layer) {
-  return (
-    layer.options.renderer ||
-    layer._map._getPaneRenderer(layer.options.pane) ||
-    layer._map.options.renderer ||
-    layer._map._renderer
-  );
+  if (typeof (layer._map) == 'undefined') {
+    return (
+      layer.options.renderer ||
+      layer._getPaneRenderer(layer.options.pane) ||
+      layer.options.renderer ||
+      layer._renderer
+    );
+  } else {
+    return (
+      layer.options.renderer ||
+      layer._map._getPaneRenderer(layer.options.pane) ||
+      layer._map.options.renderer ||
+      layer._map._renderer
+      );
+  }
 }
