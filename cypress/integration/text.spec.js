@@ -1,5 +1,35 @@
 describe('Text Layer', () => {
   const mapSelector = '#map';
+
+  it('Add Text Layer manual', () => {
+    cy.window().then(({ map, L }) => {
+      const textLayer = L.marker(map.getCenter(), {
+        textMarker: true,
+        text: 'Text Layer',
+      }).addTo(map);
+      expect(textLayer.pm.getShape()).to.eq('Text');
+      textLayer.remove();
+    });
+
+    cy.window().then(({ map, L }) => {
+      const textLayer = L.marker(map.getCenter(), {
+        textMarker: false,
+        text: 'Text Layer',
+      }).addTo(map);
+      expect(textLayer.pm.getShape()).to.eq('Marker');
+      textLayer.remove();
+    });
+
+    cy.window().then(({ map, L }) => {
+      const textLayer = L.marker(map.getCenter(), {
+        textMarker: true,
+      }).addTo(map);
+      expect(textLayer.pm.getShape()).to.eq('Text');
+      expect(textLayer.pm.getText()).to.eq('');
+      textLayer.remove();
+    });
+  });
+
   describe('Drawing', () => {
     it('place text layer and write text', () => {
       cy.toolbarButton('text')
@@ -142,13 +172,13 @@ describe('Text Layer', () => {
         expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
         const textLayer = map.pm.getGeomanDrawLayers()[0];
         textArea = textLayer.pm.getElement();
-        expect(textArea.style.width).to.eq('1px');
+        expect(textArea.style.width).to.eq('16px');
         cy.get(textArea).type('Hello World');
       });
 
       cy.window().then(() => {
         expect(textArea.value).to.eq('Hello World');
-        expect(textArea.style.height).to.eq('17px');
+        expect(textArea.style.height).to.eq('21px');
         // exact width can't be checked because if the test is running on Github, it has a different width.
         expect(textArea.style.width !== '1px').to.eq(true);
       });
@@ -386,34 +416,25 @@ describe('Text Layer', () => {
         expect(event).to.eq('pm:textchange');
       });
     });
-  });
+    it('unselect text on disable', () => {
+      cy.window().then(({ map, L }) => {
+        const textLayer = L.marker(map.getCenter(), {
+          textMarker: true,
+          text: 'Text Layer',
+        }).addTo(map);
+        expect(textLayer.pm.getText()).to.eq('Text Layer');
 
-  it('Add Text Layer manual', () => {
-    cy.window().then(({ map, L }) => {
-      const textLayer = L.marker(map.getCenter(), {
-        textMarker: true,
-        text: 'Text Layer',
-      }).addTo(map);
-      expect(textLayer.pm.getShape()).to.eq('Text');
-      textLayer.remove();
-    });
+        const textarea = textLayer.pm.getElement();
+        textLayer.pm.enable();
+        textarea.focus();
+        textarea.setSelectionRange(2, 5);
+        expect(textarea.selectionStart).to.eq(2);
+        expect(textarea.selectionEnd).to.eq(5);
 
-    cy.window().then(({ map, L }) => {
-      const textLayer = L.marker(map.getCenter(), {
-        textMarker: false,
-        text: 'Text Layer',
-      }).addTo(map);
-      expect(textLayer.pm.getShape()).to.eq('Marker');
-      textLayer.remove();
-    });
-
-    cy.window().then(({ map, L }) => {
-      const textLayer = L.marker(map.getCenter(), {
-        textMarker: true,
-      }).addTo(map);
-      expect(textLayer.pm.getShape()).to.eq('Text');
-      expect(textLayer.pm.getText()).to.eq('');
-      textLayer.remove();
+        textLayer.pm.disable();
+        expect(textarea.selectionStart).to.eq(0);
+        expect(textarea.selectionEnd).to.eq(0);
+      });
     });
   });
 });

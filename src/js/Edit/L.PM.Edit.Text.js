@@ -37,6 +37,8 @@ Edit.Text = Edit.extend({
     L.DomEvent.on(this.textArea, 'blur', this._focusChange, this);
     this._layer.on('dblclick', L.DomEvent.stop);
 
+    L.DomEvent.off(this.textArea, 'mousedown', this._preventTextSelection);
+
     this._enabled = true;
 
     this._fireEnable();
@@ -59,8 +61,13 @@ Edit.Text = Edit.extend({
     this.textArea.classList.add('pm-disabled');
 
     // remove selection
+    const focusedElement = document.activeElement;
+    // Chrome needs the focus on the element to change the selection
+    this.textArea.focus();
     this.textArea.selectionStart = 0;
     this.textArea.selectionEnd = 0;
+    L.DomEvent.on(this.textArea, 'mousedown', this._preventTextSelection);
+    focusedElement.focus();
 
     this._disableOnBlurActive = false;
 
@@ -115,8 +122,12 @@ Edit.Text = Edit.extend({
   _autoResize() {
     this.textArea.style.height = '1px';
     this.textArea.style.width = '1px';
-    this.textArea.style.height = `${this.textArea.scrollHeight}px`;
-    this.textArea.style.width = `${this.textArea.scrollWidth}px`;
+    const height =
+      this.textArea.scrollHeight > 21 ? this.textArea.scrollHeight : 21;
+    const width =
+      this.textArea.scrollWidth > 16 ? this.textArea.scrollWidth : 16;
+    this.textArea.style.height = `${height}px`;
+    this.textArea.style.width = `${width}px`;
     this._fireTextChange(this.getText());
   },
 
@@ -232,11 +243,18 @@ Edit.Text = Edit.extend({
       this.setText(this._layer.options.text);
     }
 
+    this._autoResize();
+
     if (enable) {
       // enable editing for the marker
       this.enable();
       this.focus();
       this._disableOnBlur();
     }
+  },
+
+  // Chrome ignores `user-select: none`, so we need to disable text selection manually
+  _preventTextSelection(e) {
+    e.preventDefault();
   },
 });

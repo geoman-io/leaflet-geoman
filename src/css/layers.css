@@ -57,13 +57,16 @@
 }
 
 .pm-textarea {
-  resize: none;
-  background: transparent;
-  border: none;
-  outline: 0;
-  color: #000;
-  cursor: pointer;
-  border-radius: 3px;
+    background-color: #fff;
+    color: #000;
+    resize: none;
+    border: none;
+    outline: 0;
+    cursor: pointer;
+    border-radius: 3px;
+    padding-left: 7px;
+    padding-bottom: 0;
+    padding-top: 4px;
 }
 
 .leaflet-pm-draggable .pm-textarea {
