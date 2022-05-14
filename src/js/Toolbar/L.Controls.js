@@ -96,6 +96,10 @@ const PMButton = L.Control.extend({
       this._container
     );
 
+    if (button.title) {
+      buttonContainer.setAttribute('title', button.title);
+    }
+
     // the button itself
     const newButton = L.DomUtil.create(
       'a',
@@ -190,10 +194,6 @@ const PMButton = L.Control.extend({
 
     if (button.toggleStatus) {
       L.DomUtil.addClass(buttonContainer, 'active');
-    }
-
-    if (button.title) {
-      buttonContainer.setAttribute('title', button.title);
     }
 
     const image = L.DomUtil.create('div', 'control-icon', newButton);
