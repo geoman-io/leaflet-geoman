@@ -1,3 +1,5 @@
+import { getRenderer } from '../helpers';
+
 const DragMixin = {
   enableLayerDrag() {
     // layer is not allowed to dragged or is not on the map
@@ -32,7 +34,7 @@ const DragMixin = {
     this._tempDragCoord = null;
 
     // add CSS class
-    if (this._layer._map?.options.preferCanvas) {
+    if (getRenderer(this._layer) instanceof L.Canvas) {
       this._layer.on('mouseout', this.removeDraggingClass, this);
       this._layer.on('mouseover', this.addDraggingClass, this);
     } else {
@@ -50,7 +52,7 @@ const DragMixin = {
     // check if DOM element exists
     if (container) {
       // add mousedown event to trigger drag
-      if (this._layer._map?.options.preferCanvas && this._layer._renderer) {
+      if (getRenderer(this._layer) instanceof L.Canvas) {
         this._layer.on(
           'touchstart mousedown',
           this._dragMixinOnMouseDown,
@@ -69,13 +71,13 @@ const DragMixin = {
       }
     }
 
-    // TODO: should we add Events "enabledrag" / "disabledrag"?
+    this._fireDragEnable();
   },
   disableLayerDrag() {
     this._layerDragEnabled = false;
 
     // remove CSS class
-    if (this._layer._map?.options.preferCanvas) {
+    if (getRenderer(this._layer) instanceof L.Canvas) {
       this._layer.off('mouseout', this.removeDraggingClass, this);
       this._layer.off('mouseover', this.addDraggingClass, this);
     } else {
@@ -98,7 +100,7 @@ const DragMixin = {
     const container = this._getDOMElem();
     // check if DOM element exists
     if (container) {
-      if (this._layer._map?.options.preferCanvas && this._layer._renderer) {
+      if (getRenderer(this._layer) instanceof L.Canvas) {
         this._layer.off(
           'touchstart mousedown',
           this._dragMixinOnMouseDown,
@@ -115,6 +117,13 @@ const DragMixin = {
         );
       }
     }
+
+    if (this._layerDragged) {
+      this._fireUpdate();
+    }
+    this._layerDragged = false;
+
+    this._fireDragDisable();
   },
   // TODO: make this private in the next major release
   dragging() {
@@ -302,6 +311,8 @@ const DragMixin = {
       this._layer.pm._updateHiddenPolyCircle();
     }
 
+    this._layerDragged = true;
+
     // timeout to prevent click event after drag :-/
     // TODO: do it better as soon as leaflet has a way to do it better :-)
     window.setTimeout(() => {
@@ -317,7 +328,6 @@ const DragMixin = {
 
       // fire edit
       this._fireEdit();
-      this._layerEdited = true;
     }, 10);
 
     return true;
@@ -342,10 +352,15 @@ const DragMixin = {
         }
 
         // move the coord and return it
-        return {
+        const newLatlng = {
           lat: currentLatLng.lat + deltaLatLng.lat,
           lng: currentLatLng.lng + deltaLatLng.lng,
         };
+
+        if (currentLatLng.alt || currentLatLng.alt === 0) {
+          newLatlng.alt = currentLatLng.alt;
+        }
+        return newLatlng;
       });
 
     if (
@@ -356,6 +371,7 @@ const DragMixin = {
       const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
+      this._fireChange(this._layer.getLatLng(), 'Edit');
     } else if (
       this._layer instanceof L.CircleMarker ||
       this._layer instanceof L.Marker
@@ -369,6 +385,7 @@ const DragMixin = {
       const newCoords = moveCoords([coordsRefernce]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
+      this._fireChange(this._layer.getLatLng(), 'Edit');
     } else if (this._layer instanceof L.ImageOverlay) {
       // create the new coordinates array
       const newCoords = moveCoords([
@@ -377,12 +394,14 @@ const DragMixin = {
       ]);
       // set new coordinates and redraw
       this._layer.setBounds(newCoords);
+      this._fireChange(this._layer.getBounds(), 'Edit');
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
 
       // set new coordinates and redraw
       this._layer.setLatLngs(newCoords);
+      this._fireChange(this._layer.getLatLngs(), 'Edit');
     }
 
     // save current latlng for next delta calculation

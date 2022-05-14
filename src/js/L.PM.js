@@ -232,34 +232,5 @@ L.PM = L.PM || {
   },
 };
 
-if (L.version === '1.7.1') {
-  // Canvas Mode: After dragging the map the target layer can't be dragged anymore until it is clicked
-  // https://github.com/Leaflet/Leaflet/issues/7775 a fix is already merged for the Leaflet 1.8.0 version
-  L.Canvas.include({
-    _onClick(e) {
-      const point = this._map.mouseEventToLayerPoint(e);
-      let layer;
-      let clickedLayer;
-
-      for (let order = this._drawFirst; order; order = order.next) {
-        layer = order.layer;
-        if (layer.options.interactive && layer._containsPoint(point)) {
-          // changing e.type !== 'preclick' to e.type === 'preclick' fix the issue
-          if (
-            !(e.type === 'click' || e.type === 'preclick') ||
-            !this._map._draggableMoved(layer)
-          ) {
-            clickedLayer = layer;
-          }
-        }
-      }
-      if (clickedLayer) {
-        L.DomEvent.fakeStop(e);
-        this._fireEvent([clickedLayer], e);
-      }
-    },
-  });
-}
-
 // initialize leaflet-geoman
 L.PM.initialize();

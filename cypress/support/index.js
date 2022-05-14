@@ -36,11 +36,16 @@ beforeEach(() => {
       // create the map
       const map = L.map('map', {
         preferCanvas: false,
+        doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       })
         .setView([51.505, -0.09], 13)
         .addLayer(tiles);
 
       contentWindow.map = map;
+
+      contentWindow.ONE_BLOCK_CONTROL_COUNT = 12;
+      contentWindow.TOP_RIGHT_BLOCK_CONTROL_COUNT = 7;
+      contentWindow.TOP_LEFT_BLOCK_CONTROL_COUNT = 6;
 
       // add leaflet-geoman toolbar
       map.pm.addControls();

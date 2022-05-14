@@ -657,8 +657,11 @@ const Toolbar = L.Class.extend({
   },
   setButtonDisabled(name, state) {
     const btnName = this._btnNameMapping(name);
-    this.buttons[btnName]._button.disabled = !!state;
-    this._showHideButtons();
+    if (state) {
+      this.buttons[btnName].disable();
+    } else {
+      this.buttons[btnName].enable();
+    }
   },
   _shapeMapping() {
     return {

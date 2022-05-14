@@ -6,6 +6,7 @@ import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
 import KeyboardMixins from './Mixins/Keyboard';
+import { getRenderer } from './helpers';
 
 const Map = L.Class.extend({
   includes: [
@@ -217,7 +218,7 @@ const Map = L.Class.extend({
       this._touchEventCounter <= 1 ? 0 : this._touchEventCounter - 1;
   },
   _canvasTouchMove(e) {
-    this.map._renderer._onMouseMove(this._createMouseEvent('mousemove', e));
+    getRenderer(this.map)._onMouseMove(this._createMouseEvent('mousemove', e));
   },
   _canvasTouchClick(e) {
     let type = '';
@@ -231,7 +232,7 @@ const Map = L.Class.extend({
     if (!type) {
       return;
     }
-    this.map._renderer._onClick(this._createMouseEvent(type, e));
+    getRenderer(this.map)._onClick(this._createMouseEvent(type, e));
   },
   _createMouseEvent(type, e) {
     let mouseEvent;

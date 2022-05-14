@@ -136,6 +136,7 @@ const SnapMixin = {
     if (closestLayer.distance < minDistance) {
       // snap the marker
       marker._orgLatLng = marker.getLatLng();
+      // TODO: if the origin marker has a altitude is applied to the snapped layer too, do we want this?
       marker.setLatLng(snapLatLng);
 
       marker._snapped = true;

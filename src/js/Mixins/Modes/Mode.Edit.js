@@ -79,9 +79,7 @@ const GlobalEditMode = {
       // when global edit mode is enabled and a layer is added to the map,
       // enable edit for that layer if it's relevant
 
-      // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-      const isRelevant = !!layer.pm && !layer._pmTempLayer;
-      if (isRelevant) {
+      if (this._isRelevantForEdit(layer)) {
         if (this.globalEditModeEnabled()) {
           layer.pm.enable({ ...this.globalOptions });
         }
@@ -90,6 +88,16 @@ const GlobalEditMode = {
   },
   _layerAdded({ layer }) {
     this._addedLayers[L.stamp(layer)] = layer;
+  },
+  _isRelevantForEdit(layer) {
+    return (
+      layer.pm &&
+      !(layer instanceof L.LayerGroup) &&
+      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      !layer._pmTempLayer &&
+      layer.pm.options.allowEditing
+    );
   },
 };
 

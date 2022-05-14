@@ -53,11 +53,10 @@ declare module 'leaflet' {
   }
 
   /**
-   * Extends built in leaflet Polyline.
+   * Extends built in leaflet Marker.
    */
-  interface Polyline {
-    /** Returns true if Line or Polygon has a self intersection. */
-    hasSelfIntersection(): boolean;
+  interface Marker {
+    pm: PM.PMLayer;
   }
 
   /**
@@ -289,6 +288,11 @@ declare module 'leaflet' {
     once(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
     off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
 
+    /** Fired coordinates of the layer changed. */
+    on(type: 'pm:change', fn: PM.ChangeEventHandler): this;
+    once(type: 'pm:change', fn: PM.ChangeEventHandler): this;
+    off(type: 'pm:change', fn?: PM.ChangeEventHandler): this;
+
     /** Fired when position / coordinates of a layer changed. */
     on(type: 'pm:textchange', fn: PM.TextChangeEventHandler): this;
     once(type: 'pm:textchange', fn: PM.TextChangeEventHandler): this;
@@ -354,6 +358,16 @@ declare module 'leaflet' {
     on(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
     once(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
     off(type: 'pm:dragend', fn?: PM.DragEndEventHandler): this;
+
+    /** Fired when drag mode on a layer is enabled. */
+    on(type: 'pm:dragenable', fn: PM.DragEnableEventHandler): this;
+    once(type: 'pm:dragenable', fn: PM.DragEnableEventHandler): this;
+    off(type: 'pm:dragenable', fn?: PM.DragEnableEventHandler): this;
+
+    /** Fired when drag mode on a layer is disabled. */
+    on(type: 'pm:dragdisable', fn: PM.DragDisableEventHandler): this;
+    once(type: 'pm:dragdisable', fn: PM.DragDisableEventHandler): this;
+    off(type: 'pm:dragdisable', fn?: PM.DragDisableEventHandler): this;
 
     /******************************************
      *
@@ -1129,6 +1143,10 @@ declare module 'leaflet' {
 
       /** Adds a button to toggle the Snapping Option ⭐ */
       snappingOption?: boolean;
+
+      /** Adds custom button (default:true) */
+      // The type of custom buttons are always boolean but TS needs the other types defined too.
+      [key: string]: L.ControlPosition | BlockPositions | boolean;
     }
 
     /** the position of each block. */
@@ -1386,6 +1404,11 @@ declare module 'leaflet' {
       layer: L.Layer;
       intersection: L.LatLng;
     }) => void;
+    export type ChangeEventHandler = (e: {
+      shape: PM.SUPPORTED_SHAPES;
+      layer: L.Layer;
+      latlngs: L.LatLng | L.LatLng[];
+    }) => void;
     export type TextChangeEventHandler = (e: {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
@@ -1427,6 +1450,15 @@ declare module 'leaflet' {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
+    export type DragEnableEventHandler = (e: {
+      layer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
+    export type DragDisableEventHandler = (e: {
+      layer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
+
 
     /**
      * REMOVE MODE LAYER EVENT HANDLERS
@@ -1464,8 +1496,12 @@ declare module 'leaflet' {
     export type RotateEnableEventHandler = (e: {
       layer: L.Layer;
       helpLayer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type RotateDisableEventHandler = (e: { layer: L.Layer }) => void;
+    export type RotateDisableEventHandler = (e: {
+      layer: L.Layer
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
     export type RotateStartEventHandler = (e: {
       layer: L.Layer;
       helpLayer: L.Layer;
