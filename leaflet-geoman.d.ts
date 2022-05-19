@@ -735,10 +735,10 @@ declare module 'leaflet' {
       layerGroup?: L.Map | L.LayerGroup;
 
       /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']. */
-      snappingOrder: SUPPORTED_SHAPES[];
+      snappingOrder?: SUPPORTED_SHAPES[];
 
       /** Defines in which panes the layers and helper vertices are created. Default: { vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' } */
-      panes: { vertexPane: PANE; layerPane: PANE; markerPane: PANE };
+      panes?: { vertexPane?: PANE; layerPane?: PANE; markerPane?: PANE };
     }
 
     interface PMDrawMap {
