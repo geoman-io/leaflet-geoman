@@ -268,8 +268,10 @@ export function fixLatOffset(latlng, map) {
 export function getRenderer(layer) {
   return (
     layer.options.renderer ||
-    layer._map._getPaneRenderer(layer.options.pane) ||
-    layer._map.options.renderer ||
-    layer._map._renderer
+    (layer._map &&
+      (layer._map._getPaneRenderer(layer.options.pane) ||
+        layer._map.options.renderer ||
+        layer._map._renderer)) ||
+    layer._renderer
   );
 }

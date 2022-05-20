@@ -412,8 +412,9 @@ describe('Draw Circle Marker', () => {
 
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
-    // TODO: Remove this in the next cypress version. Not reasonable why 'circle' button is clicked instead of 'edit'. With first disable 'circle-marker' draw, it works to select 'edit'
-    cy.toolbarButton('circle-marker').click();
+    cy.window().then(({ map }) => {
+      map.pm.disableDraw();
+    });
 
     cy.toolbarButton('edit')
       .click()
