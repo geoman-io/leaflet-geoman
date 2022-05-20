@@ -256,24 +256,28 @@ describe('Testing the Toolbar', () => {
           .and('include', 'Display text on hover button');
         cy.get(container[0].children[0]).click(); // button
         cy.get(container).should('have.class', 'active');
-        const actions = container[0].children[1].children;
-        const actioncount = actions.length;
+        const buttonActions = container[0].children[1].children;
+        const actioncount = buttonActions.length;
         expect(actioncount).to.equal(3);
 
-        cy.get(actions[2])
+        cy.get(buttonActions[2])
           .click()
           .then(() => {
             expect(testresult).to.equal('click');
-            expect(actions[1].innerHTML).to.equal('Custom text, no click');
+            expect(buttonActions[1].innerHTML).to.equal(
+              'Custom text, no click'
+            );
           });
 
-        cy.get(actions[0]).click();
+        cy.get(buttonActions[0]).click();
         cy.get(container).should('not.have.class', 'active');
         cy.window().then(() => {
           map.pm.enableDraw('PolygonCopy');
           map.on('pm:create', (e) => {
             expect(e.shape).to.equal('PolygonCopy');
-            e.layer.on('click', (l) => (testlayer = l.target));
+            e.layer.on('click', (l) => {
+              testlayer = l.target;
+            });
           });
         });
         cy.get(container).should('have.class', 'active');
@@ -449,6 +453,27 @@ describe('Testing the Toolbar', () => {
       cy.toolbarButton('polygon')
         .closest('.button-container')
         .should('have.not.class', 'active');
+    });
+  });
+
+  it('Disable button before init controller', () => {
+    cy.window().then(({ map, L }) => {
+      map.remove();
+
+      // create the map
+      map = L.map('map', {
+        preferCanvas: false,
+        doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
+      }).setView([51.505, -0.09], 13);
+
+      map.pm.Toolbar.setButtonDisabled('drawMarker', true);
+
+      // add leaflet-geoman toolbar
+      map.pm.addControls();
+
+      cy.get('.leaflet-pm-toolbar')
+        .parent('.leaflet-top.leaflet-left')
+        .should('exist');
     });
   });
 
