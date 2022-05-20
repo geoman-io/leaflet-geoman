@@ -802,7 +802,7 @@ It is possible to create a text layer programmatically by adding a Marker with t
 ```js
 L.marker(latlng, {
   textMarker: true,
-  text: 'Manual creation is for Geoman no problem!',
+  text: 'Manual creation is no problem for Geoman!',
 }).addTo(map);
 ```
 
