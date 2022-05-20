@@ -211,9 +211,7 @@ describe('Testing the Toolbar', () => {
         toggle: false,
       });
       cy.toolbarButtonContainer('clickButton', map).then((container) => {
-        cy.get(container[0].children[0].children[0])
-          .parent()
-          .parent()
+        cy.get(container[0])
           .should('have.attr', 'title')
           .and('include', 'Count layers');
         container[0].children[0].click(); // button
@@ -253,9 +251,7 @@ describe('Testing the Toolbar', () => {
       map.pm.Draw.PolygonCopy.setPathOptions({ color: 'red' });
 
       cy.toolbarButtonContainer('PolygonCopy', map).then((container) => {
-        cy.get(container[0].children[0].children[0])
-          .parent()
-          .parent()
+        cy.get(container[0])
           .should('have.attr', 'title')
           .and('include', 'Display text on hover button');
         cy.get(container[0].children[0]).click(); // button
