@@ -8,7 +8,8 @@
     "finishRect": "Beende mit Klick",
     "startCircle": "Platziere das Kreiszentrum mit Klick",
     "finishCircle": "Beende den Kreis mit Klick",
-    "placeCircleMarker": "Platziere den Kreismarker mit Klick"
+    "placeCircleMarker": "Platziere den Kreismarker mit Klick",
+    "placeText": "Platziere den Text mit Klick"
   },
   "actions": {
     "finish": "Beenden",
@@ -28,6 +29,7 @@
     "drawCircleMarkerButton": "Kreismarker zeichnen",
     "snappingButton": "Bewegter Layer an andere Layer oder Vertexe einhacken",
     "pinningButton": "Vertexe an der gleichen Position verknüpfen",
-    "rotateButton": "Layer drehen"
+    "rotateButton": "Layer drehen",
+    "drawTextButton": "Text zeichnen"
   }
 }

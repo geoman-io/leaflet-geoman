@@ -358,6 +358,21 @@ const EventMixin = {
     );
   },
 
+  // Fired when text of a text layer changed
+  _fireTextChange(text, source = 'Edit', customPayload = {}) {
+    this.__fire(
+      this._layer,
+      'pm:textchange',
+      {
+        layer: this._layer,
+        text,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
+
   // Snapping Events
   // Fired during a marker move/drag and other layers are existing
   _fireSnapDrag(fireLayer, eventInfo, source = 'Snapping', customPayload = {}) {
