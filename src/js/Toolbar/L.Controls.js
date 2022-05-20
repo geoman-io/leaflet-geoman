@@ -274,6 +274,8 @@ const PMButton = L.Control.extend({
     } else {
       L.DomUtil.removeClass(button, className);
       button.setAttribute('aria-disabled', 'false');
+      L.DomEvent.on(button, 'click', this._triggerClick, this);
+      L.DomEvent.on(button, 'click', this._onBtnClick, this);
     }
   },
 });
