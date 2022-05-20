@@ -51,6 +51,7 @@ Features marked with ⭐ in this documentation are available in Leaflet-Geoman P
 - [Rotation Mode](#rotation-mode)  
 - [Split Mode ⭐](#split-mode-)
 - [Scale Mode ⭐](#scale-mode-)
+- [Text Layer](#text-layer)
 - [Options](#options)  
   - [Snapping](#snapping)
   - [Pinning ⭐](#pinning-)
@@ -201,6 +202,7 @@ See the available options in the table below.
 | drawRectangle      | `true`      | Adds button to draw Rectangle.                                                                   |  
 | drawPolygon        | `true`      | Adds button to draw Polygon.                                                                     |  
 | drawCircle         | `true`      | Adds button to draw Circle.                                                                      |  
+| drawText           | `true`      | Adds button to draw Text.                                                                        |  
 | editMode           | `true`      | Adds button to toggle Edit Mode for all layers.                                                  |  
 | dragMode           | `true`      | Adds button to toggle Drag Mode for all layers.                                                  |  
 | cutPolygon         | `true`      | Adds button to cut a hole in a Polygon or Line.                                                  |  
@@ -290,6 +292,7 @@ See the available options in the table below.
 | continueDrawing       | `false` / `true`                      | Draw Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.                                          |
 | rectangleAngle        | `0`                                   | Rectangle can drawn with a rotation angle 0-360 degrees                                                                                                                                                         |
 | layersToCut           | `[]`                                  | Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again.                                              |
+| textOptions           | `{}`                                  | Text Layer options. Look into [textOptions](#text-layer-drawing).                                                                                                                                               |
 
 This options can only set over `map.pm.setGlobalOptions({})`:
 
@@ -745,6 +748,63 @@ The following events are available on a map instance:
 | pm:scalestart             | `e`    | Fired when scale starts on a layer.       | `layer`, `helpLayer`, `originLatLngs`, `originLatLngs` |
 | pm:scale                  | `e`    | Fired when a layer is scaled.             | `layer`, `helpLayer`, `oldLatLngs`, `newLatLngs`       |
 | pm:scaleend               | `e`    | Fired when scale ends on a layer.         | `layer`, `helpLayer`, `originLatLngs`, `newLatLngs`    |
+
+### Text Layer
+
+![text-layer](https://user-images.githubusercontent.com/19800037/168420156-953c7d1a-ed61-4a33-bc90-f18ebea425bd.gif)
+
+Additional to the default methods and options there are a few more possibilities for Text Layers:
+
+#### Text Layer Drawing:
+
+```js
+map.pm.enableDraw('Text', { textOptions: { text: 'Geoman is fantastic! 🚀' } });
+```
+
+See the available options for `textOptions` in the table below.
+
+| Option         | Default | Description                                                   |
+| :------------- | :------ | :------------------------------------------------------------ |
+| text           | ``      | Predefined text.                                              |
+| focusAfterDraw | `true`  | Directly after placing the marker, text editing is activated. |
+| removeIfEmpty  | `true`  | The text layer is removed if no text is written.              |
+| className      | ``      | Custom CSS Classes. Separated by a space.                     |
+
+#### Text Layer Editing:
+
+The following methods are available on `layer.pm`:
+
+| Method          | Returns       | Description                           |
+| :-------------- | :------------ | :------------------------------------ |
+| focus()         | -             | Activate text editing.                |
+| blur()          | -             | Deactivate text editing.              |
+| hasFocus()      | `Boolean`     | Is text editing active.               |
+| getElement()    | `HTMLElement` | Returns the `<textarea>` DOM element. |
+| setText(`text`) | -             | Set text.                             |
+| getText()       | `String`      | Returns the text.                     |
+
+The following events are available on a layer instance:
+
+| Event         | Params | Description                                | Output                   |
+| :------------ | :----- | :----------------------------------------- | :----------------------- |
+| pm:textchange | `e`    | Fired when the text of a layer is changed. | `text`, `layer`, `shape` |
+
+For custom text styling get the HTMLElement and add CSS styles:
+
+```js
+layer.pm.getElement().style.color = 'red';
+```
+
+#### Text Layer manual creation:
+
+It is possible to create a text layer programmatically by adding a Marker with the options `textMarker: true` and `text: 'your text'`.
+
+```js
+L.marker(latlng, {
+  textMarker: true,
+  text: 'Manual creation is no problem for Geoman!',
+}).addTo(map);
+```
 
 ### Options
 

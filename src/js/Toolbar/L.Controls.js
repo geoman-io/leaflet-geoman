@@ -96,6 +96,10 @@ const PMButton = L.Control.extend({
       this._container
     );
 
+    if (button.title) {
+      buttonContainer.setAttribute('title', button.title);
+    }
+
     // the button itself
     const newButton = L.DomUtil.create(
       'a',
@@ -194,10 +198,6 @@ const PMButton = L.Control.extend({
 
     const image = L.DomUtil.create('div', 'control-icon', newButton);
 
-    if (button.title) {
-      image.setAttribute('title', button.title);
-    }
-
     if (button.iconUrl) {
       image.setAttribute('src', button.iconUrl);
     }
@@ -259,6 +259,10 @@ const PMButton = L.Control.extend({
   },
 
   _updateDisabled() {
+    if (!this._container) {
+      return;
+    }
+
     const className = 'pm-disabled';
     const button = this.buttonsDomNode.children[0];
 
@@ -270,6 +274,8 @@ const PMButton = L.Control.extend({
     } else {
       L.DomUtil.removeClass(button, className);
       button.setAttribute('aria-disabled', 'false');
+      L.DomEvent.on(button, 'click', this._triggerClick, this);
+      L.DomEvent.on(button, 'click', this._onBtnClick, this);
     }
   },
 });

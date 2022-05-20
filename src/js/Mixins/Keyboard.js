@@ -3,7 +3,7 @@ const KeyboardMixins = {
   _initKeyListener(map) {
     this.map = map;
     L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
-    L.DomEvent.on(document, 'blur', this._onKeyListener, this);
+    L.DomEvent.on(window, 'blur', this._onBlur, this);
   },
   _onKeyListener(e) {
     let focusOn = 'document';
@@ -19,6 +19,12 @@ const KeyboardMixins = {
     this._lastEvents.current = data;
 
     this.map.pm._fireKeyeventEvent(e, e.type, focusOn);
+  },
+  _onBlur(e) {
+    e.altKey = false;
+    const data = { event: e, eventType: e.type, focusOn: 'document' };
+    this._lastEvents[e.type] = data;
+    this._lastEvents.current = data;
   },
   getLastKeyEvent(type = 'current') {
     return this._lastEvents[type];
