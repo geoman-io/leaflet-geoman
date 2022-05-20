@@ -43,8 +43,8 @@ beforeEach(() => {
 
       contentWindow.map = map;
 
-      contentWindow.ONE_BLOCK_CONTROL_COUNT = 11;
-      contentWindow.TOP_RIGHT_BLOCK_CONTROL_COUNT = 6;
+      contentWindow.ONE_BLOCK_CONTROL_COUNT = 12;
+      contentWindow.TOP_RIGHT_BLOCK_CONTROL_COUNT = 7;
       contentWindow.TOP_LEFT_BLOCK_CONTROL_COUNT = 6;
 
       // add leaflet-geoman toolbar

@@ -449,4 +449,28 @@ describe('Testing the Toolbar', () => {
         .should('have.not.class', 'active');
     });
   });
+
+  it('Enable disabled button', () => {
+    let eventFired = '';
+    cy.window().then(({ map }) => {
+      map.on('pm:buttonclick', ({ btnName }) => {
+        eventFired = btnName;
+      });
+      map.pm.Toolbar.setButtonDisabled('drawPolygon', true);
+    });
+    cy.toolbarButton('polygon')
+      .click()
+      .then(() => {
+        expect(eventFired).to.equal('');
+      });
+
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.setButtonDisabled('drawPolygon', false);
+    });
+    cy.toolbarButton('polygon')
+      .click()
+      .then(() => {
+        expect(eventFired).to.equal('drawPolygon');
+      });
+  });
 });
