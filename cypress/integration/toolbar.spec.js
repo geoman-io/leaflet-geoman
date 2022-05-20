@@ -152,8 +152,6 @@ describe('Testing the Toolbar', () => {
     });
 
     cy.get('.leaflet-buttons-control-button .leaflet-pm-icon-circle-marker')
-      .parent()
-      .parent()
       .should('have.attr', 'title')
       .and('include', 'Dibujar Marcador de Circulo');
   });
@@ -212,8 +210,6 @@ describe('Testing the Toolbar', () => {
       });
       cy.toolbarButtonContainer('clickButton', map).then((container) => {
         cy.get(container[0].children[0].children[0])
-          .parent()
-          .parent()
           .should('have.attr', 'title')
           .and('include', 'Count layers');
         container[0].children[0].click(); // button
@@ -254,8 +250,6 @@ describe('Testing the Toolbar', () => {
 
       cy.toolbarButtonContainer('PolygonCopy', map).then((container) => {
         cy.get(container[0].children[0].children[0])
-          .parent()
-          .parent()
           .should('have.attr', 'title')
           .and('include', 'Display text on hover button');
         cy.get(container[0].children[0]).click(); // button
