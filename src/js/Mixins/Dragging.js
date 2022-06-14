@@ -135,11 +135,11 @@ const DragMixin = {
   // We need to simulate a mousedown event on the layer object. We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
   // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
   _simulateMouseDownEvent(e) {
+    const first = e.touches ? e.touches[0] : e;
     const evt = {
-      originalEvent: e,
+      originalEvent: first,
       target: this._layer,
     };
-    const first = e.touches ? e.touches[0] : e;
     // we expect in the function to get the clicked latlng / point
     evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
@@ -148,11 +148,11 @@ const DragMixin = {
     return false;
   },
   _simulateMouseMoveEvent(e) {
+    const first = e.touches ? e.touches[0] : e;
     const evt = {
-      originalEvent: e,
+      originalEvent: first,
       target: this._layer,
     };
-    const first = e.touches ? e.touches[0] : e;
     // we expect in the function to get the clicked latlng / point
     evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
