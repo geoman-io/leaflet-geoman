@@ -107,8 +107,12 @@ const RotateMixin = {
     // store the new latlngs
     this._rotationLayer.pm._rotateOrgLatLng = copyLatLngs(this._rotationLayer);
 
-    this._fireRotationEnd(this._rotationLayer, startAngle, originLatLngs);
-    this._fireRotationEnd(this._map, startAngle, originLatLngs);
+    this._fireRotationEnd(this._rotationLayer, startAngle, originLatLngs, undefined, {
+      matrix: this._matrix
+    });
+    this._fireRotationEnd(this._map, startAngle, originLatLngs, undefined, {
+      matrix: this._matrix
+    });
     this._rotationLayer.pm._fireEdit(this._rotationLayer, 'Rotation');
 
     this._preventRenderingMarkers(false);

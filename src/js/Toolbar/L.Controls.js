@@ -183,7 +183,9 @@ const PMButton = L.Control.extend({
                 break;
               }
             }
-            this._fireActionClick(action, btnName, button);
+            this._fireActionClick(action, btnName, button, 'ToolBar', {
+              name
+            });
           };
 
           L.DomEvent.addListener(actionNode, 'click', actionClick, this);
