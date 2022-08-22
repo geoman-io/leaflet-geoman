@@ -776,9 +776,11 @@ declare module 'leaflet' {
       ): void;
 
       /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
+      getGeomanLayers(asFeatureGroup: true): L.FeatureGroup;
       getGeomanLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
 
       /** Returns all Geoman draw layers on the map as array. Pass true to get a L.FeatureGroup. */
+      getGeomanDrawLayers(asFeatureGroup: true): L.FeatureGroup;
       getGeomanDrawLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
     }
 
