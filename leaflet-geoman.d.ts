@@ -1021,7 +1021,7 @@ declare module 'leaflet' {
       allowSelfIntersection?: boolean;
 
       /** Leaflet path options for the lines between drawn vertices/markers. (default:{color:'red'}). */
-      templineStyle?: L.PathOptions;
+      templineStyle?: L.CircleMarkerOptions;
 
       /** Leaflet path options for the helper line between last drawn vertex and the cursor. (default:{color:'red',dashArray:[5,5]}). */
       hintlineStyle?: L.PathOptions;
