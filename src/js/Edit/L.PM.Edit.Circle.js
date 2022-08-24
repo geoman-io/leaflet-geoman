@@ -10,6 +10,9 @@ Edit.Circle = Edit.extend({
     this._updateHiddenPolyCircle();
   },
   enable(options) {
+    // backwards compatibility
+    options.allowEditing = options.radiusEdit ?? true;
+
     L.Util.setOptions(this, options);
 
     this._map = this._layer._map;
@@ -29,8 +32,10 @@ Edit.Circle = Edit.extend({
     // change state
     this._enabled = true;
 
-    // init markers
-    this._initMarkers();
+    if (this.options.radiusEdit) {
+      // init markers
+      this._initMarkers();
+    }
 
     this.applyOptions();
 
@@ -52,16 +57,19 @@ Edit.Circle = Edit.extend({
     if (this._dragging) {
       return;
     }
-
-    this._centerMarker.off('dragstart', this._onCircleDragStart, this);
-    this._centerMarker.off('drag', this._onCircleDrag, this);
-    this._centerMarker.off('dragend', this._onCircleDragEnd, this);
-    this._outerMarker.off('drag', this._handleOuterMarkerSnapping, this);
+    if (this.options.radiusEdit) {
+      this._centerMarker.off('dragstart', this._onCircleDragStart, this);
+      this._centerMarker.off('drag', this._onCircleDrag, this);
+      this._centerMarker.off('dragend', this._onCircleDragEnd, this);
+      this._outerMarker.off('drag', this._handleOuterMarkerSnapping, this);
+    }
 
     this._layer.off('remove', this.disable, this);
 
     this._enabled = false;
-    this._helperLayers.clearLayers();
+    if (this.options.radiusEdit) {
+      this._helperLayers.clearLayers();
+    }
 
     // remove draggable class
     const el = this._layer._path
@@ -111,17 +119,54 @@ Edit.Circle = Edit.extend({
     this._createHintLine(this._centerMarker, this._outerMarker);
   },
   applyOptions() {
-    if (this.options.snappable) {
-      this._initSnappableMarkers();
-      // update marker latlng when snapped latlng radius is out of min/max
-      this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
-      // sync the hintline with hint marker
-      this._outerMarker.on('move', this._syncHintLine, this);
-      this._outerMarker.on('move', this._syncCircleRadius, this);
-      this._centerMarker.on('move', this._moveCircle, this);
+    // Use the not radiusEdit and only draggable version
+    if (!this.options.radiusEdit && this.options.draggable) {
+      this.enableLayerDrag();
     } else {
-      this._disableSnapping();
+      this.disableLayerDrag();
     }
+
+    if (this.options.editable) {
+      this._initMarkers();
+      this._map.on('move', this._syncMarkers, this);
+    } else {
+      // only update the circle border poly
+      this._map.on('move', this._updateHiddenPolyCircle, this);
+    }
+
+    if (this.options.snappable) {
+      if (this.options.radiusEdit) {
+        this._initSnappableMarkers();
+        // update marker latlng when snapped latlng radius is out of min/max
+        this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
+        // sync the hintline with hint marker
+        this._outerMarker.on('move', this._syncHintLine, this);
+        this._outerMarker.on('move', this._syncCircleRadius, this);
+        this._centerMarker.on('move', this._moveCircle, this);
+      } else {
+        this._initSnappableMarkersDrag();
+      }
+    } else if (this.options.radiusEdit) {
+      this._disableSnapping();
+    } else {
+      this._disableSnappingDrag();
+    }
+  },
+  _initSnappableMarkersDrag() {
+    const marker = this._layer;
+
+    this.options.snapDistance = this.options.snapDistance || 30;
+    this.options.snapSegment =
+      this.options.snapSegment === undefined ? true : this.options.snapSegment;
+
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.on('pm:drag', this._handleSnapping, this);
+
+    marker.off('pm:dragend', this._cleanupSnapping, this);
+    marker.on('pm:dragend', this._cleanupSnapping, this);
+
+    marker.off('pm:dragstart', this._unsnap, this);
+    marker.on('pm:dragstart', this._unsnap, this);
   },
   _createHintLine(markerA, markerB) {
     const A = markerA.getLatLng();
@@ -238,6 +283,13 @@ Edit.Circle = Edit.extend({
 
     this._layer.off('pm:dragstart', this._unsnap, this);
   },
+  _disableSnappingDrag() {
+    const marker = this._layer;
+
+    marker.off('pm:drag', this._handleSnapping, this);
+    marker.off('pm:dragend', this._cleanupSnapping, this);
+    marker.off('pm:dragstart', this._unsnap, this);
+  },
   _onMarkerDragStart(e) {
     if (!this._vertexValidation('move', e)) {
       return;
@@ -259,9 +311,11 @@ Edit.Circle = Edit.extend({
       return;
     }
 
-    // fire edit event
-    this._fireEdit();
-    this._layerEdited = true;
+    if (this.options.radiusEdit) {
+      // fire edit event
+      this._fireEdit();
+      this._layerEdited = true;
+    }
     this._fireMarkerDragEnd(e);
   },
   _onCircleDragStart(e) {

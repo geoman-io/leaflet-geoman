@@ -16,67 +16,92 @@ Draw.Circle = Draw.extend({
 
     // enable draw mode
     this._enabled = true;
+    
+    if (this.options.radiusEdit) {
+      // create a new layergroup
+      this._layerGroup = new L.LayerGroup();
+      this._layerGroup._pmTempLayer = true;
+      this._layerGroup.addTo(this._map);
 
-    // create a new layergroup
-    this._layerGroup = new L.LayerGroup();
-    this._layerGroup._pmTempLayer = true;
-    this._layerGroup.addTo(this._map);
+      // this is the circle we want to draw
+      this._layer = L.circle([0, 0], {
+        ...this.options.templineStyle,
+        radius: 0,
+      });
+      this._setPane(this._layer, 'layerPane');
+      this._layer._pmTempLayer = true;
 
-    // this is the circle we want to draw
-    this._layer = L.circle([0, 0], {
-      ...this.options.templineStyle,
-      radius: 0,
-    });
-    this._setPane(this._layer, 'layerPane');
-    this._layer._pmTempLayer = true;
+      // this is the marker in the center of the circle
+      this._centerMarker = L.marker([0, 0], {
+        icon: L.divIcon({ className: 'marker-icon' }),
+        draggable: false,
+        zIndexOffset: 100,
+      });
+      this._setPane(this._centerMarker, 'vertexPane');
+      this._centerMarker._pmTempLayer = true;
 
-    // this is the marker in the center of the circle
-    this._centerMarker = L.marker([0, 0], {
-      icon: L.divIcon({ className: 'marker-icon' }),
-      draggable: false,
-      zIndexOffset: 100,
-    });
-    this._setPane(this._centerMarker, 'vertexPane');
-    this._centerMarker._pmTempLayer = true;
+      // this is the hintmarker on the mouse cursor
+      this._hintMarker = L.marker([0, 0], {
+        zIndexOffset: 110,
+        icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+      });
+      this._setPane(this._hintMarker, 'vertexPane');
+      this._hintMarker._pmTempLayer = true;
+      this._layerGroup.addLayer(this._hintMarker);
 
-    // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker([0, 0], {
-      zIndexOffset: 110,
-      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
-    });
-    this._setPane(this._hintMarker, 'vertexPane');
-    this._hintMarker._pmTempLayer = true;
-    this._layerGroup.addLayer(this._hintMarker);
+      // show the hintmarker if the option is set
+      if (this.options.cursorMarker) {
+        L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+      }
 
-    // show the hintmarker if the option is set
-    if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+      // add tooltip to hintmarker
+      if (this.options.tooltips) {
+        this._hintMarker
+          .bindTooltip(getTranslation('tooltips.startCircle'), {
+            permanent: true,
+            offset: L.point(0, 10),
+            direction: 'bottom',
+            opacity: 0.8,
+          })
+          .openTooltip();
+      }
+
+      // this is the hintline from the hint marker to the center marker
+      this._hintline = L.polyline([], this.options.hintlineStyle);
+      this._setPane(this._hintline, 'layerPane');
+      this._hintline._pmTempLayer = true;
+      this._layerGroup.addLayer(this._hintline);
+
+      // change map cursor
+      this._map._container.style.cursor = 'crosshair';
+
+      // create a polygon-point on click
+      this._map.on('click', this._placeCenterMarker, this);
+    } else {
+      // create a marker on click on the map
+      this._map.on('click', this._createMarker, this);
+
+      // this is the hintmarker on the mouse cursor
+      this._hintMarker = L.circle([0, 0], this.options.templineStyle);
+      this._setPane(this._hintMarker, 'layerPane');
+      this._hintMarker._pmTempLayer = true;
+      this._hintMarker.addTo(this._map);
+      // this is just to keep the snappable mixin happy
+      this._layer = this._hintMarker;
+
+      // add tooltip to hintmarker
+      if (this.options.tooltips) {
+        this._hintMarker
+          .bindTooltip(getTranslation('tooltips.startCircle'), {
+            permanent: true,
+            offset: L.point(0, 10),
+            direction: 'bottom',
+
+            opacity: 0.8,
+          })
+          .openTooltip();
+      }
     }
-
-    // add tooltip to hintmarker
-    if (this.options.tooltips) {
-      this._hintMarker
-        .bindTooltip(getTranslation('tooltips.startCircle'), {
-          permanent: true,
-          offset: L.point(0, 10),
-          direction: 'bottom',
-          opacity: 0.8,
-        })
-        .openTooltip();
-    }
-
-    // this is the hintline from the hint marker to the center marker
-    this._hintline = L.polyline([], this.options.hintlineStyle);
-    this._setPane(this._hintline, 'layerPane');
-    this._hintline._pmTempLayer = true;
-    this._layerGroup.addLayer(this._hintline);
-
-    // change map cursor
-    this._map._container.style.cursor = 'crosshair';
-
-    // create a polygon-point on click
-    this._map.on('click', this._placeCenterMarker, this);
-
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
@@ -86,6 +111,7 @@ Draw.Circle = Draw.extend({
     // an array used in the snapping mixin.
     // TODO: think about moving this somewhere else?
     this._otherSnapLayers = [];
+    this._layer.bringToBack();
 
     // fire drawstart event
     this._fireDrawStart();
@@ -101,17 +127,24 @@ Draw.Circle = Draw.extend({
 
     this._enabled = false;
 
-    // reset cursor
-    this._map._container.style.cursor = '';
+    if (this.options.radiusEdit) {
+      // reset cursor
+      this._map._container.style.cursor = '';
 
-    // unbind listeners
-    this._map.off('click', this._finishShape, this);
-    this._map.off('click', this._placeCenterMarker, this);
-    this._map.off('mousemove', this._syncHintMarker, this);
+      // unbind listeners
+      this._map.off('click', this._finishShape, this);
+      this._map.off('click', this._placeCenterMarker, this);
+      this._map.off('mousemove', this._syncHintMarker, this);
 
-    // remove helping layers
-    this._map.removeLayer(this._layerGroup);
+      // remove helping layers
+      this._map.removeLayer(this._layerGroup);
+    } else {
+      // undbind click event, don't create a marker on click anymore
+      this._map.off('click', this._createMarker, this);
 
+      // remove hint marker
+      this._hintMarker.remove();
+    }
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
@@ -224,6 +257,51 @@ Draw.Circle = Draw.extend({
       this._fireChange(this._layer.getLatLng(), 'Draw');
     }
   },
+  _createMarker(e) {
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (
+      this.options.requireSnapToFinish &&
+      !this._hintMarker._snapped &&
+      !this._isFirstLayer()
+    ) {
+      return;
+    }
+
+    // with _layerIsDragging we check if a circlemarker is currently dragged
+    if (!e.latlng || this._layerIsDragging) {
+      return;
+    }
+
+    // assign the coordinate of the click to the hintMarker, that's necessary for
+    // mobile where the marker can't follow a cursor
+    if (!this._hintMarker._snapped) {
+      this._hintMarker.setLatLng(e.latlng);
+    }
+
+    // get coordinate for new vertex by hintMarker (cursor marker)
+    const latlng = this._hintMarker.getLatLng();
+
+    // create marker
+    const marker = L.circle(latlng, this.options.pathOptions);
+    this._setPane(marker, 'layerPane');
+    this._finishLayer(marker);
+    // add marker to the map
+    marker.addTo(this._map.pm._getContainingLayer());
+
+    if (marker.pm && this.options.radiusEdit) {
+      // enable editing for the marker
+      marker.pm.enable();
+    }
+
+    // fire the pm:create event and pass shape and marker
+    this._fireCreate(marker);
+
+    this._cleanupSnapping();
+
+    if (!this.options.continueDrawing) {
+      this.disable();
+    }
+  },
   _finishShape(e) {
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
     if (
@@ -252,13 +330,18 @@ Draw.Circle = Draw.extend({
       radius = center.distanceTo(latlng);
     }
 
-    if (this.options.minRadiusCircle && radius < this.options.minRadiusCircle) {
-      radius = this.options.minRadiusCircle;
-    } else if (
-      this.options.maxRadiusCircle &&
-      radius > this.options.maxRadiusCircle
-    ) {
-      radius = this.options.maxRadiusCircle;
+    if (this.options.radiusEdit) {
+      if (
+        this.options.minRadiusCircle &&
+        radius < this.options.minRadiusCircle
+      ) {
+        radius = this.options.minRadiusCircle;
+      } else if (
+        this.options.maxRadiusCircle &&
+        radius > this.options.maxRadiusCircle
+      ) {
+        radius = this.options.maxRadiusCircle;
+      }
     }
 
     const options = { ...this.options.pathOptions, radius };
@@ -284,57 +367,61 @@ Draw.Circle = Draw.extend({
     }
   },
   _getNewDestinationOfHintMarker() {
-    const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._hintMarker.getLatLng();
-    const distance = latlng.distanceTo(secondLatLng);
-
-    if (latlng.equals(L.latLng([0, 0]))) {
-      return secondLatLng;
-    }
-
-    if (
-      this.options.minRadiusCircle &&
-      distance < this.options.minRadiusCircle
-    ) {
-      secondLatLng = destinationOnLine(
-        this._map,
-        latlng,
-        secondLatLng,
-        this.options.minRadiusCircle
-      );
-    } else if (
-      this.options.maxRadiusCircle &&
-      distance > this.options.maxRadiusCircle
-    ) {
-      secondLatLng = destinationOnLine(
-        this._map,
-        latlng,
-        secondLatLng,
-        this.options.maxRadiusCircle
-      );
-    }
-    return secondLatLng;
-  },
-  _handleHintMarkerSnapping() {
-    if (this._hintMarker._snapped) {
+    if (this.options.radiusEdit) {
       const latlng = this._centerMarker.getLatLng();
-      const secondLatLng = this._hintMarker.getLatLng();
       const distance = latlng.distanceTo(secondLatLng);
+
       if (latlng.equals(L.latLng([0, 0]))) {
-        // do nothing
-      } else if (
+        return secondLatLng;
+      }
+
+      if (
         this.options.minRadiusCircle &&
         distance < this.options.minRadiusCircle
       ) {
-        this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
+        secondLatLng = destinationOnLine(
+          this._map,
+          latlng,
+          secondLatLng,
+          this.options.minRadiusCircle
+        );
       } else if (
         this.options.maxRadiusCircle &&
         distance > this.options.maxRadiusCircle
       ) {
-        this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
+        secondLatLng = destinationOnLine(
+          this._map,
+          latlng,
+          secondLatLng,
+          this.options.maxRadiusCircle
+        );
       }
     }
-    // calculate the new latlng of marker if the snapped latlng radius is out of min/max
-    this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
+    return secondLatLng;
+  },
+  _handleHintMarkerSnapping() {
+    if (this.options.radiusEdit) {
+      if (this._hintMarker._snapped) {
+        const latlng = this._centerMarker.getLatLng();
+        const secondLatLng = this._hintMarker.getLatLng();
+        const distance = latlng.distanceTo(secondLatLng);
+        if (latlng.equals(L.latLng([0, 0]))) {
+          // do nothing
+        } else if (
+          this.options.minRadiusCircle &&
+          distance < this.options.minRadiusCircle
+        ) {
+          this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
+        } else if (
+          this.options.maxRadiusCircle &&
+          distance > this.options.maxRadiusCircle
+        ) {
+          this._hintMarker.setLatLng(this._hintMarker._orgLatLng);
+        }
+      }
+      // calculate the new latlng of marker if the snapped latlng radius is out of min/max
+      this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
+    }
   },
 });
