@@ -65,7 +65,7 @@ const Draw = L.Class.extend({
     this.shapes.forEach((shape) => {
       this[shape] = new L.PM.Draw[shape](this._map);
     });
-    this.Circle.setOptions({ radiusEdit: true, continueDrawing: true });
+    this.Circle.setOptions({ radiusEdit: true });
     this.Marker.setOptions({ continueDrawing: true });
     this.CircleMarker.setOptions({ continueDrawing: true });
   },
