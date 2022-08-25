@@ -16,7 +16,7 @@ Draw.Circle = Draw.extend({
 
     // enable draw mode
     this._enabled = true;
-    
+
     if (this.options.radiusEdit) {
       // create a new layergroup
       this._layerGroup = new L.LayerGroup();
@@ -330,18 +330,13 @@ Draw.Circle = Draw.extend({
       radius = center.distanceTo(latlng);
     }
 
-    if (this.options.radiusEdit) {
-      if (
-        this.options.minRadiusCircle &&
-        radius < this.options.minRadiusCircle
-      ) {
-        radius = this.options.minRadiusCircle;
-      } else if (
-        this.options.maxRadiusCircle &&
-        radius > this.options.maxRadiusCircle
-      ) {
-        radius = this.options.maxRadiusCircle;
-      }
+    if (this.options.minRadiusCircle && radius < this.options.minRadiusCircle) {
+      radius = this.options.minRadiusCircle;
+    } else if (
+      this.options.maxRadiusCircle &&
+      radius > this.options.maxRadiusCircle
+    ) {
+      radius = this.options.maxRadiusCircle;
     }
 
     const options = { ...this.options.pathOptions, radius };

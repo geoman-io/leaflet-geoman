@@ -11,7 +11,7 @@ Edit.Circle = Edit.extend({
   },
   enable(options) {
     // backwards compatibility
-    options.allowEditing = options.radiusEdit ?? true;
+    options.radiusEdit = options.radiusEdit ?? true;
 
     L.Util.setOptions(this, options);
 
