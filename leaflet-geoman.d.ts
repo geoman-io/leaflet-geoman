@@ -1062,6 +1062,9 @@ declare module 'leaflet' {
       /** Makes a CircleMarker editable like a Circle (default:false). */
       editable?: boolean;
 
+      /** Edit a circle's radius after placement (default:true). */
+      radiusEdit?: boolean;
+
       /** Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them) (default:true). */
       markerEditable?: boolean;
 
