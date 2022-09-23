@@ -13,13 +13,22 @@ export function getTranslation(path) {
 }
 
 export function isEmptyDeep(l) {
-  // thanks for the function, Felix Heck
-  const flatten = (list) =>
-    list
-      .filter((x) => ![null, '', undefined].includes(x))
-      .reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+  const hasValues = (list) => {
+    for (let i = 0; i < list.length; i += 1) {
+      const item = list[i];
 
-  return !flatten(l).length;
+      if (Array.isArray(item)) {
+        if (hasValues(item)) {
+          return true;
+        }
+      } else if (item != null && item !== '') {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  return !hasValues(l);
 }
 
 export function removeEmptyCoordRings(arr) {
