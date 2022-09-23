@@ -21,7 +21,7 @@ export function isEmptyDeep(l) {
         if (hasValues(item)) {
           return true;
         }
-      } else if (item != null && item !== '') {
+      } else if (item !== null && item !== undefined && item !== '') {
         return true;
       }
     }
