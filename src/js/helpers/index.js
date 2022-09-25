@@ -12,23 +12,20 @@ export function getTranslation(path) {
   return get(translations[lang], path);
 }
 
-export function isEmptyDeep(l) {
-  const hasValues = (list) => {
-    for (let i = 0; i < list.length; i += 1) {
-      const item = list[i];
+export function isEmptyDeep(list) {
+  for (let i = 0; i < list.length; i += 1) {
+    const item = list[i];
 
-      if (Array.isArray(item)) {
-        if (hasValues(item)) {
-          return true;
-        }
-      } else if (item !== null && item !== undefined && item !== '') {
-        return true;
+    if (Array.isArray(item)) {
+      if (!isEmptyDeep(item)) {
+        return false;
       }
+    } else if (item !== null && item !== undefined && item !== '') {
+      return false;
     }
-    return false;
-  };
+  }
 
-  return !hasValues(l);
+  return true;
 }
 
 export function removeEmptyCoordRings(arr) {
