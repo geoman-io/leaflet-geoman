@@ -2,7 +2,7 @@ import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
-import { isEmptyDeep, removeEmptyCoordRings } from '../helpers';
+import { hasValues, removeEmptyCoordRings } from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -506,7 +506,7 @@ Edit.Line = Edit.extend({
     }
 
     // if no coords are left, remove the layer
-    if (isEmptyDeep(coords)) {
+    if (!hasValues(coords)) {
       this._layer.remove();
     }
 
