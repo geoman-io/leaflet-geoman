@@ -232,6 +232,8 @@ Edit.Text = Edit.extend({
   },
 
   _createTextMarker(enable = false) {
+    this._layer.off('add', this._createTextMarker, this);
+
     this._layer.getElement().tabIndex = -1;
 
     this.textArea.wrap = 'off';
