@@ -128,6 +128,7 @@ Edit.Text = Edit.extend({
       this.textArea.scrollWidth > 16 ? this.textArea.scrollWidth : 16;
     this.textArea.style.height = `${height}px`;
     this.textArea.style.width = `${width}px`;
+    this._layer.options.text = this.getText();
     this._fireTextChange(this.getText());
   },
 
