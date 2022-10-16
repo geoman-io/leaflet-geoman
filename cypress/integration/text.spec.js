@@ -30,6 +30,32 @@ describe('Text Layer', () => {
     });
   });
 
+  it('Add Text Layer over OptIn', () => {
+    cy.window().then(({ map, L }) => {
+      L.PM.setOptIn(true);
+
+      const textLayer = L.marker(map.getCenter(), {
+        textMarker: true,
+        text: 'Text Layer',
+      }).addTo(map);
+
+      expect(map.pm.getGeomanLayers().length).to.eq(0);
+
+      textLayer.options.pmIgnore = false;
+      L.PM.reInitLayer(textLayer);
+
+      expect(map.pm.getGeomanLayers().length).to.eq(1);
+    });
+
+    cy.toolbarButton('edit').click();
+    cy.get(mapSelector).click(570, 250);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      expect(layer.pm.hasFocus()).to.be.eq(true);
+    });
+  });
+
   describe('Drawing', () => {
     it('place text layer and write text', () => {
       cy.toolbarButton('text')
