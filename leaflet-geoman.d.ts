@@ -469,6 +469,9 @@ declare module 'leaflet' {
   }
 
   namespace PM {
+
+    export const version: string;
+
     /** Supported shape names. 'ImageOverlay' is in Edit Mode only. Also accepts custom shape name. */
     type SUPPORTED_SHAPES =
       | 'Marker'
