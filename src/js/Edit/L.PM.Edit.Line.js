@@ -495,6 +495,24 @@ Edit.Line = Edit.extend({
     if (coordsRing.length <= 1) {
       coordsRing.splice(0, coordsRing.length);
 
+      // Clean up MultiPolygon
+      if (parentPath.length > 1 && indexPath.length > 1) {
+        let tempCoordsRing = coords;
+        for (let i = 0; i < parentPath.length; i += 1) {
+          const pathIdx = parentPath[i];
+          if (
+            tempCoordsRing[pathIdx] &&
+            !isEmptyDeep(tempCoordsRing[pathIdx])
+          ) {
+            tempCoordsRing = tempCoordsRing[pathIdx];
+          } else {
+            // all children are empty
+            tempCoordsRing.splice(pathIdx, 1);
+            break;
+          }
+        }
+      }
+
       // set new coords
       this._layer.setLatLngs(coords);
 
