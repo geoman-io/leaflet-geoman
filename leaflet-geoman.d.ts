@@ -1063,7 +1063,7 @@ declare module 'leaflet' {
       editable?: boolean;
 
       /** Enables radius editing while drawing a Circle (default:true). */
-      radiusEdit?: boolean;
+      radiusEditCircle?: boolean;
 
       /** Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them) (default:true). */
       markerEditable?: boolean;

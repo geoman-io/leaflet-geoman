@@ -364,7 +364,7 @@ const DragMixin = {
       });
 
     if (
-      (this._layer instanceof L.Circle && this._layer.options.radiusEdit) ||
+      (this._layer instanceof L.Circle && this._layer.options.radiusEditCircle) ||
       (this._layer instanceof L.CircleMarker && this._layer.options.editable)
     ) {
       // create the new coordinates array

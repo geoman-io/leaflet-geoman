@@ -17,7 +17,7 @@ Draw.Circle = Draw.extend({
     // enable draw mode
     this._enabled = true;
 
-    if (this.options.radiusEdit) {
+    if (this.options.radiusEditCircle) {
       // create a new layergroup
       this._layerGroup = new L.LayerGroup();
       this._layerGroup._pmTempLayer = true;
@@ -127,7 +127,7 @@ Draw.Circle = Draw.extend({
 
     this._enabled = false;
 
-    if (this.options.radiusEdit) {
+    if (this.options.radiusEditCircle) {
       // reset cursor
       this._map._container.style.cursor = '';
 
@@ -288,7 +288,7 @@ Draw.Circle = Draw.extend({
     // add marker to the map
     marker.addTo(this._map.pm._getContainingLayer());
 
-    if (marker.pm && this.options.radiusEdit) {
+    if (marker.pm && this.options.radiusEditCircle) {
       // enable editing for the marker
       marker.pm.enable();
     }
@@ -363,7 +363,7 @@ Draw.Circle = Draw.extend({
   },
   _getNewDestinationOfHintMarker() {
     let secondLatLng = this._hintMarker.getLatLng();
-    if (this.options.radiusEdit) {
+    if (this.options.radiusEditCircle) {
       const latlng = this._centerMarker.getLatLng();
       const distance = latlng.distanceTo(secondLatLng);
 
@@ -396,7 +396,7 @@ Draw.Circle = Draw.extend({
     return secondLatLng;
   },
   _handleHintMarkerSnapping() {
-    if (this.options.radiusEdit) {
+    if (this.options.radiusEditCircle) {
       if (this._hintMarker._snapped) {
         const latlng = this._centerMarker.getLatLng();
         const secondLatLng = this._hintMarker.getLatLng();

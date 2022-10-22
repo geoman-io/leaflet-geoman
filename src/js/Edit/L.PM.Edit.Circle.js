@@ -11,7 +11,7 @@ Edit.Circle = Edit.extend({
   },
   enable(options) {
     // backwards compatibility
-    options.radiusEdit = options.radiusEdit ?? true;
+    options.radiusEditCircle = options.radiusEditCircle ?? true;
 
     L.Util.setOptions(this, options);
 
@@ -32,7 +32,7 @@ Edit.Circle = Edit.extend({
     // change state
     this._enabled = true;
 
-    if (this.options.radiusEdit) {
+    if (this.options.radiusEditCircle) {
       // init markers
       this._initMarkers();
     }
@@ -57,7 +57,7 @@ Edit.Circle = Edit.extend({
     if (this._dragging) {
       return;
     }
-    if (this.options.radiusEdit) {
+    if (this.options.radiusEditCircle) {
       this._centerMarker.off('dragstart', this._onCircleDragStart, this);
       this._centerMarker.off('drag', this._onCircleDrag, this);
       this._centerMarker.off('dragend', this._onCircleDragEnd, this);
@@ -67,7 +67,7 @@ Edit.Circle = Edit.extend({
     this._layer.off('remove', this.disable, this);
 
     this._enabled = false;
-    if (this.options.radiusEdit) {
+    if (this.options.radiusEditCircle) {
       this._helperLayers.clearLayers();
     }
 
@@ -119,8 +119,8 @@ Edit.Circle = Edit.extend({
     this._createHintLine(this._centerMarker, this._outerMarker);
   },
   applyOptions() {
-    // Use the not radiusEdit and only draggable version
-    if (!this.options.radiusEdit && this.options.draggable) {
+    // Use the not radiusEditCircle and only draggable version
+    if (!this.options.radiusEditCircle && this.options.draggable) {
       this.enableLayerDrag();
     } else {
       this.disableLayerDrag();
@@ -135,7 +135,7 @@ Edit.Circle = Edit.extend({
     }
 
     if (this.options.snappable) {
-      if (this.options.radiusEdit) {
+      if (this.options.radiusEditCircle) {
         this._initSnappableMarkers();
         // update marker latlng when snapped latlng radius is out of min/max
         this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
@@ -146,7 +146,7 @@ Edit.Circle = Edit.extend({
       } else {
         this._initSnappableMarkersDrag();
       }
-    } else if (this.options.radiusEdit) {
+    } else if (this.options.radiusEditCircle) {
       this._disableSnapping();
     } else {
       this._disableSnappingDrag();
@@ -311,7 +311,7 @@ Edit.Circle = Edit.extend({
       return;
     }
 
-    if (this.options.radiusEdit) {
+    if (this.options.radiusEditCircle) {
       // fire edit event
       this._fireEdit();
       this._layerEdited = true;
