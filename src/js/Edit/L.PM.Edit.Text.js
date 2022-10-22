@@ -245,7 +245,7 @@ Edit.Text = Edit.extend({
 
     this._autoResize();
 
-    if (enable) {
+    if (enable === true) {
       // enable editing for the marker
       this.enable();
       this.focus();
