@@ -774,14 +774,14 @@ See the available options for `textOptions` in the table below.
 
 The following methods are available on `layer.pm`:
 
-| Method          | Returns       | Description                           |
-| :-------------- | :------------ | :------------------------------------ |
-| focus()         | -             | Activate text editing.                |
-| blur()          | -             | Deactivate text editing.              |
-| hasFocus()      | `Boolean`     | Is text editing active.               |
-| getElement()    | `HTMLElement` | Returns the `<textarea>` DOM element. |
-| setText(`text`) | -             | Set text.                             |
-| getText()       | `String`      | Returns the text.                     |
+| Method          | Returns       | Description                                                           |
+| :-------------- | :------------ | :-------------------------------------------------------------------- |
+| focus()         | -             | Activate text editing. Layer needs first to be enabled `.enable()`.   |
+| blur()          | -             | Deactivate text editing. Layer needs first to be enabled `.enable()`. |
+| hasFocus()      | `Boolean`     | Is text editing active.                                               |
+| getElement()    | `HTMLElement` | Returns the `<textarea>` DOM element.                                 |
+| setText(`text`) | -             | Set text.                                                             |
+| getText()       | `String`      | Returns the text.                                                     |
 
 The following events are available on a layer instance:
 
