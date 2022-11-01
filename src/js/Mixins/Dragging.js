@@ -161,8 +161,9 @@ const DragMixin = {
     return false;
   },
   _simulateMouseUpEvent(e) {
+    const first = e.touches ? e.touches[0] : e;
     const evt = {
-      originalEvent: e,
+      originalEvent: first,
       target: this._layer,
     };
     if (e.type.indexOf('touch') === -1) {
