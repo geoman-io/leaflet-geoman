@@ -25,7 +25,14 @@ export function isEmptyDeep(l) {
 export function removeEmptyCoordRings(arr) {
   return arr.reduce((result, item) => {
     if (item.length !== 0) {
-      result.push(Array.isArray(item) ? removeEmptyCoordRings(item) : item);
+      const newItem = Array.isArray(item) ? removeEmptyCoordRings(item) : item;
+      if (Array.isArray(newItem)) {
+        if (newItem.length !== 0) {
+          result.push(newItem);
+        }
+      } else {
+        result.push(newItem);
+      }
     }
     return result;
   }, []);

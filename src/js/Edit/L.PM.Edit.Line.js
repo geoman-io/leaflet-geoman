@@ -495,6 +495,11 @@ Edit.Line = Edit.extend({
     if (coordsRing.length <= 1) {
       coordsRing.splice(0, coordsRing.length);
 
+      // Clean up MultiPolygon
+      if (parentPath.length > 1 && indexPath.length > 1) {
+        coords = removeEmptyCoordRings(coords);
+      }
+
       // set new coords
       this._layer.setLatLngs(coords);
 

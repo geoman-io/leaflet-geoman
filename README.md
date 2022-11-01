@@ -124,8 +124,7 @@ L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
   
 Enable Leaflet-Geoman on an ignored layer:  
 ```js  
-layer.setStyle({pmIgnore: false});
-// layer.options.pmIgnore = false; // If the layer is a LayerGroup / FeatureGroup / GeoJSON this line is needed too
+layer.options.pmIgnore = false;
 L.PM.reInitLayer(layer);  
 ```  
 If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.
@@ -162,7 +161,7 @@ To prevent this you can add the following event handler:
 
 ```js
 map.on('pm:create', (e) => {
-  e.layer.setStyle({ pmIgnore: false });
+  e.layer.options.pmIgnore = false;
   L.PM.reInitLayer(e.layer);
 });
 ```
@@ -774,14 +773,14 @@ See the available options for `textOptions` in the table below.
 
 The following methods are available on `layer.pm`:
 
-| Method          | Returns       | Description                           |
-| :-------------- | :------------ | :------------------------------------ |
-| focus()         | -             | Activate text editing.                |
-| blur()          | -             | Deactivate text editing.              |
-| hasFocus()      | `Boolean`     | Is text editing active.               |
-| getElement()    | `HTMLElement` | Returns the `<textarea>` DOM element. |
-| setText(`text`) | -             | Set text.                             |
-| getText()       | `String`      | Returns the text.                     |
+| Method          | Returns       | Description                                                           |
+| :-------------- | :------------ | :-------------------------------------------------------------------- |
+| focus()         | -             | Activate text editing. Layer needs first to be enabled `.enable()`.   |
+| blur()          | -             | Deactivate text editing. Layer needs first to be enabled `.enable()`. |
+| hasFocus()      | `Boolean`     | Is text editing active.                                               |
+| getElement()    | `HTMLElement` | Returns the `<textarea>` DOM element.                                 |
+| setText(`text`) | -             | Set text.                                                             |
+| getText()       | `String`      | Returns the text.                                                     |
 
 The following events are available on a layer instance:
 
@@ -922,7 +921,7 @@ Change the language of user-facing copy in Leaflet-Geoman
 map.pm.setLang('de');
 ```
 
-Currently available languages are `cz`, `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `tr`, `ua`, `zh` and `zh_tw`.  
+Currently available languages are `cz`, `da`, `de`, `el`, `en`, `es`, `fa`, `fr`, `hu`, `id`, `it`, `ja`, `nl`, `no`, `pl`, `pt_br`, `ro`, `ru`, `sv`, `tr`, `ua`, `zh` and `zh_tw`.  
 To add translations to the plugin, you can add [a translation file](src/assets/translations) via Pull Request.
 
 You can also provide your own custom translations.
