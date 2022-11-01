@@ -1,4 +1,4 @@
-describe.only('Shows Tooltips', () => {
+describe('Shows Tooltips', () => {
   // map and leaflet object
 
   const mapSelector = '#map';

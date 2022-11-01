@@ -1,4 +1,4 @@
-describe.only('Testing the Toolbar', () => {
+describe('Testing the Toolbar', () => {
   const mapSelector = '#map';
 
   it('Repositions The Toolbar', () => {
