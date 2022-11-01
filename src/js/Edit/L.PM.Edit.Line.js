@@ -497,20 +497,7 @@ Edit.Line = Edit.extend({
 
       // Clean up MultiPolygon
       if (parentPath.length > 1 && indexPath.length > 1) {
-        let tempCoordsRing = coords;
-        for (let i = 0; i < parentPath.length; i += 1) {
-          const pathIdx = parentPath[i];
-          if (
-            tempCoordsRing[pathIdx] &&
-            !isEmptyDeep(tempCoordsRing[pathIdx])
-          ) {
-            tempCoordsRing = tempCoordsRing[pathIdx];
-          } else {
-            // all children are empty
-            tempCoordsRing.splice(pathIdx, 1);
-            break;
-          }
-        }
+        coords = removeEmptyCoordRings(coords);
       }
 
       // set new coords
