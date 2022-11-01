@@ -1,4 +1,4 @@
-describe('Shows Tooltips', () => {
+describe.only('Shows Tooltips', () => {
   // map and leaflet object
 
   const mapSelector = '#map';
@@ -199,13 +199,13 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('exist');
 
     cy.get('.leaflet-tooltip-bottom').then((el) => {
-      expect(el).to.have.text('Presiona para colocar un marcador de circulo');
+      expect(el).to.have.text('Presiona para colocar un marcador de círculo');
     });
 
     cy.get(mapSelector).click(290, 250);
 
     cy.get('.leaflet-tooltip-bottom').then((el) => {
-      expect(el).to.have.text('Presiona para colocar un marcador de circulo');
+      expect(el).to.have.text('Presiona para colocar un marcador de círculo');
     });
 
     cy.toolbarButton('circle-marker').click();

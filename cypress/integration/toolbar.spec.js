@@ -1,4 +1,4 @@
-describe('Testing the Toolbar', () => {
+describe.only('Testing the Toolbar', () => {
   const mapSelector = '#map';
 
   it('Repositions The Toolbar', () => {
@@ -155,7 +155,7 @@ describe('Testing the Toolbar', () => {
       .parent()
       .parent()
       .should('have.attr', 'title')
-      .and('include', 'Dibujar Marcador de Circulo');
+      .and('include', 'Dibujar Marcador de Círculo');
   });
 
   it('has functioning actions', () => {
