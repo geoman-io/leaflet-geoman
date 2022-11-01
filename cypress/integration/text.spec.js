@@ -299,7 +299,7 @@ describe('Text Layer', () => {
           text: 'Text Layer',
         }).addTo(map);
         textArea = textLayer.pm.getElement();
-
+        textLayer.pm.enable();
         textLayer.pm.focus();
       });
 
@@ -316,6 +316,7 @@ describe('Text Layer', () => {
       cy.get(mapSelector).click(90, 280);
 
       cy.window().then(() => {
+        textLayer.pm.disable();
         expect(textArea.readOnly).to.eq(true);
         expect(textArea.classList.contains('pm-disabled')).to.eq(true);
       });
@@ -329,7 +330,7 @@ describe('Text Layer', () => {
           text: 'Text Layer',
         }).addTo(map);
         textArea = textLayer.pm.getElement();
-
+        textLayer.pm.enable();
         textLayer.pm.focus();
       });
 
@@ -337,6 +338,9 @@ describe('Text Layer', () => {
         expect(textArea.readOnly).to.eq(false);
         expect(textArea.classList.contains('pm-disabled')).to.eq(false);
         textLayer.pm.blur();
+        expect(textLayer.pm.hasFocus()).to.eq(false);
+
+        textLayer.pm.disable();
         expect(textArea.readOnly).to.eq(true);
         expect(textArea.classList.contains('pm-disabled')).to.eq(true);
       });
@@ -350,7 +354,7 @@ describe('Text Layer', () => {
           text: 'Text Layer',
         }).addTo(map);
         textArea = textLayer.pm.getElement();
-
+        textLayer.pm.enable();
         textLayer.pm.focus();
       });
 
@@ -359,9 +363,11 @@ describe('Text Layer', () => {
         expect(textArea.classList.contains('pm-disabled')).to.eq(false);
         expect(textLayer.pm.hasFocus()).to.eq(true);
         textLayer.pm.blur();
+        expect(textLayer.pm.hasFocus()).to.eq(false);
+
+        textLayer.pm.disable();
         expect(textArea.readOnly).to.eq(true);
         expect(textArea.classList.contains('pm-disabled')).to.eq(true);
-        expect(textLayer.pm.hasFocus()).to.eq(false);
       });
     });
     it('getElement', () => {
@@ -403,6 +409,8 @@ describe('Text Layer', () => {
           textMarker: true,
           text: '',
         }).addTo(map);
+        textLayer.pm.enable();
+        textLayer.pm.focus();
 
         textLayer.on('pm:textchange', (e) => {
           event = e.type;
