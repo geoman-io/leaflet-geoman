@@ -272,6 +272,7 @@ const SnapMixin = {
       }
       // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
       const results = this._calcLayerDistances(latlng, layer);
+      results.distance = Math.floor(results.distance);
 
       if (this.debugIndicatorLines[index]) {
         // show indicator lines, it's for debugging
