@@ -1145,4 +1145,35 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).rightclick(205, 50);
     cy.hasVertexMarkers(3);
   });
+
+  it('cleans coords if last vertex of MultiPolygon is removed', () => {
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(100, 50)
+      .click(540, 250)
+      .click(150, 250)
+      .click(90, 250);
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(200, 70)
+      .click(250, 70)
+      .click(250, 300)
+      .click(200, 300)
+      .click(200, 70);
+
+    cy.toolbarButton('edit').click();
+
+    cy.get('.marker-icon:not(.marker-icon-middle)').each(($el, index) => {
+      if (index < 2) {
+        // remove first two markers
+        cy.wrap($el).trigger('contextmenu');
+      }
+    });
+
+    expect(() => {
+      cy.toolbarButton('edit').click();
+    }).to.not.throw();
+  });
 });

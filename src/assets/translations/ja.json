@@ -1,0 +1,35 @@
+{
+  "tooltips": {
+    "placeMarker": "クリックしてマーカーを配置",
+    "firstVertex": "クリックして最初の頂点を配置",
+    "continueLine": "クリックして描画を続ける",
+    "finishLine": "任意のマーカーをクリックして終了",
+    "finishPoly": "最初のマーカーをクリックして終了",
+    "finishRect": "クリックして終了",
+    "startCircle": "クリックして円の中心を配置",
+    "finishCircle": "クリックして円の描画を終了",
+    "placeCircleMarker": "クリックして円マーカーを配置",
+    "placeText": "クリックしてテキストを配置"
+  },
+  "actions": {
+    "finish": "終了",
+    "cancel": "キャンセル",
+    "removeLastVertex": "最後の頂点を削除"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "マーカーを描画",
+    "drawPolyButton": "ポリゴンを描画",
+    "drawLineButton": "折れ線を描画",
+    "drawCircleButton": "円を描画",
+    "drawRectButton": "矩形を描画",
+    "editButton": "レイヤーを編集",
+    "dragButton": "レイヤーをドラッグ",
+    "cutButton": "レイヤーを切り取り",
+    "deleteButton": "レイヤーを削除",
+    "drawCircleMarkerButton": "円マーカーを描画",
+    "snappingButton": "ドラッグしたマーカーを他のレイヤーや頂点にスナップする",
+    "pinningButton": "共有する頂点を同時に動かす",
+    "rotateButton": "レイヤーを回転",
+    "drawTextButton": "テキストを描画"
+  }
+}

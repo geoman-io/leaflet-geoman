@@ -213,7 +213,13 @@ L.PM = L.PM || {
     } else if (layer instanceof L.Map) {
       layer.pm = new L.PM.Map(layer);
     } else if (layer instanceof L.Marker) {
-      layer.pm = new L.PM.Edit.Marker(layer);
+      if (layer.options.textMarker) {
+        layer.pm = new L.PM.Edit.Text(layer);
+        layer.pm._initTextMarker();
+        layer.pm._createTextMarker(false);
+      } else {
+        layer.pm = new L.PM.Edit.Marker(layer);
+      }
     } else if (layer instanceof L.Circle) {
       layer.pm = new L.PM.Edit.Circle(layer);
     } else if (layer instanceof L.CircleMarker) {
