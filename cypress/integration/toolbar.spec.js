@@ -155,7 +155,7 @@ describe('Testing the Toolbar', () => {
       .parent()
       .parent()
       .should('have.attr', 'title')
-      .and('include', 'Dibujar Marcador de Circulo');
+      .and('include', 'Dibujar Marcador de Círculo');
   });
 
   it('has functioning actions', () => {

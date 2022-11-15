@@ -128,6 +128,7 @@ Edit.Text = Edit.extend({
       this.textArea.scrollWidth > 16 ? this.textArea.scrollWidth : 16;
     this.textArea.style.height = `${height}px`;
     this.textArea.style.width = `${width}px`;
+    this._layer.options.text = this.getText();
     this._fireTextChange(this.getText());
   },
 
@@ -232,6 +233,8 @@ Edit.Text = Edit.extend({
   },
 
   _createTextMarker(enable = false) {
+    this._layer.off('add', this._createTextMarker, this);
+
     this._layer.getElement().tabIndex = -1;
 
     this.textArea.wrap = 'off';
@@ -245,7 +248,7 @@ Edit.Text = Edit.extend({
 
     this._autoResize();
 
-    if (enable) {
+    if (enable === true) {
       // enable editing for the marker
       this.enable();
       this.focus();

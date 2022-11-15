@@ -2,7 +2,7 @@ import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
-import { isEmptyDeep, removeEmptyCoordRings } from '../helpers';
+import { hasValues, removeEmptyCoordRings } from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -495,6 +495,11 @@ Edit.Line = Edit.extend({
     if (coordsRing.length <= 1) {
       coordsRing.splice(0, coordsRing.length);
 
+      // Clean up MultiPolygon
+      if (parentPath.length > 1 && indexPath.length > 1) {
+        coords = removeEmptyCoordRings(coords);
+      }
+
       // set new coords
       this._layer.setLatLngs(coords);
 
@@ -506,7 +511,7 @@ Edit.Line = Edit.extend({
     }
 
     // if no coords are left, remove the layer
-    if (isEmptyDeep(coords)) {
+    if (!hasValues(coords)) {
       this._layer.remove();
     }
 
