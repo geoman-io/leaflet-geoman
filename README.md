@@ -632,6 +632,7 @@ The following methods are available for layers under `layer.pm`:
 | rotateLayer(`degrees`)        | -         | Rotates the layer by `x` degrees.                |
 | rotateLayerToAngle(`degrees`) | -         | Rotates the layer to `x` degrees.                |
 | getAngle()                    | `Degrees` | Returns the angle of the layer in degrees.       |
+| setInitAngle(`degrees`)       | -         | Set the initial angle of the layer in degrees.   |
 
 The following events are available on a layer instance:
 

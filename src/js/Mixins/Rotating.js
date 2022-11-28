@@ -206,10 +206,10 @@ const RotateMixin = {
     return this._rotateEnabled;
   },
   // angle is clockwise (0-360)
-  rotateLayer(angle) {
+  rotateLayer(degrees) {
     const oldAngle = this.getAngle();
     const oldLatLngs = this._layer.getLatLngs();
-    const rads = angle * (Math.PI / 180);
+    const rads = degrees * (Math.PI / 180);
     this._layer.setLatLngs(
       this._rotateLayer(
         rads,
@@ -221,7 +221,7 @@ const RotateMixin = {
     );
     // store the new latlngs
     this._rotateOrgLatLng = L.polygon(this._layer.getLatLngs()).getLatLngs();
-    this._setAngle(this.getAngle() + angle);
+    this._setAngle(this.getAngle() + degrees);
     if (
       this.rotateEnabled() &&
       this._rotatePoly &&
@@ -249,13 +249,17 @@ const RotateMixin = {
     delete this._startAngle;
     this._fireChange(this._layer.getLatLngs(), 'Rotation');
   },
-  rotateLayerToAngle(angle) {
-    const newAnlge = angle - this.getAngle();
+  rotateLayerToAngle(degrees) {
+    const newAnlge = degrees - this.getAngle();
     this.rotateLayer(newAnlge);
   },
   // angle is clockwise (0-360)
   getAngle() {
     return this._angle || 0;
+  },
+  // angle is clockwise (0-360)
+  setInitAngle(degrees) {
+    this._setAngle(degrees);
   },
 };
 
