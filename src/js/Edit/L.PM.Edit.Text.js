@@ -151,12 +151,21 @@ Edit.Text = Edit.extend({
   },
 
   _focusChange(e = {}) {
+    const focusAlreadySet = this._hasFocus;
     this._hasFocus = e.type === 'focus';
-
-    if (this._hasFocus) {
-      this._applyFocus();
-    } else {
-      this._removeFocus();
+    if (!focusAlreadySet !== !this._hasFocus) {
+      if (this._hasFocus) {
+        this._applyFocus();
+        this._focusText = this.getText();
+        this._fireTextFocus();
+      } else {
+        this._removeFocus();
+        this._fireTextBlur();
+        if (this._focusText !== this.getText()) {
+          this._fireEdit();
+          this._layerEdited = true;
+        }
+      }
     }
   },
   _applyFocus() {

@@ -373,6 +373,33 @@ const EventMixin = {
     );
   },
 
+  // Fired when text layer focused
+  _fireTextFocus(source = 'Edit', customPayload = {}) {
+    this.__fire(
+      this._layer,
+      'pm:textfocus',
+      {
+        layer: this._layer,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
+  // Fired when text layer blurred
+  _fireTextBlur(source = 'Edit', customPayload = {}) {
+    this.__fire(
+      this._layer,
+      'pm:textblur',
+      {
+        layer: this._layer,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
+
   // Snapping Events
   // Fired during a marker move/drag and other layers are existing
   _fireSnapDrag(fireLayer, eventInfo, source = 'Snapping', customPayload = {}) {

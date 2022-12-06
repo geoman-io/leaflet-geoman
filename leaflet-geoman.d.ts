@@ -293,10 +293,20 @@ declare module 'leaflet' {
     once(type: 'pm:change', fn: PM.ChangeEventHandler): this;
     off(type: 'pm:change', fn?: PM.ChangeEventHandler): this;
 
-    /** Fired when position / coordinates of a layer changed. */
+    /** Fired when the text of a layer is changed. */
     on(type: 'pm:textchange', fn: PM.TextChangeEventHandler): this;
     once(type: 'pm:textchange', fn: PM.TextChangeEventHandler): this;
     off(type: 'pm:textchange', fn?: PM.TextChangeEventHandler): this;
+
+    /** Fired when the text layer is focused. */
+    on(type: 'pm:textfocus', fn: PM.TextFocusEventHandler): this;
+    once(type: 'pm:textfocus', fn: PM.TextFocusEventHandler): this;
+    off(type: 'pm:textfocus', fn?: PM.TextFocusEventHandler): this;
+
+    /** Fired when the text layer is blurred.  */
+    on(type: 'pm:textblur', fn: PM.TextBlurEventHandler): this;
+    once(type: 'pm:textblur', fn: PM.TextBlurEventHandler): this;
+    off(type: 'pm:textblur', fn?: PM.TextBlurEventHandler): this;
 
     /******************************************
      *
@@ -1421,6 +1431,14 @@ declare module 'leaflet' {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
       text: string;
+    }) => void;
+    export type TextFocusEventHandler = (e: {
+      shape: PM.SUPPORTED_SHAPES;
+      layer: L.Layer;
+    }) => void;
+    export type TextBlurEventHandler = (e: {
+      shape: PM.SUPPORTED_SHAPES;
+      layer: L.Layer;
     }) => void;
 
     /**
