@@ -1,0 +1,35 @@
+{
+  "tooltips": {
+    "placeMarker": "마커 위치를 클릭하세요",
+    "firstVertex": "첫번째 꼭지점 위치을 클릭하세요",
+    "continueLine": "계속 그리려면 클릭하세요",
+    "finishLine": "끝내려면 기존 마커를 클릭하세요",
+    "finishPoly": "끝내려면 처음 마커를 클릭하세요",
+    "finishRect": "끝내려면 클릭하세요",
+    "startCircle": "원의 중심이 될 위치를 클릭하세요",
+    "finishCircle": "원을 끝내려면 클릭하세요",
+    "placeCircleMarker": "원 마커 위치를 클릭하세요",
+    "placeText": "텍스트 위치를 클릭하세요"
+  },
+  "actions": {
+    "finish": "끝내기",
+    "cancel": "취소",
+    "removeLastVertex": "마지막 꼭지점 제거"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "마커 그리기",
+    "drawPolyButton": "다각형 그리기",
+    "drawLineButton": "다각선 그리기",
+    "drawCircleButton": "원 그리기",
+    "drawRectButton": "직사각형 그리기",
+    "editButton": "레이어 편집하기",
+    "dragButton": "레이어 끌기",
+    "cutButton": "레이어 자르기",
+    "deleteButton": "레이어 제거하기",
+    "drawCircleMarkerButton": "원 마커 그리기",
+    "snappingButton": "잡아끈 마커를 다른 레이어 및 꼭지점에 들러붙게 하기",
+    "pinningButton": "공유 꼭지점을 함께 찍기",
+    "rotateButton": "레이어 회전하기",
+    "drawTextButton": "텍스트 그리기"
+  }
+}
