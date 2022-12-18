@@ -168,7 +168,7 @@ Draw.Cut = Draw.Polygon.extend({
       if (resultLayer.getLayers().length === 1) {
         [resultLayer] = resultLayer.getLayers(); // prevent that a unnecessary layergroup is created
       }
-      this._setPane(resultLayer, 'layerPane');
+      this._setPane(resultLayer, 'polygonPane');
       const resultingLayer = resultLayer.addTo(
         this._map.pm._getContainingLayer()
       );

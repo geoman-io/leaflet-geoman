@@ -37,6 +37,9 @@ const Map = L.Class.extend({
         vertexPane: 'markerPane',
         layerPane: 'overlayPane',
         markerPane: 'markerPane',
+        circlePane: 'overlayPane',
+        polygonPane: 'overlayPane',
+        polylinePane: 'overlayPane',
       },
       draggable: true,
     };

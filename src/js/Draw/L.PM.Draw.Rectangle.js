@@ -28,7 +28,7 @@ Draw.Rectangle = Draw.extend({
       ],
       this.options.pathOptions
     );
-    this._setPane(this._layer, 'layerPane');
+    this._setPane(this._layer, 'polygonPane');
     this._layer._pmTempLayer = true;
 
     // this is the marker at the origin of the rectangle
@@ -291,7 +291,7 @@ Draw.Rectangle = Draw.extend({
       }
     }
 
-    this._setPane(rectangleLayer, 'layerPane');
+    this._setPane(rectangleLayer, 'polygonPane');
     this._finishLayer(rectangleLayer);
     rectangleLayer.addTo(this._map.pm._getContainingLayer());
 

@@ -81,7 +81,7 @@ Draw.Polygon = Draw.Line.extend({
     }
 
     const polygonLayer = L.polygon(coords, this.options.pathOptions);
-    this._setPane(polygonLayer, 'layerPane');
+    this._setPane(polygonLayer, 'polygonPane');
     this._finishLayer(polygonLayer);
     polygonLayer.addTo(this._map.pm._getContainingLayer());
 
