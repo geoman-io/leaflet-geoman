@@ -128,6 +128,16 @@ const Map = L.Class.extend({
       layer.pm.setOptions(options);
     });
 
+    if (o.panes && o.panes.layerPane && !o.panes.polygonPane) {
+      options.panes.polygonPane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.polylinePane) {
+      options.panes.polylinePane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.circlePane) {
+      options.panes.circlePane = o.panes.layerPane;
+    }
+
     // apply the options (actually trigger the functionality)
     this.applyGlobalOptions();
 
