@@ -1,4 +1,4 @@
-import { isEmptyDeep, prioritiseSort } from '../helpers';
+import { hasValues, prioritiseSort } from '../helpers';
 
 const SnapMixin = {
   _initSnappableMarkers() {
@@ -229,8 +229,7 @@ const SnapMixin = {
 
     // also remove everything that has no coordinates yet
     layers = layers.filter(
-      (layer) =>
-        layer._latlng || (layer._latlngs && !isEmptyDeep(layer._latlngs))
+      (layer) => layer._latlng || (layer._latlngs && hasValues(layer._latlngs))
     );
 
     // finally remove everything that's leaflet-geoman specific temporary stuff
@@ -272,6 +271,7 @@ const SnapMixin = {
       }
       // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
       const results = this._calcLayerDistances(latlng, layer);
+      results.distance = Math.floor(results.distance);
 
       if (this.debugIndicatorLines[index]) {
         // show indicator lines, it's for debugging

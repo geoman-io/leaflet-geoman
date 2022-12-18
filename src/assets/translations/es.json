@@ -6,26 +6,26 @@
     "finishLine": "Presiona cualquier marcador existente para finalizar",
     "finishPoly": "Presiona el primer marcador para finalizar",
     "finishRect": "Presiona para finalizar",
-    "startCircle": "Presiona para colocar el centro del circulo",
-    "finishCircle": "Presiona para finalizar el circulo",
-    "placeCircleMarker": "Presiona para colocar un marcador de circulo"
+    "startCircle": "Presiona para colocar el centro del círculo",
+    "finishCircle": "Presiona para finalizar el círculo",
+    "placeCircleMarker": "Presiona para colocar un marcador de círculo"
   },
   "actions": {
     "finish": "Finalizar",
     "cancel": "Cancelar",
-    "removeLastVertex": "Remover ultimo vértice"
+    "removeLastVertex": "Eliminar último vértice"
   },
   "buttonTitles": {
     "drawMarkerButton": "Dibujar Marcador",
     "drawPolyButton": "Dibujar Polígono",
     "drawLineButton": "Dibujar Línea",
-    "drawCircleButton": "Dibujar Circulo",
+    "drawCircleButton": "Dibujar Círculo",
     "drawRectButton": "Dibujar Rectángulo",
     "editButton": "Editar Capas",
     "dragButton": "Arrastrar Capas",
     "cutButton": "Cortar Capas",
-    "deleteButton": "Remover Capas",
-    "drawCircleMarkerButton": "Dibujar Marcador de Circulo",
+    "deleteButton": "Eliminar Capas",
+    "drawCircleMarkerButton": "Dibujar Marcador de Círculo",
     "snappingButton": "El marcador de Snap arrastrado a otras capas y vértices",
     "pinningButton": "Fijar juntos los vértices compartidos"
   }

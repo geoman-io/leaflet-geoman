@@ -469,6 +469,9 @@ declare module 'leaflet' {
   }
 
   namespace PM {
+
+    export const version: string;
+
     /** Supported shape names. 'ImageOverlay' is in Edit Mode only. Also accepts custom shape name. */
     type SUPPORTED_SHAPES =
       | 'Marker'
@@ -481,6 +484,31 @@ declare module 'leaflet' {
       | 'ImageOverlay'
       | 'Text'
       | string;
+
+    type SupportLocales =
+      | 'cz'
+      | 'da'
+      | 'de'
+      | 'el'
+      | 'en'
+      | 'es'
+      | 'fa'
+      | 'fr'
+      | 'hu'
+      | 'id'
+      | 'it'
+      | 'ja'
+      | 'nl'
+      | 'no'
+      | 'pl'
+      | 'pt_br'
+      | 'ro'
+      | 'ru'
+      | 'sv'
+      | 'tr'
+      | 'ua'
+      | 'zh'
+      | 'zh_tw';
 
     /**
      * Changes default registration of leaflet-geoman on leaflet layers.
@@ -523,29 +551,7 @@ declare module 'leaflet' {
       toggleControls(): void;
 
       setLang(
-        lang:
-          | 'cz'
-          | 'da'
-          | 'de'
-          | 'el'
-          | 'en'
-          | 'es'
-          | 'fa'
-          | 'fr'
-          | 'hu'
-          | 'id'
-          | 'it'
-          | 'nl'
-          | 'no'
-          | 'pl'
-          | 'pt_br'
-          | 'ro'
-          | 'ru'
-          | 'sv'
-          | 'tr'
-          | 'ua'
-          | 'zh'
-          | 'zh_tw',
+        lang: SupportLocales,
         customTranslations?: Translations,
         fallbackLanguage?: string
       ): void;
@@ -776,10 +782,12 @@ declare module 'leaflet' {
       ): void;
 
       /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
-      getGeomanLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
+      getGeomanLayers(asFeatureGroup: true): L.FeatureGroup;
+      getGeomanLayers(asFeatureGroup?: false): L.Layer[];
 
       /** Returns all Geoman draw layers on the map as array. Pass true to get a L.FeatureGroup. */
-      getGeomanDrawLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
+      getGeomanDrawLayers(asFeatureGroup: true): L.FeatureGroup;
+      getGeomanDrawLayers(asFeatureGroup?: false): L.Layer[];
     }
 
     interface PMEditMap {
@@ -1019,7 +1027,7 @@ declare module 'leaflet' {
       allowSelfIntersection?: boolean;
 
       /** Leaflet path options for the lines between drawn vertices/markers. (default:{color:'red'}). */
-      templineStyle?: L.PathOptions;
+      templineStyle?: L.CircleMarkerOptions;
 
       /** Leaflet path options for the helper line between last drawn vertex and the cursor. (default:{color:'red',dashArray:[5,5]}). */
       hintlineStyle?: L.PathOptions;
@@ -1462,7 +1470,6 @@ declare module 'leaflet' {
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
 
-
     /**
      * REMOVE MODE LAYER EVENT HANDLERS
      */
@@ -1502,7 +1509,7 @@ declare module 'leaflet' {
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
     export type RotateDisableEventHandler = (e: {
-      layer: L.Layer
+      layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
     export type RotateStartEventHandler = (e: {
