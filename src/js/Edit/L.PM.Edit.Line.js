@@ -92,7 +92,10 @@ Edit.Line = Edit.extend({
     // remove listener
     this._layer.off('remove', this.disable, this);
 
-    if (!this.options.allowSelfIntersection) {
+    if (
+      this._map.hasLayer(this._layer) &&
+      !this.options.allowSelfIntersection
+    ) {
       this._layer.off(
         'pm:vertexremoved',
         this._handleSelfIntersectionOnVertexRemoval,
@@ -107,7 +110,7 @@ Edit.Line = Edit.extend({
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
     // remove invalid class if layer has self intersection
-    if (this.hasSelfIntersection()) {
+    if (this._map.hasLayer(this._layer) && this.hasSelfIntersection()) {
       L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
     }
 
@@ -505,8 +508,7 @@ Edit.Line = Edit.extend({
 
       // re-enable editing so unnecessary markers are removed
       // TODO: kind of an ugly workaround maybe do it better?
-      this.disable();
-      this.enable(this.options);
+      this._initMarkers();
       layerRemoved = true;
     }
 
