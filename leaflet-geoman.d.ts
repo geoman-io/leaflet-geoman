@@ -493,6 +493,7 @@ declare module 'leaflet' {
       | 'en'
       | 'es'
       | 'fa'
+      | 'fi'
       | 'fr'
       | 'hu'
       | 'id'
