@@ -787,6 +787,8 @@ The following events are available on a layer instance:
 | Event         | Params | Description                                | Output                   |
 | :------------ | :----- | :----------------------------------------- | :----------------------- |
 | pm:textchange | `e`    | Fired when the text of a layer is changed. | `text`, `layer`, `shape` |
+| pm:textfocus  | `e`    | Fired when the text layer is focused.      | `layer`, `shape`         |
+| pm:textblur   | `e`    | Fired when the text layer is blurred.      | `layer`, `shape`         |
 
 For custom text styling get the HTMLElement and add CSS styles:
 

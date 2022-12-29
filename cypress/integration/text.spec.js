@@ -427,6 +427,28 @@ describe('Text Layer', () => {
         expect(textLayer.pm.getText()).to.eq('Text Layer');
       });
     });
+    it('unselect text on disable', () => {
+      cy.window().then(({ map, L }) => {
+        const textLayer = L.marker(map.getCenter(), {
+          textMarker: true,
+          text: 'Text Layer',
+        }).addTo(map);
+        expect(textLayer.pm.getText()).to.eq('Text Layer');
+
+        const textarea = textLayer.pm.getElement();
+        textLayer.pm.enable();
+        textarea.focus();
+        textarea.setSelectionRange(2, 5);
+        expect(textarea.selectionStart).to.eq(2);
+        expect(textarea.selectionEnd).to.eq(5);
+
+        textLayer.pm.disable();
+        expect(textarea.selectionStart).to.eq(0);
+        expect(textarea.selectionEnd).to.eq(0);
+      });
+    });
+  });
+  describe('Events', () => {
     it("fire event 'pm:textchange'", () => {
       let textLayer;
       let event = '';
@@ -450,24 +472,124 @@ describe('Text Layer', () => {
         expect(event).to.eq('pm:textchange');
       });
     });
-    it('unselect text on disable', () => {
+
+    it("fire event 'pm:edit'", () => {
+      let textLayer;
+      let event = '';
       cy.window().then(({ map, L }) => {
-        const textLayer = L.marker(map.getCenter(), {
+        textLayer = L.marker(map.getCenter(), {
           textMarker: true,
-          text: 'Text Layer',
+          text: '',
         }).addTo(map);
-        expect(textLayer.pm.getText()).to.eq('Text Layer');
-
-        const textarea = textLayer.pm.getElement();
         textLayer.pm.enable();
-        textarea.focus();
-        textarea.setSelectionRange(2, 5);
-        expect(textarea.selectionStart).to.eq(2);
-        expect(textarea.selectionEnd).to.eq(5);
+        textLayer.pm.focus();
 
+        textLayer.on('pm:edit', (e) => {
+          event = e.type;
+        });
+
+        cy.get(textLayer.pm.getElement()).type('Hello World');
+      });
+
+      cy.window().then(() => {
+        textLayer.pm.blur();
+        expect(textLayer.pm.getText()).to.eq('Hello World');
+        expect(event).to.eq('pm:edit');
+      });
+    });
+
+    it("fire event 'pm:update'", () => {
+      let textLayer;
+      let event = '';
+      cy.window().then(({ map, L }) => {
+        textLayer = L.marker(map.getCenter(), {
+          textMarker: true,
+          text: '',
+        }).addTo(map);
+        textLayer.pm.enable();
+        textLayer.pm.focus();
+
+        textLayer.on('pm:update', (e) => {
+          event = e.type;
+        });
+
+        cy.get(textLayer.pm.getElement()).type('Hello World');
+      });
+
+      cy.window().then(() => {
         textLayer.pm.disable();
-        expect(textarea.selectionStart).to.eq(0);
-        expect(textarea.selectionEnd).to.eq(0);
+        expect(textLayer.pm.getText()).to.eq('Hello World');
+        expect(event).to.eq('pm:update');
+      });
+    });
+
+    it("fire event 'pm:textfocus'", () => {
+      let textLayer;
+      let event = '';
+      cy.window().then(({ map, L }) => {
+        textLayer = L.marker(map.getCenter(), {
+          textMarker: true,
+          text: '',
+        }).addTo(map);
+        textLayer.pm.enable();
+
+        textLayer.on('pm:textfocus', (e) => {
+          event = e.type;
+        });
+        textLayer.pm.focus();
+      });
+
+      cy.window().then(() => {
+        expect(event).to.eq('pm:textfocus');
+      });
+    });
+
+    it("fire event 'pm:textblur'", () => {
+      let textLayer;
+      let event = '';
+      cy.window().then(({ map, L }) => {
+        textLayer = L.marker(map.getCenter(), {
+          textMarker: true,
+          text: '',
+        }).addTo(map);
+        textLayer.pm.enable();
+
+        textLayer.on('pm:textblur', (e) => {
+          event = e.type;
+        });
+        textLayer.pm.focus();
+        textLayer.pm.blur();
+      });
+
+      cy.window().then(() => {
+        expect(event).to.eq('pm:textblur');
+      });
+    });
+
+    it("fire event 'pm:textblur' only once", () => {
+      let textLayer;
+      let event = '';
+      let count = 0;
+      cy.window().then(({ map, L }) => {
+        textLayer = L.marker(map.getCenter(), {
+          textMarker: true,
+          text: '',
+        }).addTo(map);
+        textLayer.pm.enable();
+
+        count = 0;
+        textLayer.on('pm:textblur', (e) => {
+          count += 1;
+          event = e.type;
+        });
+        textLayer.pm.focus();
+        textLayer.pm.blur();
+        textLayer.pm.blur();
+      });
+
+      cy.window().then(() => {
+        expect(event).to.eq('pm:textblur');
+        expect(count).to.eq(1);
       });
     });
   });
