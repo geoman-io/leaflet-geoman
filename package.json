@@ -35,7 +35,7 @@
     "@babel/core": "7.14.0",
     "@babel/preset-env": "7.14.1",
     "@types/leaflet": "^1.7.9",
-    "babel-loader": "8.2.2",
+    "babel-loader": "8.3.0",
     "copy-webpack-plugin": "8.1.1",
     "css-loader": "5.2.4",
     "cypress": "6.9.1",
