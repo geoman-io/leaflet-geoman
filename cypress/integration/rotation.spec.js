@@ -208,7 +208,7 @@ describe('Rotation', () => {
     });
   });
 
-  it.only('rotate a new added layer', () => {
+  it('rotate a new added layer', () => {
     cy.window().then(({ map, L }) => {
       expect(() => {
         const coords = [
