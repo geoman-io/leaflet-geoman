@@ -498,6 +498,7 @@ declare module 'leaflet' {
       | 'id'
       | 'it'
       | 'ja'
+      | 'ko'
       | 'nl'
       | 'no'
       | 'pl'
