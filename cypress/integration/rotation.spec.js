@@ -207,4 +207,17 @@ describe('Rotation', () => {
       expect(!!rotatePoly._map).to.eq(false);
     });
   });
+
+  it.only('rotate a new added layer', () => {
+    cy.window().then(({ map, L }) => {
+      expect(() => {
+        const coords = [
+          [1, 2],
+          [3, 4],
+        ];
+        const rect = L.rectangle(coords).addTo(map);
+        rect.pm.rotateLayer(50);
+      }).to.not.throw();
+    });
+  });
 });
