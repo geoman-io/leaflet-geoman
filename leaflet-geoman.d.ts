@@ -493,6 +493,7 @@ declare module 'leaflet' {
       | 'en'
       | 'es'
       | 'fa'
+      | 'fi'
       | 'fr'
       | 'hu'
       | 'id'
@@ -868,8 +869,8 @@ declare module 'leaflet' {
       /** Disables rotate mode on the layer. */
       disableRotate(): void;
 
-      /** Toggles rotate mode on the layer. */
-      rotateEnabled(): void;
+      /** Returns if rotate mode is enabled for the layer. */
+      rotateEnabled(): boolean;
 
       /** Rotates the layer by x degrees. */
       rotateLayer(degrees: number): void;

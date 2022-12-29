@@ -1,0 +1,35 @@
+{
+  "tooltips": {
+    "placeMarker": "Klikkaa asettaaksesi merkin",
+    "firstVertex": "Klikkaa asettaakseni ensimmäisen osuuden",
+    "continueLine": "Klikkaa jatkaaksesi piirtämistä",
+    "finishLine": "Klikkaa olemassa olevaa merkkiä lopettaaksesi",
+    "finishPoly": "Klikkaa ensimmäistä merkkiä lopettaaksesi",
+    "finishRect": "Klikkaa lopettaaksesi",
+    "startCircle": "Klikkaa asettaaksesi ympyrän keskipisteen",
+    "finishCircle": "Klikkaa lopettaaksesi ympyrän",
+    "placeCircleMarker": "Klikkaa asettaaksesi ympyrämerkin",
+    "placeText": "Klikkaa asettaaksesi tekstin"
+  },
+  "actions": {
+    "finish": "Valmis",
+    "cancel": "Peruuta",
+    "removeLastVertex": "Poista viimeinen osuus"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Piirrä merkkejä",
+    "drawPolyButton": "Piirrä monikulmioita",
+    "drawLineButton": "Piirrä viivoja",
+    "drawCircleButton": "Piirrä ympyrä",
+    "drawRectButton": "Piirrä neliskulmioita",
+    "editButton": "Muokkaa",
+    "dragButton": "Siirrä",
+    "cutButton": "Leikkaa",
+    "deleteButton": "Poista",
+    "drawCircleMarkerButton": "Piirrä ympyrämerkki",
+    "snappingButton": "Kiinnitä siirrettävä merkki toisiin muotoihin",
+    "pinningButton": "Kiinnitä jaetut muodot yhteen",
+    "rotateButton": "Käännä",
+    "drawTextButton": "Piirrä tekstiä"
+  }
+}
