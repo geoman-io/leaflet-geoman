@@ -245,12 +245,7 @@ const RotateMixin = {
 
     this._startAngle = oldAngle;
     this._fireRotation(this._layer, angleDiff, oldLatLngs, this._layer);
-    this._fireRotation(
-      this._map || this._layer._map,
-      angleDiff,
-      oldLatLngs,
-      this._layer
-    );
+    this._fireRotation(this._map, angleDiff, oldLatLngs, this._layer);
     delete this._startAngle;
     this._fireChange(this._layer.getLatLngs(), 'Rotation');
   },
