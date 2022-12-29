@@ -24,6 +24,7 @@ import tr from './tr.json';
 import cz from './cz.json';
 import ja from './ja.json';
 import fi from './fi.json';
+import ko from './ko.json';
 
 export default {
   en,
@@ -50,4 +51,5 @@ export default {
   cz,
   ja,
   fi,
+  ko,
 };
