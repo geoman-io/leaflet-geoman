@@ -1176,4 +1176,51 @@ describe('Draw & Edit Poly', () => {
       cy.toolbarButton('edit').click();
     }).to.not.throw();
   });
+
+  it('remove vertex & layer by right-click', () => {
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('edit').click();
+    cy.hasDrawnLayers(1);
+
+    // Add Vertex
+    cy.get(mapSelector).click(205, 50);
+    cy.hasVertexMarkers(4);
+
+    // Remove Vertex
+    cy.get(mapSelector).rightclick(205, 50);
+    cy.hasVertexMarkers(3);
+
+    cy.get(mapSelector).rightclick(150, 250);
+    cy.hasDrawnLayers(0);
+  });
+
+  it('re-render marker-handlers if hole is removed by right-click', () => {
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(150, 50)
+      .click(650, 50)
+      .click(650, 250)
+      .click(150, 250);
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(250, 200)
+      .click(250, 100)
+      .click(450, 200)
+      .click(250, 200);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(7);
+
+    // Remove hole
+    cy.get(mapSelector).rightclick(250, 200);
+    cy.hasVertexMarkers(4);
+  });
 });
