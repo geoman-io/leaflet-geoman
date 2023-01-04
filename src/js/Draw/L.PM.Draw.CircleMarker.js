@@ -378,11 +378,11 @@ Draw.CircleMarker = Draw.Marker.extend({
   _getNewDestinationOfHintMarker() {
     let secondLatLng = this._hintMarker.getLatLng();
     if (this.options.editable) {
-      const latlng = this._centerMarker.getLatLng();
-
-      if (latlng.equals(L.latLng([0, 0]))) {
+      if (!this._layerGroup.hasLayer(this._centerMarker)) {
         return secondLatLng;
       }
+
+      const latlng = this._centerMarker.getLatLng();
 
       const distance = this._map
         .project(latlng)
@@ -419,7 +419,9 @@ Draw.CircleMarker = Draw.Marker.extend({
         const distance = this._map
           .project(latlng)
           .distanceTo(this._map.project(secondLatLng));
-        if (
+        if (!this._layerGroup.hasLayer(this._centerMarker)) {
+          // do nothing
+        } else if (
           this.options.minRadiusCircleMarker &&
           distance < this.options.minRadiusCircleMarker
         ) {

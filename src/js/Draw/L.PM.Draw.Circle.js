@@ -284,13 +284,13 @@ Draw.Circle = Draw.extend({
     }
   },
   _getNewDestinationOfHintMarker() {
-    const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._hintMarker.getLatLng();
-    const distance = latlng.distanceTo(secondLatLng);
-
-    if (latlng.equals(L.latLng([0, 0]))) {
+    if (!this._layerGroup.hasLayer(this._centerMarker)) {
       return secondLatLng;
     }
+
+    const latlng = this._centerMarker.getLatLng();
+    const distance = latlng.distanceTo(secondLatLng);
 
     if (
       this.options.minRadiusCircle &&
@@ -320,7 +320,7 @@ Draw.Circle = Draw.extend({
       const latlng = this._centerMarker.getLatLng();
       const secondLatLng = this._hintMarker.getLatLng();
       const distance = latlng.distanceTo(secondLatLng);
-      if (latlng.equals(L.latLng([0, 0]))) {
+      if (!this._layerGroup.hasLayer(this._centerMarker)) {
         // do nothing
       } else if (
         this.options.minRadiusCircle &&
