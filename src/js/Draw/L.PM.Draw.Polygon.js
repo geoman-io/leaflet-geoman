@@ -25,6 +25,7 @@ Draw.Polygon = Draw.Line.extend({
 
     // add it to the map
     this._layerGroup.addLayer(marker);
+    this._markers.push(marker);
 
     // if the first marker gets clicked again, finish this shape
     if (this._layer.getLatLngs().flat().length === 1) {

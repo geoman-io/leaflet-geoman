@@ -900,6 +900,13 @@ describe('Draw & Edit Poly', () => {
     cy.window().then(({ map }) => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
+
+    cy.toolbarButton('delete').click();
+    cy.get(mapSelector).click(160, 50);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
   });
 
   it('requireSnapToFinish', () => {
