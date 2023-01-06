@@ -1100,17 +1100,19 @@ map.pm.Toolbar.getBlockPositions();
 map.pm.Toolbar.createCustomControl(options);
 ```
 
-| Option     | Default  | Description                                                                          |
-| :--------- | :------- | :----------------------------------------------------------------------------------- |
-| name       | Required | Name of the control.                                                                 |
-| block      | ''       | block of the control. `draw`, `edit`, `custom`, `options`⭐                          |
-| title      | ''       | Text showing when you hover the control.                                             |
-| className  | ''       | CSS class with the Icon.                                                             |
-| onClick    | -        | Function fired when clicking the control.                                            |
-| afterClick | -        | Function fired after clicking the control.                                           |
-| actions    | [ ]      | Action that appears as tooltip. Look under [Actions](#actions) for more information. |
-| toggle     | true     | Control can be toggled.                                                              |
-| disabled   | false    | Control is disabled.                                                                 |
+| Option                  | Default  | Description                                                                          |
+| :---------------------- | :------- | :----------------------------------------------------------------------------------- |
+| name                    | Required | Name of the control.                                                                 |
+| block                   | ''       | block of the control. `draw`, `edit`, `custom`, `options`⭐                          |
+| title                   | ''       | Text showing when you hover the control.                                             |
+| className               | ''       | CSS class with the Icon.                                                             |
+| onClick                 | -        | Function fired when clicking the control.                                            |
+| afterClick              | -        | Function fired after clicking the control.                                           |
+| actions                 | [ ]      | Action that appears as tooltip. Look under [Actions](#actions) for more information. |
+| toggle                  | true     | Control can be toggled.                                                              |
+| disabled                | false    | Control is disabled.                                                                 |
+| disableOtherButtons     | true    | Control disables other buttons if enabled.                                            |
+| disableByOtherButtons   | true    | Control disabled if other buttons is enabled.                                         |
 
 #### Inherit from an Existing Control
 
