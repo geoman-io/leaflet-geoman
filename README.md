@@ -843,6 +843,11 @@ The following options are additionally to the [Draw](#draw-mode) and [Edit Mode]
 | panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' }`. |
 | cutAsCircle   | `false`  | Enable cutting in shape form of a Circle.                                                                                                                                                                              |
 
+The following events are available on a map instance:
+
+| Event                     | Params | Description                               | Output                                                 |
+| :------------------------ | :----- | :---------------------------------------- | :----------------------------------------------------- |
+| pm:globaloptionschanged   | `e`    | Fired when global options are changed.    |                                                        |
 
 Some details about a few more powerful options:
 
