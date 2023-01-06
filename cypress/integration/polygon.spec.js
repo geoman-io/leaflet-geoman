@@ -1223,4 +1223,21 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).rightclick(250, 200);
     cy.hasVertexMarkers(4);
   });
+
+  it('show correct measurement for Polygon while drawing', () => {
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(150, 150)
+      .click(450, 150)
+      .click(450, 400);
+
+    cy.window().then(({ map }) => {
+      const polygon = map.pm.Draw.Polygon._layer;
+      expect(polygon.pm.getShape()).to.equal('Polygon');
+    });
+  });
 });
