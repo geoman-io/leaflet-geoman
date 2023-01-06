@@ -30,6 +30,7 @@ beforeEach(() => {
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 22
         }
       );
 

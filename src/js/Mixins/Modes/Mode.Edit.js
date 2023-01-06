@@ -1,7 +1,10 @@
 // this mixin adds a global edit mode to the map
 const GlobalEditMode = {
   _globalEditModeEnabled: false,
-  enableGlobalEditMode(options) {
+  enableGlobalEditMode(o) {
+    const options = {
+      ...o,
+    };
     // set status
     this._globalEditModeEnabled = true;
 
