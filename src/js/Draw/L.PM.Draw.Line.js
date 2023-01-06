@@ -258,7 +258,7 @@ Draw.Line = Draw.extend({
     const newMarker = this._createMarker(latlng);
     this._setTooltipText();
 
-    this._hintline.setLatLngs([latlng, latlng]);
+    this._setHintLineAfterNewVertex(latlng);
 
     this._fireVertexAdded(newMarker, undefined, latlng, 'Draw');
     this._change(this._layer.getLatLngs());
@@ -266,6 +266,10 @@ Draw.Line = Draw.extend({
     if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {
       this._finishShape(e);
     }
+  },
+  _setHintLineAfterNewVertex(hintMarkerLatLng) {
+    // make the new drawn line (with another style) visible
+    this._hintline.setLatLngs([hintMarkerLatLng, hintMarkerLatLng]);
   },
   _removeLastVertex() {
     // remove last coords
