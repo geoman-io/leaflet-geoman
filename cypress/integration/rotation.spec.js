@@ -220,4 +220,17 @@ describe('Rotation', () => {
       }).to.not.throw();
     });
   });
+
+  it('doesn\'t return the rotation help-layer over getGeomanLayers()', () => {
+    cy.window().then(({ map, L }) => {
+      const coords = [
+        [1, 2],
+        [3, 4],
+      ];
+      const rect = L.rectangle(coords).addTo(map);
+      rect.pm.enableRotate();
+
+      expect(map.pm.getGeomanLayers().length).to.eq(1);
+    });
+  });
 });
