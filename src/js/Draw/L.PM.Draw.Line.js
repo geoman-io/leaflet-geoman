@@ -17,7 +17,7 @@ Draw.Line = Draw.extend({
     this._enabled = true;
 
     // create a new layergroup
-    this._layerGroup = new L.LayerGroup();
+    this._layerGroup = new L.FeatureGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
 
@@ -380,5 +380,9 @@ Draw.Line = Draw.extend({
   },
   _change(latlngs) {
     this._fireChange(latlngs, 'Draw');
+  },
+  setStyle() {
+    this._layer?.setStyle(this.options.templineStyle);
+    this._hintline?.setStyle(this.options.hintlineStyle);
   },
 });

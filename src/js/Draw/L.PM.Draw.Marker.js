@@ -178,4 +178,9 @@ Draw.Marker = Draw.extend({
       this.disable();
     }
   },
+  setStyle() {
+    if (this.options.markerStyle?.icon) {
+      this._hintMarker?.setIcon(this.options.markerStyle.icon);
+    }
+  },
 });

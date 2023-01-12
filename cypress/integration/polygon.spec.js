@@ -1223,4 +1223,27 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).rightclick(250, 200);
     cy.hasVertexMarkers(4);
   });
+
+  it('change color of Polygon while drawing', () => {
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(220, 220);
+    cy.get(mapSelector).click(100, 230);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.Polygon._layer;
+      const hintLine = map.pm.Draw.Polygon._hintline;
+      expect(layer.options.color).to.eql('red');
+      expect(hintLine.options.color).to.eql('red');
+    });
+  });
 });
