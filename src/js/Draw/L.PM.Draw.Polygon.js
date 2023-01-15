@@ -7,6 +7,11 @@ Draw.Polygon = Draw.Line.extend({
     this._shape = 'Polygon';
     this.toolbarButtonName = 'drawPolygon';
   },
+  enable(options) {
+    L.PM.Draw.Line.prototype.enable.call(this, options);
+    // Overwrite the shape "Line" of this._layer
+    this._layer.pm._shape = 'Polygon';
+  },
   _createMarker(latlng) {
     // create the new marker
     const marker = new L.Marker(latlng, {
@@ -20,6 +25,7 @@ Draw.Polygon = Draw.Line.extend({
 
     // add it to the map
     this._layerGroup.addLayer(marker);
+    this._markers.push(marker);
 
     // if the first marker gets clicked again, finish this shape
     if (this._layer.getLatLngs().flat().length === 1) {

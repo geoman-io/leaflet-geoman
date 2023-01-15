@@ -125,11 +125,13 @@ const Map = L.Class.extend({
       layer.pm.setOptions(options);
     });
 
-    // apply the options (actually trigger the functionality)
-    this.applyGlobalOptions();
+    this.map.fire('pm:globaloptionschanged');
 
     // store options
     this.globalOptions = options;
+
+    // apply the options (actually trigger the functionality)
+    this.applyGlobalOptions();
   },
   applyGlobalOptions() {
     const layers = L.PM.Utils.findLayers(this.map);
@@ -183,7 +185,7 @@ const Map = L.Class.extend({
   // returns the map instance by default or a layergroup is set through global options
   _getContainingLayer() {
     return this.globalOptions.layerGroup &&
-      this.globalOptions.layerGroup instanceof L.LayerGroup
+    this.globalOptions.layerGroup instanceof L.LayerGroup
       ? this.globalOptions.layerGroup
       : this.map;
   },

@@ -3,41 +3,6 @@ describe('Options', () => {
 
   const mapSelector = '#map';
 
-  it('Pinning fires pm:edit', () => {
-    cy.toolbarButton('polygon').click();
-
-    cy.window().then(({ map, L }) => {
-      cy.get(mapSelector)
-        .click(90, 250)
-        .click(100, 50)
-        .click(150, 50)
-        .click(150, 150)
-        .click(90, 250)
-        .then(() => {
-          let l;
-          map.eachLayer((layer) => {
-            if (layer instanceof L.Polygon) {
-              layer.pm.enable();
-              l = layer;
-            }
-          });
-          return l;
-        })
-        .as('poly');
-    });
-
-    cy.get('@poly').then((poly) => {
-      poly.on('pm:edit', (e) => {
-        console.log(e);
-      });
-    });
-
-    cy.toolbarButton('marker').click();
-    cy.get(mapSelector).click(150, 150);
-
-    cy.toolbarButton('edit').click();
-  });
-
   it('sets global options', () => {
     cy.toolbarButton('polygon').click();
 
@@ -163,6 +128,19 @@ describe('Options', () => {
       expect(map.pm.Draw.Line.options.pathOptions.borderColor).to.equal(
         'green'
       );
+    });
+  });
+
+  it('fires `pm:globaloptionschanged`', () => {
+    cy.window().then(({ map }) => {
+      let fired = false;
+      map.on('pm:globaloptionschanged', () => {
+        fired = true;
+      });
+
+      map.pm.setGlobalOptions({ snapSegment: false });
+
+      expect(fired).to.equal(true);
     });
   });
 });

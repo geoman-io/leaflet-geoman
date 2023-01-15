@@ -167,6 +167,7 @@ const RotateMixin = {
     });
     // we connect the temp polygon (that will be enabled for rotation) with the current layer, so that we can rotate the current layer too
     this._rotatePoly.pm._rotationLayer = this._layer;
+    this._rotatePoly._pmTempLayer = true;
     this._rotatePoly.pm.enable();
 
     // store the original latlngs
