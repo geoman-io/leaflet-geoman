@@ -104,7 +104,7 @@ const Map = L.Class.extend({
     let reenableCircleMarker = false;
     if (
       this.map.pm.Draw.CircleMarker.enabled() &&
-      this.map.pm.Draw.CircleMarker.options.editable !== options.editable
+      !!this.map.pm.Draw.CircleMarker.options.editable !== !!options.editable
     ) {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;

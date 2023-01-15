@@ -16,7 +16,7 @@ Draw.Rectangle = Draw.extend({
     this._enabled = true;
 
     // create a new layergroup
-    this._layerGroup = new L.LayerGroup();
+    this._layerGroup = new L.FeatureGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
 
@@ -305,5 +305,8 @@ Draw.Rectangle = Draw.extend({
     if (this.options.continueDrawing) {
       this.enable();
     }
+  },
+  setStyle() {
+    this._layer?.setStyle(this.options.pathOptions);
   },
 });

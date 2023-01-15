@@ -284,4 +284,26 @@ describe('Draw Circle', () => {
       expect(layer.getLatLng().equals(layer2.getLatLng())).to.eq(true);
     });
   });
+
+  it('change color of circle while drawing', () => {
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.Circle._layer;
+      const hintLine = map.pm.Draw.Circle._hintline;
+      expect(layer.options.color).to.eql('red');
+      expect(hintLine.options.color).to.eql('red');
+    });
+  });
 });

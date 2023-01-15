@@ -24,11 +24,11 @@ Draw.CircleMarker = Draw.Marker.extend({
     if (this.options.editable) {
       // we need to set the radius to 0 without overwriting the CircleMarker style
       const templineStyle = {};
-      L.setOptions(templineStyle, this.options.templineStyle);
+      L.extend(templineStyle, this.options.templineStyle);
       templineStyle.radius = 0;
 
       // create a new layergroup
-      this._layerGroup = new L.LayerGroup();
+      this._layerGroup = new L.FeatureGroup();
       this._layerGroup._pmTempLayer = true;
       this._layerGroup.addTo(this._map);
 
@@ -442,5 +442,14 @@ Draw.CircleMarker = Draw.Marker.extend({
     const pointA = this._map.project(center);
     const pointB = L.point(pointA.x + radius, pointA.y);
     return this._map.unproject(pointB).distanceTo(center);
+  },
+  setStyle() {
+    const templineStyle = {};
+    L.extend(templineStyle, this.options.templineStyle);
+    if (this.options.editable) {
+      templineStyle.radius = 0;
+    }
+    this._layer?.setStyle(templineStyle);
+    this._hintline?.setStyle(this.options.hintlineStyle);
   },
 });

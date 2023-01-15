@@ -456,4 +456,49 @@ describe('Draw Circle Marker', () => {
       expect(layer.getLatLng().equals(layer2.getLatLng())).to.eq(true);
     });
   });
+
+  it('change color of circleMarker while drawing', () => {
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.CircleMarker._layer;
+      expect(layer.options.color).to.eql('red');
+    });
+  });
+
+  it('change color of circleMarker (editable) while drawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ editable: true });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.CircleMarker._layer;
+      const hintLine = map.pm.Draw.CircleMarker._hintline;
+      expect(layer.options.color).to.eql('red');
+      expect(hintLine.options.color).to.eql('red');
+    });
+  });
 });

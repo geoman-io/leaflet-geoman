@@ -18,7 +18,7 @@ Draw.Circle = Draw.extend({
     this._enabled = true;
 
     // create a new layergroup
-    this._layerGroup = new L.LayerGroup();
+    this._layerGroup = new L.FeatureGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
 
@@ -336,5 +336,9 @@ Draw.Circle = Draw.extend({
     }
     // calculate the new latlng of marker if the snapped latlng radius is out of min/max
     this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
+  },
+  setStyle() {
+    this._layer?.setStyle(this.options.templineStyle);
+    this._hintline?.setStyle(this.options.hintlineStyle);
   },
 });
