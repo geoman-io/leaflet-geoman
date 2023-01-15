@@ -1231,7 +1231,7 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(4);
   });
 
-  it('show correct measurement for Polygon while drawing', () => {
+  it('show correct shape for Polygon while drawing', () => {
     cy.toolbarButton('polygon')
       .click()
       .closest('.button-container')
