@@ -56,6 +56,7 @@ Features marked with ⭐ in this documentation are available in Leaflet-Geoman P
   - [Snapping](#snapping)
   - [Pinning ⭐](#pinning-)
   - [Measurement ⭐](#measurement-)
+  - [AutoTracing ⭐](#autotracing-)
 - [LayerGroup](#layergroup)
 - [Customization](#customize)  
 - [Toolbar](#toolbar)  
@@ -125,7 +126,7 @@ L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
 Enable Leaflet-Geoman on an ignored layer:  
 ```js  
 layer.options.pmIgnore = false;
-L.PM.reInitLayer(layer);  
+L.PM.reInitLayer(layer); 
 ```  
 If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.
 
@@ -216,6 +217,7 @@ See the available options in the table below.
 | snappingOption     | `true`      | Adds a button to toggle the Snapping Option ⭐.                                                   |  
 | splitMode          | `true`      | Adds a button to toggle the Split Mode for all layers ⭐.                                         |  
 | scaleMode          | `true`      | Adds a button to toggle the Scale Mode for all layers ⭐.                                         |  
+| autoTracingOption  | `false`     | Adds a button to toggle the Auto Tracing Option ⭐.                                               |  
   
 To pass options to the buttons you have two ways:
 ```js
@@ -246,7 +248,7 @@ map.pm.enableDraw('Polygon', {
 map.pm.disableDraw();
 ```
 
-Currently available shapes are `Marker`, `CircleMarker`, `Circle`, `Line`, `Rectangle`, `Polygon` and `Cut`.
+Currently available shapes are `Marker`, `CircleMarker`, `Circle`, `Line`, `Rectangle`, `Polygon`, `Text`, `Cut`, `CutCircle`⭐ and `Split`⭐.
 
 The following methods are available on `map.pm`:
 
@@ -292,6 +294,10 @@ See the available options in the table below.
 | rectangleAngle        | `0`                                   | Rectangle can drawn with a rotation angle 0-360 degrees                                                                                                                                                         |
 | layersToCut           | `[]`                                  | Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again.                                              |
 | textOptions           | `{}`                                  | Text Layer options. Look into [textOptions](#text-layer-drawing).                                                                                                                                               |
+| closedPolygonEdge     | `false`                               | Closes the Polygon while drawing ⭐.                                                                                                                                                                               |
+| closedPolygonFill     | `false`                               | Shows the Polygon fill while drawing ⭐.                                                                                                                                                                           |
+| autoTracing           | `false`                               | Enables auto tracing while drawing ⭐.                                                                                                                                                                             |
+| allowCircleCut        | `true`                                | Allow Cutting of a Circle ⭐.                                                                                                                                                                                    |
 
 This options can only set over `map.pm.setGlobalOptions({})`:
 
@@ -416,6 +422,8 @@ See the available options in the table below.
 | pinning                        | `false`       | Pin shared vertices/markers together during edit [Details](#pinning-⭐). ⭐                                                                                                                                                   |
 | centerScaling                  | `true`        | Scale origin is the center, else it is the opposite corner. If `false` Alt-Key can be used. [Scale Mode](#scale-mode-). ⭐                                                                                                    |
 | uniformScaling                 | `true`        | Width and height are scaled with the same ratio. If `false` Shift-Key can be used. [Scale Mode](#scale-mode-). ⭐                                                                                                             |
+| allowAutoTracing               | `true`        | Layer can be prevented from auto tracing.⭐                                                                                                                                                                                   |
+| addVertexOnClick               | `false`       | Add Vertices while clicking on the line of Polyline or Polygon⭐                                                                                                                                                              |
 
 You can listen to events related to editing on events like this:
 
@@ -576,6 +584,10 @@ map.pm.enableGlobalCutMode({
 
 Available options are the same as in [Draw Mode](#draw-mode).
 If the option `layersToCut: [layer1, layer2]` is passed, only this certain layers will be cutted.
+
+In the Pro-Version ⭐ is the option `allowCircleCut` available, which makes it possible to cut Circles.
+
+Over the Global Options you enable cutting in shape form of a Circle `cutAsCircle: true` for the cut-button. Else you can enable `CutCircle` over `map.pm.enableDraw('CutCircle')`
 
 The following methods are available on `map.pm`:
 
@@ -829,6 +841,13 @@ The following options are additionally to the [Draw](#draw-mode) and [Edit Mode]
 | snappingOrder | `Array`  | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`.                                                                                                          |
 | layerGroup    | `map`    | add the created layers to a layergroup instead to the map.                                                                                                                                                             |
 | panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' }`. |
+| cutAsCircle   | `false`  | Enable cutting in shape form of a Circle.                                                                                                                                                                              |
+
+The following events are available on a map instance:
+
+| Event                     | Params | Description                               | Output                                                 |
+| :------------------------ | :----- | :---------------------------------------- | :----------------------------------------------------- |
+| pm:globaloptionschanged   | `e`    | Fired when global options are changed.    |                                                        |
 
 Some details about a few more powerful options:
 
@@ -872,6 +891,34 @@ See the available options in the table below.
 | height             | `true`   | Shows the height in the tooltip `Rectangle`.                                                                          |
 | width              | `true`   | Shows the width in the tooltip `Rectangle`.                                                                           |
 | coordinates        | `true`   | Shows the coordinates in the tooltip `Marker`, `CircleMarker` and the current dragged marker while drawing / editing. |
+
+
+##### AutoTracing ⭐
+
+![AutoTracing Demo](https://user-images.githubusercontent.com/19800037/196027144-7bc696aa-6b5d-4903-8a21-2df0e2d05e4e.gif)
+
+While drawing / cutting it is possible to auto trace the coordinates of another Layer. Exclusive for Leaflet-Geoman Pro ⭐
+
+```js
+map.pm.setGlobalOptions({ autoTracing: true })
+```
+
+See the available options in the table below.
+
+| Option             | Default  | Description                                                                                                                             |
+| :----------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| autoTracing        | `true`   | Enables auto tracing while drawing.                                                                                                     |
+| autoTraceMaxZoom   | `10`     | Until which zoom level the coordinates of the layers in the viewport will be used. |
+| autoTraceMaxDistance | `20`     | The distance to the layer when a snap for auto tracing should happen. |
+
+Here's a list of map events you can listen to:
+
+| Event                    | Params | Description                                                                             | Output                    |
+| :----------------------- | :----- | :-------------------------------------------------------------------------------------- | :------------------------ |
+| pm:autotracestart        | `e`    | Fired when auto tracing is started and connected with a layer.                          |                           |
+| pm:autotracelinechange   | `e`    | Fired when auto tracing hintline is changed.                                            | `hintLatLngs`             |
+| pm:autotraceend          | `e`    | Fired when auto tracing is ended.                                                       |                           |
+
 
 ### LayerGroup
 
@@ -1058,17 +1105,19 @@ map.pm.Toolbar.getBlockPositions();
 map.pm.Toolbar.createCustomControl(options);
 ```
 
-| Option     | Default  | Description                                                                          |
-| :--------- | :------- | :----------------------------------------------------------------------------------- |
-| name       | Required | Name of the control.                                                                 |
-| block      | ''       | block of the control. `draw`, `edit`, `custom`, `options`⭐                          |
-| title      | ''       | Text showing when you hover the control.                                             |
-| className  | ''       | CSS class with the Icon.                                                             |
-| onClick    | -        | Function fired when clicking the control.                                            |
-| afterClick | -        | Function fired after clicking the control.                                           |
-| actions    | [ ]      | Action that appears as tooltip. Look under [Actions](#actions) for more information. |
-| toggle     | true     | Control can be toggled.                                                              |
-| disabled   | false    | Control is disabled.                                                                 |
+| Option                  | Default  | Description                                                                          |
+| :---------------------- | :------- | :----------------------------------------------------------------------------------- |
+| name                    | Required | Name of the control.                                                                 |
+| block                   | ''       | block of the control. `draw`, `edit`, `custom`, `options`⭐                          |
+| title                   | ''       | Text showing when you hover the control.                                             |
+| className               | ''       | CSS class with the Icon.                                                             |
+| onClick                 | -        | Function fired when clicking the control.                                            |
+| afterClick              | -        | Function fired after clicking the control.                                           |
+| actions                 | [ ]      | Action that appears as tooltip. Look under [Actions](#actions) for more information. |
+| toggle                  | true     | Control can be toggled.                                                              |
+| disabled                | false    | Control is disabled.                                                                 |
+| disableOtherButtons     | true    | Control disables other buttons if enabled.                                            |
+| disableByOtherButtons   | true    | Control disabled if other buttons is enabled.                                         |
 
 #### Inherit from an Existing Control
 

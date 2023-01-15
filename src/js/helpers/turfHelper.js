@@ -12,10 +12,17 @@ export function getGeometry(geojson) {
 }
 
 export function getCoords(geojson) {
-  return geojson.geometry.coordinates;
+  if (geojson && geojson.geometry && geojson.geometry.coordinates)
+    return geojson.geometry.coordinates;
+  return geojson;
 }
 
-export function turfPoint(coords) {
+export function turfPoint(coords, precision = -1) {
+  if (precision > -1) {
+    coords[0] = L.Util.formatNum(coords[0], precision);
+    coords[1] = L.Util.formatNum(coords[1], precision);
+  }
+
   return feature({ type: 'Point', coordinates: coords });
 }
 
@@ -99,4 +106,19 @@ export function groupToMultiLineString(group) {
     coords.push(getCoords(layer.toGeoJSON(15)));
   });
   return turfMultiLineString(coords);
+}
+
+export function convertToLatLng(coords) {
+  const lnglat = getCoords(coords);
+  return L.latLng(lnglat[1], lnglat[0]);
+}
+
+export function convertArrayToLatLngs(arr) {
+  const latlngs = [];
+  if (arr.features) {
+    arr.features.forEach((geojson) => {
+      latlngs.push(convertToLatLng(geojson));
+    });
+  }
+  return latlngs;
 }
