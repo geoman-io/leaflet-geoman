@@ -22,7 +22,10 @@ Draw.Marker = Draw.extend({
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker([0, 0], this.options.markerStyle);
+    this._hintMarker = L.marker(
+      this._map.getCenter(),
+      this.options.markerStyle
+    );
     this._setPane(this._hintMarker, 'markerPane');
     this._hintMarker._pmTempLayer = true;
     this._hintMarker.addTo(this._map);

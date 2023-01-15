@@ -23,7 +23,7 @@ Draw.Circle = Draw.extend({
     this._layerGroup.addTo(this._map);
 
     // this is the circle we want to draw
-    this._layer = L.circle([0, 0], {
+    this._layer = L.circle(this._map.getCenter(), {
       ...this.options.templineStyle,
       radius: 0,
     });
@@ -31,7 +31,7 @@ Draw.Circle = Draw.extend({
     this._layer._pmTempLayer = true;
 
     // this is the marker in the center of the circle
-    this._centerMarker = L.marker([0, 0], {
+    this._centerMarker = L.marker(this._map.getCenter(), {
       icon: L.divIcon({ className: 'marker-icon' }),
       draggable: false,
       zIndexOffset: 100,
@@ -40,7 +40,7 @@ Draw.Circle = Draw.extend({
     this._centerMarker._pmTempLayer = true;
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker([0, 0], {
+    this._hintMarker = L.marker(this._map.getCenter(), {
       zIndexOffset: 110,
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
@@ -284,13 +284,13 @@ Draw.Circle = Draw.extend({
     }
   },
   _getNewDestinationOfHintMarker() {
-    const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._hintMarker.getLatLng();
-    const distance = latlng.distanceTo(secondLatLng);
-
-    if (latlng.equals(L.latLng([0, 0]))) {
+    if (!this._layerGroup.hasLayer(this._centerMarker)) {
       return secondLatLng;
     }
+
+    const latlng = this._centerMarker.getLatLng();
+    const distance = latlng.distanceTo(secondLatLng);
 
     if (
       this.options.minRadiusCircle &&
@@ -320,7 +320,7 @@ Draw.Circle = Draw.extend({
       const latlng = this._centerMarker.getLatLng();
       const secondLatLng = this._hintMarker.getLatLng();
       const distance = latlng.distanceTo(secondLatLng);
-      if (latlng.equals(L.latLng([0, 0]))) {
+      if (!this._layerGroup.hasLayer(this._centerMarker)) {
         // do nothing
       } else if (
         this.options.minRadiusCircle &&

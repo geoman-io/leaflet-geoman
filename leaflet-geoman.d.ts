@@ -890,6 +890,9 @@ declare module 'leaflet' {
 
       /** Returns the angle of the layer in degrees. */
       getAngle(): number;
+
+      /** Set the initial angle of the layer in degrees. */
+      setInitAngle(degrees: number): void;
     }
 
     interface Draw {

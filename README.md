@@ -621,6 +621,15 @@ The following events are available on a map instance:
 The rotation is clockwise. It starts in the North with 0° and goes over East (90°) and South (180°) to West (270°).
 The rotation center is the center (`layer.getCenter()`) of a Polygon with the LatLngs of the layer.
 
+**Rotation of Rectangles:**
+
+If a rotated rectangle is created programmatically, it is important to set the initial angle with `setInitAngle(degrees)`.
+```js
+const rect = L.rectangle(coords).addTo(map); // the Leaflet constructor always creates a non-rotated rectangle
+rect.setLatLngs(coords); // setting the rotated coordinates
+rect.pm.setInitAngle(angle);
+```
+
 You can enable Rotate Mode for all layers on a map like this:
 
 ```js
@@ -646,6 +655,7 @@ The following methods are available for layers under `layer.pm`:
 | rotateLayer(`degrees`)        | -         | Rotates the layer by `x` degrees.                |
 | rotateLayerToAngle(`degrees`) | -         | Rotates the layer to `x` degrees.                |
 | getAngle()                    | `Degrees` | Returns the angle of the layer in degrees.       |
+| setInitAngle(`degrees`)       | -         | Set the initial angle of the layer in degrees.   |
 
 The following events are available on a layer instance:
 
