@@ -221,7 +221,7 @@ describe('Rotation', () => {
     });
   });
 
-  it('doesn\'t return the rotation help-layer over getGeomanLayers()', () => {
+  it("doesn't return the rotation help-layer over getGeomanLayers()", () => {
     cy.window().then(({ map, L }) => {
       const coords = [
         [1, 2],
