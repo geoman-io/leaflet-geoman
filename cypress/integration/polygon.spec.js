@@ -1237,10 +1237,7 @@ describe('Draw & Edit Poly', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector)
-      .click(150, 150)
-      .click(450, 150)
-      .click(450, 400);
+    cy.get(mapSelector).click(150, 150).click(450, 150).click(450, 400);
 
     cy.window().then(({ map }) => {
       const polygon = map.pm.Draw.Polygon._layer;

@@ -442,7 +442,10 @@ Edit.Line = Edit.extend({
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
     if (!this.options.allowSelfIntersection) {
-      this._coordsBeforeEdit = copyLatLngs(this._layer, this._layer.getLatLngs());
+      this._coordsBeforeEdit = copyLatLngs(
+        this._layer,
+        this._layer.getLatLngs()
+      );
     }
 
     // coords of the layer
@@ -665,7 +668,10 @@ Edit.Line = Edit.extend({
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
     if (!this.options.allowSelfIntersection) {
-      this._coordsBeforeEdit = copyLatLngs(this._layer, this._layer.getLatLngs());
+      this._coordsBeforeEdit = copyLatLngs(
+        this._layer,
+        this._layer.getLatLngs()
+      );
     }
 
     if (

@@ -185,7 +185,7 @@ const Map = L.Class.extend({
   // returns the map instance by default or a layergroup is set through global options
   _getContainingLayer() {
     return this.globalOptions.layerGroup &&
-    this.globalOptions.layerGroup instanceof L.LayerGroup
+      this.globalOptions.layerGroup instanceof L.LayerGroup
       ? this.globalOptions.layerGroup
       : this.map;
   },
