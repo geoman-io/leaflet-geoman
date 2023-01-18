@@ -18,9 +18,6 @@
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=16.13 <17"
-  },
   "main": "dist/leaflet-geoman.min.js",
   "types": "dist/leaflet-geoman.d.ts",
   "dependencies": {
