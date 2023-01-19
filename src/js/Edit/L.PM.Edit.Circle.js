@@ -10,10 +10,10 @@ Edit.Circle = Edit.extend({
     this._updateHiddenPolyCircle();
   },
   enable(options) {
-    // backwards compatibility
-    options.radiusEditCircle = options.radiusEditCircle ?? true;
-
     L.Util.setOptions(this, options);
+
+    // backwards compatibility
+    this.options.radiusEditCircle = this.options.radiusEditCircle ?? true;
 
     this._map = this._layer._map;
 
