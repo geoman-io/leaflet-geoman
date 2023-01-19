@@ -1056,6 +1056,9 @@ The following methods are available on `map.pm.Toolbar`:
 | createCustomControl(`options`)            | -        | To add a custom Control to the Toolbar. [Details](#adding-newcustom-controls)                                                                                                                    |
 | copyDrawControl(`instance`, `options`)    | `Object` | Creates a copy of a draw Control. Returns the `drawInstance` and the `control`.                                                                                                                  |
 | changeActionsOfControl(`name`, `actions`) | -        | Change the actions of an existing button.                                                                                                                                                        |
+| getButtons() | `Object`       | Get an object of the current buttons button.                                                                                                                                                        |
+| controlExists(`name`) | `Boolean`      | Checks whether a button has been mounted button.                                                                                                                                                        |
+| getCustomControls()) | `Object`       | Gets an object of the custom controls that are mounted button.                                                                                                                                                        |
 
 #### Customize Controls
 
