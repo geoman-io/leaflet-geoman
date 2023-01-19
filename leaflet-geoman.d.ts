@@ -646,6 +646,15 @@ declare module 'leaflet' {
         position: L.ControlPosition
       ): void;
 
+      /** Returns all of the active buttons */
+      getButtons(): Record<string, L.Control>
+
+      /** Checks whether a button has been mounted */
+      controlExists(name: string): boolean;
+
+      /** Returns all of the custom, active buttons */
+      getCustomControls(): Record<string, L.Control>
+
       /** Returns a Object with the positions for all blocks */
       getBlockPositions(): BlockPositions;
 

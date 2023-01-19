@@ -563,7 +563,16 @@ const Toolbar = L.Class.extend({
     this.changeControlOrder();
     return control;
   },
-
+  controlExists(name) {
+    return Boolean(this.getButtons()[name]);
+  },
+  getCustomControls() {
+    return Object.fromEntries(
+      Object.entries(this.getButtons()).filter(
+        ([, v]) => v._button.tool === 'custom'
+      )
+    );
+  },
   changeControlOrder(order = []) {
     const shapeMapping = this._shapeMapping();
 
