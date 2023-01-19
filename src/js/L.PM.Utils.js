@@ -111,7 +111,7 @@ const Utils = {
   },
   createGeodesicPolygon,
   getTranslation,
-  findDeepCoordIndex(arr, latlng) {
+  findDeepCoordIndex(arr, latlng, exact = true) {
     // find latlng in arr and return its location as path
     // thanks for the function, Felix Heck
     let result;
@@ -119,7 +119,12 @@ const Utils = {
     const run = (path) => (v, i) => {
       const iRes = path.concat(i);
 
-      if (v.lat && v.lat === latlng.lat && v.lng === latlng.lng) {
+      if (exact) {
+        if (v.lat && v.lat === latlng.lat && v.lng === latlng.lng) {
+          result = iRes;
+          return true;
+        }
+      } else if (v.lat && L.latLng(v).equals(latlng)) {
         result = iRes;
         return true;
       }

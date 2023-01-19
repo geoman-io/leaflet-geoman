@@ -19,12 +19,12 @@ Draw.Circle = Draw.extend({
 
     if (this.options.radiusEditCircle) {
       // create a new layergroup
-      this._layerGroup = new L.LayerGroup();
+      this._layerGroup = new L.FeatureGroup();
       this._layerGroup._pmTempLayer = true;
       this._layerGroup.addTo(this._map);
 
       // this is the circle we want to draw
-      this._layer = L.circle([0, 0], {
+      this._layer = L.circle(this._map.getCenter(), {
         ...this.options.templineStyle,
         radius: 0,
       });
@@ -32,7 +32,7 @@ Draw.Circle = Draw.extend({
       this._layer._pmTempLayer = true;
 
       // this is the marker in the center of the circle
-      this._centerMarker = L.marker([0, 0], {
+      this._centerMarker = L.marker(this._map.getCenter(), {
         icon: L.divIcon({ className: 'marker-icon' }),
         draggable: false,
         zIndexOffset: 100,
@@ -41,7 +41,7 @@ Draw.Circle = Draw.extend({
       this._centerMarker._pmTempLayer = true;
 
       // this is the hintmarker on the mouse cursor
-      this._hintMarker = L.marker([0, 0], {
+      this._hintMarker = L.marker(this._map.getCenter(), {
         zIndexOffset: 110,
         icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
       });
@@ -68,7 +68,7 @@ Draw.Circle = Draw.extend({
 
       // this is the hintline from the hint marker to the center marker
       this._hintline = L.polyline([], this.options.hintlineStyle);
-      this._setPane(this._hintline, 'layerPane');
+      this._setPane(this._hintline, 'circlePane');
       this._hintline._pmTempLayer = true;
       this._layerGroup.addLayer(this._hintline);
 
@@ -83,7 +83,7 @@ Draw.Circle = Draw.extend({
 
       // this is the hintmarker on the mouse cursor
       this._hintMarker = L.circle([0, 0], this.options.templineStyle);
-      this._setPane(this._hintMarker, 'layerPane');
+      this._setPane(this._hintMarker, 'circlePane');
       this._hintMarker._pmTempLayer = true;
       this._hintMarker.addTo(this._map);
       // this is just to keep the snappable mixin happy
@@ -102,6 +102,7 @@ Draw.Circle = Draw.extend({
           .openTooltip();
       }
     }
+
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
@@ -283,7 +284,7 @@ Draw.Circle = Draw.extend({
 
     // create marker
     const marker = L.circle(latlng, this.options.pathOptions);
-    this._setPane(marker, 'layerPane');
+    this._setPane(marker, 'circlePane');
     this._finishLayer(marker);
     // add marker to the map
     marker.addTo(this._map.pm._getContainingLayer());
@@ -343,7 +344,7 @@ Draw.Circle = Draw.extend({
 
     // create the final circle layer
     const circleLayer = L.circle(center, options);
-    this._setPane(circleLayer, 'layerPane');
+    this._setPane(circleLayer, 'circlePane');
     this._finishLayer(circleLayer);
     circleLayer.addTo(this._map.pm._getContainingLayer());
 
@@ -364,12 +365,12 @@ Draw.Circle = Draw.extend({
   _getNewDestinationOfHintMarker() {
     let secondLatLng = this._hintMarker.getLatLng();
     if (this.options.radiusEditCircle) {
-      const latlng = this._centerMarker.getLatLng();
-      const distance = latlng.distanceTo(secondLatLng);
-
-      if (latlng.equals(L.latLng([0, 0]))) {
+      if (!this._layerGroup.hasLayer(this._centerMarker)) {
         return secondLatLng;
       }
+
+      const latlng = this._centerMarker.getLatLng();
+      const distance = latlng.distanceTo(secondLatLng);
 
       if (
         this.options.minRadiusCircle &&
@@ -401,7 +402,7 @@ Draw.Circle = Draw.extend({
         const latlng = this._centerMarker.getLatLng();
         const secondLatLng = this._hintMarker.getLatLng();
         const distance = latlng.distanceTo(secondLatLng);
-        if (latlng.equals(L.latLng([0, 0]))) {
+        if (!this._layerGroup.hasLayer(this._centerMarker)) {
           // do nothing
         } else if (
           this.options.minRadiusCircle &&
@@ -418,5 +419,9 @@ Draw.Circle = Draw.extend({
       // calculate the new latlng of marker if the snapped latlng radius is out of min/max
       this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
     }
+  },
+  setStyle() {
+    this._layer?.setStyle(this.options.templineStyle);
+    this._hintline?.setStyle(this.options.hintlineStyle);
   },
 });

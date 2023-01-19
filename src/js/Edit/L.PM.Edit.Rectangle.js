@@ -15,7 +15,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._markerGroup = new L.LayerGroup();
+    this._markerGroup = new L.FeatureGroup();
     this._markerGroup._pmTempLayer = true;
     map.addLayer(this._markerGroup);
 

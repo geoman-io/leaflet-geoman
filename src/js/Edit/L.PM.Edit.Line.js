@@ -2,7 +2,7 @@ import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
-import { hasValues, removeEmptyCoordRings } from '../helpers';
+import { copyLatLngs, hasValues, removeEmptyCoordRings } from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -107,7 +107,7 @@ Edit.Line = Edit.extend({
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
     // remove invalid class if layer has self intersection
-    if (this.hasSelfIntersection()) {
+    if (!this._map.hasLayer(this._layer) || this.hasSelfIntersection()) {
       L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
     }
 
@@ -145,7 +145,7 @@ Edit.Line = Edit.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._markerGroup = new L.LayerGroup();
+    this._markerGroup = new L.FeatureGroup();
     this._markerGroup._pmTempLayer = true;
 
     // handle coord-rings (outer, inner, etc)
@@ -442,8 +442,10 @@ Edit.Line = Edit.extend({
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
     if (!this.options.allowSelfIntersection) {
-      const c = this._layer.getLatLngs();
-      this._coordsBeforeEdit = JSON.parse(JSON.stringify(c));
+      this._coordsBeforeEdit = copyLatLngs(
+        this._layer,
+        this._layer.getLatLngs()
+      );
     }
 
     // coords of the layer
@@ -504,9 +506,7 @@ Edit.Line = Edit.extend({
       this._layer.setLatLngs(coords);
 
       // re-enable editing so unnecessary markers are removed
-      // TODO: kind of an ugly workaround maybe do it better?
-      this.disable();
-      this.enable(this.options);
+      this._initMarkers();
       layerRemoved = true;
     }
 
@@ -668,7 +668,10 @@ Edit.Line = Edit.extend({
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
     if (!this.options.allowSelfIntersection) {
-      this._coordsBeforeEdit = this._layer.getLatLngs();
+      this._coordsBeforeEdit = copyLatLngs(
+        this._layer,
+        this._layer.getLatLngs()
+      );
     }
 
     if (

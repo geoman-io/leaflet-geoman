@@ -304,4 +304,48 @@ describe('Modes', () => {
     });
     cy.hasVertexMarkers(8);
   });
+
+  it('prevent enabling multiple modes at the same time', () => {
+    cy.toolbarButton('edit').click();
+
+    cy.toolbarButton('delete')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.toolbarButton('edit')
+      .closest('.button-container')
+      .should('not.have.class', 'active');
+  });
+
+  it('re-applies drag mode onAdd', () => {
+    cy.toolbarButton('polygon').click();
+
+    const jsonString =
+      '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
+
+    const poly = JSON.parse(jsonString);
+
+    cy.get(mapSelector)
+      .click(320, 150)
+      .click(320, 100)
+      .click(400, 100)
+      .click(400, 200)
+      .click(320, 150);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
+    });
+
+    cy.window().then(({ map, L }) => {
+      L.geoJSON(poly).addTo(map);
+    });
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
+      expect(map.pm.getGeomanLayers()[1].pm.layerDragEnabled()).to.equal(true);
+    });
+  });
 });
