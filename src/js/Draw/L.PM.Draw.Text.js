@@ -147,7 +147,7 @@ Draw.Text = Draw.extend({
       _textMarkerOverPM: true, // we need to put this into the options, else we can't catch this in the init method
       icon: textAreaIcon,
     });
-    this._setPane(marker, 'markerPane');
+    this._setPane(marker, 'textPane');
     this._finishLayer(marker);
 
     if (!marker.pm) {

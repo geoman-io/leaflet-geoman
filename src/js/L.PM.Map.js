@@ -40,6 +40,9 @@ const Map = L.Class.extend({
         circlePane: 'overlayPane',
         polygonPane: 'overlayPane',
         polylinePane: 'overlayPane',
+        circleMarkerPane: 'overlayPane',
+        rectanglePane: 'overlayPane',
+        textPane: 'markerPane',
       },
       draggable: true,
     };

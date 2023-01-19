@@ -759,7 +759,7 @@ declare module 'leaflet' {
       snappingOrder?: SUPPORTED_SHAPES[];
 
       /** Defines in which panes the layers and helper vertices are created. Default: { vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane', circlePane: 'overlayPane', polygonPane: 'overlayPane', polylinePane: 'overlayPane' } */
-      panes?: { vertexPane?: PANE; layerPane?: PANE; markerPane?: PANE, circlePane?: PANE, polygonPane?: PANE, polylinePane?: PANE };
+      panes?: { vertexPane?: PANE; layerPane?: PANE; markerPane?: PANE, circlePane?: PANE, polygonPane?: PANE, polylinePane?: PANE, circleMarkerPane?: PANE, rectanglePane?: PANE, textPane?: PANE };
     }
 
     interface PMDrawMap {

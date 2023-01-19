@@ -826,7 +826,7 @@ The following options are additionally to the [Draw](#draw-mode) and [Edit Mode]
 | :------------ | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | snappingOrder | `Array`  | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`.                                                                                                          |
 | layerGroup    | `map`    | add the created layers to a layergroup instead to the map.                                                                                                                                                             |
-| panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane', circlePane: 'overlayPane', polylinePane: 'overlayPane', polygonPane: 'overlayPane' }`. |
+| panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane', circlePane: 'overlayPane', polylinePane: 'overlayPane', polygonPane: 'overlayPane', circleMarkerPane: 'overlayPane', rectanglePane: 'overlayPane', textPane: 'markerPane' }`. |
 
 Some details about a few more powerful options:
 
