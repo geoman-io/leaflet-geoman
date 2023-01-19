@@ -860,4 +860,24 @@ describe('Draw Rectangle', () => {
       expect(mapCanvas.getRenderer(rect2) instanceof L.SVG).to.eq(true);
     });
   });
+
+  it('change color of Rectangle while drawing', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(220, 220);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ pathOptions: style });
+
+      const layer = map.pm.Draw.Rectangle._layer;
+      expect(layer.options.color).to.eql('red');
+    });
+  });
 });

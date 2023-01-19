@@ -294,4 +294,26 @@ describe('Draw Marker', () => {
       expect(updateFired).to.eq(true);
     });
   });
+
+  it('change icon of Marker while drawing', () => {
+    cy.toolbarButton('marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map, L }) => {
+      map.pm.setGlobalOptions({
+        markerStyle: {
+          icon: L.icon({
+            iconUrl: 'someIcon.png',
+          }),
+        },
+      });
+
+      const layer = map.pm.Draw.Marker._hintMarker;
+      expect(layer._icon.src.endsWith('someIcon.png')).to.eql(true);
+    });
+  });
 });

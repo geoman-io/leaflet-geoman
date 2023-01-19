@@ -16,13 +16,18 @@ Draw.Line = Draw.extend({
     // enable draw mode
     this._enabled = true;
 
+    this._markers = [];
+
     // create a new layergroup
-    this._layerGroup = new L.LayerGroup();
+    this._layerGroup = new L.FeatureGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
 
     // this is the polyLine that'll make up the polygon
-    this._layer = L.polyline([], this.options.templineStyle);
+    this._layer = L.polyline([], {
+      ...this.options.templineStyle,
+      pmIgnore: false,
+    });
     this._setPane(this._layer, 'polylinePane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
@@ -174,7 +179,7 @@ Draw.Line = Draw.extend({
 
     // if self-intersection is forbidden, handle it
     if (!this.options.allowSelfIntersection) {
-      this._handleSelfIntersection(true, e.latlng);
+      this._handleSelfIntersection(true, this._hintMarker.getLatLng());
     }
     const latlngs = this._layer._defaultShape().slice();
     latlngs.push(this._hintMarker.getLatLng());
@@ -238,9 +243,16 @@ Draw.Line = Draw.extend({
     const latlng = this._hintMarker.getLatLng();
 
     // check if the first and this vertex have the same latlng
-    if (latlng.equals(this._layer.getLatLngs()[0])) {
+    // or the last vertex and the hintMarker have the same latlng (dbl-click)
+    const latlngs = this._layer.getLatLngs();
+
+    const lastLatLng = latlngs[latlngs.length - 1];
+    if (
+      latlng.equals(latlngs[0]) ||
+      (latlngs.length > 0 && latlng.equals(lastLatLng))
+    ) {
       // yes? finish the polygon
-      this._finishShape(e);
+      this._finishShape();
 
       // "why?", you ask? Because this happens when we snap the last vertex to the first one
       // and then click without hitting the last marker. Click happens on the map
@@ -258,7 +270,7 @@ Draw.Line = Draw.extend({
     const newMarker = this._createMarker(latlng);
     this._setTooltipText();
 
-    this._hintline.setLatLngs([latlng, latlng]);
+    this._setHintLineAfterNewVertex(latlng);
 
     this._fireVertexAdded(newMarker, undefined, latlng, 'Draw');
     this._change(this._layer.getLatLngs());
@@ -267,40 +279,53 @@ Draw.Line = Draw.extend({
       this._finishShape(e);
     }
   },
+  _setHintLineAfterNewVertex(hintMarkerLatLng) {
+    // make the new drawn line (with another style) visible
+    this._hintline.setLatLngs([hintMarkerLatLng, hintMarkerLatLng]);
+  },
   _removeLastVertex() {
-    // remove last coords
-    const coords = this._layer.getLatLngs();
-    const removedCoord = coords.pop();
+    const markers = this._markers;
 
-    // if all coords are gone, cancel drawing
-    if (coords.length < 1) {
+    // if all markers are gone, cancel drawing
+    if (markers.length <= 1) {
       this.disable();
       return;
     }
 
-    // find corresponding marker
-    const marker = this._layerGroup
-      .getLayers()
-      .filter((l) => l instanceof L.Marker)
-      .filter((l) => !L.DomUtil.hasClass(l._icon, 'cursor-marker'))
-      .find((l) => l.getLatLng() === removedCoord);
+    // remove last coords
+    let coords = this._layer.getLatLngs();
 
-    const markers = this._layerGroup
-      .getLayers()
-      .filter((l) => l instanceof L.Marker);
+    const removedMarker = markers[markers.length - 1];
+
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(markers, marker);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+      markers,
+      removedMarker
+    );
+
+    // remove last marker from array
+    markers.pop();
 
     // remove that marker
-    this._layerGroup.removeLayer(marker);
+    this._layerGroup.removeLayer(removedMarker);
+
+    const markerPrevious = markers[markers.length - 1];
+
+    // no need for findDeepMarkerIndex because the coords are always flat (Polyline) no matter if Line or Polygon
+    const indexMarkerPrev = coords.indexOf(markerPrevious.getLatLng());
+
+    // +1 don't cut out the previous marker
+    coords = coords.slice(0, indexMarkerPrev + 1);
+
     // update layer with new coords
     this._layer.setLatLngs(coords);
+    this._layer._latlngInfo.pop();
 
     // sync the hintline again
     this._syncHintLine();
     this._setTooltipText();
 
-    this._fireVertexRemoved(marker, indexPath, 'Draw');
+    this._fireVertexRemoved(removedMarker, indexPath, 'Draw');
     this._change(this._layer.getLatLngs());
   },
   _finishShape() {
@@ -360,6 +385,7 @@ Draw.Line = Draw.extend({
 
     // add it to the map
     this._layerGroup.addLayer(marker);
+    this._markers.push(marker);
 
     // a click on any marker finishes this shape
     marker.on('click', this._finishShape, this);
@@ -380,5 +406,9 @@ Draw.Line = Draw.extend({
   },
   _change(latlngs) {
     this._fireChange(latlngs, 'Draw');
+  },
+  setStyle() {
+    this._layer?.setStyle(this.options.templineStyle);
+    this._hintline?.setStyle(this.options.hintlineStyle);
   },
 });

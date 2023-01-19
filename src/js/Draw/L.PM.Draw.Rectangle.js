@@ -16,7 +16,7 @@ Draw.Rectangle = Draw.extend({
     this._enabled = true;
 
     // create a new layergroup
-    this._layerGroup = new L.LayerGroup();
+    this._layerGroup = new L.FeatureGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
 
@@ -33,7 +33,7 @@ Draw.Rectangle = Draw.extend({
 
     // this is the marker at the origin of the rectangle
     // this needs to be present, for tracking purposes, but we'll make it invisible if a user doesn't want to see it!
-    this._startMarker = L.marker([0, 0], {
+    this._startMarker = L.marker(this._map.getCenter(), {
       icon: L.divIcon({ className: 'marker-icon rect-start-marker' }),
       draggable: false,
       zIndexOffset: -100,
@@ -44,13 +44,18 @@ Draw.Rectangle = Draw.extend({
     this._layerGroup.addLayer(this._startMarker);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker([0, 0], {
+    this._hintMarker = L.marker(this._map.getCenter(), {
       zIndexOffset: 150,
       icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
+
+    // show the hintmarker if the option is set
+    if (this.options.cursorMarker) {
+      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+    }
 
     // add tooltip to hintmarker
     if (this.options.tooltips) {
@@ -65,14 +70,11 @@ Draw.Rectangle = Draw.extend({
         .openTooltip();
     }
 
-    // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
-
       // Add two more matching style markers, if cursor marker is rendered
       this._styleMarkers = [];
       for (let i = 0; i < 2; i += 1) {
-        const styleMarker = L.marker([0, 0], {
+        const styleMarker = L.marker(this._map.getCenter(), {
           icon: L.divIcon({
             className: 'marker-icon rect-style-marker',
           }),
@@ -303,5 +305,8 @@ Draw.Rectangle = Draw.extend({
     if (this.options.continueDrawing) {
       this.enable();
     }
+  },
+  setStyle() {
+    this._layer?.setStyle(this.options.pathOptions);
   },
 });

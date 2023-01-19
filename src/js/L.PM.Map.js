@@ -110,7 +110,7 @@ const Map = L.Class.extend({
     let reenableCircleMarker = false;
     if (
       this.map.pm.Draw.CircleMarker.enabled() &&
-      this.map.pm.Draw.CircleMarker.options.editable !== options.editable
+      !!this.map.pm.Draw.CircleMarker.options.editable !== !!options.editable
     ) {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
@@ -140,12 +140,23 @@ const Map = L.Class.extend({
     if (o.panes && o.panes.layerPane && !o.panes.circlePane) {
       options.panes.circlePane = o.panes.layerPane;
     }
+    if (o.panes && o.panes.layerPane && !o.panes.circleMarkerPane) {
+      options.panes.polygonPane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.rectanglePane) {
+      options.panes.polylinePane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.textPane) {
+      options.panes.circlePane = o.panes.markerPane;
+    }
 
-    // apply the options (actually trigger the functionality)
-    this.applyGlobalOptions();
+    this.map.fire('pm:globaloptionschanged');
 
     // store options
     this.globalOptions = options;
+
+    // apply the options (actually trigger the functionality)
+    this.applyGlobalOptions();
   },
   applyGlobalOptions() {
     const layers = L.PM.Utils.findLayers(this.map);

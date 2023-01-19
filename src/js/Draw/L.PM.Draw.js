@@ -35,7 +35,9 @@ const Draw = L.Class.extend({
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
+    this.setStyle(this.options);
   },
+  setStyle() {},
   getOptions() {
     return this.options;
   },

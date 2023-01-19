@@ -5,11 +5,12 @@ const PMButton = L.Control.extend({
   includes: [EventMixin],
   options: {
     position: 'topleft',
+    disableByOtherButtons: true,
   },
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
     // replaced setOptions with this because classNames returned undefined 🤔
-    this._button = { ...this.options, ...options };
+    this._button = L.Util.extend({}, this.options, options);
   },
   onAdd(map) {
     this._map = map;
