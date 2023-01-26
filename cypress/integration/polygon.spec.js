@@ -900,6 +900,13 @@ describe('Draw & Edit Poly', () => {
     cy.window().then(({ map }) => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
+
+    cy.toolbarButton('delete').click();
+    cy.get(mapSelector).click(160, 50);
+
+    cy.window().then(({ map }) => {
+      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
   });
 
   it('requireSnapToFinish', () => {
@@ -1175,5 +1182,89 @@ describe('Draw & Edit Poly', () => {
     expect(() => {
       cy.toolbarButton('edit').click();
     }).to.not.throw();
+  });
+
+  it('remove vertex & layer by right-click', () => {
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(160, 50)
+      .click(250, 50)
+      .click(150, 250);
+
+    cy.toolbarButton('edit').click();
+    cy.hasDrawnLayers(1);
+
+    // Add Vertex
+    cy.get(mapSelector).click(205, 50);
+    cy.hasVertexMarkers(4);
+
+    // Remove Vertex
+    cy.get(mapSelector).rightclick(205, 50);
+    cy.hasVertexMarkers(3);
+
+    cy.get(mapSelector).rightclick(150, 250);
+    cy.hasDrawnLayers(0);
+  });
+
+  it('re-render marker-handlers if hole is removed by right-click', () => {
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector)
+      .click(150, 250)
+      .click(150, 50)
+      .click(650, 50)
+      .click(650, 250)
+      .click(150, 250);
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector)
+      .click(250, 200)
+      .click(250, 100)
+      .click(450, 200)
+      .click(250, 200);
+
+    cy.toolbarButton('edit').click();
+    cy.hasVertexMarkers(7);
+
+    // Remove hole
+    cy.get(mapSelector).rightclick(250, 200);
+    cy.hasVertexMarkers(4);
+  });
+
+  it('show correct shape for Polygon while drawing', () => {
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(150, 150).click(450, 150).click(450, 400);
+
+    cy.window().then(({ map }) => {
+      const polygon = map.pm.Draw.Polygon._layer;
+      expect(polygon.pm.getShape()).to.equal('Polygon');
+    });
+  });
+
+  it('change color of Polygon while drawing', () => {
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(220, 220);
+    cy.get(mapSelector).click(100, 230);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.Polygon._layer;
+      const hintLine = map.pm.Draw.Polygon._hintline;
+      expect(layer.options.color).to.eql('red');
+      expect(hintLine.options.color).to.eql('red');
+    });
   });
 });

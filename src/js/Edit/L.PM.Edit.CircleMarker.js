@@ -153,7 +153,7 @@ Edit.CircleMarker = Edit.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._helperLayers = new L.LayerGroup();
+    this._helperLayers = new L.FeatureGroup();
     this._helperLayers._pmTempLayer = true;
     this._helperLayers.addTo(map);
 

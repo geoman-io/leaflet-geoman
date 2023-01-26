@@ -161,18 +161,14 @@ const Toolbar = L.Class.extend({
     // we can't have two active modes because of possible event conflicts
     // so, we trigger a click on all currently active (toggled) buttons
 
-    // the options toolbar should not be disabled during the different modes
-    // TODO: probably need to abstract this a bit so different options are automatically
-    // disabled for different modes, like pinning for circles
-    const exceptOptionButtons = ['snappingOption'];
-
     for (const name in this.buttons) {
+      const button = this.buttons[name];
       if (
-        !exceptOptionButtons.includes(name) &&
-        this.buttons[name] !== exceptThisButton &&
-        this.buttons[name].toggled()
+        button._button.disableByOtherButtons &&
+        button !== exceptThisButton &&
+        button.toggled()
       ) {
-        this.buttons[name]._triggerClick();
+        button._triggerClick();
       }
     }
   },
@@ -548,7 +544,8 @@ const Toolbar = L.Class.extend({
       afterClick: options.afterClick,
       doToggle: options.toggle,
       toggleStatus: false,
-      disableOtherButtons: true,
+      disableOtherButtons: options.disableOtherButtons ?? true,
+      disableByOtherButtons: options.disableByOtherButtons ?? true,
       cssToggle: options.toggle,
       position: this.options.position,
       actions: options.actions || [],

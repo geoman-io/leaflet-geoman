@@ -329,6 +329,7 @@ const DragMixin = {
 
       // fire edit
       this._fireEdit();
+      this._layerEdited = true;
     }, 10);
 
     return true;

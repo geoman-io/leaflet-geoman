@@ -30,6 +30,19 @@
     "snappingButton": "Bewegter Layer an andere Layer oder Vertexe einhacken",
     "pinningButton": "Vertexe an der gleichen Position verknüpfen",
     "rotateButton": "Layer drehen",
-    "drawTextButton": "Text zeichnen"
+    "drawTextButton": "Text zeichnen",
+    "scaleButton": "Layer skalieren",
+    "autoTracingButton": "Linie automatisch nachzeichen"
+  },
+  "measurements": {
+    "totalLength": "Länge",
+    "segmentLength": "Segment Länge",
+    "area": "Fläche",
+    "radius": "Radius",
+    "perimeter": "Umfang",
+    "height": "Höhe",
+    "width": "Breite",
+    "coordinates": "Position",
+    "coordinatesMarker": "Position Marker"
   }
 }

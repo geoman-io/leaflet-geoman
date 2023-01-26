@@ -298,4 +298,27 @@ describe('Draw & Edit Line', () => {
     });
     cy.hasLayers(2);
   });
+
+  it('change color of line while drawing', () => {
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(100, 230);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.Line._layer;
+      const hintLine = map.pm.Draw.Line._hintline;
+      expect(layer.options.color).to.eql('red');
+      expect(hintLine.options.color).to.eql('red');
+    });
+  });
 });

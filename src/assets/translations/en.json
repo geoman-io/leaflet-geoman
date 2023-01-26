@@ -30,6 +30,19 @@
     "snappingButton": "Snap dragged marker to other layers and vertices",
     "pinningButton": "Pin shared vertices together",
     "rotateButton": "Rotate Layers",
-    "drawTextButton": "Draw Text"
+    "drawTextButton": "Draw Text",
+    "scaleButton": "Scale Layers",
+    "autoTracingButton": "Auto trace Line"
+  },
+  "measurements": {
+    "totalLength": "Length",
+    "segmentLength": "Segment length",
+    "area": "Area",
+    "radius": "Radius",
+    "perimeter": "Perimeter",
+    "height": "Height",
+    "width": "Width",
+    "coordinates": "Position",
+    "coordinatesMarker": "Position Marker"
   }
 }

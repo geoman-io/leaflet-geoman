@@ -19,8 +19,8 @@ const GlobalDragMode = {
     }
 
     // add map handler
-    this.map.on('layeradd', this.throttledReInitDrag, this);
     this.map.on('layeradd', this._layerAddedDrag, this);
+    this.map.on('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
@@ -37,6 +37,7 @@ const GlobalDragMode = {
     });
 
     // remove map handler
+    this.map.off('layeradd', this._layerAddedDrag, this);
     this.map.off('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
