@@ -26,7 +26,7 @@ const Edit = L.Class.extend({
     removeVertexValidation: undefined,
     addVertexValidation: undefined,
     moveVertexValidation: undefined,
-    editable: false,
+    editableCircleMarker: false,
     editableCircle: true,
   },
   setOptions(options) {

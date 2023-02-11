@@ -27,6 +27,8 @@ Edit.Circle = Edit.CircleMarker.extend({
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
   },
   _extendingApplyOptions(){},
+  _syncMarkers(){},
+  _removeMarker(){},
   _onDragStart(){},
   _extedingMarkerDragEnd(){},
   _updateHiddenPolyCircle() {

@@ -100,11 +100,17 @@ const Map = L.Class.extend({
     // merge passed and existing options
     const options = merge(this.globalOptions, o);
 
+    // TODO: remove with next major release
+    if(options.editable){
+      options.editableCircleMarker = options.editable;
+      delete options.editable;
+    }
+
     // check if switched the editable mode for CircleMarker while drawing
     let reenableCircleMarker = false;
     if (
       this.map.pm.Draw.CircleMarker.enabled() &&
-      !!this.map.pm.Draw.CircleMarker.options.editable !== !!options.editable
+      !!this.map.pm.Draw.CircleMarker.options.editableCircleMarker !== !!options.editableCircleMarker
     ) {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;

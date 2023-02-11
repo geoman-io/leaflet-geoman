@@ -199,7 +199,7 @@ const DragMixin = {
       this._layer instanceof L.CircleMarker
     ) {
 
-      let _editableOption = 'editable';
+      let _editableOption = 'editableCircleMarker';
       if(this._layer instanceof L.Circle){
         _editableOption = 'editableCircle';
       }
@@ -372,7 +372,7 @@ const DragMixin = {
 
     if (
       (this._layer instanceof L.Circle && this._layer.options.editableCircle) ||
-      (this._layer instanceof L.CircleMarker && this._layer.options.editable)
+      (this._layer instanceof L.CircleMarker && this._layer.options.editableCircleMarker)
     ) {
       // create the new coordinates array
       const newCoords = moveCoords([this._layer.getLatLng()]);

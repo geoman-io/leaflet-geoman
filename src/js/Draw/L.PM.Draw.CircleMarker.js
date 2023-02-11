@@ -11,13 +11,18 @@ Draw.CircleMarker = Draw.extend({
     this._BaseCircleClass = L.CircleMarker;
     this._minRadiusOption = 'minRadiusCircleMarker';
     this._maxRadiusOption = 'maxRadiusCircleMarker';
-    this._editableOption = 'editable';
+    this._editableOption = 'editableCircleMarker';
     this._defaultRadius = 10;
   },
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
+    // TODO: remove with next major release
+    if(this.options.editable){
+      this.options.editableCircleMarker = this.options.editable;
+      delete this.options.editable;
+    }
 
     // change enabled state
     this._enabled = true;
