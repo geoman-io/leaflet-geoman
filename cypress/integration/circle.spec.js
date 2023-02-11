@@ -306,4 +306,33 @@ describe('Draw Circle', () => {
       expect(hintLine.options.color).to.eql('red');
     });
   });
+
+  it('fires disable event only if it was enabled', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ editable: true });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 300);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+
+      let disableFired = false;
+      layer.on('pm:disable',()=>{
+        disableFired = true;
+      });
+      layer.pm.disable();
+      expect(disableFired).to.eql(false);
+
+      layer.pm.enable();
+      layer.pm.disable();
+      expect(disableFired).to.eql(true);
+    });
+  });
 });

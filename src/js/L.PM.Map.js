@@ -109,6 +109,15 @@ const Map = L.Class.extend({
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
     }
+    // check if switched the editable mode for Circle while drawing
+    let reenableCircle = false;
+    if (
+      this.map.pm.Draw.Circle.enabled() &&
+      !!this.map.pm.Draw.Circle.options.editableCircle !== !!options.editableCircle
+    ) {
+      this.map.pm.Draw.Circle.disable();
+      reenableCircle = true;
+    }
 
     // enable options for Drawing Shapes
     this.map.pm.Draw.shapes.forEach((shape) => {
@@ -117,6 +126,10 @@ const Map = L.Class.extend({
 
     if (reenableCircleMarker) {
       this.map.pm.Draw.CircleMarker.enable();
+    }
+
+    if (reenableCircle) {
+      this.map.pm.Draw.Circle.enable();
     }
 
     // enable options for Editing
