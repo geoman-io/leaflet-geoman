@@ -26,6 +26,8 @@ Edit.Text = Edit.extend({
     }
     this.applyOptions();
 
+    this._safeToCacheDragState = true;
+
     this._focusChange();
     this.textArea.readOnly = false;
     this.textArea.classList.remove('pm-disabled');

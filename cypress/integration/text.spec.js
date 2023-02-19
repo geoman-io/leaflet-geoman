@@ -447,6 +447,27 @@ describe('Text Layer', () => {
         expect(textarea.selectionEnd).to.eq(0);
       });
     });
+
+    it('enable map dragging after blur', () => {
+      cy.window().then(({ map, L }) => {
+        const textLayer = L.marker(map.getCenter(), {
+          textMarker: true,
+          text: 'Text Layer',
+        }).addTo(map);
+
+        expect(map.dragging.enabled()).to.eq(true);
+
+        const textarea = textLayer.pm.getElement();
+        textLayer.pm.enable();
+        textarea.focus();
+
+        expect(map.dragging.enabled()).to.eq(false);
+
+        textLayer.pm.disable();
+
+        expect(map.dragging.enabled()).to.eq(true);
+      });
+    });
   });
   describe('Events', () => {
     it("fire event 'pm:textchange'", () => {
