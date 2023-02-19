@@ -146,6 +146,10 @@ const RotateMixin = {
       return;
     }
 
+    if(this.rotateEnabled()){
+      this.disableRotate();
+    }
+
     // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
     const options = {
       fill: false,
@@ -155,7 +159,9 @@ const RotateMixin = {
     };
 
     // we create a temp polygon for rotation
-    this._rotatePoly = L.polygon(this._layer.getLatLngs(), options).addTo(
+    this._rotatePoly = L.polygon(this._layer.getLatLngs(), options);
+    this._rotatePoly._pmTempLayer = true;
+    this._rotatePoly.addTo(
       this._layer._map
     );
     this._rotatePoly.pm._setAngle(this.getAngle());
@@ -167,7 +173,6 @@ const RotateMixin = {
     });
     // we connect the temp polygon (that will be enabled for rotation) with the current layer, so that we can rotate the current layer too
     this._rotatePoly.pm._rotationLayer = this._layer;
-    this._rotatePoly._pmTempLayer = true;
     this._rotatePoly.pm.enable();
 
     // store the original latlngs
