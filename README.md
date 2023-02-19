@@ -37,7 +37,7 @@
 [Please consider sponsoring its development](https://github.com/sponsors/codeofsumit)  
   
 #### Leaflet-Geoman Pro ⭐  
-Features marked with ⭐ in this documentation are available in Leaflet-Geoman Pro. [Purchase Pro](https://geoman.io/leaflet-geoman#pro) or [get in touch](mailto:sumit@geoman.io)  
+Features marked with ⭐ in this documentation are available in Leaflet-Geoman Pro. [Purchase Pro](https://geoman.io/leaflet-geoman-pro#pricing) or [get in touch](mailto:sumit@geoman.io)  
   
 ## Documentation  
   
@@ -270,36 +270,36 @@ The following methods are available on `map.pm`:
 
 See the available options in the table below.
 
-| Option                | Default                               | Description                                                                                                                                                                                                     |
-| :-------------------- | :------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| snappable             | `true`                                | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                                                                                                       |
-| snapDistance          | `20`                                  | The distance to another vertex when a snap should happen.                                                                                                                                                       |
-| snapMiddle            | `false`                               | Allow snapping in the middle of two vertices (middleMarker).                                                                                                                                                    |
-| snapSegment           | `true`                                | Allow snapping between two vertices.                                                                                                                                                                            |
-| requireSnapToFinish   | `false`                               | Require the last point of a shape to be snapped.                                                                                                                                                                |
-| tooltips              | `true`                                | Show helpful tooltips for your user.                                                                                                                                                                            |
-| allowSelfIntersection | `true`                                | Allow self intersections.                                                                                                                                                                                       |
+| Option                | Default                                   | Description                                                                                                                                                                                               |
+| :-------------------- | :---------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| snappable             | `true`                                    | Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the `ALT` key.                                                                                                 |
+| snapDistance          | `20`                                      | The distance to another vertex when a snap should happen.                                                                                                                                                 |
+| snapMiddle            | `false`                                   | Allow snapping in the middle of two vertices (middleMarker).                                                                                                                                              |
+| snapSegment           | `true`                                    | Allow snapping between two vertices.                                                                                                                                                                      |
+| requireSnapToFinish   | `false`                                   | Require the last point of a shape to be snapped.                                                                                                                                                          |
+| tooltips              | `true`                                    | Show helpful tooltips for your user.                                                                                                                                                                      |
+| allowSelfIntersection | `true`                                    | Allow self intersections.                                                                                                                                                                                 |
 | templineStyle         | `{ color: '#3388ff' },`                   | [Leaflet path options](https://leafletjs.com/reference.html#path) for the lines between drawn vertices/markers.                                                                                           |
 | hintlineStyle         | `{ color: '#3388ff', dashArray: [5, 5] }` | [Leaflet path options](https://leafletjs.com/reference.html#path) for the helper line between last drawn vertex and the cursor.                                                                           |
-| pathOptions           | `null`                                | [Leaflet path options](https://leafletjs.com/reference.html#path) for the drawn layer (Only for L.Path layers).                                                                                           |
-| markerStyle           | `{ draggable: true }`                 | [Leaflet marker options](https://leafletjs.com/reference.html#marker-icon) (only for drawing markers).                                                                                                    |
-| cursorMarker          | `true`                                | Show a marker at the cursor.                                                                                                                                                                                    |
-| finishOn              | `null`                                | Leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click). `snap` is also an option for Line, Polygon and Rectangle. |
-| hideMiddleMarkers     | `false`                               | Hide the middle Markers in Edit Mode from Polyline and Polygon.                                                                                                                                                 |
-| minRadiusCircle       | `null`                                | Set the min radius of a `Circle`.                                                                                                                                                                               |
-| maxRadiusCircle       | `null`                                | Set the max radius of a `Circle`.                                                                                                                                                                               |
-| minRadiusCircleMarker | `null`                                | Set the min radius of a `CircleMarker` when editable is active.                                                                                                                                                 |
-| maxRadiusCircleMarker | `null`                                | Set the max radius of a `CircleMarker` when editable is active.                                                                                                                                                 |
-| editable              | `false`                               | Makes a `CircleMarker` editable like a `Circle`.                                                                                                                                                                |
-| markerEditable        | `true`                                | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them).                                                                                       |
-| continueDrawing       | `false` / `true`                      | Draw Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.                                          |
-| rectangleAngle        | `0`                                   | Rectangle can drawn with a rotation angle 0-360 degrees                                                                                                                                                         |
-| layersToCut           | `[]`                                  | Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again.                                              |
-| textOptions           | `{}`                                  | Text Layer options. Look into [textOptions](#text-layer-drawing).                                                                                                                                               |
-| closedPolygonEdge     | `false`                               | Closes the Polygon while drawing ⭐.                                                                                                                                                                               |
-| closedPolygonFill     | `false`                               | Shows the Polygon fill while drawing ⭐.                                                                                                                                                                           |
-| autoTracing           | `false`                               | Enables auto tracing while drawing ⭐.                                                                                                                                                                             |
-| allowCircleCut        | `true`                                | Allow Cutting of a Circle ⭐.                                                                                                                                                                                    |
+| pathOptions           | `null`                                    | [Leaflet path options](https://leafletjs.com/reference.html#path) for the drawn layer (Only for L.Path layers).                                                                                           |
+| markerStyle           | `{ draggable: true }`                     | [Leaflet marker options](https://leafletjs.com/reference.html#marker-icon) (only for drawing markers).                                                                                                    |
+| cursorMarker          | `true`                                    | Show a marker at the cursor.                                                                                                                                                                              |
+| finishOn              | `null`                                    | Leaflet layer event to finish the drawn shape, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click). `snap` is also an option for Line, Polygon and Rectangle. |
+| hideMiddleMarkers     | `false`                                   | Hide the middle Markers in Edit Mode from Polyline and Polygon.                                                                                                                                           |
+| minRadiusCircle       | `null`                                    | Set the min radius of a `Circle`.                                                                                                                                                                         |
+| maxRadiusCircle       | `null`                                    | Set the max radius of a `Circle`.                                                                                                                                                                         |
+| minRadiusCircleMarker | `null`                                    | Set the min radius of a `CircleMarker` when editable is active.                                                                                                                                           |
+| maxRadiusCircleMarker | `null`                                    | Set the max radius of a `CircleMarker` when editable is active.                                                                                                                                           |
+| editable              | `false`                                   | Makes a `CircleMarker` editable like a `Circle`.                                                                                                                                                          |
+| markerEditable        | `true`                                    | Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them).                                                                                 |
+| continueDrawing       | `false` / `true`                          | Draw Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to `true` for Markers and CircleMarkers and `false` for all other layers.                                    |
+| rectangleAngle        | `0`                                       | Rectangle can drawn with a rotation angle 0-360 degrees                                                                                                                                                   |
+| layersToCut           | `[]`                                      | Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again.                                        |
+| textOptions           | `{}`                                      | Text Layer options. Look into [textOptions](#text-layer-drawing).                                                                                                                                         |
+| closedPolygonEdge     | `false`                                   | Closes the Polygon while drawing ⭐.                                                                                                                                                                      |
+| closedPolygonFill     | `false`                                   | Shows the Polygon fill while drawing ⭐.                                                                                                                                                                  |
+| autoTracing           | `false`                                   | Enables auto tracing while drawing ⭐.                                                                                                                                                                    |
+| allowCircleCut        | `true`                                    | Allow Cutting of a Circle ⭐.                                                                                                                                                                             |
 
 This options can only set over `map.pm.setGlobalOptions({})`:
 
@@ -337,14 +337,14 @@ map.on('pm:drawstart', ({ workingLayer }) => {
 
 Here's a list of layer events you can listen to:
 
-| Event             | Params | Description                                                                                                           | Output                                                                                                  |
-| :---------------- | :----- | :-------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
-| pm:vertexadded    | `e`    | Called when a new vertex is added. Payload includes the new vertex, it's marker, index, working layer and shape type. | `shape`, `workingLayer`, `marker`, `latlng`                                                             |
-| pm:snapdrag       | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation.                | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
-| pm:snap           | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`.                                                 | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
-| pm:unsnap         | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`.                                               | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
-| pm:centerplaced   | `e`    | Called when the center of a circle is placed/moved.                                                                   | `shape`, `workingLayer`, `latlng`                                                                       |
-| pm:change         | `e`    | Fired coordinates of the layer changed.                                                                               | `layer`, `latlngs`, `shape`                                                                             |
+| Event           | Params | Description                                                                                                           | Output                                                                                                  |
+| :-------------- | :----- | :-------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| pm:vertexadded  | `e`    | Called when a new vertex is added. Payload includes the new vertex, it's marker, index, working layer and shape type. | `shape`, `workingLayer`, `marker`, `latlng`                                                             |
+| pm:snapdrag     | `e`    | Fired during a marker move/drag. Payload includes info about involved layers and snapping calculation.                | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:snap         | `e`    | Fired when a vertex is snapped. Payload is the same as in `snapdrag`.                                                 | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:unsnap       | `e`    | Fired when a vertex is unsnapped. Payload is the same as in `snapdrag`.                                               | `shape`, `distance`, `layer` = `workingLayer`, `marker`, `layerInteractedWith`, `segment`, `snapLatLng` |
+| pm:centerplaced | `e`    | Called when the center of a circle is placed/moved.                                                                   | `shape`, `workingLayer`, `latlng`                                                                       |
+| pm:change       | `e`    | Fired coordinates of the layer changed.                                                                               | `layer`, `latlngs`, `shape`                                                                             |
 
 For making the snapping to other layers selective, you can add the "snapIgnore" option to your layers to disable the snapping to them during drawing.
 
@@ -412,9 +412,9 @@ See the available options in the table below.
 | allowCutting                   | `true`        | Layer can be prevented from cutting.                                                                                                                                                                                          |
 | allowRotation                  | `true`        | Layer can be prevented from rotation.                                                                                                                                                                                         |
 | draggable                      | `true`        | Dragging can be disabled for the layer.                                                                                                                                                                                       |
-| addVertexOn                    | `click`       | Leaflet layer event to add a vertex to a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click).                                                              |
+| addVertexOn                    | `click`       | Leaflet layer event to add a vertex to a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click).                                                                    |
 | addVertexValidation            | `undefined`   | A function for validation if a vertex (of a Line / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.    |
-| removeVertexOn                 | `contextmenu` | Leaflet layer event to remove a vertex from a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click).                                                         |
+| removeVertexOn                 | `contextmenu` | Leaflet layer event to remove a vertex from a Line or Polygon, like `'dblclick'`. [Here's a list](http://leafletjs.com/reference.html#interactive-layer-click).                                                               |
 | removeVertexValidation         | `undefined`   | A function for validation if a vertex (of a Line / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. |
 | moveVertexValidation           | `undefined`   | A function for validation if a vertex / helper-marker is allowed to move / drag. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed.  |
 | limitMarkersToCount            | `-1`          | Shows only `n` markers closest to the cursor. Use `-1` for no limit.                                                                                                                                                          |
@@ -423,7 +423,7 @@ See the available options in the table below.
 | limitMarkersToClick            | `false`       | Shows markers only after the layer was clicked. ⭐                                                                                                                                                                            |
 | pinning                        | `false`       | Pin shared vertices/markers together during edit [Details](#pinning-⭐). ⭐                                                                                                                                                   |
 | allowPinning                   | `true`        | Layer can be prevented from pinning.⭐                                                                                                                                                                                        |
-| allowScale                     | `true`        | Layer can be prevented from scaling.⭐                                                                                                                                                                                   |
+| allowScale                     | `true`        | Layer can be prevented from scaling.⭐                                                                                                                                                                                        |
 | centerScaling                  | `true`        | Scale origin is the center, else it is the opposite corner. If `false` Alt-Key can be used. [Scale Mode](#scale-mode-). ⭐                                                                                                    |
 | uniformScaling                 | `true`        | Width and height are scaled with the same ratio. If `false` Shift-Key can be used. [Scale Mode](#scale-mode-). ⭐                                                                                                             |
 | allowAutoTracing               | `true`        | Layer can be prevented from auto tracing.⭐                                                                                                                                                                                   |
@@ -459,6 +459,7 @@ The following events are available on a layer instance:
 | pm:intersect       | `e`    | When `allowSelfIntersection: false`, this event is fired as soon as a self-intersection is detected.   | `layer`, `intersection`, `shape`                                                                        |
 | pm:centerplaced    | `e`    | Fired when the center of a circle is moved.                                                            | `layer`, `latlng`, `shape`                                                                              |
 | pm:change          | `e`    | Fired coordinates of the layer changed.                                                                | `layer`, `latlngs`, `shape`                                                                             |
+
 The following events are available on a map instance:
 
 | Event                    | Params | Description                      | Output           |
@@ -508,14 +509,14 @@ The following methods are available on `map.pm`:
 
 The following events are available on a layer instance:
 
-| Event             | Params | Description                                               | Output                                                                    |
-| :---------------- | :----- | :-------------------------------------------------------- | :------------------------------------------------------------------------ |
-| pm:dragstart      | `e`    | Fired when a layer starts being dragged.                  | `layer`, `shape`                                                          |
-| pm:drag           | `e`    | Fired when a layer is dragged.                            | `layer`, `containerPoint`,`latlng`, `layerPoint`,`originalEvent`, `shape` |
-| pm:dragend        | `e`    | Fired when a layer stops being dragged.                   | `layer`, `shape`                                                          |
-| pm:dragenable     | `e`    | Fired when Drag Mode on a layer is enabled.               | `layer`, `shape`                                                          |
-| pm:dragdisable    | `e`    | Fired when Drag Mode on a layer is disabled.              | `layer`, `shape`                                                          |
-| pm:change         | `e`    | Fired coordinates of the layer changed.                   | `layer`, `latlngs`, `shape`                                                |
+| Event          | Params | Description                                  | Output                                                                    |
+| :------------- | :----- | :------------------------------------------- | :------------------------------------------------------------------------ |
+| pm:dragstart   | `e`    | Fired when a layer starts being dragged.     | `layer`, `shape`                                                          |
+| pm:drag        | `e`    | Fired when a layer is dragged.               | `layer`, `containerPoint`,`latlng`, `layerPoint`,`originalEvent`, `shape` |
+| pm:dragend     | `e`    | Fired when a layer stops being dragged.      | `layer`, `shape`                                                          |
+| pm:dragenable  | `e`    | Fired when Drag Mode on a layer is enabled.  | `layer`, `shape`                                                          |
+| pm:dragdisable | `e`    | Fired when Drag Mode on a layer is disabled. | `layer`, `shape`                                                          |
+| pm:change      | `e`    | Fired coordinates of the layer changed.      | `layer`, `latlngs`, `shape`                                               |
 
 The following events are available on a map instance:
 
@@ -626,6 +627,7 @@ The rotation center is the center (`layer.getCenter()`) of a Polygon with the La
 **Rotation of Rectangles:**
 
 If a rotated rectangle is created programmatically, it is important to set the initial angle with `setInitAngle(degrees)`.
+
 ```js
 const rect = L.rectangle(coords).addTo(map); // the Leaflet constructor always creates a non-rotated rectangle
 rect.setLatLngs(coords); // setting the rotated coordinates
@@ -661,14 +663,14 @@ The following methods are available for layers under `layer.pm`:
 
 The following events are available on a layer instance:
 
-| Event             | Params | Description                                           | Output                                                                               |
-| :---------------- | :----- | :---------------------------------------------------- | :----------------------------------------------------------------------------------- |
-| pm:rotateenable   | `e`    | Fired when rotation is enabled for a layer.           | `layer`, `helpLayer`, `shape`                                                        |
-| pm:rotatedisable  | `e`    | Fired when rotation is disabled for a layer.          | `layer`, `shape`                                                                     |
-| pm:rotatestart    | `e`    | Fired when rotation starts on a layer.                | `layer`, `helpLayer`, `startAngle`, `originLatLngs`                                  |
-| pm:rotate         | `e`    | Fired when a layer is rotated.                        | `layer`, `helpLayer`, `startAngle`, `angle`, `angleDiff`, `oldLatLngs`, `newLatLngs` |
-| pm:rotateend      | `e`    | Fired when rotation ends on a layer.                  | `layer`, `helpLayer`, `startAngle`, `angle`, `originLatLngs`, `newLatLngs`           |
-| pm:change         | `e`    | Fired coordinates of the layer changed.               | `layer`, `latlngs`, `shape`                                                           |
+| Event            | Params | Description                                  | Output                                                                               |
+| :--------------- | :----- | :------------------------------------------- | :----------------------------------------------------------------------------------- |
+| pm:rotateenable  | `e`    | Fired when rotation is enabled for a layer.  | `layer`, `helpLayer`, `shape`                                                        |
+| pm:rotatedisable | `e`    | Fired when rotation is disabled for a layer. | `layer`, `shape`                                                                     |
+| pm:rotatestart   | `e`    | Fired when rotation starts on a layer.       | `layer`, `helpLayer`, `startAngle`, `originLatLngs`                                  |
+| pm:rotate        | `e`    | Fired when a layer is rotated.               | `layer`, `helpLayer`, `startAngle`, `angle`, `angleDiff`, `oldLatLngs`, `newLatLngs` |
+| pm:rotateend     | `e`    | Fired when rotation ends on a layer.         | `layer`, `helpLayer`, `startAngle`, `angle`, `originLatLngs`, `newLatLngs`           |
+| pm:change        | `e`    | Fired coordinates of the layer changed.      | `layer`, `latlngs`, `shape`                                                          |
 
 The following events are available on a map instance:
 
@@ -859,9 +861,9 @@ The following options are additionally to the [Draw](#draw-mode) and [Edit Mode]
 
 The following events are available on a map instance:
 
-| Event                     | Params | Description                               | Output                                                 |
-| :------------------------ | :----- | :---------------------------------------- | :----------------------------------------------------- |
-| pm:globaloptionschanged   | `e`    | Fired when global options are changed.    |                                                        |
+| Event                   | Params | Description                            | Output |
+| :---------------------- | :----- | :------------------------------------- | :----- |
+| pm:globaloptionschanged | `e`    | Fired when global options are changed. |        |
 
 Some details about a few more powerful options:
 
@@ -906,7 +908,6 @@ See the available options in the table below.
 | width              | `true`   | Shows the width in the tooltip `Rectangle`.                                                                           |
 | coordinates        | `true`   | Shows the coordinates in the tooltip `Marker`, `CircleMarker` and the current dragged marker while drawing / editing. |
 
-
 ##### AutoTracing ⭐
 
 ![AutoTracing Demo](https://user-images.githubusercontent.com/19800037/196027144-7bc696aa-6b5d-4903-8a21-2df0e2d05e4e.gif)
@@ -914,25 +915,24 @@ See the available options in the table below.
 While drawing / cutting it is possible to auto trace the coordinates of another Layer. Exclusive for Leaflet-Geoman Pro ⭐
 
 ```js
-map.pm.setGlobalOptions({ autoTracing: true })
+map.pm.setGlobalOptions({ autoTracing: true });
 ```
 
 See the available options in the table below.
 
-| Option             | Default  | Description                                                                                                                             |
-| :----------------- | :------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
-| autoTracing        | `true`   | Enables auto tracing while drawing.                                                                                                     |
-| autoTraceMaxZoom   | `10`     | Until which zoom level the coordinates of the layers in the viewport will be used. |
-| autoTraceMaxDistance | `20`     | The distance to the layer when a snap for auto tracing should happen. |
+| Option               | Default | Description                                                                        |
+| :------------------- | :------ | :--------------------------------------------------------------------------------- |
+| autoTracing          | `true`  | Enables auto tracing while drawing.                                                |
+| autoTraceMaxZoom     | `10`    | Until which zoom level the coordinates of the layers in the viewport will be used. |
+| autoTraceMaxDistance | `20`    | The distance to the layer when a snap for auto tracing should happen.              |
 
 Here's a list of map events you can listen to:
 
-| Event                    | Params | Description                                                                             | Output                    |
-| :----------------------- | :----- | :-------------------------------------------------------------------------------------- | :------------------------ |
-| pm:autotracestart        | `e`    | Fired when auto tracing is started and connected with a layer.                          |                           |
-| pm:autotracelinechange   | `e`    | Fired when auto tracing hintline is changed.                                            | `hintLatLngs`             |
-| pm:autotraceend          | `e`    | Fired when auto tracing is ended.                                                       |                           |
-
+| Event                  | Params | Description                                                    | Output        |
+| :--------------------- | :----- | :------------------------------------------------------------- | :------------ |
+| pm:autotracestart      | `e`    | Fired when auto tracing is started and connected with a layer. |               |
+| pm:autotracelinechange | `e`    | Fired when auto tracing hintline is changed.                   | `hintLatLngs` |
+| pm:autotraceend        | `e`    | Fired when auto tracing is ended.                              |               |
 
 ### LayerGroup
 
@@ -1119,19 +1119,19 @@ map.pm.Toolbar.getBlockPositions();
 map.pm.Toolbar.createCustomControl(options);
 ```
 
-| Option                  | Default  | Description                                                                          |
-| :---------------------- | :------- | :----------------------------------------------------------------------------------- |
-| name                    | Required | Name of the control.                                                                 |
-| block                   | ''       | block of the control. `draw`, `edit`, `custom`, `options`⭐                          |
-| title                   | ''       | Text showing when you hover the control.                                             |
-| className               | ''       | CSS class with the Icon.                                                             |
-| onClick                 | -        | Function fired when clicking the control.                                            |
-| afterClick              | -        | Function fired after clicking the control.                                           |
-| actions                 | [ ]      | Action that appears as tooltip. Look under [Actions](#actions) for more information. |
-| toggle                  | true     | Control can be toggled.                                                              |
-| disabled                | false    | Control is disabled.                                                                 |
-| disableOtherButtons     | true    | Control disables other buttons if enabled.                                            |
-| disableByOtherButtons   | true    | Control disabled if other buttons is enabled.                                         |
+| Option                | Default  | Description                                                                          |
+| :-------------------- | :------- | :----------------------------------------------------------------------------------- |
+| name                  | Required | Name of the control.                                                                 |
+| block                 | ''       | block of the control. `draw`, `edit`, `custom`, `options`⭐                          |
+| title                 | ''       | Text showing when you hover the control.                                             |
+| className             | ''       | CSS class with the Icon.                                                             |
+| onClick               | -        | Function fired when clicking the control.                                            |
+| afterClick            | -        | Function fired after clicking the control.                                           |
+| actions               | [ ]      | Action that appears as tooltip. Look under [Actions](#actions) for more information. |
+| toggle                | true     | Control can be toggled.                                                              |
+| disabled              | false    | Control is disabled.                                                                 |
+| disableOtherButtons   | true     | Control disables other buttons if enabled.                                           |
+| disableByOtherButtons | true     | Control disabled if other buttons is enabled.                                        |
 
 #### Inherit from an Existing Control
 
