@@ -589,6 +589,7 @@ declare module 'leaflet' {
         startCircle?: string;
         finishCircle?: string;
         placeCircleMarker?: string;
+        placeText?: string;
       };
 
       actions?: {
@@ -608,7 +609,25 @@ declare module 'leaflet' {
         cutButton?: string;
         deleteButton?: string;
         drawCircleMarkerButton?: string;
+        snappingButton?: string;
+        pinningButton?: string;
+        rotateButton?: string;
+        drawTextButton?: string;
+        scaleButton?: string;
+        autoTracingButton?: string;
       };
+
+      measurements?: {
+        totalLength?: string;
+        segmentLength?: string;
+        area?: string;
+        radius?: string;
+        perimeter?: string;
+        height?: string;
+        width?: string;
+        coordinates?: string;
+        coordinatesMarker?: string;
+      }
     }
 
     type ACTION_NAMES = 'cancel' | 'removeLastVertex' | 'finish' | 'finishMode';
