@@ -16,15 +16,15 @@
     "removeLastVertex": "Fjern forrige punkt"
   },
   "buttonTitles": {
-    "drawMarkerButton": "Tegn Punkt",
-    "drawPolyButton": "Tegn Flate",
-    "drawLineButton": "Tegn Linje",
-    "drawCircleButton": "Tegn Sirkel",
+    "drawMarkerButton": "Tegn punkt",
+    "drawPolyButton": "Tegn flate",
+    "drawLineButton": "Tegn linje",
+    "drawCircleButton": "Tegn sirkel",
     "drawRectButton": "Tegn rektangel",
-    "editButton": "Rediger Objekter",
-    "dragButton": "Dra Objekter",
-    "cutButton": "Kutt Objekter",
-    "deleteButton": "Fjern Objekter",
+    "editButton": "Rediger objekter",
+    "dragButton": "Dra objekter",
+    "cutButton": "Kutt objekter",
+    "deleteButton": "Fjern objekter",
     "drawCircleMarkerButton": "Tegn sirkel-punkt",
     "snappingButton": "Fest dratt punkt til andre objekter og punkt",
     "pinningButton": "Pin delte punkt sammen"
