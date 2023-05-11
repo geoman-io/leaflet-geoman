@@ -1,5 +1,5 @@
 <p align="center">  
-  <a href="https://geoman.io/leaflet-geoman">  
+  <a href="https://geoman.io">  
     <img width="130" alt="Geoman Logo" src="https://file-jxzyjgqwut.now.sh/" />  
   </a>  
 </p>  
@@ -8,7 +8,7 @@
 </h1>  
 <p align="center">  
   <strong>Leaflet Plugin For Creating And Editing Geometry Layers</strong><br>  
-  Draw, Edit, Drag, Cut, Rotate, Split⭐, Scale⭐, Measure⭐, Snap and Pin⭐ Layers<br>  
+  Draw, Edit, Drag, Cut, Rotate, Split, Scale, Measure, Snap and Pin Layers<br>  
   Supports Markers, CircleMarkers, Polylines, Polygons, Circles, Rectangles, ImageOverlays, LayerGroups, GeoJSON, MultiLineStrings and MultiPolygons  
 </p>  
 <p align="center">  
@@ -17,117 +17,105 @@
   </a>  
   <a href="#">  
     <img src="https://github.com/geoman-io/leaflet-geoman/workflows/Tests/badge.svg" alt="" />  
-  </a>  
-  <a href="https://github.com/geoman-io/leaflet-geoman">  
-    <img src="http://githubbadges.com/star.svg?user=geoman-io&repo=leaflet-geoman&style=default" alt="star this repo" />  
-  </a>  
-  <a href="https://www.npmjs.com/package/leaflet.pm">  
-    <img src="https://img.shields.io/npm/dt/leaflet.pm.svg" alt="NPM Downloads" />  
-  </a>  
+  </a>
   <a href="https://www.npmjs.com/package/@geoman-io/leaflet-geoman-free">  
     <img src="https://img.shields.io/npm/dt/@geoman-io/leaflet-geoman-free.svg" alt="NPM Downloads" />  
   </a>  
 </p>  
   
-## [👉 Live Demo 👈](https://geoman.io/leaflet-geoman)  
+## [👉 Live Demo 👈](https://www.geoman.io/demo)  
   
-![Demo](https://file-gmeileqfmg.now.sh/)  
+![Demo](https://file-gmeileqfmg.now.sh/) 
   
-### Using Leaflet-Geoman in production?  
-[Please consider sponsoring its development](https://github.com/sponsors/codeofsumit)  
-  
-#### Leaflet-Geoman Pro ⭐  
-Features marked with ⭐ in this documentation are available in Leaflet-Geoman Pro. [Purchase Pro](https://geoman.io/leaflet-geoman-pro#pricing) or [get in touch](mailto:sumit@geoman.io)  
-  
-## Documentation  
-  
-- [Installation](#installation)  
-- [Getting Started](#getting-started)  
-- [Draw Mode](#draw-mode)  
-- [Edit Mode](#edit-mode)  
-- [Drag Mode](#drag-mode)  
-- [Removal Mode](#removal-mode)  
-- [Cut Mode](#cut-mode)  
-- [Rotation Mode](#rotation-mode)  
+### Leaflet-Geoman Pro ⭐  
+Features marked with ⭐ in this documentation are only available with a Pro license.
+
+[View Pricing](https://www.geoman.io/#pricing)
+
+## Documentation
+
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Draw Mode](#draw-mode)
+- [Edit Mode](#edit-mode)
+- [Drag Mode](#drag-mode)
+- [Removal Mode](#removal-mode)
+- [Cut Mode](#cut-mode)
+- [Rotation Mode](#rotation-mode)
 - [Split Mode ⭐](#split-mode-)
 - [Scale Mode ⭐](#scale-mode-)
 - [Text Layer](#text-layer)
-- [Options](#options)  
+- [Options](#options)
   - [Snapping](#snapping)
   - [Pinning ⭐](#pinning-)
   - [Measurement ⭐](#measurement-)
   - [AutoTracing ⭐](#autotracing-)
 - [LayerGroup](#layergroup)
-- [Customization](#customize)  
-- [Toolbar](#toolbar)  
-- [Utils](#utils)  
-- [Lazy loading](#lazy-loading)  
-- [Need a feature? | Existing Feature Requests](https://github.com/geoman-io/Leaflet-Geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)  
-  
-  
-### Installation  
-  
-#### Migrate from Leaflet.PM  
-  
-```  
-npm uninstall leaflet.pm  
-npm i @geoman-io/leaflet-geoman-free  
-```  
-That's it.  
-  
-#### Install via npm  
-  
-```  
-npm i @geoman-io/leaflet-geoman-free  
-```  
-  
-#### Install Manually  
-  
+- [Customization](#customize)
+- [Toolbar](#toolbar)
+- [Utils](#utils)
+- [Lazy loading](#lazy-loading)
+- [Need a feature? | Existing Feature Requests](https://github.com/geoman-io/Leaflet-Geoman/issues?q=is%3Aissue+is%3Aclosed+label%3A%22feature+request%22+sort%3Areactions-%2B1-desc)
+
+### Installation
+
+#### Install via npm
+
+```
+npm i @geoman-io/leaflet-geoman-free
+```
+
+#### Install Manually
+
 Download  
 [`leaflet-geoman.css`](https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css) and  
 [`leaflet-geoman.min.js`](https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js)  
-and include them in your project.  
-  
-#### Include via CDN  
-  
-CSS  
-  
-<!-- prettier-ignore -->  
-```html  
-  
-<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />  
-```  
-  
-JS  
-  
-```html  
-<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>  
-```  
-  
-#### Include as ES6 Module  
-  
-```js  
-import '@geoman-io/leaflet-geoman-free';  
-import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';  
-```  
-  
-### Getting Started  
-  
-#### Init Leaflet-Geoman  
-  
+and include them in your project.
+
+#### Include via CDN
+
+CSS
+
+<!-- prettier-ignore -->
+```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"
+/>
+```
+
+JS
+
+```html
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+```
+
+#### Include as ES6 Module
+
+```js
+import '@geoman-io/leaflet-geoman-free';
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
+```
+
+### Getting Started
+
+#### Init Leaflet-Geoman
+
 Just include `leaflet-geoman.min.js` right after Leaflet. It initializes itself. If  
 you want certain layers to be ignored by Leaflet-Geoman, pass `pmIgnore: true` to  
-their options when creating them. Example:  
-  
-```js  
-L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);  
-```  
-  
-Enable Leaflet-Geoman on an ignored layer:  
-```js  
+their options when creating them. Example:
+
+```js
+L.marker([51.50915, -0.096112], { pmIgnore: true }).addTo(map);
+```
+
+Enable Leaflet-Geoman on an ignored layer:
+
+```js
 layer.options.pmIgnore = false;
-L.PM.reInitLayer(layer); 
-```  
+L.PM.reInitLayer(layer);
+```
+
 If `Opt-In` (look below) is `true`, a layers `pmIgnore` property has to be set to `false` to get initiated.
 
 #### Opt-In
