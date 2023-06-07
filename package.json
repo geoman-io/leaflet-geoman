@@ -74,13 +74,13 @@
   "author": {
     "name": "Sumit Kumar",
     "email": "sumit@geoman.io",
-    "url": "http://geoman.io/leaflet-geoman"
+    "url": "http://geoman.io"
   },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/geoman-io/leaflet-geoman/issues"
   },
-  "homepage": "https://geoman.io/leaflet-geoman",
+  "homepage": "https://geoman.io",
   "prettier": {
     "trailingComma": "es5",
     "tabWidth": 2,
