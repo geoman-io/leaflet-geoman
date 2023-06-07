@@ -34,7 +34,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
       // this is the circle we want to draw
       this._layer = L.circleMarker(this._map.getCenter(), templineStyle);
-      this._setPane(this._layer, 'layerPane');
+      this._setPane(this._layer, 'circleMarkerPane');
       this._layer._pmTempLayer = true;
 
       // this is the marker in the center of the circle
@@ -75,7 +75,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
       // this is the hintline from the hint marker to the center marker
       this._hintline = L.polyline([], this.options.hintlineStyle);
-      this._setPane(this._hintline, 'layerPane');
+      this._setPane(this._hintline, 'circleMarkerPane');
       this._hintline._pmTempLayer = true;
       this._layerGroup.addLayer(this._hintline);
       // create a polygon-point on click
@@ -91,7 +91,7 @@ Draw.CircleMarker = Draw.Marker.extend({
         this._map.getCenter(),
         this.options.templineStyle
       );
-      this._setPane(this._hintMarker, 'layerPane');
+      this._setPane(this._hintMarker, 'circleMarkerPane');
       this._hintMarker._pmTempLayer = true;
       this._hintMarker.addTo(this._map);
       // this is just to keep the snappable mixin happy
@@ -297,7 +297,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // create marker
     const marker = L.circleMarker(latlng, this.options.pathOptions);
-    this._setPane(marker, 'layerPane');
+    this._setPane(marker, 'circleMarkerPane');
     this._finishLayer(marker);
     // add marker to the map
     marker.addTo(this._map.pm._getContainingLayer());
@@ -357,7 +357,7 @@ Draw.CircleMarker = Draw.Marker.extend({
 
     // create the final circle layer
     const circleLayer = L.circleMarker(center, options);
-    this._setPane(circleLayer, 'layerPane');
+    this._setPane(circleLayer, 'circleMarkerPane');
     this._finishLayer(circleLayer);
     circleLayer.addTo(this._map.pm._getContainingLayer());
 

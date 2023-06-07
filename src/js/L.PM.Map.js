@@ -37,6 +37,12 @@ const Map = L.Class.extend({
         vertexPane: 'markerPane',
         layerPane: 'overlayPane',
         markerPane: 'markerPane',
+        circlePane: 'overlayPane',
+        polygonPane: 'overlayPane',
+        polylinePane: 'overlayPane',
+        circleMarkerPane: 'overlayPane',
+        rectanglePane: 'overlayPane',
+        textPane: 'markerPane',
       },
       draggable: true,
     };
@@ -124,6 +130,25 @@ const Map = L.Class.extend({
     layers.forEach((layer) => {
       layer.pm.setOptions(options);
     });
+
+    if (o.panes && o.panes.layerPane && !o.panes.polygonPane) {
+      options.panes.polygonPane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.polylinePane) {
+      options.panes.polylinePane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.circlePane) {
+      options.panes.circlePane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.circleMarkerPane) {
+      options.panes.polygonPane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.rectanglePane) {
+      options.panes.polylinePane = o.panes.layerPane;
+    }
+    if (o.panes && o.panes.layerPane && !o.panes.textPane) {
+      options.panes.circlePane = o.panes.markerPane;
+    }
 
     this.map.fire('pm:globaloptionschanged');
 

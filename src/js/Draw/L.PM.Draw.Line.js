@@ -28,13 +28,13 @@ Draw.Line = Draw.extend({
       ...this.options.templineStyle,
       pmIgnore: false,
     });
-    this._setPane(this._layer, 'layerPane');
+    this._setPane(this._layer, 'polylinePane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
     // this is the hintline from the mouse cursor to the last marker
     this._hintline = L.polyline([], this.options.hintlineStyle);
-    this._setPane(this._hintline, 'layerPane');
+    this._setPane(this._hintline, 'polylinePane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
@@ -357,7 +357,7 @@ Draw.Line = Draw.extend({
 
     // create the leaflet shape and add it to the map
     const polylineLayer = L.polyline(coords, this.options.pathOptions);
-    this._setPane(polylineLayer, 'layerPane');
+    this._setPane(polylineLayer, 'polylinePane');
     this._finishLayer(polylineLayer);
     polylineLayer.addTo(this._map.pm._getContainingLayer());
 

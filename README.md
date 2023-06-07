@@ -840,12 +840,12 @@ map.pm.setGlobalOptions({ pinning: true, snappable: false });
 
 The following options are additionally to the [Draw](#draw-mode) and [Edit Mode](#edit-mode) options.
 
-| Option        | Default  | Description                                                                                                                                                                                                      |
-| :------------ | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| snappingOrder | `Array`  | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`.                                                                                                    |
-| layerGroup    | `map`    | add the created layers to a layergroup instead to the map.                                                                                                                                                       |
-| panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' }`. |
-| cutAsCircle   | `false`  | Enable cutting in shape form of a Circle.                                                                                                                                                                        |
+| Option        | Default  | Description                                                                                                                                                                                                            |
+| :------------ | :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| snappingOrder | `Array`  | Prioritize the order of snapping. Default: `['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']`.                                                                                                          |
+| layerGroup    | `map`    | add the created layers to a layergroup instead to the map.                                                                                                                                                             |
+| panes         | `Object` | Defines in which [panes](https://leafletjs.com/reference.html#map-pane) the layers and helper vertices are created. Default: `{ vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane', circlePane: 'overlayPane', polylinePane: 'overlayPane', polygonPane: 'overlayPane', circleMarkerPane: 'overlayPane', rectanglePane: 'overlayPane', textPane: 'markerPane' }`. |
+| cutAsCircle   | `false`  | Enable cutting in shape form of a Circle.                                                                                                                                                                              |
 
 The following events are available on a map instance:
 

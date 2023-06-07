@@ -57,6 +57,42 @@ const Edit = L.Class.extend({
         (this._map.pm.globalOptions.panes &&
           this._map.pm.globalOptions.panes.markerPane) ||
         'markerPane';
+    } else if (type === 'polygonPane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          (this._map.pm.globalOptions.panes.polygonPane ||
+            this._map.pm.globalOptions.panes.layerPane)) ||
+        'overlayPane';
+    } else if (type === 'circlePane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          (this._map.pm.globalOptions.panes.circlePane ||
+            this._map.pm.globalOptions.panes.layerPane)) ||
+        'overlayPane';
+    } else if (type === 'circleMarkerPane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          (this._map.pm.globalOptions.panes.circleMarkerPane ||
+            this._map.pm.globalOptions.panes.layerPane)) ||
+        'overlayPane';
+    } else if (type === 'polylinePane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          (this._map.pm.globalOptions.panes.polylinePane ||
+            this._map.pm.globalOptions.panes.layerPane)) ||
+        'overlayPane';
+    } else if (type === 'rectanglePane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          (this._map.pm.globalOptions.panes.rectanglePane ||
+            this._map.pm.globalOptions.panes.layerPane)) ||
+        'overlayPane';
+    } else if (type === 'textPane') {
+      layer.options.pane =
+        (this._map.pm.globalOptions.panes &&
+          (this._map.pm.globalOptions.panes.textPane ||
+            this._map.pm.globalOptions.panes.markerPane)) ||
+        'markerPane';
     }
   },
   remove() {

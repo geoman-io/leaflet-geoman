@@ -30,6 +30,10 @@ const map3 = L.map('example3').setView([51.505, -0.09], 13).addLayer(tiles2);
 const map4 = L.map('example4').setView([51.505, -0.09], 13).addLayer(tiles3);
 // map2.dragging.disable();
 
+map2.createPane('polygonPane');
+map2.createPane('circlePane');
+map2.createPane('polylinePane');
+
 // map2.on('pm:create', function(e) {
 //     // alert('pm:create event fired. See console for details');
 //     console.log(e);
@@ -341,6 +345,7 @@ map2.pm.disableDraw('Polygon');
 map2.pm.enableDraw('Line', { allowSelfIntersection: false });
 map2.pm.disableDraw('Line');
 
+map2.pm.setGlobalOptions({ panes: { polygonPane: 'polygonPane', circlePane: 'circlePane', polylinePane: 'polylinePane' }})
 map2.on('pm:create', function (e) {
   // e.layer.pm.enable({ allowSelfIntersection: false });
   // e.layer.pm.disable();

@@ -177,7 +177,7 @@ Edit.CircleMarker = Edit.extend({
     const A = markerA.getLatLng();
     const B = markerB.getLatLng();
     this._hintline = L.polyline([A, B], this.options.hintlineStyle);
-    this._setPane(this._hintline, 'layerPane');
+    this._setPane(this._hintline, 'circleMarkerPane');
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
   },
