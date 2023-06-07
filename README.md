@@ -23,6 +23,8 @@
   </a>  
 </p>
 
+![Demo](https://file-gmeileqfmg.now.sh/)
+
 ## Documentation
 
 Visit [geoman.io/docs](https://www.geoman.io/docs) to get started.
@@ -30,8 +32,6 @@ Visit [geoman.io/docs](https://www.geoman.io/docs) to get started.
 ## Demo
 
 Check out the full power of Leaflet-Geoman Pro on [geoman.io/demo](https://www.geoman.io/demo)
-
-![Demo](https://file-gmeileqfmg.now.sh/)
 
 ### Feature Requests
 
