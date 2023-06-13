@@ -221,6 +221,64 @@ describe('Rotation', () => {
     });
   });
 
+  it('gets and sets rotation center', () => {
+    cy.window().then(({ map, L }) => {
+      const coords = [
+        [0, 0],
+        [4, 4],
+      ];
+
+      const rect = L.rectangle(coords).addTo(map);
+
+      // If no rotation center is set, use the shape's center.
+      const defaultCenter = rect.pm.getRotationCenter();
+      expect(defaultCenter.lat).to.closeTo(2, 0.1);
+      expect(defaultCenter.lng).to.closeTo(2, 0.1);
+
+      // Introduce a new origin of rotation
+      rect.pm.setRotationCenter(L.latLng([4, 4]));
+      const newCenter = rect.pm.getRotationCenter();
+      expect(newCenter.lat).to.closeTo(4, 0.1);
+      expect(newCenter.lng).to.closeTo(4, 0.1);
+
+      // Unset rotation center (i.e., use default)
+      rect.pm.setRotationCenter(null);
+      const restoredCenter = rect.pm.getRotationCenter();
+      expect(restoredCenter).to.eql(defaultCenter);
+    });
+  });
+
+  it('rotates around arbitrary origins', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200).click(400, 350);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const origin = map.containerPointToLatLng([200, 200]);
+      layer.pm.setRotationCenter(origin);
+
+      layer.pm.rotateLayerToAngle(90);
+
+      const expected = [
+        { x: 50, y: 200 },
+        { x: 200, y: 200 },
+        { x: 200, y: 400 },
+        { x: 50, y: 400 },
+      ];
+
+      const px = layer.getLatLngs()[0].map((latlng) => {
+        const point = map.latLngToContainerPoint(latlng);
+        return { x: point.x, y: point.y };
+      });
+
+      expect(px).to.eql(expected);
+    });
+  });
+
   it("doesn't return the rotation help-layer over getGeomanLayers()", () => {
     cy.window().then(({ map, L }) => {
       const coords = [

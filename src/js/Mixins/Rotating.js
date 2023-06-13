@@ -125,6 +125,10 @@ const RotateMixin = {
     this._angle = angle % 360;
   },
   _getRotationCenter() {
+    if (this._rotationCenter) {
+      return this._rotationCenter;
+    }
+
     const polygon = L.polygon(this._layer.getLatLngs(), {
       stroke: false,
       fill: false,
@@ -271,6 +275,12 @@ const RotateMixin = {
   // angle is clockwise (0-360)
   setInitAngle(degrees) {
     this._setAngle(degrees);
+  },
+  getRotationCenter() {
+    return this._getRotationCenter();
+  },
+  setRotationCenter(center) {
+    this._rotationCenter = center;
   },
 };
 
