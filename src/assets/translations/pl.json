@@ -36,7 +36,7 @@
   },
   "measurements": {
     "totalLength": "Długość",
-    "segmentLength": "Długość segmentu",
+    "segmentLength": "Długość odcinka",
     "area": "Obszar",
     "radius": "Promień",
     "perimeter": "Obwód",
