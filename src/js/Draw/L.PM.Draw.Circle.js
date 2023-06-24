@@ -8,7 +8,7 @@ Draw.Circle = Draw.CircleMarker.extend({
     this._BaseCircleClass = L.Circle;
     this._minRadiusOption = 'minRadiusCircle';
     this._maxRadiusOption = 'maxRadiusCircle';
-    this._editableOption = 'editableCircle';
+    this._editableOption = 'resizableCircle';
     this._defaultRadius = 100;
   },
   _extendingEnable(){},

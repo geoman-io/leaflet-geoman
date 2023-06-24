@@ -11,7 +11,7 @@ Draw.CircleMarker = Draw.extend({
     this._BaseCircleClass = L.CircleMarker;
     this._minRadiusOption = 'minRadiusCircleMarker';
     this._maxRadiusOption = 'maxRadiusCircleMarker';
-    this._editableOption = 'editableCircleMarker';
+    this._editableOption = 'resizeableCircleMarker';
     this._defaultRadius = 10;
   },
   enable(options) {
@@ -20,7 +20,7 @@ Draw.CircleMarker = Draw.extend({
     L.Util.setOptions(this, options);
     // TODO: remove with next major release
     if(this.options.editable){
-      this.options.editableCircleMarker = this.options.editable;
+      this.options.resizeableCircleMarker = this.options.editable;
       delete this.options.editable;
     }
 

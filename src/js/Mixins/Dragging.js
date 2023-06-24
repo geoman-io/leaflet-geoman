@@ -199,9 +199,9 @@ const DragMixin = {
       this._layer instanceof L.CircleMarker
     ) {
 
-      let _editableOption = 'editableCircleMarker';
+      let _editableOption = 'resizeableCircleMarker';
       if(this._layer instanceof L.Circle){
-        _editableOption = 'editableCircle';
+        _editableOption = 'resizableCircle';
       }
 
       if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
@@ -371,8 +371,8 @@ const DragMixin = {
       });
 
     if (
-      (this._layer instanceof L.Circle && this._layer.options.editableCircle) ||
-      (this._layer instanceof L.CircleMarker && this._layer.options.editableCircleMarker)
+      (this._layer instanceof L.Circle && this._layer.options.resizableCircle) ||
+      (this._layer instanceof L.CircleMarker && this._layer.options.resizeableCircleMarker)
     ) {
       // create the new coordinates array
       const newCoords = moveCoords([this._layer.getLatLng()]);

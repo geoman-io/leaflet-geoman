@@ -1102,15 +1102,15 @@ declare module 'leaflet' {
       maxRadiusCircleMarker?: number;
 
       /**
-       * @deprecated Use editableCircleMarker instead
+       * @deprecated Use resizeableCircleMarker instead
        */
       editable?: boolean;
 
       /** Enables radius editing while drawing a Circle (default:true). */
-      editableCircle?: boolean;
+      resizableCircle?: boolean;
 
       /** Enables radius editing while drawing a CircleMarker (default:false). */
-      editableCircleMarker?: boolean;
+      resizeableCircleMarker?: boolean;
 
       /** Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them) (default:true). */
       markerEditable?: boolean;

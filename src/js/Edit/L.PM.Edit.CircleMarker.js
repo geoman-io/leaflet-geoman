@@ -9,7 +9,7 @@ Edit.CircleMarker = Edit.extend({
 
     this._minRadiusOption = 'minRadiusCircleMarker';
     this._maxRadiusOption = 'maxRadiusCircleMarker';
-    this._editableOption = 'editableCircleMarker';
+    this._editableOption = 'resizeableCircleMarker';
 
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
@@ -19,7 +19,7 @@ Edit.CircleMarker = Edit.extend({
     L.Util.setOptions(this, options);
     // TODO: remove with next major release
     if(this.options.editable){
-      this.options.editableCircleMarker = this.options.editable;
+      this.options.resizeableCircleMarker = this.options.editable;
       delete this.options.editable;
     }
 

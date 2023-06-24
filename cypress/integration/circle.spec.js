@@ -345,9 +345,9 @@ describe('Draw Circle', () => {
   });
 
 
-  it('creates circles (non-editableCircle)', () => {
+  it('creates circles (non-resizableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editableCircle: false, continueDrawing: true });
+      map.pm.setGlobalOptions({ resizableCircle: false, continueDrawing: true });
     });
 
     cy.toolbarButton('circle')
@@ -367,9 +367,9 @@ describe('Draw Circle', () => {
     cy.hasCircleLayers(3);
   });
 
-  it('disable dragging correctly (non-editableCircle)', () => {
+  it('disable dragging correctly (non-resizableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editableCircle: false });
+      map.pm.setGlobalOptions({ resizableCircle: false });
     });
 
     cy.toolbarButton('circle')
@@ -391,9 +391,9 @@ describe('Draw Circle', () => {
     });
   });
 
-  it('deletes no circles by right-click (non-editableCircle)', () => {
+  it('deletes no circles by right-click (non-resizableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editableCircle: false });
+      map.pm.setGlobalOptions({ resizableCircle: false });
     });
 
     cy.toolbarButton('circle')
@@ -418,9 +418,9 @@ describe('Draw Circle', () => {
     cy.hasCircleLayers(1);
   });
 
-  it('change color of circleMarker while drawing (non-editableCircle)', () => {
+  it('change color of circleMarker while drawing (non-resizableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editableCircle: false });
+      map.pm.setGlobalOptions({ resizableCircle: false });
     });
 
     cy.toolbarButton('circle')

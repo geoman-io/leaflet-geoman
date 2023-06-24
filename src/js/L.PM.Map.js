@@ -102,7 +102,7 @@ const Map = L.Class.extend({
 
     // TODO: remove with next major release
     if(options.editable){
-      options.editableCircleMarker = options.editable;
+      options.resizeableCircleMarker = options.editable;
       delete options.editable;
     }
 
@@ -110,7 +110,7 @@ const Map = L.Class.extend({
     let reenableCircleMarker = false;
     if (
       this.map.pm.Draw.CircleMarker.enabled() &&
-      !!this.map.pm.Draw.CircleMarker.options.editableCircleMarker !== !!options.editableCircleMarker
+      !!this.map.pm.Draw.CircleMarker.options.resizeableCircleMarker !== !!options.resizeableCircleMarker
     ) {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
@@ -119,7 +119,7 @@ const Map = L.Class.extend({
     let reenableCircle = false;
     if (
       this.map.pm.Draw.Circle.enabled() &&
-      !!this.map.pm.Draw.Circle.options.editableCircle !== !!options.editableCircle
+      !!this.map.pm.Draw.Circle.options.resizableCircle !== !!options.resizableCircle
     ) {
       this.map.pm.Draw.Circle.disable();
       reenableCircle = true;

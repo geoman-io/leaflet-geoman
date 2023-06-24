@@ -8,7 +8,7 @@ Edit.Circle = Edit.CircleMarker.extend({
 
     this._minRadiusOption = 'minRadiusCircle';
     this._maxRadiusOption = 'maxRadiusCircle';
-    this._editableOption = 'editableCircle';
+    this._editableOption = 'resizableCircle';
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
   },
