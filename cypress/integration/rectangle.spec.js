@@ -880,4 +880,31 @@ describe('Draw Rectangle', () => {
       expect(layer.options.color).to.eql('red');
     });
   });
+
+  it('on vertex click', (done) => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 300);
+
+    cy.window().then(({ map }) => {
+      let count = 0;
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.on('pm:vertexclick', ()=>{
+        count += 1;
+        if(count >= 2) {
+          expect(count).to.eql(2);
+          setTimeout(done, 100)
+        }
+      })
+    });
+
+    cy.toolbarButton('edit').click();
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 300);
+
+  });
 });

@@ -166,6 +166,7 @@ Edit.Circle = Edit.extend({
     marker.on('dragstart', this._onMarkerDragStart, this);
     marker.on('drag', this._onMarkerDrag, this);
     marker.on('dragend', this._onMarkerDragEnd, this);
+    marker.on('click', this._onVertexClick, this);
 
     this._helperLayers.addLayer(marker);
 
@@ -356,5 +357,13 @@ Edit.Circle = Edit.extend({
     }
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
+  },
+  _onVertexClick(e) {
+    const vertex = e.target;
+    if (vertex._dragging) {
+      return;
+    }
+
+    this._fireVertexClick(e, undefined);
   },
 });
