@@ -282,6 +282,10 @@ const RotateMixin = {
   },
   setRotationCenter(center) {
     this._rotationCenter = center;
+
+    if(this._rotatePoly){
+      this._rotatePoly.pm.setRotationCenter(center);
+    }
   },
 };
 

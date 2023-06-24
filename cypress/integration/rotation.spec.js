@@ -248,7 +248,7 @@ describe('Rotation', () => {
     });
   });
 
-  it('rotates around arbitrary origins', () => {
+  it('rotateLayerToAngle around arbitrary origins', () => {
     cy.toolbarButton('rectangle')
       .click()
       .closest('.button-container')
@@ -275,6 +275,115 @@ describe('Rotation', () => {
         return { x: point.x, y: point.y };
       });
 
+      expect(px).to.eql(expected);
+    });
+  });
+
+  it('rotates around arbitrary origins', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200).click(400, 350);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const origin = map.containerPointToLatLng([200, 200]);
+      layer.pm.setRotationCenter(origin);
+    });
+
+    cy.toolbarButton('rotate').click();
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
+      marker1.fire('dragstart', { target: marker1 });
+      marker1.setLatLng(map.containerPointToLatLng([300, 310]));
+      marker1.fire('drag', { target: marker1 });
+      marker1.fire('dragend', { target: marker1 });
+    });
+
+    cy.window().then(({ map }) => {
+      const expected = [
+        {
+          x: 301,
+          y: 311,
+        },
+        {
+          x: 200,
+          y: 200,
+        },
+        {
+          x: 348,
+          y: 65,
+        },
+        {
+          x: 449,
+          y: 176,
+        },
+      ];
+
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const px = layer.getLatLngs()[0].map((latlng) => {
+        const point = map.latLngToContainerPoint(latlng);
+        return { x: point.x, y: point.y };
+      });
+      expect(px).to.eql(expected);
+    });
+  });
+
+  it('apply new rotation center while rotation is enabled', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200).click(400, 350);
+
+    cy.toolbarButton('rotate').click();
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const origin = map.containerPointToLatLng([200, 200]);
+      layer.pm.setRotationCenter(origin);
+    });
+
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
+      marker1.fire('dragstart', { target: marker1 });
+      marker1.setLatLng(map.containerPointToLatLng([300, 310]));
+      marker1.fire('drag', { target: marker1 });
+      marker1.fire('dragend', { target: marker1 });
+    });
+
+    cy.window().then(({ map }) => {
+      const expected = [
+        {
+          x: 301,
+          y: 311,
+        },
+        {
+          x: 200,
+          y: 200,
+        },
+        {
+          x: 348,
+          y: 65,
+        },
+        {
+          x: 449,
+          y: 176,
+        },
+      ];
+
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const px = layer.getLatLngs()[0].map((latlng) => {
+        const point = map.latLngToContainerPoint(latlng);
+        return { x: point.x, y: point.y };
+      });
       expect(px).to.eql(expected);
     });
   });
