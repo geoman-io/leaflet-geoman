@@ -169,6 +169,7 @@ const RotateMixin = {
       this._layer._map
     );
     this._rotatePoly.pm._setAngle(this.getAngle());
+    this._rotatePoly.pm.setRotationCenter(this.getRotationCenter());
     this._rotatePoly.pm.setOptions(this._layer._map.pm.getGlobalOptions());
     this._rotatePoly.pm.setOptions({
       rotate: true,
