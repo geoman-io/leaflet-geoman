@@ -269,4 +269,55 @@ describe('Rotation', () => {
       expect(map.pm.getGeomanLayers().length).to.eq(2);
     });
   });
+
+  it('set the angle correctly after rotating a new imported rotated rectangle', ()=>{
+    cy.window().then(({ map, L }) => {
+      const coords = JSON.parse('{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.122532,51.507986],[-0.117474,51.518864],[-0.06784,51.509926],[-0.072898,51.499046],[-0.122532,51.507986]]]}}');
+      const rectangle = L.rectangle([[0,0],[0,0]]);
+      rectangle.setLatLngs(L.geoJSON(coords).getLayers()[0].getLatLngs());
+      rectangle.addTo(map);
+    });
+
+    cy.toolbarButton('rotate').click();
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      layer.pm.enableRotate();
+      const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
+      marker1.fire('dragstart', { target: marker1 });
+      marker1.setLatLng(map.containerPointToLatLng([200, 120]));
+      marker1.fire('drag', { target: marker1 });
+      marker1.fire('dragend', { target: marker1 });
+      expect(Math.ceil(layer.pm.getAngle())).to.eq(39);
+
+      layer.pm.rotateLayerToAngle(0);
+      expect(Math.ceil(layer.pm.getAngle())).to.eq(0);
+
+      const expected = [
+        {
+          'x': 319,
+          'y': 267,
+        },
+        {
+          'x': 319,
+          'y': 161,
+        },
+        {
+          'x': 620,
+          'y': 159,
+        },
+        {
+          'x': 620,
+          'y': 265,
+        },
+      ];
+
+      const px = layer.getLatLngs()[0].map((latlng) => {
+        const point = map.latLngToContainerPoint(latlng);
+        return { x: point.x, y: point.y };
+      });
+
+      expect(px).to.eql(expected);
+    });
+  })
 });

@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
-import { copyLatLngs } from '../helpers';
+import { calcAngle, copyLatLngs } from '../helpers';
 
 /**
  * We create a temporary polygon with the same latlngs as the layer that we want to rotate.
@@ -148,6 +148,10 @@ const RotateMixin = {
 
     if (this.rotateEnabled()) {
       this.disableRotate();
+    }
+
+    if(this._layer instanceof L.Rectangle && this._angle === undefined){
+        this.setInitAngle(calcAngle(this._layer._map, this._layer.getLatLngs()[0][0],this._layer.getLatLngs()[0][1]) || 0)
     }
 
     // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
