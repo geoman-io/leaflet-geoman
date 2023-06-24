@@ -43,7 +43,9 @@
     "eslint-plugin-cypress": "2.11.3",
     "eslint-plugin-import": "2.22.1",
     "file-loader": "6.2.0",
+    "husky": "^8.0.3",
     "leaflet": "1.9.3",
+    "lint-staged": "^13.2.2",
     "mini-css-extract-plugin": "1.6.0",
     "prettier": "2.2.1",
     "prosthetic-hand": "1.3.1",
@@ -61,7 +63,7 @@
     "test": "cypress run",
     "cypress": "cypress open",
     "build": "webpack --config=webpack.build.js",
-    "prepare": "npm run build",
+    "prepare": "npm run build && husky install",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
     "eslint": "eslint {src,cypress,demo}/**/*.js --fix ",
     "prettier": "prettier --write {src,cypress,demo}/**/*.{js,css}",
@@ -86,5 +88,9 @@
     "tabWidth": 2,
     "semi": true,
     "singleQuote": true
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }
