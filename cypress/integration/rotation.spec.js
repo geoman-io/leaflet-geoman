@@ -233,4 +233,41 @@ describe('Rotation', () => {
       expect(map.pm.getGeomanLayers().length).to.eq(1);
     });
   });
+
+  it("fixes enabling rotation multiple times", () => {
+    cy.window().then(({ map, L }) => {
+      const coords = [
+        [1, 2],
+        [3, 4],
+      ];
+      const rect = L.rectangle(coords).addTo(map);
+      rect.pm.enableRotate();
+      rect.pm.enableRotate();
+
+      cy.hasVertexMarkers(4);
+      expect(map.pm.getGeomanLayers().length).to.eq(1);
+    });
+  });
+
+
+  it("prevents enabling rotation on temp layer", () => {
+    cy.window().then(({ map, L }) => {
+      const coords = [
+        [1, 2],
+        [3, 4],
+      ];
+      L.rectangle(coords).addTo(map);
+      const coords2 = [
+        [2, 3],
+        [3, 4],
+      ];
+      L.rectangle(coords2).addTo(map);
+
+      map.pm.enableGlobalRotateMode();
+      map.pm.enableGlobalRotateMode();
+
+      cy.hasVertexMarkers(8);
+      expect(map.pm.getGeomanLayers().length).to.eq(2);
+    });
+  });
 });

@@ -5,7 +5,7 @@
  * Written by Sumit Kumar <sumit@geoman.io>, January 2020
  * Twitter: @TweetsOfSumit
  * OSS Repo: https://github.com/geoman-io/leaflet-geoman
- * Get Pro: https://geoman.io/leaflet-geoman#pro
+ * Get Pro: https://geoman.io
  */
 
 import './polyfills';
