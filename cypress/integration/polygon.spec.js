@@ -248,16 +248,21 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('prevents self intersections', () => {
+    let intersectEventCalled = false;
     cy.window().then(({ map }) => {
       map.pm.enableDraw('Polygon', {
         allowSelfIntersection: false,
       });
 
-      Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
+      map.on('pm:create', (event) => {
         const poly = event.layer;
         poly.pm.enable({
           allowSelfIntersection: false,
         });
+      });
+
+      map.on('pm:intersect', () => {
+        intersectEventCalled = true;
       });
     });
 
@@ -272,6 +277,10 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
 
     cy.hasVertexMarkers(4);
+
+    cy.window().then(() => {
+      expect(intersectEventCalled).to.eql(true);
+    });
   });
 
   it('doesnt allow duplicate points in polygon', () => {

@@ -100,6 +100,9 @@ Draw.Line = Draw.extend({
     // TODO: think about moving this somewhere else?
     this._otherSnapLayers = [];
 
+    // make sure intersection is not set while start drawing
+    this.isRed = false;
+
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
@@ -216,10 +219,16 @@ Draw.Line = Draw.extend({
 
     // change the style based on self intersection
     if (this._doesSelfIntersect) {
-      this._hintline.setStyle({
-        color: '#f00000ff',
-      });
+      if (!this.isRed) {
+        this.isRed = true;
+        this._hintline.setStyle({
+          color: '#f00000ff',
+        });
+        // fire intersect event
+        this._fireIntersect(selfIntersection, this._map, 'Draw');
+      }
     } else if (!this._hintline.isEmpty()) {
+      this.isRed = false;
       this._hintline.setStyle(this.options.hintlineStyle);
     }
   },

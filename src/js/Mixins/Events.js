@@ -314,9 +314,14 @@ const EventMixin = {
     );
   },
   // Fired when a Line / Polygon has self intersection
-  _fireIntersect(intersection, source = 'Edit', customPayload = {}) {
+  _fireIntersect(
+    intersection,
+    fireLayer = this._layer,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     this.__fire(
-      this._layer,
+      fireLayer,
       'pm:intersect',
       {
         layer: this._layer,
