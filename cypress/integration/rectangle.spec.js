@@ -114,7 +114,7 @@ describe('Draw Rectangle', () => {
 
     cy.get(mapSelector).rightclick(300, 250);
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({ map }) => {
       const rect = map.pm.getGeomanDrawLayers()[0];
       expect(rect.options.color).to.not.equal('#f00000ff');
     });
@@ -224,7 +224,7 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ map }) => {
       expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
       map.pm.disableDraw();
-      layer = map.pm.getGeomanDrawLayers()[0];
+      layer = [map.pm.getGeomanDrawLayers()];
     });
 
     // test 2: snapIgnore: true, pmIgnore: undefined, optIn: false --> not snappable

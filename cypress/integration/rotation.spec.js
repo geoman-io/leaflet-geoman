@@ -234,7 +234,7 @@ describe('Rotation', () => {
     });
   });
 
-  it("fixes enabling rotation multiple times", () => {
+  it('fixes enabling rotation multiple times', () => {
     cy.window().then(({ map, L }) => {
       const coords = [
         [1, 2],
@@ -249,8 +249,7 @@ describe('Rotation', () => {
     });
   });
 
-
-  it("prevents enabling rotation on temp layer", () => {
+  it('prevents enabling rotation on temp layer', () => {
     cy.window().then(({ map, L }) => {
       const coords = [
         [1, 2],

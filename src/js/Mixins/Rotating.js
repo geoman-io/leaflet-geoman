@@ -146,7 +146,7 @@ const RotateMixin = {
       return;
     }
 
-    if(this.rotateEnabled()){
+    if (this.rotateEnabled()) {
       this.disableRotate();
     }
 
@@ -161,9 +161,7 @@ const RotateMixin = {
     // we create a temp polygon for rotation
     this._rotatePoly = L.polygon(this._layer.getLatLngs(), options);
     this._rotatePoly._pmTempLayer = true;
-    this._rotatePoly.addTo(
-      this._layer._map
-    );
+    this._rotatePoly.addTo(this._layer._map);
     this._rotatePoly.pm._setAngle(this.getAngle());
     this._rotatePoly.pm.setOptions(this._layer._map.pm.getGlobalOptions());
     this._rotatePoly.pm.setOptions({

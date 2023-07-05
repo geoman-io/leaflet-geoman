@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'cypress-wait-until';
 // ***********************************************
 // This example commands.js shows you how to
@@ -87,7 +88,7 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
   cy.window().then(() => {
     const t1 = performance.now();
     const delta = Math.abs(t1 - t0);
-    console.log(`Rendering 6k CircleMarkers took ${delta} milliseconds.`);
+    // console.log(`Rendering 6k CircleMarkers took ${delta} milliseconds.`);
 
     expect(delta).to.lessThan(1000);
   });
