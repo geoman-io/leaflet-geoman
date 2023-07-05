@@ -224,7 +224,7 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ map }) => {
       expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
       map.pm.disableDraw();
-      layer = [map.pm.getGeomanDrawLayers()];
+      [layer] = map.pm.getGeomanDrawLayers();
     });
 
     // test 2: snapIgnore: true, pmIgnore: undefined, optIn: false --> not snappable

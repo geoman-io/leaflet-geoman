@@ -1011,7 +1011,7 @@ describe('Draw & Edit Poly', () => {
 
     let layer;
     cy.window().then(({ map }) => {
-      layer = [map.pm.getGeomanDrawLayers()];
+      [layer] = map.pm.getGeomanDrawLayers();
       map.pm.setGlobalOptions({ allowCutting: false });
     });
 
@@ -1055,8 +1055,7 @@ describe('Draw & Edit Poly', () => {
     let layer;
     cy.window().then(({ map }) => {
       const cutlayer = map.pm.getGeomanDrawLayers()[0];
-      // eslint-disable-next-line prefer-destructuring
-      layer = map.pm.getGeomanDrawLayers()[1];
+      [, layer] = map.pm.getGeomanDrawLayers();
       map.pm.enableDraw('Cut', { layersToCut: [cutlayer] });
     });
 
