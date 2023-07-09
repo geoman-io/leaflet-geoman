@@ -7,3 +7,4 @@ npm-debug.log
 \.source*
 /cypress/screenshots
 /cypress/videos
+.eslintcache
