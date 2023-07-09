@@ -90,7 +90,7 @@
     "singleQuote": true
   },
   "lint-staged": {
-    "*.js": "eslint --cache --fix",
-    "*.{js,css,md}": "prettier --write"
+    "*.js": "eslint {src,cypress,demo}/**/*.js --fix",
+    "*.{js,css,md}": "prettier --write {src,cypress,demo}/**/*.{js,css}"
   }
 }
