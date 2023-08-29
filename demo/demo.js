@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 const tiles1 = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   {
     maxZoom: 19,
     attribution:
@@ -9,7 +9,7 @@ const tiles1 = L.tileLayer(
 );
 
 const tiles2 = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   {
     maxZoom: 19,
     attribution:
@@ -18,7 +18,7 @@ const tiles2 = L.tileLayer(
 );
 
 const tiles3 = L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
   {
     maxZoom: 19,
     attribution:
