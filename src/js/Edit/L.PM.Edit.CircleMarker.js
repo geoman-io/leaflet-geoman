@@ -13,18 +13,14 @@ Edit.CircleMarker = Edit.extend({
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
 
-    this._map = this._layer._map;
-
-    // cancel when map isn't available, this happens when the polygon is removed before this fires
-    if (!this._map) {
-      return;
-    }
-
     // layer is not allowed to edit
-    if (!this.options.allowEditing) {
+    // cancel when map isn't available, this happens when it is removed before this fires
+    if (!this.options.allowEditing || !this._layer._map) {
       this.disable();
       return;
     }
+
+    this._map = this._layer._map;
 
     if (this.enabled()) {
       // if it was already enabled, disable first
@@ -32,6 +28,9 @@ Edit.CircleMarker = Edit.extend({
       this.disable();
     }
     this.applyOptions();
+
+    // if shape gets removed from map, disable edit mode
+    this._layer.on('remove', this.disable, this);
 
     // change state
     this._enabled = true;
@@ -45,14 +44,14 @@ Edit.CircleMarker = Edit.extend({
 
     this._fireEnable();
   },
-  disable(layer = this._layer) {
+  disable() {
     // prevent disabling if layer is being dragged
-    if (layer.pm._dragging) {
-      return false;
+    if (this._dragging) {
+      return;
     }
 
-    if (layer.pm._helperLayers) {
-      layer.pm._helperLayers.clearLayers();
+    if (this._helperLayers) {
+      this._helperLayers.clearLayers();
     }
 
     // Add map if it is not already set. This happens when disable() is called before enable()
@@ -60,19 +59,22 @@ Edit.CircleMarker = Edit.extend({
       this._map = this._layer._map;
     }
 
-    if (this.options.editable) {
-      this._map.off('move', this._syncMarkers, this);
-      if (this._outerMarker) {
-        // update marker latlng when snapped latlng radius is out of min/max
-        this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
+    if (!this._map) {
+      if (this.options.editable) {
+        this._map.off('move', this._syncMarkers, this);
+        if (this._outerMarker) {
+          // update marker latlng when snapped latlng radius is out of min/max
+          this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
+        }
+      } else {
+        this._map.off('move', this._updateHiddenPolyCircle, this);
       }
-    } else {
-      this._map.off('move', this._updateHiddenPolyCircle, this);
     }
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
 
     this._layer.off('contextmenu', this._removeMarker, this);
+    this._layer.off('remove', this.disable, this);
 
     // only fire events if it was enabled before
     if (this.enabled()) {
@@ -83,9 +85,7 @@ Edit.CircleMarker = Edit.extend({
       this._fireDisable();
     }
 
-    layer.pm._enabled = false;
-
-    return true;
+    this._enabled = false;
   },
   enabled() {
     return this._enabled;
@@ -153,7 +153,7 @@ Edit.CircleMarker = Edit.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._helperLayers = new L.LayerGroup();
+    this._helperLayers = new L.FeatureGroup();
     this._helperLayers._pmTempLayer = true;
     this._helperLayers.addTo(map);
 
@@ -228,6 +228,7 @@ Edit.CircleMarker = Edit.extend({
     this._updateHiddenPolyCircle();
 
     this._fireCenterPlaced('Edit');
+    this._fireChange(this._layer.getLatLng(), 'Edit');
   },
   _syncMarkers() {
     const center = this._layer.getLatLng();
@@ -263,6 +264,7 @@ Edit.CircleMarker = Edit.extend({
     }
 
     this._updateHiddenPolyCircle();
+    this._fireChange(this._layer.getLatLng(), 'Edit');
   },
   _syncHintLine() {
     const A = this._centerMarker.getLatLng();
@@ -278,10 +280,10 @@ Edit.CircleMarker = Edit.extend({
     this._fireRemove(this._layer);
     this._fireRemove(this._map, this._layer);
   },
-  _onDragStart(e) {
+  _onDragStart() {
     this._map.pm.Draw.CircleMarker._layerIsDragging = true;
-    if (!this._vertexValidation('move', e)) {
-    }
+    // if (!this._vertexValidation('move', e)) {
+    // }
   },
   _onMarkerDragStart(e) {
     if (!this._vertexValidation('move', e)) {

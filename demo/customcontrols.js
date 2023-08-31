@@ -1,4 +1,6 @@
-var map = L.map('map').setView([40.0269319, 32.83604819], 13);
+/* eslint-disable no-console */
+/* eslint-disable no-alert */
+const map = L.map('map').setView([40.0269319, 32.83604819], 13);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
@@ -22,9 +24,7 @@ map.pm.Toolbar.createCustomControl({
   className: 'leaflet-pm-icon-marker xyz-class',
   title: 'Count layers',
   onClick: () => {
-    alert(
-      'There are ' + L.PM.Utils.findLayers(map).length + ' layers on the map'
-    );
+    alert(`There are ${L.PM.Utils.findLayers(map).length} layers on the map`);
   },
   toggle: false,
 });
@@ -33,7 +33,7 @@ map.pm.Toolbar.createCustomControl({
 const _actions = [
   {
     text: 'Custom message, with click event',
-    onClick(e) {
+    onClick() {
       alert('click');
     },
     name: 'actionName',
@@ -49,9 +49,9 @@ map.pm.Draw.RectangleCopy.setPathOptions({ color: 'green' });
 
 map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
 
-map.on('pm:actionclick', function (e) {
+map.on('pm:actionclick', (e) => {
   console.log(e);
 });
-map.on('pm:buttonclick', function (e) {
+map.on('pm:buttonclick', (e) => {
   console.log(e);
 });

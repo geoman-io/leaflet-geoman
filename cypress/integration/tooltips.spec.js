@@ -42,7 +42,10 @@ describe('Shows Tooltips', () => {
 
     cy.get(mapSelector).click(290, 250);
 
+    cy.wait(500);
+
     cy.get('.leaflet-tooltip-bottom').then((el) => {
+      expect(el.length).to.eq(1);
       expect(el).to.have.text('Click to place marker');
     });
 
@@ -199,13 +202,15 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('exist');
 
     cy.get('.leaflet-tooltip-bottom').then((el) => {
-      expect(el).to.have.text('Presiona para colocar un marcador de circulo');
+      expect(el).to.have.text('Presiona para colocar un marcador de círculo');
     });
 
     cy.get(mapSelector).click(290, 250);
 
+    cy.wait(500);
+
     cy.get('.leaflet-tooltip-bottom').then((el) => {
-      expect(el).to.have.text('Presiona para colocar un marcador de circulo');
+      expect(el).to.have.text('Presiona para colocar un marcador de círculo');
     });
 
     cy.toolbarButton('circle-marker').click();

@@ -25,11 +25,11 @@
 .cursor-marker {
   cursor: crosshair;
   pointer-events: none;
-  display: none;
+  opacity: 0;
 }
 
 .cursor-marker.visible {
-  display: block !important;
+  opacity: 1 !important;
 }
 
 .leaflet-pm-invalid {
@@ -47,10 +47,45 @@
   opacity: 1 !important;
 }
 
-.hidden {
-  display: none;
-}
-
 .vertexmarker-disabled {
   opacity: 0.7;
+}
+
+.pm-text-marker {
+  width: 0;
+  height: 0;
+}
+
+.pm-textarea {
+  background-color: #fff;
+  color: #000;
+  resize: none;
+  border: none;
+  outline: 0;
+  cursor: pointer;
+  border-radius: 3px;
+  padding-left: 7px;
+  padding-bottom: 0;
+  padding-top: 4px;
+}
+
+.leaflet-pm-draggable .pm-textarea {
+  cursor: move;
+}
+
+.pm-textarea:focus,
+.pm-textarea:focus-within,
+.pm-textarea:focus-visible,
+.pm-textarea:active {
+  border: 2px solid #000;
+  outline: 0;
+}
+
+.pm-textarea.pm-disabled {
+  border: none;
+  user-select: none;
+}
+
+.pm-textarea.pm-hasfocus {
+  cursor: auto;
 }

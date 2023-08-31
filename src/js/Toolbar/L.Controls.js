@@ -5,11 +5,12 @@ const PMButton = L.Control.extend({
   includes: [EventMixin],
   options: {
     position: 'topleft',
+    disableByOtherButtons: true,
   },
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
     // replaced setOptions with this because classNames returned undefined 🤔
-    this._button = { ...this.options, ...options };
+    this._button = L.Util.extend({}, this.options, options);
   },
   onAdd(map) {
     this._map = map;
@@ -64,10 +65,22 @@ const PMButton = L.Control.extend({
   onCreate() {
     this.toggle(false);
   },
+  disable() {
+    this.toggle(false); // is needed to prevent active button disabled
+    this._button.disabled = true;
+    this._updateDisabled();
+  },
+  enable() {
+    this._button.disabled = false;
+    this._updateDisabled();
+  },
   _triggerClick(e) {
     if (e) {
       // is needed to prevent scrolling when clicking on a-element with href="a"
       e.preventDefault();
+    }
+    if (this._button.disabled) {
+      return;
     }
     // TODO is this a big change when we change from e to a object with the event and the button? Now it's the second argument
     this._button.onClick(e, { button: this, event: e });
@@ -83,6 +96,10 @@ const PMButton = L.Control.extend({
       `button-container  ${pos}`,
       this._container
     );
+
+    if (button.title) {
+      buttonContainer.setAttribute('title', button.title);
+    }
 
     // the button itself
     const newButton = L.DomUtil.create(
@@ -151,6 +168,9 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
+      L.DomEvent.disableClickPropagation(actionNode);
+      L.DomEvent.on(actionNode, 'click', L.DomEvent.stop);
+
       if (!button.disabled) {
         if (action.onClick) {
           const actionClick = (e) => {
@@ -171,7 +191,6 @@ const PMButton = L.Control.extend({
           L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
         }
       }
-      L.DomEvent.disableClickPropagation(actionNode);
     });
 
     if (button.toggleStatus) {
@@ -180,42 +199,28 @@ const PMButton = L.Control.extend({
 
     const image = L.DomUtil.create('div', 'control-icon', newButton);
 
-    if (button.title) {
-      image.setAttribute('title', button.title);
-    }
-
     if (button.iconUrl) {
       image.setAttribute('src', button.iconUrl);
     }
     if (button.className) {
       L.DomUtil.addClass(image, button.className);
     }
+
+    L.DomEvent.disableClickPropagation(newButton);
+    L.DomEvent.on(newButton, 'click', L.DomEvent.stop);
+
     if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
-      L.DomEvent.addListener(newButton, 'click', () => {
-        if (this._button.disableOtherButtons) {
-          this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
-        }
-        let btnName = '';
-        const { buttons } = this._map.pm.Toolbar;
-        for (const btn in buttons) {
-          if (buttons[btn]._button === button) {
-            btnName = btn;
-            break;
-          }
-        }
-        this._fireButtonClick(btnName, button);
-      });
+      L.DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
       L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
     }
 
     if (button.disabled) {
       L.DomUtil.addClass(newButton, 'pm-disabled');
-      L.DomUtil.addClass(image, 'pm-disabled');
+      newButton.setAttribute('aria-disabled', 'true');
     }
 
-    L.DomEvent.disableClickPropagation(newButton);
     return buttonContainer;
   },
 
@@ -233,9 +238,45 @@ const PMButton = L.Control.extend({
     }
   },
 
+  _onBtnClick() {
+    if (this._button.disableOtherButtons) {
+      this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
+    }
+    let btnName = '';
+    const { buttons } = this._map.pm.Toolbar;
+    for (const btn in buttons) {
+      if (buttons[btn]._button === this._button) {
+        btnName = btn;
+        break;
+      }
+    }
+    this._fireButtonClick(btnName, this._button);
+  },
+
   _clicked() {
     if (this._button.doToggle) {
       this.toggle();
+    }
+  },
+
+  _updateDisabled() {
+    if (!this._container) {
+      return;
+    }
+
+    const className = 'pm-disabled';
+    const button = this.buttonsDomNode.children[0];
+
+    if (this._button.disabled) {
+      L.DomUtil.addClass(button, className);
+      button.setAttribute('aria-disabled', 'true');
+      L.DomEvent.off(button, 'click', this._triggerClick, this);
+      L.DomEvent.off(button, 'click', this._onBtnClick, this);
+    } else {
+      L.DomUtil.removeClass(button, className);
+      button.setAttribute('aria-disabled', 'false');
+      L.DomEvent.on(button, 'click', this._triggerClick, this);
+      L.DomEvent.on(button, 'click', this._onBtnClick, this);
     }
   },
 });

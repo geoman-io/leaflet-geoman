@@ -1,7 +1,9 @@
+import { getRenderer } from '../helpers';
+
 const DragMixin = {
   enableLayerDrag() {
-    // layer is not allowed to dragged
-    if (!this.options.draggable) {
+    // layer is not allowed to dragged or is not on the map
+    if (!this.options.draggable || !this._layer._map) {
       return;
     }
 
@@ -32,7 +34,7 @@ const DragMixin = {
     this._tempDragCoord = null;
 
     // add CSS class
-    if (this._layer._map?.options.preferCanvas) {
+    if (getRenderer(this._layer) instanceof L.Canvas) {
       this._layer.on('mouseout', this.removeDraggingClass, this);
       this._layer.on('mouseover', this.addDraggingClass, this);
     } else {
@@ -45,34 +47,48 @@ const DragMixin = {
     // (if the mouse up event happens outside the container, then the map can become undraggable)
     this._safeToCacheDragState = true;
 
-    const container =
-      this._layer instanceof L.Marker ? this._layer._icon : this._layer._path;
+    const container = this._getDOMElem();
 
     // check if DOM element exists
     if (container) {
       // add mousedown event to trigger drag
-      // We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
-      // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
-      L.DomEvent.on(
-        container,
-        'touchstart mousedown',
-        this._simulateMouseDownEvent,
-        this
-      );
+      if (getRenderer(this._layer) instanceof L.Canvas) {
+        this._layer.on(
+          'touchstart mousedown',
+          this._dragMixinOnMouseDown,
+          this
+        );
+        this._map.pm._addTouchEvents(container);
+      } else {
+        // We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
+        // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
+        L.DomEvent.on(
+          container,
+          'touchstart mousedown',
+          this._simulateMouseDownEvent,
+          this
+        );
+      }
     }
 
-    // TODO: should we add Events "enabledrag" / "disabledrag"?
+    this._fireDragEnable();
   },
   disableLayerDrag() {
     this._layerDragEnabled = false;
 
     // remove CSS class
-    if (this._layer._map?.options.preferCanvas) {
+    if (getRenderer(this._layer) instanceof L.Canvas) {
       this._layer.off('mouseout', this.removeDraggingClass, this);
       this._layer.off('mouseover', this.addDraggingClass, this);
     } else {
       this.removeDraggingClass();
     }
+
+    // if the layer is dragged but now disabled
+    if (this._originalMapDragState && this._dragging) {
+      this._map.dragging.enable();
+    }
+
     // no longer save the drag state
     this._safeToCacheDragState = false;
 
@@ -81,18 +97,33 @@ const DragMixin = {
       this._layer.dragging.disable();
     }
 
-    const container =
-      this._layer instanceof L.Marker ? this._layer._icon : this._layer._path;
+    const container = this._getDOMElem();
     // check if DOM element exists
     if (container) {
-      // disable mousedown event
-      L.DomEvent.off(
-        container,
-        'touchstart mousedown',
-        this._simulateMouseDownEvent,
-        this
-      );
+      if (getRenderer(this._layer) instanceof L.Canvas) {
+        this._layer.off(
+          'touchstart mousedown',
+          this._dragMixinOnMouseDown,
+          this
+        );
+        this._map.pm._removeTouchEvents(container);
+      } else {
+        // disable mousedown event
+        L.DomEvent.off(
+          container,
+          'touchstart mousedown',
+          this._simulateMouseDownEvent,
+          this
+        );
+      }
     }
+
+    if (this._layerDragged) {
+      this._fireUpdate();
+    }
+    this._layerDragged = false;
+
+    this._fireDragDisable();
   },
   // TODO: make this private in the next major release
   dragging() {
@@ -104,38 +135,42 @@ const DragMixin = {
   // We need to simulate a mousedown event on the layer object. We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
   // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
   _simulateMouseDownEvent(e) {
+    const first = e.touches ? e.touches[0] : e;
     const evt = {
-      originalEvent: e,
+      originalEvent: first,
       target: this._layer,
     };
     // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+    evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
 
     this._dragMixinOnMouseDown(evt);
     return false;
   },
   _simulateMouseMoveEvent(e) {
+    const first = e.touches ? e.touches[0] : e;
     const evt = {
-      originalEvent: e,
+      originalEvent: first,
       target: this._layer,
     };
     // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+    evt.containerPoint = this._map.mouseEventToContainerPoint(first);
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
 
     this._dragMixinOnMouseMove(evt);
     return false;
   },
   _simulateMouseUpEvent(e) {
+    const first = e.touches ? e.touches[0] : e;
     const evt = {
-      originalEvent: e,
+      originalEvent: first,
       target: this._layer,
     };
-    // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(e);
-    evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-
+    if (e.type.indexOf('touch') === -1) {
+      // we expect in the function to get the clicked latlng / point
+      evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+      evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
+    }
     this._dragMixinOnMouseUp(evt);
     return false;
   },
@@ -168,12 +203,10 @@ const DragMixin = {
         if (!this._layer.pm.options.editable) {
           this._initSnappableMarkersDrag();
         }
+      } else if (this._layer.pm.options.editable) {
+        this._layer.pm._disableSnapping();
       } else {
-        if (this._layer.pm.options.editable) {
-          this._layer.pm._disableSnapping();
-        } else {
-          this._layer.pm._disableSnappingDrag();
-        }
+        this._layer.pm._disableSnappingDrag();
       }
     }
 
@@ -222,11 +255,16 @@ const DragMixin = {
 
       // disbale map drag
       if (this._originalMapDragState) {
-        this._layer._map.dragging.disable();
+        this._map.dragging.disable();
       }
 
       // fire pm:dragstart event
       this._fireDragStart();
+    }
+
+    // if _tempDragCoord is null add the current latlng to prevent throwing a error. This can happen when for example the layer is removed and added to the map while dragging (MarkerCluster)
+    if (!this._tempDragCoord) {
+      this._tempDragCoord = e.latlng;
     }
 
     this._onLayerDrag(e);
@@ -243,7 +281,7 @@ const DragMixin = {
 
     // re-enable map drag
     if (this._originalMapDragState) {
-      this._layer._map.dragging.enable();
+      this._map.dragging.enable();
     }
 
     // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
@@ -274,12 +312,17 @@ const DragMixin = {
       this._layer.pm._updateHiddenPolyCircle();
     }
 
+    this._layerDragged = true;
+
     // timeout to prevent click event after drag :-/
     // TODO: do it better as soon as leaflet has a way to do it better :-)
     window.setTimeout(() => {
       // set state
       this._dragging = false;
-      L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+      // if the layer is not on the map, we have no DOM element
+      if (el) {
+        L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+      }
 
       // fire pm:dragend event
       this._fireDragEnd();
@@ -311,10 +354,15 @@ const DragMixin = {
         }
 
         // move the coord and return it
-        return {
+        const newLatlng = {
           lat: currentLatLng.lat + deltaLatLng.lat,
           lng: currentLatLng.lng + deltaLatLng.lng,
         };
+
+        if (currentLatLng.alt || currentLatLng.alt === 0) {
+          newLatlng.alt = currentLatLng.alt;
+        }
+        return newLatlng;
       });
 
     if (
@@ -325,6 +373,7 @@ const DragMixin = {
       const newCoords = moveCoords([this._layer.getLatLng()]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
+      this._fireChange(this._layer.getLatLng(), 'Edit');
     } else if (
       this._layer instanceof L.CircleMarker ||
       this._layer instanceof L.Marker
@@ -338,6 +387,7 @@ const DragMixin = {
       const newCoords = moveCoords([coordsRefernce]);
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
+      this._fireChange(this._layer.getLatLng(), 'Edit');
     } else if (this._layer instanceof L.ImageOverlay) {
       // create the new coordinates array
       const newCoords = moveCoords([
@@ -346,12 +396,14 @@ const DragMixin = {
       ]);
       // set new coordinates and redraw
       this._layer.setBounds(newCoords);
+      this._fireChange(this._layer.getBounds(), 'Edit');
     } else {
       // create the new coordinates array
       const newCoords = moveCoords(this._layer.getLatLngs());
 
       // set new coordinates and redraw
       this._layer.setLatLngs(newCoords);
+      this._fireChange(this._layer.getLatLngs(), 'Edit');
     }
 
     // save current latlng for next delta calculation
@@ -444,9 +496,8 @@ const DragMixin = {
         });
       }
       return layersToSync.length > 0;
-    } else {
-      return false;
     }
+    return false;
   },
   _stopDOMImageDrag(e) {
     e.preventDefault();

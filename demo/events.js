@@ -1,4 +1,5 @@
-var map = L.map('map').setView([39.74739, -105], 13);
+/* eslint-disable no-console */
+const map = L.map('map').setView([39.74739, -105], 13);
 
 map.pm.addControls();
 map.pm.setLang('de');
@@ -13,9 +14,9 @@ function logEvent(e) {
   console.log(e);
 }
 
-map.on('pm:drawstart', function (e) {
+map.on('pm:drawstart', (e) => {
   logEvent(e);
-  var layer = e.workingLayer;
+  const layer = e.workingLayer;
 
   layer.on('pm:vertexadded', logEvent);
   layer.on('pm:snapdrag', logEvent);
@@ -24,9 +25,9 @@ map.on('pm:drawstart', function (e) {
   layer.on('pm:centerplaced', logEvent);
 });
 map.on('pm:drawend', logEvent);
-map.on('pm:create', function (e) {
+map.on('pm:create', (e) => {
   logEvent(e);
-  var layer = e.layer;
+  const { layer } = e;
 
   map.pm.disableDraw();
 
@@ -34,7 +35,7 @@ map.on('pm:create', function (e) {
     allowSelfIntersection: false,
   });
 
-  //Edit Event
+  // Edit Event
   layer.on('pm:edit', logEvent);
   layer.on('pm:update', logEvent);
   layer.on('pm:enable', logEvent);
@@ -50,33 +51,33 @@ map.on('pm:create', function (e) {
   layer.on('pm:intersect', logEvent);
   layer.on('pm:centerplaced', logEvent);
 
-  //Drag event
+  // Drag event
   layer.on('pm:dragstart', logEvent);
   layer.on('pm:drag', logEvent);
   layer.on('pm:dragend', logEvent);
 
-  //Cut event
+  // Cut event
   layer.on('pm:cut', logEvent);
 
-  //Remove event
+  // Remove event
   layer.on('pm:remove', logEvent);
 });
 
-//Toggle mode events
+// Toggle mode events
 map.on('pm:globaleditmodetoggled', logEvent);
 map.on('pm:globaldragmodetoggled', logEvent);
 map.on('pm:globalremovalmodetoggled', logEvent);
 map.on('pm:globaldrawmodetoggled', logEvent);
 map.on('pm:globalcutmodetoggled', logEvent);
 
-//Remove event
+// Remove event
 map.on('pm:remove', logEvent);
 map.on('layerremove', logEvent);
 
-//Cut event
+// Cut event
 map.on('pm:cut', logEvent);
 
-//Language changed
+// Language changed
 map.on('pm:langchange', logEvent);
 
 map.pm.setLang('en');

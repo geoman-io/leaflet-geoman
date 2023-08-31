@@ -12,6 +12,7 @@ const Toolbar = L.Class.extend({
     drawPolygon: true,
     drawCircle: true,
     drawCircleMarker: true,
+    drawText: true,
     editMode: true,
     dragMode: true,
     cutPolygon: true,
@@ -118,6 +119,7 @@ const Toolbar = L.Class.extend({
         dragMode: 'control-icon leaflet-pm-icon-drag',
         cutPolygon: 'control-icon leaflet-pm-icon-cut',
         removalMode: 'control-icon leaflet-pm-icon-delete',
+        drawText: 'control-icon leaflet-pm-icon-text',
       },
     };
 
@@ -159,18 +161,14 @@ const Toolbar = L.Class.extend({
     // we can't have two active modes because of possible event conflicts
     // so, we trigger a click on all currently active (toggled) buttons
 
-    // the options toolbar should not be disabled during the different modes
-    // TODO: probably need to abstract this a bit so different options are automatically
-    // disabled for different modes, like pinning for circles
-    const exceptOptionButtons = ['snappingOption'];
-
     for (const name in this.buttons) {
+      const button = this.buttons[name];
       if (
-        !exceptOptionButtons.includes(name) &&
-        this.buttons[name] !== exceptThisButton &&
-        this.buttons[name].toggled()
+        button._button.disableByOtherButtons &&
+        button !== exceptThisButton &&
+        button.toggled()
       ) {
-        this.buttons[name]._triggerClick();
+        button._triggerClick();
       }
     }
   },
@@ -378,6 +376,22 @@ const Toolbar = L.Class.extend({
       actions: ['finishMode'],
     };
 
+    const drawTextButton = {
+      className: 'control-icon leaflet-pm-icon-text',
+      title: getTranslation('buttonTitles.drawTextButton'),
+      jsClass: 'Text',
+      onClick: () => {},
+      afterClick: (e, ctx) => {
+        // toggle drawing mode
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['cancel'],
+    };
+
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
     this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
@@ -387,6 +401,7 @@ const Toolbar = L.Class.extend({
       'drawCircleMarker',
       new L.Control.PMButton(drawCircleMarkerButton)
     );
+    this._addButton('drawText', new L.Control.PMButton(drawTextButton));
     this._addButton('editMode', new L.Control.PMButton(editButton));
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
@@ -529,7 +544,8 @@ const Toolbar = L.Class.extend({
       afterClick: options.afterClick,
       doToggle: options.toggle,
       toggleStatus: false,
-      disableOtherButtons: true,
+      disableOtherButtons: options.disableOtherButtons ?? true,
+      disableByOtherButtons: options.disableByOtherButtons ?? true,
       cssToggle: options.toggle,
       position: this.options.position,
       actions: options.actions || [],
@@ -638,8 +654,11 @@ const Toolbar = L.Class.extend({
   },
   setButtonDisabled(name, state) {
     const btnName = this._btnNameMapping(name);
-    this.buttons[btnName]._button.disabled = !!state;
-    this._showHideButtons();
+    if (state) {
+      this.buttons[btnName].disable();
+    } else {
+      this.buttons[btnName].enable();
+    }
   },
   _shapeMapping() {
     return {
@@ -655,6 +674,7 @@ const Toolbar = L.Class.extend({
       Cut: 'cutPolygon',
       Removal: 'removalMode',
       Rotate: 'rotateMode',
+      Text: 'drawText',
     };
   },
   _btnNameMapping(name) {

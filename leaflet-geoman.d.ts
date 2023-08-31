@@ -45,11 +45,18 @@ declare module 'leaflet' {
   }
 
   /**
-   * Extends built in leaflet Polyline.
+   * Extends built in leaflet MarkerOptions with options for Text-Layer
    */
-  interface Polyline {
-    /** Returns true if Line or Polygon has a self intersection. */
-    hasSelfIntersection(): boolean;
+  interface MarkerOptions {
+    textMarker?: boolean;
+    text?: string;
+  }
+
+  /**
+   * Extends built in leaflet Marker.
+   */
+  interface Marker {
+    pm: PM.PMLayer;
   }
 
   /**
@@ -281,6 +288,26 @@ declare module 'leaflet' {
     once(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
     off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
 
+    /** Fired coordinates of the layer changed. */
+    on(type: 'pm:change', fn: PM.ChangeEventHandler): this;
+    once(type: 'pm:change', fn: PM.ChangeEventHandler): this;
+    off(type: 'pm:change', fn?: PM.ChangeEventHandler): this;
+
+    /** Fired when the text of a layer is changed. */
+    on(type: 'pm:textchange', fn: PM.TextChangeEventHandler): this;
+    once(type: 'pm:textchange', fn: PM.TextChangeEventHandler): this;
+    off(type: 'pm:textchange', fn?: PM.TextChangeEventHandler): this;
+
+    /** Fired when the text layer is focused. */
+    on(type: 'pm:textfocus', fn: PM.TextFocusEventHandler): this;
+    once(type: 'pm:textfocus', fn: PM.TextFocusEventHandler): this;
+    off(type: 'pm:textfocus', fn?: PM.TextFocusEventHandler): this;
+
+    /** Fired when the text layer is blurred.  */
+    on(type: 'pm:textblur', fn: PM.TextBlurEventHandler): this;
+    once(type: 'pm:textblur', fn: PM.TextBlurEventHandler): this;
+    off(type: 'pm:textblur', fn?: PM.TextBlurEventHandler): this;
+
     /******************************************
      *
      * TODO: EDIT MODE EVENTS ON MAP ONLY
@@ -341,6 +368,16 @@ declare module 'leaflet' {
     on(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
     once(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
     off(type: 'pm:dragend', fn?: PM.DragEndEventHandler): this;
+
+    /** Fired when drag mode on a layer is enabled. */
+    on(type: 'pm:dragenable', fn: PM.DragEnableEventHandler): this;
+    once(type: 'pm:dragenable', fn: PM.DragEnableEventHandler): this;
+    off(type: 'pm:dragenable', fn?: PM.DragEnableEventHandler): this;
+
+    /** Fired when drag mode on a layer is disabled. */
+    on(type: 'pm:dragdisable', fn: PM.DragDisableEventHandler): this;
+    once(type: 'pm:dragdisable', fn: PM.DragDisableEventHandler): this;
+    off(type: 'pm:dragdisable', fn?: PM.DragDisableEventHandler): this;
 
     /******************************************
      *
@@ -442,6 +479,9 @@ declare module 'leaflet' {
   }
 
   namespace PM {
+
+    export const version: string;
+
     /** Supported shape names. 'ImageOverlay' is in Edit Mode only. Also accepts custom shape name. */
     type SUPPORTED_SHAPES =
       | 'Marker'
@@ -452,7 +492,35 @@ declare module 'leaflet' {
       | 'Cut'
       | 'CircleMarker'
       | 'ImageOverlay'
+      | 'Text'
       | string;
+
+    type SupportLocales =
+      | 'cz'
+      | 'da'
+      | 'de'
+      | 'el'
+      | 'en'
+      | 'es'
+      | 'fa'
+      | 'fi'
+      | 'fr'
+      | 'hu'
+      | 'id'
+      | 'it'
+      | 'ja'
+      | 'ko'
+      | 'nl'
+      | 'no'
+      | 'pl'
+      | 'pt_br'
+      | 'ro'
+      | 'ru'
+      | 'sv'
+      | 'tr'
+      | 'ua'
+      | 'zh'
+      | 'zh_tw';
 
     /**
      * Changes default registration of leaflet-geoman on leaflet layers.
@@ -495,29 +563,7 @@ declare module 'leaflet' {
       toggleControls(): void;
 
       setLang(
-        lang:
-          | 'cz'
-          | 'da'
-          | 'de'
-          | 'el'
-          | 'en'
-          | 'es'
-          | 'fa'
-          | 'fr'
-          | 'hu'
-          | 'id'
-          | 'it'
-          | 'nl'
-          | 'no'
-          | 'pl'
-          | 'pt_br'
-          | 'ro'
-          | 'ru'
-          | 'sv'
-          | 'tr'
-          | 'ua'
-          | 'zh'
-          | 'zh_tw',
+        lang: SupportLocales,
         customTranslations?: Translations,
         fallbackLanguage?: string
       ): void;
@@ -543,6 +589,7 @@ declare module 'leaflet' {
         startCircle?: string;
         finishCircle?: string;
         placeCircleMarker?: string;
+        placeText?: string;
       };
 
       actions?: {
@@ -562,7 +609,25 @@ declare module 'leaflet' {
         cutButton?: string;
         deleteButton?: string;
         drawCircleMarkerButton?: string;
+        snappingButton?: string;
+        pinningButton?: string;
+        rotateButton?: string;
+        drawTextButton?: string;
+        scaleButton?: string;
+        autoTracingButton?: string;
       };
+
+      measurements?: {
+        totalLength?: string;
+        segmentLength?: string;
+        area?: string;
+        radius?: string;
+        perimeter?: string;
+        height?: string;
+        width?: string;
+        coordinates?: string;
+        coordinatesMarker?: string;
+      }
     }
 
     type ACTION_NAMES = 'cancel' | 'removeLastVertex' | 'finish' | 'finishMode';
@@ -584,6 +649,7 @@ declare module 'leaflet' {
       | 'cutPolygon'
       | 'removalMode'
       | 'rotateMode'
+      | 'drawText'
       | string;
 
     interface PMMapToolbar {
@@ -721,10 +787,10 @@ declare module 'leaflet' {
       layerGroup?: L.Map | L.LayerGroup;
 
       /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']. */
-      snappingOrder: SUPPORTED_SHAPES[];
+      snappingOrder?: SUPPORTED_SHAPES[];
 
       /** Defines in which panes the layers and helper vertices are created. Default: { vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' } */
-      panes: { vertexPane: PANE; layerPane: PANE; markerPane: PANE };
+      panes?: { vertexPane?: PANE; layerPane?: PANE; markerPane?: PANE };
     }
 
     interface PMDrawMap {
@@ -747,10 +813,12 @@ declare module 'leaflet' {
       ): void;
 
       /** Returns all Geoman layers on the map as array. Pass true to get a L.FeatureGroup. */
-      getGeomanLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
+      getGeomanLayers(asFeatureGroup: true): L.FeatureGroup;
+      getGeomanLayers(asFeatureGroup?: false): L.Layer[];
 
       /** Returns all Geoman draw layers on the map as array. Pass true to get a L.FeatureGroup. */
-      getGeomanDrawLayers(asFeatureGroup?: boolean): L.FeatureGroup | L.Layer[];
+      getGeomanDrawLayers(asFeatureGroup: true): L.FeatureGroup;
+      getGeomanDrawLayers(asFeatureGroup?: false): L.Layer[];
     }
 
     interface PMEditMap {
@@ -830,8 +898,8 @@ declare module 'leaflet' {
       /** Disables rotate mode on the layer. */
       disableRotate(): void;
 
-      /** Toggles rotate mode on the layer. */
-      rotateEnabled(): void;
+      /** Returns if rotate mode is enabled for the layer. */
+      rotateEnabled(): boolean;
 
       /** Rotates the layer by x degrees. */
       rotateLayer(degrees: number): void;
@@ -841,6 +909,9 @@ declare module 'leaflet' {
 
       /** Returns the angle of the layer in degrees. */
       getAngle(): number;
+
+      /** Set the initial angle of the layer in degrees. */
+      setInitAngle(degrees: number): void;
     }
 
     interface Draw {
@@ -953,6 +1024,20 @@ declare module 'leaflet' {
       hideMiddleMarkers?: boolean;
     }
 
+    interface TextOptions {
+      /** Predefined text for Text-Layer. */
+      text?: string;
+
+      /** Directly after placing the Text-Layer text editing is activated. */
+      focusAfterDraw?: boolean;
+
+      /** The text layer is removed if no text is written. */
+      removeIfEmpty?: boolean;
+
+      /** Custom CSS Classes for Text-Layer. Separated by a space. */
+      className?: string;
+    }
+
     interface DrawModeOptions {
       /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
       snappable?: boolean;
@@ -976,7 +1061,7 @@ declare module 'leaflet' {
       allowSelfIntersection?: boolean;
 
       /** Leaflet path options for the lines between drawn vertices/markers. (default:{color:'red'}). */
-      templineStyle?: L.PathOptions;
+      templineStyle?: L.CircleMarkerOptions;
 
       /** Leaflet path options for the helper line between last drawn vertex and the cursor. (default:{color:'red',dashArray:[5,5]}). */
       hintlineStyle?: L.PathOptions;
@@ -1030,6 +1115,8 @@ declare module 'leaflet' {
 
       /** Cut-Mode: Only the passed layers can be cut. Cutted layers are removed from the Array until no layers are left anymore and cutting is working on all layers again. (Default: []) */
       layersToCut?: L.Layer[];
+
+      textOptions?: TextOptions;
     }
 
     /**
@@ -1056,6 +1143,9 @@ declare module 'leaflet' {
 
       /** Adds button to draw Polygon (default:true) */
       drawPolygon?: boolean;
+
+      /** Adds button to draw Text (default:true) */
+      drawText?: boolean;
 
       /** Adds button to draw Circle (default:true) */
       drawCircle?: boolean;
@@ -1095,6 +1185,10 @@ declare module 'leaflet' {
 
       /** Adds a button to toggle the Snapping Option ⭐ */
       snappingOption?: boolean;
+
+      /** Adds custom button (default:true) */
+      // The type of custom buttons are always boolean but TS needs the other types defined too.
+      [key: string]: L.ControlPosition | BlockPositions | boolean | undefined;
     }
 
     /** the position of each block. */
@@ -1112,7 +1206,7 @@ declare module 'leaflet' {
       options?: L.ControlPosition;
     }
 
-    interface PMEditLayer {
+    interface PMEditLayer extends PMEditTextLayer {
       /** Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar */
       enable(options?: EditModeOptions): void;
 
@@ -1136,6 +1230,26 @@ declare module 'leaflet' {
 
       /** Removes the layer with the same checks as GlobalRemovalMode. */
       remove(): void;
+    }
+
+    interface PMEditTextLayer {
+      /** Activate text editing of Text-Layer. */
+      focus(): void;
+
+      /** Deactivate text editing of Text-Layer. */
+      blur(): void;
+
+      /** Is text editing active on Text-Layer. */
+      hasFocus(): boolean;
+
+      /** Returns the `<textarea>` DOM element of Text-Layer. */
+      getElement(): HTMLElement;
+
+      /** Set text on Text-Layer. */
+      setText(text: string): void;
+
+      /** Returns the text of Text-Layer. */
+      getText(): string;
     }
 
     interface PMDragLayer {
@@ -1332,6 +1446,24 @@ declare module 'leaflet' {
       layer: L.Layer;
       intersection: L.LatLng;
     }) => void;
+    export type ChangeEventHandler = (e: {
+      shape: PM.SUPPORTED_SHAPES;
+      layer: L.Layer;
+      latlngs: L.LatLng | L.LatLng[];
+    }) => void;
+    export type TextChangeEventHandler = (e: {
+      shape: PM.SUPPORTED_SHAPES;
+      layer: L.Layer;
+      text: string;
+    }) => void;
+    export type TextFocusEventHandler = (e: {
+      shape: PM.SUPPORTED_SHAPES;
+      layer: L.Layer;
+    }) => void;
+    export type TextBlurEventHandler = (e: {
+      shape: PM.SUPPORTED_SHAPES;
+      layer: L.Layer;
+    }) => void;
 
     /**
      * EDIT MODE MAP EVENT HANDLERS
@@ -1365,6 +1497,14 @@ declare module 'leaflet' {
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
     export type DragEndEventHandler = (e: {
+      layer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
+    export type DragEnableEventHandler = (e: {
+      layer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
+    export type DragDisableEventHandler = (e: {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
@@ -1405,8 +1545,12 @@ declare module 'leaflet' {
     export type RotateEnableEventHandler = (e: {
       layer: L.Layer;
       helpLayer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type RotateDisableEventHandler = (e: { layer: L.Layer }) => void;
+    export type RotateDisableEventHandler = (e: {
+      layer: L.Layer;
+      shape: PM.SUPPORTED_SHAPES;
+    }) => void;
     export type RotateStartEventHandler = (e: {
       layer: L.Layer;
       helpLayer: L.Layer;

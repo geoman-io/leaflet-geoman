@@ -191,6 +191,7 @@ describe('Draw Circle', () => {
       mapSimple = L.map('map', {
         crs: L.CRS.Simple,
         minZoom: -2,
+        doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([0, 0], 0);
       mapSimple.pm.addControls();
     });
@@ -219,6 +220,7 @@ describe('Draw Circle', () => {
       mapSimple = L.map('map', {
         crs: L.CRS.Simple,
         minZoom: -2,
+        doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([0, 0], 0);
       mapSimple.pm.addControls();
     });
@@ -240,6 +242,68 @@ describe('Draw Circle', () => {
     cy.window().then(({ map }) => {
       // if map property is null, then it is not visible
       expect(!!map.pm.Draw.Circle._layer._map).to.eq(false);
+    });
+  });
+  it('removes circle if enabled', () => {
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200).click(250, 250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasLayers(7);
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.remove();
+    });
+    cy.hasLayers(3);
+  });
+  it('check if snapping works with max radius of circle', () => {
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(350, 250).click(450, 250);
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        maxRadiusCircle: 1500,
+      });
+    });
+
+    cy.toolbarButton('circle').click();
+    cy.get(mapSelector).click(355, 250).click(475, 250);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer2 = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLng().equals(layer2.getLatLng())).to.eq(true);
+    });
+  });
+
+  it('change color of circle while drawing', () => {
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.Circle._layer;
+      const hintLine = map.pm.Draw.Circle._hintline;
+      expect(layer.options.color).to.eql('red');
+      expect(hintLine.options.color).to.eql('red');
     });
   });
 });

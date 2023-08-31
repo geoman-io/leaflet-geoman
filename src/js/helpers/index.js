@@ -12,20 +12,33 @@ export function getTranslation(path) {
   return get(translations[lang], path);
 }
 
-export function isEmptyDeep(l) {
-  // thanks for the function, Felix Heck
-  const flatten = (list) =>
-    list
-      .filter((x) => ![null, '', undefined].includes(x))
-      .reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+export function hasValues(list) {
+  for (let i = 0; i < list.length; i += 1) {
+    const item = list[i];
 
-  return !flatten(l).length;
+    if (Array.isArray(item)) {
+      if (hasValues(item)) {
+        return true;
+      }
+    } else if (item !== null && item !== undefined && item !== '') {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function removeEmptyCoordRings(arr) {
   return arr.reduce((result, item) => {
     if (item.length !== 0) {
-      result.push(Array.isArray(item) ? removeEmptyCoordRings(item) : item);
+      const newItem = Array.isArray(item) ? removeEmptyCoordRings(item) : item;
+      if (Array.isArray(newItem)) {
+        if (newItem.length !== 0) {
+          result.push(newItem);
+        }
+      } else {
+        result.push(newItem);
+      }
     }
     return result;
   }, []);
@@ -114,15 +127,15 @@ export function createGeodesicPolygon(
   rotation,
   withBearing = true
 ) {
-  let angle;
+  let trueAngle;
   let newLonlat;
   let geomPoint;
   const points = [];
 
   for (let i = 0; i < sides; i += 1) {
     if (withBearing) {
-      angle = (i * 360) / sides + rotation;
-      newLonlat = destinationVincenty(origin, angle, radius);
+      trueAngle = (i * 360) / sides + rotation;
+      newLonlat = destinationVincenty(origin, trueAngle, radius);
       geomPoint = L.latLng(newLonlat.lng, newLonlat.lat);
     } else {
       const pLat = origin.lat + Math.cos((2 * i * Math.PI) / sides) * radius;
@@ -158,10 +171,15 @@ function destination(latlng, heading, distance) {
       cosDistR - sinLat1 * Math.sin(lat2)
     );
   lon2 *= radInv;
-  lon2 = lon2 > 180 ? lon2 - 360 : lon2 < -180 ? lon2 + 360 : lon2;
+
+  const optA = lon2 - 360;
+  const optB = lon2 < -180 ? lon2 + 360 : lon2;
+
+  lon2 = lon2 > 180 ? optA : optB;
   return L.latLng([lat2 * radInv, lon2]);
 }
 /* Copied from L.GeometryUtil */
+// TODO: rename this function to calcAngle
 function angle(map, latlngA, latlngB) {
   const pointA = map.latLngToContainerPoint(latlngA);
   const pointB = map.latLngToContainerPoint(latlngB);
@@ -187,11 +205,12 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
   // change the keys to lowercase
   const keys = Object.keys(_sortingOrder);
   let objKey;
-  let n = keys.length;
+  let n = keys.length - 1;
   const sortingOrder = {};
-  while (n--) {
+  while (n >= 0) {
     objKey = keys[n];
     sortingOrder[objKey.toLowerCase()] = _sortingOrder[objKey];
+    n -= 1;
   }
 
   function getShape(layer) {
@@ -257,4 +276,15 @@ export function fixLatOffset(latlng, map) {
     latlng.lat = Math.max(Math.min(max, latlng.lat), -max);
   }
   return latlng;
+}
+
+export function getRenderer(layer) {
+  return (
+    layer.options.renderer ||
+    (layer._map &&
+      (layer._map._getPaneRenderer(layer.options.pane) ||
+        layer._map.options.renderer ||
+        layer._map._renderer)) ||
+    layer._renderer
+  );
 }

@@ -30,17 +30,23 @@ beforeEach(() => {
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 22,
         }
       );
 
       // create the map
       const map = L.map('map', {
         preferCanvas: false,
+        doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       })
         .setView([51.505, -0.09], 13)
         .addLayer(tiles);
 
       contentWindow.map = map;
+
+      contentWindow.ONE_BLOCK_CONTROL_COUNT = 12;
+      contentWindow.TOP_RIGHT_BLOCK_CONTROL_COUNT = 7;
+      contentWindow.TOP_LEFT_BLOCK_CONTROL_COUNT = 6;
 
       // add leaflet-geoman toolbar
       map.pm.addControls();
@@ -50,7 +56,7 @@ beforeEach(() => {
   // because of this issue: https://github.com/Leaflet/prosthetic-hand/issues/16
   // this._onStop not detected by default as instance of Function. -> Replaced with typeof this._onStop === "function"
   cy.window().then(({ Hand }) => {
-    Hand.prototype.fingerIsIdle = function () {
+    Hand.prototype.fingerIsIdle = function fingerIsIdle() {
       if (this._fingers.every((f) => f.isIdle())) {
         if (!this._fingersAreIdle) {
           // 🖑event prostheticHandStop: CustomEvent
@@ -66,7 +72,7 @@ beforeEach(() => {
       }
     };
 
-    Hand.prototype.fingerIsBusy = function () {
+    Hand.prototype.fingerIsBusy = function fingerIsBusy() {
       if (this._fingersAreIdle) {
         // 🖑section
         // Use `document.addEventListener('prostheticHandStop', fn)` to

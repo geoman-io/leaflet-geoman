@@ -4,6 +4,7 @@ const GlobalDragMode = {
     const layers = L.PM.Utils.findLayers(this.map);
 
     this._globalDragModeEnabled = true;
+    this._addedLayersDrag = {};
 
     layers.forEach((layer) => {
       layer.pm.enableLayerDrag();
@@ -18,6 +19,7 @@ const GlobalDragMode = {
     }
 
     // add map handler
+    this.map.on('layeradd', this._layerAddedDrag, this);
     this.map.on('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
@@ -35,6 +37,7 @@ const GlobalDragMode = {
     });
 
     // remove map handler
+    this.map.off('layeradd', this._layerAddedDrag, this);
     this.map.off('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
@@ -52,18 +55,31 @@ const GlobalDragMode = {
       this.enableGlobalDragMode();
     }
   },
-  reinitGlobalDragMode({ layer }) {
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-    const isRelevant = !!layer.pm && !layer._pmTempLayer;
-    if (!isRelevant) {
-      return;
-    }
+  reinitGlobalDragMode() {
+    const layers = this._addedLayersDrag;
+    this._addedLayersDrag = {};
+    for (const id in layers) {
+      const layer = layers[id];
 
-    // re-enable global drag mode if it's enabled already
-    if (this.globalDragModeEnabled()) {
-      this.disableGlobalDragMode();
-      this.enableGlobalDragMode();
+      if (this._isRelevantForDrag(layer)) {
+        if (this.globalDragModeEnabled()) {
+          layer.pm.enableLayerDrag();
+        }
+      }
     }
+  },
+  _layerAddedDrag({ layer }) {
+    this._addedLayersDrag[L.stamp(layer)] = layer;
+  },
+  _isRelevantForDrag(layer) {
+    return (
+      layer.pm &&
+      !(layer instanceof L.LayerGroup) &&
+      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      !layer._pmTempLayer &&
+      layer.pm.options.draggable
+    );
   },
 };
 

@@ -1,11 +1,11 @@
 import Draw from './L.PM.Draw';
 import { getTranslation } from '../helpers';
 
-Draw.Marker = Draw.extend({
+Draw.Text = Draw.extend({
   initialize(map) {
     this._map = map;
-    this._shape = 'Marker';
-    this.toolbarButtonName = 'drawMarker';
+    this._shape = 'Text';
+    this.toolbarButtonName = 'drawText';
   },
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
@@ -22,18 +22,24 @@ Draw.Marker = Draw.extend({
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(
-      this._map.getCenter(),
-      this.options.markerStyle
-    );
-    this._setPane(this._hintMarker, 'markerPane');
+    this._hintMarker = L.marker(this._map.getCenter(), {
+      interactive: false,
+      zIndexOffset: 100,
+      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+    });
+    this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
     this._hintMarker.addTo(this._map);
+
+    // show the hintmarker if the option is set
+    if (this.options.cursorMarker) {
+      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+    }
 
     // add tooltip to hintmarker
     if (this.options.tooltips) {
       this._hintMarker
-        .bindTooltip(getTranslation('tooltips.placeMarker'), {
+        .bindTooltip(getTranslation('tooltips.placeText'), {
           permanent: true,
           offset: L.point(0, 10),
           direction: 'bottom',
@@ -48,15 +54,6 @@ Draw.Marker = Draw.extend({
 
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
-
-    // enable edit mode for existing markers
-    if (this.options.markerEditable) {
-      this._map.eachLayer((layer) => {
-        if (this.isRelevantMarker(layer)) {
-          layer.pm.enable();
-        }
-      });
-    }
 
     // fire drawstart event
     this._fireDrawStart();
@@ -80,13 +77,6 @@ Draw.Marker = Draw.extend({
     // remove event listener to sync hint marker
     this._map.off('mousemove', this._syncHintMarker, this);
 
-    // disable dragging and removing for all markers
-    this._map.eachLayer((layer) => {
-      if (this.isRelevantMarker(layer)) {
-        layer.pm.disable();
-      }
-    });
-
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
@@ -109,14 +99,6 @@ Draw.Marker = Draw.extend({
       this.enable(options);
     }
   },
-  isRelevantMarker(layer) {
-    return (
-      layer instanceof L.Marker &&
-      layer.pm &&
-      !layer._pmTempLayer &&
-      !layer.pm._initTextMarker
-    );
-  },
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
@@ -127,8 +109,6 @@ Draw.Marker = Draw.extend({
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
     }
-
-    this._fireChange(this._hintMarker.getLatLng(), 'Draw');
   },
   _createMarker(e) {
     if (!e.latlng) {
@@ -153,8 +133,20 @@ Draw.Marker = Draw.extend({
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();
 
-    // create marker
-    const marker = new L.Marker(latlng, this.options.markerStyle);
+    this.textArea = this._createTextArea();
+
+    if (this.options.textOptions?.className) {
+      const cssClasses = this.options.textOptions.className.split(' ');
+      this.textArea.classList.add(...cssClasses);
+    }
+
+    const textAreaIcon = this._createTextIcon(this.textArea);
+
+    const marker = new L.Marker(latlng, {
+      textMarker: true,
+      _textMarkerOverPM: true, // we need to put this into the options, else we can't catch this in the init method
+      icon: textAreaIcon,
+    });
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 
@@ -164,12 +156,17 @@ Draw.Marker = Draw.extend({
     }
     // add marker to the map
     marker.addTo(this._map.pm._getContainingLayer());
+    if (marker.pm) {
+      marker.pm.textArea = this.textArea;
+      L.setOptions(marker.pm, {
+        removeIfEmpty: this.options.textOptions?.removeIfEmpty ?? true,
+      });
 
-    if (marker.pm && this.options.markerEditable) {
-      // enable editing for the marker
-      marker.pm.enable();
-    } else if (marker.dragging) {
-      marker.dragging.disable();
+      const focusAfterDraw = this.options.textOptions?.focusAfterDraw ?? true;
+      marker.pm._createTextMarker(focusAfterDraw);
+      if (this.options.textOptions?.text) {
+        marker.pm.setText(this.options.textOptions.text);
+      }
     }
 
     // fire the pm:create event and pass shape and marker
@@ -177,13 +174,25 @@ Draw.Marker = Draw.extend({
 
     this._cleanupSnapping();
 
-    if (!this.options.continueDrawing) {
-      this.disable();
+    // disable drawing
+    this.disable();
+    if (this.options.continueDrawing) {
+      this.enable();
     }
   },
-  setStyle() {
-    if (this.options.markerStyle?.icon) {
-      this._hintMarker?.setIcon(this.options.markerStyle.icon);
-    }
+
+  _createTextArea() {
+    const textArea = document.createElement('textarea');
+    textArea.autofocus = true;
+    textArea.readOnly = true;
+    textArea.classList.add('pm-textarea', 'pm-disabled');
+    return textArea;
+  },
+
+  _createTextIcon(textArea) {
+    return L.divIcon({
+      className: 'pm-text-marker',
+      html: textArea,
+    });
   },
 });

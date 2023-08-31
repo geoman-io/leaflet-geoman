@@ -391,12 +391,114 @@ describe('Draw Circle Marker', () => {
   });
   it('checks if circle is hidden before drawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({editable: true});
+      map.pm.setGlobalOptions({ editable: true });
     });
     cy.toolbarButton('circle-marker').click();
     cy.window().then(({ map }) => {
       // if map property is null, then it is not visible
       expect(!!map.pm.Draw.CircleMarker._layer._map).to.eq(false);
+    });
+  });
+
+  it('removes circleMarker if enabled', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ editable: true });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(350, 250).click(190, 60);
+
+    cy.window().then(({ map }) => {
+      map.pm.disableDraw();
+    });
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasLayers(7);
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      layer.remove();
+    });
+    cy.hasLayers(3);
+  });
+
+  it('check if snapping works with max radius of circle', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        editable: true,
+      });
+    });
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(320, 250).click(450, 250);
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({
+        maxRadiusCircleMarker: 100,
+      });
+    });
+
+    cy.get(mapSelector).click(325, 250).click(475, 250);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer2 = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLng().equals(layer2.getLatLng())).to.eq(true);
+    });
+  });
+
+  it('change color of circleMarker while drawing', () => {
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.CircleMarker._layer;
+      expect(layer.options.color).to.eql('red');
+    });
+  });
+
+  it('change color of circleMarker (editable) while drawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ editable: true });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.CircleMarker._layer;
+      const hintLine = map.pm.Draw.CircleMarker._hintline;
+      expect(layer.options.color).to.eql('red');
+      expect(hintLine.options.color).to.eql('red');
     });
   });
 });

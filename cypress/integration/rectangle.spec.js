@@ -66,10 +66,10 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('cut').click();
     cy.get(mapSelector)
-      .click(226, 389)
+      .click(226, 419)
       .click(230, 105)
-      .click(270, 396)
-      .click(226, 389);
+      .click(270, 419)
+      .click(226, 419);
 
     cy.toolbarButton('cut').click();
     cy.get(mapSelector)
@@ -114,7 +114,7 @@ describe('Draw Rectangle', () => {
 
     cy.get(mapSelector).rightclick(300, 250);
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({ map }) => {
       const rect = map.pm.getGeomanDrawLayers()[0];
       expect(rect.options.color).to.not.equal('#f00000ff');
     });
@@ -224,7 +224,7 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ map }) => {
       expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
       map.pm.disableDraw();
-      layer = map.pm.getGeomanDrawLayers()[0];
+      [layer] = map.pm.getGeomanDrawLayers();
     });
 
     // test 2: snapIgnore: true, pmIgnore: undefined, optIn: false --> not snappable
@@ -566,6 +566,318 @@ describe('Draw Rectangle', () => {
       });
 
       expect(maxLatUsed).to.eq(2);
+    });
+  });
+
+  it('Canvas drags syncLayers', () => {
+    let mapCanvas;
+
+    cy.window().then(({ L, map }) => {
+      map.remove();
+      const tiles = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      );
+
+      // create the map
+      mapCanvas = L.map('map', {
+        preferCanvas: true,
+      })
+        .setView([51.505, -0.09], 13)
+        .addLayer(tiles);
+
+      // add leaflet-geoman toolbar
+      mapCanvas.pm.addControls();
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(191, 216).click(608, 323);
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(230, 230).click(350, 350);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(() => {
+      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      let center1 = layers[0].getCenter();
+      let center2 = layers[1].getCenter();
+
+      const layer = layers[0];
+      // if this layer is dragged, all layers on the map should dragged too
+      layer.pm.options.syncLayersOnDrag = layers;
+
+      // Drag both layers
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([290, 290]),
+      });
+      layer.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([500, 320]),
+      });
+      layer.pm._dragMixinOnMouseUp({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([320, 320]),
+      });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(false);
+      expect(center2.equals(layers[1].getCenter())).to.eq(false);
+
+      center1 = layers[0].getCenter();
+      center2 = layers[1].getCenter();
+
+      const layer2 = layers[1];
+      // Drag only layer2
+      layer2.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer2,
+        latlng: mapCanvas.containerPointToLatLng([290, 290]),
+      });
+      layer2.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer2,
+        latlng: mapCanvas.containerPointToLatLng([500, 320]),
+      });
+      layer2.pm._dragMixinOnMouseUp({
+        originalEvent: { button: 0 },
+        target: layer2,
+        latlng: mapCanvas.containerPointToLatLng([320, 320]),
+      });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(true);
+      expect(center2.equals(layers[1].getCenter())).to.eq(false);
+    });
+  });
+
+  it('preferCanvas - drag a simple layer', () => {
+    let mapCanvas;
+
+    cy.window().then(({ L, map }) => {
+      map.remove();
+      const tiles = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      );
+
+      // create the map
+      mapCanvas = L.map('map', {
+        preferCanvas: true,
+      })
+        .setView([51.505, -0.09], 13)
+        .addLayer(tiles);
+
+      // add leaflet-geoman toolbar
+      mapCanvas.pm.addControls();
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(191, 216).click(608, 323);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(() => {
+      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      const center1 = layers[0].getCenter();
+
+      const layer = layers[0];
+
+      // Drag both layers
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([290, 290]),
+      });
+      layer.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([500, 320]),
+      });
+      layer.pm._dragMixinOnMouseUp({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([320, 320]),
+      });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(false);
+    });
+  });
+
+  it('Canvas renderer - drag a simple layer', () => {
+    let mapCanvas;
+
+    cy.window().then(({ L, map }) => {
+      map.remove();
+      const tiles = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      );
+
+      // create the map
+      mapCanvas = L.map('map', {
+        renderer: L.canvas(),
+      })
+        .setView([51.505, -0.09], 13)
+        .addLayer(tiles);
+
+      // add leaflet-geoman toolbar
+      mapCanvas.pm.addControls();
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(191, 216).click(608, 323);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(() => {
+      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      const center1 = layers[0].getCenter();
+
+      const layer = layers[0];
+
+      // Drag both layers
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([290, 290]),
+      });
+      layer.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([500, 320]),
+      });
+      layer.pm._dragMixinOnMouseUp({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([320, 320]),
+      });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(false);
+    });
+  });
+
+  it('Canvas & SVG renderer - drag two layers', () => {
+    let mapCanvas;
+    let rect1;
+    let rect2;
+
+    cy.window().then(({ L, map }) => {
+      map.remove();
+      const tiles = L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      );
+
+      // create the map
+      mapCanvas = L.map('map', {
+        renderer: L.canvas(),
+      })
+        .setView([51.505, -0.09], 13)
+        .addLayer(tiles);
+
+      // add leaflet-geoman toolbar
+      mapCanvas.pm.addControls();
+
+      mapCanvas.on('pm:create', (e) => {
+        rect1 = e.layer;
+        rect2 = L.rectangle(rect1.getBounds(), { renderer: L.svg() }).addTo(
+          mapCanvas
+        );
+      });
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(191, 216).click(608, 323);
+
+    cy.toolbarButton('drag').click();
+
+    // Canvas layer
+    cy.window().then(({ L }) => {
+      const center1 = rect1.getCenter();
+
+      const layer = rect1;
+
+      // Drag both layers
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([290, 290]),
+      });
+      layer.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([500, 320]),
+      });
+      layer.pm._dragMixinOnMouseUp({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([320, 320]),
+      });
+
+      expect(center1.equals(rect1.getCenter())).to.eq(false);
+      expect(mapCanvas.getRenderer(rect1) instanceof L.Canvas).to.eq(true);
+    });
+
+    // SVG layer
+    cy.window().then(({ L }) => {
+      const center1 = rect2.getCenter();
+
+      const layer = rect2;
+
+      // Drag both layers
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([290, 290]),
+      });
+      layer.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([500, 320]),
+      });
+      layer.pm._dragMixinOnMouseUp({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: mapCanvas.containerPointToLatLng([320, 320]),
+      });
+
+      expect(center1.equals(rect2.getCenter())).to.eq(false);
+      expect(mapCanvas.getRenderer(rect2) instanceof L.SVG).to.eq(true);
+    });
+  });
+
+  it('change color of Rectangle while drawing', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(220, 220);
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ pathOptions: style });
+
+      const layer = map.pm.Draw.Rectangle._layer;
+      expect(layer.options.color).to.eql('red');
     });
   });
 });

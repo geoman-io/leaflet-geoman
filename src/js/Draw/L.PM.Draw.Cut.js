@@ -28,7 +28,23 @@ Draw.Cut = Draw.Polygon.extend({
       }
     }
 
+    // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
+    if (
+      this.options.requireSnapToFinish &&
+      !this._hintMarker._snapped &&
+      !this._isFirstLayer()
+    ) {
+      return;
+    }
+
+    // get coordinates
     const coords = this._layer.getLatLngs();
+
+    // only finish the shape if there are 3 or more vertices
+    if (coords.length <= 2) {
+      return;
+    }
+
     const polygonLayer = L.polygon(coords, this.options.pathOptions);
     // readout information about the latlngs like snapping points
     polygonLayer._latlngInfos = this._layer._latlngInfo;
@@ -254,4 +270,5 @@ Draw.Cut = Draw.Polygon.extend({
     }
     return diff;
   },
+  _change: L.Util.falseFn,
 });

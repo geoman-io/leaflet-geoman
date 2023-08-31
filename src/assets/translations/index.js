@@ -22,6 +22,9 @@ import fa from './fa.json';
 import ua from './ua.json';
 import tr from './tr.json';
 import cz from './cz.json';
+import ja from './ja.json';
+import fi from './fi.json';
+import ko from './ko.json';
 
 export default {
   en,
@@ -46,4 +49,7 @@ export default {
   ua,
   tr,
   cz,
+  ja,
+  fi,
+  ko,
 };

@@ -149,6 +149,42 @@ describe('Draw Marker', () => {
     });
   });
 
+  it('keeps alt in LatLng while dragging', (done) => {
+    cy.toolbarButton('marker').click();
+    cy.wait(1000);
+    cy.get(mapSelector).click(150, 250);
+    cy.wait(1000);
+    cy.toolbarButton('marker').click();
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      expect(marker.getLatLng().alt).to.eq(undefined);
+      marker.getLatLng().alt = 10;
+      expect(marker.getLatLng().alt).to.eq(10);
+    });
+
+    cy.window().then(({ map, Hand }) => {
+      const handMarker = new Hand({
+        timing: 'frame',
+        onStop: () => {
+          const marker = map.pm.getGeomanDrawLayers()[0];
+          expect(marker.getLatLng().alt).to.eq(10);
+          done();
+        },
+      });
+      const toucherMarker = handMarker.growFinger('mouse');
+      toucherMarker
+        .wait(100)
+        .moveTo(150, 240, 100)
+        .down()
+        .wait(500)
+        .moveTo(170, 290, 400)
+        .up()
+        .wait(100); // Not allowed
+    });
+  });
+
   it('enabled of Marker is true in edit-mode', () => {
     cy.toolbarButton('marker').click();
     cy.get(mapSelector).click(150, 250);
@@ -237,6 +273,47 @@ describe('Draw Marker', () => {
 
     cy.window().then(({ map }) => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+    });
+  });
+  it('fires pm:update after edit', () => {
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector).click(350, 250);
+
+    let updateFired = false;
+    cy.window().then(({ map }) => {
+      const marker = map.pm.getGeomanDrawLayers()[0];
+      marker.on('pm:update', () => {
+        updateFired = true;
+      });
+      marker.pm.enable();
+      marker.pm._layerEdited = true;
+      marker.pm.disable();
+    });
+
+    cy.window().then(() => {
+      expect(updateFired).to.eq(true);
+    });
+  });
+
+  it('change icon of Marker while drawing', () => {
+    cy.toolbarButton('marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map, L }) => {
+      map.pm.setGlobalOptions({
+        markerStyle: {
+          icon: L.icon({
+            iconUrl: 'someIcon.png',
+          }),
+        },
+      });
+
+      const layer = map.pm.Draw.Marker._hintMarker;
+      expect(layer._icon.src.endsWith('someIcon.png')).to.eql(true);
     });
   });
 });

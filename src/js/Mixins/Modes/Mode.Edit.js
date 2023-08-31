@@ -1,7 +1,10 @@
 // this mixin adds a global edit mode to the map
 const GlobalEditMode = {
   _globalEditModeEnabled: false,
-  enableGlobalEditMode(options) {
+  enableGlobalEditMode(o) {
+    const options = {
+      ...o,
+    };
     // set status
     this._globalEditModeEnabled = true;
 
@@ -25,9 +28,9 @@ const GlobalEditMode = {
     }
 
     // save the added layers into the _addedLayers array, to read it later out
-    this._addedLayers = [];
+    this._addedLayers = {};
     this.map.on('layeradd', this._layerAdded, this);
-    // handle layers that are added while in removal mode
+    // handle layers that are added while in edit mode
     this.map.on('layeradd', this.throttledReInitEdit, this);
 
     // fire event
@@ -73,24 +76,31 @@ const GlobalEditMode = {
   },
   handleLayerAdditionInGlobalEditMode() {
     const layers = this._addedLayers;
-    this._addedLayers = [];
-    layers.forEach((layer) => {
+    this._addedLayers = {};
+    for (const id in layers) {
+      const layer = layers[id];
       // when global edit mode is enabled and a layer is added to the map,
       // enable edit for that layer if it's relevant
 
-      // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-      const isRelevant = !!layer.pm && !layer._pmTempLayer;
-      if (!isRelevant) {
-        return;
+      if (this._isRelevantForEdit(layer)) {
+        if (this.globalEditModeEnabled()) {
+          layer.pm.enable({ ...this.globalOptions });
+        }
       }
-
-      if (this.globalEditModeEnabled()) {
-        layer.pm.enable({ ...this.globalOptions });
-      }
-    });
+    }
   },
   _layerAdded({ layer }) {
-    this._addedLayers.push(layer);
+    this._addedLayers[L.stamp(layer)] = layer;
+  },
+  _isRelevantForEdit(layer) {
+    return (
+      layer.pm &&
+      !(layer instanceof L.LayerGroup) &&
+      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      !layer._pmTempLayer &&
+      layer.pm.options.allowEditing
+    );
   },
 };
 

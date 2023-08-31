@@ -6,6 +6,7 @@ import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
 import KeyboardMixins from './Mixins/Keyboard';
+import { getRenderer } from './helpers';
 
 const Map = L.Class.extend({
   includes: [
@@ -37,6 +38,7 @@ const Map = L.Class.extend({
         layerPane: 'overlayPane',
         markerPane: 'markerPane',
       },
+      draggable: true,
     };
 
     this.Keyboard._initKeyListener(map);
@@ -102,7 +104,7 @@ const Map = L.Class.extend({
     let reenableCircleMarker = false;
     if (
       this.map.pm.Draw.CircleMarker.enabled() &&
-      this.map.pm.Draw.CircleMarker.options.editable !== options.editable
+      !!this.map.pm.Draw.CircleMarker.options.editable !== !!options.editable
     ) {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
@@ -123,11 +125,13 @@ const Map = L.Class.extend({
       layer.pm.setOptions(options);
     });
 
-    // apply the options (actually trigger the functionality)
-    this.applyGlobalOptions();
+    this.map.fire('pm:globaloptionschanged');
 
     // store options
     this.globalOptions = options;
+
+    // apply the options (actually trigger the functionality)
+    this.applyGlobalOptions();
   },
   applyGlobalOptions() {
     const layers = L.PM.Utils.findLayers(this.map);
@@ -187,6 +191,92 @@ const Map = L.Class.extend({
   },
   _isCRSSimple() {
     return this.map.options.crs === L.CRS.Simple;
+  },
+  // in Canvas mode we need to convert touch- and pointerevents (IE) to mouseevents, because Leaflet don't support them.
+  _touchEventCounter: 0,
+  _addTouchEvents(elm) {
+    if (this._touchEventCounter === 0) {
+      L.DomEvent.on(elm, 'touchmove', this._canvasTouchMove, this);
+      L.DomEvent.on(
+        elm,
+        'touchstart touchend touchcancel',
+        this._canvasTouchClick,
+        this
+      );
+    }
+    this._touchEventCounter += 1;
+  },
+  _removeTouchEvents(elm) {
+    if (this._touchEventCounter === 1) {
+      L.DomEvent.off(elm, 'touchmove', this._canvasTouchMove, this);
+      L.DomEvent.off(
+        elm,
+        'touchstart touchend touchcancel',
+        this._canvasTouchClick,
+        this
+      );
+    }
+    this._touchEventCounter =
+      this._touchEventCounter <= 1 ? 0 : this._touchEventCounter - 1;
+  },
+  _canvasTouchMove(e) {
+    getRenderer(this.map)._onMouseMove(this._createMouseEvent('mousemove', e));
+  },
+  _canvasTouchClick(e) {
+    let type = '';
+    if (e.type === 'touchstart' || e.type === 'pointerdown') {
+      type = 'mousedown';
+    } else if (e.type === 'touchend' || e.type === 'pointerup') {
+      type = 'mouseup';
+    } else if (e.type === 'touchcancel' || e.type === 'pointercancel') {
+      type = 'mouseup';
+    }
+    if (!type) {
+      return;
+    }
+    getRenderer(this.map)._onClick(this._createMouseEvent(type, e));
+  },
+  _createMouseEvent(type, e) {
+    let mouseEvent;
+    const touchEvt = e.touches[0] || e.changedTouches[0];
+    try {
+      mouseEvent = new MouseEvent(type, {
+        bubbles: e.bubbles,
+        cancelable: e.cancelable,
+        view: e.view,
+        detail: touchEvt.detail,
+        screenX: touchEvt.screenX,
+        screenY: touchEvt.screenY,
+        clientX: touchEvt.clientX,
+        clientY: touchEvt.clientY,
+        ctrlKey: e.ctrlKey,
+        altKey: e.altKey,
+        shiftKey: e.shiftKey,
+        metaKey: e.metaKey,
+        button: e.button,
+        relatedTarget: e.relatedTarget,
+      });
+    } catch (ex) {
+      mouseEvent = document.createEvent('MouseEvents');
+      mouseEvent.initMouseEvent(
+        type,
+        e.bubbles,
+        e.cancelable,
+        e.view,
+        touchEvt.detail,
+        touchEvt.screenX,
+        touchEvt.screenY,
+        touchEvt.clientX,
+        touchEvt.clientY,
+        e.ctrlKey,
+        e.altKey,
+        e.shiftKey,
+        e.metaKey,
+        e.button,
+        e.relatedTarget
+      );
+    }
+    return mouseEvent;
   },
 });
 

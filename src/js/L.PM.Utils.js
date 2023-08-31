@@ -111,7 +111,7 @@ const Utils = {
   },
   createGeodesicPolygon,
   getTranslation,
-  findDeepCoordIndex(arr, latlng) {
+  findDeepCoordIndex(arr, latlng, exact = true) {
     // find latlng in arr and return its location as path
     // thanks for the function, Felix Heck
     let result;
@@ -119,7 +119,40 @@ const Utils = {
     const run = (path) => (v, i) => {
       const iRes = path.concat(i);
 
-      if (v.lat && v.lat === latlng.lat && v.lng === latlng.lng) {
+      if (exact) {
+        if (v.lat && v.lat === latlng.lat && v.lng === latlng.lng) {
+          result = iRes;
+          return true;
+        }
+      } else if (v.lat && L.latLng(v).equals(latlng)) {
+        result = iRes;
+        return true;
+      }
+
+      return Array.isArray(v) && v.some(run(iRes));
+    };
+    arr.some(run([]));
+
+    let returnVal = {};
+
+    if (result) {
+      returnVal = {
+        indexPath: result,
+        index: result[result.length - 1],
+        parentPath: result.slice(0, result.length - 1),
+      };
+    }
+
+    return returnVal;
+  },
+  findDeepMarkerIndex(arr, marker) {
+    // thanks for the function, Felix Heck
+    let result;
+
+    const run = (path) => (v, i) => {
+      const iRes = path.concat(i);
+
+      if (v._leaflet_id === marker._leaflet_id) {
         result = iRes;
         return true;
       }

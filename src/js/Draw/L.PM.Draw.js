@@ -36,7 +36,9 @@ const Draw = L.Class.extend({
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
+    this.setStyle(this.options);
   },
+  setStyle() {},
   getOptions() {
     return this.options;
   },
@@ -59,6 +61,7 @@ const Draw = L.Class.extend({
       'Rectangle',
       'Circle',
       'Cut',
+      'Text',
     ];
 
     // initiate drawing class for our shapes
@@ -179,6 +182,7 @@ const Draw = L.Class.extend({
       cutPolygon: 'Cut',
       removalMode: 'Removal',
       rotateMode: 'Rotate',
+      drawText: 'Text',
     };
 
     if (shapeMapping[name]) {
