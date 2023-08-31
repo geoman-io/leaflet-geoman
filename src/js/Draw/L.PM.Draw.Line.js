@@ -237,7 +237,9 @@ Draw.Line = Draw.extend({
     // check if the first and this vertex have the same latlng
     if (latlng.equals(this._layer.getLatLngs()[0])) {
       // yes? finish the polygon
-      this._finishShape(e);
+      if (this.options.finishOnVertexClick) {
+        this._finishShape(e);
+      }
 
       // "why?", you ask? Because this happens when we snap the last vertex to the first one
       // and then click without hitting the last marker. Click happens on the map
@@ -350,8 +352,10 @@ Draw.Line = Draw.extend({
     // add it to the map
     this._layerGroup.addLayer(marker);
 
-    // a click on any marker finishes this shape
-    marker.on('click', this._finishShape, this);
+    if (this.options.finishOnVertexClick) {
+      // a click on any marker finishes this shape
+      marker.on('click', this._finishShape, this);
+    }
 
     return marker;
   },
@@ -363,7 +367,9 @@ Draw.Line = Draw.extend({
     if (length <= 1) {
       text = getTranslation('tooltips.continueLine');
     } else {
-      text = getTranslation('tooltips.finishLine');
+      text = this.options.finishOnVertexClick
+        ? getTranslation('tooltips.finishLine')
+        : getTranslation('tooltips.finishLineByBtn');
     }
     this._hintMarker.setTooltipContent(text);
   },
