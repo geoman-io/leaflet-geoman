@@ -880,4 +880,26 @@ describe('Draw Rectangle', () => {
       expect(layer.options.color).to.eql('red');
     });
   });
+
+  it('Return correct corners of rotated rectangle while drawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ rectangleAngle: 45 });
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(220, 220);
+    cy.get(mapSelector).trigger('mousemove', 500, 300);
+
+    cy.window().then(({ map }) => {
+      const corners = map.pm.Draw.Rectangle._findCorners();
+      expect(corners[0].equals([51.50820824957313, -0.13801574707031253])).to.eql(true);
+      expect(corners[1].equals([51.48897254548231, -0.10711669921875001])).to.eql(true);
+      expect(corners[2].equals([51.499660050014434, -0.08995056152343751])).to.eql(true);
+      expect(corners[3].equals([51.51889124411909, -0.12084960937500001])).to.eql(true);
+    });
+  });
 });
