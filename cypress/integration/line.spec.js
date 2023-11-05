@@ -117,6 +117,8 @@ describe('Draw & Edit Line', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
+    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+
     // draw a line
     cy.get(mapSelector)
       .click(150, 250)
@@ -124,6 +126,8 @@ describe('Draw & Edit Line', () => {
       .click(250, 50)
       .click(250, 250)
       .click(250, 250);
+
+    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
 
     // button should be disabled after successful draw
     cy.toolbarButton('polyline')

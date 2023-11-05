@@ -4,12 +4,16 @@ describe('Draw & Edit Poly', () => {
   it('drages shared vertices when pinned', () => {
     cy.toolbarButton('polygon').click();
 
+    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+
     cy.get(mapSelector)
       .click(120, 150)
       .click(120, 100)
       .click(300, 100)
       .click(300, 200)
       .click(120, 150);
+
+    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
 
     cy.toolbarButton('marker').click();
 

@@ -81,7 +81,7 @@ Draw.CircleMarker = Draw.Marker.extend({
       // create a polygon-point on click
       this._map.on('click', this._placeCenterMarker, this);
       // change map cursor
-      this._map._container.style.cursor = 'crosshair';
+      this._map.getContainer().classList.add('geoman-draw-cursor');
     } else {
       // create a marker on click on the map
       this._map.on('click', this._createMarker, this);
@@ -140,7 +140,7 @@ Draw.CircleMarker = Draw.Marker.extend({
     // disable when drawing like a Circle
     if (this.options.editable) {
       // reset cursor
-      this._map._container.style.cursor = '';
+      this._map.getContainer().classList.remove('geoman-draw-cursor');
 
       // unbind listeners
       this._map.off('click', this._finishShape, this);
