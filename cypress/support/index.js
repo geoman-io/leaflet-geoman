@@ -26,7 +26,7 @@ beforeEach(() => {
       const { L } = contentWindow;
 
       const tiles = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -56,7 +56,7 @@ beforeEach(() => {
   // because of this issue: https://github.com/Leaflet/prosthetic-hand/issues/16
   // this._onStop not detected by default as instance of Function. -> Replaced with typeof this._onStop === "function"
   cy.window().then(({ Hand }) => {
-    Hand.prototype.fingerIsIdle = function () {
+    Hand.prototype.fingerIsIdle = function fingerIsIdle() {
       if (this._fingers.every((f) => f.isIdle())) {
         if (!this._fingersAreIdle) {
           // 🖑event prostheticHandStop: CustomEvent
@@ -72,7 +72,7 @@ beforeEach(() => {
       }
     };
 
-    Hand.prototype.fingerIsBusy = function () {
+    Hand.prototype.fingerIsBusy = function fingerIsBusy() {
       if (this._fingersAreIdle) {
         // 🖑section
         // Use `document.addEventListener('prostheticHandStop', fn)` to

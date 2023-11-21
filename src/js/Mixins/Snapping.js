@@ -76,7 +76,8 @@ const SnapMixin = {
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
-    if (this._map.pm.Keyboard.isAltKeyPressed()) {
+    // we need to check for the altKey on the move event, because keydown event is to slow ...
+    if (e.originalEvent.altKey || this._map?.pm?.Keyboard.isAltKeyPressed()) {
       return false;
     }
 

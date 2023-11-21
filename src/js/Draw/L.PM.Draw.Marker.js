@@ -15,6 +15,9 @@ Draw.Marker = Draw.extend({
     // change enabled state
     this._enabled = true;
 
+    // change map cursor
+    this._map.getContainer().classList.add('geoman-draw-cursor');
+
     // create a marker on click on the map
     this._map.on('click', this._createMarker, this);
 
@@ -70,6 +73,9 @@ Draw.Marker = Draw.extend({
 
     // change enabled state
     this._enabled = false;
+
+    // reset cursor
+    this._map.getContainer().classList.remove('geoman-draw-cursor');
 
     // undbind click event, don't create a marker on click anymore
     this._map.off('click', this._createMarker, this);

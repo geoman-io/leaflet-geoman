@@ -7,7 +7,11 @@ describe('Draw Circle', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
+    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+
     cy.get(mapSelector).click(200, 200).click(250, 250);
+
+    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
 
     cy.toolbarButton('edit')
       .click()

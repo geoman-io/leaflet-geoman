@@ -63,8 +63,8 @@
     "build": "webpack --config=webpack.build.js",
     "prepare": "npm run build",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
-    "eslint": "eslint src/ --fix",
-    "prettier": "prettier --write '{src,cypress}/**/*.{js,css}'",
+    "eslint": "eslint {src,cypress,demo}/**/*.js --fix ",
+    "prettier": "prettier --write {src,cypress,demo}/**/*.{js,css}",
     "lint": "npm run eslint && npm run prettier"
   },
   "repository": {

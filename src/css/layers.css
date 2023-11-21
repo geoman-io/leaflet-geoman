@@ -32,6 +32,10 @@
   opacity: 1 !important;
 }
 
+.geoman-draw-cursor {
+  cursor: crosshair;
+}
+
 .rect-style-marker,
 .rect-start-marker {
   opacity: 0;
