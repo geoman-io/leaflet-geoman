@@ -4,12 +4,16 @@ describe('Draw & Edit Poly', () => {
   it('drages shared vertices when pinned', () => {
     cy.toolbarButton('polygon').click();
 
+    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+
     cy.get(mapSelector)
       .click(120, 150)
       .click(120, 100)
       .click(300, 100)
       .click(300, 200)
       .click(120, 150);
+
+    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
 
     cy.toolbarButton('marker').click();
 
@@ -1011,7 +1015,7 @@ describe('Draw & Edit Poly', () => {
 
     let layer;
     cy.window().then(({ map }) => {
-      layer = map.pm.getGeomanDrawLayers()[0];
+      [layer] = map.pm.getGeomanDrawLayers();
       map.pm.setGlobalOptions({ allowCutting: false });
     });
 
@@ -1055,7 +1059,7 @@ describe('Draw & Edit Poly', () => {
     let layer;
     cy.window().then(({ map }) => {
       const cutlayer = map.pm.getGeomanDrawLayers()[0];
-      layer = map.pm.getGeomanDrawLayers()[1];
+      [, layer] = map.pm.getGeomanDrawLayers();
       map.pm.enableDraw('Cut', { layersToCut: [cutlayer] });
     });
 

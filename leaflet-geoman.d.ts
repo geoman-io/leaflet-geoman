@@ -912,6 +912,12 @@ declare module 'leaflet' {
 
       /** Set the initial angle of the layer in degrees. */
       setInitAngle(degrees: number): void;
+
+      /** Returns the center of rotation. */
+      getRotationCenter(): L.LatLng;
+
+      /** Change the center of rotation. Pass null to use the shape's default center. */
+      setRotationCenter(center: L.LatLng | null): void;
     }
 
     interface Draw {
