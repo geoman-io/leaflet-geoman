@@ -16,8 +16,8 @@ Edit.Circle = Edit.CircleMarker.extend({
     // TODO: this can be removed after the default options of CircleMarker.enable are removed
     L.PM.Edit.CircleMarker.prototype.enable.call(this, options || {});
   },
-  _extendingEnable(){},
-  _extendingDisable(){
+  _extendingEnable() {},
+  _extendingDisable() {
     this._layer.off('remove', this.disable, this);
 
     // remove draggable class
@@ -26,11 +26,11 @@ Edit.Circle = Edit.CircleMarker.extend({
       : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
   },
-  _extendingApplyOptions(){},
-  _syncMarkers(){},
-  _removeMarker(){},
-  _onDragStart(){},
-  _extedingMarkerDragEnd(){},
+  _extendingApplyOptions() {},
+  _syncMarkers() {},
+  _removeMarker() {},
+  _onDragStart() {},
+  _extedingMarkerDragEnd() {},
   _updateHiddenPolyCircle() {
     const crsSimple = this._map && this._map.pm._isCRSSimple();
     if (this._hiddenPolyCircle) {
@@ -49,14 +49,14 @@ Edit.Circle = Edit.CircleMarker.extend({
       this._hiddenPolyCircle._parentCopy = this._layer;
     }
   },
-  _distanceCalculation(A, B){
+  _distanceCalculation(A, B) {
     return this._map.distance(A, B);
   },
-  _getMinDistanceInMeter(){
-    return this.options[this._minRadiusOption]
+  _getMinDistanceInMeter() {
+    return this.options[this._minRadiusOption];
   },
-  _getMaxDistanceInMeter(){
-    return this.options[this._maxRadiusOption]
+  _getMaxDistanceInMeter() {
+    return this.options[this._maxRadiusOption];
   },
   _onVertexClick(e) {
     const vertex = e.target;

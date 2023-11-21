@@ -349,7 +349,6 @@ describe('Rotation', () => {
       layer.pm.setRotationCenter(origin);
     });
 
-
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[0];
       const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
@@ -437,10 +436,15 @@ describe('Rotation', () => {
     });
   });
 
-  it('set the angle correctly after rotating a new imported rotated rectangle', ()=>{
+  it('set the angle correctly after rotating a new imported rotated rectangle', () => {
     cy.window().then(({ map, L }) => {
-      const coords = JSON.parse('{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.122532,51.507986],[-0.117474,51.518864],[-0.06784,51.509926],[-0.072898,51.499046],[-0.122532,51.507986]]]}}');
-      const rectangle = L.rectangle([[0,0],[0,0]]);
+      const coords = JSON.parse(
+        '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.122532,51.507986],[-0.117474,51.518864],[-0.06784,51.509926],[-0.072898,51.499046],[-0.122532,51.507986]]]}}'
+      );
+      const rectangle = L.rectangle([
+        [0, 0],
+        [0, 0],
+      ]);
       rectangle.setLatLngs(L.geoJSON(coords).getLayers()[0].getLatLngs());
       rectangle.addTo(map);
     });
@@ -462,20 +466,20 @@ describe('Rotation', () => {
 
       const expected = [
         {
-          'x': 319,
-          'y': 267,
+          x: 319,
+          y: 267,
         },
         {
-          'x': 319,
-          'y': 161,
+          x: 319,
+          y: 161,
         },
         {
-          'x': 620,
-          'y': 159,
+          x: 620,
+          y: 159,
         },
         {
-          'x': 620,
-          'y': 265,
+          x: 620,
+          y: 265,
         },
       ];
 
@@ -486,5 +490,5 @@ describe('Rotation', () => {
 
       expect(px).to.eql(expected);
     });
-  })
+  });
 });

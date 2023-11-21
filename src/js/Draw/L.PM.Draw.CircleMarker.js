@@ -19,7 +19,7 @@ Draw.CircleMarker = Draw.extend({
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
     // TODO: remove with next major release
-    if(this.options.editable){
+    if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;
       delete this.options.editable;
     }
@@ -46,7 +46,10 @@ Draw.CircleMarker = Draw.extend({
       this._layerGroup.addTo(this._map);
 
       // this is the circle we want to draw
-      this._layer = new this._BaseCircleClass(this._map.getCenter(), templineStyle);
+      this._layer = new this._BaseCircleClass(
+        this._map.getCenter(),
+        templineStyle
+      );
       this._setPane(this._layer, 'layerPane');
       this._layer._pmTempLayer = true;
 
@@ -98,10 +101,10 @@ Draw.CircleMarker = Draw.extend({
       this._map.on('click', this._createMarker, this);
 
       // this is the hintmarker on the mouse cursor
-      this._hintMarker = new this._BaseCircleClass(
-        this._map.getCenter(),
-        {radius: this._defaultRadius, ...this.options.templineStyle}
-      );
+      this._hintMarker = new this._BaseCircleClass(this._map.getCenter(), {
+        radius: this._defaultRadius,
+        ...this.options.templineStyle,
+      });
       this._setPane(this._hintMarker, 'layerPane');
       this._hintMarker._pmTempLayer = true;
       this._hintMarker.addTo(this._map);
@@ -135,7 +138,7 @@ Draw.CircleMarker = Draw.extend({
     this._fireDrawStart();
     this._setGlobalDrawMode();
   },
-  _extendingEnable(){
+  _extendingEnable() {
     if (!this.options[this._editableOption] && this.options.markerEditable) {
       // enable edit mode for existing markers
       this._map.eachLayer((layer) => {
@@ -160,7 +163,6 @@ Draw.CircleMarker = Draw.extend({
 
     // disable when drawing like a Circle
     if (this.options[this._editableOption]) {
-
       // unbind listeners
       this._map.off('click', this._finishShape, this);
       this._map.off('click', this._placeCenterMarker, this);
@@ -192,7 +194,7 @@ Draw.CircleMarker = Draw.extend({
     this._fireDrawEnd();
     this._setGlobalDrawMode();
   },
-  _extendingDisable(){
+  _extendingDisable() {
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {
       if (this.isRelevantMarker(layer)) {
@@ -328,7 +330,10 @@ Draw.CircleMarker = Draw.extend({
     const latlng = this._hintMarker.getLatLng();
 
     // create marker
-    const marker = new this._BaseCircleClass(latlng, {radius: this._defaultRadius, ...this.options.pathOptions});
+    const marker = new this._BaseCircleClass(latlng, {
+      radius: this._defaultRadius,
+      ...this.options.pathOptions,
+    });
     this._setPane(marker, 'layerPane');
     this._finishLayer(marker);
     // add marker to the map
@@ -345,7 +350,7 @@ Draw.CircleMarker = Draw.extend({
       this.disable();
     }
   },
-  _extendingCreateMarker(marker){
+  _extendingCreateMarker(marker) {
     if (marker.pm && this.options.markerEditable) {
       // enable editing for the marker
       marker.pm.enable();
@@ -443,11 +448,19 @@ Draw.CircleMarker = Draw.extend({
     }
     return secondLatLng;
   },
-  _getMinDistanceInMeter(){
-    return L.PM.Utils.pxRadiusToMeterRadius(this.options[this._minRadiusOption], this._map, this._centerMarker.getLatLng())
+  _getMinDistanceInMeter() {
+    return L.PM.Utils.pxRadiusToMeterRadius(
+      this.options[this._minRadiusOption],
+      this._map,
+      this._centerMarker.getLatLng()
+    );
   },
-  _getMaxDistanceInMeter(){
-    return L.PM.Utils.pxRadiusToMeterRadius(this.options[this._maxRadiusOption], this._map, this._centerMarker.getLatLng())
+  _getMaxDistanceInMeter() {
+    return L.PM.Utils.pxRadiusToMeterRadius(
+      this.options[this._maxRadiusOption],
+      this._map,
+      this._centerMarker.getLatLng()
+    );
   },
   _handleHintMarkerSnapping() {
     if (this.options[this._editableOption]) {
@@ -483,9 +496,7 @@ Draw.CircleMarker = Draw.extend({
     this._layer?.setStyle(templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
   },
-  _distanceCalculation(A, B){
-    return this._map
-      .project(A)
-      .distanceTo(this._map.project(B));
-  }
+  _distanceCalculation(A, B) {
+    return this._map.project(A).distanceTo(this._map.project(B));
+  },
 });

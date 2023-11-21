@@ -248,11 +248,11 @@ Draw.Rectangle = Draw.extend({
   _findCorners() {
     const latlngs = this._layer.getLatLngs()[0];
     return L.PM.Utils._getRotatedRectangle(
-       latlngs[0],
-       latlngs[2],
+      latlngs[0],
+      latlngs[2],
       this.options.rectangleAngle || 0,
-       this._map
-   );
+      this._map
+    );
   },
   _finishShape(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for

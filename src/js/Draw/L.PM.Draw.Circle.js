@@ -11,17 +11,17 @@ Draw.Circle = Draw.CircleMarker.extend({
     this._editableOption = 'resizableCircle';
     this._defaultRadius = 100;
   },
-  _extendingEnable(){},
-  _extendingDisable(){},
-  _extendingCreateMarker(){},
-  isRelevantMarker(){},
-  _getMinDistanceInMeter(){
-    return this.options[this._minRadiusOption]
+  _extendingEnable() {},
+  _extendingDisable() {},
+  _extendingCreateMarker() {},
+  isRelevantMarker() {},
+  _getMinDistanceInMeter() {
+    return this.options[this._minRadiusOption];
   },
-  _getMaxDistanceInMeter(){
-    return this.options[this._maxRadiusOption]
+  _getMaxDistanceInMeter() {
+    return this.options[this._maxRadiusOption];
   },
-  _distanceCalculation(A, B){
+  _distanceCalculation(A, B) {
     return this._map.distance(A, B);
-  }
+  },
 });
