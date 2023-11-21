@@ -183,7 +183,6 @@ Draw.Text = Draw.extend({
 
   _createTextArea() {
     const textArea = document.createElement('textarea');
-    textArea.autofocus = true;
     textArea.readOnly = true;
     textArea.classList.add('pm-textarea', 'pm-disabled');
     return textArea;
