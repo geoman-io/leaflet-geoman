@@ -222,6 +222,7 @@ Edit.CircleMarker = Edit.extend({
     marker.on('dragstart', this._onMarkerDragStart, this);
     marker.on('drag', this._onMarkerDrag, this);
     marker.on('dragend', this._onMarkerDragEnd, this);
+    marker.on('click', this._onVertexClick, this);
 
     this._helperLayers.addLayer(marker);
 
@@ -453,5 +454,13 @@ Edit.CircleMarker = Edit.extend({
   },
   _getMaxDistanceInMeter(latlng){
     return L.PM.Utils.pxRadiusToMeterRadius(this.options[this._maxRadiusOption], this._map, latlng)
+  },
+  _onVertexClick(e) {
+    const vertex = e.target;
+    if (vertex._dragging) {
+      return;
+    }
+
+    this._fireVertexClick(e, undefined);
   },
 });

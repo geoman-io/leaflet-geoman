@@ -58,4 +58,12 @@ Edit.Circle = Edit.CircleMarker.extend({
   _getMaxDistanceInMeter(){
     return this.options[this._maxRadiusOption]
   },
+  _onVertexClick(e) {
+    const vertex = e.target;
+    if (vertex._dragging) {
+      return;
+    }
+
+    this._fireVertexClick(e, undefined);
+  },
 });

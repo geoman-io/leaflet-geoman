@@ -58,6 +58,8 @@ Edit.Rectangle = Edit.Polygon.extend({
     marker._index = index;
     marker._pmTempLayer = true;
 
+    marker.on('click', this._onVertexClick, this);
+
     this._markerGroup.addLayer(marker);
 
     return marker;
