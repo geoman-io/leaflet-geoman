@@ -1,32 +1,48 @@
 {
   "tooltips": {
-    "placeMarker": "Kliknij, aby ustawić znacznik",
-    "firstVertex": "Kliknij, aby ustawić pierwszy punkt",
+    "placeMarker": "Kliknij, aby umieścić znacznik",
+    "firstVertex": "Kliknij, aby umieścić pierwszy wierzchołek",
     "continueLine": "Kliknij, aby kontynuować rysowanie",
-    "finishLine": "Kliknij dowolny punkt, aby zakończyć",
-    "finishPoly": "Kliknij pierwszy punkt, aby zakończyć",
+    "finishLine": "Kliknij dowolny istniejący znacznik, aby zakończyć",
+    "finishPoly": "Kliknij pierwszy znacznik, aby zakończyć",
     "finishRect": "Kliknij, aby zakończyć",
-    "startCircle": "Kliknij, aby ustawić środek koła",
-    "finishCircle": "Kliknij, aby zakończyć rysowanie koła",
-    "placeCircleMarker": "Kliknij, aby ustawić okrągły znacznik"
+    "startCircle": "Kliknij, aby umieścić środek okręgu",
+    "finishCircle": "Kliknij, aby zakończyć okrąg",
+    "placeCircleMarker": "Kliknij, aby umieścić znacznik okręgu",
+    "placeText": "Kliknij, aby umieścić tekst"
   },
   "actions": {
     "finish": "Zakończ",
     "cancel": "Anuluj",
-    "removeLastVertex": "Usuń ostatni punkt"
+    "removeLastVertex": "Usuń ostatni wierzchołek"
   },
   "buttonTitles": {
-    "drawMarkerButton": "Narysuj znacznik",
-    "drawPolyButton": "Narysuj wielokąt",
-    "drawLineButton": "Narysuj ścieżkę",
-    "drawCircleButton": "Narysuj koło",
-    "drawRectButton": "Narysuj prostokąt",
-    "editButton": "Edytuj",
-    "dragButton": "Przesuń",
-    "cutButton": "Wytnij",
-    "deleteButton": "Usuń",
-    "drawCircleMarkerButton": "Narysuj okrągły znacznik",
-    "snappingButton": "Snap przeciągnięty marker na inne warstwy i wierzchołki",
-    "pinningButton": "Sworzeń wspólne wierzchołki razem"
+    "drawMarkerButton": "Rysuj znacznik",
+    "drawPolyButton": "Rysuj wielokąt",
+    "drawLineButton": "Rysuj linię",
+    "drawCircleButton": "Rysuj okrąg",
+    "drawRectButton": "Rysuj prostokąt",
+    "editButton": "Edytuj warstwy",
+    "dragButton": "Przeciągnij warstwy",
+    "cutButton": "Wytnij warstwy",
+    "deleteButton": "Usuń warstwy",
+    "drawCircleMarkerButton": "Rysuj znacznik okrągły",
+    "snappingButton": "Przyciągnij przenoszony znacznik do innych warstw i wierzchołków",
+    "pinningButton": "Przypnij wspólne wierzchołki razem",
+    "rotateButton": "Obróć warstwy",
+    "drawTextButton": "Rysuj tekst",
+    "scaleButton": "Skaluj warstwy",
+    "autoTracingButton": "Automatyczne śledzenie linii"
+  },
+  "measurements": {
+    "totalLength": "Długość",
+    "segmentLength": "Długość odcinka",
+    "area": "Obszar",
+    "radius": "Promień",
+    "perimeter": "Obwód",
+    "height": "Wysokość",
+    "width": "Szerokość",
+    "coordinates": "Pozycja",
+    "coordinatesMarker": "Znacznik pozycji"
   }
 }

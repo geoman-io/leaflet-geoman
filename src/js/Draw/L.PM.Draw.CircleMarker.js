@@ -20,6 +20,9 @@ Draw.CircleMarker = Draw.Marker.extend({
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
+    // change map cursor
+    this._map.getContainer().classList.add('geoman-draw-cursor');
+
     // Draw the CircleMarker like a Circle
     if (this.options.editable) {
       // we need to set the radius to 0 without overwriting the CircleMarker style
@@ -80,8 +83,6 @@ Draw.CircleMarker = Draw.Marker.extend({
       this._layerGroup.addLayer(this._hintline);
       // create a polygon-point on click
       this._map.on('click', this._placeCenterMarker, this);
-      // change map cursor
-      this._map._container.style.cursor = 'crosshair';
     } else {
       // create a marker on click on the map
       this._map.on('click', this._createMarker, this);
@@ -137,10 +138,11 @@ Draw.CircleMarker = Draw.Marker.extend({
     // change enabled state
     this._enabled = false;
 
+    // reset cursor
+    this._map.getContainer().classList.remove('geoman-draw-cursor');
+
     // disable when drawing like a Circle
     if (this.options.editable) {
-      // reset cursor
-      this._map._container.style.cursor = '';
 
       // unbind listeners
       this._map.off('click', this._finishShape, this);
