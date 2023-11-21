@@ -1,6 +1,18 @@
 describe('Draw Circle', () => {
   const mapSelector = '#map';
 
+  Cypress.Commands.add('hasCircleLayers', (count) => {
+    cy.window().then(({ map, L }) => {
+      const layerCount = Object.values(map._layers).reduce((total, layer) => {
+        if (layer instanceof L.Circle) {
+          return total + 1;
+        }
+        return total;
+      }, 0);
+      cy.wrap(layerCount).should('eq', count);
+    });
+  });
+
   it('draws a circle', () => {
     cy.toolbarButton('circle')
       .click()
@@ -308,6 +320,128 @@ describe('Draw Circle', () => {
       const hintLine = map.pm.Draw.Circle._hintline;
       expect(layer.options.color).to.eql('red');
       expect(hintLine.options.color).to.eql('red');
+    });
+  });
+
+  it('fires disable event only if it was enabled', () => {
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 300);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+
+      let disableFired = false;
+      layer.on('pm:disable',()=>{
+        disableFired = true;
+      });
+      layer.pm.disable();
+      expect(disableFired).to.eql(false);
+
+      layer.pm.enable();
+      layer.pm.disable();
+      expect(disableFired).to.eql(true);
+    });
+  });
+
+
+  it('creates circles (non-resizableCircle)', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ resizableCircle: false, continueDrawing: true });
+    });
+
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 300);
+    cy.get(mapSelector).click(350, 350);
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasCircleLayers(3);
+  });
+
+  it('disable dragging correctly (non-resizableCircle)', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ resizableCircle: false });
+    });
+
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 300);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+
+      expect(layer.pm.layerDragEnabled()).to.eql(false);
+      layer.pm.enable();
+      expect(layer.pm.layerDragEnabled()).to.eql(true);
+      layer.pm.disable();
+      expect(layer.pm.layerDragEnabled()).to.eql(false);
+    });
+  });
+
+  it('deletes no circles by right-click (non-resizableCircle)', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ resizableCircle: false });
+    });
+
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasCircleLayers(1);
+
+
+    cy.get(mapSelector)
+      .rightclick(200, 200);
+
+
+    cy.hasCircleLayers(1);
+  });
+
+  it('change color of circleMarker while drawing (non-resizableCircle)', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ resizableCircle: false });
+    });
+
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).trigger('mousemove', 300, 300);
+
+    cy.window().then(({ map }) => {
+      const style = {
+        color: 'red',
+      };
+      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+
+      const layer = map.pm.Draw.Circle._layer;
+      expect(layer.options.color).to.eql('red');
     });
   });
 });

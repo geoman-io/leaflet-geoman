@@ -116,7 +116,7 @@ describe('Draw Circle Marker', () => {
 
   it('draw a CircleMarker like a Circle', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editable: true, continueDrawing: false });
+      map.pm.setGlobalOptions({ resizeableCircleMarker: true, continueDrawing: false });
     });
 
     cy.toolbarButton('circle-marker')
@@ -142,7 +142,7 @@ describe('Draw Circle Marker', () => {
 
   it('enable continueDrawing #2', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ continueDrawing: true, editable: true });
+      map.pm.setGlobalOptions({ continueDrawing: true, resizeableCircleMarker: true });
     });
 
     cy.toolbarButton('circle-marker')
@@ -249,7 +249,7 @@ describe('Draw Circle Marker', () => {
       map.pm.setGlobalOptions({
         minRadiusCircleMarker: 50,
         maxRadiusCircleMarker: 150,
-        editable: true,
+        resizeableCircleMarker: true,
       });
       cy.get(mapSelector)
         .click(250, 200)
@@ -275,7 +275,7 @@ describe('Draw Circle Marker', () => {
       map.pm.setGlobalOptions({
         minRadiusCircleMarker: 150,
         maxRadiusCircleMarker: 300,
-        editable: true,
+        resizeableCircleMarker: true,
       });
       cy.get(mapSelector)
         .click(250, 200)
@@ -318,11 +318,11 @@ describe('Draw Circle Marker', () => {
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
   });
-  it('requireSnapToFinish editable', () => {
+  it('requireSnapToFinish resizeableCircleMarker', () => {
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({
         requireSnapToFinish: true,
-        editable: true,
+        resizeableCircleMarker: true,
         snapSegment: false,
       });
     });
@@ -370,7 +370,7 @@ describe('Draw Circle Marker', () => {
     });
   });
 
-  it('Snapping to CircleMarker (editable) border on CRS Simple Map', () => {
+  it('Snapping to CircleMarker (resizeableCircleMarker) border on CRS Simple Map', () => {
     let mapSimple;
     cy.window().then(({ map, L }) => {
       map.remove();
@@ -380,7 +380,7 @@ describe('Draw Circle Marker', () => {
       }).setView([0, 0], 0);
       mapSimple.pm.addControls();
 
-      mapSimple.pm.enableDraw('CircleMarker', { editable: true });
+      mapSimple.pm.enableDraw('CircleMarker', { resizeableCircleMarker: true });
     });
 
     cy.get(mapSelector).click(350, 250).click(450, 250);
@@ -395,7 +395,7 @@ describe('Draw Circle Marker', () => {
   });
   it('checks if circle is hidden before drawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editable: true });
+      map.pm.setGlobalOptions({ resizeableCircleMarker: true });
     });
     cy.toolbarButton('circle-marker').click();
     cy.window().then(({ map }) => {
@@ -406,7 +406,7 @@ describe('Draw Circle Marker', () => {
 
   it('removes circleMarker if enabled', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editable: true });
+      map.pm.setGlobalOptions({ resizeableCircleMarker: true });
     });
 
     cy.toolbarButton('circle-marker')
@@ -436,7 +436,7 @@ describe('Draw Circle Marker', () => {
   it('check if snapping works with max radius of circle', () => {
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({
-        editable: true,
+        resizeableCircleMarker: true,
       });
     });
     cy.toolbarButton('circle-marker')
@@ -480,9 +480,9 @@ describe('Draw Circle Marker', () => {
     });
   });
 
-  it('change color of circleMarker (editable) while drawing', () => {
+  it('change color of circleMarker (resizeableCircleMarker) while drawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editable: true });
+      map.pm.setGlobalOptions({ resizeableCircleMarker: true });
     });
 
     cy.toolbarButton('circle-marker')
@@ -504,5 +504,78 @@ describe('Draw Circle Marker', () => {
       expect(layer.options.color).to.eql('red');
       expect(hintLine.options.color).to.eql('red');
     });
+  });
+
+  it('fires disable event only if it was enabled', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ resizeableCircleMarker: true });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 300);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+
+      let disableFired = false;
+      layer.on('pm:disable',()=>{
+        disableFired = true;
+      });
+      layer.pm.disable();
+      expect(disableFired).to.eql(false);
+
+      layer.pm.enable();
+      layer.pm.disable();
+      expect(disableFired).to.eql(true);
+    });
+  });
+
+  it('disable dragging correctly', () => {
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+
+    cy.toolbarButton('circle-marker')
+      .click();
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[0];
+
+      expect(layer.pm.layerDragEnabled()).to.eql(false);
+      layer.pm.enable();
+      expect(layer.pm.layerDragEnabled()).to.eql(true);
+      layer.pm.disable();
+      expect(layer.pm.layerDragEnabled()).to.eql(false);
+    });
+  });
+
+  it('draw a CircleMarker like a Circle with deprecated option `editable`', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ editable: true, continueDrawing: false });
+    });
+
+    cy.toolbarButton('circle-marker')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200).click(250, 250);
+
+    cy.hasCircleLayers(1);
+
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(2);
   });
 });

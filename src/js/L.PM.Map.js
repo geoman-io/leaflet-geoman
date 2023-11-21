@@ -100,14 +100,29 @@ const Map = L.Class.extend({
     // merge passed and existing options
     const options = merge(this.globalOptions, o);
 
+    // TODO: remove with next major release
+    if(options.editable){
+      options.resizeableCircleMarker = options.editable;
+      delete options.editable;
+    }
+
     // check if switched the editable mode for CircleMarker while drawing
     let reenableCircleMarker = false;
     if (
       this.map.pm.Draw.CircleMarker.enabled() &&
-      !!this.map.pm.Draw.CircleMarker.options.editable !== !!options.editable
+      !!this.map.pm.Draw.CircleMarker.options.resizeableCircleMarker !== !!options.resizeableCircleMarker
     ) {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
+    }
+    // check if switched the editable mode for Circle while drawing
+    let reenableCircle = false;
+    if (
+      this.map.pm.Draw.Circle.enabled() &&
+      !!this.map.pm.Draw.Circle.options.resizableCircle !== !!options.resizableCircle
+    ) {
+      this.map.pm.Draw.Circle.disable();
+      reenableCircle = true;
     }
 
     // enable options for Drawing Shapes
@@ -117,6 +132,10 @@ const Map = L.Class.extend({
 
     if (reenableCircleMarker) {
       this.map.pm.Draw.CircleMarker.enable();
+    }
+
+    if (reenableCircle) {
+      this.map.pm.Draw.Circle.enable();
     }
 
     // enable options for Editing
