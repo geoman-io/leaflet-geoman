@@ -179,8 +179,7 @@ function destination(latlng, heading, distance) {
   return L.latLng([lat2 * radInv, lon2]);
 }
 /* Copied from L.GeometryUtil */
-// TODO: rename this function to calcAngle
-function angle(map, latlngA, latlngB) {
+export function calcAngle(map, latlngA, latlngB) {
   const pointA = map.latLngToContainerPoint(latlngA);
   const pointB = map.latLngToContainerPoint(latlngB);
   let angleDeg =
@@ -190,7 +189,7 @@ function angle(map, latlngA, latlngB) {
 }
 
 export function destinationOnLine(map, latlngA, latlngB, distance) {
-  const angleDeg = angle(map, latlngA, latlngB);
+  const angleDeg = calcAngle(map, latlngA, latlngB);
   return destination(latlngA, angleDeg, distance);
 }
 

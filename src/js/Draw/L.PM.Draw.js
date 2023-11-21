@@ -27,7 +27,8 @@ const Draw = L.Class.extend({
     maxRadiusCircle: null,
     minRadiusCircleMarker: null,
     maxRadiusCircleMarker: null,
-    editable: false,
+    resizeableCircleMarker: false,
+    resizableCircle: true,
     markerEditable: true,
     continueDrawing: false,
     snapSegment: true,
@@ -69,6 +70,7 @@ const Draw = L.Class.extend({
       this[shape] = new L.PM.Draw[shape](this._map);
     });
 
+    // TODO: Remove this with the next major release
     this.Marker.setOptions({ continueDrawing: true });
     this.CircleMarker.setOptions({ continueDrawing: true });
   },

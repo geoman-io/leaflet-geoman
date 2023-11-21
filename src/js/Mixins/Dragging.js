@@ -196,14 +196,19 @@ const DragMixin = {
 
     // we need to disable snapping for CircleMarker because they are snapping because of the check in onLayerDrag -> if(_snapped)
     if (
-      this._layer instanceof L.CircleMarker &&
-      !(this._layer instanceof L.Circle)
+      this._layer instanceof L.CircleMarker
     ) {
+
+      let _editableOption = 'resizeableCircleMarker';
+      if(this._layer instanceof L.Circle){
+        _editableOption = 'resizableCircle';
+      }
+
       if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
-        if (!this._layer.pm.options.editable) {
+        if (!this._layer.pm.options[_editableOption]) {
           this._initSnappableMarkersDrag();
         }
-      } else if (this._layer.pm.options.editable) {
+      } else if (this._layer.pm.options[_editableOption]) {
         this._layer.pm._disableSnapping();
       } else {
         this._layer.pm._disableSnappingDrag();
@@ -366,8 +371,8 @@ const DragMixin = {
       });
 
     if (
-      this._layer instanceof L.Circle ||
-      (this._layer instanceof L.CircleMarker && this._layer.options.editable)
+      (this._layer instanceof L.Circle && this._layer.options.resizableCircle) ||
+      (this._layer instanceof L.CircleMarker && this._layer.options.resizeableCircleMarker)
     ) {
       // create the new coordinates array
       const newCoords = moveCoords([this._layer.getLatLng()]);

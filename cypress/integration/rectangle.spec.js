@@ -907,6 +907,52 @@ describe('Draw Rectangle', () => {
     });
   });
 
+  it('edit correctly after a rotated rectangle is imported', ()=>{
+    cy.window().then(({ map, L }) => {
+      const coords = JSON.parse('{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.122532,51.507986],[-0.117474,51.518864],[-0.06784,51.509926],[-0.072898,51.499046],[-0.122532,51.507986]]]}}');
+      const rectangle = L.rectangle([[0,0],[0,0]]);
+      rectangle.setLatLngs(L.geoJSON(coords).getLayers()[0].getLatLngs());
+      rectangle.addTo(map);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      const marker1 = layer.pm._markers[0][0];
+      marker1.fire('dragstart', { target: marker1 });
+      marker1.setLatLng(map.containerPointToLatLng([200, 120]));
+      marker1.fire('drag', { target: marker1 });
+      marker1.fire('dragend', { target: marker1 });
+
+      const expected = [
+        {
+          "x": 200,
+          "y": 120
+        },
+        {
+          "x": 617,
+          "y": 243
+        },
+        {
+          "x": 629,
+          "y": 204
+        },
+        {
+          "x": 211,
+          "y": 81
+        }
+      ];
+
+      const px = layer.getLatLngs()[0].map((latlng) => {
+        const point = map.latLngToContainerPoint(latlng);
+        return { x: point.x, y: point.y };
+      });
+
+      expect(px).to.eql(expected);
+    });
+  });
+
   it('on vertex click', (done) => {
     cy.toolbarButton('rectangle')
       .click()
