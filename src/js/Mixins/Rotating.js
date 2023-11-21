@@ -154,8 +154,14 @@ const RotateMixin = {
       this.disableRotate();
     }
 
-    if(this._layer instanceof L.Rectangle && this._angle === undefined){
-        this.setInitAngle(calcAngle(this._layer._map, this._layer.getLatLngs()[0][0],this._layer.getLatLngs()[0][1]) || 0)
+    if (this._layer instanceof L.Rectangle && this._angle === undefined) {
+      this.setInitAngle(
+        calcAngle(
+          this._layer._map,
+          this._layer.getLatLngs()[0][0],
+          this._layer.getLatLngs()[0][1]
+        ) || 0
+      );
     }
 
     // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
@@ -285,7 +291,7 @@ const RotateMixin = {
   setRotationCenter(center) {
     this._rotationCenter = center;
 
-    if(this._rotatePoly){
+    if (this._rotatePoly) {
       this._rotatePoly.pm.setRotationCenter(center);
     }
   },

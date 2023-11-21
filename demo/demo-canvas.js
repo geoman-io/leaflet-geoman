@@ -1,30 +1,21 @@
 /* eslint-disable no-console */
-const tiles1 = L.tileLayer(
-  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    maxZoom: 19,
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }
-);
+const tiles1 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+});
 
-const tiles2 = L.tileLayer(
-  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    maxZoom: 19,
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }
-);
+const tiles2 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+});
 
-const tiles3 = L.tileLayer(
-  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    maxZoom: 19,
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  }
-);
+const tiles3 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+});
 
 const map2 = L.map('example2', { preferCanvas: true })
   .setView([51.505, -0.09], 13)

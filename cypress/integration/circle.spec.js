@@ -336,7 +336,7 @@ describe('Draw Circle', () => {
       const layer = map.pm.getGeomanDrawLayers()[0];
 
       let disableFired = false;
-      layer.on('pm:disable',()=>{
+      layer.on('pm:disable', () => {
         disableFired = true;
       });
       layer.pm.disable();
@@ -348,10 +348,12 @@ describe('Draw Circle', () => {
     });
   });
 
-
   it('creates circles (non-resizableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ resizableCircle: false, continueDrawing: true });
+      map.pm.setGlobalOptions({
+        resizableCircle: false,
+        continueDrawing: true,
+      });
     });
 
     cy.toolbarButton('circle')
@@ -414,10 +416,7 @@ describe('Draw Circle', () => {
 
     cy.hasCircleLayers(1);
 
-
-    cy.get(mapSelector)
-      .rightclick(200, 200);
-
+    cy.get(mapSelector).rightclick(200, 200);
 
     cy.hasCircleLayers(1);
   });
@@ -457,18 +456,17 @@ describe('Draw Circle', () => {
     cy.window().then(({ map }) => {
       let count = 0;
       const layer = map.pm.getGeomanDrawLayers()[0];
-      layer.on('pm:vertexclick', ()=>{
+      layer.on('pm:vertexclick', () => {
         count += 1;
-        if(count >= 2) {
+        if (count >= 2) {
           expect(count).to.eql(2);
-          setTimeout(done, 100)
+          setTimeout(done, 100);
         }
-      })
+      });
     });
 
     cy.toolbarButton('edit').click();
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 200);
-
   });
 });

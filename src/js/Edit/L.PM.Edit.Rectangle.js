@@ -1,7 +1,7 @@
 // Corner detection based on Leaflet Draw's Edit.Rectangle.js Class:
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
 import Edit from './L.PM.Edit';
-import {calcAngle} from '../helpers';
+import { calcAngle } from '../helpers';
 
 Edit.Rectangle = Edit.Polygon.extend({
   _shape: 'Rectangle',
@@ -200,8 +200,14 @@ Edit.Rectangle = Edit.Polygon.extend({
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
   _findCorners() {
-    if(this._angle === undefined){
-      this.setInitAngle(calcAngle(this._map, this._layer.getLatLngs()[0][0],this._layer.getLatLngs()[0][1]) || 0)
+    if (this._angle === undefined) {
+      this.setInitAngle(
+        calcAngle(
+          this._map,
+          this._layer.getLatLngs()[0][0],
+          this._layer.getLatLngs()[0][1]
+        ) || 0
+      );
     }
 
     const latlngs = this._layer.getLatLngs()[0];

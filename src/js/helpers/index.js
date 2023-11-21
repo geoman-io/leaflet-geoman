@@ -153,7 +153,7 @@ function destination(latlng, heading, distance) {
   heading = (heading + 360) % 360;
   const rad = Math.PI / 180;
   const radInv = 180 / Math.PI;
-  const R = L.CRS.Earth.R; // approximation of Earth's radius
+  const { R } = L.CRS.Earth; // approximation of Earth's radius
   const lon1 = latlng.lng * rad;
   const lat1 = latlng.lat * rad;
   const rheading = heading * rad;

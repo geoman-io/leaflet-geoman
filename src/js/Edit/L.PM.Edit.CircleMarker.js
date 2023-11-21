@@ -18,7 +18,7 @@ Edit.CircleMarker = Edit.extend({
   enable(options = { draggable: true, snappable: true }) {
     L.Util.setOptions(this, options);
     // TODO: remove with next major release
-    if(this.options.editable){
+    if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;
       delete this.options.editable;
     }
@@ -52,7 +52,7 @@ Edit.CircleMarker = Edit.extend({
 
     this._fireEnable();
   },
-  _extendingEnable(){
+  _extendingEnable() {
     // if CircleMarker is dragged while draw mode
     this._layer.on('pm:dragstart', this._onDragStart, this);
     this._layer.on('pm:drag', this._onMarkerDrag, this);
@@ -79,7 +79,7 @@ Edit.CircleMarker = Edit.extend({
     }
 
     // disable dragging of non-editable circle
-    if(this.layerDragEnabled()) {
+    if (this.layerDragEnabled()) {
       this.disableLayerDrag();
     }
 
@@ -89,7 +89,7 @@ Edit.CircleMarker = Edit.extend({
       }
       this._map.off('move', this._syncMarkers, this);
       this._outerMarker.off('drag', this._handleOuterMarkerSnapping, this);
-    }else{
+    } else {
       this._map.off('move', this._updateHiddenPolyCircle, this);
     }
 
@@ -105,7 +105,7 @@ Edit.CircleMarker = Edit.extend({
 
     this._enabled = false;
   },
-  _extendingDisable(){
+  _extendingDisable() {
     this._layer.off('contextmenu', this._removeMarker, this);
   },
   enabled() {
@@ -119,7 +119,7 @@ Edit.CircleMarker = Edit.extend({
     }
   },
   applyOptions() {
-    if (this.options[this._editableOption]){
+    if (this.options[this._editableOption]) {
       this._initMarkers();
       this._map.on('move', this._syncMarkers, this);
 
@@ -135,9 +135,8 @@ Edit.CircleMarker = Edit.extend({
       } else {
         this._disableSnapping();
       }
-
     } else {
-      if(this.options.draggable) {
+      if (this.options.draggable) {
         this.enableLayerDrag();
       }
       // only update the circle border poly
@@ -152,7 +151,7 @@ Edit.CircleMarker = Edit.extend({
 
     this._extendingApplyOptions();
   },
-  _extendingApplyOptions(){
+  _extendingApplyOptions() {
     // enable removal for the marker
     if (!this.options.preventMarkerRemoval) {
       this._layer.on('contextmenu', this._removeMarker, this);
@@ -338,7 +337,7 @@ Edit.CircleMarker = Edit.extend({
     }
     this._fireMarkerDragEnd(e);
   },
-  _extedingMarkerDragEnd(){
+  _extedingMarkerDragEnd() {
     this._map.pm.Draw.CircleMarker._layerIsDragging = false;
   },
   // _initSnappableMarkers when option editable is not true
@@ -444,16 +443,22 @@ Edit.CircleMarker = Edit.extend({
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
   },
-  _distanceCalculation(A, B){
-    return this._map
-      .project(A)
-      .distanceTo(this._map.project(B));
+  _distanceCalculation(A, B) {
+    return this._map.project(A).distanceTo(this._map.project(B));
   },
-  _getMinDistanceInMeter(latlng){
-    return L.PM.Utils.pxRadiusToMeterRadius(this.options[this._minRadiusOption], this._map, latlng)
+  _getMinDistanceInMeter(latlng) {
+    return L.PM.Utils.pxRadiusToMeterRadius(
+      this.options[this._minRadiusOption],
+      this._map,
+      latlng
+    );
   },
-  _getMaxDistanceInMeter(latlng){
-    return L.PM.Utils.pxRadiusToMeterRadius(this.options[this._maxRadiusOption], this._map, latlng)
+  _getMaxDistanceInMeter(latlng) {
+    return L.PM.Utils.pxRadiusToMeterRadius(
+      this.options[this._maxRadiusOption],
+      this._map,
+      latlng
+    );
   },
   _onVertexClick(e) {
     const vertex = e.target;

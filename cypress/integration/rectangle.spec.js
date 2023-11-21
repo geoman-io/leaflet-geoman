@@ -900,17 +900,30 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ map }) => {
       const corners = map.pm.Draw.Rectangle._findCorners();
-      expect(corners[0].equals([51.50820824957313, -0.13801574707031253])).to.eql(true);
-      expect(corners[1].equals([51.48897254548231, -0.10711669921875001])).to.eql(true);
-      expect(corners[2].equals([51.499660050014434, -0.08995056152343751])).to.eql(true);
-      expect(corners[3].equals([51.51889124411909, -0.12084960937500001])).to.eql(true);
+      expect(
+        corners[0].equals([51.50820824957313, -0.13801574707031253])
+      ).to.eql(true);
+      expect(
+        corners[1].equals([51.48897254548231, -0.10711669921875001])
+      ).to.eql(true);
+      expect(
+        corners[2].equals([51.499660050014434, -0.08995056152343751])
+      ).to.eql(true);
+      expect(
+        corners[3].equals([51.51889124411909, -0.12084960937500001])
+      ).to.eql(true);
     });
   });
 
-  it('edit correctly after a rotated rectangle is imported', ()=>{
+  it('edit correctly after a rotated rectangle is imported', () => {
     cy.window().then(({ map, L }) => {
-      const coords = JSON.parse('{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.122532,51.507986],[-0.117474,51.518864],[-0.06784,51.509926],[-0.072898,51.499046],[-0.122532,51.507986]]]}}');
-      const rectangle = L.rectangle([[0,0],[0,0]]);
+      const coords = JSON.parse(
+        '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.122532,51.507986],[-0.117474,51.518864],[-0.06784,51.509926],[-0.072898,51.499046],[-0.122532,51.507986]]]}}'
+      );
+      const rectangle = L.rectangle([
+        [0, 0],
+        [0, 0],
+      ]);
       rectangle.setLatLngs(L.geoJSON(coords).getLayers()[0].getLatLngs());
       rectangle.addTo(map);
     });
@@ -927,21 +940,21 @@ describe('Draw Rectangle', () => {
 
       const expected = [
         {
-          "x": 200,
-          "y": 120
+          x: 200,
+          y: 120,
         },
         {
-          "x": 617,
-          "y": 243
+          x: 617,
+          y: 243,
         },
         {
-          "x": 629,
-          "y": 204
+          x: 629,
+          y: 204,
         },
         {
-          "x": 211,
-          "y": 81
-        }
+          x: 211,
+          y: 81,
+        },
       ];
 
       const px = layer.getLatLngs()[0].map((latlng) => {
@@ -965,18 +978,17 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ map }) => {
       let count = 0;
       const layer = map.pm.getGeomanDrawLayers()[0];
-      layer.on('pm:vertexclick', ()=>{
+      layer.on('pm:vertexclick', () => {
         count += 1;
-        if(count >= 2) {
+        if (count >= 2) {
           expect(count).to.eql(2);
-          setTimeout(done, 100)
+          setTimeout(done, 100);
         }
-      })
+      });
     });
 
     cy.toolbarButton('edit').click();
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
-
   });
 });
