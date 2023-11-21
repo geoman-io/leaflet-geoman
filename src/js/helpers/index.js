@@ -48,7 +48,7 @@ export function removeEmptyCoordRings(arr) {
 function destinationVincenty(lonlat, brng, dist) {
   // rewritten to work with leaflet
   const VincentyConstants = {
-    a: 6378137,
+    a: L.CRS.Earth.R,
     b: 6356752.3142,
     f: 1 / 298.257223563,
   };
@@ -153,7 +153,7 @@ function destination(latlng, heading, distance) {
   heading = (heading + 360) % 360;
   const rad = Math.PI / 180;
   const radInv = 180 / Math.PI;
-  const R = 6378137; // approximation of Earth's radius
+  const R = L.CRS.Earth.R; // approximation of Earth's radius
   const lon1 = latlng.lng * rad;
   const lat1 = latlng.lat * rad;
   const rheading = heading * rad;
