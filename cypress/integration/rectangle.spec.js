@@ -7,7 +7,11 @@ describe('Draw Rectangle', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
+    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+
     cy.get(mapSelector).click(200, 200).click(400, 350);
+
+    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
 
     cy.toolbarButton('edit')
       .click()
@@ -114,7 +118,7 @@ describe('Draw Rectangle', () => {
 
     cy.get(mapSelector).rightclick(300, 250);
 
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({ map }) => {
       const rect = map.pm.getGeomanDrawLayers()[0];
       expect(rect.options.color).to.not.equal('#f00000ff');
     });
@@ -224,7 +228,7 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ map }) => {
       expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
       map.pm.disableDraw();
-      layer = map.pm.getGeomanDrawLayers()[0];
+      [layer] = map.pm.getGeomanDrawLayers();
     });
 
     // test 2: snapIgnore: true, pmIgnore: undefined, optIn: false --> not snappable
@@ -575,7 +579,7 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ L, map }) => {
       map.remove();
       const tiles = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -662,7 +666,7 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ L, map }) => {
       map.remove();
       const tiles = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -718,7 +722,7 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ L, map }) => {
       map.remove();
       const tiles = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -776,7 +780,7 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ L, map }) => {
       map.remove();
       const tiles = L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -878,6 +882,28 @@ describe('Draw Rectangle', () => {
 
       const layer = map.pm.Draw.Rectangle._layer;
       expect(layer.options.color).to.eql('red');
+    });
+  });
+
+  it('Return correct corners of rotated rectangle while drawing', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ rectangleAngle: 45 });
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(220, 220);
+    cy.get(mapSelector).trigger('mousemove', 500, 300);
+
+    cy.window().then(({ map }) => {
+      const corners = map.pm.Draw.Rectangle._findCorners();
+      expect(corners[0].equals([51.50820824957313, -0.13801574707031253])).to.eql(true);
+      expect(corners[1].equals([51.48897254548231, -0.10711669921875001])).to.eql(true);
+      expect(corners[2].equals([51.499660050014434, -0.08995056152343751])).to.eql(true);
+      expect(corners[3].equals([51.51889124411909, -0.12084960937500001])).to.eql(true);
     });
   });
 });

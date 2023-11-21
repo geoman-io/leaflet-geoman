@@ -394,7 +394,6 @@ describe('Events', () => {
     cy.window()
       .then(({ map }) => {
         function logEvent(e) {
-          console.log(e.type);
           calledevent = e.type;
           calledeventArr[e.type] = e.type;
         }
