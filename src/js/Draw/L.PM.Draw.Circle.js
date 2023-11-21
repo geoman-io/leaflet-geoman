@@ -72,7 +72,7 @@ Draw.Circle = Draw.extend({
     this._layerGroup.addLayer(this._hintline);
 
     // change map cursor
-    this._map._container.style.cursor = 'crosshair';
+    this._map.getContainer().classList.add('geoman-draw-cursor');
 
     // create a polygon-point on click
     this._map.on('click', this._placeCenterMarker, this);
@@ -102,7 +102,7 @@ Draw.Circle = Draw.extend({
     this._enabled = false;
 
     // reset cursor
-    this._map._container.style.cursor = '';
+    this._map.getContainer().classList.remove('geoman-draw-cursor');
 
     // unbind listeners
     this._map.off('click', this._finishShape, this);
