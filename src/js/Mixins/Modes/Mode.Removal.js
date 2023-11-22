@@ -5,20 +5,24 @@ const GlobalRemovalMode = {
     // handle existing layers
     this.map.eachLayer((layer) => {
       if (this._isRelevantForRemoval(layer)) {
-        layer.pm.disable();
+        if (layer.pm.enabled()) {
+          layer.pm.disable();
+        }
         layer.on('click', this.removeLayer, this);
       }
     });
 
     if (!this.throttledReInitRemoval) {
       this.throttledReInitRemoval = L.Util.throttle(
-        this.reinitGlobalRemovalMode,
+        this.handleLayerAdditionInGlobalRemovalMode,
         100,
         this
       );
     }
-
+    // save the added layers into the _addedLayersRemoval array, to read it later out
+    this._addedLayersRemoval = {};
     // handle layers that are added while in removal mode
+    this.map.on('layeradd', this._layerAddedRemoval, this);
     this.map.on('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
@@ -33,6 +37,7 @@ const GlobalRemovalMode = {
     });
 
     // remove map handler
+    this.map.off('layeradd', this._layerAddedRemoval, this);
     this.map.off('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
@@ -52,18 +57,6 @@ const GlobalRemovalMode = {
     if (this.globalRemovalModeEnabled()) {
       this.disableGlobalRemovalMode();
     } else {
-      this.enableGlobalRemovalMode();
-    }
-  },
-  reinitGlobalRemovalMode({ layer }) {
-    // do nothing if layer is not handled by leaflet so it doesn't fire unnecessarily
-    if (!this._isRelevantForRemoval(layer)) {
-      return;
-    }
-
-    // re-enable global removal mode if it's enabled already
-    if (this.globalRemovalModeEnabled()) {
-      this.disableGlobalRemovalMode();
       this.enableGlobalRemovalMode();
     }
   },
@@ -95,6 +88,24 @@ const GlobalRemovalMode = {
       !layer._pmTempLayer &&
       layer.pm.options.allowRemoval
     );
+  },
+  handleLayerAdditionInGlobalRemovalMode() {
+    const layers = this._addedLayersRemoval;
+    this._addedLayersRemoval = {};
+    if (this.globalRemovalModeEnabled()) {
+      for (const id in layers) {
+        const layer = layers[id];
+        if (this._isRelevantForRemoval(layer)) {
+          if (layer.pm.enabled()) {
+            layer.pm.disable();
+          }
+          layer.on('click', this.removeLayer, this);
+        }
+      }
+    }
+  },
+  _layerAddedRemoval({ layer }) {
+    this._addedLayersRemoval[L.stamp(layer)] = layer;
   },
 };
 
