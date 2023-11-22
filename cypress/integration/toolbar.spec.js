@@ -500,4 +500,24 @@ describe('Testing the Toolbar', () => {
         expect(eventFired).to.equal('drawPolygon');
       });
   });
+
+  it("After disabling & enabling of button, while a mode is active, don't call disable on the draw layer", (done) => {
+    let eventFired = '';
+
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map }) => {
+      map.on('pm:drawend', ({ shape }) => {
+        eventFired = shape;
+      });
+      map.pm.Toolbar.setButtonDisabled('drawText', true);
+      map.pm.Toolbar.setButtonDisabled('drawText', false);
+    });
+    cy.toolbarButton('text').click();
+
+    cy.window().then(() => {
+      expect(eventFired).to.equal('');
+      done();
+    });
+  });
 });

@@ -239,6 +239,9 @@ const PMButton = L.Control.extend({
   },
 
   _onBtnClick() {
+    if (this._button.disabled) {
+      return;
+    }
     if (this._button.disableOtherButtons) {
       this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
     }
@@ -270,13 +273,9 @@ const PMButton = L.Control.extend({
     if (this._button.disabled) {
       L.DomUtil.addClass(button, className);
       button.setAttribute('aria-disabled', 'true');
-      L.DomEvent.off(button, 'click', this._triggerClick, this);
-      L.DomEvent.off(button, 'click', this._onBtnClick, this);
     } else {
       L.DomUtil.removeClass(button, className);
       button.setAttribute('aria-disabled', 'false');
-      L.DomEvent.on(button, 'click', this._triggerClick, this);
-      L.DomEvent.on(button, 'click', this._onBtnClick, this);
     }
   },
 });
