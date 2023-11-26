@@ -63,7 +63,11 @@ describe('Text Layer', () => {
         .closest('.button-container')
         .should('have.class', 'active');
 
+      cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+
       cy.get(mapSelector).click(90, 250);
+
+      cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
 
       let textArea;
       cy.window().then(({ map }) => {

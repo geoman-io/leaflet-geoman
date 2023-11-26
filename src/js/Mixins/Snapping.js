@@ -48,7 +48,7 @@ const SnapMixin = {
     }
 
     // remove map event
-    this._map.off('pm:remove', this._handleSnapLayerRemoval, this);
+    this._map.off('layerremove', this._handleSnapLayerRemoval, this);
 
     if (this.debugIndicatorLines) {
       this.debugIndicatorLines.forEach((line) => {
@@ -76,7 +76,8 @@ const SnapMixin = {
     }
 
     // if snapping is disabled via holding ALT during drag, stop right here
-    if (this._map.pm.Keyboard.isAltKeyPressed()) {
+    // we need to check for the altKey on the move event, because keydown event is to slow ...
+    if (e?.originalEvent?.altKey || this._map?.pm?.Keyboard.isAltKeyPressed()) {
       return false;
     }
 
@@ -183,8 +184,8 @@ const SnapMixin = {
     const debugIndicatorLines = [];
     const map = this._map;
 
-    map.off('pm:remove', this._handleSnapLayerRemoval, this);
-    map.on('pm:remove', this._handleSnapLayerRemoval, this);
+    map.off('layerremove', this._handleSnapLayerRemoval, this);
+    map.on('layerremove', this._handleSnapLayerRemoval, this);
 
     // find all layers that are or inherit from Polylines... and markers that are not
     // temporary markers of polygon-edits
@@ -257,12 +258,17 @@ const SnapMixin = {
     this.debugIndicatorLines = debugIndicatorLines;
   },
   _handleSnapLayerRemoval({ layer }) {
+    if (!layer._leaflet_id) {
+      return;
+    }
     // find the layers index in snaplist
     const index = this._snapList.findIndex(
       (e) => e._leaflet_id === layer._leaflet_id
     );
-    // remove it from the snaplist
-    this._snapList.splice(index, 1);
+    if (index > -1) {
+      // remove it from the snaplist
+      this._snapList.splice(index, 1);
+    }
   },
   _calcClosestLayer(latlng, layers) {
     return this._calcClosestLayers(latlng, layers, 1)[0];

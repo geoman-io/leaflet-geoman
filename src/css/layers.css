@@ -32,9 +32,8 @@
   opacity: 1 !important;
 }
 
-.leaflet-pm-invalid {
-  stroke: red;
-  transition: fill ease 0s, stroke ease 0s;
+.geoman-draw-cursor {
+  cursor: crosshair;
 }
 
 .rect-style-marker,

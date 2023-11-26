@@ -1,6 +1,7 @@
 // Corner detection based on Leaflet Draw's Edit.Rectangle.js Class:
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
 import Edit from './L.PM.Edit';
+import { calcAngle } from '../helpers';
 
 Edit.Rectangle = Edit.Polygon.extend({
   _shape: 'Rectangle',
@@ -56,6 +57,8 @@ Edit.Rectangle = Edit.Polygon.extend({
     marker._origLatLng = latlng;
     marker._index = index;
     marker._pmTempLayer = true;
+
+    marker.on('click', this._onVertexClick, this);
 
     this._markerGroup.addLayer(marker);
 
@@ -150,7 +153,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     const corners = L.PM.Utils._getRotatedRectangle(
       movedMarker.getLatLng(),
       movedMarker._oppositeCornerLatLng,
-      this._angle || 0,
+      this.getAngle(),
       this._map
     );
     this._layer.setLatLngs(corners);
@@ -197,12 +200,22 @@ Edit.Rectangle = Edit.Polygon.extend({
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
   _findCorners() {
+    if (this._angle === undefined) {
+      this.setInitAngle(
+        calcAngle(
+          this._map,
+          this._layer.getLatLngs()[0][0],
+          this._layer.getLatLngs()[0][1]
+        ) || 0
+      );
+    }
+
     const latlngs = this._layer.getLatLngs()[0];
     return L.PM.Utils._getRotatedRectangle(
       latlngs[0],
       latlngs[2],
-      this._angle || 0,
-      this._map
+      this.getAngle(),
+      this._map || this
     );
   },
 });

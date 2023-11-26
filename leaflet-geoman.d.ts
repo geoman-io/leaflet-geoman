@@ -912,6 +912,12 @@ declare module 'leaflet' {
 
       /** Set the initial angle of the layer in degrees. */
       setInitAngle(degrees: number): void;
+
+      /** Returns the center of rotation. */
+      getRotationCenter(): L.LatLng;
+
+      /** Change the center of rotation. Pass null to use the shape's default center. */
+      setRotationCenter(center: L.LatLng | null): void;
     }
 
     interface Draw {
@@ -1095,14 +1101,22 @@ declare module 'leaflet' {
       /** Set the max radius of a Circle. (default:null). */
       maxRadiusCircle?: number;
 
-      /** Set the min radius of a CircleMarker when editable is active. (default:null). */
+      /** Set the min radius of a CircleMarker. (default:null). */
       minRadiusCircleMarker?: number;
 
-      /** Set the max radius of a CircleMarker when editable is active. (default:null). */
+      /** Set the max radius of a CircleMarker. (default:null). */
       maxRadiusCircleMarker?: number;
 
-      /** Makes a CircleMarker editable like a Circle (default:false). */
+      /**
+       * @deprecated Use resizeableCircleMarker instead
+       */
       editable?: boolean;
+
+      /** Enables radius editing while drawing a Circle (default:true). */
+      resizableCircle?: boolean;
+
+      /** Enables radius editing while drawing a CircleMarker (default:false). */
+      resizeableCircleMarker?: boolean;
 
       /** Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them) (default:true). */
       markerEditable?: boolean;

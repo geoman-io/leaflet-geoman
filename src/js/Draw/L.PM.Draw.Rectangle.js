@@ -90,7 +90,7 @@ Draw.Rectangle = Draw.extend({
     }
 
     // change map cursor
-    this._map._container.style.cursor = 'crosshair';
+    this._map.getContainer().classList.add('geoman-draw-cursor');
 
     // create a polygon-point on click
     this._map.on('click', this._placeStartingMarkers, this);
@@ -120,7 +120,7 @@ Draw.Rectangle = Draw.extend({
     this._enabled = false;
 
     // reset cursor
-    this._map._container.style.cursor = '';
+    this._map.getContainer().classList.remove('geoman-draw-cursor');
 
     // unbind listeners
     this._map.off('click', this._finishShape, this);
@@ -246,14 +246,13 @@ Draw.Rectangle = Draw.extend({
     }
   },
   _findCorners() {
-    const corners = this._layer.getBounds();
-
-    const northwest = corners.getNorthWest();
-    const northeast = corners.getNorthEast();
-    const southeast = corners.getSouthEast();
-    const southwest = corners.getSouthWest();
-
-    return [northwest, northeast, southeast, southwest];
+    const latlngs = this._layer.getLatLngs()[0];
+    return L.PM.Utils._getRotatedRectangle(
+      latlngs[0],
+      latlngs[2],
+      this.options.rectangleAngle || 0,
+      this._map
+    );
   },
   _finishShape(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for

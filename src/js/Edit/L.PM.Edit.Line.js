@@ -106,11 +106,6 @@ Edit.Line = Edit.extend({
       : this._layer._renderer._container;
     L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
 
-    // remove invalid class if layer has self intersection
-    if (!this._map.hasLayer(this._layer) || this.hasSelfIntersection()) {
-      L.DomUtil.removeClass(el, 'leaflet-pm-invalid');
-    }
-
     if (this._layerEdited) {
       this._fireUpdate();
     }
@@ -355,9 +350,9 @@ Edit.Line = Edit.extend({
 
   _handleSelfIntersectionOnVertexRemoval() {
     // check for selfintersection again (mainly to reset the style)
-    this._handleLayerStyle(true);
+    const selfIntersection = this._handleLayerStyle(true);
 
-    if (this.hasSelfIntersection()) {
+    if (selfIntersection) {
       // reset coordinates
       this._layer.setLatLngs(this._coordsBeforeEdit);
       this._coordsBeforeEdit = null;
@@ -370,7 +365,16 @@ Edit.Line = Edit.extend({
   _handleLayerStyle(flash) {
     const layer = this._layer;
 
-    if (this.hasSelfIntersection()) {
+    let selfIntersection;
+    let intersection;
+    if (this.options.allowSelfIntersection) {
+      selfIntersection = false;
+    } else {
+      intersection = kinks(this._layer.toGeoJSON(15));
+      selfIntersection = intersection.features.length > 0;
+    }
+
+    if (selfIntersection) {
       if (
         !this.options.allowSelfIntersection &&
         this.options.allowSelfIntersectionEdit
@@ -379,7 +383,7 @@ Edit.Line = Edit.extend({
       }
 
       if (this.isRed) {
-        return;
+        return selfIntersection;
       }
 
       // if it does self-intersect, mark or flash it red
@@ -390,9 +394,8 @@ Edit.Line = Edit.extend({
         this.isRed = true;
       }
 
-      // TODO: call kinks only once (hasSelfIntersection)
       // fire intersect event
-      this._fireIntersect(kinks(this._layer.toGeoJSON(15)));
+      this._fireIntersect(intersection);
     } else {
       // if not, reset the style to the default color
       layer.setStyle({ color: this.cachedColor });
@@ -404,6 +407,7 @@ Edit.Line = Edit.extend({
         this._updateDisabledMarkerStyle(this._markers, false);
       }
     }
+    return selfIntersection;
   },
   _flashLayer() {
     if (!this.cachedColor) {
