@@ -25,7 +25,7 @@
 
 
 <p align="center">
-    <img src="https://geoman-static.onrender.com/assets/draw-and-edit.gif" alt="Demo" />  
+    <img src="https://geoman-static.onrender.com/assets/draw-example.png" alt="Demo" />  
 </p>
 
 ## Documentation
