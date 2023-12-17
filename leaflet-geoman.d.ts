@@ -520,7 +520,8 @@ declare module 'leaflet' {
       | 'tr'
       | 'ua'
       | 'zh'
-      | 'zh_tw';
+      | 'zh_tw'
+      | 'ky;
 
     /**
      * Changes default registration of leaflet-geoman on leaflet layers.
