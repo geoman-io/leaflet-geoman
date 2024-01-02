@@ -1,9 +1,16 @@
-const KeyboardMixins = {
+// use function to create a new mixin object for keeping isolation
+// to make it work for multiple map instances
+const createKeyboardMixins = () => ({
   _lastEvents: { keydown: undefined, keyup: undefined, current: undefined },
   _initKeyListener(map) {
     this.map = map;
     L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
     L.DomEvent.on(window, 'blur', this._onBlur, this);
+    // clean up global listeners when current map instance is destroyed
+    map.on('unload', () => {
+      L.DomEvent.off(document, 'keydown keyup', this._onKeyListener, this);
+      L.DomEvent.off(window, 'blur', this._onBlur, this);
+    });
   },
   _onKeyListener(e) {
     let focusOn = 'document';
@@ -44,6 +51,6 @@ const KeyboardMixins = {
   getPressedKey() {
     return this._lastEvents.current?.event.key;
   },
-};
+});
 
-export default KeyboardMixins;
+export default createKeyboardMixins;
