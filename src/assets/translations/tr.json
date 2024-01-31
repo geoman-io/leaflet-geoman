@@ -27,6 +27,7 @@
     "deleteButton": "Katmanları kaldır",
     "drawCircleMarkerButton": "Daire işaretçisi çiz",
     "snappingButton": "Sürüklenen işaretçiyi diğer katmanlara ve köşelere yapıştır",
-    "pinningButton": "Paylaşılan köşeleri birbirine sabitle"
+    "pinningButton": "Paylaşılan köşeleri birbirine sabitle",
+    "rotateButton": "Katmanı döndür"
   }
 }
