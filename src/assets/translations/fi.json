@@ -30,6 +30,7 @@
     "snappingButton": "Kiinnitä siirrettävä merkki toisiin muotoihin",
     "pinningButton": "Kiinnitä jaetut muodot yhteen",
     "rotateButton": "Käännä",
-    "drawTextButton": "Piirrä tekstiä"
+    "drawTextButton": "Piirrä tekstiä",
+    "rotateButton": "Kierrä kerrosta"
   }
 }
