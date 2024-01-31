@@ -7,6 +7,7 @@ import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
 import KeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
+import GlobalMergeMode from './Mixins/Modes/Mode.Merge';
 
 const Map = L.Class.extend({
   includes: [
@@ -14,6 +15,7 @@ const Map = L.Class.extend({
     GlobalDragMode,
     GlobalRemovalMode,
     GlobalRotateMode,
+    GlobalMergeMode,
     EventMixin,
   ],
   initialize(map) {

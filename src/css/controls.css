@@ -86,6 +86,9 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-snapping {
   background-image: url('../assets/icons/Magnet.svg');
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-merge {
+  background-image: url('../assets/icons/Merge.svg');
+}
 .leaflet-pm-toolbar .leaflet-pm-icon-rotate {
   background-image: url('../assets/icons/Rotate.svg');
 }

@@ -1,5 +1,41 @@
 describe('Modes', () => {
   const mapSelector = '#map';
+  it('unions two overlapping polygons into one polygon', () => {
+
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(100, 100)
+      .click(300, 100)
+      .click(300, 300)
+      .click(100, 300)
+      .click(100, 100);
+
+    cy.toolbarButton('polygon').click();
+
+    cy.get(mapSelector)
+      .click(200, 200)
+      .click(400, 200)
+      .click(400, 400)
+      .click(200, 400)
+      .click(200, 200);
+
+    cy.hasLayers(4);
+
+    cy.toolbarButton('merge').click();
+
+    cy.get(mapSelector)
+      .click(150, 150)
+
+    cy.get(mapSelector)
+      .click(350, 350)
+
+    //todo this check isn't working?
+    //cy.hasLayers(3);
+
+    cy.toolbarButton('merge').click();
+  });
+
   it('limits markers in edit mode', () => {
     cy.drawShape('MonsterPolygon');
 

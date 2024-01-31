@@ -29,6 +29,7 @@
     "drawCircleMarkerButton": "Draw Circle Marker",
     "snappingButton": "Snap dragged marker to other layers and vertices",
     "pinningButton": "Pin shared vertices together",
+    "mergeButton": "Merge Layers",
     "rotateButton": "Rotate Layers",
     "drawTextButton": "Draw Text",
     "scaleButton": "Scale Layers",
