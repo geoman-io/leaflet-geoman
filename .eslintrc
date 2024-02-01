@@ -19,5 +19,8 @@
     "L": true,
     "window": true,
     "document": true
-  }
+  },
+  "ignorePatterns": [
+    "cypress/libs"
+  ]
 }

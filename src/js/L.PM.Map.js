@@ -43,6 +43,7 @@ const Map = L.Class.extend({
 
     this.Keyboard._initKeyListener(map);
   },
+  // eslint-disable-next-line default-param-last
   setLang(lang = 'en', t, fallback = 'en') {
     const oldLang = L.PM.activeLang;
     if (t) {
@@ -65,6 +66,7 @@ const Map = L.Class.extend({
   controlsVisible() {
     return this.Toolbar.isVisible;
   },
+  // eslint-disable-next-line default-param-last
   enableDraw(shape = 'Polygon', options) {
     // backwards compatible, remove after 3.0
     if (shape === 'Poly') {

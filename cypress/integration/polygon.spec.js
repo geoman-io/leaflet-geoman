@@ -716,9 +716,8 @@ describe('Draw & Edit Poly', () => {
           onStop() {
             expect(poly.pm.hasSelfIntersection()).to.equal(true);
 
-            const toucherSelfIntersectionFalse = handSelfIntersectionFalse.growFinger(
-              'mouse'
-            );
+            const toucherSelfIntersectionFalse =
+              handSelfIntersectionFalse.growFinger('mouse');
             toucherSelfIntersectionFalse
               .wait(100)
               .moveTo(504, 337, 100)
@@ -744,9 +743,8 @@ describe('Draw & Edit Poly', () => {
           allowSelfIntersectionEdit: true,
         });
 
-        const toucherSelfIntersectionTrue = handSelfIntersectionTrue.growFinger(
-          'mouse'
-        );
+        const toucherSelfIntersectionTrue =
+          handSelfIntersectionTrue.growFinger('mouse');
         toucherSelfIntersectionTrue
           .wait(100)
           .moveTo(294, 114, 100)
