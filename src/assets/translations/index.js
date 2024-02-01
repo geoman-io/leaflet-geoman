@@ -36,8 +36,10 @@ export default {
   es,
   nl,
   fr,
+  // eslint-disable-next-line camelcase
   pt_br,
   zh,
+  // eslint-disable-next-line camelcase
   zh_tw,
   pl,
   sv,
