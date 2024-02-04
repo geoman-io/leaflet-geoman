@@ -7,7 +7,7 @@ const createKeyboardMixins = () => ({
     L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
     L.DomEvent.on(window, 'blur', this._onBlur, this);
     // clean up global listeners when current map instance is destroyed
-    map.once('unload', this_unbindKeyListenerEvents, this);
+    map.once('unload', this._unbindKeyListenerEvents, this);
   },
   _unbindKeyListenerEvents() {
       L.DomEvent.off(document, 'keydown keyup', this._onKeyListener, this);
