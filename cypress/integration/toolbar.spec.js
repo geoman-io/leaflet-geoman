@@ -501,7 +501,7 @@ describe('Testing the Toolbar', () => {
       });
   });
 
-  it("After disabling & enabling of button, while a mode is active, don't call disable on the draw layer", (done) => {
+  it("After disabling & enabling of a button, while a mode is active, don't call disable on the draw layer", (done) => {
     let eventFired = '';
 
     cy.toolbarButton('edit').click();
