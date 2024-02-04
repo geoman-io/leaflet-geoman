@@ -1,0 +1,48 @@
+{
+  "tooltips": {
+    "placeMarker": "Маркерди жайгаштыруу үчүн басыңыз",
+    "firstVertex": "Биринчи чокуну жайгаштырууну үчүн басыңыз",
+    "continueLine": "Сүрөт тартууну улантуу үчүн басыңыз",
+    "finishLine": "Аяктоо үчүн учурдагы маркерди басыңыз",
+    "finishPoly": "Бүтүрүү үчүн биринчи маркерди басыңыз",
+    "finishRect": "Бүтүрүү үчүн басыңыз",
+    "startCircle": "Айлананын борборун жайгаштырууну үчүн басыңыз",
+    "finishCircle": "Айлананы бүтүрүү үчүн басыңыз",
+    "placeCircleMarker": "Тегерек маркерди жайгаштыруу үчүн басыңыз",
+    "placeText": "Текстти жайгаштыруу үчүн басыңыз"
+  },
+  "actions": {
+    "finish": "Аягы",
+    "cancel": "Жок кылуу",
+    "removeLastVertex": "Акыркы чокуну өчүрүү"
+  },
+  "buttonTitles": {
+    "drawMarkerButton": "Маркерди чизуу",
+    "drawPolyButton": "Полигон чизуу",
+    "drawLineButton": "Полилиния чизуу",
+    "drawCircleButton": "Дайынды чизуу",
+    "drawRectButton": "Прямоугольник чизуу",
+    "editButton": "Слоопту түзөтүү",
+    "dragButton": "Слоопту карап сүйлөү",
+    "cutButton": "Слооптун башын кесүү",
+    "deleteButton": "Слооптун өчүрүү",
+    "drawCircleMarkerButton": "Дайынды маркерди чизуу",
+    "snappingButton": "Башка слооптордун жана вертекстердин арасына чекилдөө",
+    "pinningButton": "Бөлүшкөн вертекстерди бирге тутуштуруу",
+    "rotateButton": "Слооптун өзгөртүү",
+    "drawTextButton": "Текст чизуу",
+    "scaleButton": "Слооптун өлчөмүн өзгөртүү",
+    "autoTracingButton": "Автоматтык тизмеги чизуу"
+  },
+  "measurements": {
+    "totalLength": "Узундук",
+    "segmentLength": "Сегмент узундугу",
+    "area": "Аймак",
+    "radius": "Радиус",
+    "perimeter": "Периметр",
+    "height": "Диаметр",
+    "width": "Кенчилик",
+    "coordinates": "Координаттар",
+    "coordinatesMarker": "Маркердин координаттары"
+  }
+}
