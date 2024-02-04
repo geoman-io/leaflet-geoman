@@ -1,4 +1,4 @@
-describe('', (KeyboardMixin) => {
+describe('KeyboardMixin', () => {
   it('Should unbind event listeners that bound by the KeyboardMixin after the map is destroyed', () => {
     cy.window().then((window) => {
       const { map, document } = window;
