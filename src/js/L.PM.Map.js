@@ -5,7 +5,7 @@ import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
-import KeyboardMixins from './Mixins/Keyboard';
+import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
 
 const Map = L.Class.extend({
@@ -20,7 +20,7 @@ const Map = L.Class.extend({
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
-    this.Keyboard = KeyboardMixins;
+    this.Keyboard = createKeyboardMixins();
 
     this.globalOptions = {
       snappable: true,
