@@ -27,6 +27,7 @@
     "deleteButton": "删除图层",
     "drawCircleMarkerButton": "画圆圈标记",
     "snappingButton": "将拖动的标记捕捉到其他图层和顶点",
-    "pinningButton": "将共享顶点固定在一起"
+    "pinningButton": "将共享顶点固定在一起",
+    "rotateButton": "旋转图层"
   }
 }

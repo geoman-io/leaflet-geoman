@@ -27,6 +27,7 @@
     "deleteButton": "Hilangkan Layer",
     "drawCircleMarkerButton": "Digitasi Penanda Lingkaran",
     "snappingButton": "Jepretkan penanda yang ditarik ke lapisan dan simpul lain",
-    "pinningButton": "Sematkan simpul bersama bersama"
+    "pinningButton": "Sematkan simpul bersama bersama",
+    "rotateButton": "Putar lapisan"
   }
 }

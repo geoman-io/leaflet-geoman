@@ -27,6 +27,7 @@
     "deleteButton": "Удалить слой",
     "drawCircleMarkerButton": "Добавить круговой маркер",
     "snappingButton": "Привязать перетаскиваемый маркер к другим слоям и вершинам",
-    "pinningButton": "Связать общие точки вместе"
+    "pinningButton": "Связать общие точки вместе",
+    "rotateButton": "Поворот слоя"
   }
 }
