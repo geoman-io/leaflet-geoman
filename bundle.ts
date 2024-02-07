@@ -1,39 +1,46 @@
-const esbuild = require('esbuild');
-const path = require('path');
-const fs = require('fs');
+import * as esbuild from 'esbuild';
+import fs from 'fs';
 
-// Define the entry point
-const entryPoint = './src/js/L.PM.js';
+const plugins = [{
+  name: 'my-plugin',
+  setup(build) {
+    let count = 0;
+    build.onEnd(({ errors, warnings }) => {
+      count++;
+      const message = errors.length === 0 && warnings.length === 0
+        ? 'Build completed.'
+        : `Build completed with ${errors.length} error(s) and ${warnings.length} warning(s).`;
+        console.log(`[BUILD #${count.toString().padStart(3, '0')}]:`, message);    });
+  },
+}];
 
-// Define the output directory
-const outdir = path.resolve(__dirname, 'dist');
-fs.mkdirSync(outdir, { recursive: true });
-
-// Define an async function to handle the build
-async function build() {
-  try {
-    await esbuild.build({
-      entryPoints: [entryPoint],
-      bundle: true,
-      minify: true,
-      sourcemap: false,
-      outdir,
-      loader: {
-        '.js': 'jsx',
-        '.css': 'css',
-        '.svg': 'dataurl',
-      },
-    });
-
-    // Copy the leaflet-geoman.d.ts file
-    fs.copyFileSync('leaflet-geoman.d.ts', path.join(outdir, 'leaflet-geoman.d.ts'));
-    fs.renameSync(path.join(outdir, 'L.PM.js'), path.join(outdir, 'leaflet-geoman.min.js'));
-    fs.renameSync(path.join(outdir, 'L.PM.css'), path.join(outdir, 'leaflet-geoman.css'));
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
-  }
+const buildOptions = {
+  bundle: true,
+  entryPoints: ['./src/js/L.PM.js'],
+  loader: {
+    '.js': 'jsx',
+    '.css': 'css',
+    '.svg': 'dataurl' },
+  minify: true,
+  outfile: './dist/leaflet-geoman.js',
+  //plugins: plugins,
+  sourcemap: true,
 }
 
-// Call the build function
-build();
+const ctx = await esbuild.context({ ...buildOptions, plugins });
+
+if (process.env.DEV) {
+  await ctx.watch();
+  console.log('watching...');
+    const { host, port } = await ctx.serve({
+      port: 5500,
+      servedir: '.',
+      fallback: "./index.html"
+    });
+  console.log(`Serving app at ${host}:${port}.`);
+} else {
+  await ctx.rebuild();
+  ctx.dispose();
+  fs.copyFileSync('leaflet-geoman.d.ts', './dist/leaflet-geoman.d.ts');
+  fs.copyFileSync('./dist/leaflet-geoman.js', './dist/leaflet-geoman.min.js');
+}

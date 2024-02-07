@@ -18,7 +18,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/leaflet-geoman.min.js",
+  "main": "dist/leaflet-geoman.js",
   "types": "dist/leaflet-geoman.d.ts",
   "dependencies": {
     "@turf/boolean-contains": "^6.5.0",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/leaflet": "^1.7.9",
+    "cross-env": "^7.0.3",
     "cypress": "6.9.1",
     "cypress-wait-until": "1.7.1",
     "esbuild": "^0.20.0",
@@ -50,8 +51,8 @@
   },
   "scripts": {
     "start": "npm run dev",
-    "dev": "esbuild ./src/js/L.PM.js --bundle --watch --loader:.svg=dataurl --outfile=dist/leaflet-geoman.min.js",
-    "build": "ts-node bundle.ts",
+    "dev": "cross-env DEV=true ts-node bundle.mjs",
+    "build": "ts-node bundle.mjs",
     "test": "cypress run",
     "cypress": "cypress open",
     "prepare": "npm run build && husky install",
