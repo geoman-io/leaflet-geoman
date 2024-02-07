@@ -10,8 +10,8 @@ const createKeyboardMixins = () => ({
     map.once('unload', this._unbindKeyListenerEvents, this);
   },
   _unbindKeyListenerEvents() {
-      L.DomEvent.off(document, 'keydown keyup', this._onKeyListener, this);
-      L.DomEvent.off(window, 'blur', this._onBlur, this);
+    L.DomEvent.off(document, 'keydown keyup', this._onKeyListener, this);
+    L.DomEvent.off(window, 'blur', this._onBlur, this);
   },
   _onKeyListener(e) {
     let focusOn = 'document';
