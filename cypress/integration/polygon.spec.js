@@ -1278,4 +1278,53 @@ describe('Draw & Edit Poly', () => {
       expect(hintLine.options.color).to.eql('red');
     });
   });
+
+  it('snap to start marker instead of to the layer below', () => {
+    cy.window().then(({ map, L }) => {
+      // it was not possible to create this test with creating the polygon by clicking
+      const polygon = L.polygon([
+        [
+          [20.53507732696281, 71.98242187500001],
+          [19.87005983797396, 71.97143554687501],
+          [19.782211275967995, 73.35021972656251],
+          [20.55565240377338, 73.48754882812501],
+          [20.53507732696281, 71.98242187500001],
+        ],
+      ]);
+      polygon.addTo(map);
+      map.fitBounds(polygon.getBounds(), { animate: false });
+      map.setZoom(8, { animate: false });
+
+      map.pm.enableDraw('Polygon');
+
+      map.pm.Draw.Polygon._hintMarker.setLatLng([
+        20.53837097209846, 72.22334801861803,
+      ]);
+      map.pm.Draw.Polygon._createVertex({
+        latlng: [20.53837097209846, 72.22334801861803],
+      });
+
+      map.pm.Draw.Polygon._hintMarker.setLatLng([
+        20.21581109239457, 72.13073730468751,
+      ]);
+      map.pm.Draw.Polygon._createVertex({
+        latlng: [20.21581109239457, 72.13073730468751],
+      });
+
+      map.pm.Draw.Polygon._hintMarker.setLatLng([
+        20.205501205844214, 72.77893066406251,
+      ]);
+      map.pm.Draw.Polygon._createVertex({
+        latlng: [20.205501205844214, 72.77893066406251],
+      });
+    });
+
+    cy.get(mapSelector).trigger('mousemove', 413, 180);
+
+    cy.window().then(({ map }) => {
+      const hintMarker = map.pm.Draw.Polygon._hintMarker;
+      expect(hintMarker.getLatLng().lat).to.eq(20.53837097209846);
+      expect(hintMarker.getLatLng().lng).to.eq(72.22334801861803);
+    });
+  });
 });
