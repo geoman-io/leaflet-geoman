@@ -37,6 +37,7 @@ describe('Rotation', () => {
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[0];
+      expect(layer.pm.rotateEnabled()).to.equal(false);
 
       layer.pm.enableRotate();
       expect(layer.pm.rotateEnabled()).to.equal(true);

@@ -222,7 +222,7 @@ const RotateMixin = {
     }
   },
   rotateEnabled() {
-    return this._rotateEnabled;
+    return !!this._rotateEnabled;
   },
   // angle is clockwise (0-360)
   rotateLayer(degrees) {
