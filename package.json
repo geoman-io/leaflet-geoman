@@ -50,23 +50,23 @@
     "leaflet": "^1.2.0"
   },
   "scripts": {
-    "start": "npm run dev",
+    "start": "pnpm run dev",
     "dev": "cross-env DEV=true ts-node bundle.mjs",
     "build": "ts-node bundle.mjs",
     "test": "cypress run",
     "cypress": "cypress open",
-    "prepare": "npm run build && husky",
+    "prepare": "pnpm run build && husky",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
     "eslint": "eslint \"{src,cypress,demo}/**/*.js\" --fix ",
     "prettier": "prettier --write \"{src,cypress,demo}/**/*.{js,css}\" --log-level=warn",
-    "lint": "npm run eslint && npm run prettier"
+    "lint": "pnpm run eslint && pnpm run prettier"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/geoman-io/leaflet-geoman.git"
   },
   "author": {
-    "name": "Sumit Kumar",
+    "name": "Geoman.io",
     "email": "sales@geoman.io",
     "url": "http://geoman.io"
   },
