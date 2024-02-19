@@ -7,7 +7,7 @@ on:
       - 'v*.*.*'
 
 env:
-  FILE_NAME_PREFIX: geoman-io-leaflet-geoman-pro
+  FILE_NAME_PREFIX: geoman-io-leaflet-geoman
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   
 jobs:
