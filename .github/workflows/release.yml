@@ -12,6 +12,7 @@ env:
   
 jobs:
   build:
+    environment: release
     name: release job
     runs-on: ubuntu-latest
 
