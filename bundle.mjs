@@ -23,13 +23,13 @@ const buildOptions = {
     '.svg': 'dataurl' },
   minify: true,
   outfile: './dist/leaflet-geoman.js',
-  //plugins: plugins,
-  sourcemap: true,
+  sourcemap: process.env.DEV ? true : false,
 }
 
 const ctx = await esbuild.context({ ...buildOptions, plugins });
 
 if (process.env.DEV) {
+  // Watch in dev mode
   await ctx.watch();
   console.log('watching...');
     const { host, port } = await ctx.serve({
@@ -39,8 +39,16 @@ if (process.env.DEV) {
     });
   console.log(`Serving app at ${host}:${port}.`);
 } else {
+  // Clean /dist folder
+  fs.rmSync("./dist", { recursive: true, force: true });
+
+  // Build
   await ctx.rebuild();
+  
+  // Dispose context
   ctx.dispose();
+
+  // Copy types
   fs.copyFileSync('leaflet-geoman.d.ts', './dist/leaflet-geoman.d.ts');
   fs.copyFileSync('./dist/leaflet-geoman.js', './dist/leaflet-geoman.min.js');
 }
