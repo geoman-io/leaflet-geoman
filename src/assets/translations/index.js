@@ -25,6 +25,7 @@ import cz from './cz.json';
 import ja from './ja.json';
 import fi from './fi.json';
 import ko from './ko.json';
+import ky from './ky.json';
 
 export default {
   en,
@@ -36,8 +37,10 @@ export default {
   es,
   nl,
   fr,
+  // eslint-disable-next-line camelcase
   pt_br,
   zh,
+  // eslint-disable-next-line camelcase
   zh_tw,
   pl,
   sv,
@@ -52,4 +55,5 @@ export default {
   ja,
   fi,
   ko,
+  ky,
 };

@@ -27,6 +27,7 @@
     "deleteButton": "Elimina Livelli",
     "drawCircleMarkerButton": "Disegna Marker del Cerchio",
     "snappingButton": "Snap ha trascinato il pennarello su altri strati e vertici",
-    "pinningButton": "Pin condiviso vertici insieme"
+    "pinningButton": "Pin condiviso vertici insieme",
+    "rotateButton": "Ruota livello"
   }
 }

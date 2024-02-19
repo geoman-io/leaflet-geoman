@@ -27,6 +27,7 @@
     "deleteButton": "Șterge straturile",
     "drawCircleMarkerButton": "Desenează marcatorul cercului",
     "snappingButton": "Fixați marcatorul glisat pe alte straturi și vârfuri",
-    "pinningButton": "Fixați vârfurile partajate împreună"
+    "pinningButton": "Fixați vârfurile partajate împreună",
+    "rotateButton": "Rotiți stratul"
   }
 }

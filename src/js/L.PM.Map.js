@@ -5,7 +5,7 @@ import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
-import KeyboardMixins from './Mixins/Keyboard';
+import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
 
 const Map = L.Class.extend({
@@ -20,7 +20,7 @@ const Map = L.Class.extend({
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
-    this.Keyboard = KeyboardMixins;
+    this.Keyboard = createKeyboardMixins();
 
     this.globalOptions = {
       snappable: true,
@@ -43,6 +43,7 @@ const Map = L.Class.extend({
 
     this.Keyboard._initKeyListener(map);
   },
+  // eslint-disable-next-line default-param-last
   setLang(lang = 'en', t, fallback = 'en') {
     const oldLang = L.PM.activeLang;
     if (t) {
@@ -65,6 +66,7 @@ const Map = L.Class.extend({
   controlsVisible() {
     return this.Toolbar.isVisible;
   },
+  // eslint-disable-next-line default-param-last
   enableDraw(shape = 'Polygon', options) {
     // backwards compatible, remove after 3.0
     if (shape === 'Poly') {

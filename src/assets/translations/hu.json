@@ -27,6 +27,7 @@
     "deleteButton": "Elemek törlése",
     "drawCircleMarkerButton": "Kör jelölő rajzolása",
     "snappingButton": "Kapcsolja a jelöltőt másik elemhez vagy ponthoz",
-    "pinningButton": "Közös pontok összekötése"
+    "pinningButton": "Közös pontok összekötése",
+    "rotateButton": "Fólia elforgatása"
   }
 }

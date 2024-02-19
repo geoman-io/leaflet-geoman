@@ -158,11 +158,8 @@ Draw.Cut = Draw.Polygon.extend({
             ) {
               const { segment } = closest;
               if (segment && segment.length === 2) {
-                const {
-                  indexPath,
-                  parentPath,
-                  newIndex,
-                } = L.PM.Utils._getIndexFromSegment(coords, segment);
+                const { indexPath, parentPath, newIndex } =
+                  L.PM.Utils._getIndexFromSegment(coords, segment);
                 // define the coordsRing that is edited
                 const coordsRing =
                   indexPath.length > 1 ? get(coords, parentPath) : coords;

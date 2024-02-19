@@ -74,7 +74,7 @@ Draw.Text = Draw.extend({
     this._map.off('click', this._createMarker, this);
 
     // remove hint marker
-    this._hintMarker.remove();
+    this._hintMarker?.remove();
 
     this._map.getContainer().classList.remove('geoman-draw-cursor');
 

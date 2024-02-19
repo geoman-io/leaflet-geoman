@@ -27,6 +27,7 @@
     "deleteButton": "Eliminar Capas",
     "drawCircleMarkerButton": "Dibujar Marcador de Círculo",
     "snappingButton": "El marcador de Snap arrastrado a otras capas y vértices",
-    "pinningButton": "Fijar juntos los vértices compartidos"
+    "pinningButton": "Fijar juntos los vértices compartidos",
+    "rotateButton": "Rotar capa"
   }
 }

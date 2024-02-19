@@ -303,9 +303,10 @@ const SnapMixin = {
       if (
         amount === 1 &&
         (closestLayer.distance === undefined ||
-          results.distance <= closestLayer.distance)
+          results.distance - 5 <= closestLayer.distance)
       ) {
-        if (results.distance < closestLayer.distance) {
+        // if the layer is less then 5 pixels away, we treat it as same distance and sort it based on priority
+        if (results.distance + 5 < closestLayer.distance) {
           closestLayers = [];
         }
         closestLayer = results;
