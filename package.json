@@ -55,7 +55,7 @@
     "build": "ts-node bundle.mjs",
     "test": "cypress run",
     "cypress": "cypress open",
-    "prepare": "npm run build && husky install",
+    "prepare": "npm run build && husky",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
     "eslint": "eslint \"{src,cypress,demo}/**/*.js\" --fix ",
     "prettier": "prettier --write \"{src,cypress,demo}/**/*.{js,css}\" --log-level=warn",
@@ -67,7 +67,7 @@
   },
   "author": {
     "name": "Sumit Kumar",
-    "email": "sumit@geoman.io",
+    "email": "sales@geoman.io",
     "url": "http://geoman.io"
   },
   "license": "MIT",
