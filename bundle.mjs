@@ -37,7 +37,7 @@ if (process.env.DEV) {
       servedir: '.',
       fallback: "./index.html"
     });
-  console.log(`Serving app at ${host}:${port}.`);
+  console.log(`Serving app at http://${host}:${port}/demo`);
 } else {
   // Clean /dist folder
   fs.rmSync("./dist", { recursive: true, force: true });
