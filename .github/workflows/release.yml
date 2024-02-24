@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  FILE_NAME_PREFIX: geoman-io-leaflet-geoman
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  
+jobs:
+  build:
+    environment: release
+    name: release job
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set version
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Check version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [ "${{ steps.version.outputs.version }}" != "$PACKAGE_VERSION" ]; then
+            echo "Tag version ($TAG_VERSION) does not match package.json version ($PACKAGE_VERSION)"
+            exit 1
+          fi
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: pnpm
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --store-dir ${{ env.STORE_PATH }}
+
+      - name: Prepare package
+        run: pnpm pack
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.version.outputs.version }}
+          token: ${{ secrets.GEOMAN_RELEASE_TOKEN }}
+          files: |
+            ${{env.FILE_NAME_PREFIX}}-${{ steps.version.outputs.version }}.tgz
+            LICENSE
+
+      - name: Publish to NPM
+        shell: bash
+        run: |
+          #!/bin/bash
+
+          # Set npm configurations
+          pnpm config set shamefully-hoist true
+          pnpm config set strict-peer-dependencies false
+
+          # Set auth token
+          pnpm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+          pnpm publish --no-git-checks

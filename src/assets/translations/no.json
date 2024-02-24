@@ -8,7 +8,8 @@
     "finishRect": "Klikk for å fullføre",
     "startCircle": "Klikk for å sette sirkel midtpunkt",
     "finishCircle": "Klikk for å fullføre sirkel",
-    "placeCircleMarker": "Klikk for å plassere sirkel"
+    "placeCircleMarker": "Klikk for å plassere sirkel",
+    "placeText": "Klikk for å plassere tekst"
   },
   "actions": {
     "finish": "Fullfør",
@@ -16,17 +17,32 @@
     "removeLastVertex": "Fjern forrige punkt"
   },
   "buttonTitles": {
-    "drawMarkerButton": "Tegn Punkt",
-    "drawPolyButton": "Tegn Flate",
-    "drawLineButton": "Tegn Linje",
-    "drawCircleButton": "Tegn Sirkel",
+    "drawMarkerButton": "Tegn punkt",
+    "drawPolyButton": "Tegn flate",
+    "drawLineButton": "Tegn linje",
+    "drawCircleButton": "Tegn sirkel",
     "drawRectButton": "Tegn rektangel",
-    "editButton": "Rediger Objekter",
-    "dragButton": "Dra Objekter",
-    "cutButton": "Kutt Objekter",
-    "deleteButton": "Fjern Objekter",
+    "editButton": "Rediger objekter",
+    "dragButton": "Dra objekter",
+    "cutButton": "Kutt objekter",
+    "deleteButton": "Fjern objekter",
     "drawCircleMarkerButton": "Tegn sirkel-punkt",
     "snappingButton": "Fest dratt punkt til andre objekter og punkt",
-    "pinningButton": "Pin delte punkt sammen"
+    "pinningButton": "Pin delte punkter sammen",
+    "rotateButton": "Rotér objekter",
+    "drawTextButton": "Tegn tekst",
+    "scaleButton": "Skalér objekter",
+    "autoTracingButton": "Automatisk sporing av linje"
+  },
+  "measurements": {
+    "totalLength": "Lengde",
+    "segmentLength": "Segmentlengde",
+    "area": "Område",
+    "radius": "Radius",
+    "perimeter": "Omriss",
+    "height": "Høyde",
+    "width": "Bredde",
+    "coordinates": "Posisjon",
+    "coordinatesMarker": "Posisjonsmarkør"
   }
 }

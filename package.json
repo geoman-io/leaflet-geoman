@@ -1,6 +1,6 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
-  "version": "2.14.1",
+  "version": "2.16.0",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -18,7 +18,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/leaflet-geoman.min.js",
+  "main": "dist/leaflet-geoman.js",
   "types": "dist/leaflet-geoman.d.ts",
   "dependencies": {
     "@turf/boolean-contains": "^6.5.0",
@@ -29,62 +29,60 @@
     "polygon-clipping": "0.15.3"
   },
   "devDependencies": {
-    "@babel/core": "7.14.0",
-    "@babel/preset-env": "7.14.1",
     "@types/leaflet": "^1.7.9",
-    "babel-loader": "8.2.2",
-    "copy-webpack-plugin": "8.1.1",
-    "css-loader": "5.2.4",
+    "cross-env": "^7.0.3",
     "cypress": "6.9.1",
     "cypress-wait-until": "1.7.1",
-    "eslint": "7.26.0",
-    "eslint-config-airbnb-base": "14.2.1",
-    "eslint-config-prettier": "8.3.0",
-    "eslint-plugin-cypress": "2.11.3",
-    "eslint-plugin-import": "2.22.1",
-    "file-loader": "6.2.0",
+    "esbuild": "^0.20.0",
+    "eslint": "8.56.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-cypress": "2.15.1",
+    "eslint-plugin-import": "2.29.1",
+    "husky": "^9.0.7",
     "leaflet": "1.9.3",
-    "mini-css-extract-plugin": "1.6.0",
-    "prettier": "2.2.1",
+    "lint-staged": "^15.2.1",
+    "prettier": "3.2.4",
     "prosthetic-hand": "1.3.1",
-    "terser-webpack-plugin": "^5.1.2",
-    "url-loader": "4.1.1",
-    "webpack": "5.36.2",
-    "webpack-cli": "4.7.0"
+    "ts-node": "^10.9.2"
   },
   "peerDependencies": {
     "leaflet": "^1.2.0"
   },
   "scripts": {
-    "start": "npm run dev",
-    "dev": "webpack --config=webpack.dev.js",
+    "start": "pnpm run dev",
+    "dev": "cross-env DEV=true ts-node bundle.mjs",
+    "build": "ts-node bundle.mjs",
     "test": "cypress run",
     "cypress": "cypress open",
-    "build": "webpack --config=webpack.build.js",
-    "prepare": "npm run build",
+    "prepare": "pnpm run build && husky",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
-    "eslint": "eslint src/ --fix",
-    "prettier": "prettier --write '{src,cypress}/**/*.{js,css}'",
-    "lint": "npm run eslint && npm run prettier"
+    "eslint": "eslint \"{src,cypress,demo}/**/*.js\" --fix ",
+    "prettier": "prettier --write \"{src,cypress,demo}/**/*.{js,css}\" --log-level=warn",
+    "lint": "pnpm run eslint && pnpm run prettier"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/geoman-io/leaflet-geoman.git"
   },
   "author": {
-    "name": "Sumit Kumar",
-    "email": "sumit@geoman.io",
-    "url": "http://geoman.io/leaflet-geoman"
+    "name": "Geoman.io",
+    "email": "sales@geoman.io",
+    "url": "http://geoman.io"
   },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/geoman-io/leaflet-geoman/issues"
   },
-  "homepage": "https://geoman.io/leaflet-geoman",
+  "homepage": "https://geoman.io",
   "prettier": {
     "trailingComma": "es5",
     "tabWidth": 2,
     "semi": true,
     "singleQuote": true
+  },
+  "lint-staged": {
+    "*.js": "eslint \"{src,cypress,demo}/**/*.js\" --fix",
+    "*.{js,css,md}": "prettier --write \"{src,cypress,demo}/**/*.{js,css}\""
   }
 }

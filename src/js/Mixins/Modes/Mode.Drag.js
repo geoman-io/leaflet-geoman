@@ -7,7 +7,9 @@ const GlobalDragMode = {
     this._addedLayersDrag = {};
 
     layers.forEach((layer) => {
-      layer.pm.enableLayerDrag();
+      if (this._isRelevantForDrag(layer)) {
+        layer.pm.enableLayerDrag();
+      }
     });
 
     if (!this.throttledReInitDrag) {
@@ -58,11 +60,11 @@ const GlobalDragMode = {
   reinitGlobalDragMode() {
     const layers = this._addedLayersDrag;
     this._addedLayersDrag = {};
-    for (const id in layers) {
-      const layer = layers[id];
+    if (this.globalDragModeEnabled()) {
+      for (const id in layers) {
+        const layer = layers[id];
 
-      if (this._isRelevantForDrag(layer)) {
-        if (this.globalDragModeEnabled()) {
+        if (this._isRelevantForDrag(layer)) {
           layer.pm.enableLayerDrag();
         }
       }

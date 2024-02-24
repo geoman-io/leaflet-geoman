@@ -27,6 +27,7 @@
     "deleteButton": "Verwijder",
     "drawCircleMarkerButton": "Plaats Marker",
     "snappingButton": "Snap gesleepte marker naar andere lagen en hoekpunten",
-    "pinningButton": "Speld gedeelde hoekpunten samen"
+    "pinningButton": "Speld gedeelde hoekpunten samen",
+    "rotateButton": "Laag roteren"
   }
 }

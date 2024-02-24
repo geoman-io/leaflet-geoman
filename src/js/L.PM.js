@@ -5,7 +5,7 @@
  * Written by Sumit Kumar <sumit@geoman.io>, January 2020
  * Twitter: @TweetsOfSumit
  * OSS Repo: https://github.com/geoman-io/leaflet-geoman
- * Get Pro: https://geoman.io/leaflet-geoman#pro
+ * Get Pro: https://geoman.io
  */
 
 import './polyfills';
@@ -19,8 +19,8 @@ import './Draw/L.PM.Draw.Marker';
 import './Draw/L.PM.Draw.Line';
 import './Draw/L.PM.Draw.Polygon';
 import './Draw/L.PM.Draw.Rectangle';
-import './Draw/L.PM.Draw.Circle';
 import './Draw/L.PM.Draw.CircleMarker';
+import './Draw/L.PM.Draw.Circle';
 import './Draw/L.PM.Draw.Cut';
 import './Draw/L.PM.Draw.Text';
 
@@ -30,8 +30,8 @@ import './Edit/L.PM.Edit.Marker';
 import './Edit/L.PM.Edit.Line';
 import './Edit/L.PM.Edit.Polygon';
 import './Edit/L.PM.Edit.Rectangle';
-import './Edit/L.PM.Edit.Circle';
 import './Edit/L.PM.Edit.CircleMarker';
+import './Edit/L.PM.Edit.Circle';
 import './Edit/L.PM.Edit.ImageOverlay';
 import './Edit/L.PM.Edit.Text';
 

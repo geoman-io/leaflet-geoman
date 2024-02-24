@@ -16,7 +16,9 @@ const GlobalEditMode = {
 
     // enable all layers
     layers.forEach((layer) => {
-      layer.pm.enable(options);
+      if (this._isRelevantForEdit(layer)) {
+        layer.pm.enable(options);
+      }
     });
 
     if (!this.throttledReInitEdit) {
@@ -27,9 +29,9 @@ const GlobalEditMode = {
       );
     }
 
-    // save the added layers into the _addedLayers array, to read it later out
-    this._addedLayers = {};
-    this.map.on('layeradd', this._layerAdded, this);
+    // save the added layers into the _addedLayersEdit array, to read it later out
+    this._addedLayersEdit = {};
+    this.map.on('layeradd', this._layerAddedEdit, this);
     // handle layers that are added while in edit mode
     this.map.on('layeradd', this.throttledReInitEdit, this);
 
@@ -49,6 +51,7 @@ const GlobalEditMode = {
     });
 
     // cleanup layer off event
+    this.map.off('layeradd', this._layerAddedEdit, this);
     this.map.off('layeradd', this.throttledReInitEdit, this);
 
     // Set toolbar button to currect status
@@ -75,22 +78,22 @@ const GlobalEditMode = {
     }
   },
   handleLayerAdditionInGlobalEditMode() {
-    const layers = this._addedLayers;
-    this._addedLayers = {};
-    for (const id in layers) {
-      const layer = layers[id];
-      // when global edit mode is enabled and a layer is added to the map,
-      // enable edit for that layer if it's relevant
+    const layers = this._addedLayersEdit;
+    this._addedLayersEdit = {};
+    if (this.globalEditModeEnabled()) {
+      for (const id in layers) {
+        const layer = layers[id];
+        // when global edit mode is enabled and a layer is added to the map,
+        // enable edit for that layer if it's relevant
 
-      if (this._isRelevantForEdit(layer)) {
-        if (this.globalEditModeEnabled()) {
+        if (this._isRelevantForEdit(layer)) {
           layer.pm.enable({ ...this.globalOptions });
         }
       }
     }
   },
-  _layerAdded({ layer }) {
-    this._addedLayers[L.stamp(layer)] = layer;
+  _layerAddedEdit({ layer }) {
+    this._addedLayersEdit[L.stamp(layer)] = layer;
   },
   _isRelevantForEdit(layer) {
     return (

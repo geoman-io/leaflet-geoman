@@ -1,6 +1,6 @@
 import get from 'lodash/get';
 import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
-import { copyLatLngs } from '../helpers';
+import { calcAngle, copyLatLngs } from '../helpers';
 
 /**
  * We create a temporary polygon with the same latlngs as the layer that we want to rotate.
@@ -125,6 +125,10 @@ const RotateMixin = {
     this._angle = angle % 360;
   },
   _getRotationCenter() {
+    if (this._rotationCenter) {
+      return this._rotationCenter;
+    }
+
     const polygon = L.polygon(this._layer.getLatLngs(), {
       stroke: false,
       fill: false,
@@ -146,6 +150,20 @@ const RotateMixin = {
       return;
     }
 
+    if (this.rotateEnabled()) {
+      this.disableRotate();
+    }
+
+    if (this._layer instanceof L.Rectangle && this._angle === undefined) {
+      this.setInitAngle(
+        calcAngle(
+          this._layer._map,
+          this._layer.getLatLngs()[0][0],
+          this._layer.getLatLngs()[0][1]
+        ) || 0
+      );
+    }
+
     // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
     const options = {
       fill: false,
@@ -155,10 +173,11 @@ const RotateMixin = {
     };
 
     // we create a temp polygon for rotation
-    this._rotatePoly = L.polygon(this._layer.getLatLngs(), options).addTo(
-      this._layer._map
-    );
+    this._rotatePoly = L.polygon(this._layer.getLatLngs(), options);
+    this._rotatePoly._pmTempLayer = true;
+    this._rotatePoly.addTo(this._layer._map);
     this._rotatePoly.pm._setAngle(this.getAngle());
+    this._rotatePoly.pm.setRotationCenter(this.getRotationCenter());
     this._rotatePoly.pm.setOptions(this._layer._map.pm.getGlobalOptions());
     this._rotatePoly.pm.setOptions({
       rotate: true,
@@ -167,7 +186,6 @@ const RotateMixin = {
     });
     // we connect the temp polygon (that will be enabled for rotation) with the current layer, so that we can rotate the current layer too
     this._rotatePoly.pm._rotationLayer = this._layer;
-    this._rotatePoly._pmTempLayer = true;
     this._rotatePoly.pm.enable();
 
     // store the original latlngs
@@ -204,7 +222,7 @@ const RotateMixin = {
     }
   },
   rotateEnabled() {
-    return this._rotateEnabled;
+    return !!this._rotateEnabled;
   },
   // angle is clockwise (0-360)
   rotateLayer(degrees) {
@@ -266,6 +284,16 @@ const RotateMixin = {
   // angle is clockwise (0-360)
   setInitAngle(degrees) {
     this._setAngle(degrees);
+  },
+  getRotationCenter() {
+    return this._getRotationCenter();
+  },
+  setRotationCenter(center) {
+    this._rotationCenter = center;
+
+    if (this._rotatePoly) {
+      this._rotatePoly.pm.setRotationCenter(center);
+    }
   },
 };
 

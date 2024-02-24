@@ -27,6 +27,7 @@
     "deleteButton": "Fjern",
     "drawCircleMarkerButton": "Tegn cirkelmarkør",
     "snappingButton": "Fastgør trukket markør til andre elementer",
-    "pinningButton": "Sammenlæg delte elementer"
+    "pinningButton": "Sammenlæg delte elementer",
+    "rotateButton": "Roter laget"
   }
 }

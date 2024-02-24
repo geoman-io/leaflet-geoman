@@ -67,7 +67,7 @@ Draw.Line = Draw.extend({
     }
 
     // change map cursor
-    this._map._container.style.cursor = 'crosshair';
+    this._map.getContainer().classList.add('geoman-draw-cursor');
 
     // create a polygon-point on click
     this._map.on('click', this._createVertex, this);
@@ -100,6 +100,9 @@ Draw.Line = Draw.extend({
     // TODO: think about moving this somewhere else?
     this._otherSnapLayers = [];
 
+    // make sure intersection is not set while start drawing
+    this.isRed = false;
+
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
@@ -115,7 +118,7 @@ Draw.Line = Draw.extend({
     this._enabled = false;
 
     // reset cursor
-    this._map._container.style.cursor = '';
+    this._map.getContainer().classList.remove('geoman-draw-cursor');
 
     // unbind listeners
     this._map.off('click', this._createVertex, this);
@@ -216,10 +219,16 @@ Draw.Line = Draw.extend({
 
     // change the style based on self intersection
     if (this._doesSelfIntersect) {
-      this._hintline.setStyle({
-        color: '#f00000ff',
-      });
+      if (!this.isRed) {
+        this.isRed = true;
+        this._hintline.setStyle({
+          color: '#f00000ff',
+        });
+        // fire intersect event
+        this._fireIntersect(selfIntersection, this._map, 'Draw');
+      }
     } else if (!this._hintline.isEmpty()) {
+      this.isRed = false;
       this._hintline.setStyle(this.options.hintlineStyle);
     }
   },

@@ -5,7 +5,7 @@ import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
-import KeyboardMixins from './Mixins/Keyboard';
+import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
 
 const Map = L.Class.extend({
@@ -20,7 +20,7 @@ const Map = L.Class.extend({
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
-    this.Keyboard = KeyboardMixins;
+    this.Keyboard = createKeyboardMixins();
 
     this.globalOptions = {
       snappable: true,
@@ -43,6 +43,7 @@ const Map = L.Class.extend({
 
     this.Keyboard._initKeyListener(map);
   },
+  // eslint-disable-next-line default-param-last
   setLang(lang = 'en', t, fallback = 'en') {
     const oldLang = L.PM.activeLang;
     if (t) {
@@ -65,6 +66,7 @@ const Map = L.Class.extend({
   controlsVisible() {
     return this.Toolbar.isVisible;
   },
+  // eslint-disable-next-line default-param-last
   enableDraw(shape = 'Polygon', options) {
     // backwards compatible, remove after 3.0
     if (shape === 'Poly') {
@@ -100,14 +102,31 @@ const Map = L.Class.extend({
     // merge passed and existing options
     const options = merge(this.globalOptions, o);
 
+    // TODO: remove with next major release
+    if (options.editable) {
+      options.resizeableCircleMarker = options.editable;
+      delete options.editable;
+    }
+
     // check if switched the editable mode for CircleMarker while drawing
     let reenableCircleMarker = false;
     if (
       this.map.pm.Draw.CircleMarker.enabled() &&
-      !!this.map.pm.Draw.CircleMarker.options.editable !== !!options.editable
+      !!this.map.pm.Draw.CircleMarker.options.resizeableCircleMarker !==
+        !!options.resizeableCircleMarker
     ) {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
+    }
+    // check if switched the editable mode for Circle while drawing
+    let reenableCircle = false;
+    if (
+      this.map.pm.Draw.Circle.enabled() &&
+      !!this.map.pm.Draw.Circle.options.resizableCircle !==
+        !!options.resizableCircle
+    ) {
+      this.map.pm.Draw.Circle.disable();
+      reenableCircle = true;
     }
 
     // enable options for Drawing Shapes
@@ -117,6 +136,10 @@ const Map = L.Class.extend({
 
     if (reenableCircleMarker) {
       this.map.pm.Draw.CircleMarker.enable();
+    }
+
+    if (reenableCircle) {
+      this.map.pm.Draw.Circle.enable();
     }
 
     // enable options for Editing

@@ -55,6 +55,8 @@ Draw.Text = Draw.extend({
     // sync hint marker with mouse cursor
     this._map.on('mousemove', this._syncHintMarker, this);
 
+    this._map.getContainer().classList.add('geoman-draw-cursor');
+
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
@@ -72,7 +74,9 @@ Draw.Text = Draw.extend({
     this._map.off('click', this._createMarker, this);
 
     // remove hint marker
-    this._hintMarker.remove();
+    this._hintMarker?.remove();
+
+    this._map.getContainer().classList.remove('geoman-draw-cursor');
 
     // remove event listener to sync hint marker
     this._map.off('mousemove', this._syncHintMarker, this);
@@ -183,7 +187,6 @@ Draw.Text = Draw.extend({
 
   _createTextArea() {
     const textArea = document.createElement('textarea');
-    textArea.autofocus = true;
     textArea.readOnly = true;
     textArea.classList.add('pm-textarea', 'pm-disabled');
     return textArea;

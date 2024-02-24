@@ -27,6 +27,7 @@
     "deleteButton": "Smazat vrstvu",
     "drawCircleMarkerButton": "Přidat kruhovou značku",
     "snappingButton": "Navázat tažnou značku k dalším vrstvám a vrcholům",
-    "pinningButton": "Spojit společné body dohromady"
+    "pinningButton": "Spojit společné body dohromady",
+    "rotateButton": "Otočte vrstvu"
   }
 }

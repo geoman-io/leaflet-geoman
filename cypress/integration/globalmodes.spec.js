@@ -255,7 +255,7 @@ describe('Modes', () => {
     cy.testLayerAdditionPerformance();
   });
 
-  it('Test removal when preventMarkerRremoval is passed to global options', () => {
+  it('Test removal when preventMarkerRemoval is passed to global options', () => {
     cy.toolbarButton('rectangle')
       .click()
       .closest('.button-container')
@@ -346,6 +346,83 @@ describe('Modes', () => {
     cy.window().then(({ map }) => {
       expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
       expect(map.pm.getGeomanLayers()[1].pm.layerDragEnabled()).to.equal(true);
+    });
+  });
+
+  it('re-applies rotate mode onAdd for first layer', (done) => {
+    cy.toolbarButton('rotate').click();
+
+    cy.window().then(({ map, L }) => {
+      const jsonString =
+        '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
+      const poly = JSON.parse(jsonString);
+      L.geoJSON(poly).addTo(map);
+    });
+
+    cy.window().then(({ map }) => {
+      setTimeout(() => {
+        expect(map.pm.getGeomanLayers()[0].pm.rotateEnabled()).to.equal(true);
+        done();
+      }, 100);
+    });
+  });
+
+  it('re-applies edit mode onAdd for first layer', (done) => {
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map, L }) => {
+      const jsonString =
+        '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
+      const poly = JSON.parse(jsonString);
+      L.geoJSON(poly).addTo(map);
+    });
+
+    cy.window().then(({ map }) => {
+      setTimeout(() => {
+        expect(map.pm.getGeomanLayers()[0].pm.enabled()).to.equal(true);
+        done();
+      }, 100);
+    });
+  });
+
+  it('re-applies move mode onAdd for first layer', (done) => {
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map, L }) => {
+      const jsonString =
+        '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
+      const poly = JSON.parse(jsonString);
+      L.geoJSON(poly).addTo(map);
+    });
+
+    cy.window().then(({ map }) => {
+      setTimeout(() => {
+        expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(
+          true
+        );
+        done();
+      }, 100);
+    });
+  });
+
+  it('re-applies removal mode onAdd for first layer', (done) => {
+    cy.toolbarButton('delete').click();
+
+    cy.window().then(({ map, L }) => {
+      const jsonString =
+        '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
+      const poly = JSON.parse(jsonString);
+      L.geoJSON(poly).addTo(map);
+    });
+
+    cy.window().then(({ map }) => {
+      setTimeout(() => {
+        const layer = map.pm.getGeomanLayers()[0];
+        expect(layer.listens('click', map.pm.removeLayer, map.pm)).to.equal(
+          true
+        );
+        done();
+      }, 100);
     });
   });
 });

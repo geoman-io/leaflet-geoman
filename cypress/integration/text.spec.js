@@ -63,7 +63,11 @@ describe('Text Layer', () => {
         .closest('.button-container')
         .should('have.class', 'active');
 
+      cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+
       cy.get(mapSelector).click(90, 250);
+
+      cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
 
       let textArea;
       cy.window().then(({ map }) => {
@@ -445,6 +449,27 @@ describe('Text Layer', () => {
         textLayer.pm.disable();
         expect(textarea.selectionStart).to.eq(0);
         expect(textarea.selectionEnd).to.eq(0);
+      });
+    });
+
+    it('enable map dragging after blur', () => {
+      cy.window().then(({ map, L }) => {
+        const textLayer = L.marker(map.getCenter(), {
+          textMarker: true,
+          text: 'Text Layer',
+        }).addTo(map);
+
+        expect(map.dragging.enabled()).to.eq(true);
+
+        const textarea = textLayer.pm.getElement();
+        textLayer.pm.enable();
+        textarea.focus();
+
+        expect(map.dragging.enabled()).to.eq(false);
+
+        textLayer.pm.disable();
+
+        expect(map.dragging.enabled()).to.eq(true);
       });
     });
   });
