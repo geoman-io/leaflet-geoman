@@ -566,12 +566,21 @@ const Toolbar = L.Class.extend({
   controlExists(name) {
     return Boolean(this.getButtons()[name]);
   },
-  getCustomControls() {
-    return Object.fromEntries(
-      Object.entries(this.getButtons()).filter(
-        ([, v]) => v._button.tool === 'custom'
-      )
-    );
+  getButton(name) {
+    return this.getButtons()[name];
+  },
+  getButtonsInBlock(name) {
+    const buttonsInBlock = {};
+    if (name) {
+      for (const buttonName in map.pm.Toolbar.getButtons()) {
+        const button = map.pm.Toolbar.getButtons()[buttonName];
+        // draw controls doesn't have a block
+        if (button._button.tool === name || (name === 'draw' && !button._button.tool)) {
+          buttonsInBlock[buttonName] = button;
+        }
+      }
+    }
+    return buttonsInBlock;
   },
   changeControlOrder(order = []) {
     const shapeMapping = this._shapeMapping();
