@@ -572,10 +572,13 @@ const Toolbar = L.Class.extend({
   getButtonsInBlock(name) {
     const buttonsInBlock = {};
     if (name) {
-      for (const buttonName in map.pm.Toolbar.getButtons()) {
-        const button = map.pm.Toolbar.getButtons()[buttonName];
+      for (const buttonName in this.getButtons()) {
+        const button = this.getButtons()[buttonName];
         // draw controls doesn't have a block
-        if (button._button.tool === name || (name === 'draw' && !button._button.tool)) {
+        if (
+          button._button.tool === name ||
+          (name === 'draw' && !button._button.tool)
+        ) {
           buttonsInBlock[buttonName] = button;
         }
       }
