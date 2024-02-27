@@ -241,4 +241,25 @@ describe('Shows Tooltips', () => {
       expect(el).to.have.text('Click first marker to finish');
     });
   });
+
+  it('Add fallback to english for translations', () => {
+    cy.window().then(({ map, L }) => {
+      // we set the language to 'custom'
+      // to make sure that it has no fallback we overwrite the fallback with 'xx'
+      map.pm.setLang(
+        'custom',
+        {
+          tooltips: {
+            mytext: 'Some Text',
+          },
+        },
+        'xx'
+      );
+
+      expect(L.PM.Utils.getTranslation('tooltips.mytext')).to.eq('Some Text');
+      expect(L.PM.Utils.getTranslation('tooltips.placeMarker')).to.eq(
+        'Click to place marker'
+      );
+    });
+  });
 });
