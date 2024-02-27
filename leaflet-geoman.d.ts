@@ -668,7 +668,7 @@ declare module 'leaflet' {
 
       /** Returns all of the active buttons */
       getButtons(): Record<string, L.Control>
-      
+
       /** Returns the full button object or undefined if the name does not exist */
       getButton(name: string): L.Control | undefined;
 
@@ -682,13 +682,16 @@ declare module 'leaflet' {
       getBlockPositions(): BlockPositions;
 
       /** To add a custom Control to the Toolbar */
-      createCustomControl(options: CustomControlOptions): void;
+      createCustomControl(options: CustomControlOptions): L.Control;
 
       /** Creates a copy of a draw Control. Returns the drawInstance and the control. */
       copyDrawControl(
         copyInstance: string,
         options?: CustomControlOptions
-      ): void;
+      ): {
+        drawInstance: Draw,
+        control: L.Control
+      };
 
       /** Change the actions of an existing button. */
       changeActionsOfControl(
