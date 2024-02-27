@@ -573,7 +573,7 @@ const Toolbar = L.Class.extend({
     const buttonsInBlock = {};
     if (name) {
       for (const buttonName in this.getButtons()) {
-        const button = this.getButton(buttonName);
+        const button = this.getButtons()[buttonName];
         // draw controls doesn't have a block
         if (
           button._button.tool === name ||
