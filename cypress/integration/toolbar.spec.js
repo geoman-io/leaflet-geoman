@@ -218,6 +218,11 @@ describe('Testing the Toolbar', () => {
         expect(testresult).to.equal('clickButton clicked');
         cy.get(container).should('not.have.class', 'active');
       });
+      expect(map.pm.Toolbar.getButton('clickButton')).to.not.equal(undefined);
+      expect(map.pm.Toolbar.controlExists('clickButton')).to.equal(true);
+      expect(
+        'clickButton' in map.pm.Toolbar.getButtonsInBlock('custom')
+      ).to.equal(true);
     });
   });
 
