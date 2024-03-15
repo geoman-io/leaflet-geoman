@@ -1,37 +1,37 @@
 {
   "tooltips": {
-    "placeMarker": "Clique para posicionar o marcador",
-    "firstVertex": "Clique para posicionar o primeiro vértice",
-    "continueLine": "Clique para continuar desenhando",
-    "finishLine": "Clique em qualquer marcador existente para finalizar",
-    "finishPoly": "Clique no primeiro marcador para finalizar",
-    "finishRect": "Clique para finalizar",
-    "startCircle": "Clique para posicionar o centro do círculo",
-    "finishCircle": "Clique para finalizar o círculo",
-    "placeCircleMarker": "Clique para posicionar o marcador circular",
-    "placeText": "Clique para inserir texto"
+    "placeMarker": "Clique para colocar marcador",
+    "firstVertex": "Clique para colocar primeiro vértice",
+    "continueLine": "Clique para continuar a desenhar",
+    "finishLine": "Clique num marcador existente para terminar",
+    "finishPoly": "Clique no primeiro marcador para terminar",
+    "finishRect": "Clique para terminar",
+    "startCircle": "Clique para colocar o centro do círculo",
+    "finishCircle": "Clique para terminar o círculo",
+    "placeCircleMarker": "Clique para colocar marcador de círculo",
+    "placeText": "Clique para colocar texto"
   },
   "actions": {
-    "finish": "Finalizar",
+    "finish": "Terminar",
     "cancel": "Cancelar",
-    "removeLastVertex": "Remover último vértice"
+    "removeLastVertex": "Remover Último Vértice"
   },
   "buttonTitles": {
     "drawMarkerButton": "Desenhar Marcador",
     "drawPolyButton": "Desenhar Polígonos",
-    "drawLineButton": "Desenhar Linha Poligonal",
+    "drawLineButton": "Desenhar Polilinha",
     "drawCircleButton": "Desenhar Círculo",
     "drawRectButton": "Desenhar Retângulo",
     "editButton": "Editar Camadas",
     "dragButton": "Arrastar Camadas",
-    "cutButton": "Recortar Camadas",
+    "cutButton": "Cortar Camadas",
     "deleteButton": "Remover Camadas",
     "drawCircleMarkerButton": "Desenhar Marcador de Círculo",
     "snappingButton": "Ajustar marcador arrastado a outras camadas e vértices",
-    "pinningButton": "Unir vértices compartilhados",
-    "rotateButton": "Rotacionar Camadas",
+    "pinningButton": "Unir vértices partilhados",
+    "rotateButton": "Rodar Camadas",
     "drawTextButton": "Desenhar Texto",
-    "scaleButton": "Redimensionar Camadas",
+    "scaleButton": "Escalar Camadas",
     "autoTracingButton": "Traçado Automático de Linha"
   },
   "measurements": {
