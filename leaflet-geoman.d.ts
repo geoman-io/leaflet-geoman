@@ -515,6 +515,7 @@ declare module 'leaflet' {
       | 'no'
       | 'pl'
       | 'pt_br'
+      | 'pt_pt'
       | 'ro'
       | 'ru'
       | 'sv'
