@@ -4,7 +4,7 @@ import translations from '../../assets/translations';
 export function getTranslation(path) {
   const lang = L.PM.activeLang;
   // if translation is not found, fallback to english
-  return get(translations[lang], path) || get(translations.en, path);
+  return get(translations[lang], path) || get(translations.en, path) || path;
 }
 
 export function hasValues(list) {

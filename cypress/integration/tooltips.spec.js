@@ -262,4 +262,15 @@ describe('Shows Tooltips', () => {
       );
     });
   });
+
+  it('shows key if no translation is available', () => {
+    cy.window().then(({ L }) => {
+      expect(L.PM.Utils.getTranslation('tooltips.placeMarker')).to.eq(
+        'Click to place marker'
+      );
+      expect(L.PM.Utils.getTranslation('tooltips.mytext')).to.eq(
+        'tooltips.mytext'
+      );
+    });
+  });
 });
