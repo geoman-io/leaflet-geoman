@@ -991,4 +991,18 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
   });
+
+  it('prevents drawing rectangle where all corners have the same position', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(200, 200);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.getGeomanDrawLayers().length).to.eql(0);
+    });
+  });
 });

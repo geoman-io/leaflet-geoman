@@ -275,6 +275,11 @@ Draw.Rectangle = Draw.extend({
       return;
     }
 
+    if (A.equals(B)) {
+      // rectangle has only one point
+      return;
+    }
+
     // create the final rectangle layer, based on opposite corners A & B
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
 
