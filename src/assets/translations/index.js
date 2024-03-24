@@ -12,6 +12,8 @@ import zh from './zh.json';
 import zh_tw from './zh_tw.json';
 // eslint-disable-next-line camelcase
 import pt_br from './pt_br.json';
+// eslint-disable-next-line camelcase
+import pt_pt from './pt_pt.json';
 import pl from './pl.json';
 import sv from './sv.json';
 import el from './el.json';
@@ -39,6 +41,8 @@ export default {
   fr,
   // eslint-disable-next-line camelcase
   pt_br,
+  // eslint-disable-next-line camelcase
+  pt_pt,
   zh,
   // eslint-disable-next-line camelcase
   zh_tw,
