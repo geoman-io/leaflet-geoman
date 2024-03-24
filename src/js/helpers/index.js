@@ -1,15 +1,10 @@
 import get from 'lodash/get';
-import has from 'lodash/has';
 import translations from '../../assets/translations';
 
 export function getTranslation(path) {
-  let lang = L.PM.activeLang;
-
-  if (!has(translations, lang)) {
-    lang = 'en';
-  }
-
-  return get(translations[lang], path);
+  const lang = L.PM.activeLang;
+  // if translation is not found, fallback to english
+  return get(translations[lang], path) || get(translations.en, path) || path;
 }
 
 export function hasValues(list) {
