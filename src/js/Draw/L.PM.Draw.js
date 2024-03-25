@@ -18,6 +18,7 @@ const Draw = L.Class.extend({
     pathOptions: null,
     cursorMarker: true,
     finishOn: null,
+    finishOnVertexClick: true,
     markerStyle: {
       draggable: true,
       icon: L.icon(),
