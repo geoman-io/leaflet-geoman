@@ -136,7 +136,22 @@ const Draw = L.Class.extend({
       this._fireGlobalDrawModeToggled();
     }
 
-    const layers = L.PM.Utils.findLayers(this._map);
+    const layers = [];
+    this._map.eachLayer((layer) => {
+      if (
+        layer instanceof L.Polyline ||
+        layer instanceof L.Marker ||
+        layer instanceof L.Circle ||
+        layer instanceof L.CircleMarker ||
+        layer instanceof L.ImageOverlay
+      ) {
+        // filter out everything that's leaflet-geoman specific temporary stuff
+        if (!layer._pmTempLayer) {
+          layers.push(layer);
+        }
+      }
+    });
+
     if (this._enabled) {
       layers.forEach((layer) => {
         L.PM.Utils.disablePopup(layer);
