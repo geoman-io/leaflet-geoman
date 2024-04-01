@@ -473,8 +473,11 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // prevent removal of the layer if the vertex count is below minimum
-    if (!this.options.removeLayerBelowMinVertexCount) {
+    // define whether marker is part of hole
+    const isHole = parentPath[parentPath.length - 1] > 0;
+
+    // prevent removal of the layer if the vertex count is below minimum when not a hole
+    if (!this.options.removeLayerBelowMinVertexCount && !isHole) {
       // if on a line only 2 vertices left or on a polygon 3 vertices left, don't allow to delete
       if (
         coordsRing.length <= 2 ||
