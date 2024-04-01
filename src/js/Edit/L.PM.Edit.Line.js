@@ -474,7 +474,8 @@ Edit.Line = Edit.extend({
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
     // define whether marker is part of hole
-    const isHole = parentPath[parentPath.length - 1] > 0;
+    const isHole =
+      parentPath[parentPath.length - 1] > 0 && this._layer instanceof L.Polygon;
 
     // prevent removal of the layer if the vertex count is below minimum when not a hole
     if (!this.options.removeLayerBelowMinVertexCount && !isHole) {
