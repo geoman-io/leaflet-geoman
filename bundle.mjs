@@ -48,6 +48,11 @@ if (process.env.DEV) {
   // Dispose context
   ctx.dispose();
 
+  // Replace incorrect closing tag in <\/style>
+  const data = fs.readFileSync('./dist/leaflet-geoman.css', 'utf8');
+  const result = data.replace(/<\\\/style>/g, '</style>');
+  fs.writeFileSync('./dist/leaflet-geoman.css', result, 'utf8');
+
   // Copy types
   fs.copyFileSync('leaflet-geoman.d.ts', './dist/leaflet-geoman.d.ts');
   fs.copyFileSync('./dist/leaflet-geoman.js', './dist/leaflet-geoman.min.js');
