@@ -695,6 +695,38 @@ const EventMixin = {
       customPayload
     );
   },
+  // Fired when arrowhead property is changed
+  _fireArrowheadDrawChangeEvent(
+    arrowheadOptions,
+    source = 'Draw',
+    customPayload = {}
+  ) {
+    this.__fire(
+      this._layer,
+      'pm:arrowheaddrawchange',
+      {
+        layer: this._layer,
+        arrowheadOptions,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
+  // Fired when arrowhead property is changed
+  _fireArrowheadEditChangeEvent(latlngs, source = 'Edit', customPayload = {}) {
+    this.__fire(
+      this._layer,
+      'pm:arrowheadeditchange',
+      {
+        layer: this._layer,
+        latlngs,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
 
   // private (very private) fire function
   __fire(fireLayer, type, payload, source, customPayload = {}) {
