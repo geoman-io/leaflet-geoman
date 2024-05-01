@@ -59,3 +59,6 @@ map.on('pm:actionclick', (e) => {
 map.on('pm:buttonclick', (e) => {
   console.log(e);
 });
+map.on('pm:arrowheaddrawchange', (e) => {
+  console.log('draw change', e);
+});

@@ -25,6 +25,7 @@ Draw.ArrowLine = Draw.extend({
   },
   enable(options) {
     L.Util.setOptions(this, options);
+    this._arrowheadOptions = { ...this._arrowheadOptions, ...this._options };
     // console.log("this.options", this.options)
     this.openDialog();
 
@@ -120,6 +121,10 @@ Draw.ArrowLine = Draw.extend({
     // make sure intersection is not set while start drawing
     this.isRed = false;
 
+    this._layer?.on('pm:arrowheaddrawchange', (e) => {
+      console.log('draw change', e);
+    });
+
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
@@ -174,6 +179,39 @@ Draw.ArrowLine = Draw.extend({
     }
   },
   openDialog() {
+    const dialogBody = this._getDefaultDialogBody();
+
+    this._dialog.setContent(this.options.dialogContent || dialogBody);
+    this._dialog.open();
+
+    document.getElementById('arrow-filled').addEventListener('change', (e) => {
+      console.log('Changeo');
+      this._arrowheadOptions.fill = e.target.checked;
+      this._layer.arrowheads(this._arrowheadOptions);
+      this._hintline.arrowheads(this._arrowheadOptions);
+      this._fireArrowheadDrawChangeEvent(this._arrowheadOptions);
+      // event.layer.fire("pm:arrowchange", event, false)
+    });
+    // document.getElementById("arrow-frequency").addEventListener("change", e => {
+    //   const freq = e.target.value === '200' ?
+    //     "endonly" : e.target.value >= '120' && e.target.value <= '130'
+    //       ? "allvertices" : `${e.target.value}px`
+    //   event.layer.arrowheads({ ...event.layer._arrowheadOptions, frequency: freq })
+    //   event.layer.fire("pm:arrowchange", event, false)
+    // })
+    // document.getElementById("arrow-angle").addEventListener("change", e => {
+    //   event.layer.arrowheads({ ...event.layer._arrowheadOptions, yawn: e.target.value })
+    //   event.layer.fire("pm:arrowchange", event, false)
+    // })
+    // document.getElementById("arrow-size").addEventListener("change", e => {
+    //   event.layer.arrowheads({ ...event.layer._arrowheadOptions, size: `${e.target.value}px` })
+    //   event.layer.fire("pm:arrowchange", event, false)
+    // })
+  },
+  closeDialog() {
+    this._dialog.close();
+  },
+  _getDefaultDialogBody() {
     let arrowFrequency;
     if (this._arrowheadOptions.frequency === 'endonly') {
       arrowFrequency = '200';
@@ -184,7 +222,7 @@ Draw.ArrowLine = Draw.extend({
     }
     const arrowSize = this._arrowheadOptions.size?.split('px')?.[0] || 25;
     const checked = this._arrowheadOptions.fill ? 'checked' : '';
-    const dialogBody = `
+    return `
       <div style='padding: 0.5rem 1rem;'>
         <h3 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h3>
         <hr>
@@ -205,12 +243,6 @@ Draw.ArrowLine = Draw.extend({
           <input type='range' class='form-range' id='arrow-size' min='10' max='50' value='${arrowSize}'>
         </div>
       </div>`;
-
-    this._dialog.setContent(this.options.dialogContent || dialogBody);
-    this._dialog.open();
-  },
-  closeDialog() {
-    this._dialog.close();
   },
   _syncHintLine() {
     const polyPoints = this._layer.getLatLngs();
@@ -257,7 +289,9 @@ Draw.ArrowLine = Draw.extend({
     // intersection on the clone. Phew... - let's do it 💪
 
     // clone layer (polyline is enough, even when it's a polygon)
-    const clone = L.polyline(this._layer.getLatLngs());
+    const clone = L.polyline(this._layer.getLatLngs()).arrowheads(
+      this._arrowheadOptions
+    );
 
     if (addVertex) {
       // get vertex from param or from hintmarker
