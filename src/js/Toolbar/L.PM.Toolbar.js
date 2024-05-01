@@ -9,6 +9,7 @@ const Toolbar = L.Class.extend({
     drawMarker: true,
     drawRectangle: true,
     drawPolyline: true,
+    drawArrowLine: true,
     drawPolygon: true,
     drawCircle: true,
     drawCircleMarker: true,
@@ -120,6 +121,7 @@ const Toolbar = L.Class.extend({
       geomanIcons: {
         drawMarker: 'control-icon leaflet-pm-icon-marker',
         drawPolyline: 'control-icon leaflet-pm-icon-polyline',
+        drawArrowLine: 'control-icon leaflet-pm-icon-arrowline',
         drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
         drawPolygon: 'control-icon leaflet-pm-icon-polygon',
         drawCircle: 'control-icon leaflet-pm-icon-circle',
@@ -244,6 +246,22 @@ const Toolbar = L.Class.extend({
       className: 'control-icon leaflet-pm-icon-polyline',
       title: getTranslation('buttonTitles.drawLineButton'),
       jsClass: 'Line',
+      onClick: () => {},
+      afterClick: (e, ctx) => {
+        // toggle drawing mode
+        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      actions: ['finish', 'removeLastVertex', 'cancel'],
+    };
+
+    const drawArrowLineButton = {
+      className: 'control-icon leaflet-pm-icon-arrowline',
+      title: getTranslation('buttonTitles.drawArrowLineButton'),
+      jsClass: 'ArrowLine',
       onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
@@ -403,6 +421,10 @@ const Toolbar = L.Class.extend({
 
     this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
     this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
+    this._addButton(
+      'drawArrowLine',
+      new L.Control.PMButton(drawArrowLineButton)
+    );
     this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
     this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
     this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
@@ -697,6 +719,7 @@ const Toolbar = L.Class.extend({
       Polygon: 'drawPolygon',
       Rectangle: 'drawRectangle',
       Polyline: 'drawPolyline',
+      ArrowLine: 'drawArrowLine',
       Line: 'drawPolyline',
       CircleMarker: 'drawCircleMarker',
       Edit: 'editMode',

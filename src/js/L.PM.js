@@ -8,6 +8,10 @@
  * Get Pro: https://geoman.io
  */
 
+import './Libraries/GeometryUtil';
+import './Libraries/Arrowheads';
+import './Libraries/Dialog';
+
 import './polyfills';
 import packageInfo from '../../package.json';
 
@@ -17,6 +21,7 @@ import Toolbar from './Toolbar/L.PM.Toolbar';
 import Draw from './Draw/L.PM.Draw';
 import './Draw/L.PM.Draw.Marker';
 import './Draw/L.PM.Draw.Line';
+import './Draw/L.PM.Draw.ArrowLine';
 import './Draw/L.PM.Draw.Polygon';
 import './Draw/L.PM.Draw.Rectangle';
 import './Draw/L.PM.Draw.CircleMarker';
@@ -28,6 +33,7 @@ import Edit from './Edit/L.PM.Edit';
 import './Edit/L.PM.Edit.LayerGroup';
 import './Edit/L.PM.Edit.Marker';
 import './Edit/L.PM.Edit.Line';
+import './Edit/L.PM.Edit.ArrowLine';
 import './Edit/L.PM.Edit.Polygon';
 import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.CircleMarker';
@@ -37,6 +43,7 @@ import './Edit/L.PM.Edit.Text';
 
 import '../css/layers.css';
 import '../css/controls.css';
+import '../css/dialog.css';
 
 import Matrix from './helpers/Matrix';
 
@@ -130,6 +137,7 @@ L.PM = L.PM || {
         this.pm = new L.PM.Edit.CircleMarker(this);
       }
     }
+
     L.CircleMarker.addInitHook(initCircleMarker);
 
     function initPolyline() {
@@ -234,6 +242,8 @@ L.PM = L.PM || {
       layer.pm = new L.PM.Edit.Polygon(layer);
     } else if (layer instanceof L.Polyline) {
       layer.pm = new L.PM.Edit.Line(layer);
+    } else if (layer instanceof L.ArrowLine) {
+      layer.pm = new L.PM.Edit.ArrowLine(layer);
     } else if (layer instanceof L.LayerGroup) {
       layer.pm = new L.PM.Edit.LayerGroup(layer);
     } else if (layer instanceof L.ImageOverlay) {

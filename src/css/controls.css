@@ -62,6 +62,12 @@
 .leaflet-pm-toolbar .leaflet-pm-icon-polyline {
   background-image: url('../assets/icons/Line.svg');
 }
+.leaflet-pm-toolbar .leaflet-pm-icon-arrowline {
+  background-image: url('../assets/icons/ArrowLine.svg');
+}
+.leaflet-pm-toolbar .leaflet-pm-icon-arrowline-edit {
+  background-image: url('../assets/icons/ArrowLineEdit.svg');
+}
 .leaflet-pm-toolbar .leaflet-pm-icon-circle {
   background-image: url('../assets/icons/Circle.svg');
 }
