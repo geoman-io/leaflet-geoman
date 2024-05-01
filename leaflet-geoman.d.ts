@@ -487,6 +487,7 @@ declare module 'leaflet' {
       | 'Marker'
       | 'Circle'
       | 'Line'
+      | 'ArrowLine'
       | 'Rectangle'
       | 'Polygon'
       | 'Cut'
@@ -604,6 +605,7 @@ declare module 'leaflet' {
         drawMarkerButton?: string;
         drawPolyButton?: string;
         drawLineButton?: string;
+        drawArrowLineButton?: string;
         drawCircleButton?: string;
         drawRectButton?: string;
         editButton?: string;
@@ -643,6 +645,7 @@ declare module 'leaflet' {
       | 'drawMarker'
       | 'drawCircleMarker'
       | 'drawPolyline'
+      | 'drawArrowLine'
       | 'drawRectangle'
       | 'drawPolygon'
       | 'drawCircle'
@@ -1168,6 +1171,9 @@ declare module 'leaflet' {
 
       /** Adds button to draw Line (default:true) */
       drawPolyline?: boolean;
+
+      /** Adds button to draw Line (default:true) */
+      drawArrowLine?: boolean;
 
       /** Adds button to draw Rectangle (default:true) */
       drawRectangle?: boolean;

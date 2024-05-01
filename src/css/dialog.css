@@ -1,0 +1,220 @@
+.leaflet-control-dialog {
+  position: absolute;
+  background-color: #fff;
+  padding: 0px;
+  text-align: left;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
+}
+
+.leaflet-control-dialog .leaflet-control-dialog-inner {
+  position: relative;
+  box-sizing: border-box;
+  float: left;
+  width: 100%;
+  height: 100%;
+  padding: 20px 0px;
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-grabber {
+  position: absolute;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  top: 0px;
+  left: 0px;
+  padding: 3px;
+  font-size: 15px;
+  line-height: 15px;
+  color: #ccc;
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-grabber:hover {
+  cursor: grab;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-grabber
+  > .grabber-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  background-repeat: no-repeat;
+  background-image: url('../assets/icons/DialogGrabber.svg');
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-close {
+  position: absolute;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  top: 0px;
+  right: 0px;
+  padding: 2px;
+  font-size: 16px;
+  line-height: 16px;
+  color: #666;
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-close:hover {
+  cursor: pointer;
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-close
+  > .grabber-close {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  background-repeat: no-repeat;
+  background-image: url('../assets/icons/DialogClose.svg');
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-contents {
+  position: relative;
+  float: left;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0 20px;
+  min-height: 50px;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-resizer {
+  position: absolute;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  bottom: 0px;
+  right: 0px;
+  padding: 2px;
+  font-size: 16px;
+  line-height: 16px;
+  color: #ccc;
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-resizer:hover {
+  cursor: grab;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+}
+
+.leaflet-control-dialog
+  .leaflet-control-dialog-inner
+  .leaflet-control-dialog-resizer
+  > .grabber-resize {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  background-repeat: no-repeat;
+  background-image: url('../assets/icons/DialogResize.svg');
+}
+
+.fa-rotate-45 {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+/* ----- Customizations ----- */
+.leaflet-control-dialog-contents {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  overflow: hidden !important;
+}
+
+.leaflet-control-dialog-inner {
+  padding-bottom: 0 !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.form-check {
+  display: block;
+  min-height: 1.5rem;
+  margin-bottom: 0.125rem;
+  padding-left: 2.5em;
+  margin-left: 0.5rem;
+  margin-bottom: 0.25rem;
+  align-items: center;
+  display: flex;
+}
+
+.form-check-input {
+  width: 1em;
+  height: 1em;
+  margin-top: 0.25em;
+  vertical-align: top;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.form-check-label {
+  display: inline-block;
+}
+
+.form-label {
+  margin-left: 5px;
+}
+
+.form-range {
+  width: 100%;
+  height: 1.5rem;
+  padding: 0;
+  background-color: transparent;
+  margin: 0;
+  cursor: pointer;
+}
+
+.form-switch .form-check-input {
+  width: 2em;
+  margin: auto 0.5rem auto -2.5em;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
+  background-position: left center;
+  border-radius: 2em;
+  transition: background-position 0.15s ease-in-out;
+  float: left;
+}
+
+.form-switch .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  background-position: right center;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}

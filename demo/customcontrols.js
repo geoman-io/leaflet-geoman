@@ -8,9 +8,12 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
+window.L = L;
+window.map = map;
+
 map.pm.addControls({
   position: 'topleft',
-  drawControls: false,
+  drawControls: true,
   editControls: true,
   optionsControls: true,
   customControls: true,
@@ -39,6 +42,7 @@ const _actions = [
     name: 'actionName',
   },
 ];
+// map.pm.enableDraw('ArrowLine', { dialogContent: `<h3>Hello World</h3>` });
 map.pm.Toolbar.copyDrawControl('Rectangle', {
   name: 'RectangleCopy',
   block: 'custom',
