@@ -695,7 +695,7 @@ const EventMixin = {
       customPayload
     );
   },
-  // Fired when arrowhead property is changed
+  // Fired when arrowhead property is changed during drawing
   _fireArrowheadDrawChangeEvent(
     arrowheadOptions,
     source = 'Draw',
@@ -713,7 +713,7 @@ const EventMixin = {
       customPayload
     );
   },
-  // Fired when arrowhead property is changed
+  // Fired when arrowhead property is changed during editing
   _fireArrowheadEditChangeEvent(latlngs, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
