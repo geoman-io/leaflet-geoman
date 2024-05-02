@@ -6,7 +6,7 @@ L.Control.Dialog = L.Control.extend({
     minSize: [100, 100],
     maxSize: [350, 350],
     anchor: [250, 250],
-    position: 'topright',
+    position: 'topleft',
     initOpen: false,
     resize: false,
     move: true,
@@ -14,8 +14,6 @@ L.Control.Dialog = L.Control.extend({
   },
   initialize: function (options) {
     this.options = JSON.parse(JSON.stringify(this.options));
-    console.log('this', this);
-    console.log('options', options);
     L.setOptions(this, { ...this.optionsDefault, ...options });
 
     this._attributions = {};

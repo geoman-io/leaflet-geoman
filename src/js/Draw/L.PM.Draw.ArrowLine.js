@@ -13,6 +13,7 @@ Draw.ArrowLine = Draw.extend({
       .dialog({
         size: [200, 268],
         anchor: [0, -210],
+        position: 'topright',
       })
       .addTo(this._map);
     this._arrowheadOptions = {
