@@ -8,18 +8,32 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
-// In order to find a value inside such an array you need a path to adress it directly.
+// In order to find a value inside such an array you need a path to address it directly.
 // Example: var arr = [[['a', 'b'], ['c']]];
 // The indexPath to 'b' is [0, 0, 1]. The indexPath to 'c' is [0, 1, 0].
 // So I can get 'b' with: arr[0][0][1].
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
-Edit.Line = Edit.extend({
+Edit.ArrowLine = Edit.extend({
   includes: [MarkerLimits],
   _shape: 'ArrowLine',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
+    this._dialog = L.control
+      .dialog({
+        size: [200, 268],
+        anchor: [0, -210],
+        position: 'topright',
+      })
+      .addTo(this._map);
+    this._arrowheadOptions = {
+      fill: false,
+      frequency: 'endonly',
+      yawn: 30,
+      size: '25px',
+      weight: 3,
+    };
   },
   enable(options) {
     L.Util.setOptions(this, options);
