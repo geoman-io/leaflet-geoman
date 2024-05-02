@@ -174,6 +174,7 @@ Draw.ArrowLine = Draw.extend({
   toggle(options) {
     if (this.enabled()) {
       this.disable();
+      this.closeDialog();
     } else {
       this.enable(options);
     }
@@ -481,6 +482,8 @@ Draw.ArrowLine = Draw.extend({
     this.disable();
     if (this.options.continueDrawing) {
       this.enable();
+    } else {
+      this.closeDialog();
     }
   },
   _createMarker(latlng) {
