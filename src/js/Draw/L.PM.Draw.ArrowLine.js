@@ -184,32 +184,39 @@ Draw.ArrowLine = Draw.extend({
     this._dialog.setContent(this.options.dialogContent || dialogBody);
     this._dialog.open();
 
-    document.getElementById('arrow-filled').addEventListener('change', (e) => {
-      console.log('Changeo');
+    document.getElementById('arrow-filled')?.addEventListener('change', (e) => {
       this._arrowheadOptions.fill = e.target.checked;
-      this._layer.arrowheads(this._arrowheadOptions);
-      this._hintline.arrowheads(this._arrowheadOptions);
-      this._fireArrowheadDrawChangeEvent(this._arrowheadOptions);
-      // event.layer.fire("pm:arrowchange", event, false)
+      this._updateLines(e);
     });
-    // document.getElementById("arrow-frequency").addEventListener("change", e => {
-    //   const freq = e.target.value === '200' ?
-    //     "endonly" : e.target.value >= '120' && e.target.value <= '130'
-    //       ? "allvertices" : `${e.target.value}px`
-    //   event.layer.arrowheads({ ...event.layer._arrowheadOptions, frequency: freq })
-    //   event.layer.fire("pm:arrowchange", event, false)
-    // })
-    // document.getElementById("arrow-angle").addEventListener("change", e => {
-    //   event.layer.arrowheads({ ...event.layer._arrowheadOptions, yawn: e.target.value })
-    //   event.layer.fire("pm:arrowchange", event, false)
-    // })
-    // document.getElementById("arrow-size").addEventListener("change", e => {
-    //   event.layer.arrowheads({ ...event.layer._arrowheadOptions, size: `${e.target.value}px` })
-    //   event.layer.fire("pm:arrowchange", event, false)
-    // })
+    document
+      .getElementById('arrow-frequency')
+      ?.addEventListener('change', (e) => {
+        let freq;
+        if (e.target.value === '200') freq = 'endonly';
+        else if (e.target.value >= '120' && e.target.value <= '130')
+          freq = 'allvertices';
+        else freq = `${e.target.value}px`;
+
+        this._arrowheadOptions.frequency = freq;
+        this._updateLines(e);
+      });
+    document.getElementById('arrow-angle')?.addEventListener('change', (e) => {
+      this._arrowheadOptions.yawn = e.target.value;
+      this._updateLines(e);
+    });
+    document.getElementById('arrow-size')?.addEventListener('change', (e) => {
+      this._arrowheadOptions.size = `${e.target.value}px`;
+      this._updateLines(e);
+    });
   },
   closeDialog() {
     this._dialog.close();
+  },
+  _updateLines(event) {
+    this._layer.arrowheads(this._arrowheadOptions);
+    this._hintline.arrowheads(this._arrowheadOptions);
+    this._fireArrowheadDrawChangeEvent(this._arrowheadOptions);
+    this._map.fire('viewreset', event);
   },
   _getDefaultDialogBody() {
     let arrowFrequency;
