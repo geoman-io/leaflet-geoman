@@ -26,7 +26,7 @@
     "@turf/line-intersect": "^6.5.0",
     "@turf/line-split": "^6.5.0",
     "lodash": "4.17.21",
-    "polygon-clipping": "0.15.3"
+    "polyclip-ts": "^0.16.5"
   },
   "devDependencies": {
     "@types/leaflet": "^1.7.9",

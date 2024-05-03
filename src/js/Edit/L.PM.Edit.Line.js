@@ -535,13 +535,16 @@ Edit.Line = Edit.extend({
       // remove the marker and the middlemarkers next to it from the map
       if (marker._middleMarkerPrev) {
         this._markerGroup.removeLayer(marker._middleMarkerPrev);
+        this._removeFromCache(marker._middleMarkerPrev);
       }
       if (marker._middleMarkerNext) {
         this._markerGroup.removeLayer(marker._middleMarkerNext);
+        this._removeFromCache(marker._middleMarkerNext);
       }
 
       // remove the marker from the map
       this._markerGroup.removeLayer(marker);
+      this._removeFromCache(marker);
 
       if (markerArr) {
         let rightMarkerIndex;
