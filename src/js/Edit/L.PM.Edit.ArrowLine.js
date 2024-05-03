@@ -1,3 +1,9 @@
+// Ok, so this file is responsible for editing on a layer level.  It is initialized even when the associated shape is
+// being drawn, but the functions in here are described on the https://www.geoman.io/docs/modes/edit-mode page.
+// So for Arrow Lines we only want this activated if the user clicks the arrow edit button.  And the methods in here
+// should mirror the documentation.  The methods I thought I wanted in here I actually want in the Mode.EditArrows
+// class, as that is what gets activated when the user clicks the arrow edit button.
+
 import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
@@ -16,24 +22,10 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 
 Edit.ArrowLine = Edit.extend({
   includes: [MarkerLimits],
-  _shape: 'ArrowLine',
+  _shape: 'Line',
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
-    this._dialog = L.control
-      .dialog({
-        size: [200, 268],
-        anchor: [0, -210],
-        position: 'topright',
-      })
-      .addTo(this._map);
-    this._arrowheadOptions = {
-      fill: false,
-      frequency: 'endonly',
-      yawn: 30,
-      size: '25px',
-      weight: 3,
-    };
   },
   enable(options) {
     L.Util.setOptions(this, options);
@@ -125,6 +117,8 @@ Edit.ArrowLine = Edit.extend({
     }
     this._layerEdited = false;
     this._fireDisable();
+    this.closeDialog();
+    this.disableAllDialogEvents();
   },
   enabled() {
     return this._enabled;
@@ -143,6 +137,49 @@ Edit.ArrowLine = Edit.extend({
     } else {
       this._disableSnapping();
     }
+  },
+  openDialog() {
+    const dialogBody = this.getDefaultArrowDialogBody(this._arrowheadOptions);
+
+    this._dialog.setContent(this._options.dialogContent || dialogBody);
+    this._dialog.open();
+
+    this.initArrowFilledChangedListener(
+      this._onArrowFilledChangedListener,
+      this
+    );
+    this.initArrowFrequencyChangedListener(
+      this._onArrowFrequencyChangedListener,
+      this
+    );
+    this.initArrowAngleChangedListener(this._onArrowAngleChangedListener, this);
+    this.initArrowSizeChangedListener(this._onArrowSizeChangedListener, this);
+  },
+  closeDialog() {
+    this._dialog.close();
+  },
+  _onArrowFilledChangedListener(e) {
+    this._arrowheadOptions.fill = e.target.checked;
+    this._updateLines(e);
+  },
+  _onArrowFrequencyChangedListener(e) {
+    this._arrowheadOptions.frequency = this._getArrowFrequency({
+      frequency: e.target.value,
+    });
+    this._updateLines(e);
+  },
+  _onArrowAngleChangedListener(e) {
+    this._arrowheadOptions.yawn = e.target.value;
+    this._updateLines(e);
+  },
+  _onArrowSizeChangedListener(e) {
+    this._arrowheadOptions.size = `${e.target.value}px`;
+    this._updateLines(e);
+  },
+  _updateLines(event) {
+    this._layer.arrowheads(this._arrowheadOptions);
+    this._fireArrowheadEditChangeEvent(this._arrowheadOptions);
+    this._map.fire('viewreset', event);
   },
   _initMarkers() {
     const map = this._map;

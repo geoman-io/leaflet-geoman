@@ -2,9 +2,10 @@ import SnapMixin from '../Mixins/Snapping';
 import DragMixin from '../Mixins/Dragging';
 import RotateMixin from '../Mixins/Rotating';
 import EventMixin from '../Mixins/Events';
+import DialogMixin from '../Mixins/Dialog';
 
 const Edit = L.Class.extend({
-  includes: [DragMixin, SnapMixin, RotateMixin, EventMixin],
+  includes: [DragMixin, SnapMixin, RotateMixin, EventMixin, DialogMixin],
   options: {
     snappable: true, // TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,

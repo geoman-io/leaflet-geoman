@@ -368,12 +368,13 @@ L.Polyline.include({
     //  --------- LOOP THROUGH EACH POLYLINE END ---------------- //
     //  --------------------------------------------------------- //
 
+    // FMX: Prevent Leaflet Geoman from targeting arrows for things like rotating and editing
+    allhats.forEach((l) => (l.options.pmIgnore = true));
     let arrowheads = L.layerGroup(allhats);
     this._arrowheads = arrowheads;
 
     return this;
   },
-
   getArrowheads: function () {
     if (this._arrowheads) {
       return this._arrowheads;
@@ -382,6 +383,10 @@ L.Polyline.include({
         `Error: You tried to call '.getArrowheads() on a shape that does not have a arrowhead.  Use '.arrowheads()' to add a arrowheads before trying to call '.getArrowheads()'`
       );
     }
+  },
+  // FMX: Check if the line has arrows associated with it
+  hasArrowheads: function () {
+    return this._arrowheads;
   },
 
   /**

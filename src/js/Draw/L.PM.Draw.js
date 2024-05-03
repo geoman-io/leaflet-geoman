@@ -1,9 +1,10 @@
 import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
+import DialogMixin from '../Mixins/Dialog';
 
 const Draw = L.Class.extend({
-  includes: [SnapMixin, EventMixin],
+  includes: [SnapMixin, EventMixin, DialogMixin],
   options: {
     snappable: true, // TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,

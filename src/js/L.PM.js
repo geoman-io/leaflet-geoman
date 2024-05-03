@@ -154,6 +154,20 @@ L.PM = L.PM || {
 
     L.Polyline.addInitHook(initPolyline);
 
+    // function initArrowLine() {
+    //   this.pm = undefined;
+    //
+    //   if (L.PM.optIn) {
+    //     if (this.options.pmIgnore === false) {
+    //       this.pm = new L.PM.Edit.ArrowLine(this);
+    //     }
+    //   } else if (!this.options.pmIgnore) {
+    //     this.pm = new L.PM.Edit.ArrowLine(this);
+    //   }
+    // }
+
+    // L.Polyline.addInitHook(initArrowLine);
+
     function initPolygon() {
       this.pm = undefined;
 

@@ -18,7 +18,9 @@ Leaflet-Arrowheads compatible with leaflet 1.7.1+. It has 2 dependencies: [Leafl
 [Leaflet GeometryUtil](https://github.com/makinacorpus/Leaflet.GeometryUtil).
 
 You can use leaflet-arrowheads by including the JavaScript source file (along with Leaflet GeometryUtil). In this
-project the file is `src/js/Libraries/Arrowheads.js`. Some non-functional changes have been made to the source file.
+project the file is `src/js/Libraries/Arrowheads.js`. A change was made to the source file on line 372, which prevents
+Geoman from targeting the arrowheads for editing or rotating. There was also a `hasArrowheads()` function added to help
+determine if a line has arrowheads associated with it.
 
 You could also use npm to install it:
 
@@ -57,6 +59,12 @@ Arrowheads will be added to your polyline and will automatically be added to and
 
 ```javascript
 myVector.addTo(map) or myVector.remove()
+```
+
+If you need to check if a line has arrowheads associated with it:
+
+```javascript
+myVector.hasArrowheads(); // returns a bool
 ```
 
 If you need to access the arrowheads directly, you can call the `.getArrowheads()` method on your polyline.
