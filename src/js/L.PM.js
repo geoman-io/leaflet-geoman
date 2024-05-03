@@ -33,7 +33,6 @@ import Edit from './Edit/L.PM.Edit';
 import './Edit/L.PM.Edit.LayerGroup';
 import './Edit/L.PM.Edit.Marker';
 import './Edit/L.PM.Edit.Line';
-import './Edit/L.PM.Edit.ArrowLine';
 import './Edit/L.PM.Edit.Polygon';
 import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.CircleMarker';
@@ -154,20 +153,6 @@ L.PM = L.PM || {
 
     L.Polyline.addInitHook(initPolyline);
 
-    // function initArrowLine() {
-    //   this.pm = undefined;
-    //
-    //   if (L.PM.optIn) {
-    //     if (this.options.pmIgnore === false) {
-    //       this.pm = new L.PM.Edit.ArrowLine(this);
-    //     }
-    //   } else if (!this.options.pmIgnore) {
-    //     this.pm = new L.PM.Edit.ArrowLine(this);
-    //   }
-    // }
-
-    // L.Polyline.addInitHook(initArrowLine);
-
     function initPolygon() {
       this.pm = undefined;
 
@@ -225,6 +210,8 @@ L.PM = L.PM || {
     L.ImageOverlay.addInitHook(initImageOverlay);
   },
   reInitLayer(layer) {
+    console.log('reInitLayer', this);
+    console.log('reInitLayer', layer);
     if (layer instanceof L.LayerGroup) {
       layer.eachLayer((_layer) => {
         this.reInitLayer(_layer);
@@ -256,8 +243,6 @@ L.PM = L.PM || {
       layer.pm = new L.PM.Edit.Polygon(layer);
     } else if (layer instanceof L.Polyline) {
       layer.pm = new L.PM.Edit.Line(layer);
-    } else if (layer instanceof L.ArrowLine) {
-      layer.pm = new L.PM.Edit.ArrowLine(layer);
     } else if (layer instanceof L.LayerGroup) {
       layer.pm = new L.PM.Edit.LayerGroup(layer);
     } else if (layer instanceof L.ImageOverlay) {

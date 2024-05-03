@@ -1,4 +1,12 @@
 const dialogMixins = {
+  dialogInit(options) {
+    return L.control.dialog({
+      size: [200, 268],
+      anchor: [0, -210],
+      position: 'topright',
+      ...options,
+    });
+  },
   getDefaultArrowDialogBody(arrowheadOptions) {
     const arrowSize = arrowheadOptions.size?.split('px')?.[0] || 25;
     const checked = arrowheadOptions.fill ? 'checked' : '';
