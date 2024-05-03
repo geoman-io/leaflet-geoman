@@ -23,6 +23,7 @@ const Draw = L.Class.extend({
       draggable: true,
       icon: L.icon(),
     },
+    editArrows: false,
     hideMiddleMarkers: false,
     minRadiusCircle: null,
     maxRadiusCircle: null,

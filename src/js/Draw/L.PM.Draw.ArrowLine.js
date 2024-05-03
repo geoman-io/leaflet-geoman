@@ -9,13 +9,7 @@ Draw.ArrowLine = Draw.extend({
     this._shape = 'ArrowLine';
     this.toolbarButtonName = 'drawArrowLine';
     this._doesSelfIntersect = false;
-    this._dialog = L.control
-      .dialog({
-        size: [200, 268],
-        anchor: [0, -210],
-        position: 'topright',
-      })
-      .addTo(this._map);
+    this._dialog = this.dialogInit({ close: false }).addTo(this._map);
     this._arrowheadOptions = {
       fill: false,
       frequency: 'endonly',
@@ -26,7 +20,6 @@ Draw.ArrowLine = Draw.extend({
   },
   enable(options) {
     L.Util.setOptions(this, options);
-    this._arrowheadOptions = { ...this._arrowheadOptions, ...this._options };
 
     this.openDialog();
 
@@ -437,6 +430,7 @@ Draw.ArrowLine = Draw.extend({
       coords,
       this.options.pathOptions
     ).arrowheads(this._arrowheadOptions);
+
     this._setPane(polylineLayer, 'layerPane');
     this._finishLayer(polylineLayer);
     polylineLayer.addTo(this._map.pm._getContainingLayer());

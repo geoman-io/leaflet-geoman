@@ -24,6 +24,7 @@ Edit.Line = Edit.extend({
   enable(options) {
     L.Util.setOptions(this, options);
 
+    console.log('L.PM.Edit.Line (this): ', this);
     this._map = this._layer._map;
 
     // cancel when map isn't available, this happens when the polygon is removed before this fires
@@ -54,6 +55,13 @@ Edit.Line = Edit.extend({
     // if shape gets removed from map, disable edit mode
     this._layer.on('remove', this.disable, this);
 
+    if (this.options.editArrows) {
+      // Open arrow dialog if line is clicked
+      this._dialog = this.dialogInit().addTo(this._map);
+
+      this._layer.on('click', this._onLineClick, this);
+    }
+
     if (!this.options.allowSelfIntersection) {
       this._layer.on(
         'pm:vertexremoved',
@@ -81,6 +89,12 @@ Edit.Line = Edit.extend({
       return;
     }
 
+    // Close the dialog if it is open
+    if (this._dialog) {
+      this._dialog.close();
+      this._dialog.destroy();
+    }
+
     // prevent disabling if polygon is being dragged
     if (this._dragging) {
       return;
@@ -89,8 +103,11 @@ Edit.Line = Edit.extend({
     this._markerGroup.clearLayers();
     this._markerGroup.removeFrom(this._map);
 
-    // remove listener
+    // remove listeners
     this._layer.off('remove', this.disable, this);
+    this._layer.off('click', this._onLineClick, this);
+
+    L.Util.setOptions(this, { editArrows: false });
 
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
@@ -129,6 +146,28 @@ Edit.Line = Edit.extend({
     } else {
       this._disableSnapping();
     }
+  },
+  closeDialog() {
+    this._dialog.close();
+    this._dialog.destroy();
+  },
+  _onArrowFilledChangedListener(e) {
+    this._layer._arrowheadOptions.fill = e.target.checked;
+    this._map.fire('viewreset', e);
+  },
+  _onArrowFrequencyChangedListener(e) {
+    this._layer._arrowheadOptions.frequency = this._getArrowFrequency({
+      frequency: e.target.value,
+    });
+    this._map.fire('viewreset', e);
+  },
+  _onArrowAngleChangedListener(e) {
+    this._layer._arrowheadOptions.yawn = e.target.value;
+    this._map.fire('viewreset', e);
+  },
+  _onArrowSizeChangedListener(e) {
+    this._layer._arrowheadOptions.size = `${e.target.value}px`;
+    this._map.fire('viewreset', e);
   },
   _initMarkers() {
     const map = this._map;
@@ -282,6 +321,33 @@ Edit.Line = Edit.extend({
     setTimeout(() => {
       delete middleMarker._dragging;
     }, 100);
+  },
+  _onLineClick(e) {
+    console.log('Layer click: ', e);
+    console.log('This inside click', this);
+    if (!this._layer.hasArrowheads()) {
+      this._layer = this._layer.arrowheads(
+        this.options.defaultArrowheadOptions
+      );
+      this._map.fire('viewreset', e);
+    }
+    const dialogBody = this.getDefaultArrowDialogBody(
+      this._layer._arrowheadOptions
+    );
+
+    this._dialog.setContent(this.options.dialogContent || dialogBody);
+    this._dialog.open();
+
+    this.initArrowFilledChangedListener(
+      this._onArrowFilledChangedListener,
+      this
+    );
+    this.initArrowFrequencyChangedListener(
+      this._onArrowFrequencyChangedListener,
+      this
+    );
+    this.initArrowAngleChangedListener(this._onArrowAngleChangedListener, this);
+    this.initArrowSizeChangedListener(this._onArrowSizeChangedListener, this);
   },
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {

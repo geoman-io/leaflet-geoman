@@ -9,12 +9,16 @@ const GlobalArrowEditMode = {
       size: '25px',
       weight: 3,
     };
-    const options = {
-      hideMiddleMarkers: true,
-      ...o,
-    };
     // set status
     this._globalArrowEditModeEnabled = true;
+
+    // Set layer options
+    const options = {
+      hideMiddleMarkers: true,
+      editArrows: this.globalArrowEditModeEnabled(),
+      defaultArrowheadOptions: this._arrowheadOptions,
+      ...o,
+    };
 
     // Set toolbar button to correct status
     this.Toolbar.toggleButton(
@@ -108,8 +112,7 @@ const GlobalArrowEditMode = {
     if (this.globalArrowEditModeEnabled()) {
       for (const id in layers) {
         const layer = layers[id];
-        // when global edit mode is enabled and a layer is added to the map,
-        // enable edit for that layer if it's relevant
+        // when global edit mode is enabled and a layer is added to the map, enable edit for that layer if it's relevant
 
         if (this._isRelevantForEdit(layer)) {
           layer.pm.enable({ ...this.globalOptions });

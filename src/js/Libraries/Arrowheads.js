@@ -386,7 +386,7 @@ L.Polyline.include({
   },
   // FMX: Check if the line has arrows associated with it
   hasArrowheads: function () {
-    return this._arrowheads;
+    return this._arrowheads !== undefined && this._arrowheads !== null;
   },
 
   /**

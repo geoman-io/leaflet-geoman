@@ -53,12 +53,12 @@ map.pm.Draw.RectangleCopy.setPathOptions({ color: 'green' });
 
 map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
 
-map.on('pm:actionclick', (e) => {
-  console.log(e);
-});
-map.on('pm:buttonclick', (e) => {
-  console.log(e);
-});
-map.on('pm:arrowheaddrawchange', (e) => {
-  console.log('draw change', e);
-});
+// map.on('pm:actionclick', (e) => {
+//   console.log(e);
+// });
+// map.on('pm:buttonclick', (e) => {
+//   console.log(e);
+// });
+// map.on('pm:arrowheaddrawchange', (e) => {
+//   console.log('draw change', e);
+// });
