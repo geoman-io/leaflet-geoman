@@ -8,6 +8,7 @@ const GlobalArrowEditMode = {
       yawn: 30,
       size: '25px',
       weight: 3,
+      showArrowToggle: true,
     };
     // set status
     this._globalArrowEditModeEnabled = true;
@@ -50,13 +51,10 @@ const GlobalArrowEditMode = {
     // handle layers that are added while in edit mode
     this.map.on('layeradd', this.throttledReInitEdit, this);
 
-    this._dialog = L.control
-      .dialog({
-        size: [200, 268],
-        anchor: [0, -210],
-        position: 'topright',
-      })
-      .addTo(this.map);
+    // Build Arrow Options Dialog
+    this._editArrowDialog = this.arrowDialogInit({
+      showArrowToggle: true,
+    }).addTo(this.map);
 
     // fire event
     this._fireGlobalArrowEditModeToggled(true);
@@ -84,7 +82,7 @@ const GlobalArrowEditMode = {
     );
 
     // Remove dialog
-    this._dialog.destroy();
+    this._editArrowDialog.destroy();
 
     // fire event
     this._fireGlobalArrowEditModeToggled(false);

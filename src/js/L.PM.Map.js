@@ -6,6 +6,7 @@ import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
+import DialogMixin from './Mixins/Dialog';
 import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
 
@@ -17,6 +18,7 @@ const Map = L.Class.extend({
     GlobalRemovalMode,
     GlobalRotateMode,
     EventMixin,
+    DialogMixin,
   ],
   initialize(map) {
     this.map = map;

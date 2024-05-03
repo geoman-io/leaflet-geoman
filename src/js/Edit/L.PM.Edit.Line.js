@@ -57,8 +57,6 @@ Edit.Line = Edit.extend({
 
     if (this.options.editArrows) {
       // Open arrow dialog if line is clicked
-      this._dialog = this.dialogInit().addTo(this._map);
-
       this._layer.on('click', this._onLineClick, this);
     }
 
@@ -90,9 +88,8 @@ Edit.Line = Edit.extend({
     }
 
     // Close the dialog if it is open
-    if (this._dialog) {
-      this._dialog.close();
-      this._dialog.destroy();
+    if (this._map.pm._editArrowDialog) {
+      this._map.pm._editArrowDialog.close();
     }
 
     // prevent disabling if polygon is being dragged
@@ -106,6 +103,7 @@ Edit.Line = Edit.extend({
     // remove listeners
     this._layer.off('remove', this.disable, this);
     this._layer.off('click', this._onLineClick, this);
+    this.disableAllArrowDialogEvents();
 
     L.Util.setOptions(this, { editArrows: false });
 
@@ -148,8 +146,16 @@ Edit.Line = Edit.extend({
     }
   },
   closeDialog() {
-    this._dialog.close();
-    this._dialog.destroy();
+    this._map.pm._editArrowDialog.close();
+  },
+  _onArrowEnabledChangedListener(e) {
+    if (e.target.checked && !this._layer.hasArrowheads()) {
+      this._layer.arrowheads(this.options.defaultArrowheadOptions);
+    } else if (!e.target.checked && this._layer.hasArrowheads()) {
+      this._layer.deleteArrowheads();
+    }
+    this.toggleArrowPropVisibility(e.target.checked);
+    this._map.fire('viewreset', e);
   },
   _onArrowFilledChangedListener(e) {
     this._layer._arrowheadOptions.fill = e.target.checked;
@@ -323,21 +329,26 @@ Edit.Line = Edit.extend({
     }, 100);
   },
   _onLineClick(e) {
-    console.log('Layer click: ', e);
-    console.log('This inside click', this);
     if (!this._layer.hasArrowheads()) {
       this._layer = this._layer.arrowheads(
         this.options.defaultArrowheadOptions
       );
       this._map.fire('viewreset', e);
     }
-    const dialogBody = this.getDefaultArrowDialogBody(
-      this._layer._arrowheadOptions
+    const dialogBody = this.getDefaultArrowDialogBody({
+      ...this._layer._arrowheadOptions,
+      showArrowToggle: true,
+    });
+
+    this._map.pm._editArrowDialog.setContent(
+      this.options.dialogContent || dialogBody
     );
+    this._map.pm._editArrowDialog.open();
 
-    this._dialog.setContent(this.options.dialogContent || dialogBody);
-    this._dialog.open();
-
+    this.initArrowEnabledChangedListener(
+      this._onArrowEnabledChangedListener,
+      this
+    );
     this.initArrowFilledChangedListener(
       this._onArrowFilledChangedListener,
       this
