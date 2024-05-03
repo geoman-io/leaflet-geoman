@@ -20,6 +20,7 @@ const MarkerLimits = {
 
     // remove events when edit mode is disabled
     this._layer.on('pm:disable', this._removeMarkerLimitEvents, this);
+    this._layer.on('remove', this._removeMarkerLimitEvents, this);
 
     // add markers closest to the mouse
     if (this.options.limitMarkersToCount > -1) {
@@ -39,6 +40,12 @@ const MarkerLimits = {
   createCache() {
     const allMarkers = [...this._markerGroup.getLayers(), ...this.markerCache];
     this.markerCache = allMarkers.filter((v, i, s) => s.indexOf(v) === i);
+  },
+  _removeFromCache(marker) {
+    const markerCacheIndex = this.markerCache.indexOf(marker);
+    if (markerCacheIndex > -1) {
+      this.markerCache.splice(markerCacheIndex, 1);
+    }
   },
   renderLimits(markers) {
     this.markerCache.forEach((l) => {

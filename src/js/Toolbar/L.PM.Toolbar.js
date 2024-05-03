@@ -34,6 +34,15 @@ const Toolbar = L.Class.extend({
   },
   customButtons: [],
   initialize(map) {
+    // For some reason there is an reference between multiple maps instances
+    this.customButtons = [];
+    this.options.positions = {
+      draw: '',
+      edit: '',
+      options: '',
+      custom: '',
+    };
+
     this.init(map);
   },
   reinit() {
@@ -151,7 +160,7 @@ const Toolbar = L.Class.extend({
   },
   _addButton(name, button) {
     this.buttons[name] = button;
-    this.options[name] = this.options[name] || false;
+    this.options[name] = !!this.options[name] || false;
 
     return this.buttons[name];
   },

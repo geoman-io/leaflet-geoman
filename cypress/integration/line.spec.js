@@ -325,4 +325,37 @@ describe('Draw & Edit Line', () => {
       expect(hintLine.options.color).to.eql('red');
     });
   });
+
+  it('remove vertex marker from MarkerLimit Cache', () => {
+    cy.toolbarButton('polyline').click();
+
+    cy.get(mapSelector)
+      .click(120, 150)
+      .click(120, 100)
+      .click(300, 100)
+      .click(300, 200)
+      .click(120, 150);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(4);
+    cy.hasMiddleMarkers(3);
+
+    // rightclick on a vertex-marker to delete it
+    cy.get('.marker-icon:not(.marker-icon-middle)')
+      .eq(2)
+      .trigger('contextmenu');
+
+    cy.hasVertexMarkers(3);
+    cy.hasMiddleMarkers(2);
+
+    cy.wait(20);
+
+    cy.window().then(({ map }) => {
+      map.panBy([40, 40], { animate: false });
+    });
+
+    cy.hasVertexMarkers(3);
+    cy.hasMiddleMarkers(2);
+  });
 });

@@ -101,7 +101,12 @@ Edit.Rectangle = Edit.Polygon.extend({
     // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
     draggedMarker._snapped = false;
 
-    this._fireMarkerDragStart(e);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+      this._markers,
+      draggedMarker
+    );
+
+    this._fireMarkerDragStart(e, indexPath);
   },
 
   _onMarkerDrag(e) {
@@ -119,7 +124,11 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     this._adjustRectangleForMarkerMove(draggedMarker);
 
-    this._fireMarkerDrag(e);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+      this._markers,
+      draggedMarker
+    );
+    this._fireMarkerDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
   },
 
@@ -135,7 +144,11 @@ Edit.Rectangle = Edit.Polygon.extend({
       delete m._oppositeCornerLatLng;
     });
 
-    this._fireMarkerDragEnd(e);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+      this._markers,
+      draggedMarker
+    );
+    this._fireMarkerDragEnd(e, indexPath);
 
     // fire edit event
     this._fireEdit();

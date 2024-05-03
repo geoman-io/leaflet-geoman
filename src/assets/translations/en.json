@@ -9,7 +9,9 @@
     "startCircle": "Click to place circle center",
     "finishCircle": "Click to finish circle",
     "placeCircleMarker": "Click to place circle marker",
-    "placeText": "Click to place text"
+    "placeText": "Click to place text",
+    "selectFirstLayerFor": "Select first layer for {action}",
+    "selectSecondLayerFor": "Select second layer for {action}"
   },
   "actions": {
     "finish": "Finish",
@@ -32,7 +34,10 @@
     "rotateButton": "Rotate Layers",
     "drawTextButton": "Draw Text",
     "scaleButton": "Scale Layers",
-    "autoTracingButton": "Auto trace Line"
+    "autoTracingButton": "Auto trace Line",
+    "snapGuidesButton": "Show SnapGuides",
+    "unionButton": "Union layers",
+    "differenceButton": "Subtract layers"
   },
   "measurements": {
     "totalLength": "Length",
