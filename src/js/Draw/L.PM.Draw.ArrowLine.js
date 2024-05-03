@@ -9,13 +9,17 @@ Draw.ArrowLine = Draw.extend({
     this._shape = 'ArrowLine';
     this.toolbarButtonName = 'drawArrowLine';
     this._doesSelfIntersect = false;
-    this._dialog = this.dialogInit({ close: false }).addTo(this._map);
+    this._drawArrowDialog = this.arrowDialogInit({
+      close: false,
+      showArrowToggle: false,
+    }).addTo(this._map);
     this._arrowheadOptions = {
       fill: false,
       frequency: 'endonly',
       yawn: 30,
       size: '25px',
       weight: 3,
+      showArrowToggle: false,
     };
   },
   enable(options) {
@@ -158,7 +162,7 @@ Draw.ArrowLine = Draw.extend({
     this._fireDrawEnd();
     this._setGlobalDrawMode();
     this.closeDialog();
-    this.disableAllDialogEvents();
+    this.disableAllArrowDialogEvents();
   },
   enabled() {
     return this._enabled;
@@ -173,8 +177,8 @@ Draw.ArrowLine = Draw.extend({
   openDialog() {
     const dialogBody = this.getDefaultArrowDialogBody(this._arrowheadOptions);
 
-    this._dialog.setContent(this.options.dialogContent || dialogBody);
-    this._dialog.open();
+    this._drawArrowDialog.setContent(this.options.dialogContent || dialogBody);
+    this._drawArrowDialog.open();
 
     this.initArrowFilledChangedListener(
       this._onArrowFilledChangedListener,
@@ -188,8 +192,8 @@ Draw.ArrowLine = Draw.extend({
     this.initArrowSizeChangedListener(this._onArrowSizeChangedListener, this);
   },
   closeDialog() {
-    this._dialog.close();
-    this._dialog.destroy();
+    this._drawArrowDialog.close();
+    this._drawArrowDialog.destroy();
   },
   _onArrowFilledChangedListener(e) {
     this._arrowheadOptions.fill = e.target.checked;
