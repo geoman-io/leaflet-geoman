@@ -27,7 +27,7 @@ Draw.ArrowLine = Draw.extend({
   enable(options) {
     L.Util.setOptions(this, options);
     this._arrowheadOptions = { ...this._arrowheadOptions, ...this._options };
-    // console.log("this.options", this.options)
+
     this.openDialog();
 
     // enable draw mode
@@ -122,10 +122,6 @@ Draw.ArrowLine = Draw.extend({
     // make sure intersection is not set while start drawing
     this.isRed = false;
 
-    this._layer?.on('pm:arrowheaddrawchange', (e) => {
-      console.log('draw change', e);
-    });
-
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
@@ -168,6 +164,8 @@ Draw.ArrowLine = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
+    this.closeDialog();
+    this.disableAllDialogEvents();
   },
   enabled() {
     return this._enabled;
@@ -175,83 +173,54 @@ Draw.ArrowLine = Draw.extend({
   toggle(options) {
     if (this.enabled()) {
       this.disable();
-      this.closeDialog();
     } else {
       this.enable(options);
     }
   },
   openDialog() {
-    const dialogBody = this._getDefaultDialogBody();
+    const dialogBody = this.getDefaultArrowDialogBody(this._arrowheadOptions);
 
     this._dialog.setContent(this.options.dialogContent || dialogBody);
     this._dialog.open();
 
-    document.getElementById('arrow-filled')?.addEventListener('change', (e) => {
-      this._arrowheadOptions.fill = e.target.checked;
-      this._updateLines(e);
-    });
-    document
-      .getElementById('arrow-frequency')
-      ?.addEventListener('change', (e) => {
-        let freq;
-        if (e.target.value === '200') freq = 'endonly';
-        else if (e.target.value >= '120' && e.target.value <= '130')
-          freq = 'allvertices';
-        else freq = `${e.target.value}px`;
-
-        this._arrowheadOptions.frequency = freq;
-        this._updateLines(e);
-      });
-    document.getElementById('arrow-angle')?.addEventListener('change', (e) => {
-      this._arrowheadOptions.yawn = e.target.value;
-      this._updateLines(e);
-    });
-    document.getElementById('arrow-size')?.addEventListener('change', (e) => {
-      this._arrowheadOptions.size = `${e.target.value}px`;
-      this._updateLines(e);
-    });
+    this.initArrowFilledChangedListener(
+      this._onArrowFilledChangedListener,
+      this
+    );
+    this.initArrowFrequencyChangedListener(
+      this._onArrowFrequencyChangedListener,
+      this
+    );
+    this.initArrowAngleChangedListener(this._onArrowAngleChangedListener, this);
+    this.initArrowSizeChangedListener(this._onArrowSizeChangedListener, this);
   },
   closeDialog() {
     this._dialog.close();
+    this._dialog.destroy();
+  },
+  _onArrowFilledChangedListener(e) {
+    this._arrowheadOptions.fill = e.target.checked;
+    this._updateLines(e);
+  },
+  _onArrowFrequencyChangedListener(e) {
+    this._arrowheadOptions.frequency = this._getArrowFrequency({
+      frequency: e.target.value,
+    });
+    this._updateLines(e);
+  },
+  _onArrowAngleChangedListener(e) {
+    this._arrowheadOptions.yawn = e.target.value;
+    this._updateLines(e);
+  },
+  _onArrowSizeChangedListener(e) {
+    this._arrowheadOptions.size = `${e.target.value}px`;
+    this._updateLines(e);
   },
   _updateLines(event) {
     this._layer.arrowheads(this._arrowheadOptions);
     this._hintline.arrowheads(this._arrowheadOptions);
     this._fireArrowheadDrawChangeEvent(this._arrowheadOptions);
     this._map.fire('viewreset', event);
-  },
-  _getDefaultDialogBody() {
-    let arrowFrequency;
-    if (this._arrowheadOptions.frequency === 'endonly') {
-      arrowFrequency = '200';
-    } else if (this._arrowheadOptions.frequency === 'allvertices') {
-      arrowFrequency = '125';
-    } else {
-      arrowFrequency = this._arrowheadOptions.frequency;
-    }
-    const arrowSize = this._arrowheadOptions.size?.split('px')?.[0] || 25;
-    const checked = this._arrowheadOptions.fill ? 'checked' : '';
-    return `
-      <div style='padding: 0.5rem 1rem;'>
-        <h3 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h3>
-        <hr>
-        <div class='form-switch form-check cursor-pointer'>
-          <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='arrow-filled' ${checked}>
-          <label class='form-check-label cursor-pointer' for='arrow-filled'>Line / Filled</label>
-        </div>
-        <div style='margin-bottom: 0.5rem;'>
-          <label for='arrow-frequency' class='form-label'>Arrow Spacing</label>
-          <input type='range' class='form-range' id='arrow-frequency' min='50' max='200' value='${arrowFrequency}' style='direction: rtl;'>
-        </div>
-        <div style='margin-bottom: 0.5rem;'>
-          <label for='arrow-angle' class='form-label'>Arrow Angle</label>
-          <input type='range' class='form-range' id='arrow-angle' min='10' max='100' value='${this._arrowheadOptions.yawn}'>
-        </div>
-        <div style='margin-bottom: 0.5rem;'>
-          <label for='arrow-size' class='form-label'>Arrow Size</label>
-          <input type='range' class='form-range' id='arrow-size' min='10' max='50' value='${arrowSize}'>
-        </div>
-      </div>`;
   },
   _syncHintLine() {
     const polyPoints = this._layer.getLatLngs();
@@ -483,8 +452,6 @@ Draw.ArrowLine = Draw.extend({
     this.disable();
     if (this.options.continueDrawing) {
       this.enable();
-    } else {
-      this.closeDialog();
     }
   },
   _createMarker(latlng) {

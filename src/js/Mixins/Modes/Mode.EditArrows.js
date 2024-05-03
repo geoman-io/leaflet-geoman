@@ -1,19 +1,29 @@
 // this mixin adds a global edit mode to the map
-const GlobalEditMode = {
-  _globalEditModeEnabled: false,
-  enableGlobalEditMode(o) {
+const GlobalArrowEditMode = {
+  _globalArrowEditModeEnabled: false,
+  enableGlobalArrowEditMode(o) {
+    this._arrowheadOptions = {
+      fill: false,
+      frequency: 'endonly',
+      yawn: 30,
+      size: '25px',
+      weight: 3,
+    };
     const options = {
-      hideMiddleMarkers: false,
+      hideMiddleMarkers: true,
       ...o,
     };
     // set status
-    this._globalEditModeEnabled = true;
+    this._globalArrowEditModeEnabled = true;
 
     // Set toolbar button to correct status
-    this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
+    this.Toolbar.toggleButton(
+      'arrowEditMode',
+      this.globalArrowEditModeEnabled()
+    );
 
     // find all layers handled by leaflet-geoman
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = L.PM.Utils.findPolylines(this.map);
 
     // enable all layers
     layers.forEach((layer) => {
@@ -24,7 +34,7 @@ const GlobalEditMode = {
 
     if (!this.throttledReInitEdit) {
       this.throttledReInitEdit = L.Util.throttle(
-        this.handleLayerAdditionInGlobalEditMode,
+        this.handleLayerAdditionInGlobalArrowEditMode,
         100,
         this
       );
@@ -36,15 +46,23 @@ const GlobalEditMode = {
     // handle layers that are added while in edit mode
     this.map.on('layeradd', this.throttledReInitEdit, this);
 
+    this._dialog = L.control
+      .dialog({
+        size: [200, 268],
+        anchor: [0, -210],
+        position: 'topright',
+      })
+      .addTo(this.map);
+
     // fire event
-    this._fireGlobalEditModeToggled(true);
+    this._fireGlobalArrowEditModeToggled(true);
   },
-  disableGlobalEditMode() {
+  disableGlobalArrowEditMode() {
     // set status
-    this._globalEditModeEnabled = false;
+    this._globalArrowEditModeEnabled = false;
 
     // find all layers handles by leaflet-geoman
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = L.PM.Utils.findPolylines(this.map);
 
     // disable all layers
     layers.forEach((layer) => {
@@ -55,33 +73,39 @@ const GlobalEditMode = {
     this.map.off('layeradd', this._layerAddedEdit, this);
     this.map.off('layeradd', this.throttledReInitEdit, this);
 
-    // Set toolbar button to currect status
-    this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
+    // Set toolbar button to correct status
+    this.Toolbar.toggleButton(
+      'arrowEditMode',
+      this.globalArrowEditModeEnabled()
+    );
+
+    // Remove dialog
+    this._dialog.destroy();
 
     // fire event
-    this._fireGlobalEditModeToggled(false);
+    this._fireGlobalArrowEditModeToggled(false);
   },
   // TODO: Remove in the next major release
-  globalEditEnabled() {
-    return this.globalEditModeEnabled();
+  globalArrowEditEnabled() {
+    return this.globalArrowEditModeEnabled();
   },
-  globalEditModeEnabled() {
-    return this._globalEditModeEnabled;
+  globalArrowEditModeEnabled() {
+    return this._globalArrowEditModeEnabled;
   },
   // TODO: this should maybe removed, it will overwrite explicit options on the layers
-  toggleGlobalEditMode(options = this.globalOptions) {
-    if (this.globalEditModeEnabled()) {
+  toggleGlobalArrowEditMode(options = this.globalOptions) {
+    if (this.globalArrowEditModeEnabled()) {
       // disable
-      this.disableGlobalEditMode();
+      this.disableGlobalArrowEditMode();
     } else {
       // enable
-      this.enableGlobalEditMode(options);
+      this.enableGlobalArrowEditMode(options);
     }
   },
-  handleLayerAdditionInGlobalEditMode() {
+  handleLayerAdditionInGlobalArrowEditMode() {
     const layers = this._addedLayersEdit;
     this._addedLayersEdit = {};
-    if (this.globalEditModeEnabled()) {
+    if (this.globalArrowEditModeEnabled()) {
       for (const id in layers) {
         const layer = layers[id];
         // when global edit mode is enabled and a layer is added to the map,
@@ -108,4 +132,4 @@ const GlobalEditMode = {
   },
 };
 
-export default GlobalEditMode;
+export default GlobalArrowEditMode;

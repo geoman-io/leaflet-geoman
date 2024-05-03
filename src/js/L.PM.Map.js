@@ -1,6 +1,7 @@
 import merge from 'lodash/merge';
 import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
+import GlobalArrowEditMode from './Mixins/Modes/Mode.EditArrows';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
@@ -11,6 +12,7 @@ import { getRenderer } from './helpers';
 const Map = L.Class.extend({
   includes: [
     GlobalEditMode,
+    GlobalArrowEditMode,
     GlobalDragMode,
     GlobalRemovalMode,
     GlobalRotateMode,
@@ -124,7 +126,6 @@ const Map = L.Class.extend({
       }
     });
   },
-
   getGlobalOptions() {
     return this.globalOptions;
   },

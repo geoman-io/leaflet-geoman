@@ -603,6 +603,23 @@ const EventMixin = {
       customPayload
     );
   },
+  // Fired when Edit Mode is toggled.
+  _fireGlobalArrowEditModeToggled(
+    enabled,
+    source = 'Global',
+    customPayload = {}
+  ) {
+    this.__fire(
+      this.map,
+      'pm:globalarroweditmodetoggled',
+      {
+        enabled,
+        map: this.map,
+      },
+      source,
+      customPayload
+    );
+  },
   // Fired when Removal Mode is toggled.
   _fireGlobalRemovalModeToggled(
     enabled,
