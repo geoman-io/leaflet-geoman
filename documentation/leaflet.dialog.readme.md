@@ -9,8 +9,8 @@ to suit our purposes.
 
 ## Installation:
 
-You can include the `Leaflet.Dialog.js` and `Leaflet.Dialog.css` (from the repo) files in your project, or you can install the package
-using `npm` or `bower`. In this project the files are `src/js/Libraries/Dialog.js` and `crs/css/dialog.css`.
+You can include the `Leaflet.ArrowDialog.js` and `Leaflet.Dialog.css` (from the repo) files in your project, or you can install the package
+using `npm` or `bower`. In this project the files are `src/js/Libraries/ArrowDialog.js` and `crs/css/dialog.css`.
 
 ```shell
 # Bower:
@@ -78,6 +78,8 @@ dialog.setContent("<p>Here's some new content!</p>");
 | ------------------------------------------------- | ------- | --------------------------------- | ----------------------------------------------------------------------------------------- |
 | open()                                            | this    | dialog.open();                    | Opens the dialog window.                                                                  |
 | close()                                           | this    | dialog.close();                   | Closes the dialog window.                                                                 |
+| toggle()                                          | this    | dialog.toggle();                  | Toggles the dialog window between open and closed.                                        |
+| isOpen()                                          | bool    | dialog.isOpen();                  | Returns the open state of the dialog window.                                              |
 | destroy()                                         | this    | dialog.destroy();                 | Removes the dialog box from the window.                                                   |
 | setLocation( [Array][top, left] anchor location ) | this    | dialog.setLocation( [ 15, 15 ] ); | Move the dialog box to the specified pixel location ( Relative to the 'position' option ) |
 | setSize( [Array][width, height] size )            | this    | dialog.setSize( [ 150, 150 ] );   | Resize the dialog window to the specified width and height.                               |

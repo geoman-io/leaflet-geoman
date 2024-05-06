@@ -44,7 +44,24 @@ L.Control.Dialog = L.Control.extend({
     return this;
   },
 
+  toggle: function () {
+    if (!this._map) {
+      return;
+    }
+    const isVisible = this._container.style.visibility === '';
+    if (isVisible) {
+      this._container.style.visibility = 'hidden';
+      this._map.fire('dialog:closed', this);
+    } else {
+      this._container.style.visibility = '';
+      this._map.fire('dialog:opened', this);
+    }
+
+    return this;
+  },
+
   close: function () {
+    console.log('this (dialog close)', this);
     this._container.style.visibility = 'hidden';
 
     this._map.fire('dialog:closed', this);
@@ -64,6 +81,14 @@ L.Control.Dialog = L.Control.extend({
     }
 
     return this;
+  },
+
+  isOpen: function () {
+    if (!this._map) {
+      return this;
+    }
+
+    return this._container.style.visibility === '';
   },
 
   setLocation: function (location) {

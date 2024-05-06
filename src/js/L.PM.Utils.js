@@ -43,7 +43,9 @@ const Utils = {
     let layers = [];
     map.eachLayer((layer) => {
       if (layer instanceof L.Polyline) {
-        layers.push(layer);
+        if (layer.pm._shape.toLowerCase().includes('line')) {
+          layers.push(layer);
+        }
       }
     });
 

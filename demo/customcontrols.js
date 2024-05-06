@@ -59,13 +59,13 @@ map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
 // map.on('pm:buttonclick', (e) => {
 //   console.log(e);
 // });
-// map.on('pm:arrowheaddrawchange', (e) => {
-//   console.log('draw change', e);
+// map.on('pm:drawend', (e) => {
+//   console.log('draw end', e);
 // });
 
-map.on('pm:create', (e) => {
-  console.log('pm:create: ', e);
-  e.layer.on('pm:arroweditchange', (event) => {
-    console.log('pm:arroweditchange', event);
-  });
-});
+// map.on('pm:create', (e) => {
+//   console.log('pm:create: ', e);
+//   e.layer.on('pm:arroweditchange', (event) => {
+//     console.log('pm:arroweditchange', event);
+//   });
+// });

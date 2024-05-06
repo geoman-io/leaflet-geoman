@@ -709,6 +709,19 @@ const EventMixin = {
       customPayload
     );
   },
+  // Fired when the color is changed
+  _fireColorChanged(activeColor, source = 'Draw', customPayload = {}) {
+    this.__fire(
+      this._map,
+      'pm:colorchanged',
+      {
+        shape: this._shape,
+        activeColor,
+      },
+      source,
+      customPayload
+    );
+  },
   // Fired when LayerGroup is removed
   _fireRemoveLayerGroup(
     fireLayer,

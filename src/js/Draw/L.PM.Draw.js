@@ -1,7 +1,7 @@
 import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
-import DialogMixin from '../Mixins/Dialog';
+import DialogMixin from '../Mixins/ArrowDialog';
 
 const defaultColor = '#3388ff';
 

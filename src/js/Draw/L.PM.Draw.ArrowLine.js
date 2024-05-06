@@ -193,7 +193,6 @@ Draw.ArrowLine = Draw.extend({
   },
   closeDialog() {
     this._drawArrowDialog.close();
-    this._drawArrowDialog.destroy();
   },
   _onArrowFilledChangedListener(e) {
     this._arrowheadOptions.fill = e.target.checked;
