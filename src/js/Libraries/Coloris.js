@@ -625,6 +625,7 @@
    * @return {string} The color format.
    */
   function getColorFormatFromStr(str) {
+    console.log('str', str);
     const format = str.substring(0, 3).toLowerCase();
 
     if (format === 'rgb' || format === 'hsl') {

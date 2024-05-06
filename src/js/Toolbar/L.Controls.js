@@ -1,8 +1,9 @@
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
+import ColorChangeMixin from '../Mixins/ColorChange';
 
 const PMButton = L.Control.extend({
-  includes: [EventMixin],
+  includes: [EventMixin, ColorChangeMixin],
   options: {
     position: 'topleft',
     disableByOtherButtons: true,

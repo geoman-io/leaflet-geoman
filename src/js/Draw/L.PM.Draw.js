@@ -3,6 +3,8 @@ import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
 import DialogMixin from '../Mixins/Dialog';
 
+const defaultColor = '#3388ff';
+
 const Draw = L.Class.extend({
   includes: [SnapMixin, EventMixin, DialogMixin],
   options: {
@@ -11,9 +13,11 @@ const Draw = L.Class.extend({
     snapMiddle: false,
     allowSelfIntersection: true,
     tooltips: true,
+    defaultColor,
+    activeColor: defaultColor,
     templineStyle: {},
     hintlineStyle: {
-      color: '#3388ff',
+      color: defaultColor,
       dashArray: '5,5',
     },
     pathOptions: null,

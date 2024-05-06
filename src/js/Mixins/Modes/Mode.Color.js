@@ -9,11 +9,24 @@ const GlobalColorChangeMode = {
       }
     });
 
-    // toogle the button in the toolbar if this is called programatically
+    // toggle the button in the toolbar if this is called programmatically
     this.Toolbar.toggleButton(
       'colorChangeMode',
       this.globalColorChangeModeEnabled()
     );
+
+    // display the color picker dialog
+    this._changeColorDialog = this.colorChangeDialogInit({
+      close: false,
+    }).addTo(this.map);
+    this._changeColorDialog.open();
+
+    this.colorChangeInit();
+
+    this.map.on('dialog:moveend', this.updateColorisPosition);
+
+    // const dialogBody = this.getColorChangeDialogBody({ activeColor: this.activeColor });
+
     this._fireGlobalColorChangeModeToggled();
   },
   disableGlobalColorChangeMode() {
@@ -30,6 +43,10 @@ const GlobalColorChangeMode = {
       'colorChangeMode',
       this.globalColorChangeModeEnabled()
     );
+
+    this.map.off('dialog:moveend', this.updateColorisPosition);
+    this._changeColorDialog.close();
+    this._changeColorDialog.destroy();
     this._fireGlobalColorChangeModeToggled();
   },
   globalColorChangeModeEnabled() {
