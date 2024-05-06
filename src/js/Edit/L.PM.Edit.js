@@ -2,8 +2,8 @@ import SnapMixin from '../Mixins/Snapping';
 import DragMixin from '../Mixins/Dragging';
 import RotateMixin from '../Mixins/Rotating';
 import EventMixin from '../Mixins/Events';
-import DialogMixin from '../Mixins/Dialog';
-import ColorChangeMixin from '../Mixins/ColorChange';
+import DialogMixin from '../Mixins/ArrowDialog';
+import ColorChangeMixin from '../Mixins/ColorChangeDialog';
 
 const Edit = L.Class.extend({
   includes: [

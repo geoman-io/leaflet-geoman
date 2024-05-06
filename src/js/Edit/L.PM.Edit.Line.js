@@ -88,8 +88,8 @@ Edit.Line = Edit.extend({
     }
 
     // Close the dialog if it is open
-    if (this._map.pm._editArrowDialog) {
-      this._map.pm._editArrowDialog.close();
+    if (this._map.pm.Dialog.editArrowDialog) {
+      this._map.pm.Dialog.closeArrowDialog();
     }
 
     // prevent disabling if polygon is being dragged
@@ -146,7 +146,7 @@ Edit.Line = Edit.extend({
     }
   },
   closeDialog() {
-    this._map.pm._editArrowDialog.close();
+    this._map.pm.Dialog.editArrowDialog.close();
   },
   _onArrowEnabledChangedListener(e) {
     if (e.target.checked && !this._layer.hasArrowheads()) {
@@ -333,15 +333,16 @@ Edit.Line = Edit.extend({
       this._layer.arrowheads(this.options.defaultArrowheadOptions);
       this._onArrowChange(e);
     }
+    console.log('this in _onLineClick', this);
     const dialogBody = this.getDefaultArrowDialogBody({
       ...this._layer._arrowheadOptions,
       showArrowToggle: true,
     });
 
-    this._map.pm._editArrowDialog.setContent(
+    this._map.pm.Dialog.editArrowDialog.setContent(
       this.options.dialogContent || dialogBody
     );
-    this._map.pm._editArrowDialog.open();
+    this._map.pm.Dialog.editArrowDialog.open();
 
     this.initArrowEnabledChangedListener(
       this._onArrowEnabledChangedListener,

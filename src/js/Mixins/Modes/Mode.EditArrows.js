@@ -52,7 +52,7 @@ const GlobalArrowEditMode = {
     this.map.on('layeradd', this.throttledReInitEdit, this);
 
     // Build Arrow Options Dialog
-    this._editArrowDialog = this.arrowDialogInit({
+    this.Dialog.editArrowDialog = this.Dialog.arrowDialogInit({
       showArrowToggle: true,
     }).addTo(this.map);
 
@@ -80,9 +80,6 @@ const GlobalArrowEditMode = {
       'arrowEditMode',
       this.globalArrowEditModeEnabled()
     );
-
-    // Remove dialog
-    this._editArrowDialog.destroy();
 
     // fire event
     this._fireGlobalArrowEditModeToggled(false);

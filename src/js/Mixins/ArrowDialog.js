@@ -1,21 +1,7 @@
-const dialogMixins = {
-  colorChangeDialogInit(options = {}) {
-    return L.control.dialog({
-      size: [200, 300],
-      anchor: [0, -210],
-      position: 'topright',
-      contentId: 'color-change',
-      ...options,
-    });
-  },
-  getColorChangeDialogBody(options) {
-    return `
-      <span class="color-control-background" style="border-radius: 3px; background-color: ${options.activeColor}">
-        &nbsp;&nbsp;&nbsp;&nbsp;
-      </span>`;
-  },
+const ArrowDialogMixins = {
   // Arrow Dialog Functions
-  arrowDialogInit(options = {}) {
+  arrowDialog: undefined,
+  arrowDialogInit(map, options = {}) {
     if (options.showArrowToggle) {
       options.size = [200, 288];
     }
@@ -26,10 +12,14 @@ const dialogMixins = {
       showArrowToggle: true,
       ...options,
     };
-    return L.control.dialog(dialogOptions);
+    this.arrowDialog = L.control.dialog(dialogOptions);
+
+    return this.arrowDialog;
+  },
+  closeArrowDialog() {
+    this.arrowDialog?.close();
   },
   getDefaultArrowDialogBody(arrowheadOptions) {
-    console.log('arrowheadOptions', arrowheadOptions);
     const arrowSize = arrowheadOptions.size?.split('px')?.[0] || 25;
     const arrowFilled = arrowheadOptions.fill ? 'checked' : '';
     const showArrowToggle = arrowheadOptions.showArrowToggle ? '' : 'd-none';
@@ -167,4 +157,4 @@ const dialogMixins = {
   },
 };
 
-export default dialogMixins;
+export default ArrowDialogMixins;

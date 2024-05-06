@@ -121,6 +121,7 @@ const Toolbar = L.Class.extend({
         drawCircleMarker: 'control-icon leaflet-pm-icon-circle-marker',
         editMode: 'control-icon leaflet-pm-icon-edit',
         arrowEditMode: 'control-icon leaflet-pm-icon-arrowline-edit',
+        colorChangeMode: 'control-icon leaflet-pm-icon-change-color',
         dragMode: 'control-icon leaflet-pm-icon-drag',
         cutPolygon: 'control-icon leaflet-pm-icon-cut',
         removalMode: 'control-icon leaflet-pm-icon-delete',
@@ -203,6 +204,7 @@ const Toolbar = L.Class.extend({
     return this.buttons[name].toggle(status);
   },
   _defineButtons() {
+    console.log('this (_defineButtons)', this);
     // some buttons are still in their respective classes, like L.PM.Draw.Polygon
     const drawMarkerButton = {
       className: 'control-icon leaflet-pm-icon-marker',
@@ -233,7 +235,7 @@ const Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['finish', 'removeLastVertex', 'cancel'],
+      actions: ['finish', 'removeLastVertex', 'cancel', 'changeColor'],
     };
 
     const drawLineButton = {
@@ -249,7 +251,7 @@ const Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['finish', 'removeLastVertex', 'cancel'],
+      actions: ['finish', 'removeLastVertex', 'cancel', 'changeColor'],
     };
 
     const drawArrowLineButton = {
@@ -265,7 +267,7 @@ const Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['finish', 'removeLastVertex', 'cancel'],
+      actions: ['finish', 'removeLastVertex', 'cancel', 'changeColor'],
     };
 
     const drawCircleButton = {
@@ -281,7 +283,7 @@ const Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['cancel'],
+      actions: ['cancel', 'changeColor'],
     };
 
     const drawCircleMarkerButton = {
@@ -297,7 +299,7 @@ const Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['cancel'],
+      actions: ['cancel', 'changeColor'],
     };
 
     const drawRectButton = {
@@ -313,7 +315,7 @@ const Toolbar = L.Class.extend({
       toggleStatus: false,
       disableOtherButtons: true,
       position: this.options.position,
-      actions: ['cancel'],
+      actions: ['cancel', 'changeColor'],
     };
 
     const editButton = {
@@ -351,7 +353,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.changeColorButton'),
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalColorChangeMode();
+        this.map.pm.toggleGlobalColorChangeMode({ close: false });
       },
       doToggle: true,
       toggleStatus: false,

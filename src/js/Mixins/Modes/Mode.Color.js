@@ -16,16 +16,8 @@ const GlobalColorChangeMode = {
     );
 
     // display the color picker dialog
-    this._changeColorDialog = this.colorChangeDialogInit({
-      close: false,
-    }).addTo(this.map);
-    this._changeColorDialog.open();
-
-    this.colorChangeInit();
-
-    this.map.on('dialog:moveend', this.updateColorisPosition);
-
-    // const dialogBody = this.getColorChangeDialogBody({ activeColor: this.activeColor });
+    this.Dialog.colorChangeDialog.hideClose();
+    this.Dialog.colorChangeDialog.open();
 
     this._fireGlobalColorChangeModeToggled();
   },
@@ -45,8 +37,7 @@ const GlobalColorChangeMode = {
     );
 
     this.map.off('dialog:moveend', this.updateColorisPosition);
-    this._changeColorDialog.close();
-    this._changeColorDialog.destroy();
+    this.Dialog.colorChangeDialog.close();
     this._fireGlobalColorChangeModeToggled();
   },
   globalColorChangeModeEnabled() {

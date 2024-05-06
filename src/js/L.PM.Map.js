@@ -7,8 +7,8 @@ import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import GlobalColorChangeMode from './Mixins/Modes/Mode.Color';
 import EventMixin from './Mixins/Events';
-import DialogMixin from './Mixins/Dialog';
-import ColorChangeMixin from './Mixins/ColorChange';
+import ArrowDialogMixin from './Mixins/ArrowDialog';
+import ColorChangeDialogMixin from './Mixins/ColorChangeDialog';
 import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
 
@@ -21,14 +21,15 @@ const Map = L.Class.extend({
     GlobalRotateMode,
     GlobalColorChangeMode,
     EventMixin,
-    DialogMixin,
-    ColorChangeMixin,
+    ColorChangeDialogMixin,
+    ArrowDialogMixin,
   ],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
     this.Keyboard = createKeyboardMixins();
+    this.Dialog = { ...ArrowDialogMixin, ...ColorChangeDialogMixin };
 
     this.globalOptions = {
       snappable: true,
@@ -50,6 +51,13 @@ const Map = L.Class.extend({
     };
 
     this.Keyboard._initKeyListener(map);
+
+    this.Dialog.colorChangeDialog = this.colorChangeDialogInit({
+      close: false,
+    }).addTo(this.map);
+    this.Dialog.colorChangeInit();
+
+    this._addDialogEvents();
   },
   // eslint-disable-next-line default-param-last
   setLang(lang = 'en', t, fallback = 'en') {
@@ -211,6 +219,14 @@ const Map = L.Class.extend({
       group.addLayer(layer);
     });
     return group;
+  },
+  _addDialogEvents() {
+    this.map.on('pm:drawend', () => {
+      this.Dialog.closeColorChangeDialog();
+      this.Dialog.closeArrowDialog();
+    });
+
+    this.map.on('dialog:moveend', this.updateColorisPosition);
   },
   // returns the map instance by default or a layergroup is set through global options
   _getContainingLayer() {

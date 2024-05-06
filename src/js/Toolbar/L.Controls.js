@@ -1,6 +1,6 @@
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
-import ColorChangeMixin from '../Mixins/ColorChange';
+import ColorChangeMixin from '../Mixins/ColorChangeDialog';
 
 const PMButton = L.Control.extend({
   includes: [EventMixin, ColorChangeMixin],
@@ -127,24 +127,39 @@ const PMButton = L.Control.extend({
         onClick() {
           this._triggerClick();
         },
+        title: getTranslation('actions.cancel'),
       },
       finishMode: {
         text: getTranslation('actions.finish'),
         onClick() {
           this._triggerClick();
         },
+        title: getTranslation('actions.finish'),
       },
       removeLastVertex: {
         text: getTranslation('actions.removeLastVertex'),
         onClick() {
           this._map.pm.Draw[button.jsClass]._removeLastVertex();
         },
+        title: getTranslation('actions.removeLastVertex'),
       },
       finish: {
         text: getTranslation('actions.finish'),
         onClick(e) {
           this._map.pm.Draw[button.jsClass]._finishShape(e);
         },
+        title: getTranslation('actions.finish'),
+      },
+      changeColor: {
+        text: `
+          <span class="color-control-background" style="border-radius: 3px; background-color: red">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+          </span>`,
+        onClick() {
+          this._map.pm.Dialog.toggleColorChangeDialog();
+          this._map.pm.Dialog.colorChangeDialog.showClose();
+        },
+        title: getTranslation('actions.changeColor'),
       },
     };
 
@@ -165,6 +180,8 @@ const PMButton = L.Control.extend({
       );
       actionNode.setAttribute('role', 'button');
       actionNode.setAttribute('tabindex', '0');
+      if (action.title) actionNode.setAttribute('title', action.title);
+
       actionNode.href = '#';
 
       actionNode.innerHTML = action.text;
