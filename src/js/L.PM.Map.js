@@ -5,8 +5,10 @@ import GlobalArrowEditMode from './Mixins/Modes/Mode.EditArrows';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
+import GlobalColorChangeMode from './Mixins/Modes/Mode.Color';
 import EventMixin from './Mixins/Events';
 import DialogMixin from './Mixins/Dialog';
+import ColorChangeMixin from './Mixins/ColorChange';
 import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
 
@@ -17,8 +19,10 @@ const Map = L.Class.extend({
     GlobalDragMode,
     GlobalRemovalMode,
     GlobalRotateMode,
+    GlobalColorChangeMode,
     EventMixin,
     DialogMixin,
+    ColorChangeMixin,
   ],
   initialize(map) {
     this.map = map;

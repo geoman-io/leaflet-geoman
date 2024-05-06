@@ -3,9 +3,17 @@ import DragMixin from '../Mixins/Dragging';
 import RotateMixin from '../Mixins/Rotating';
 import EventMixin from '../Mixins/Events';
 import DialogMixin from '../Mixins/Dialog';
+import ColorChangeMixin from '../Mixins/ColorChange';
 
 const Edit = L.Class.extend({
-  includes: [DragMixin, SnapMixin, RotateMixin, EventMixin, DialogMixin],
+  includes: [
+    DragMixin,
+    SnapMixin,
+    RotateMixin,
+    EventMixin,
+    DialogMixin,
+    ColorChangeMixin,
+  ],
   options: {
     snappable: true, // TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,
@@ -22,6 +30,7 @@ const Edit = L.Class.extend({
     allowRemoval: true,
     allowCutting: true,
     allowRotation: true,
+    allowColorChange: true,
     addVertexOn: 'click',
     removeVertexOn: 'contextmenu',
     removeVertexValidation: undefined,

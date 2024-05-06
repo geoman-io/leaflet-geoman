@@ -20,6 +20,7 @@ const Toolbar = L.Class.extend({
     cutPolygon: true,
     removalMode: true,
     rotateMode: true,
+    colorChangeMode: true,
     snappingOption: true,
     drawControls: true,
     editControls: true,
@@ -354,6 +355,21 @@ const Toolbar = L.Class.extend({
       actions: ['finishMode'],
     };
 
+    const changeColorButton = {
+      className: 'control-icon leaflet-pm-icon-change-color',
+      title: getTranslation('buttonTitles.changeColorButton'),
+      onClick: () => {},
+      afterClick: () => {
+        this.map.pm.toggleGlobalColorChangeMode();
+      },
+      doToggle: true,
+      toggleStatus: false,
+      disableOtherButtons: true,
+      position: this.options.position,
+      tool: 'edit',
+      actions: ['finishMode'],
+    };
+
     const dragButton = {
       title: getTranslation('buttonTitles.dragButton'),
       className: 'control-icon leaflet-pm-icon-drag',
@@ -454,6 +470,10 @@ const Toolbar = L.Class.extend({
     this._addButton(
       'arrowEditMode',
       new L.Control.PMButton(editArrowLineButton)
+    );
+    this._addButton(
+      'colorChangeMode',
+      new L.Control.PMButton(changeColorButton)
     );
     this._addButton('dragMode', new L.Control.PMButton(dragButton));
     this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
@@ -744,6 +764,7 @@ const Toolbar = L.Class.extend({
       Line: 'drawPolyline',
       CircleMarker: 'drawCircleMarker',
       Edit: 'editMode',
+      ColorChange: 'colorChangeMode',
       Drag: 'dragMode',
       Cut: 'cutPolygon',
       Removal: 'removalMode',
