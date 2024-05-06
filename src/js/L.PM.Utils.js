@@ -62,6 +62,29 @@ const Utils = {
 
     return layers;
   },
+  findMarkers(map) {
+    let layers = [];
+    map.eachLayer((layer) => {
+      if (layer instanceof L.Marker) {
+        layers.push(layer);
+      }
+    });
+
+    // filter out layers that don't have the leaflet-geoman instance
+    layers = layers.filter((layer) => !!layer.pm);
+
+    // filter out everything that's leaflet-geoman specific temporary stuff
+    layers = layers.filter((layer) => !layer._pmTempLayer);
+
+    // filter out everything that ignore leaflet-geoman
+    layers = layers.filter(
+      (layer) =>
+        (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+    );
+
+    return layers;
+  },
   circleToPolygon(circle, sides = 60, withBearing = true) {
     const origin = circle.getLatLng();
     const radius = circle.getRadius();

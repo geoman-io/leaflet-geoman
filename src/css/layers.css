@@ -9,6 +9,17 @@
   transition: opacity ease 0.3s;
 }
 
+.active-shape.marker-icon {
+  background-color: #ffffff;
+  border: 2px solid #a92929;
+  border-radius: 50%;
+  margin: -8px 0 0 -8px !important;
+  width: 14px !important;
+  height: 14px !important;
+  outline: 0;
+  transition: opacity ease 0.3s;
+}
+
 .marker-icon-middle {
   opacity: 0.7;
   margin: -6px 0 0 -6px !important;
