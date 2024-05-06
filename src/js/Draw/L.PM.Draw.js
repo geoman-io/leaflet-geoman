@@ -203,6 +203,7 @@ const Draw = L.Class.extend({
       cutPolygon: 'Cut',
       removalMode: 'Removal',
       rotateMode: 'Rotate',
+      colorChangeMode: 'Color',
       drawText: 'Text',
     };
 

@@ -32,6 +32,7 @@
     "snappingButton": "Snap dragged marker to other layers and vertices",
     "pinningButton": "Pin shared vertices together",
     "rotateButton": "Rotate Layers",
+    "changeColorButton": "Change Colors",
     "drawTextButton": "Draw Text",
     "scaleButton": "Scale Layers",
     "autoTracingButton": "Auto trace Line"

@@ -60,7 +60,7 @@ const EventMixin = {
       customPayload
     );
   },
-  // Fired when layer is cutted
+  // Fired when layer is cut
   // TODO: is Cut "Draw" or "Edit"? The event `pm:edit` in the same scope is called as source "Edit"
   _fireCut(
     fireLayer,
@@ -671,6 +671,19 @@ const EventMixin = {
       'pm:globalrotatemodetoggled',
       {
         enabled: this.globalRotateModeEnabled(),
+        map: this.map,
+      },
+      source,
+      customPayload
+    );
+  },
+  // Fired when Color Change Mode is toggled.
+  _fireGlobalColorChangeModeToggled(source = 'Global', customPayload = {}) {
+    this.__fire(
+      this.map,
+      'pm:globalcolorchangemodetoggled',
+      {
+        enabled: this.globalColorChangeModeEnabled(),
         map: this.map,
       },
       source,

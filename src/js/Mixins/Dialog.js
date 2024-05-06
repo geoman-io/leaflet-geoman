@@ -136,13 +136,11 @@ const dialogMixins = {
     L.DomEvent.off(this._dialogElements.arrowSize, 'change', listener, context);
   },
   disableAllArrowDialogEvents() {
-    if (this._dialogElements?.arrowEnabled) {
-      L.DomEvent.off(this._dialogElements.arrowEnabled, 'change');
-    }
-    L.DomEvent.off(this._dialogElements.arrowFilled, 'change');
-    L.DomEvent.off(this._dialogElements.arrowFrequency, 'change');
-    L.DomEvent.off(this._dialogElements.arrowAngle, 'change');
-    L.DomEvent.off(this._dialogElements.arrowSize, 'change');
+    Object.values(this._dialogElements).forEach((el) => {
+      if (el) {
+        L.DomEvent.off(el, 'change');
+      }
+    });
   },
   _dialogElements: {
     arrowEnabled: undefined,

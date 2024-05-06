@@ -11,6 +11,7 @@
 import './Libraries/GeometryUtil';
 import './Libraries/Arrowheads';
 import './Libraries/Dialog';
+import './Libraries/Coloris';
 
 import './polyfills';
 import packageInfo from '../../package.json';
@@ -43,6 +44,7 @@ import './Edit/L.PM.Edit.Text';
 import '../css/layers.css';
 import '../css/controls.css';
 import '../css/dialog.css';
+import '../css/coloris.css';
 
 import Matrix from './helpers/Matrix';
 
