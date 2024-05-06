@@ -11,6 +11,7 @@ L.Control.Dialog = L.Control.extend({
     resize: false,
     move: true,
     close: true,
+    contentId: undefined,
   },
   initialize: function (options) {
     this.options = JSON.parse(JSON.stringify(this.options));
@@ -244,6 +245,7 @@ L.Control.Dialog = L.Control.extend({
       'div',
       className + '-contents'
     ));
+    if (this.options.contentId) contentNode.id = this.options.contentId;
 
     container.appendChild(innerContainer);
 

@@ -1,4 +1,20 @@
 const dialogMixins = {
+  colorChangeDialogInit(options = {}) {
+    return L.control.dialog({
+      size: [200, 300],
+      anchor: [0, -210],
+      position: 'topright',
+      contentId: 'color-change',
+      ...options,
+    });
+  },
+  getColorChangeDialogBody(options) {
+    return `
+      <span class="color-control-background" style="border-radius: 3px; background-color: ${options.activeColor}">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+      </span>`;
+  },
+  // Arrow Dialog Functions
   arrowDialogInit(options = {}) {
     if (options.showArrowToggle) {
       options.size = [200, 288];

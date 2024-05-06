@@ -31,6 +31,10 @@
   cursor: move !important;
 }
 
+.leaflet-pm-color-changeable {
+  cursor: move !important;
+}
+
 .cursor-marker {
   cursor: crosshair;
   pointer-events: none;

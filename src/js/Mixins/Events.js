@@ -677,6 +677,25 @@ const EventMixin = {
       customPayload
     );
   },
+
+  // Color Change Events
+  // Fired when color change is enabled
+  _fireColorChangeEnable(
+    fireLayer,
+    source = 'ColorChange',
+    customPayload = {}
+  ) {
+    this.__fire(
+      fireLayer,
+      'pm:colorchangeenable',
+      {
+        layer: this._layer,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
   // Fired when Color Change Mode is toggled.
   _fireGlobalColorChangeModeToggled(source = 'Global', customPayload = {}) {
     this.__fire(
