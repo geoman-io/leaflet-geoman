@@ -720,7 +720,7 @@ const EventMixin = {
   ) {
     this.__fire(
       this._layer,
-      'pm:arrowheaddrawchange',
+      'pm:arrowdrawchange',
       {
         layer: this._layer,
         arrowheadOptions,
@@ -731,13 +731,18 @@ const EventMixin = {
     );
   },
   // Fired when arrowhead property is changed during editing
-  _fireArrowheadEditChangeEvent(latlngs, source = 'Edit', customPayload = {}) {
+  // The custom payload is simply expanded into the event object
+  _fireArrowheadEditChangeEvent(
+    arrowheadOptions,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     this.__fire(
       this._layer,
-      'pm:arrowheadeditchange',
+      'pm:arroweditchange',
       {
         layer: this._layer,
-        latlngs,
+        arrowheadOptions,
         shape: this.getShape(),
       },
       source,

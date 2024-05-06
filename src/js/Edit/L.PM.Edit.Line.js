@@ -155,25 +155,25 @@ Edit.Line = Edit.extend({
       this._layer.deleteArrowheads();
     }
     this.toggleArrowPropVisibility(e.target.checked);
-    this._map.fire('viewreset', e);
+    this._onArrowChange(e);
   },
   _onArrowFilledChangedListener(e) {
     this._layer._arrowheadOptions.fill = e.target.checked;
-    this._map.fire('viewreset', e);
+    this._onArrowChange(e);
   },
   _onArrowFrequencyChangedListener(e) {
     this._layer._arrowheadOptions.frequency = this._getArrowFrequency({
       frequency: e.target.value,
     });
-    this._map.fire('viewreset', e);
+    this._onArrowChange(e);
   },
   _onArrowAngleChangedListener(e) {
     this._layer._arrowheadOptions.yawn = e.target.value;
-    this._map.fire('viewreset', e);
+    this._onArrowChange(e);
   },
   _onArrowSizeChangedListener(e) {
     this._layer._arrowheadOptions.size = `${e.target.value}px`;
-    this._map.fire('viewreset', e);
+    this._onArrowChange(e);
   },
   _initMarkers() {
     const map = this._map;
@@ -330,10 +330,8 @@ Edit.Line = Edit.extend({
   },
   _onLineClick(e) {
     if (!this._layer.hasArrowheads()) {
-      this._layer = this._layer.arrowheads(
-        this.options.defaultArrowheadOptions
-      );
-      this._map.fire('viewreset', e);
+      this._layer.arrowheads(this.options.defaultArrowheadOptions);
+      this._onArrowChange(e);
     }
     const dialogBody = this.getDefaultArrowDialogBody({
       ...this._layer._arrowheadOptions,
@@ -359,6 +357,17 @@ Edit.Line = Edit.extend({
     );
     this.initArrowAngleChangedListener(this._onArrowAngleChangedListener, this);
     this.initArrowSizeChangedListener(this._onArrowSizeChangedListener, this);
+
+    this._setLineAsActive();
+  },
+  _setLineAsActive() {
+    this._markerGroup.eachLayer((l) => {
+      console.log('Marker layer: ', l);
+    });
+  },
+  _onArrowChange(e) {
+    this._fireArrowheadEditChangeEvent(this._layer._arrowheadOptions);
+    this._map.fire('viewreset', e);
   },
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {
