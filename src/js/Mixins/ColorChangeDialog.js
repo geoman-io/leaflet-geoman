@@ -18,10 +18,6 @@ const ColorChangeMixin = {
     this.colorChangeDialog?.close();
   },
   toggleColorChangeDialog() {
-    if (!this.colorPickerInstance) {
-      this.colorChangeInit();
-    }
-
     if (this.colorChangeDialog) {
       if (this.colorChangeDialog.isOpen()) {
         this.colorChangeDialog?.close();
@@ -52,7 +48,6 @@ const ColorChangeMixin = {
     window.Coloris?.updatePosition();
   },
   colorChangeInit(map, options = {}) {
-    console.log('colorChangeInit');
     // eslint-disable-next-line no-undef
     Coloris({
       parent: '#color-change', // The parent property must be first
@@ -61,10 +56,21 @@ const ColorChangeMixin = {
       alpha: false,
       closeButton: false,
       inline: true,
-      defaultColor: '#3388ff',
+      defaultColor: options.activeColor || '#3388ff',
       onChange: (e) => {
-        console.log('this (color change)', this);
-        this.setGlobalOptions({ activeColor: e });
+        const style = {
+          color: e,
+        };
+        map.pm.setGlobalOptions({
+          activeColor: e,
+          templineStyle: style,
+          hintlineStyle: style,
+        });
+        map.pm.setPathOptions(style, {
+          ignoreShapes: ['Text'],
+          merge: true,
+        });
+        console.log('this (color change)', map);
       },
       swatches: [
         '#0020A0',

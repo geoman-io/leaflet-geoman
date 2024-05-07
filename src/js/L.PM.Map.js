@@ -32,6 +32,8 @@ const Map = L.Class.extend({
     this.Dialog = { ...ArrowDialogMixin, ...ColorChangeDialogMixin };
 
     this.globalOptions = {
+      defaultColor: '#3388ff',
+      activeColor: '#3388ff',
       snappable: true,
       layerGroup: undefined,
       snappingOrder: [
@@ -55,7 +57,9 @@ const Map = L.Class.extend({
     this.Dialog.colorChangeDialog = this.colorChangeDialogInit({
       close: false,
     }).addTo(this.map);
-    this.Dialog.colorChangeInit();
+
+    // Events
+    this.Dialog.colorChangeInit(this.map, {});
 
     this._addDialogEvents();
   },
@@ -139,6 +143,9 @@ const Map = L.Class.extend({
         this.map.pm.Draw[shape].setPathOptions(options, mergeOptions);
       }
     });
+  },
+  getActiveColor() {
+    return this.globalOptions.activeColor;
   },
   getGlobalOptions() {
     return this.globalOptions;

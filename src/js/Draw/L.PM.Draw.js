@@ -3,8 +3,6 @@ import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
 import DialogMixin from '../Mixins/ArrowDialog';
 
-const defaultColor = '#3388ff';
-
 const Draw = L.Class.extend({
   includes: [SnapMixin, EventMixin, DialogMixin],
   options: {
@@ -13,14 +11,13 @@ const Draw = L.Class.extend({
     snapMiddle: false,
     allowSelfIntersection: true,
     tooltips: true,
-    defaultColor,
-    activeColor: defaultColor,
     templineStyle: {},
     hintlineStyle: {
-      color: defaultColor,
+      color: '#3388ff',
       dashArray: '5,5',
     },
-    pathOptions: null,
+    // Ok, so this sets the final color, but you still have to set templine and hintline
+    pathOptions: { color: 'purple' },
     cursorMarker: true,
     finishOn: null,
     markerStyle: {
@@ -43,7 +40,9 @@ const Draw = L.Class.extend({
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
+    // I don't know why they call this since this method itself is empty
     this.setStyle(this.options);
+    console.log('setOptions', this, options);
   },
   setStyle() {},
   getOptions() {
