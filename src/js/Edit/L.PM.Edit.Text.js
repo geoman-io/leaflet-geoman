@@ -123,11 +123,11 @@ Edit.Text = Edit.extend({
   },
   _autoResize() {
     this.textArea.style.height = '1px';
-    this.textArea.style.width = '1px';
+    this.textArea.style.width = '3px';
     const height =
       this.textArea.scrollHeight > 21 ? this.textArea.scrollHeight : 21;
     const width =
-      this.textArea.scrollWidth > 16 ? this.textArea.scrollWidth : 16;
+      this.textArea.scrollWidth > 16 ? this.textArea.scrollWidth + 6 : 22;
     this.textArea.style.height = `${height}px`;
     this.textArea.style.width = `${width}px`;
     this._layer.options.text = this.getText();

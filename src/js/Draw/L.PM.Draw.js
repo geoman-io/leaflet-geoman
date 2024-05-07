@@ -17,7 +17,7 @@ const Draw = L.Class.extend({
       dashArray: '5,5',
     },
     // Ok, so this sets the final color, but you still have to set templine and hintline
-    pathOptions: { color: 'purple' },
+    pathOptions: null,
     cursorMarker: true,
     finishOn: null,
     markerStyle: {
@@ -42,7 +42,6 @@ const Draw = L.Class.extend({
     L.Util.setOptions(this, options);
     // I don't know why they call this since this method itself is empty
     this.setStyle(this.options);
-    console.log('setOptions', this, options);
   },
   setStyle() {},
   getOptions() {

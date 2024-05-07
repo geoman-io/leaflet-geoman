@@ -70,7 +70,6 @@ const ColorChangeMixin = {
           ignoreShapes: ['Text'],
           merge: true,
         });
-        console.log('this (color change)', map);
       },
       swatches: [
         '#0020A0',

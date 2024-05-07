@@ -204,7 +204,6 @@ const Toolbar = L.Class.extend({
     return this.buttons[name].toggle(status);
   },
   _defineButtons() {
-    console.log('this (_defineButtons)', this);
     // some buttons are still in their respective classes, like L.PM.Draw.Polygon
     const drawMarkerButton = {
       className: 'control-icon leaflet-pm-icon-marker',
