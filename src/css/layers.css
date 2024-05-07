@@ -72,7 +72,7 @@
   background-color: #fff;
   color: #000;
   resize: none;
-  border: none;
+  border: 1px solid black;
   outline: 0;
   cursor: pointer;
   border-radius: 3px;

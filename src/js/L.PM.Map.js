@@ -150,6 +150,14 @@ const Map = L.Class.extend({
   getGlobalOptions() {
     return this.globalOptions;
   },
+  setGlobalStyle(options) {
+    this.setGlobalOptions(options);
+    this.setPathOptions(options.pathOptions, {
+      ignoreShapes: ['Text'],
+      merge: true,
+    });
+    this._fireColorChanged(options.activeColor, 'Global');
+  },
   setGlobalOptions(o) {
     // merge passed and existing options
     const options = merge(this.globalOptions, o);
