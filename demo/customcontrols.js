@@ -49,7 +49,8 @@ map.pm.Toolbar.copyDrawControl('Rectangle', {
   title: 'Display text on hover button',
   actions: _actions,
 });
-map.pm.Draw.RectangleCopy.setPathOptions({ color: 'green' });
+map.pm.Draw.RectangleCopy.setOptions({ pathOptions: { color: 'green' } }, true);
+console.log('RectangleCopy: ', map.pm.Draw);
 
 map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
 
