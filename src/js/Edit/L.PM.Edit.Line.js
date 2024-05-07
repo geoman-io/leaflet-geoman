@@ -20,6 +20,18 @@ Edit.Line = Edit.extend({
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
+
+    this._circleMarker = L.circleMarker([0, 0], {
+      radius: 5,
+      fillColor: 'white',
+      fillOpacity: 1,
+      className: 'pm-selectable',
+    });
+    this._proximityCursorMarker = L.marker([0, 0], {
+      zIndexOffset: 110,
+      icon: L.divIcon({ className: 'almost-over-marker pm-selectable' }),
+      pane: 'markerPane',
+    });
   },
   enable(options) {
     L.Util.setOptions(this, options);
@@ -57,6 +69,7 @@ Edit.Line = Edit.extend({
     if (this.options.editArrows) {
       // Open arrow dialog if line is clicked
       this._layer.on('click', this._onLineClick, this);
+      this._activateAlmostOver();
     }
 
     if (!this.options.allowSelfIntersection) {
@@ -114,6 +127,8 @@ Edit.Line = Edit.extend({
       );
     }
 
+    this._disableAlmostOver();
+
     // remove draggable class
     const el = this._layer._path
       ? this._layer._path
@@ -146,6 +161,60 @@ Edit.Line = Edit.extend({
   },
   closeDialog() {
     this._map.pm.Dialog.editArrowDialog.close();
+  },
+  _activateAlmostOver() {
+    this._map.almostOver.addLayer(this._layer);
+
+    this._map.on('almost:over', (e) => {
+      this._map.addLayer(this._circleMarker);
+      this._map.addLayer(this._proximityCursorMarker);
+      L.DomUtil.removeClass(
+        this._circleMarker.getElement(),
+        'leaflet-pm-draggable'
+      );
+      L.DomUtil.removeClass(
+        this._proximityCursorMarker.getElement(),
+        'leaflet-pm-draggable'
+      );
+      e.layer.setStyle({ weight: 6 });
+      if (e.layer._arrowheadOptions) {
+        Object.values(e.layer.getArrowheads()._layers)?.forEach((l) =>
+          l.setStyle({ weight: 5 })
+        );
+      }
+      this._map.on('mousemove', this._syncProximityCursorMarker, this);
+    });
+
+    this._map.on('almost:move', (e) => {
+      this._circleMarker.setLatLng(e.latlng);
+    });
+
+    this._map.on('almost:out', (e) => {
+      this._map.removeLayer(this._circleMarker);
+      this._map.removeLayer(this._proximityCursorMarker);
+      e.layer.setStyle({ weight: 3 });
+      if (e.layer._arrowheadOptions) {
+        Object.values(e.layer.getArrowheads()._layers)?.forEach((l) =>
+          l.setStyle({ weight: 3 })
+        );
+      }
+    });
+
+    this._map.on('almost:click', (e) => {
+      e.layer.fire('click', this);
+    });
+  },
+  _disableAlmostOver() {
+    this._map.almostOver.removeLayer(this._layer);
+
+    this._map.off('mousemove', this._syncProximityCursorMarker);
+    this._map.off('almost:over');
+    this._map.off('almost:move');
+    this._map.off('almost:out');
+    this._map.off('almost:click');
+  },
+  _syncProximityCursorMarker(e) {
+    this._proximityCursorMarker.setLatLng(e.latlng);
   },
   _onArrowEnabledChangedListener(e) {
     if (e.target.checked && !this._layer.hasArrowheads()) {

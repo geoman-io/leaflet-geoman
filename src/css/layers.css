@@ -99,3 +99,21 @@
 .pm-textarea.pm-hasfocus {
   cursor: auto;
 }
+
+.pm-selectable {
+  cursor: pointer !important;
+}
+
+.almost-over-marker,
+.almost-over-marker:focus {
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 50%;
+  margin: -8px 0 0 -8px !important;
+  width: 14px !important;
+  height: 14px !important;
+  outline: 0;
+  transition: opacity ease 0.3s;
+  cursor: pointer;
+  opacity: 0;
+}

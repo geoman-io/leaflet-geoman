@@ -12,6 +12,7 @@ import './Libraries/GeometryUtil';
 import './Libraries/Arrowheads';
 import './Libraries/Dialog';
 import './Libraries/Coloris';
+import './Libraries/AlmostOver';
 
 import './polyfills';
 import packageInfo from '../../package.json';

@@ -32,6 +32,10 @@ const ColorChangeMixin = {
       return;
     }
 
+    if (this.getShape() === 'Text' || this.getShape() === 'Marker') {
+      return;
+    }
+
     this._colorChangeEnabled = true;
 
     L.DomUtil.addClass(this._layer.getElement(), 'leaflet-pm-changecolor');
