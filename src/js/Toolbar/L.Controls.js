@@ -1,3 +1,4 @@
+import head from 'lodash/head';
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 import ColorChangeMixin from '../Mixins/ColorChangeDialog';
@@ -164,7 +165,7 @@ const PMButton = L.Control.extend({
       },
       changeColor: {
         text: `
-          <span class="color-control-background" style="border-radius: 3px; background-color: red">
+          <span class="color-control-background" style="border-radius: 3px; background-color: ${this._map.pm.getGlobalOptions().activeColor}">
             &nbsp;&nbsp;&nbsp;&nbsp;
           </span>`,
         onClick() {
@@ -172,6 +173,15 @@ const PMButton = L.Control.extend({
           this._map.pm.Dialog.colorChangeDialog.showClose();
         },
         title: getTranslation('actions.changeColor'),
+        events: [
+          {
+            eventName: 'pm:colorchanged',
+            callback: (event, action) => {
+              const colorIcon = head(action.children);
+              colorIcon.style.backgroundColor = event.activeColor;
+            },
+          },
+        ],
       },
     };
 
@@ -202,8 +212,21 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
+      // Action Events
       L.DomEvent.disableClickPropagation(actionNode);
       L.DomEvent.on(actionNode, 'click', L.DomEvent.stop);
+
+      if (action.events) {
+        action.events?.forEach((eventObject) => {
+          this._map.on(
+            eventObject.eventName,
+            (e) => {
+              eventObject.callback(e, actionNode);
+            },
+            action
+          );
+        });
+      }
 
       if (!button.disabled) {
         if (action.onClick) {

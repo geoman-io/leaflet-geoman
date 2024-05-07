@@ -156,7 +156,9 @@ const Map = L.Class.extend({
       ignoreShapes: ['Text'],
       merge: true,
     });
-    this._fireColorChanged(options.activeColor, 'Global');
+    if (options.activeColor) {
+      this._fireColorChanged(options.activeColor, 'Global');
+    }
   },
   setGlobalOptions(o) {
     // merge passed and existing options
