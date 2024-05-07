@@ -54,19 +54,6 @@ console.log('RectangleCopy: ', map.pm.Draw);
 
 map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
 
-// map.on('pm:actionclick', (e) => {
-//   console.log(e);
-// });
-// map.on('pm:buttonclick', (e) => {
-//   console.log(e);
-// });
-// map.on('pm:drawend', (e) => {
-//   console.log('draw end', e);
-// });
-
-// map.on('pm:create', (e) => {
-//   console.log('pm:create: ', e);
-//   e.layer.on('pm:arroweditchange', (event) => {
-//     console.log('pm:arroweditchange', event);
-//   });
-// });
+map.on('pm:colorchanged', (e) => {
+  console.log('pm:colorchanged', e);
+});

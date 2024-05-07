@@ -696,6 +696,23 @@ const EventMixin = {
       customPayload
     );
   },
+  // Fired when color change is disabled
+  _fireColorChangeDisable(
+    fireLayer,
+    source = 'ColorChange',
+    customPayload = {}
+  ) {
+    this.__fire(
+      fireLayer,
+      'pm:colorchangedisable',
+      {
+        layer: this._layer,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
   // Fired when Color Change Mode is toggled.
   _fireGlobalColorChangeModeToggled(source = 'Global', customPayload = {}) {
     this.__fire(
@@ -712,10 +729,9 @@ const EventMixin = {
   // Fired when the color is changed
   _fireColorChanged(activeColor, source = 'Draw', customPayload = {}) {
     this.__fire(
-      this._map,
+      this.map,
       'pm:colorchanged',
       {
-        shape: this._shape,
         activeColor,
       },
       source,
@@ -797,6 +813,7 @@ const EventMixin = {
 
   // private (very private) fire function
   __fire(fireLayer, type, payload, source, customPayload = {}) {
+    console.log('fireLayer', fireLayer);
     payload = merge(payload, customPayload, { source });
     L.PM.Utils._fireEvent(fireLayer, type, payload);
   },

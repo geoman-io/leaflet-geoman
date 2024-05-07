@@ -32,20 +32,34 @@ const ColorChangeMixin = {
       return;
     }
 
-    if (this.colorChangeEnabled()) {
-      this.disableColorChange();
-    }
+    // I'm not sure why this code is here.  Look at the other modes and see if it is needed
+    // if (this.colorChangeEnabled()) {
+    //   this.disableColorChange();
+    // }
 
     this._colorChangeEnabled = true;
 
     this._layer.on('remove', this.disableColorChange, this);
+    this._layer.on('click', this.updateShapeStyle, this);
 
     this._fireColorChangeEnable(this._layer);
   },
-  disableColorChange() {},
-  colorChangeEnabled() {},
+  disableColorChange() {
+    this._colorChangeEnabled = true;
+
+    this._layer.off('remove', this.disableColorChange, this);
+    this._layer.off('click', this.updateShapeStyle, this);
+
+    this._fireColorChangeDisable(this._layer);
+  },
+  colorChangeEnabled() {
+    return this._colorChangeEnabled;
+  },
   updateColorisPosition() {
     window.Coloris?.updatePosition();
+  },
+  updateShapeStyle(e) {
+    e.target.setStyle({ color: this.options.activeColor });
   },
   colorChangeInit(map, options = {}) {
     // eslint-disable-next-line no-undef
@@ -61,14 +75,11 @@ const ColorChangeMixin = {
         const style = {
           color: e,
         };
-        map.pm.setGlobalOptions({
+        map.pm.setGlobalStyle({
           activeColor: e,
           templineStyle: style,
           hintlineStyle: style,
-        });
-        map.pm.setPathOptions(style, {
-          ignoreShapes: ['Text'],
-          merge: true,
+          pathOptions: style,
         });
       },
       swatches: [
