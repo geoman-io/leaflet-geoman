@@ -54,6 +54,6 @@ console.log('RectangleCopy: ', map.pm.Draw);
 
 map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
 
-map.on('pm:colorchanged', (e) => {
-  console.log('pm:colorchanged', e);
-});
+// map.on('pm:colorchanged', (e) => {
+//   console.log('pm:colorchanged', e);
+// });
