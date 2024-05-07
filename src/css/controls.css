@@ -198,3 +198,9 @@
 .leaflet-buttons-control-button.pm-disabled > .control-icon {
   filter: opacity(0.6);
 }
+
+.leaflet-pm-changecolor {
+  cursor:
+    url('../assets/icons/ColorPointer.svg') 5 5,
+    pointer !important;
+}

@@ -32,13 +32,9 @@ const ColorChangeMixin = {
       return;
     }
 
-    // I'm not sure why this code is here.  Look at the other modes and see if it is needed
-    // if (this.colorChangeEnabled()) {
-    //   this.disableColorChange();
-    // }
-
     this._colorChangeEnabled = true;
 
+    L.DomUtil.addClass(this._layer.getElement(), 'leaflet-pm-changecolor');
     this._layer.on('remove', this.disableColorChange, this);
     this._layer.on('click', this.updateShapeStyle, this);
 
@@ -47,6 +43,7 @@ const ColorChangeMixin = {
   disableColorChange() {
     this._colorChangeEnabled = true;
 
+    L.DomUtil.removeClass(this._layer.getElement(), 'leaflet-pm-changecolor');
     this._layer.off('remove', this.disableColorChange, this);
     this._layer.off('click', this.updateShapeStyle, this);
 
@@ -78,7 +75,7 @@ const ColorChangeMixin = {
         map.pm.setGlobalStyle({
           activeColor: e,
           templineStyle: style,
-          hintlineStyle: style,
+          hintlineStyle: { ...style, dashArray: '5,5' },
           pathOptions: style,
         });
       },
