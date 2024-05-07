@@ -212,8 +212,6 @@ L.PM = L.PM || {
     L.ImageOverlay.addInitHook(initImageOverlay);
   },
   reInitLayer(layer) {
-    console.log('reInitLayer', this);
-    console.log('reInitLayer', layer);
     if (layer instanceof L.LayerGroup) {
       layer.eachLayer((_layer) => {
         this.reInitLayer(_layer);

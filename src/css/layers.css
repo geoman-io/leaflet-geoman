@@ -76,9 +76,7 @@
   outline: 0;
   cursor: pointer;
   border-radius: 3px;
-  padding-left: 7px;
-  padding-bottom: 0;
-  padding-top: 4px;
+  padding: 4px 7px;
 }
 
 .leaflet-pm-draggable .pm-textarea {

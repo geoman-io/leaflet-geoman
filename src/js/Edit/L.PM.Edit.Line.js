@@ -24,7 +24,6 @@ Edit.Line = Edit.extend({
   enable(options) {
     L.Util.setOptions(this, options);
 
-    console.log('L.PM.Edit.Line (this): ', this);
     this._map = this._layer._map;
 
     // cancel when map isn't available, this happens when the polygon is removed before this fires
@@ -333,7 +332,6 @@ Edit.Line = Edit.extend({
       this._layer.arrowheads(this.options.defaultArrowheadOptions);
       this._onArrowChange(e);
     }
-    console.log('this in _onLineClick', this);
     const dialogBody = this.getDefaultArrowDialogBody({
       ...this._layer._arrowheadOptions,
       showArrowToggle: true,
@@ -363,7 +361,7 @@ Edit.Line = Edit.extend({
   },
   _setLineAsActive() {
     this._markerGroup.eachLayer((l) => {
-      console.log('Marker layer: ', l);
+      console.log('Active Marker layer: ', l);
     });
   },
   _onArrowChange(e) {
