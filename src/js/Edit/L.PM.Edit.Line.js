@@ -68,6 +68,7 @@ Edit.Line = Edit.extend({
 
     if (this.options.editArrows) {
       // Open arrow dialog if line is clicked
+      console.log('Setting line click listener (this): ', this);
       this._layer.on('click', this._onLineClick, this);
       // this._activateAlmostOver();
     }
@@ -100,8 +101,8 @@ Edit.Line = Edit.extend({
     }
 
     // Close the dialog if it is open
-    if (this._map.pm.Dialog.editArrowDialog) {
-      this._map.pm.Dialog.closeArrowDialog();
+    if (this._map.pm.Dialog.editArrowLineDialog) {
+      this._map.pm.Dialog.closeEditArrowLineDialog();
     }
 
     // prevent disabling if polygon is being dragged
@@ -115,7 +116,7 @@ Edit.Line = Edit.extend({
     // remove listeners
     this._layer.off('remove', this.disable, this);
     this._layer.off('click', this._onLineClick, this);
-    this.disableAllArrowDialogEvents(this);
+    this._map.pm.Dialog.disableAllEditArrowLineDialogEvents();
 
     L.Util.setOptions(this, { editArrows: false });
 
@@ -224,7 +225,7 @@ Edit.Line = Edit.extend({
     } else if (!e.target.checked && this._layer.hasArrowheads()) {
       this._layer.deleteArrowheads();
     }
-    this.toggleArrowPropVisibility(e.target.checked);
+    this._map.pm.Dialog.toggleEditArrowLinePropVisibility(e.target.checked);
     this._onArrowChange(e);
   },
   _onArrowFilledChangedListener(e) {
@@ -232,9 +233,10 @@ Edit.Line = Edit.extend({
     this._onArrowChange(e);
   },
   _onArrowFrequencyChangedListener(e) {
-    this._layer._arrowheadOptions.frequency = this._getArrowFrequency({
-      frequency: e.target.value,
-    });
+    this._layer._arrowheadOptions.frequency =
+      this._map.pm.Dialog._getEditArrowLineFrequency({
+        frequency: e.target.value,
+      });
     this._onArrowChange(e);
   },
   _onArrowAngleChangedListener(e) {
@@ -404,33 +406,42 @@ Edit.Line = Edit.extend({
       this._layer.arrowheads(this.options.defaultArrowheadOptions);
       this._onArrowChange(e);
     }
-    const dialogBody = this.getDefaultArrowDialogBody({
+    const dialogBody = this._map.pm.Dialog.getEditArrowLineDialogBody({
       ...this._layer._arrowheadOptions,
       showArrowToggle: true,
     });
 
-    this._map.pm.Dialog.editArrowDialog.setContent(
+    this._map.pm.Dialog.editArrowLineDialog.setContent(
       this.options.dialogContent || dialogBody
     );
-    this._map.pm.Dialog.editArrowDialog.open();
+    this._map.pm.Dialog.editArrowLineDialog.open();
 
-    this.initArrowEnabledChangedListener(
+    console.log(
+      'Setting initEditArrowLineEnabledChangedListener (this): ',
+      this
+    );
+    this._map.pm.Dialog.initEditArrowLineEnabledChangedListener(
       this._onArrowEnabledChangedListener,
       this
     );
-    this.initArrowFilledChangedListener(
+    this._map.pm.Dialog.initEditArrowLineFilledChangedListener(
       this._onArrowFilledChangedListener,
       this
     );
-    this.initArrowFrequencyChangedListener(
+    this._map.pm.Dialog.initEditArrowLineFrequencyChangedListener(
       this._onArrowFrequencyChangedListener,
       this
     );
-    this.initArrowAngleChangedListener(this._onArrowAngleChangedListener, this);
-    this.initArrowSizeChangedListener(this._onArrowSizeChangedListener, this);
+    this._map.pm.Dialog.initEditArrowLineAngleChangedListener(
+      this._onArrowAngleChangedListener,
+      this
+    );
+    this._map.pm.Dialog.initEditArrowLineSizeChangedListener(
+      this._onArrowSizeChangedListener,
+      this
+    );
 
     this._setLineAsActive();
-    console.log('_onLineClick (this)', this);
   },
   _setLineAsActive() {
     this._markerGroup.eachLayer((l) => {
