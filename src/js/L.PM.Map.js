@@ -272,6 +272,15 @@ const Map = L.Class.extend({
     });
     return group;
   },
+  getActiveGeomanLayers(shapeType) {
+    return this.getGeomanLayers().filter((l) => {
+      console.log('geoman layer', l);
+      if (shapeType) {
+        return l.getShape() === shapeType && l.pm._active;
+      }
+      return l.pm._active;
+    });
+  },
   getGeomanDrawLayers(asGroup = false) {
     const layers = L.PM.Utils.findLayers(this.map).filter(
       (l) => l._drawnByGeoman === true
