@@ -50,6 +50,5 @@ map.pm.Toolbar.copyDrawControl('Rectangle', {
   actions: _actions,
 });
 map.pm.Draw.RectangleCopy.setOptions({ pathOptions: { color: 'green' } }, true);
-console.log('RectangleCopy: ', map.pm.Draw);
 
 map.pm.Toolbar.changeControlOrder(['RectangleCopy']);

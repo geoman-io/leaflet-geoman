@@ -9,10 +9,6 @@ Draw.ArrowLine = Draw.extend({
     this._shape = 'ArrowLine';
     this.toolbarButtonName = 'drawArrowLine';
     this._doesSelfIntersect = false;
-    this._drawArrowDialog = this.arrowDialogInit({
-      close: false,
-      showArrowToggle: false,
-    }).addTo(this._map);
     this._arrowheadOptions = {
       fill: false,
       frequency: 'endonly',
@@ -162,7 +158,7 @@ Draw.ArrowLine = Draw.extend({
     this._fireDrawEnd();
     this._setGlobalDrawMode();
     this.closeDialog();
-    this.disableAllArrowDialogEvents();
+    this.disableAllDrawArrowLineDialogEvents();
   },
   enabled() {
     return this._enabled;
@@ -175,32 +171,41 @@ Draw.ArrowLine = Draw.extend({
     }
   },
   openDialog() {
-    this._map.pm.Dialog.arrowDialog = this._drawArrowDialog;
-    const dialogBody = this.getDefaultArrowDialogBody(this._arrowheadOptions);
+    // this._map.pm.Dialog.arrowDialog = this._drawArrowDialog;
+    const dialogBody = this.getDrawArrowLineDialogBody(this._arrowheadOptions);
 
-    this._drawArrowDialog.setContent(this.options.dialogContent || dialogBody);
-    this._drawArrowDialog.open();
+    console.log('this._map.pm.Dialog', this);
+    this._map.pm.Dialog.drawArrowLineDialog.setContent(
+      this.options.dialogContent || dialogBody
+    );
+    this._map.pm.Dialog.drawArrowLineDialog.open();
 
-    this.initArrowFilledChangedListener(
+    this.initDrawArrowLineFilledChangedListener(
       this._onArrowFilledChangedListener,
       this
     );
-    this.initArrowFrequencyChangedListener(
+    this.initDrawArrowLineFrequencyChangedListener(
       this._onArrowFrequencyChangedListener,
       this
     );
-    this.initArrowAngleChangedListener(this._onArrowAngleChangedListener, this);
-    this.initArrowSizeChangedListener(this._onArrowSizeChangedListener, this);
+    this.initDrawArrowLineAngleChangedListener(
+      this._onArrowAngleChangedListener,
+      this
+    );
+    this.initDrawArrowLineSizeChangedListener(
+      this._onArrowSizeChangedListener,
+      this
+    );
   },
   closeDialog() {
-    this._drawArrowDialog.close();
+    this._map.pm.Dialog.drawArrowLineDialog.close();
   },
   _onArrowFilledChangedListener(e) {
     this._arrowheadOptions.fill = e.target.checked;
     this._updateLines(e);
   },
   _onArrowFrequencyChangedListener(e) {
-    this._arrowheadOptions.frequency = this._getArrowFrequency({
+    this._arrowheadOptions.frequency = this._getDrawArrowLineFrequency({
       frequency: e.target.value,
     });
     this._updateLines(e);
@@ -486,6 +491,7 @@ Draw.ArrowLine = Draw.extend({
     this._fireChange(latlngs, 'Draw');
   },
   setStyle() {
+    console.log('Arrow Line set style');
     this._layer?.setStyle(this.options.templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
   },

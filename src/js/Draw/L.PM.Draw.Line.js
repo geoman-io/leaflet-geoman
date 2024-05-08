@@ -417,6 +417,7 @@ Draw.Line = Draw.extend({
     this._fireChange(latlngs, 'Draw');
   },
   setStyle() {
+    console.log('Line setStyle');
     this._layer?.setStyle(this.options.templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
   },

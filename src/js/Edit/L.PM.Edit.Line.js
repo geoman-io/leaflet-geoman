@@ -69,7 +69,7 @@ Edit.Line = Edit.extend({
     if (this.options.editArrows) {
       // Open arrow dialog if line is clicked
       this._layer.on('click', this._onLineClick, this);
-      this._activateAlmostOver();
+      // this._activateAlmostOver();
     }
 
     if (!this.options.allowSelfIntersection) {
@@ -115,7 +115,7 @@ Edit.Line = Edit.extend({
     // remove listeners
     this._layer.off('remove', this.disable, this);
     this._layer.off('click', this._onLineClick, this);
-    this.disableAllArrowDialogEvents();
+    this.disableAllArrowDialogEvents(this);
 
     L.Util.setOptions(this, { editArrows: false });
 
@@ -217,6 +217,8 @@ Edit.Line = Edit.extend({
     this._proximityCursorMarker.setLatLng(e.latlng);
   },
   _onArrowEnabledChangedListener(e) {
+    console.log('_onArrowEnabledChangedListener (e): ', e);
+    console.log('_onArrowEnabledChangedListener (this): ', this);
     if (e.target.checked && !this._layer.hasArrowheads()) {
       this._layer.arrowheads(this.options.defaultArrowheadOptions);
     } else if (!e.target.checked && this._layer.hasArrowheads()) {
@@ -397,6 +399,7 @@ Edit.Line = Edit.extend({
     }, 100);
   },
   _onLineClick(e) {
+    console.log('_onLineClick', e);
     if (!this._layer.hasArrowheads()) {
       this._layer.arrowheads(this.options.defaultArrowheadOptions);
       this._onArrowChange(e);
@@ -427,10 +430,13 @@ Edit.Line = Edit.extend({
     this.initArrowSizeChangedListener(this._onArrowSizeChangedListener, this);
 
     this._setLineAsActive();
+    console.log('_onLineClick (this)', this);
   },
   _setLineAsActive() {
     this._markerGroup.eachLayer((l) => {
-      console.log('Active Marker layer: ', l);
+      const activeIcon = l.getIcon();
+      activeIcon.options.className += ' active-shape';
+      l.setIcon(activeIcon);
     });
   },
   _onArrowChange(e) {
