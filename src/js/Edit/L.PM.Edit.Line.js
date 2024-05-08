@@ -70,7 +70,7 @@ Edit.Line = Edit.extend({
       // Open arrow dialog if line is clicked
       console.log('Setting line click listener (this): ', this);
       this._layer.on('click', this._onLineClick, this);
-      // this._activateAlmostOver();
+      this._activateAlmostOver();
     }
 
     if (!this.options.allowSelfIntersection) {
@@ -444,6 +444,17 @@ Edit.Line = Edit.extend({
     this._setLineAsActive();
   },
   _setLineAsActive() {
+    console.log('_setLineAsActive (this): ', this);
+    this._active = true;
+    const currentlyActive = this._map.pm.getActiveGeomanLayers();
+    currentlyActive.forEach((l) => {
+      l.pm._markerGroup.eachLayer((mg) => {
+        const activeIcon = mg.getIcon();
+        activeIcon.options.className = 'marker-icon';
+        mg.setIcon(activeIcon);
+      });
+    });
+    console.log('currentlyActive', currentlyActive);
     this._markerGroup.eachLayer((l) => {
       const activeIcon = l.getIcon();
       activeIcon.options.className += ' active-shape';
