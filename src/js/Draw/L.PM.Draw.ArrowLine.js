@@ -9,6 +9,7 @@ Draw.ArrowLine = Draw.extend({
     this._shape = 'ArrowLine';
     this.toolbarButtonName = 'drawArrowLine';
     this._doesSelfIntersect = false;
+    console.log('this', this);
     this._drawArrowDialog = this.arrowDialogInit({
       close: false,
       showArrowToggle: false,
@@ -175,6 +176,7 @@ Draw.ArrowLine = Draw.extend({
     }
   },
   openDialog() {
+    this._map.pm.Dialog.arrowDialog = this._drawArrowDialog;
     const dialogBody = this.getDefaultArrowDialogBody(this._arrowheadOptions);
 
     this._drawArrowDialog.setContent(this.options.dialogContent || dialogBody);

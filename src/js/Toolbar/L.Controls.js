@@ -169,7 +169,9 @@ const PMButton = L.Control.extend({
             &nbsp;&nbsp;&nbsp;&nbsp;
           </span>`,
         onClick() {
-          this._map.pm.Dialog.toggleColorChangeDialog();
+          this._map.pm.Dialog.toggleColorChangeDialog(
+            this._map.pm.Dialog.arrowDialog?.isOpen()
+          );
           this._map.pm.Dialog.colorChangeDialog.showClose();
         },
         title: getTranslation('actions.changeColor'),
