@@ -13,7 +13,6 @@ const ArrowDialogMixins = {
       ...options,
     };
     this.arrowDialog = L.control.dialog(dialogOptions);
-    console.log('this.arrowDialog', this.arrowDialog);
 
     return this.arrowDialog;
   },

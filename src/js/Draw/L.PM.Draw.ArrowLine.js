@@ -9,7 +9,6 @@ Draw.ArrowLine = Draw.extend({
     this._shape = 'ArrowLine';
     this.toolbarButtonName = 'drawArrowLine';
     this._doesSelfIntersect = false;
-    console.log('this', this);
     this._drawArrowDialog = this.arrowDialogInit({
       close: false,
       showArrowToggle: false,
