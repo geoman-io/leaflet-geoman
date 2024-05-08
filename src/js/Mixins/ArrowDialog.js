@@ -1,8 +1,5 @@
 const DrawArrowLineDialogMixins = {
   drawArrowLineDialogInit(options = {}) {
-    if (options.showArrowToggle) {
-      options.size = [200, 288];
-    }
     const dialogOptions = {
       size: [200, 268],
       anchor: [0, -210],
@@ -11,8 +8,6 @@ const DrawArrowLineDialogMixins = {
       ...options,
     };
     return L.control.dialog(dialogOptions);
-    // console.log("drawArrowLineDialog", this.drawArrowLineDialog)
-    // return this.drawArrowLineDialog;
   },
   closeDrawArrowLineDialog() {
     this.drawArrowLineDialog?.close();
@@ -20,15 +15,10 @@ const DrawArrowLineDialogMixins = {
   getDrawArrowLineDialogBody(arrowheadOptions) {
     const arrowSize = arrowheadOptions.size?.split('px')?.[0] || 25;
     const arrowFilled = arrowheadOptions.fill ? 'checked' : '';
-    const showArrowToggle = arrowheadOptions.showArrowToggle ? '' : 'd-none';
     return `
       <div style='padding: 0.5rem 1rem;'>
         <h3 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h3>
         <hr>
-        <div class='form-switch form-check cursor-pointer ${showArrowToggle}'>
-          <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='draw-arrow-enabled' checked>
-          <label class='form-check-label cursor-pointer' for='draw-arrow-enabled'>Enable Arrows</label>
-        </div>
         <div class='form-switch form-check cursor-pointer arrow-visible-prop'>
           <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='draw-arrow-filled' ${arrowFilled}>
           <label class='form-check-label cursor-pointer' for='draw-arrow-filled'>Line / Filled</label>
