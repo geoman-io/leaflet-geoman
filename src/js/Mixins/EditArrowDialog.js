@@ -67,7 +67,6 @@ const EditArrowLineDialogMixins = {
   initEditArrowLineEnabledChangedListener(listener, context) {
     this._editArrowLineDialogElements.arrowEnabled =
       L.DomUtil.get('edit-arrow-enabled');
-    console.log('initArrowEnabledChangedListener (this): ', context);
     L.DomEvent.on(
       this._editArrowLineDialogElements.arrowEnabled,
       'change',

@@ -157,7 +157,7 @@ Draw.ArrowLine = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-    this.closeDialog();
+    this.closeDrawArrowLineDialog();
     this.disableAllDrawArrowLineDialogEvents();
   },
   enabled() {
@@ -171,7 +171,6 @@ Draw.ArrowLine = Draw.extend({
     }
   },
   openDialog() {
-    // this._map.pm.Dialog.arrowDialog = this._drawArrowDialog;
     const dialogBody = this.getDrawArrowLineDialogBody(this._arrowheadOptions);
 
     this._map.pm.Dialog.drawArrowLineDialog.setContent(
@@ -196,9 +195,6 @@ Draw.ArrowLine = Draw.extend({
       this
     );
   },
-  closeDialog() {
-    this._map.pm.Dialog.drawArrowLineDialog.close();
-  },
   _onArrowFilledChangedListener(e) {
     this._arrowheadOptions.fill = e.target.checked;
     this._updateLines(e);
@@ -217,11 +213,11 @@ Draw.ArrowLine = Draw.extend({
     this._arrowheadOptions.size = `${e.target.value}px`;
     this._updateLines(e);
   },
-  _updateLines(event) {
+  _updateLines() {
     this._layer.arrowheads(this._arrowheadOptions);
     this._hintline.arrowheads(this._arrowheadOptions);
     this._fireArrowheadDrawChangeEvent(this._arrowheadOptions);
-    this._map.fire('viewreset', event);
+    this._fireMapResetView();
   },
   _syncHintLine() {
     const polyPoints = this._layer.getLatLngs();

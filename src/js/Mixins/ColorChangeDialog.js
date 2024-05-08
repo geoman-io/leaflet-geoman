@@ -66,7 +66,7 @@ const ColorChangeMixin = {
   },
   updateShapeStyle(e) {
     e.target.setStyle({ color: this.options.activeColor });
-    this._fireMapResetView();
+    e.target._map.fire('viewreset', e);
   },
   colorChangeInit(map, options = {}) {
     // eslint-disable-next-line no-undef

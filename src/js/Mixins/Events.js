@@ -728,6 +728,7 @@ const EventMixin = {
   },
   // Fired when the color is changed
   _fireColorChanged(activeColor, source = 'Draw', customPayload = {}) {
+    console.log('_fireColorChanged (this): ', this);
     this.__fire(
       this.map,
       'pm:colorchanged',
@@ -811,6 +812,7 @@ const EventMixin = {
     );
   },
   _fireMapResetView(source = 'Edit', customPayload = {}) {
+    console.log('_fireMapResetView', this);
     this.__fire(
       this._map,
       'viewreset',

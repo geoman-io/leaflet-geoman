@@ -9,8 +9,8 @@ to suit our purposes.
 
 ## Installation:
 
-You can include the `Leaflet.ArrowDialog.js` and `Leaflet.Dialog.css` (from the repo) files in your project, or you can install the package
-using `npm` or `bower`. In this project the files are `src/js/Libraries/ArrowDialog.js` and `crs/css/dialog.css`.
+You can include the `Leaflet.DrawArrowDialog.js` and `Leaflet.Dialog.css` (from the repo) files in your project, or you can install the package
+using `npm` or `bower`. In this project the files are `src/js/Libraries/DrawArrowDialog.js` and `crs/css/dialog.css`.
 
 ```shell
 # Bower:

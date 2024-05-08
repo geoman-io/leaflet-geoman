@@ -2,8 +2,8 @@ import SnapMixin from '../Mixins/Snapping';
 import DragMixin from '../Mixins/Dragging';
 import RotateMixin from '../Mixins/Rotating';
 import EventMixin from '../Mixins/Events';
-import DialogMixin from '../Mixins/ArrowDialog';
-import ColorChangeMixin from '../Mixins/ColorChangeDialog';
+import EditArrowDialogMixin from '../Mixins/DrawArrowDialog';
+import ColorChangeDialogMixin from '../Mixins/ColorChangeDialog';
 
 const Edit = L.Class.extend({
   includes: [
@@ -11,8 +11,8 @@ const Edit = L.Class.extend({
     SnapMixin,
     RotateMixin,
     EventMixin,
-    DialogMixin,
-    ColorChangeMixin,
+    EditArrowDialogMixin,
+    ColorChangeDialogMixin,
   ],
   options: {
     snappable: true, // TODO: next major Release, rename it to allowSnapping

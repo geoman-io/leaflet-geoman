@@ -104,6 +104,9 @@ Edit.Line = Edit.extend({
       this._map.pm.Dialog.closeEditArrowLineDialog();
     }
 
+    this._disableAlmostOver();
+    this._setLinesAsInactive();
+
     // prevent disabling if polygon is being dragged
     if (this._dragging) {
       return;
@@ -126,9 +129,6 @@ Edit.Line = Edit.extend({
         this
       );
     }
-
-    this._disableAlmostOver();
-    this._setLinesAsInactive();
 
     // remove draggable class
     const el = this._layer._path
@@ -159,9 +159,6 @@ Edit.Line = Edit.extend({
     } else {
       this._disableSnapping();
     }
-  },
-  closeDialog() {
-    this._map.pm.Dialog.editArrowDialog.close();
   },
   _activateAlmostOver() {
     this._map.almostOver.addLayer(this._layer);
@@ -194,10 +191,8 @@ Edit.Line = Edit.extend({
       this._map.removeLayer(this._circleMarker);
       this._map.removeLayer(this._proximityCursorMarker);
       e.layer.setStyle({ weight: 3 });
-      if (e.layer._arrowheadOptions) {
-        Object.values(e.layer.getArrowheads()._layers)?.forEach((l) =>
-          l.setStyle({ weight: 3 })
-        );
+      if (e.layer.hasArrowheads()) {
+        e.layer.setArrowStyle({ weight: 3 });
       }
     });
 
@@ -448,6 +443,7 @@ Edit.Line = Edit.extend({
   _setLinesAsInactive() {
     const currentlyActive = this._map.pm.getActiveGeomanLayers();
     currentlyActive.forEach((l) => {
+      l.pm._active = false;
       l.pm._markerGroup.eachLayer((mg) => {
         const activeIcon = mg.getIcon();
         activeIcon.options.className = 'marker-icon';
@@ -457,7 +453,7 @@ Edit.Line = Edit.extend({
   },
   _onArrowChange(e) {
     this._fireArrowheadEditChangeEvent(this._layer._arrowheadOptions);
-    this._map.fire('viewreset', e);
+    this._fireMapResetView('Edit', { event: e });
   },
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {

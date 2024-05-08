@@ -1,7 +1,7 @@
 import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
-import DialogMixin from '../Mixins/ArrowDialog';
+import DialogMixin from '../Mixins/DrawArrowDialog';
 
 const Draw = L.Class.extend({
   includes: [SnapMixin, EventMixin, DialogMixin],
@@ -16,7 +16,6 @@ const Draw = L.Class.extend({
       color: '#3388ff',
       dashArray: '5,5',
     },
-    // Ok, so this sets the final color, but you still have to set templine and hintline
     pathOptions: null,
     cursorMarker: true,
     finishOn: null,
@@ -40,7 +39,6 @@ const Draw = L.Class.extend({
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
-    // I don't know why they call this since this method itself is empty
     this.setStyle(this.options);
   },
   setStyle() {},
@@ -80,6 +78,7 @@ const Draw = L.Class.extend({
     this.CircleMarker.setOptions({ continueDrawing: true });
   },
   setPathOptions(options, mergeOptions = false) {
+    console.log('options', options);
     if (!mergeOptions) {
       this.options.pathOptions = options;
     } else {

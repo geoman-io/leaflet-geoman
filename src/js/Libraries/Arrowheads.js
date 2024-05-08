@@ -504,15 +504,15 @@ L.Polyline.include({
     return this.removeFrom(this._map || this._mapToAdd);
   },
 
-  setArrowStyle: function () {
+  setArrowStyle: function (style) {
     if (this._arrowheads) {
       this._arrowheads.getLayers().forEach((l) => {
-        console.log('Arrow layer: ', l);
+        l.setStyle(style);
       });
     }
     if (this._ghosts) {
       this._ghosts.getLayers().forEach((l) => {
-        console.log('Ghost layer: ', l);
+        l.setStyle(style);
       });
     }
   },

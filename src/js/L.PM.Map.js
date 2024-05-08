@@ -7,7 +7,7 @@ import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import GlobalColorChangeMode from './Mixins/Modes/Mode.Color';
 import EventMixin from './Mixins/Events';
-import ArrowDialogMixin from './Mixins/ArrowDialog';
+import ArrowDialogMixin from './Mixins/DrawArrowDialog';
 import EditArrowDialogMixin from './Mixins/EditArrowDialog';
 import ColorChangeDialogMixin from './Mixins/ColorChangeDialog';
 import createKeyboardMixins from './Mixins/Keyboard';

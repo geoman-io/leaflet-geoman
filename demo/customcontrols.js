@@ -8,12 +8,9 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
-window.L = L;
-window.map = map;
-
 map.pm.addControls({
   position: 'topleft',
-  drawControls: true,
+  drawControls: false,
   editControls: true,
   optionsControls: true,
   customControls: true,
@@ -42,13 +39,19 @@ const _actions = [
     name: 'actionName',
   },
 ];
-
 map.pm.Toolbar.copyDrawControl('Rectangle', {
   name: 'RectangleCopy',
   block: 'custom',
   title: 'Display text on hover button',
   actions: _actions,
 });
-map.pm.Draw.RectangleCopy.setOptions({ pathOptions: { color: 'green' } }, true);
+map.pm.Draw.RectangleCopy.setPathOptions({ color: 'green' });
 
 map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
+
+map.on('pm:actionclick', (e) => {
+  console.log(e);
+});
+map.on('pm:buttonclick', (e) => {
+  console.log(e);
+});
