@@ -1,7 +1,7 @@
 const ArrowDialogMixins = {
   // Arrow Dialog Functions
   arrowDialog: undefined,
-  arrowDialogInit(map, options = {}) {
+  arrowDialogInit(options = {}) {
     if (options.showArrowToggle) {
       options.size = [200, 288];
     }
@@ -13,6 +13,7 @@ const ArrowDialogMixins = {
       ...options,
     };
     this.arrowDialog = L.control.dialog(dialogOptions);
+    console.log('this.arrowDialog', this.arrowDialog);
 
     return this.arrowDialog;
   },

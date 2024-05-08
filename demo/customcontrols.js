@@ -42,7 +42,7 @@ const _actions = [
     name: 'actionName',
   },
 ];
-// map.pm.enableDraw('ArrowLine', { dialogContent: `<h3>Hello World</h3>` });
+
 map.pm.Toolbar.copyDrawControl('Rectangle', {
   name: 'RectangleCopy',
   block: 'custom',
@@ -53,7 +53,3 @@ map.pm.Draw.RectangleCopy.setOptions({ pathOptions: { color: 'green' } }, true);
 console.log('RectangleCopy: ', map.pm.Draw);
 
 map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
-
-// map.on('pm:colorchanged', (e) => {
-//   console.log('pm:colorchanged', e);
-// });
