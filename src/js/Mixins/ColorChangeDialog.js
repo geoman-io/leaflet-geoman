@@ -24,7 +24,6 @@ const ColorChangeMixin = {
         this.colorChangeDialog?.close();
       } else {
         this.colorChangeDialog?.open();
-        console.log('this.arrowDialog.isOpen()', this);
         if (this.arrowDialog?.isOpen()) {
           this.colorChangeDialog.setLocation([275, -210]);
         } else {
