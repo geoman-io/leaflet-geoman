@@ -129,6 +129,7 @@ Edit.Line = Edit.extend({
     }
 
     this._disableAlmostOver();
+    this._setLinesAsInactive();
 
     // remove draggable class
     const el = this._layer._path
@@ -178,7 +179,7 @@ Edit.Line = Edit.extend({
         'leaflet-pm-draggable'
       );
       e.layer.setStyle({ weight: 6 });
-      if (e.layer._arrowheadOptions) {
+      if (e.layer.hasArrowheads()) {
         Object.values(e.layer.getArrowheads()._layers)?.forEach((l) =>
           l.setStyle({ weight: 5 })
         );
@@ -446,6 +447,14 @@ Edit.Line = Edit.extend({
   _setLineAsActive() {
     console.log('_setLineAsActive (this): ', this);
     this._active = true;
+    this._setLinesAsInactive();
+    this._markerGroup.eachLayer((l) => {
+      const activeIcon = l.getIcon();
+      activeIcon.options.className += ' active-shape';
+      l.setIcon(activeIcon);
+    });
+  },
+  _setLinesAsInactive() {
     const currentlyActive = this._map.pm.getActiveGeomanLayers();
     currentlyActive.forEach((l) => {
       l.pm._markerGroup.eachLayer((mg) => {
@@ -453,12 +462,6 @@ Edit.Line = Edit.extend({
         activeIcon.options.className = 'marker-icon';
         mg.setIcon(activeIcon);
       });
-    });
-    console.log('currentlyActive', currentlyActive);
-    this._markerGroup.eachLayer((l) => {
-      const activeIcon = l.getIcon();
-      activeIcon.options.className += ' active-shape';
-      l.setIcon(activeIcon);
     });
   },
   _onArrowChange(e) {

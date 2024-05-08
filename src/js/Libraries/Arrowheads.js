@@ -503,6 +503,19 @@ L.Polyline.include({
     }
     return this.removeFrom(this._map || this._mapToAdd);
   },
+
+  setArrowStyle: function () {
+    if (this._arrowheads) {
+      this._arrowheads.getLayers().forEach((l) => {
+        console.log('Arrow layer: ', l);
+      });
+    }
+    if (this._ghosts) {
+      this._ghosts.getLayers().forEach((l) => {
+        console.log('Ghost layer: ', l);
+      });
+    }
+  },
 });
 
 L.LayerGroup.include({

@@ -66,7 +66,13 @@ const ColorChangeMixin = {
     window.Coloris?.updatePosition();
   },
   updateShapeStyle(e) {
+    console.log('Update shape style:', e);
     e.target.setStyle({ color: this.options.activeColor });
+    if (e.target.hasArrowheads()) {
+      e.target.setArrowStyle({ color: this.options.activeColor });
+      // e.target.arrowheads({ ...e.target.getArrowheads(), color: this.options.activeColor })
+    }
+    this._fireMapResetView();
   },
   colorChangeInit(map, options = {}) {
     // eslint-disable-next-line no-undef
