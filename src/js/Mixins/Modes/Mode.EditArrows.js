@@ -51,11 +51,6 @@ const GlobalArrowEditMode = {
     // handle layers that are added while in edit mode
     this.map.on('layeradd', this.throttledReInitEdit, this);
 
-    // Build Arrow Options Dialog
-    this.Dialog.editArrowDialog = this.Dialog.arrowDialogInit({
-      showArrowToggle: true,
-    }).addTo(this.map);
-
     // fire event
     this._fireGlobalArrowEditModeToggled(true);
   },

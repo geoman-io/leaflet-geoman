@@ -1,6 +1,4 @@
 const EditArrowLineDialogMixins = {
-  // Arrow Dialog Functions
-  editArrowLineDialog: undefined,
   editArrowLineDialogInit(options = {}) {
     if (options.showArrowToggle) {
       options.size = [200, 288];
@@ -35,7 +33,7 @@ const EditArrowLineDialogMixins = {
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
           <label for='edit-arrow-frequency' class='form-label'>Arrow Spacing</label>
-          <input type='range' class='form-range' id='edit-arrow-frequency' min='50' max='200' value='${this._getArrowFrequency(arrowheadOptions)}' style='direction: rtl;'>
+          <input type='range' class='form-range' id='edit-arrow-frequency' min='50' max='200' value='${this._getEditArrowLineFrequency(arrowheadOptions)}' style='direction: rtl;'>
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
           <label for='edit-arrow-angle' class='form-label'>Arrow Angle</label>
@@ -73,10 +71,6 @@ const EditArrowLineDialogMixins = {
     this._editArrowLineDialogElements.arrowEnabled =
       L.DomUtil.get('edit-arrow-enabled');
     console.log('initArrowEnabledChangedListener (this): ', context);
-    console.log(
-      'initArrowEnabledChangedListener (this): ',
-      this._editArrowLineDialogElements.arrowEnabled
-    );
     L.DomEvent.on(
       this._editArrowLineDialogElements.arrowEnabled,
       'change',
@@ -84,7 +78,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  initArrowFilledChangedListener(listener, context) {
+  initEditArrowLineFilledChangedListener(listener, context) {
     this._editArrowLineDialogElements.arrowFilled =
       L.DomUtil.get('edit-arrow-filled');
     L.DomEvent.on(
@@ -94,7 +88,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  initArrowFrequencyChangedListener(listener, context) {
+  initEditArrowLineFrequencyChangedListener(listener, context) {
     this._editArrowLineDialogElements.arrowFrequency = L.DomUtil.get(
       'edit-arrow-frequency'
     );
@@ -105,7 +99,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  initArrowAngleChangedListener(listener, context) {
+  initEditArrowLineAngleChangedListener(listener, context) {
     this._editArrowLineDialogElements.arrowAngle =
       L.DomUtil.get('edit-arrow-angle');
     L.DomEvent.on(
@@ -115,7 +109,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  initArrowSizeChangedListener(listener, context) {
+  initEditArrowLineSizeChangedListener(listener, context) {
     this._editArrowLineDialogElements.arrowSize =
       L.DomUtil.get('edit-arrow-size');
     L.DomEvent.on(
@@ -125,7 +119,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  disableArrowEnabledChangedListener(listener, context) {
+  disableEditArrowLineEnabledChangedListener(listener, context) {
     L.DomEvent.off(
       this._editArrowLineDialogElements.arrowEnabled,
       'change',
@@ -133,7 +127,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  disableArrowFilledChangedListener(listener, context) {
+  disableEditArrowLineFilledChangedListener(listener, context) {
     L.DomEvent.off(
       this._editArrowLineDialogElements.arrowFilled,
       'change',
@@ -141,7 +135,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  disableArrowFrequencyChangedListener(listener, context) {
+  disableEditArrowLineFrequencyChangedListener(listener, context) {
     L.DomEvent.off(
       this._editArrowLineDialogElements.arrowFrequency,
       'change',
@@ -149,7 +143,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  disableArrowAngleChangedListener(listener, context) {
+  disableEditArrowLineAngleChangedListener(listener, context) {
     L.DomEvent.off(
       this._editArrowLineDialogElements.arrowAngle,
       'change',
@@ -157,7 +151,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  disableArrowSizeChangedListener(listener, context) {
+  disableEditArrowLineSizeChangedListener(listener, context) {
     L.DomEvent.off(
       this._editArrowLineDialogElements.arrowSize,
       'change',
@@ -165,7 +159,7 @@ const EditArrowLineDialogMixins = {
       context
     );
   },
-  disableAllArrowDialogEvents() {
+  disableAllEditArrowLineDialogEvents() {
     Object.values(this._editArrowLineDialogElements).forEach((el) => {
       if (el) {
         L.DomEvent.off(el, 'change');
