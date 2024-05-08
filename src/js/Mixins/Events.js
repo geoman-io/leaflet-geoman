@@ -810,6 +810,18 @@ const EventMixin = {
       customPayload
     );
   },
+  _fireMapResetView(source = 'Edit', customPayload = {}) {
+    this.__fire(
+      this._map,
+      'viewreset',
+      {
+        layer: this._layer,
+        shape: this.getShape(),
+      },
+      source,
+      customPayload
+    );
+  },
 
   // private (very private) fire function
   __fire(fireLayer, type, payload, source, customPayload = {}) {
