@@ -1,5 +1,4 @@
 const ColorChangeMixin = {
-  colorChangeDialog: undefined,
   colorChangeDialogInit(options = {}) {
     this.colorChangeDialog = L.control.dialog({
       size: [200, 300],
@@ -24,7 +23,7 @@ const ColorChangeMixin = {
         this.colorChangeDialog?.close();
       } else {
         this.colorChangeDialog?.open();
-        if (this.arrowDialog?.isOpen()) {
+        if (this.drawArrowLineDialog?.isOpen()) {
           this.colorChangeDialog.setLocation([275, -210]);
         } else {
           this.colorChangeDialog.setLocation([0, -210]);
@@ -66,12 +65,7 @@ const ColorChangeMixin = {
     window.Coloris?.updatePosition();
   },
   updateShapeStyle(e) {
-    console.log('Update shape style:', e);
     e.target.setStyle({ color: this.options.activeColor });
-    if (e.target.hasArrowheads()) {
-      e.target.setArrowStyle({ color: this.options.activeColor });
-      // e.target.arrowheads({ ...e.target.getArrowheads(), color: this.options.activeColor })
-    }
     this._fireMapResetView();
   },
   colorChangeInit(map, options = {}) {

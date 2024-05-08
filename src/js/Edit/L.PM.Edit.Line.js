@@ -68,7 +68,6 @@ Edit.Line = Edit.extend({
 
     if (this.options.editArrows) {
       // Open arrow dialog if line is clicked
-      console.log('Setting line click listener (this): ', this);
       this._layer.on('click', this._onLineClick, this);
       this._activateAlmostOver();
     }
@@ -219,8 +218,6 @@ Edit.Line = Edit.extend({
     this._proximityCursorMarker.setLatLng(e.latlng);
   },
   _onArrowEnabledChangedListener(e) {
-    console.log('_onArrowEnabledChangedListener (e): ', e);
-    console.log('_onArrowEnabledChangedListener (this): ', this);
     if (e.target.checked && !this._layer.hasArrowheads()) {
       this._layer.arrowheads(this.options.defaultArrowheadOptions);
     } else if (!e.target.checked && this._layer.hasArrowheads()) {
@@ -402,7 +399,6 @@ Edit.Line = Edit.extend({
     }, 100);
   },
   _onLineClick(e) {
-    console.log('_onLineClick', e);
     if (!this._layer.hasArrowheads()) {
       this._layer.arrowheads(this.options.defaultArrowheadOptions);
       this._onArrowChange(e);
@@ -417,10 +413,6 @@ Edit.Line = Edit.extend({
     );
     this._map.pm.Dialog.editArrowLineDialog.open();
 
-    console.log(
-      'Setting initEditArrowLineEnabledChangedListener (this): ',
-      this
-    );
     this._map.pm.Dialog.initEditArrowLineEnabledChangedListener(
       this._onArrowEnabledChangedListener,
       this
@@ -445,7 +437,6 @@ Edit.Line = Edit.extend({
     this._setLineAsActive();
   },
   _setLineAsActive() {
-    console.log('_setLineAsActive (this): ', this);
     this._active = true;
     this._setLinesAsInactive();
     this._markerGroup.eachLayer((l) => {

@@ -274,7 +274,6 @@ const Map = L.Class.extend({
   },
   getActiveGeomanLayers(shapeType) {
     return this.getGeomanLayers().filter((l) => {
-      console.log('geoman layer', l);
       if (shapeType) {
         return l.getShape() === shapeType && l.pm._active;
       }
@@ -303,6 +302,17 @@ const Map = L.Class.extend({
     });
 
     this.map.on('dialog:moveend', this.updateColorisPosition);
+
+    this.map.on('dialog:closed', () => {
+      const currentlyActive = this.getActiveGeomanLayers();
+      currentlyActive.forEach((l) => {
+        l.pm._markerGroup.eachLayer((mg) => {
+          const activeIcon = mg.getIcon();
+          activeIcon.options.className = 'marker-icon';
+          mg.setIcon(activeIcon);
+        });
+      });
+    });
   },
   // returns the map instance by default or a layergroup is set through global options
   _getContainingLayer() {

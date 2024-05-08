@@ -1,8 +1,5 @@
 const EditArrowLineDialogMixins = {
   editArrowLineDialogInit(options = {}) {
-    if (options.showArrowToggle) {
-      options.size = [200, 288];
-    }
     const dialogOptions = {
       size: [200, 268],
       anchor: [0, -210],

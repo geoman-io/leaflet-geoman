@@ -174,7 +174,6 @@ Draw.ArrowLine = Draw.extend({
     // this._map.pm.Dialog.arrowDialog = this._drawArrowDialog;
     const dialogBody = this.getDrawArrowLineDialogBody(this._arrowheadOptions);
 
-    console.log('this._map.pm.Dialog', this);
     this._map.pm.Dialog.drawArrowLineDialog.setContent(
       this.options.dialogContent || dialogBody
     );
@@ -491,7 +490,6 @@ Draw.ArrowLine = Draw.extend({
     this._fireChange(latlngs, 'Draw');
   },
   setStyle() {
-    console.log('Arrow Line set style');
     this._layer?.setStyle(this.options.templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
   },
