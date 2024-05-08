@@ -1,7 +1,5 @@
-const ArrowDialogMixins = {
-  // Arrow Dialog Functions
-  arrowDialog: undefined,
-  arrowDialogInit(options = {}) {
+const DrawArrowLineDialogMixins = {
+  drawArrowLineDialogInit(options = {}) {
     if (options.showArrowToggle) {
       options.size = [200, 288];
     }
@@ -12,14 +10,14 @@ const ArrowDialogMixins = {
       showArrowToggle: true,
       ...options,
     };
-    this.arrowDialog = L.control.dialog(dialogOptions);
-
-    return this.arrowDialog;
+    return L.control.dialog(dialogOptions);
+    // console.log("drawArrowLineDialog", this.drawArrowLineDialog)
+    // return this.drawArrowLineDialog;
   },
-  closeArrowDialog() {
-    this.arrowDialog?.close();
+  closeDrawArrowLineDialog() {
+    this.drawArrowLineDialog?.close();
   },
-  getDefaultArrowDialogBody(arrowheadOptions) {
+  getDrawArrowLineDialogBody(arrowheadOptions) {
     const arrowSize = arrowheadOptions.size?.split('px')?.[0] || 25;
     const arrowFilled = arrowheadOptions.fill ? 'checked' : '';
     const showArrowToggle = arrowheadOptions.showArrowToggle ? '' : 'd-none';
@@ -28,28 +26,28 @@ const ArrowDialogMixins = {
         <h3 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h3>
         <hr>
         <div class='form-switch form-check cursor-pointer ${showArrowToggle}'>
-          <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='arrow-enabled' checked>
-          <label class='form-check-label cursor-pointer' for='arrow-enabled'>Enable Arrows</label>
+          <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='draw-arrow-enabled' checked>
+          <label class='form-check-label cursor-pointer' for='draw-arrow-enabled'>Enable Arrows</label>
         </div>
         <div class='form-switch form-check cursor-pointer arrow-visible-prop'>
-          <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='arrow-filled' ${arrowFilled}>
-          <label class='form-check-label cursor-pointer' for='arrow-filled'>Line / Filled</label>
+          <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='draw-arrow-filled' ${arrowFilled}>
+          <label class='form-check-label cursor-pointer' for='draw-arrow-filled'>Line / Filled</label>
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
-          <label for='arrow-frequency' class='form-label'>Arrow Spacing</label>
-          <input type='range' class='form-range' id='arrow-frequency' min='50' max='200' value='${this._getArrowFrequency(arrowheadOptions)}' style='direction: rtl;'>
+          <label for='draw-arrow-frequency' class='form-label'>Arrow Spacing</label>
+          <input type='range' class='form-range' id='draw-arrow-frequency' min='50' max='200' value='${this._getDrawArrowLineFrequency(arrowheadOptions)}' style='direction: rtl;'>
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
-          <label for='arrow-angle' class='form-label'>Arrow Angle</label>
-          <input type='range' class='form-range' id='arrow-angle' min='10' max='100' value='${arrowheadOptions.yawn}'>
+          <label for='draw-arrow-angle' class='form-label'>Arrow Angle</label>
+          <input type='range' class='form-range' id='draw-arrow-angle' min='10' max='100' value='${arrowheadOptions.yawn}'>
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
-          <label for='arrow-size' class='form-label'>Arrow Size</label>
-          <input type='range' class='form-range' id='arrow-size' min='10' max='50' value='${arrowSize}'>
+          <label for='draw-arrow-size' class='form-label'>Arrow Size</label>
+          <input type='range' class='form-range' id='draw-arrow-size' min='10' max='50' value='${arrowSize}'>
         </div>
       </div>`;
   },
-  _getArrowFrequency(arrowheadOptions) {
+  _getDrawArrowLineFrequency(arrowheadOptions) {
     let arrowFrequency;
     if (arrowheadOptions.frequency === 'endonly') {
       arrowFrequency = '200';
@@ -64,91 +62,102 @@ const ArrowDialogMixins = {
 
     return arrowFrequency;
   },
-  toggleArrowPropVisibility(visible) {
+  toggleDrawArrowLinePropVisibility(visible) {
     Array.from(document.getElementsByClassName('arrow-visible-prop')).forEach(
       (el) => {
         el.style.display = visible ? 'revert' : 'none';
       }
     );
   },
-  initArrowEnabledChangedListener(listener, context) {
-    this._dialogElements.arrowEnabled = L.DomUtil.get('arrow-enabled');
+  initDrawArrowLineFilledChangedListener(listener, context) {
+    this._drawArrowLineDialogElements.arrowFilled =
+      L.DomUtil.get('draw-arrow-filled');
     L.DomEvent.on(
-      this._dialogElements.arrowEnabled,
+      this._drawArrowLineDialogElements.arrowFilled,
       'change',
       listener,
       context
     );
   },
-  initArrowFilledChangedListener(listener, context) {
-    this._dialogElements.arrowFilled = L.DomUtil.get('arrow-filled');
+  initDrawArrowLineFrequencyChangedListener(listener, context) {
+    this._drawArrowLineDialogElements.arrowFrequency = L.DomUtil.get(
+      'draw-arrow-frequency'
+    );
     L.DomEvent.on(
-      this._dialogElements.arrowFilled,
+      this._drawArrowLineDialogElements.arrowFrequency,
       'change',
       listener,
       context
     );
   },
-  initArrowFrequencyChangedListener(listener, context) {
-    this._dialogElements.arrowFrequency = L.DomUtil.get('arrow-frequency');
+  initDrawArrowLineAngleChangedListener(listener, context) {
+    this._drawArrowLineDialogElements.arrowAngle =
+      L.DomUtil.get('draw-arrow-angle');
     L.DomEvent.on(
-      this._dialogElements.arrowFrequency,
+      this._drawArrowLineDialogElements.arrowAngle,
       'change',
       listener,
       context
     );
   },
-  initArrowAngleChangedListener(listener, context) {
-    this._dialogElements.arrowAngle = L.DomUtil.get('arrow-angle');
-    L.DomEvent.on(this._dialogElements.arrowAngle, 'change', listener, context);
+  initDrawArrowLineSizeChangedListener(listener, context) {
+    this._drawArrowLineDialogElements.arrowSize =
+      L.DomUtil.get('draw-arrow-size');
+    L.DomEvent.on(
+      this._drawArrowLineDialogElements.arrowSize,
+      'change',
+      listener,
+      context
+    );
   },
-  initArrowSizeChangedListener(listener, context) {
-    this._dialogElements.arrowSize = L.DomUtil.get('arrow-size');
-    L.DomEvent.on(this._dialogElements.arrowSize, 'change', listener, context);
-  },
-  disableArrowEnabledChangedListener(listener, context) {
+  disableDrawArrowLineEnabledChangedListener(listener, context) {
     L.DomEvent.off(
-      this._dialogElements.arrowEnabled,
+      this._drawArrowLineDialogElements.arrowEnabled,
       'change',
       listener,
       context
     );
   },
-  disableArrowFilledChangedListener(listener, context) {
+  disableDrawArrowLineFilledChangedListener(listener, context) {
     L.DomEvent.off(
-      this._dialogElements.arrowFilled,
+      this._drawArrowLineDialogElements.arrowFilled,
       'change',
       listener,
       context
     );
   },
-  disableArrowFrequencyChangedListener(listener, context) {
+  disableDrawArrowLineFrequencyChangedListener(listener, context) {
     L.DomEvent.off(
-      this._dialogElements.arrowFrequency,
+      this._drawArrowLineDialogElements.arrowFrequency,
       'change',
       listener,
       context
     );
   },
-  disableArrowAngleChangedListener(listener, context) {
+  disableDrawArrowLineAngleChangedListener(listener, context) {
     L.DomEvent.off(
-      this._dialogElements.arrowAngle,
+      this._drawArrowLineDialogElements.arrowAngle,
       'change',
       listener,
       context
     );
   },
-  disableArrowSizeChangedListener(listener, context) {
-    L.DomEvent.off(this._dialogElements.arrowSize, 'change', listener, context);
+  disableDrawArrowLineSizeChangedListener(listener, context) {
+    L.DomEvent.off(
+      this._drawArrowLineDialogElements.arrowSize,
+      'change',
+      listener,
+      context
+    );
   },
-  disableAllArrowDialogEvents() {
-    Object.values(this._dialogElements).forEach((el) => {
+  disableAllDrawArrowLineDialogEvents() {
+    Object.values(this._drawArrowLineDialogElements).forEach((el) => {
       if (el) {
         L.DomEvent.off(el, 'change');
       }
     });
   },
-  _dialogElements: {
+  _drawArrowLineDialogElements: {
     arrowEnabled: undefined,
     arrowFilled: undefined,
     arrowFrequency: undefined,
@@ -157,4 +166,4 @@ const ArrowDialogMixins = {
   },
 };
 
-export default ArrowDialogMixins;
+export default DrawArrowLineDialogMixins;

@@ -8,6 +8,7 @@ import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import GlobalColorChangeMode from './Mixins/Modes/Mode.Color';
 import EventMixin from './Mixins/Events';
 import ArrowDialogMixin from './Mixins/ArrowDialog';
+import EditArrowDialogMixin from './Mixins/EditArrowDialog';
 import ColorChangeDialogMixin from './Mixins/ColorChangeDialog';
 import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
@@ -23,13 +24,18 @@ const Map = L.Class.extend({
     EventMixin,
     ColorChangeDialogMixin,
     ArrowDialogMixin,
+    EditArrowDialogMixin,
   ],
   initialize(map) {
     this.map = map;
     this.Draw = new L.PM.Draw(map);
     this.Toolbar = new L.PM.Toolbar(map);
     this.Keyboard = createKeyboardMixins();
-    this.Dialog = { ...ArrowDialogMixin, ...ColorChangeDialogMixin };
+    this.Dialog = {
+      ...ArrowDialogMixin,
+      ...ColorChangeDialogMixin,
+      ...EditArrowDialogMixin,
+    };
 
     this.globalOptions = {
       defaultColor: '#3388ff',
@@ -41,6 +47,7 @@ const Map = L.Class.extend({
         'CircleMarker',
         'Circle',
         'Line',
+        'ArrowLine',
         'Polygon',
         'Rectangle',
       ],
@@ -54,13 +61,25 @@ const Map = L.Class.extend({
 
     this.Keyboard._initKeyListener(map);
 
+    // Set Up Dialogs
+    // Color Change Dialog
     this.Dialog.colorChangeDialog = this.colorChangeDialogInit({
       close: false,
     }).addTo(this.map);
-
-    // Events
     this.Dialog.colorChangeInit(this.map, {});
 
+    // Draw Arrow Line Dialog
+    this.Dialog.drawArrowLineDialog = this.drawArrowLineDialogInit({
+      close: false,
+      showArrowToggle: false,
+    }).addTo(this.map);
+
+    // Edit Arrow Line Dialog
+    this.Dialog.editArrowLineDialog = this.editArrowLineDialogInit().addTo(
+      this.map
+    );
+
+    // Dialog Events
     this._addDialogEvents();
   },
   // eslint-disable-next-line default-param-last
@@ -240,7 +259,8 @@ const Map = L.Class.extend({
   _addDialogEvents() {
     this.map.on('pm:drawend', () => {
       this.Dialog.closeColorChangeDialog();
-      this.Dialog.closeArrowDialog();
+      this.Dialog.closeDrawArrowLineDialog();
+      this.Dialog.closeEditArrowLineDialog();
     });
 
     this.map.on('dialog:moveend', this.updateColorisPosition);
