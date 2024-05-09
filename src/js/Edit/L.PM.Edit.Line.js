@@ -91,6 +91,7 @@ Edit.Line = Edit.extend({
     } else {
       this.cachedColor = undefined;
     }
+
     this._fireEnable();
   },
   disable() {
@@ -227,9 +228,7 @@ Edit.Line = Edit.extend({
   },
   _onArrowFrequencyChangedListener(e) {
     this._layer._arrowheadOptions.frequency =
-      this._map.pm.Dialog._getEditArrowLineFrequency({
-        frequency: e.target.value,
-      });
+      this._map.pm.Dialog._getEditArrowLineFrequency(e.target.value);
     this._onArrowChange(e);
   },
   _onArrowAngleChangedListener(e) {
@@ -453,6 +452,8 @@ Edit.Line = Edit.extend({
   },
   _onArrowChange(e) {
     this._fireArrowheadEditChangeEvent(this._layer._arrowheadOptions);
+    this._fireEdit();
+    this._layerEdited = true;
     this._fireMapResetView('Edit', { event: e });
   },
   // adds a new marker from a middlemarker

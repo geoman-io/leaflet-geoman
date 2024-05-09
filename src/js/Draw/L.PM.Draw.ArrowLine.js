@@ -200,9 +200,9 @@ Draw.ArrowLine = Draw.extend({
     this._updateLines(e);
   },
   _onArrowFrequencyChangedListener(e) {
-    this._arrowheadOptions.frequency = this._getDrawArrowLineFrequency({
-      frequency: e.target.value,
-    });
+    this._arrowheadOptions.frequency = this._getDrawArrowLineFrequency(
+      e.target.value
+    );
     this._updateLines(e);
   },
   _onArrowAngleChangedListener(e) {
