@@ -22,6 +22,7 @@
     "document": true
   },
   "ignorePatterns": [
-    "cypress/libs"
+    "cypress/libs",
+    "dist"
   ]
 }
