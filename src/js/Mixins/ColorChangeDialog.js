@@ -26,6 +26,7 @@ const ColorChangeMixin = {
         this.colorChangeDialog.setLocation([0, -210]);
       }
     }
+    this.updateColorisPosition();
   },
   enableColorChange() {
     if (!this.options.allowColorChange) {
