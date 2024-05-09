@@ -10,7 +10,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 map.pm.addControls({
   position: 'topleft',
-  drawControls: false,
+  drawControls: true,
   editControls: true,
   optionsControls: true,
   customControls: true,

@@ -432,8 +432,8 @@ Edit.Line = Edit.extend({
     this._setLineAsActive();
   },
   _setLineAsActive() {
-    this._active = true;
     this._setLinesAsInactive();
+    this._active = true;
     this._markerGroup.eachLayer((l) => {
       const activeIcon = l.getIcon();
       activeIcon.options.className += ' active-shape';

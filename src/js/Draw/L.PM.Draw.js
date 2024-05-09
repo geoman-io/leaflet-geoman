@@ -78,7 +78,6 @@ const Draw = L.Class.extend({
     this.CircleMarker.setOptions({ continueDrawing: true });
   },
   setPathOptions(options, mergeOptions = false) {
-    console.log('options', options);
     if (!mergeOptions) {
       this.options.pathOptions = options;
     } else {
