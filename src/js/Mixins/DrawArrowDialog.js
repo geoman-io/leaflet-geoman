@@ -52,13 +52,6 @@ const DrawArrowLineDialogMixins = {
 
     return arrowFrequency;
   },
-  toggleDrawArrowLinePropVisibility(visible) {
-    Array.from(document.getElementsByClassName('arrow-visible-prop')).forEach(
-      (el) => {
-        el.style.display = visible ? 'revert' : 'none';
-      }
-    );
-  },
   initDrawArrowLineFilledChangedListener(listener, context) {
     this._drawArrowLineDialogElements.arrowFilled =
       L.DomUtil.get('draw-arrow-filled');

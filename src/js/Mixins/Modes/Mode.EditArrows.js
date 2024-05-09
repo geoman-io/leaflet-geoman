@@ -28,7 +28,7 @@ const GlobalArrowEditMode = {
     );
 
     // find all layers handled by leaflet-geoman
-    const layers = L.PM.Utils.findPolylines(this.map);
+    const layers = L.PM.Utils.findLines(this.map);
 
     // enable all layers
     layers.forEach((layer) => {
@@ -59,7 +59,7 @@ const GlobalArrowEditMode = {
     this._globalArrowEditModeEnabled = false;
 
     // find all layers handles by leaflet-geoman
-    const layers = L.PM.Utils.findPolylines(this.map);
+    const layers = L.PM.Utils.findLines(this.map);
 
     // disable all layers
     layers.forEach((layer) => {
@@ -78,10 +78,6 @@ const GlobalArrowEditMode = {
 
     // fire event
     this._fireGlobalArrowEditModeToggled(false);
-  },
-  // TODO: Remove in the next major release
-  globalArrowEditEnabled() {
-    return this.globalArrowEditModeEnabled();
   },
   globalArrowEditModeEnabled() {
     return this._globalArrowEditModeEnabled;

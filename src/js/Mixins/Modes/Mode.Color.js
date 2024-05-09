@@ -15,29 +15,28 @@ const GlobalColorChangeMode = {
       this.globalColorChangeModeEnabled()
     );
 
-    // display the color picker dialog
+    // Display the color picker dialog but hide the close button
+    // The dialog should be closed by pressing the "Finish" button
     this.Dialog.colorChangeDialog.hideClose();
-    this.Dialog.colorChangeDialog.open();
+    this.Dialog.openColorChangeDialog();
 
     this._fireGlobalColorChangeModeToggled();
   },
   disableGlobalColorChangeMode() {
     this._globalChangeColorModeEnabled = false;
-    const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l) => l instanceof L.Polyline
-    );
+    const layers = L.PM.Utils.findLayers(this.map);
     layers.forEach((layer) => {
       layer.pm.disableColorChange();
     });
 
-    // toogle the button in the toolbar if this is called programatically
+    // toggle the button in the toolbar if this is called programmatically
     this.Toolbar.toggleButton(
       'colorChangeMode',
       this.globalColorChangeModeEnabled()
     );
 
     this.map.off('dialog:moveend', this.updateColorisPosition);
-    this.Dialog.colorChangeDialog.close();
+    this.Dialog.closeColorChangeDialog();
     this._fireGlobalColorChangeModeToggled();
   },
   globalColorChangeModeEnabled() {
@@ -56,8 +55,11 @@ const GlobalColorChangeMode = {
       ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
         (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
-      layer.pm.options.allowColorChange
+      layer.pm.options.allowColorChange &&
+      layer.pm.getShape() !== 'Text' &&
+      layer.pm.getShape() !== 'Marker'
     );
   },
 };
+
 export default GlobalColorChangeMode;

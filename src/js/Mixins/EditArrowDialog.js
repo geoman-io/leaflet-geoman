@@ -17,7 +17,7 @@ const EditArrowLineDialogMixins = {
     const arrowFilled = arrowheadOptions.fill ? 'checked' : '';
     const showArrowToggle = arrowheadOptions.showArrowToggle ? '' : 'd-none';
     return `
-      <div style='padding: 0.5rem 1rem;'>
+      <div style='padding: 0 1rem;'>
         <h3 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h3>
         <hr>
         <div class='form-switch form-check cursor-pointer ${showArrowToggle}'>

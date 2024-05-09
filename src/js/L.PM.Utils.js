@@ -39,11 +39,11 @@ const Utils = {
 
     return layers;
   },
-  findPolylines(map) {
+  findLines(map) {
     let layers = [];
     map.eachLayer((layer) => {
       if (layer instanceof L.Polyline) {
-        if (layer.pm._shape.toLowerCase().includes('line')) {
+        if (layer.pm.getShape().toLowerCase().includes('line')) {
           layers.push(layer);
         }
       }

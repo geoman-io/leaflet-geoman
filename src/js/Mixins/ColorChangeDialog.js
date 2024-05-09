@@ -10,34 +10,26 @@ const ColorChangeMixin = {
     return this.colorChangeDialog;
   },
   openColorChangeDialog() {
-    this.colorChangeInit();
     this.colorChangeDialog?.open();
   },
   closeColorChangeDialog() {
     this.colorChangeDialog?.close();
   },
   toggleColorChangeDialog() {
-    window.cdialog = this.colorChangeDialog;
-    if (this.colorChangeDialog) {
-      if (this.colorChangeDialog.isOpen()) {
-        this.colorChangeDialog?.close();
+    if (this.colorChangeDialog?.isOpen()) {
+      this.colorChangeDialog?.close();
+    } else {
+      this.colorChangeDialog?.open();
+      if (this.drawArrowLineDialog?.isOpen()) {
+        this.colorChangeDialog.setLocation([275, -210]);
       } else {
-        this.colorChangeDialog?.open();
-        if (this.drawArrowLineDialog?.isOpen()) {
-          this.colorChangeDialog.setLocation([275, -210]);
-        } else {
-          this.colorChangeDialog.setLocation([0, -210]);
-        }
+        this.colorChangeDialog.setLocation([0, -210]);
       }
     }
   },
   enableColorChange() {
     if (!this.options.allowColorChange) {
       this.disableColorChange();
-      return;
-    }
-
-    if (this.getShape() === 'Text' || this.getShape() === 'Marker') {
       return;
     }
 
@@ -50,7 +42,7 @@ const ColorChangeMixin = {
     this._fireColorChangeEnable(this._layer);
   },
   disableColorChange() {
-    this._colorChangeEnabled = true;
+    this._colorChangeEnabled = false;
 
     L.DomUtil.removeClass(this._layer.getElement(), 'leaflet-pm-changecolor');
     this._layer.off('remove', this.disableColorChange, this);

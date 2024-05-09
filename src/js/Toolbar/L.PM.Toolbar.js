@@ -361,7 +361,7 @@ const Toolbar = L.Class.extend({
       title: getTranslation('buttonTitles.changeColorButton'),
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalColorChangeMode({ close: false });
+        this.map.pm.toggleGlobalColorChangeMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -765,6 +765,7 @@ const Toolbar = L.Class.extend({
       Line: 'drawPolyline',
       CircleMarker: 'drawCircleMarker',
       Edit: 'editMode',
+      EditArrowLine: 'editArrowLine',
       ColorChange: 'colorChangeMode',
       Drag: 'dragMode',
       Cut: 'cutPolygon',
