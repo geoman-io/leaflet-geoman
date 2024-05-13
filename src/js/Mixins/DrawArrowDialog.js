@@ -1,7 +1,7 @@
 const DrawArrowLineDialogMixins = {
   drawArrowLineDialogInit(options = {}) {
     const dialogOptions = {
-      size: [200, 268],
+      size: [200, 288],
       anchor: [0, -210],
       position: 'topright',
       showArrowToggle: true,
@@ -17,7 +17,7 @@ const DrawArrowLineDialogMixins = {
     const arrowFilled = arrowheadOptions.fill ? 'checked' : '';
     return `
       <div style='padding: 0.5rem 1rem;'>
-        <h3 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h3>
+        <h5 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h5>
         <hr>
         <div class='form-switch form-check cursor-pointer arrow-visible-prop'>
           <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='draw-arrow-filled' ${arrowFilled}>

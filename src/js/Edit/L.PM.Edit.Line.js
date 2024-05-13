@@ -454,6 +454,11 @@ Edit.Line = Edit.extend({
     this._fireArrowheadEditChangeEvent(this._layer._arrowheadOptions);
     this._fireEdit();
     this._layerEdited = true;
+    if (this._layer.hasArrowheads()) {
+      this._shape = 'ArrowLine';
+    } else {
+      this._shape = 'Line';
+    }
     this._fireMapResetView('Edit', { event: e });
   },
   // adds a new marker from a middlemarker
