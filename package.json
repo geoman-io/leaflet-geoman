@@ -1,6 +1,6 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
-  "version": "2.16.0",
+  "version": "2.17.0",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
