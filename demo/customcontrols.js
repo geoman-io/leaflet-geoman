@@ -51,4 +51,7 @@ map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
 
 map.on('pm:create', (e) => {
   console.log(e);
+  e.layer.on('pm:update', (ev) => {
+    console.log(ev);
+  });
 });

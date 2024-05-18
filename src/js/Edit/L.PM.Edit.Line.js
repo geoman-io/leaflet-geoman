@@ -118,6 +118,8 @@ Edit.Line = Edit.extend({
     if (this._dragging) {
       return;
     }
+
+    this._shape = this._layer.hasArrowheads() ? 'ArrowLine' : 'Line';
     this._enabled = false;
     this._markerGroup.clearLayers();
     this._markerGroup.removeFrom(this._map);
@@ -457,14 +459,14 @@ Edit.Line = Edit.extend({
     });
   },
   _onArrowChange(e) {
-    this._fireArrowheadEditChangeEvent(this._layer._arrowheadOptions);
-    this._fireEdit();
     this._layerEdited = true;
     if (this._layer.hasArrowheads()) {
       this._shape = 'ArrowLine';
     } else {
       this._shape = 'Line';
     }
+    this._fireArrowheadEditChangeEvent(this._layer._arrowheadOptions);
+    this._fireEdit();
     this._fireMapResetView('Edit', { event: e });
   },
   // adds a new marker from a middlemarker
