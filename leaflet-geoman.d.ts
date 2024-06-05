@@ -1629,7 +1629,7 @@ declare module 'leaflet' {
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
-      intersectionRest: boolean;
+      intersectionReset: boolean;
     }) => void;
     export type LayerResetEventHandler = (e: {
       layer: L.Layer;
