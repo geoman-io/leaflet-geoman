@@ -3,7 +3,7 @@ const GlobalArrowEditMode = {
   _globalArrowEditModeEnabled: false,
   enableGlobalArrowEditMode(o) {
     this._arrowheadOptions = {
-      fill: false,
+      fill: true,
       frequency: 'endonly',
       yawn: 30,
       size: '25px',
