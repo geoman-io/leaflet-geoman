@@ -15,7 +15,9 @@ const EditArrowLineDialogMixins = {
   getEditArrowLineDialogBody(arrowheadOptions) {
     const arrowSize = arrowheadOptions.size?.split('px')?.[0] || 25;
     const arrowFilled = arrowheadOptions.fill ? 'checked' : '';
-    const showArrowToggle = arrowheadOptions.showArrowToggle ? '' : 'd-none';
+    const showArrowToggle = arrowheadOptions.showArrowToggle
+      ? ''
+      : 'display-none';
     return `
       <div style='padding: 0 1rem;'>
         <h5 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h5>
