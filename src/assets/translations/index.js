@@ -29,6 +29,9 @@ import fi from './fi.json';
 import ko from './ko.json';
 import ky from './ky.json';
 
+// eslint-disable-next-line camelcase
+const pt = pt_pt;
+
 export default {
   en,
   de,
@@ -39,6 +42,7 @@ export default {
   es,
   nl,
   fr,
+  pt,
   // eslint-disable-next-line camelcase
   pt_br,
   // eslint-disable-next-line camelcase
