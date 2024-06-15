@@ -573,6 +573,7 @@ declare module 'leaflet' {
       | 'nl'
       | 'no'
       | 'pl'
+      | 'pt'
       | 'pt_br'
       | 'pt_pt'
       | 'ro'
