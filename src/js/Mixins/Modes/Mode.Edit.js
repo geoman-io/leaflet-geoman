@@ -40,10 +40,7 @@ const GlobalEditMode = {
     this._fireGlobalEditModeToggled(true);
   },
   disableGlobalEditMode() {
-    if (!this._globalEditModeEnabled) {
-      return;
-    }
-
+    // set status
     this._globalEditModeEnabled = false;
 
     // find all layers handles by leaflet-geoman

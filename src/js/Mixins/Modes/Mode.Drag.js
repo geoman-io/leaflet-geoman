@@ -30,10 +30,6 @@ const GlobalDragMode = {
     this._fireGlobalDragModeToggled(true);
   },
   disableGlobalDragMode() {
-    if (!this._globalDragModeEnabled) {
-      return;
-    }
-
     const layers = L.PM.Utils.findLayers(this.map);
 
     this._globalDragModeEnabled = false;

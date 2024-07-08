@@ -55,9 +55,6 @@ const GlobalArrowEditMode = {
     this._fireGlobalArrowEditModeToggled(true);
   },
   disableGlobalArrowEditMode() {
-    if (!this._globalArrowEditModeEnabled) {
-      return;
-    }
     // set status
     this._globalArrowEditModeEnabled = false;
 
