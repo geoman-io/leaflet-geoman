@@ -4,6 +4,7 @@ import RotateMixin from '../Mixins/Rotating';
 import EventMixin from '../Mixins/Events';
 import EditArrowDialogMixin from '../Mixins/DrawArrowDialog';
 import ColorChangeDialogMixin from '../Mixins/ColorChangeDialog';
+import Utils from '../L.PM.Utils';
 
 const Edit = L.Class.extend({
   includes: [
@@ -11,6 +12,7 @@ const Edit = L.Class.extend({
     SnapMixin,
     RotateMixin,
     EventMixin,
+    Utils,
     EditArrowDialogMixin,
     ColorChangeDialogMixin,
   ],

@@ -196,6 +196,23 @@ const Utils = {
 
     return returnVal;
   },
+  rgbToHex(rgb) {
+    // Extract the RGB values using a regular expression
+    const result = rgb.match(/\d+/g);
+
+    // Ensure that the input is valid
+    if (result.length !== 3) {
+      throw new Error('Invalid RGB color format');
+    }
+
+    // Convert each RGB component to its HEX value
+    const r = parseInt(result[0], 10).toString(16).padStart(2, '0');
+    const g = parseInt(result[1], 10).toString(16).padStart(2, '0');
+    const b = parseInt(result[2], 10).toString(16).padStart(2, '0');
+
+    // Combine the HEX values and return the result
+    return `#${r}${g}${b}`;
+  },
   findDeepMarkerIndex(arr, marker) {
     // thanks for the function, Felix Heck
     let result;

@@ -2,9 +2,10 @@ import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
 import DialogMixin from '../Mixins/DrawArrowDialog';
+import Utils from '../L.PM.Utils';
 
 const Draw = L.Class.extend({
-  includes: [SnapMixin, EventMixin, DialogMixin],
+  includes: [SnapMixin, EventMixin, DialogMixin, Utils],
   options: {
     snappable: true, // TODO: next major Release, rename it to allowSnapping
     snapDistance: 20,
@@ -219,6 +220,7 @@ const Draw = L.Class.extend({
     if (layer.pm) {
       // add the pm options from drawing to the new layer (edit)
       layer.pm.setOptions(this.options);
+      layer.options.color = this.options.activeColor;
       // set the shape (can be a custom shape)
       layer.pm._shape = this._shape;
       // apply the map to the new created layer in the pm object

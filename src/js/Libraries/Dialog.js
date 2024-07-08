@@ -72,7 +72,7 @@ L.Control.Dialog = L.Control.extend({
       return this;
     }
 
-    this._map.fire('dialog:destroyed', this);
+    this._map?.fire('dialog:destroyed', this);
     this.remove();
 
     if (this.onRemove) {

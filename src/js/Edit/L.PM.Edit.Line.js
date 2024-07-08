@@ -34,7 +34,13 @@ Edit.Line = Edit.extend({
     });
   },
   enable(options) {
-    L.Util.setOptions(this, options);
+    const hexColorValue = this.rgbToHex(
+      L.DomUtil.getStyle(this._layer.getElement(), 'stroke')
+    );
+    L.Util.setOptions(this, {
+      ...options,
+      color: hexColorValue || this.globalOptions.defaultColor,
+    });
 
     this._map = this._layer._map;
 

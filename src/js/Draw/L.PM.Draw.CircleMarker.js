@@ -17,7 +17,13 @@ Draw.CircleMarker = Draw.extend({
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
-    L.Util.setOptions(this, options);
+    const hexColorValue = this.rgbToHex(
+      L.DomUtil.getStyle(this._layer.getElement(), 'stroke')
+    );
+    L.Util.setOptions(this, {
+      ...options,
+      color: hexColorValue || this.globalOptions.defaultColor,
+    });
     // TODO: remove with next major release
     if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;

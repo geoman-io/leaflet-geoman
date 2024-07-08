@@ -16,7 +16,13 @@ Edit.CircleMarker = Edit.extend({
   },
   // TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
-    L.Util.setOptions(this, options);
+    const hexColorValue = this.rgbToHex(
+      L.DomUtil.getStyle(this._layer.getElement(), 'stroke')
+    );
+    L.Util.setOptions(this, {
+      ...options,
+      color: hexColorValue || this.globalOptions.defaultColor,
+    });
     // TODO: remove with next major release
     if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;
