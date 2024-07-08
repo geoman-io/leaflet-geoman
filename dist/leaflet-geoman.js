@@ -13606,7 +13606,7 @@
       _globalArrowEditModeEnabled: !1,
       enableGlobalArrowEditMode(t) {
         (this._arrowheadOptions = {
-          fill: !1,
+          fill: !0,
           frequency: 'endonly',
           yawn: 30,
           size: '25px',
@@ -14646,7 +14646,7 @@
       <div style='padding: 0 1rem;'>
         <h5 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h5>
         <hr>
-        <div class='form-switch form-check cursor-pointer ${t.showArrowToggle ? '' : 'd-none'}'>
+        <div class='form-switch form-check cursor-pointer ${t.showArrowToggle ? '' : 'display-none'}'>
           <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='edit-arrow-enabled' checked>
           <label class='form-check-label cursor-pointer' for='edit-arrow-enabled'>Enable Arrows</label>
         </div>
