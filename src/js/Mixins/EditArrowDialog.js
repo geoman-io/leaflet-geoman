@@ -43,33 +43,39 @@ const EditArrowLineDialogMixins = {
       </div>`;
   },
   _getEditArrowLineFrequency(frequency) {
+    const upperRange = 200;
+    const lowerRange = 50;
+
     let arrowFrequency;
-    if (frequency === 200) {
+    if (frequency === upperRange) {
       arrowFrequency = 'endonly';
     } else if (frequency >= 120 && frequency <= 130) {
       arrowFrequency = 'allvertices';
     } else {
-      arrowFrequency = `${50 + 200 - frequency}px`;
+      arrowFrequency = `${lowerRange + upperRange - frequency}px`;
     }
 
     return arrowFrequency;
   },
   _setEditArrowLineSelectorValue(frequency = '') {
+    const upperRange = 200;
+    const lowerRange = 50;
+
     const arrowFrequency = frequency.replace('px', '') || 'endonly';
-    const isNumeric = Number.isNaN(+arrowFrequency);
+    const isNumeric = !Number.isNaN(+arrowFrequency);
     if (arrowFrequency === 'endonly') {
-      return 50 + 200 - 200;
+      return lowerRange;
     }
 
-    if (arrowFrequency === 'allvertices') {
+    if (
+      arrowFrequency === 'allvertices' ||
+      (frequency >= 120 && frequency <= 130)
+    ) {
       return 125;
     }
 
     if (isNumeric) {
-      if (arrowFrequency >= 120 && arrowFrequency <= 130) {
-        return 50 + 200 - 125;
-      }
-      return 50 + 200 - arrowFrequency;
+      return upperRange + lowerRange - arrowFrequency;
     }
 
     return arrowFrequency;

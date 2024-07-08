@@ -14472,7 +14472,7 @@
   var EL = {
       drawArrowLineDialogInit(t = {}) {
         let i = {
-          size: [200, 268],
+          size: [200, 288],
           anchor: [0, -210],
           position: 'topright',
           showArrowToggle: !0,
@@ -14487,7 +14487,7 @@
         let i = t.size?.split('px')?.[0] || 25;
         return `
       <div style='padding: 0.5rem 1rem;'>
-        <h3 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h3>
+        <h5 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h5>
         <hr>
         <div class='form-switch form-check cursor-pointer arrow-visible-prop'>
           <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='draw-arrow-filled' ${t.fill ? 'checked' : ''}>
@@ -14508,28 +14508,26 @@
       </div>`;
       },
       _getDrawArrowLineFrequency(t) {
-        let i;
+        let o;
         return (
           t === 200
-            ? (i = 'endonly')
+            ? (o = 'endonly')
             : t >= 120 && t <= 130
-              ? (i = 'allvertices')
-              : (i = `${250 - t}px`),
-          i
+              ? (o = 'allvertices')
+              : (o = `${250 - t}px`),
+          o
         );
       },
       _setDrawArrowLineSelectorValue(t = '') {
-        let i = t.replace('px', '') || 'endonly',
-          r = Number.isNaN(+i);
-        return i === 'endonly'
+        let o = t.replace('px', '') || 'endonly',
+          a = !Number.isNaN(+o);
+        return o === 'endonly'
           ? 50
-          : i === 'allvertices'
+          : o === 'allvertices' || (t >= 120 && t <= 130)
             ? 125
-            : r
-              ? i >= 120 && i <= 130
-                ? 125
-                : 250 - i
-              : i;
+            : a
+              ? 250 - o
+              : o;
       },
       initDrawArrowLineFilledChangedListener(t, i) {
         (this._drawArrowLineDialogElements.arrowFilled =
@@ -14629,7 +14627,7 @@
   var SL = {
       editArrowLineDialogInit(t = {}) {
         let i = {
-          size: [200, 268],
+          size: [200, 288],
           anchor: [0, -210],
           position: 'topright',
           showArrowToggle: !0,
@@ -14645,7 +14643,7 @@
           r = t.fill ? 'checked' : '';
         return `
       <div style='padding: 0 1rem;'>
-        <h3 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h3>
+        <h5 style='margin-top: 0; margin-bottom: 0;'>Arrow Settings</h5>
         <hr>
         <div class='form-switch form-check cursor-pointer ${t.showArrowToggle ? '' : 'd-none'}'>
           <input class='form-check-input my-auto me-2 cursor-pointer' type='checkbox' role='switch' id='edit-arrow-enabled' checked>
@@ -14670,28 +14668,26 @@
       </div>`;
       },
       _getEditArrowLineFrequency(t) {
-        let i;
+        let o;
         return (
           t === 200
-            ? (i = 'endonly')
+            ? (o = 'endonly')
             : t >= 120 && t <= 130
-              ? (i = 'allvertices')
-              : (i = `${250 - t}px`),
-          i
+              ? (o = 'allvertices')
+              : (o = `${250 - t}px`),
+          o
         );
       },
       _setEditArrowLineSelectorValue(t = '') {
-        let i = t.replace('px', '') || 'endonly',
-          r = Number.isNaN(+i);
-        return i === 'endonly'
+        let o = t.replace('px', '') || 'endonly',
+          a = !Number.isNaN(+o);
+        return o === 'endonly'
           ? 50
-          : i === 'allvertices'
+          : o === 'allvertices' || (t >= 120 && t <= 130)
             ? 125
-            : r
-              ? i >= 120 && i <= 130
-                ? 125
-                : 250 - i
-              : i;
+            : a
+              ? 250 - o
+              : o;
       },
       toggleEditArrowLinePropVisibility(t) {
         Array.from(
@@ -23002,6 +22998,9 @@
       this._fireArrowheadEditChangeEvent(this._layer._arrowheadOptions),
         this._fireEdit(),
         (this._layerEdited = !0),
+        this._layer.hasArrowheads()
+          ? (this._shape = 'ArrowLine')
+          : (this._shape = 'Line'),
         this._fireMapResetView('Edit', { event: t });
     },
     _addMarker(t, i, r) {
