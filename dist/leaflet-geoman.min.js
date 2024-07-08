@@ -17422,7 +17422,7 @@
         (this.toolbarButtonName = 'drawArrowLine'),
         (this._doesSelfIntersect = !1),
         (this._defaultArrowheadOptions = {
-          fill: !1,
+          fill: !0,
           frequency: 'endonly',
           yawn: 30,
           size: '25px',

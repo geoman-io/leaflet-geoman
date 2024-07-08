@@ -10,7 +10,7 @@ Draw.ArrowLine = Draw.extend({
     this.toolbarButtonName = 'drawArrowLine';
     this._doesSelfIntersect = false;
     this._defaultArrowheadOptions = {
-      fill: false,
+      fill: true,
       frequency: 'endonly',
       yawn: 30,
       size: '25px',
