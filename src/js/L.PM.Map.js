@@ -130,13 +130,14 @@ const Map = L.Class.extend({
     this.Toolbar.removeControls();
   },
   disableAllModes() {
-    this.disableGlobalCutMode();
-    this.disableGlobalEditMode();
-    this.disableGlobalDragMode();
-    this.disableGlobalRotateMode();
-    this.disableGlobalRemovalMode();
-    this.disableGlobalArrowEditMode();
-    this.disableGlobalColorChangeMode();
+    if (this.globalCutModeEnabled()) this.disableGlobalCutMode();
+    if (this.globalEditModeEnabled()) this.disableGlobalEditMode();
+    if (this.globalDragModeEnabled()) this.disableGlobalDragMode();
+    if (this.globalRotateModeEnabled()) this.disableGlobalRotateMode();
+    if (this.globalRemovalModeEnabled()) this.disableGlobalRemovalMode();
+    if (this.globalArrowEditModeEnabled()) this.disableGlobalArrowEditMode();
+    if (this.globalColorChangeModeEnabled())
+      this.disableGlobalColorChangeMode();
   },
   toggleControls() {
     this.Toolbar.toggleControls();

@@ -15186,13 +15186,15 @@
         this.Toolbar.removeControls();
       },
       disableAllModes() {
-        this.disableGlobalCutMode(),
-          this.disableGlobalEditMode(),
-          this.disableGlobalDragMode(),
-          this.disableGlobalRotateMode(),
-          this.disableGlobalRemovalMode(),
-          this.disableGlobalArrowEditMode(),
-          this.disableGlobalColorChangeMode();
+        this.globalCutModeEnabled() && this.disableGlobalCutMode(),
+          this.globalEditModeEnabled() && this.disableGlobalEditMode(),
+          this.globalDragModeEnabled() && this.disableGlobalDragMode(),
+          this.globalRotateModeEnabled() && this.disableGlobalRotateMode(),
+          this.globalRemovalModeEnabled() && this.disableGlobalRemovalMode(),
+          this.globalArrowEditModeEnabled() &&
+            this.disableGlobalArrowEditMode(),
+          this.globalColorChangeModeEnabled() &&
+            this.disableGlobalColorChangeMode();
       },
       toggleControls() {
         this.Toolbar.toggleControls();
@@ -17960,14 +17962,8 @@
         (this._defaultRadius = 10);
     },
     enable(t) {
-      let i = this.rgbToHex(
-        L.DomUtil.getStyle(this._layer.getElement(), 'stroke')
-      );
       if (
-        (L.Util.setOptions(this, {
-          ...t,
-          color: i || this.options.defaultColor,
-        }),
+        (L.Util.setOptions(this, t),
         this.options.editable &&
           ((this.options.resizeableCircleMarker = this.options.editable),
           delete this.options.editable),
@@ -17976,13 +17972,13 @@
         this._map.getContainer().classList.add('geoman-draw-cursor'),
         this.options[this._editableOption])
       ) {
-        let r = {};
-        L.extend(r, this.options.templineStyle),
-          (r.radius = 0),
+        let i = {};
+        L.extend(i, this.options.templineStyle),
+          (i.radius = 0),
           (this._layerGroup = new L.FeatureGroup()),
           (this._layerGroup._pmTempLayer = !0),
           this._layerGroup.addTo(this._map),
-          (this._layer = new this._BaseCircleClass(this._map.getCenter(), r)),
+          (this._layer = new this._BaseCircleClass(this._map.getCenter(), i)),
           this._setPane(this._layer, 'layerPane'),
           (this._layer._pmTempLayer = !0),
           (this._centerMarker = L.marker(this._map.getCenter(), {
