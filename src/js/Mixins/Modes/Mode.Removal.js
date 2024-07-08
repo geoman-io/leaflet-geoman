@@ -31,6 +31,10 @@ const GlobalRemovalMode = {
     this._fireGlobalRemovalModeToggled(true);
   },
   disableGlobalRemovalMode() {
+    if (!this._globalRemovalModeEnabled) {
+      return;
+    }
+
     this._globalRemovalModeEnabled = false;
     this.map.eachLayer((layer) => {
       layer.off('click', this.removeLayer, this);

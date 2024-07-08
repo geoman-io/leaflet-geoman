@@ -29,6 +29,10 @@ const GlobalRotateMode = {
     this._fireGlobalRotateModeToggled();
   },
   disableGlobalRotateMode() {
+    if (!this._globalRotateModeEnabled) {
+      return;
+    }
+
     this._globalRotateModeEnabled = false;
     const layers = L.PM.Utils.findLayers(this.map).filter(
       (l) => l instanceof L.Polyline

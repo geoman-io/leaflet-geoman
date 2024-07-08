@@ -23,6 +23,9 @@ const GlobalColorChangeMode = {
     this._fireGlobalColorChangeModeToggled();
   },
   disableGlobalColorChangeMode() {
+    if (!this._globalChangeColorModeEnabled) {
+      return;
+    }
     this._globalChangeColorModeEnabled = false;
     const layers = L.PM.Utils.findLayers(this.map);
     layers.forEach((layer) => {
