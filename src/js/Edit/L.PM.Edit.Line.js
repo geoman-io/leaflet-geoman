@@ -39,7 +39,7 @@ Edit.Line = Edit.extend({
     );
     L.Util.setOptions(this, {
       ...options,
-      color: hexColorValue || this.globalOptions.defaultColor,
+      color: hexColorValue || this.options.defaultColor,
     });
 
     this._map = this._layer._map;

@@ -201,8 +201,8 @@ const Utils = {
     const result = rgb.match(/\d+/g);
 
     // Ensure that the input is valid
-    if (result.length !== 3) {
-      throw new Error('Invalid RGB color format');
+    if (!result || result.length !== 3) {
+      return this.options.defaultColor;
     }
 
     // Convert each RGB component to its HEX value

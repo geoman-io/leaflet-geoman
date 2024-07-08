@@ -22,7 +22,7 @@ Draw.CircleMarker = Draw.extend({
     );
     L.Util.setOptions(this, {
       ...options,
-      color: hexColorValue || this.globalOptions.defaultColor,
+      color: hexColorValue || this.options.defaultColor,
     });
     // TODO: remove with next major release
     if (this.options.editable) {
