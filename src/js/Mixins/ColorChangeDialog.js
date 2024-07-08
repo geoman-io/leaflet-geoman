@@ -82,7 +82,7 @@ const ColorChangeMixin = {
           hintlineStyle: { ...style, dashArray: '5,5' },
           pathOptions: style,
         });
-        map.pm._fireColorChanged(options.activeColor, 'Global');
+        map.pm._fireColorChanged(e, 'Global');
       },
       swatches: [
         '#0020A0',

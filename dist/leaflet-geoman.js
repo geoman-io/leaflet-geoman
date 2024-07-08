@@ -14885,7 +14885,7 @@
               hintlineStyle: { ...o, dashArray: '5,5' },
               pathOptions: o,
             }),
-              t.pm._fireColorChanged(i.activeColor, 'Global');
+              t.pm._fireColorChanged(r, 'Global');
           },
           swatches: [
             '#0020A0',
