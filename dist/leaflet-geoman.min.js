@@ -14826,7 +14826,7 @@
           ? this.colorChangeDialog?.close()
           : (this.colorChangeDialog?.open(),
             this.drawArrowLineDialog?.isOpen()
-              ? this.colorChangeDialog.setLocation([275, -210])
+              ? this.colorChangeDialog.setLocation([300, -210])
               : this.colorChangeDialog.setLocation([0, -210])),
           this.updateColorisPosition();
       },
