@@ -9,7 +9,7 @@ Draw.ArrowLine = Draw.extend({
     this._shape = 'ArrowLine';
     this.toolbarButtonName = 'drawArrowLine';
     this._doesSelfIntersect = false;
-    this._arrowheadOptions = {
+    this._defaultArrowheadOptions = {
       fill: false,
       frequency: 'endonly',
       yawn: 30,
@@ -20,6 +20,7 @@ Draw.ArrowLine = Draw.extend({
   },
   enable(options) {
     L.Util.setOptions(this, options);
+    this._arrowheadOptions = { ...this._defaultArrowheadOptions };
 
     this.openDialog();
 

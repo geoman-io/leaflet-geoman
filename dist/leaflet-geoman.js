@@ -606,7 +606,7 @@
           if (e instanceof et) (h = e), (f = e);
           else if (e instanceof J) {
             if (((h = e._southWest), (f = e._northEast), !h || !f)) return this;
-          } else return e ? this.extend(st(e) || it(e)) : this;
+          } else return e ? this.extend(ot(e) || it(e)) : this;
           return (
             !n && !s
               ? ((this._southWest = new et(h.lat, h.lng)),
@@ -660,7 +660,7 @@
         },
         contains: function (e) {
           typeof e[0] == 'number' || e instanceof et || 'lat' in e
-            ? (e = st(e))
+            ? (e = ot(e))
             : (e = it(e));
           var n = this._southWest,
             s = this._northEast,
@@ -723,7 +723,7 @@
       et.prototype = {
         equals: function (e, n) {
           if (!e) return !1;
-          e = st(e);
+          e = ot(e);
           var s = Math.max(
             Math.abs(this.lat - e.lat),
             Math.abs(this.lng - e.lng)
@@ -734,7 +734,7 @@
           return 'LatLng(' + y(this.lat, e) + ', ' + y(this.lng, e) + ')';
         },
         distanceTo: function (e) {
-          return ut.distance(this, st(e));
+          return ut.distance(this, ot(e));
         },
         wrap: function () {
           return ut.wrapLatLng(this);
@@ -748,7 +748,7 @@
           return new et(this.lat, this.lng, this.alt);
         },
       };
-      function st(e, n, s) {
+      function ot(e, n, s) {
         return e instanceof et
           ? e
           : B(e) && typeof e[0] != 'object'
@@ -1596,7 +1596,7 @@
               n.zoom !== void 0 && (this._zoom = this._limitZoom(n.zoom)),
               n.center &&
                 n.zoom !== void 0 &&
-                this.setView(st(n.center), n.zoom, { reset: !0 }),
+                this.setView(ot(n.center), n.zoom, { reset: !0 }),
               this.callInitHooks(),
               (this._zoomAnimated =
                 Ai &&
@@ -1611,7 +1611,7 @@
           setView: function (e, n, s) {
             if (
               ((n = n === void 0 ? this._zoom : this._limitZoom(n)),
-              (e = this._limitCenter(st(e), n, this.options.maxBounds)),
+              (e = this._limitCenter(ot(e), n, this.options.maxBounds)),
               (s = s || {}),
               this._stop(),
               this._loaded && !s.reset && s !== !0)
@@ -1732,7 +1732,7 @@
               f = this.project(e),
               m = this.getSize(),
               x = this._zoom;
-            (e = st(e)), (n = n === void 0 ? x : n);
+            (e = ot(e)), (n = n === void 0 ? x : n);
             var z = Math.max(m.x, m.y),
               G = z * this.getZoomScale(x, n),
               j = f.distanceTo(h) || 1,
@@ -2098,7 +2098,7 @@
           project: function (e, n) {
             return (
               (n = n === void 0 ? this._zoom : n),
-              this.options.crs.latLngToPoint(st(e), n)
+              this.options.crs.latLngToPoint(ot(e), n)
             );
           },
           unproject: function (e, n) {
@@ -2112,17 +2112,17 @@
             return this.unproject(n);
           },
           latLngToLayerPoint: function (e) {
-            var n = this.project(st(e))._round();
+            var n = this.project(ot(e))._round();
             return n._subtract(this.getPixelOrigin());
           },
           wrapLatLng: function (e) {
-            return this.options.crs.wrapLatLng(st(e));
+            return this.options.crs.wrapLatLng(ot(e));
           },
           wrapLatLngBounds: function (e) {
             return this.options.crs.wrapLatLngBounds(it(e));
           },
           distance: function (e, n) {
-            return this.options.crs.distance(st(e), st(n));
+            return this.options.crs.distance(ot(e), ot(n));
           },
           containerPointToLayerPoint: function (e) {
             return E(e).subtract(this._getMapPanePos());
@@ -2136,7 +2136,7 @@
           },
           latLngToContainerPoint: function (e) {
             return this.layerPointToContainerPoint(
-              this.latLngToLayerPoint(st(e))
+              this.latLngToLayerPoint(ot(e))
             );
           },
           mouseEventToContainerPoint: function (e) {
@@ -3436,7 +3436,7 @@
           ),
           (e = e[0]));
         var Q = [];
-        for (var ht in e) Q.push(n.project(st(e[ht])));
+        for (var ht in e) Q.push(n.project(ot(e[ht])));
         var mt = Q.length;
         for (s = 0, h = 0; s < mt - 1; s++) h += Q[s].distanceTo(Q[s + 1]) / 2;
         if (h === 0) j = Q[0];
@@ -3511,7 +3511,7 @@
           ),
           (e = e[0]));
         var ht = [];
-        for (var mt in e) ht.push(n.project(st(e[mt])));
+        for (var mt in e) ht.push(n.project(ot(e[mt])));
         var Jt = ht.length;
         for (z = G = j = 0, s = 0, h = Jt - 1; s < Jt; h = s++)
           (f = ht[s]),
@@ -4048,7 +4048,7 @@
             autoPanSpeed: 10,
           },
           initialize: function (e, n) {
-            O(this, n), (this._latlng = st(e));
+            O(this, n), (this._latlng = ot(e));
           },
           onAdd: function (e) {
             (this._zoomAnimated =
@@ -4075,7 +4075,7 @@
           setLatLng: function (e) {
             var n = this._latlng;
             return (
-              (this._latlng = st(e)),
+              (this._latlng = ot(e)),
               this.update(),
               this.fire('move', { oldLatLng: n, latlng: this._latlng })
             );
@@ -4285,13 +4285,13 @@
           options: { fill: !0, radius: 10 },
           initialize: function (e, n) {
             O(this, n),
-              (this._latlng = st(e)),
+              (this._latlng = ot(e)),
               (this._radius = this.options.radius);
           },
           setLatLng: function (e) {
             var n = this._latlng;
             return (
-              (this._latlng = st(e)),
+              (this._latlng = ot(e)),
               this.redraw(),
               this.fire('move', { oldLatLng: n, latlng: this._latlng })
             );
@@ -4345,7 +4345,7 @@
           if (
             (typeof n == 'number' && (n = r({}, s, { radius: n })),
             O(this, n),
-            (this._latlng = st(e)),
+            (this._latlng = ot(e)),
             isNaN(this.options.radius))
           )
             throw new Error('Circle radius cannot be NaN');
@@ -4443,7 +4443,7 @@
         addLatLng: function (e, n) {
           return (
             (n = n || this._defaultShape()),
-            (e = st(e)),
+            (e = ot(e)),
             n.push(e),
             this._bounds.extend(e),
             this.redraw()
@@ -4458,7 +4458,7 @@
         _convertLatLngs: function (e) {
           for (var n = [], s = Xt(e), h = 0, f = e.length; h < f; h++)
             s
-              ? ((n[h] = st(e[h])), this._bounds.extend(n[h]))
+              ? ((n[h] = ot(e[h])), this._bounds.extend(n[h]))
               : (n[h] = this._convertLatLngs(e[h]));
           return n;
         },
@@ -4737,7 +4737,7 @@
       }
       function zn(e, n) {
         return (
-          (e = st(e)),
+          (e = ot(e)),
           e.alt !== void 0
             ? [y(e.lng, n), y(e.lat, n), y(e.alt, n)]
             : [y(e.lng, n), y(e.lat, n)]
@@ -5026,7 +5026,7 @@
         },
         initialize: function (e, n) {
           e && (e instanceof et || B(e))
-            ? ((this._latlng = st(e)), O(this, n))
+            ? ((this._latlng = ot(e)), O(this, n))
             : (O(this, e), (this._source = n)),
             this.options.content && (this._content = this.options.content);
         },
@@ -5080,7 +5080,7 @@
         },
         setLatLng: function (e) {
           return (
-            (this._latlng = st(e)),
+            (this._latlng = ot(e)),
             this._map && (this._updatePosition(), this._adjustPan()),
             this
           );
@@ -7673,7 +7673,7 @@
         (t.gridLayer = qd),
         (t.icon = Ed),
         (t.imageOverlay = Rd),
-        (t.latLng = st),
+        (t.latLng = ot),
         (t.latLngBounds = it),
         (t.layerGroup = Cd),
         (t.map = ud),
@@ -9778,28 +9778,28 @@
       );
     });
   });
-  var wo = Z((at) => {
+  var wo = Z((st) => {
     'use strict';
-    Object.defineProperty(at, '__esModule', { value: !0 });
-    at.earthRadius = 63710088e-1;
-    at.factors = {
-      centimeters: at.earthRadius * 100,
-      centimetres: at.earthRadius * 100,
-      degrees: at.earthRadius / 111325,
-      feet: at.earthRadius * 3.28084,
-      inches: at.earthRadius * 39.37,
-      kilometers: at.earthRadius / 1e3,
-      kilometres: at.earthRadius / 1e3,
-      meters: at.earthRadius,
-      metres: at.earthRadius,
-      miles: at.earthRadius / 1609.344,
-      millimeters: at.earthRadius * 1e3,
-      millimetres: at.earthRadius * 1e3,
-      nauticalmiles: at.earthRadius / 1852,
+    Object.defineProperty(st, '__esModule', { value: !0 });
+    st.earthRadius = 63710088e-1;
+    st.factors = {
+      centimeters: st.earthRadius * 100,
+      centimetres: st.earthRadius * 100,
+      degrees: st.earthRadius / 111325,
+      feet: st.earthRadius * 3.28084,
+      inches: st.earthRadius * 39.37,
+      kilometers: st.earthRadius / 1e3,
+      kilometres: st.earthRadius / 1e3,
+      meters: st.earthRadius,
+      metres: st.earthRadius,
+      miles: st.earthRadius / 1609.344,
+      millimeters: st.earthRadius * 1e3,
+      millimetres: st.earthRadius * 1e3,
+      nauticalmiles: st.earthRadius / 1852,
       radians: 1,
-      yards: at.earthRadius * 1.0936,
+      yards: st.earthRadius * 1.0936,
     };
-    at.unitsFactors = {
+    st.unitsFactors = {
       centimeters: 100,
       centimetres: 100,
       degrees: 1 / 111325,
@@ -9813,10 +9813,10 @@
       millimeters: 1e3,
       millimetres: 1e3,
       nauticalmiles: 1 / 1852,
-      radians: 1 / at.earthRadius,
+      radians: 1 / st.earthRadius,
       yards: 1.0936133,
     };
-    at.areaFactors = {
+    st.areaFactors = {
       acres: 247105e-9,
       centimeters: 1e4,
       centimetres: 1e4,
@@ -9843,7 +9843,7 @@
         o
       );
     }
-    at.feature = Fe;
+    st.feature = Fe;
     function Sb(t, i, r) {
       switch ((r === void 0 && (r = {}), t)) {
         case 'Point':
@@ -9862,7 +9862,7 @@
           throw new Error(t + ' is invalid');
       }
     }
-    at.geometry = Sb;
+    st.geometry = Sb;
     function yo(t, i, r) {
       if ((r === void 0 && (r = {}), !t))
         throw new Error('coordinates is required');
@@ -9874,7 +9874,7 @@
       var o = { type: 'Point', coordinates: t };
       return Fe(o, i, r);
     }
-    at.point = yo;
+    st.point = yo;
     function Tb(t, i, r) {
       return (
         r === void 0 && (r = {}),
@@ -9886,7 +9886,7 @@
         )
       );
     }
-    at.points = Tb;
+    st.points = Tb;
     function vo(t, i, r) {
       r === void 0 && (r = {});
       for (var o = 0, a = t; o < a.length; o++) {
@@ -9902,7 +9902,7 @@
       var c = { type: 'Polygon', coordinates: t };
       return Fe(c, i, r);
     }
-    at.polygon = vo;
+    st.polygon = vo;
     function Bb(t, i, r) {
       return (
         r === void 0 && (r = {}),
@@ -9914,7 +9914,7 @@
         )
       );
     }
-    at.polygons = Bb;
+    st.polygons = Bb;
     function Lo(t, i, r) {
       if ((r === void 0 && (r = {}), t.length < 2))
         throw new Error(
@@ -9923,7 +9923,7 @@
       var o = { type: 'LineString', coordinates: t };
       return Fe(o, i, r);
     }
-    at.lineString = Lo;
+    st.lineString = Lo;
     function Ab(t, i, r) {
       return (
         r === void 0 && (r = {}),
@@ -9935,7 +9935,7 @@
         )
       );
     }
-    at.lineStrings = Ab;
+    st.lineStrings = Ab;
     function Wr(t, i) {
       i === void 0 && (i = {});
       var r = { type: 'FeatureCollection' };
@@ -9943,71 +9943,71 @@
         i.id && (r.id = i.id), i.bbox && (r.bbox = i.bbox), (r.features = t), r
       );
     }
-    at.featureCollection = Wr;
+    st.featureCollection = Wr;
     function qc(t, i, r) {
       r === void 0 && (r = {});
       var o = { type: 'MultiLineString', coordinates: t };
       return Fe(o, i, r);
     }
-    at.multiLineString = qc;
+    st.multiLineString = qc;
     function Zc(t, i, r) {
       r === void 0 && (r = {});
       var o = { type: 'MultiPoint', coordinates: t };
       return Fe(o, i, r);
     }
-    at.multiPoint = Zc;
+    st.multiPoint = Zc;
     function Uc(t, i, r) {
       r === void 0 && (r = {});
       var o = { type: 'MultiPolygon', coordinates: t };
       return Fe(o, i, r);
     }
-    at.multiPolygon = Uc;
+    st.multiPolygon = Uc;
     function Db(t, i, r) {
       r === void 0 && (r = {});
       var o = { type: 'GeometryCollection', geometries: t };
       return Fe(o, i, r);
     }
-    at.geometryCollection = Db;
+    st.geometryCollection = Db;
     function Ob(t, i) {
       if ((i === void 0 && (i = 0), i && !(i >= 0)))
         throw new Error('precision must be a positive number');
       var r = Math.pow(10, i || 0);
       return Math.round(t * r) / r;
     }
-    at.round = Ob;
+    st.round = Ob;
     function Vc(t, i) {
       i === void 0 && (i = 'kilometers');
-      var r = at.factors[i];
+      var r = st.factors[i];
       if (!r) throw new Error(i + ' units is invalid');
       return t * r;
     }
-    at.radiansToLength = Vc;
+    st.radiansToLength = Vc;
     function bo(t, i) {
       i === void 0 && (i = 'kilometers');
-      var r = at.factors[i];
+      var r = st.factors[i];
       if (!r) throw new Error(i + ' units is invalid');
       return t / r;
     }
-    at.lengthToRadians = bo;
+    st.lengthToRadians = bo;
     function Rb(t, i) {
       return Hc(bo(t, i));
     }
-    at.lengthToDegrees = Rb;
+    st.lengthToDegrees = Rb;
     function Ib(t) {
       var i = t % 360;
       return i < 0 && (i += 360), i;
     }
-    at.bearingToAzimuth = Ib;
+    st.bearingToAzimuth = Ib;
     function Hc(t) {
       var i = t % (2 * Math.PI);
       return (i * 180) / Math.PI;
     }
-    at.radiansToDegrees = Hc;
+    st.radiansToDegrees = Hc;
     function zb(t) {
       var i = t % 360;
       return (i * Math.PI) / 180;
     }
-    at.degreesToRadians = zb;
+    st.degreesToRadians = zb;
     function Nb(t, i, r) {
       if (
         (i === void 0 && (i = 'kilometers'),
@@ -10017,7 +10017,7 @@
         throw new Error('length must be a positive number');
       return Vc(bo(t, i), r);
     }
-    at.convertLength = Nb;
+    st.convertLength = Nb;
     function Gb(t, i, r) {
       if (
         (i === void 0 && (i = 'meters'),
@@ -10025,21 +10025,21 @@
         !(t >= 0))
       )
         throw new Error('area must be a positive number');
-      var o = at.areaFactors[i];
+      var o = st.areaFactors[i];
       if (!o) throw new Error('invalid original units');
-      var a = at.areaFactors[r];
+      var a = st.areaFactors[r];
       if (!a) throw new Error('invalid final units');
       return (t / o) * a;
     }
-    at.convertArea = Gb;
+    st.convertArea = Gb;
     function Kr(t) {
       return !isNaN(t) && t !== null && !Array.isArray(t);
     }
-    at.isNumber = Kr;
+    st.isNumber = Kr;
     function Fb(t) {
       return !!t && t.constructor === Object;
     }
-    at.isObject = Fb;
+    st.isObject = Fb;
     function qb(t) {
       if (!t) throw new Error('bbox is required');
       if (!Array.isArray(t)) throw new Error('bbox must be an Array');
@@ -10049,13 +10049,13 @@
         if (!Kr(i)) throw new Error('bbox must only contain numbers');
       });
     }
-    at.validateBBox = qb;
+    st.validateBBox = qb;
     function Zb(t) {
       if (!t) throw new Error('id is required');
       if (['string', 'number'].indexOf(typeof t) === -1)
         throw new Error('id must be a number or a string');
     }
-    at.validateId = Zb;
+    st.validateId = Zb;
   });
   var ko = Z((Rt) => {
     'use strict';
@@ -11468,7 +11468,7 @@
                 A.inline)
               ) {
                 let rt = C.defaultColor || A.defaultColor;
-                (K = lt(rt)), F(), st(rt);
+                (K = lt(rt)), F(), ot(rt);
               }
               break;
             case 'clearButton':
@@ -11553,7 +11553,7 @@
         (K = lt(W)),
         c.classList.add('clr-open'),
         F(),
-        st(W),
+        ot(W),
         (A.focusInput || A.selectInput) &&
           (b.focus({ preventScroll: !0 }),
           b.setSelectionRange(M.selectionStart, M.selectionEnd)),
@@ -11654,7 +11654,7 @@
           (M = o);
       }
     }
-    function st(C) {
+    function ot(C) {
       let H = Bi(C),
         U = pr(H);
       ne(U.s, U.v),
@@ -11912,7 +11912,7 @@
         yt(b, 'change', (C) => {
           let H = b.value;
           if (M || A.inline) {
-            let U = H === '' ? H : st(H);
+            let U = H === '' ? H : ot(H);
             ut(U);
           }
         }),
@@ -11926,7 +11926,7 @@
           (K = C.target.value), Tt(), ut();
         }),
         yt(c, 'click', '.clr-swatches button', (C) => {
-          st(C.target.textContent), ut(), A.swatchesOnly && et();
+          ot(C.target.textContent), ut(), A.swatchesOnly && et();
         }),
         yt(i, 'mouseup', (C) => {
           i.removeEventListener('mousemove', Nt);
@@ -14950,7 +14950,7 @@
     }),
     tc = BL;
   var ho = le(tr());
-  function ot(t) {
+  function at(t) {
     let i = L.PM.activeLang;
     return (0, ho.default)(Ie[i], t) || (0, ho.default)(Ie.en, t) || t;
   }
@@ -15493,36 +15493,32 @@
           l = t.actions,
           u = {
             cancel: {
-              text: ot('actions.cancel'),
-              title: ot('actions.cancel'),
+              text: at('actions.cancel'),
+              title: at('actions.cancel'),
               onClick() {
                 this._triggerClick();
               },
-              title: ot('actions.cancel'),
             },
             finishMode: {
-              text: ot('actions.finish'),
-              title: ot('actions.finish'),
+              text: at('actions.finish'),
+              title: at('actions.finish'),
               onClick() {
                 this._triggerClick();
               },
-              title: ot('actions.finish'),
             },
             removeLastVertex: {
-              text: ot('actions.removeLastVertex'),
-              title: ot('actions.removeLastVertex'),
+              text: at('actions.removeLastVertex'),
+              title: at('actions.removeLastVertex'),
               onClick() {
                 this._map.pm.Draw[t.jsClass]._removeLastVertex();
               },
-              title: ot('actions.removeLastVertex'),
             },
             finish: {
-              text: ot('actions.finish'),
-              title: ot('actions.finish'),
+              text: at('actions.finish'),
+              title: at('actions.finish'),
               onClick(d) {
                 this._map.pm.Draw[t.jsClass]._finishShape(d);
               },
-              title: ot('actions.finish'),
             },
             changeColor: {
               text: `
@@ -15533,7 +15529,7 @@
                 this._map.pm.Dialog.toggleColorChangeDialog(),
                   this._map.pm.Dialog.colorChangeDialog.showClose();
               },
-              title: ot('actions.changeColor'),
+              title: at('actions.changeColor'),
               events: [
                 {
                   eventName: 'pm:colorchanged',
@@ -15789,7 +15785,7 @@
       _defineButtons() {
         let t = {
             className: 'control-icon leaflet-pm-icon-marker',
-            title: ot('buttonTitles.drawMarkerButton'),
+            title: at('buttonTitles.drawMarkerButton'),
             jsClass: 'Marker',
             onClick: () => {},
             afterClick: ($, w) => {
@@ -15802,7 +15798,7 @@
             actions: ['cancel'],
           },
           i = {
-            title: ot('buttonTitles.drawPolyButton'),
+            title: at('buttonTitles.drawPolyButton'),
             className: 'control-icon leaflet-pm-icon-polygon',
             jsClass: 'Polygon',
             onClick: () => {},
@@ -15817,7 +15813,7 @@
           },
           r = {
             className: 'control-icon leaflet-pm-icon-polyline',
-            title: ot('buttonTitles.drawLineButton'),
+            title: at('buttonTitles.drawLineButton'),
             jsClass: 'Line',
             onClick: () => {},
             afterClick: ($, w) => {
@@ -15831,7 +15827,7 @@
           },
           o = {
             className: 'control-icon leaflet-pm-icon-arrowline',
-            title: ot('buttonTitles.drawArrowLineButton'),
+            title: at('buttonTitles.drawArrowLineButton'),
             jsClass: 'ArrowLine',
             onClick: () => {},
             afterClick: ($, w) => {
@@ -15844,7 +15840,7 @@
             actions: ['finish', 'removeLastVertex', 'cancel', 'changeColor'],
           },
           a = {
-            title: ot('buttonTitles.drawCircleButton'),
+            title: at('buttonTitles.drawCircleButton'),
             className: 'control-icon leaflet-pm-icon-circle',
             jsClass: 'Circle',
             onClick: () => {},
@@ -15858,7 +15854,7 @@
             actions: ['cancel', 'changeColor'],
           },
           l = {
-            title: ot('buttonTitles.drawCircleMarkerButton'),
+            title: at('buttonTitles.drawCircleMarkerButton'),
             className: 'control-icon leaflet-pm-icon-circle-marker',
             jsClass: 'CircleMarker',
             onClick: () => {},
@@ -15872,7 +15868,7 @@
             actions: ['cancel', 'changeColor'],
           },
           u = {
-            title: ot('buttonTitles.drawRectButton'),
+            title: at('buttonTitles.drawRectButton'),
             className: 'control-icon leaflet-pm-icon-rectangle',
             jsClass: 'Rectangle',
             onClick: () => {},
@@ -15886,7 +15882,7 @@
             actions: ['cancel', 'changeColor'],
           },
           c = {
-            title: ot('buttonTitles.editButton'),
+            title: at('buttonTitles.editButton'),
             className: 'control-icon leaflet-pm-icon-edit',
             onClick: () => {},
             afterClick: () => {
@@ -15901,7 +15897,7 @@
           },
           d = {
             className: 'control-icon leaflet-pm-icon-arrowline-edit',
-            title: ot('buttonTitles.editArrowLineButton'),
+            title: at('buttonTitles.editArrowLineButton'),
             onClick: () => {},
             afterClick: () => {
               this.map.pm.toggleGlobalArrowEditMode();
@@ -15915,7 +15911,7 @@
           },
           p = {
             className: 'control-icon leaflet-pm-icon-change-color',
-            title: ot('buttonTitles.changeColorButton'),
+            title: at('buttonTitles.changeColorButton'),
             onClick: () => {},
             afterClick: () => {
               this.map.pm.toggleGlobalColorChangeMode();
@@ -15928,7 +15924,7 @@
             actions: ['finishMode'],
           },
           y = {
-            title: ot('buttonTitles.dragButton'),
+            title: at('buttonTitles.dragButton'),
             className: 'control-icon leaflet-pm-icon-drag',
             onClick: () => {},
             afterClick: () => {
@@ -15942,7 +15938,7 @@
             actions: ['finishMode'],
           },
           b = {
-            title: ot('buttonTitles.cutButton'),
+            title: at('buttonTitles.cutButton'),
             className: 'control-icon leaflet-pm-icon-cut',
             jsClass: 'Cut',
             onClick: () => {},
@@ -15961,7 +15957,7 @@
             actions: ['finish', 'removeLastVertex', 'cancel'],
           },
           D = {
-            title: ot('buttonTitles.deleteButton'),
+            title: at('buttonTitles.deleteButton'),
             className: 'control-icon leaflet-pm-icon-delete',
             onClick: () => {},
             afterClick: () => {
@@ -15975,7 +15971,7 @@
             actions: ['finishMode'],
           },
           O = {
-            title: ot('buttonTitles.rotateButton'),
+            title: at('buttonTitles.rotateButton'),
             className: 'control-icon leaflet-pm-icon-rotate',
             onClick: () => {},
             afterClick: () => {
@@ -15990,7 +15986,7 @@
           },
           q = {
             className: 'control-icon leaflet-pm-icon-text',
-            title: ot('buttonTitles.drawTextButton'),
+            title: at('buttonTitles.drawTextButton'),
             jsClass: 'Text',
             onClick: () => {},
             afterClick: ($, w) => {
@@ -16710,7 +16706,7 @@
         this._hintMarker.addTo(this._map),
         this.options.tooltips &&
           this._hintMarker
-            .bindTooltip(ot('tooltips.placeMarker'), {
+            .bindTooltip(at('tooltips.placeMarker'), {
               permanent: !0,
               offset: L.point(0, 10),
               direction: 'bottom',
@@ -16993,7 +16989,7 @@
           L.DomUtil.addClass(this._hintMarker._icon, 'visible'),
         this.options.tooltips &&
           this._hintMarker
-            .bindTooltip(ot('tooltips.firstVertex'), {
+            .bindTooltip(at('tooltips.firstVertex'), {
               permanent: !0,
               offset: L.point(0, 10),
               direction: 'bottom',
@@ -17164,8 +17160,8 @@
       let { length: t } = this._layer.getLatLngs().flat(),
         i = '';
       t <= 1
-        ? (i = ot('tooltips.continueLine'))
-        : (i = ot('tooltips.finishLine')),
+        ? (i = at('tooltips.continueLine'))
+        : (i = at('tooltips.finishLine')),
         this._hintMarker.setTooltipContent(i);
     },
     _change(t) {
@@ -17182,7 +17178,7 @@
         (this._shape = 'ArrowLine'),
         (this.toolbarButtonName = 'drawArrowLine'),
         (this._doesSelfIntersect = !1),
-        (this._arrowheadOptions = {
+        (this._defaultArrowheadOptions = {
           fill: !1,
           frequency: 'endonly',
           yawn: 30,
@@ -17193,6 +17189,7 @@
     },
     enable(t) {
       L.Util.setOptions(this, t),
+        (this._arrowheadOptions = { ...this._defaultArrowheadOptions }),
         this.openDialog(),
         (this._enabled = !0),
         (this._markers = []),
@@ -17224,7 +17221,7 @@
           L.DomUtil.addClass(this._hintMarker._icon, 'visible'),
         this.options.tooltips &&
           this._hintMarker
-            .bindTooltip(ot('tooltips.firstVertex'), {
+            .bindTooltip(at('tooltips.firstVertex'), {
               permanent: !0,
               offset: L.point(0, 10),
               direction: 'bottom',
@@ -17446,8 +17443,8 @@
       let { length: t } = this._layer.getLatLngs().flat(),
         i = '';
       t <= 1
-        ? (i = ot('tooltips.continueLine'))
-        : (i = ot('tooltips.finishLine')),
+        ? (i = at('tooltips.continueLine'))
+        : (i = at('tooltips.finishLine')),
         this._hintMarker.setTooltipContent(i);
     },
     _change(t) {
@@ -17490,8 +17487,8 @@
       let { length: t } = this._layer.getLatLngs().flat(),
         i = '';
       t <= 2
-        ? (i = ot('tooltips.continueLine'))
-        : (i = ot('tooltips.finishPoly')),
+        ? (i = at('tooltips.continueLine'))
+        : (i = at('tooltips.finishPoly')),
         this._hintMarker.setTooltipContent(i);
     },
     _finishShape() {
@@ -17560,7 +17557,7 @@
           L.DomUtil.addClass(this._hintMarker._icon, 'visible'),
         this.options.tooltips &&
           this._hintMarker
-            .bindTooltip(ot('tooltips.firstVertex'), {
+            .bindTooltip(at('tooltips.firstVertex'), {
               permanent: !0,
               offset: L.point(0, 10),
               direction: 'bottom',
@@ -17621,7 +17618,7 @@
           }),
         this._map.off('click', this._placeStartingMarkers, this),
         this._map.on('click', this._finishShape, this),
-        this._hintMarker.setTooltipContent(ot('tooltips.finishRect')),
+        this._hintMarker.setTooltipContent(at('tooltips.finishRect')),
         this._setRectangleOrigin();
     },
     _setRectangleOrigin() {
@@ -17758,7 +17755,7 @@
             L.DomUtil.addClass(this._hintMarker._icon, 'visible'),
           this.options.tooltips &&
             this._hintMarker
-              .bindTooltip(ot('tooltips.startCircle'), {
+              .bindTooltip(at('tooltips.startCircle'), {
                 permanent: !0,
                 offset: L.point(0, 10),
                 direction: 'bottom',
@@ -17782,7 +17779,7 @@
           (this._layer = this._hintMarker),
           this.options.tooltips &&
             this._hintMarker
-              .bindTooltip(ot('tooltips.placeCircleMarker'), {
+              .bindTooltip(at('tooltips.placeCircleMarker'), {
                 permanent: !0,
                 offset: L.point(0, 10),
                 direction: 'bottom',
@@ -17848,7 +17845,7 @@
         (this._layer.setLatLng(t),
         this._hintMarker.on('move', this._syncHintLine, this),
         this._hintMarker.on('move', this._syncCircleRadius, this),
-        this._hintMarker.setTooltipContent(ot('tooltips.finishCircle')),
+        this._hintMarker.setTooltipContent(at('tooltips.finishCircle')),
         this._fireCenterPlaced(),
         this._fireChange(this._layer.getLatLng(), 'Draw'));
     },
@@ -19241,7 +19238,7 @@
             J,
             it,
             et = v.indexOf('.'),
-            st = u,
+            ot = u,
             lt = c;
           for (
             et >= 0 &&
@@ -19265,11 +19262,11 @@
               : ((X.c = J),
                 (X.e = N),
                 (X.s = R),
-                (X = i(X, it, st, lt, P)),
+                (X = i(X, it, ot, lt, P)),
                 (J = X.c),
                 (F = X.r),
                 (N = X.e)),
-            (k = N + st + 1),
+            (k = N + ot + 1),
             (et = J[k]),
             (E = P / 2),
             (F = F || k < 0 || J[k + 1] != null),
@@ -19284,7 +19281,7 @@
                       lt == (X.s < 0 ? 8 : 7)))),
             k < 1 || !J[0])
           )
-            v = F ? Se(S.charAt(1), -st, S.charAt(0)) : S.charAt(0);
+            v = F ? Se(S.charAt(1), -ot, S.charAt(0)) : S.charAt(0);
           else {
             if (((J.length = k), F))
               for (--P; ++J[--k] > P; )
@@ -19342,7 +19339,7 @@
             J,
             it,
             et,
-            st,
+            ot,
             lt,
             ut,
             Et,
@@ -19364,7 +19361,7 @@
             );
           for (
             et = new M(Tt),
-              st = et.c = [],
+              ot = et.c = [],
               N = T.e - P.e,
               Tt = R + N + 1,
               S ||
@@ -19375,7 +19372,7 @@
             bt[E] == (Bt[E] || 0);
             E++
           );
-          if ((bt[E] > (Bt[E] || 0) && N--, Tt < 0)) st.push(1), (F = !0);
+          if ((bt[E] > (Bt[E] || 0) && N--, Tt < 0)) ot.push(1), (F = !0);
           else {
             for (
               we = Bt.length,
@@ -19428,13 +19425,13 @@
                   for (; _(bt, lt, qt, ut) < 1; )
                     X++, v(lt, qt < ut ? fe : bt, ut, S), (ut = lt.length);
               } else k === 0 && (X++, (lt = [0]));
-              (st[E++] = X),
+              (ot[E++] = X),
                 lt[0] ? (lt[ut++] = Bt[ne] || 0) : ((lt = [Bt[ne]]), (ut = 1));
             } while ((ne++ < we || lt[0] != null) && Tt--);
-            (F = lt[0] != null), st[0] || st.splice(0, 1);
+            (F = lt[0] != null), ot[0] || ot.splice(0, 1);
           }
           if (S == ce) {
-            for (E = 1, Tt = st[0]; Tt >= 10; Tt /= 10, E++);
+            for (E = 1, Tt = ot[0]; Tt >= 10; Tt /= 10, E++);
             V(et, R + (et.e = E + N * ct - 1) + 1, I, F);
           } else (et.e = N), (et.r = +F);
           return et;
@@ -19847,7 +19844,7 @@
             J,
             it,
             et,
-            st,
+            ot,
             lt = this,
             ut = lt.c,
             Et = (g = new M(g, _)).c;
@@ -19871,17 +19868,17 @@
             P--;
             it.push(0)
           );
-          for (et = ce, st = qe, P = F; --P >= 0; ) {
+          for (et = ce, ot = qe, P = F; --P >= 0; ) {
             for (
-              v = 0, X = Et[P] % st, J = (Et[P] / st) | 0, I = k, R = P + I;
+              v = 0, X = Et[P] % ot, J = (Et[P] / ot) | 0, I = k, R = P + I;
               R > P;
 
             )
-              (N = ut[--I] % st),
-                (E = (ut[I] / st) | 0),
+              (N = ut[--I] % ot),
+                (E = (ut[I] / ot) | 0),
                 (S = J * N + E * X),
-                (N = X * N + (S % st) * st + it[R] + v),
-                (v = ((N / et) | 0) + ((S / st) | 0) + J * E),
+                (N = X * N + (S % ot) * ot + it[R] + v),
+                (v = ((N / et) | 0) + ((S / ot) | 0) + J * E),
                 (it[R--] = N % et);
             it[R] = v;
           }
@@ -21690,7 +21687,7 @@
           L.DomUtil.addClass(this._hintMarker._icon, 'visible'),
         this.options.tooltips &&
           this._hintMarker
-            .bindTooltip(ot('tooltips.placeText'), {
+            .bindTooltip(at('tooltips.placeText'), {
               permanent: !0,
               offset: L.point(0, 10),
               direction: 'bottom',
@@ -24225,7 +24222,7 @@
             };
       },
       createGeodesicPolygon: uo,
-      getTranslation: ot,
+      getTranslation: at,
       findDeepCoordIndex(t, i, r = !0) {
         let o,
           a = (u) => (c, d) => {
