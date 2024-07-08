@@ -11,8 +11,9 @@ const Draw = L.Class.extend({
     snapMiddle: false,
     allowSelfIntersection: true,
     tooltips: true,
-    color: '#3388ff',
-    templineStyle: {},
+    templineStyle: {
+      color: '#3388ff',
+    },
     hintlineStyle: {
       color: '#3388ff',
       dashArray: '5,5',
