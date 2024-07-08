@@ -8,6 +8,7 @@ const GlobalEditMode = {
     };
     // set status
     this._globalEditModeEnabled = true;
+    this._globalArrowEditModeEnabled = false;
 
     // Set toolbar button to correct status
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());

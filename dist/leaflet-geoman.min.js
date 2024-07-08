@@ -13541,6 +13541,7 @@
       enableGlobalEditMode(t) {
         let i = { hideMiddleMarkers: !1, ...t };
         (this._globalEditModeEnabled = !0),
+          (this._globalArrowEditModeEnabled = !1),
           this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled()),
           L.PM.Utils.findLayers(this.map).forEach((o) => {
             this._isRelevantForEdit(o) && o.pm.enable(i);
@@ -22968,7 +22969,7 @@
         this._dragging)
       )
         return;
-      (this._shape = this._layer.hasArrowheads() ? 'ArrowLine' : 'Line'),
+      (this._shape = this._layer.hasArrowheads() ? 'ArrowLine' : this._shape),
         (this._enabled = !1),
         this._markerGroup.clearLayers(),
         this._markerGroup.removeFrom(this._map),

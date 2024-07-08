@@ -119,7 +119,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    this._shape = this._layer.hasArrowheads() ? 'ArrowLine' : 'Line';
+    this._shape = this._layer.hasArrowheads() ? 'ArrowLine' : this._shape;
     this._enabled = false;
     this._markerGroup.clearLayers();
     this._markerGroup.removeFrom(this._map);
