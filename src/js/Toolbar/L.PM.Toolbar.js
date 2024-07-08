@@ -765,7 +765,7 @@ const Toolbar = L.Class.extend({
       Line: 'drawPolyline',
       CircleMarker: 'drawCircleMarker',
       Edit: 'editMode',
-      EditArrowLine: 'editArrowLine',
+      EditArrowLine: 'arrowEditMode',
       ColorChange: 'colorChangeMode',
       Drag: 'dragMode',
       Cut: 'cutPolygon',

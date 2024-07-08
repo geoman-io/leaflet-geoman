@@ -199,6 +199,7 @@ const Draw = L.Class.extend({
       drawRectangle: 'Rectangle',
       drawCircleMarker: 'CircleMarker',
       editMode: 'Edit',
+      editArrowLine: 'Edit Arrows',
       dragMode: 'Drag',
       cutPolygon: 'Cut',
       removalMode: 'Removal',
