@@ -137,7 +137,6 @@ const PMButton = L.Control.extend({
         onClick() {
           this._triggerClick();
         },
-        title: getTranslation('actions.cancel'),
       },
       finishMode: {
         text: getTranslation('actions.finish'),
@@ -145,7 +144,6 @@ const PMButton = L.Control.extend({
         onClick() {
           this._triggerClick();
         },
-        title: getTranslation('actions.finish'),
       },
       removeLastVertex: {
         text: getTranslation('actions.removeLastVertex'),
@@ -153,7 +151,6 @@ const PMButton = L.Control.extend({
         onClick() {
           this._map.pm.Draw[button.jsClass]._removeLastVertex();
         },
-        title: getTranslation('actions.removeLastVertex'),
       },
       finish: {
         text: getTranslation('actions.finish'),
@@ -161,7 +158,6 @@ const PMButton = L.Control.extend({
         onClick(e) {
           this._map.pm.Draw[button.jsClass]._finishShape(e);
         },
-        title: getTranslation('actions.finish'),
       },
       changeColor: {
         text: `

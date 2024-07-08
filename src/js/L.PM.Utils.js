@@ -64,6 +64,9 @@ const Utils = {
 
     return layers;
   },
+  reverseNumber(min, max, num) {
+    return max + min - num;
+  },
   findMarkers(map) {
     let layers = [];
     map.eachLayer((layer) => {

@@ -30,7 +30,7 @@ const EditArrowLineDialogMixins = {
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
           <label for='edit-arrow-frequency' class='form-label'>Arrow Spacing</label>
-          <input type='range' class='form-range' id='edit-arrow-frequency' min='50' max='200' value='${this._setEditArrowLineSelectorValue(arrowheadOptions.frequency)}' style='direction: rtl;'>
+          <input type='range' class='form-range' id='edit-arrow-frequency' min='50' max='200' value='${this._setEditArrowLineSelectorValue(arrowheadOptions.frequency)}'>
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
           <label for='edit-arrow-angle' class='form-label'>Arrow Angle</label>
@@ -49,7 +49,7 @@ const EditArrowLineDialogMixins = {
     } else if (frequency >= 120 && frequency <= 130) {
       arrowFrequency = 'allvertices';
     } else {
-      arrowFrequency = `${frequency}px`;
+      arrowFrequency = `${50 + 200 - frequency}px`;
     }
 
     return arrowFrequency;
@@ -58,7 +58,7 @@ const EditArrowLineDialogMixins = {
     const arrowFrequency = frequency.replace('px', '') || 'endonly';
     const isNumeric = Number.isNaN(+arrowFrequency);
     if (arrowFrequency === 'endonly') {
-      return 200;
+      return 50 + 200 - 200;
     }
 
     if (arrowFrequency === 'allvertices') {
@@ -67,9 +67,9 @@ const EditArrowLineDialogMixins = {
 
     if (isNumeric) {
       if (arrowFrequency >= 120 && arrowFrequency <= 130) {
-        return 125;
+        return 50 + 200 - 125;
       }
-      return +arrowFrequency;
+      return 50 + 200 - arrowFrequency;
     }
 
     return arrowFrequency;

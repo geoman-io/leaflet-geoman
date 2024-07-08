@@ -25,7 +25,7 @@ const DrawArrowLineDialogMixins = {
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
           <label for='draw-arrow-frequency' class='form-label'>Arrow Spacing</label>
-          <input type='range' class='form-range' id='draw-arrow-frequency' min='50' max='200' value='${this._setDrawArrowLineSelectorValue(arrowheadOptions.frequency)}' style='direction: rtl;'>
+          <input type='range' class='form-range' id='draw-arrow-frequency' min='50' max='200' value='${this._setDrawArrowLineSelectorValue(arrowheadOptions.frequency)}'>
         </div>
         <div class='arrow-visible-prop' style='margin-bottom: 0.5rem;'>
           <label for='draw-arrow-angle' class='form-label'>Arrow Angle</label>
@@ -44,7 +44,7 @@ const DrawArrowLineDialogMixins = {
     } else if (frequency >= 120 && frequency <= 130) {
       arrowFrequency = 'allvertices';
     } else {
-      arrowFrequency = `${frequency}px`;
+      arrowFrequency = `${50 + 200 - frequency}px`;
     }
 
     return arrowFrequency;
@@ -53,7 +53,7 @@ const DrawArrowLineDialogMixins = {
     const arrowFrequency = frequency.replace('px', '') || 'endonly';
     const isNumeric = Number.isNaN(+arrowFrequency);
     if (arrowFrequency === 'endonly') {
-      return 200;
+      return 50 + 200 - 200;
     }
 
     if (arrowFrequency === 'allvertices') {
@@ -62,9 +62,9 @@ const DrawArrowLineDialogMixins = {
 
     if (isNumeric) {
       if (arrowFrequency >= 120 && arrowFrequency <= 130) {
-        return 125;
+        return 50 + 200 - 125;
       }
-      return +arrowFrequency;
+      return 50 + 200 - arrowFrequency;
     }
 
     return arrowFrequency;

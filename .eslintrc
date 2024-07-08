@@ -23,6 +23,7 @@
   },
   "ignorePatterns": [
     "cypress/libs",
-    "dist"
+    "dist",
+    "Libraries"
   ]
 }
