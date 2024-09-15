@@ -707,6 +707,7 @@ declare module 'leaflet' {
       text: string;
       onClick?: (e: any) => void;
       title?: string;
+      name?: string;
     }
 
     type TOOLBAR_CONTROL_ORDER =
