@@ -1297,7 +1297,7 @@ declare module 'leaflet' {
       editable?: boolean;
 
       /** Enables radius editing while drawing a Circle (default:true). */
-      resizableCircle?: boolean;
+      resizeableCircle?: boolean;
 
       /** Enables radius editing while drawing a CircleMarker (default:false). */
       resizeableCircleMarker?: boolean;

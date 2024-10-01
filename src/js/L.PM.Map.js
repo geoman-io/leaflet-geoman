@@ -152,8 +152,8 @@ const Map = L.Class.extend({
     let reenableCircle = false;
     if (
       this.map.pm.Draw.Circle.enabled() &&
-      !!this.map.pm.Draw.Circle.options.resizableCircle !==
-        !!options.resizableCircle
+      !!this.map.pm.Draw.Circle.options.resizeableCircle !==
+        !!options.resizeableCircle
     ) {
       this.map.pm.Draw.Circle.disable();
       reenableCircle = true;
