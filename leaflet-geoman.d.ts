@@ -1776,10 +1776,15 @@ declare module 'leaflet' {
     /**
      * ROTATE MODE MAP EVENT HANDLERS
      */
-    export type GlobalRotateModeToggledEventHandler = (e: {
+    export type BaseEventHandler = (e: { 
+      source: any; 
+      custom?: Record<string, any>; 
+   }) => void;
+
+    export type GlobalRotateModeToggledEventHandler = BaseEventHandler & {
       enabled: boolean;
       map: L.Map;
-    }) => void;
+  };
 
     /**
      * UNION MODE MAP EVENT HANDLERS

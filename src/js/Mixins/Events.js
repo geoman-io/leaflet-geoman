@@ -1,4 +1,4 @@
-import merge from 'lodash/merge';
+// import merge from 'lodash/merge';
 
 const EventMixin = {
   // Draw Events
@@ -698,7 +698,7 @@ const EventMixin = {
 
   // private (very private) fire function
   __fire(fireLayer, type, payload, source, customPayload = {}) {
-    payload = merge(payload, customPayload, { source });
+    payload = { ...payload, ...customPayload, source };
     L.PM.Utils._fireEvent(fireLayer, type, payload);
   },
 };
