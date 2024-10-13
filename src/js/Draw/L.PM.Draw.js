@@ -28,7 +28,7 @@ const Draw = L.Class.extend({
     minRadiusCircleMarker: null,
     maxRadiusCircleMarker: null,
     resizeableCircleMarker: false,
-    resizableCircle: true,
+    resizeableCircle: true,
     markerEditable: true,
     continueDrawing: false,
     snapSegment: true,
