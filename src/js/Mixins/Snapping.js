@@ -284,6 +284,10 @@ const SnapMixin = {
       if (layer._parentCopy && layer._parentCopy === this._layer) {
         return;
       }
+      // if a polyline has only one coordinate
+      if (layer.getLatLngs?.().flat(5).length < 2) {
+        return;
+      }
       // find the closest latlng, segment and the distance of this layer to the dragged marker latlng
       const results = this._calcLayerDistances(latlng, layer);
       results.distance = Math.floor(results.distance);
