@@ -34,6 +34,12 @@ const Draw = L.Class.extend({
     snapSegment: true,
     requireSnapToFinish: false,
     rectangleAngle: 0,
+    textOptions: {
+      text: null,
+      focusAfterDraw: null,
+      removeIfEmpty: null,
+      className: null
+    },
   },
   setOptions(options) {
     L.Util.setOptions(this, options);

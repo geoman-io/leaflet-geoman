@@ -148,6 +148,7 @@ Draw.CircleMarker = Draw.extend({
       });
     }
 
+    // Must be named bringToBack to work with Leaflet functions.
     this._layer.bringToBack();
   },
   disable() {
@@ -213,13 +214,14 @@ Draw.CircleMarker = Draw.extend({
     }
   },
   _placeCenterMarker(e) {
-    this._layerGroup.addLayer(this._layer);
-    this._layerGroup.addLayer(this._centerMarker);
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
       this._hintMarker.setLatLng(e.latlng);
     }
+
+    this._layerGroup.addLayer(this._layer);
+    this._layerGroup.addLayer(this._centerMarker);
 
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();

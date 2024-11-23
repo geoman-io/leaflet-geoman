@@ -545,15 +545,15 @@ const SnapMixin = {
     return map.unproject(closest, maxzoom);
   },
   _getDistanceToSegment(map, latlng, latlngA, latlngB) {
-    const P = map.latLngToLayerPoint(latlng);
-    const A = map.latLngToLayerPoint(latlngA);
-    const B = map.latLngToLayerPoint(latlngB);
+    const P = map.latLngToContainerPoint(latlng);
+    const A = map.latLngToContainerPoint(latlngA);
+    const B = map.latLngToContainerPoint(latlngB);
     return L.LineUtil.pointToSegmentDistance(P, A, B);
   },
   _getDistance(map, latlngA, latlngB) {
     return map
-      .latLngToLayerPoint(latlngA)
-      .distanceTo(map.latLngToLayerPoint(latlngB));
+      .latLngToContainerPoint(latlngA)
+      .distanceTo(map.latLngToContainerPoint(latlngB));
   },
 };
 
