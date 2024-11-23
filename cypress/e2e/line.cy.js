@@ -373,4 +373,32 @@ describe('Draw & Edit Line', () => {
     // draw a line
     cy.get(mapSelector).click(150, 250);
   });
+
+  it('prevents removal of the layer if the vertex count is below minimum (removeLayerBelowMinVertexCount)', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ removeLayerBelowMinVertexCount: false });
+    });
+
+    // activate polyline drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polyline
+    cy.get(mapSelector).click(90, 250).click(150, 50).click(150, 50);
+
+    // enable global edit mode
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // let's remove one vertex
+    cy.get('.marker-icon:not(.marker-icon-middle)')
+      .last()
+      .trigger('contextmenu');
+
+    cy.hasVertexMarkers(2);
+  });
 });
