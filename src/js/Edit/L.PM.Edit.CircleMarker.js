@@ -128,10 +128,6 @@ Edit.CircleMarker = Edit.extend({
         this._initSnappableMarkers();
         // update marker latlng when snapped latlng radius is out of min/max
         this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
-        // sync the hintline with hint marker
-        this._outerMarker.on('move', this._syncHintLine, this);
-        this._outerMarker.on('move', this._syncCircleRadius, this);
-        this._centerMarker.on('move', this._moveCircle, this);
       } else {
         this._disableSnapping();
       }
@@ -198,6 +194,7 @@ Edit.CircleMarker = Edit.extend({
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
       L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
+      marker.on('move', this._moveCircle, this);
     } else {
       marker.dragging.disable();
     }

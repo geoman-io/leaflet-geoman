@@ -471,4 +471,53 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 200);
   });
+
+  it('checks if editing with snappable:false works', () => {
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 200);
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ snappable: false });
+    });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      expect(layer.getLatLng().lat).to.eq(51.51034504891232);
+      expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
+      expect(layer.getRadius()).to.eq(1187.9783670191234);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    // change radius
+    cy.get(mapSelector)
+      .trigger('mousedown', 300, 200, { which: 1 })
+      .trigger('mousemove', 300, 250, { which: 1 })
+      .trigger('mouseup', 300, 250, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      expect(layer.getLatLng().lat).to.eq(51.51034504891232);
+      expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
+      expect(layer.getRadius()).to.eq(1328.278061564339);
+    });
+
+    // change center
+    cy.get(mapSelector)
+      .trigger('mousedown', 200, 200, { which: 1 })
+      .trigger('mousemove', 200, 250, { which: 1 })
+      .trigger('mouseup', 200, 250, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      expect(layer.getLatLng().lat).to.eq(51.50500286265417);
+      expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
+      expect(layer.getRadius()).to.eq(1328.278061564339);
+    });
+  });
 });
