@@ -54,6 +54,7 @@
 }
 
 .pm-textarea {
+  box-sizing: content-box;
   background-color: #fff;
   color: #000;
   resize: none;
