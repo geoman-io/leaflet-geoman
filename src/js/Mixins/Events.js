@@ -332,7 +332,7 @@ const EventMixin = {
       customPayload
     );
   },
-  // Fired when a Line / Polygon is reset because of self intersection
+  // Fired when coords of a layer are reset. E.g. by self-intersection
   _fireLayerReset(e, indexPath, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,

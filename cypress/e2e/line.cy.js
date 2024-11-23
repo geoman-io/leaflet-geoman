@@ -359,7 +359,7 @@ describe('Draw & Edit Line', () => {
     cy.hasMiddleMarkers(2);
   });
 
-  it('snapping doesn\'t throw an error when Polyline has only one coordinate' , () => {
+  it("snapping doesn't throw an error when Polyline has only one coordinate", () => {
     cy.window().then(({ map, L }) => {
       L.polyline([map.getCenter()]).addTo(map);
     });
@@ -371,7 +371,6 @@ describe('Draw & Edit Line', () => {
       .should('have.class', 'active');
 
     // draw a line
-    cy.get(mapSelector)
-      .click(150, 250)
+    cy.get(mapSelector).click(150, 250);
   });
 });

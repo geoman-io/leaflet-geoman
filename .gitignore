@@ -8,3 +8,5 @@ npm-debug.log
 /cypress/screenshots
 /cypress/videos
 .eslintcache
+.env
+*.tgz

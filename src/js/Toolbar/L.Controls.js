@@ -64,6 +64,7 @@ const PMButton = L.Control.extend({
       this._button.toggleStatus = !this._button.toggleStatus;
     }
     this._applyStyleClasses();
+    this._updateActiveAction(this._button);
 
     return this._button.toggleStatus;
   },
@@ -81,6 +82,7 @@ const PMButton = L.Control.extend({
   enable() {
     this._button.disabled = false;
     this._updateDisabled();
+    this._updateActiveAction(this._button);
   },
   _triggerClick(e) {
     if (e) {
@@ -159,7 +161,7 @@ const PMButton = L.Control.extend({
       },
     };
 
-    activeActions.forEach((_action) => {
+    button._preparedActions = activeActions.map((_action) => {
       const name = typeof _action === 'string' ? _action : _action.name;
       let action;
       if (actions[name]) {
@@ -187,6 +189,8 @@ const PMButton = L.Control.extend({
       L.DomEvent.disableClickPropagation(actionNode);
       L.DomEvent.on(actionNode, 'click', L.DomEvent.stop);
 
+      action._node = actionNode;
+
       if (!button.disabled) {
         if (action.onClick) {
           const actionClick = (e) => {
@@ -205,9 +209,14 @@ const PMButton = L.Control.extend({
 
           L.DomEvent.addListener(actionNode, 'click', actionClick, this);
           L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
+          L.DomEvent.addListener(actionNode, 'click', () =>
+            this._updateActiveAction(button)
+          );
         }
       }
+      return action;
     });
+    this._updateActiveAction(button);
 
     if (button.toggleStatus) {
       L.DomUtil.addClass(buttonContainer, 'active');
@@ -293,6 +302,17 @@ const PMButton = L.Control.extend({
       L.DomUtil.removeClass(button, className);
       button.setAttribute('aria-disabled', 'false');
     }
+  },
+  _updateActiveAction(button) {
+    button._preparedActions?.forEach((action) => {
+      if (action?._node) {
+        if (action.isActive && action.isActive.call(this)) {
+          L.DomUtil.addClass(action._node, 'active-action');
+        } else {
+          L.DomUtil.removeClass(action._node, 'active-action');
+        }
+      }
+    });
   },
 });
 

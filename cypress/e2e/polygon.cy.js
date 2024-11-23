@@ -684,7 +684,8 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
   });
 
-  it('allowSelfIntersectionEdit on polygon', () => {
+  it('allowSelfIntersectionEdit on polygon', (done) => {
+    cy.timeout(10000);
     cy.window().then(({ map, L, Hand }) => {
       cy.fixture('PolygonIntersects')
         .then((json) => {
@@ -766,12 +767,10 @@ describe('Draw & Edit Poly', () => {
           .up()
           .wait(500); // allowed
 
-        // wait until hand is finished
-        cy.waitUntil(() => cy.window().then(() => handFinish), {
-          timeout: 9000,
-        }).then(() => {
+        setTimeout(() => {
           expect(handFinish).to.equal(true);
-        });
+          done();
+        }, 7000);
       });
     });
   });

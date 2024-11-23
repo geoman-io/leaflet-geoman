@@ -194,17 +194,19 @@ const Toolbar = L.Class.extend({
       name = 'removalMode';
     }
 
+    const toggleBtnName = name;
+
     // as some mode got enabled, we still have to trigger the click on the other buttons
     // to disable their mode
     if (disableOthers) {
-      this.triggerClickOnToggledButtons(this.buttons[name]);
+      this.triggerClickOnToggledButtons(this.buttons[toggleBtnName]);
     }
 
-    if (!this.buttons[name]) {
+    if (!this.buttons[toggleBtnName]) {
       return false;
     }
     // now toggle the state of the button
-    return this.buttons[name].toggle(status);
+    return this.buttons[toggleBtnName].toggle(status);
   },
   _defineButtons() {
     // some buttons are still in their respective classes, like L.PM.Draw.Polygon
@@ -617,7 +619,8 @@ const Toolbar = L.Class.extend({
     });
 
     const drawBtns = Object.keys(buttons).filter(
-      (btn) => !buttons[btn]._button.tool
+      (btn) =>
+        !buttons[btn]._button.tool || buttons[btn]._button.tool === 'draw'
     );
     drawBtns.forEach((btn) => {
       if (_order.indexOf(btn) === -1) {

@@ -95,7 +95,7 @@ describe('Draw Marker', () => {
     });
   });
 
-  it('calls pm:drag-events on Marker drag', () => {
+  it('calls pm:drag-events on Marker drag', (done) => {
     let handFinish = false;
     let dragstart = false;
     let drag = false;
@@ -141,11 +141,11 @@ describe('Draw Marker', () => {
         .moveTo(170, 290, 400)
         .up()
         .wait(100); // Not allowed
-    });
 
-    // wait until hand is finished
-    cy.waitUntil(() => cy.window().then(() => handFinish)).then(() => {
-      expect(handFinish).to.equal(true);
+      setTimeout(() => {
+        expect(handFinish).to.equal(true);
+        done();
+      }, 2000);
     });
   });
 
