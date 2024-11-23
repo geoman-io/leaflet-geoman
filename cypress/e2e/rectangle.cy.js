@@ -70,10 +70,10 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('cut').click();
     cy.get(mapSelector)
-      .click(226, 419)
+      .click(226, 349)
       .click(230, 105)
-      .click(270, 419)
-      .click(226, 419);
+      .click(270, 349)
+      .click(226, 349);
 
     cy.toolbarButton('cut').click();
     cy.get(mapSelector)

@@ -65,7 +65,13 @@ beforeEach(() => {
             new CustomEvent('prostheticHandStop', { target: this })
           );
           if (this._onStop && typeof this._onStop === 'function') {
-            this._onStop(this);
+            try {
+              this._onStop(this);
+            } catch (e) {
+              /* eslint-disable-next-line no-console */
+              console.error(e);
+              throw e;
+            }
           }
         }
         this._fingersAreIdle = true;

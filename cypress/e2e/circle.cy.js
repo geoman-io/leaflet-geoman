@@ -225,6 +225,8 @@ describe('Draw Circle', () => {
       // move marker
       const marker = circle.pm._markers[1];
       marker.setLatLng([marker.getLatLng().lng, marker.getLatLng().lat + 10]);
+      circle.pm._resizeCircle();
+
       expect(167).to.eq(Math.floor(circle.getRadius()));
     });
   });
