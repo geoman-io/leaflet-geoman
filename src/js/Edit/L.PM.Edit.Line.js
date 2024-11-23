@@ -136,6 +136,7 @@ Edit.Line = Edit.extend({
 
     // cleanup old ones first
     if (this._markerGroup) {
+      this._markerGroup.removeFrom(map);
       this._markerGroup.clearLayers();
     }
 
