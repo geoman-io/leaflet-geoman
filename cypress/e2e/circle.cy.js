@@ -277,7 +277,7 @@ describe('Draw Circle', () => {
       const layer = map.pm.getGeomanDrawLayers()[0];
       layer.remove();
     });
-    cy.hasLayers(3);
+    cy.hasLayers(2);
   });
   it('check if snapping works with max radius of circle', () => {
     cy.toolbarButton('circle')
