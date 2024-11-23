@@ -225,7 +225,6 @@ Draw.CircleMarker = Draw.extend({
 
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();
-    this._layerGroup.addLayer(this._layer);
 
     this._centerMarker.setLatLng(latlng);
 
