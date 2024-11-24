@@ -82,11 +82,11 @@ Edit.CircleMarker = Edit.extend({
     if (this.layerDragEnabled()) {
       this.disableLayerDrag();
     }
-
+    if (this._helperLayers) {
+      this._helperLayers.clearLayers();
+      this._helperLayers.removeFrom(this._map);
+    }
     if (this.options[this._editableOption]) {
-      if (this._helperLayers) {
-        this._helperLayers.clearLayers();
-      }
       this._map.off('move', this._syncMarkers, this);
       this._outerMarker.off('drag', this._handleOuterMarkerSnapping, this);
     } else {
@@ -158,6 +158,7 @@ Edit.CircleMarker = Edit.extend({
 
     // cleanup old ones first
     if (this._helperLayers) {
+      this._helperLayers.removeFrom(map);
       this._helperLayers.clearLayers();
     }
 
