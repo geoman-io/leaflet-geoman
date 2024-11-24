@@ -207,6 +207,12 @@ describe('Draw & Edit Line', () => {
 
     cy.get(mapSelector).click(200, 200).click(250, 250).click(250, 250);
 
+    cy.window().then(({ map }) => {
+      const latlng = map.pm.Draw.Line._hintMarker.getLatLng();
+      const pxLatLng = map.containerPointToLatLng([250, 250]);
+      expect(pxLatLng).to.deep.equal(latlng);
+    });
+
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(5);
   });

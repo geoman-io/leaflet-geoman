@@ -408,10 +408,13 @@ Draw.CircleMarker = Draw.extend({
     // fire the pm:create event and pass shape and layer
     this._fireCreate(circleLayer);
 
+    const hintMarkerLatLng = this._hintMarker.getLatLng();
+
     // disable drawing
     this.disable();
     if (this.options.continueDrawing) {
       this.enable();
+      this._hintMarker.setLatLng(hintMarkerLatLng);
     }
   },
   _getNewDestinationOfHintMarker() {

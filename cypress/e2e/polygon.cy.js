@@ -840,6 +840,12 @@ describe('Draw & Edit Poly', () => {
       .click(250, 300)
       .click(230, 230);
 
+    cy.window().then(({ map }) => {
+      const latlng = map.pm.Draw.Polygon._hintMarker.getLatLng();
+      const pxLatLng = map.containerPointToLatLng([230, 230]);
+      expect(pxLatLng).to.deep.equal(latlng);
+    });
+
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(6);
   });

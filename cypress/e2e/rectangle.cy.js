@@ -158,6 +158,12 @@ describe('Draw Rectangle', () => {
 
     cy.get(mapSelector).click(230, 230).click(350, 350);
 
+    cy.window().then(({ map }) => {
+      const latlng = map.pm.Draw.Rectangle._hintMarker.getLatLng();
+      const pxLatLng = map.containerPointToLatLng([350, 350]);
+      expect(pxLatLng).to.deep.equal(latlng);
+    });
+
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(8);
   });
