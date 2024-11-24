@@ -28,6 +28,7 @@ const Edit = L.Class.extend({
     moveVertexValidation: undefined,
     resizeableCircleMarker: false,
     resizeableCircle: true,
+    snapMiddle: false,
     snapVertex: true,
   },
   setOptions(options) {
