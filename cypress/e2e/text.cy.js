@@ -147,6 +147,20 @@ describe('Text Layer', () => {
         const textLayer = map.pm.getGeomanDrawLayers()[1];
         textArea = textLayer.pm.getElement();
         cy.get(textArea).type('Geoman!');
+
+        const textMap = map.pm.Draw.Text._hintMarker._map;
+        expect(textMap).to.eq(null);
+      });
+
+      cy.get(mapSelector)
+        .trigger('mousemove', 200, 150, { which: 1 });
+
+      cy.window().then(({ map }) => {
+        const textMap = map.pm.Draw.Text._hintMarker._map;
+        expect(textMap).to.eq(map);
+        const latlng = map.pm.Draw.Text._hintMarker.getLatLng();
+        const pxLatLng = map.containerPointToLatLng([200, 150]);
+        expect(pxLatLng).to.deep.equal(latlng);
       });
 
       cy.get(mapSelector).click(290, 150);
