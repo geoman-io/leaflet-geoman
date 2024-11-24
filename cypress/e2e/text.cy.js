@@ -81,7 +81,7 @@ describe('Text Layer', () => {
         expect(textArea.value).to.eq('Hello World');
       });
 
-      cy.get(mapSelector).click(190, 250);
+      cy.get(mapSelector).click(230, 250);
 
       cy.window().then(() => {
         expect(textArea.readOnly).to.eq(true);
@@ -195,7 +195,7 @@ describe('Text Layer', () => {
         expect(textArea.value).to.eq('Hello World');
       });
 
-      cy.get(mapSelector).click(190, 250);
+      cy.get(mapSelector).click(230, 250);
 
       cy.window().then(() => {
         expect(textArea.readOnly).to.eq(true);
