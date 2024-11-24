@@ -1418,4 +1418,51 @@ describe('Draw & Edit Poly', () => {
 
     cy.hasVertexMarkers(3);
   });
+
+  it("doesn't snap to the vertex", () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ snapVertex: false });
+    });
+
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(50, 250)
+      .click(150, 50)
+      .click(250, 50)
+      .click(50, 250);
+
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(150, 60)
+      .click(250, 90)
+      .click(200, 90)
+      .click(150, 60);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0][0].lat).to.eq(51.5255134425896);
+      expect(layer.getLatLngs()[0][0].lng).to.eq(-0.15071868896484378);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.get(mapSelector)
+      .trigger('mousedown', 150, 60, { which: 1 })
+      .trigger('mousemove', 150, 55, { which: 1 })
+      .trigger('mouseup', 150, 55, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0][0].lat).to.eq(51.52594064813257);
+      expect(layer.getLatLngs()[0][0].lng).to.eq(-0.15037536621093753);
+    });
+  });
 });

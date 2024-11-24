@@ -490,40 +490,40 @@ const SnapMixin = {
     // The closest point on the closest segment of the closest polygon to P. That's right.
     const C = closestLayer.latlng;
 
-    // distances from A to C and B to C to check which one is closer to C
-    const distanceAC = this._getDistance(map, A, C);
-    const distanceBC = this._getDistance(map, B, C);
-
-    // closest latlng of A and B to C
-    let closestVertexLatLng = distanceAC < distanceBC ? A : B;
-
-    // distance between closestVertexLatLng and C
-    let shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
-
-    // snap to middle (M) of segment if option is enabled
-    if (this.options.snapMiddle) {
-      const M = L.PM.Utils.calcMiddleLatLng(map, A, B);
-      const distanceMC = this._getDistance(map, M, C);
-
-      if (distanceMC < distanceAC && distanceMC < distanceBC) {
-        // M is the nearest vertex
-        closestVertexLatLng = M;
-        shortestDistance = distanceMC;
-      }
-    }
-
-    // the distance that needs to be undercut to trigger priority
-    const priorityDistance = this.options.snapDistance;
-
     // the latlng we ultemately want to snap to
-    let snapLatlng;
+    let snapLatlng = C;
 
-    // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
-    // the closestVertexLatLng has priority over C as the snapping point.
-    if (shortestDistance < priorityDistance) {
-      snapLatlng = closestVertexLatLng;
-    } else {
-      snapLatlng = C;
+    if (this.options.snapVertex) {
+      // distances from A to C and B to C to check which one is closer to C
+      const distanceAC = this._getDistance(map, A, C);
+      const distanceBC = this._getDistance(map, B, C);
+
+      // closest latlng of A and B to C
+      let closestVertexLatLng = distanceAC < distanceBC ? A : B;
+
+      // distance between closestVertexLatLng and C
+      let shortestDistance = distanceAC < distanceBC ? distanceAC : distanceBC;
+
+      // snap to middle (M) of segment if option is enabled
+      if (this.options.snapMiddle) {
+        const M = L.PM.Utils.calcMiddleLatLng(map, A, B);
+        const distanceMC = this._getDistance(map, M, C);
+
+        if (distanceMC < distanceAC && distanceMC < distanceBC) {
+          // M is the nearest vertex
+          closestVertexLatLng = M;
+          shortestDistance = distanceMC;
+        }
+      }
+
+      // the distance that needs to be undercut to trigger priority
+      const priorityDistance = this.options.snapDistance;
+
+      // if C is closer to the closestVertexLatLng (A, B or M) than the snapDistance,
+      // the closestVertexLatLng has priority over C as the snapping point.
+      if (shortestDistance < priorityDistance) {
+        snapLatlng = closestVertexLatLng;
+      }
     }
 
     // return the copy of snapping point
