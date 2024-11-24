@@ -1326,4 +1326,90 @@ describe('Draw & Edit Poly', () => {
       expect(hintMarker.getLatLng().lng).to.eq(72.22334801861803);
     });
   });
+
+  it('prevents removal of the layer if the vertex count is below minimum (removeLayerBelowMinVertexCount)', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ removeLayerBelowMinVertexCount: false });
+    });
+
+    // activate polygon drawing
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polygon
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(150, 50)
+      .click(500, 50)
+      .click(90, 250);
+
+    cy.hasLayers(3);
+
+    // enable global edit mode
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // let's remove one vertex
+    cy.get('.marker-icon:not(.marker-icon-middle)')
+      .last()
+      .trigger('contextmenu');
+
+    cy.hasVertexMarkers(3);
+  });
+
+  it('allows to remove the hole when removeLayerBelowMinVertexCount is false', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ removeLayerBelowMinVertexCount: false });
+    });
+
+    // activate polygon drawing
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polygon
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(150, 50)
+      .click(500, 50)
+      .click(90, 250);
+
+    // activate cutting drawing
+    cy.toolbarButton('cut')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polygon to cut
+    cy.get(mapSelector)
+      .click(170, 80)
+      .click(320, 80)
+      .click(170, 170)
+      .click(170, 80);
+
+    cy.hasLayers(3);
+
+    // enable global edit mode
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(6);
+
+    // let's remove a vertex of the hole
+    cy.get(mapSelector).trigger('contextmenu', 170, 170);
+
+    cy.hasVertexMarkers(3);
+
+    // let's remove a vertex of the hole
+    cy.get(mapSelector).trigger('contextmenu', 90, 250);
+
+    cy.hasVertexMarkers(3);
+  });
 });
