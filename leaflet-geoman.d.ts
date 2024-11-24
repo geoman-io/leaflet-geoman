@@ -1132,12 +1132,7 @@ declare module 'leaflet' {
       event: any;
     }) => boolean;
 
-    interface EditModeOptions {
-      /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
-      snappable?: boolean;
-
-      /** The distance to another vertex when a snap should happen (default:20). */
-      snapDistance?: number;
+    interface EditModeOptions extends SnappingOptions {
 
       /** Allow self intersections (default:true). */
       allowSelfIntersection?: boolean;
@@ -1229,18 +1224,7 @@ declare module 'leaflet' {
       className?: string;
     }
 
-    interface DrawModeOptions {
-      /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
-      snappable?: boolean;
-
-      /** The distance to another vertex when a snap should happen (default:20). */
-      snapDistance?: number;
-
-      /** Allow snapping in the middle of two vertices (middleMarker)(default:false). */
-      snapMiddle?: boolean;
-
-      /** Allow snapping between two vertices. (default: true)*/
-      snapSegment?: boolean;
+    interface DrawModeOptions extends SnappingOptions {
 
       /** Require the last point of a shape to be snapped. (default: false). */
       requireSnapToFinish?: boolean;
@@ -1316,6 +1300,23 @@ declare module 'leaflet' {
       layersToCut?: L.Layer[];
 
       textOptions?: TextOptions;
+    }
+
+    interface SnappingOptions {
+      /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
+      snappable?: boolean;
+
+      /** The distance to another vertex when a snap should happen (default:20). */
+      snapDistance?: number;
+
+      /** Allow snapping in the middle of two vertices (middleMarker)(default:false). */
+      snapMiddle?: boolean;
+
+      /** Allow snapping between two vertices. (default: true)*/
+      snapSegment?: boolean;
+
+      /** Allow snapping to vertices. (default: true)*/
+      snapVertex?: boolean;
     }
 
     /**
