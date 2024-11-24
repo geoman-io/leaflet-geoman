@@ -377,10 +377,13 @@ Draw.Line = Draw.extend({
       this._cleanupSnapping();
     }
 
+    const hintMarkerLatLng = this._hintMarker.getLatLng();
+
     // disable drawing
     this.disable();
     if (this.options.continueDrawing) {
       this.enable();
+      this._hintMarker.setLatLng(hintMarkerLatLng);
     }
   },
   _createMarker(latlng) {

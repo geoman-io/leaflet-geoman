@@ -101,10 +101,13 @@ Draw.Polygon = Draw.Line.extend({
     this._otherSnapLayers.splice(this._tempSnapLayerIndex, 1);
     delete this._tempSnapLayerIndex;
 
+    const hintMarkerLatLng = this._hintMarker.getLatLng();
+
     // disable drawing
     this.disable();
     if (this.options.continueDrawing) {
       this.enable();
+      this._hintMarker.setLatLng(hintMarkerLatLng);
     }
   },
 });

@@ -81,6 +81,8 @@ Draw.Text = Draw.extend({
     // remove event listener to sync hint marker
     this._map.off('mousemove', this._syncHintMarker, this);
 
+    this._map.off('mousemove', this._showHintMarker, this);
+
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
 
@@ -181,8 +183,14 @@ Draw.Text = Draw.extend({
     // disable drawing
     this.disable();
     if (this.options.continueDrawing) {
-      this.enable();
+      // the user is still typing some text, so we re-enable the layer after moving the mouse
+      this._map.once('mousemove', this._showHintMarkerAfterMoving, this);
     }
+  },
+
+  _showHintMarkerAfterMoving(e) {
+    this.enable();
+    this._hintMarker.setLatLng(e.latlng);
   },
 
   _createTextArea() {
