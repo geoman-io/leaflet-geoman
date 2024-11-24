@@ -782,7 +782,7 @@ Edit.Line = Edit.extend({
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
-    let intersection = this.hasSelfIntersection();
+    let intersection = !this.options.allowSelfIntersection && this.hasSelfIntersection();
     if (
       intersection &&
       this.options.allowSelfIntersectionEdit &&
