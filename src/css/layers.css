@@ -33,6 +33,9 @@
 .geoman-draw-cursor {
   cursor: crosshair;
 }
+.geoman-draw-cursor .leaflet-interactive {
+  cursor: crosshair;
+}
 
 .rect-style-marker,
 .rect-start-marker {
