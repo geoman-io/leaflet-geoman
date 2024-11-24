@@ -407,4 +407,47 @@ describe('Draw & Edit Line', () => {
 
     cy.hasVertexMarkers(2);
   });
+
+  it("doesn't snap to the vertex", () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ snapVertex: false });
+    });
+
+    // activate polyline drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polyline
+    cy.get(mapSelector).click(90, 250).click(150, 50).click(150, 50);
+
+    // activate polyline drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polyline
+    cy.get(mapSelector).click(150, 60).click(250, 50).click(250, 50);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0].lat).to.eq(51.52538802368748);
+      expect(layer.getLatLngs()[0].lng).to.eq(-0.15050450596240997);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.get(mapSelector)
+      .trigger('mousedown', 150, 60, { which: 1 })
+      .trigger('mousemove', 150, 55, { which: 1 })
+      .trigger('mouseup', 150, 55, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0].lat).to.eq(51.5258877375718);
+      expect(layer.getLatLngs()[0].lng).to.eq(-0.15026355008465944);
+    });
+  });
 });

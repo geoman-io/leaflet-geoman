@@ -38,8 +38,9 @@ const Draw = L.Class.extend({
       text: null,
       focusAfterDraw: null,
       removeIfEmpty: null,
-      className: null
+      className: null,
     },
+    snapVertex: true,
   },
   setOptions(options) {
     L.Util.setOptions(this, options);
