@@ -131,7 +131,6 @@ Edit.CircleMarker = Edit.extend({
         // sync the hintline with hint marker
         this._outerMarker.on('move', this._syncHintLine, this);
         this._outerMarker.on('move', this._syncCircleRadius, this);
-        this._centerMarker.on('move', this._moveCircle, this);
       } else {
         this._disableSnapping();
       }
