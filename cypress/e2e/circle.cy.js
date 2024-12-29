@@ -526,4 +526,27 @@ describe('Draw Circle', () => {
       expect(layer.getRadius()).to.eq(1328.278061564339);
     });
   });
+
+  it('checks if radius is changed when outer marker is snapped', () => {
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(100, 100).click(400, 350);
+
+    cy.toolbarButton('circle').click();
+    cy.get(mapSelector).click(300, 200).click(400, 200);
+
+    cy.toolbarButton('edit').click();
+
+    // move marker
+    cy.get(mapSelector)
+      .trigger('mousedown', 400, 200, { which: 1 })
+      .trigger('mousemove', 390, 230, { which: 1 })
+      .trigger('mouseup', 390, 230, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[1];
+      expect(layer.getLatLng().lat).to.eq(51.51034504891232);
+      expect(layer.getLatLng().lng).to.eq(-0.12428283691406251);
+      expect(layer.getRadius()).to.eq(1240.3294565841613);
+    });
+  });
 });
