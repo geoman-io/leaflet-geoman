@@ -169,7 +169,7 @@ const PMButton = L.Control.extend({
       } else if (_action.text) {
         action = _action;
       } else {
-        return;
+        return action;
       }
       const actionNode = L.DomUtil.create(
         'a',
