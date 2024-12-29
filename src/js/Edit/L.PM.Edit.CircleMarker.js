@@ -128,6 +128,9 @@ Edit.CircleMarker = Edit.extend({
         this._initSnappableMarkers();
         // update marker latlng when snapped latlng radius is out of min/max
         this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
+        // sync the hintline with hint marker
+        this._outerMarker.on('move', this._syncHintLine, this);
+        this._outerMarker.on('move', this._syncCircleRadius, this);
       } else {
         this._disableSnapping();
       }
