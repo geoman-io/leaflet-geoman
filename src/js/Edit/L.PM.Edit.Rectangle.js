@@ -101,7 +101,12 @@ Edit.Rectangle = Edit.Polygon.extend({
     // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
     draggedMarker._snapped = false;
 
-    this._fireMarkerDragStart(e);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+      this._markers,
+      draggedMarker
+    );
+
+    this._fireMarkerDragStart(e, indexPath);
   },
 
   _onMarkerDrag(e) {
@@ -119,7 +124,11 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     this._adjustRectangleForMarkerMove(draggedMarker);
 
-    this._fireMarkerDrag(e);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+      this._markers,
+      draggedMarker
+    );
+    this._fireMarkerDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
   },
 
@@ -135,7 +144,11 @@ Edit.Rectangle = Edit.Polygon.extend({
       delete m._oppositeCornerLatLng;
     });
 
-    this._fireMarkerDragEnd(e);
+    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+      this._markers,
+      draggedMarker
+    );
+    this._fireMarkerDragEnd(e, indexPath);
 
     // fire edit event
     this._fireEdit();
@@ -159,7 +172,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     this._layer.setLatLngs(corners);
 
     // Reposition the markers at each corner
-    this._adjustAllMarkers();
+    this._adjustAllMarkers(movedMarker);
 
     // Redraw the shape (to update altered rectangle)
     this._layer.redraw();
@@ -167,7 +180,7 @@ Edit.Rectangle = Edit.Polygon.extend({
 
   // adjusts the position of all Markers
   // params: markerLatLngs -- an array of exactly LatLng objects
-  _adjustAllMarkers() {
+  _adjustAllMarkers(movedMarker) {
     const markerLatLngs = this._layer.getLatLngs()[0];
 
     if (
@@ -192,9 +205,27 @@ Edit.Rectangle = Edit.Polygon.extend({
       // eslint-disable-next-line
       console.error('The layer has no LatLngs');
     } else {
-      this._cornerMarkers.forEach((marker) => {
-        marker.setLatLng(markerLatLngs[marker._index]);
-      });
+      const correctIndex = markerLatLngs.findIndex((latlng) =>
+        movedMarker.getLatLng().equals(latlng)
+      );
+
+      if (correctIndex > -1) {
+        // keep the correct index order of the markers. LatLngs index order can be changed
+        // after using setLatLngs but the markers are still on the same place
+        this._cornerMarkers[(movedMarker._index + 1) % 4].setLatLng(
+          markerLatLngs[(correctIndex + 1) % 4]
+        );
+        this._cornerMarkers[(movedMarker._index + 2) % 4].setLatLng(
+          markerLatLngs[(correctIndex + 2) % 4]
+        );
+        this._cornerMarkers[(movedMarker._index + 3) % 4].setLatLng(
+          markerLatLngs[(correctIndex + 3) % 4]
+        );
+      } else {
+        this._cornerMarkers.forEach((marker) => {
+          marker.setLatLng(markerLatLngs[marker._index]);
+        });
+      }
     }
   },
   // finds the 4 corners of the current bounding box

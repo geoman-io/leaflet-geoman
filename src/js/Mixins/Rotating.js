@@ -57,7 +57,8 @@ const RotateMixin = {
       if (L.Util.isArray(latlng[0])) {
         latlng.forEach((x, i) => forEachLatLng(x, path.slice(), i));
       } else {
-        const markers = get(that._markers, path);
+        const markers =
+          path.length > 0 ? get(that._markers, path) : that._markers[0];
         latlng.forEach((_latlng, j) => {
           const marker = markers[j];
           marker.setLatLng(_latlng);

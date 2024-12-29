@@ -115,6 +115,12 @@ describe('Draw Circle', () => {
     // draw with continueDrawing: true the second circle
     cy.get(mapSelector).click(300, 200).click(350, 250);
 
+    cy.window().then(({ map }) => {
+      const latlng = map.pm.Draw.Circle._hintMarker.getLatLng();
+      const pxLatLng = map.containerPointToLatLng([350, 250]);
+      expect(pxLatLng).to.deep.equal(latlng);
+    });
+
     // additional click because cypress lose the focus on the window ... wtf ...
     cy.get(mapSelector).click();
     cy.toolbarButton('edit').click();
@@ -225,6 +231,8 @@ describe('Draw Circle', () => {
       // move marker
       const marker = circle.pm._markers[1];
       marker.setLatLng([marker.getLatLng().lng, marker.getLatLng().lat + 10]);
+      circle.pm._resizeCircle();
+
       expect(167).to.eq(Math.floor(circle.getRadius()));
     });
   });
@@ -275,7 +283,7 @@ describe('Draw Circle', () => {
       const layer = map.pm.getGeomanDrawLayers()[0];
       layer.remove();
     });
-    cy.hasLayers(3);
+    cy.hasLayers(2);
   });
   it('check if snapping works with max radius of circle', () => {
     cy.toolbarButton('circle')
@@ -348,10 +356,10 @@ describe('Draw Circle', () => {
     });
   });
 
-  it('creates circles (non-resizableCircle)', () => {
+  it('creates circles (non-resizeableCircle)', () => {
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({
-        resizableCircle: false,
+        resizeableCircle: false,
         continueDrawing: true,
       });
     });
@@ -373,9 +381,9 @@ describe('Draw Circle', () => {
     cy.hasCircleLayers(3);
   });
 
-  it('disable dragging correctly (non-resizableCircle)', () => {
+  it('disable dragging correctly (non-resizeableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ resizableCircle: false });
+      map.pm.setGlobalOptions({ resizeableCircle: false });
     });
 
     cy.toolbarButton('circle')
@@ -397,9 +405,9 @@ describe('Draw Circle', () => {
     });
   });
 
-  it('deletes no circles by right-click (non-resizableCircle)', () => {
+  it('deletes no circles by right-click (non-resizeableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ resizableCircle: false });
+      map.pm.setGlobalOptions({ resizeableCircle: false });
     });
 
     cy.toolbarButton('circle')
@@ -421,9 +429,9 @@ describe('Draw Circle', () => {
     cy.hasCircleLayers(1);
   });
 
-  it('change color of circleMarker while drawing (non-resizableCircle)', () => {
+  it('change color of circleMarker while drawing (non-resizeableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ resizableCircle: false });
+      map.pm.setGlobalOptions({ resizeableCircle: false });
     });
 
     cy.toolbarButton('circle')
@@ -468,5 +476,54 @@ describe('Draw Circle', () => {
     cy.toolbarButton('edit').click();
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 200);
+  });
+
+  it('checks if editing with snappable:false works', () => {
+    cy.toolbarButton('circle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(300, 200);
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ snappable: false });
+    });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      expect(layer.getLatLng().lat).to.eq(51.51034504891232);
+      expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
+      expect(layer.getRadius()).to.eq(1187.9783670191234);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    // change radius
+    cy.get(mapSelector)
+      .trigger('mousedown', 300, 200, { which: 1 })
+      .trigger('mousemove', 300, 250, { which: 1 })
+      .trigger('mouseup', 300, 250, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      expect(layer.getLatLng().lat).to.eq(51.51034504891232);
+      expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
+      expect(layer.getRadius()).to.eq(1328.278061564339);
+    });
+
+    // change center
+    cy.get(mapSelector)
+      .trigger('mousedown', 200, 200, { which: 1 })
+      .trigger('mousemove', 200, 250, { which: 1 })
+      .trigger('mouseup', 200, 250, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanLayers()[0];
+      expect(layer.getLatLng().lat).to.eq(51.50500286265417);
+      expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
+      expect(layer.getRadius()).to.eq(1328.278061564339);
+    });
   });
 });

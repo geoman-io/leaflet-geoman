@@ -159,6 +159,7 @@
   border-bottom: none;
   height: 29px;
   line-height: 29px;
+  vertical-align: middle;
 }
 .leaflet-pm-toolbar
   .button-container:first-child.pos-right.active
@@ -177,6 +178,11 @@
   background-color: #777;
 }
 
+.button-container
+  .leaflet-pm-actions-container
+  .leaflet-pm-action.active-action {
+  background-color: #8e8e8e;
+}
 /* That the active control is always over the other controls */
 .leaflet-pm-toolbar.activeChild {
   z-index: 801;
@@ -188,4 +194,11 @@
 
 .leaflet-buttons-control-button.pm-disabled > .control-icon {
   filter: opacity(0.6);
+}
+
+.button-container
+  .leaflet-pm-actions-container
+  .pm-action-button-mode.control-icon {
+  filter: brightness(0) invert(1);
+  width: 18px;
 }

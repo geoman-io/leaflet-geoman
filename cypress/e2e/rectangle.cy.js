@@ -70,10 +70,10 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('cut').click();
     cy.get(mapSelector)
-      .click(226, 419)
+      .click(226, 349)
       .click(230, 105)
-      .click(270, 419)
-      .click(226, 419);
+      .click(270, 349)
+      .click(226, 349);
 
     cy.toolbarButton('cut').click();
     cy.get(mapSelector)
@@ -158,6 +158,12 @@ describe('Draw Rectangle', () => {
 
     cy.get(mapSelector).click(230, 230).click(350, 350);
 
+    cy.window().then(({ map }) => {
+      const latlng = map.pm.Draw.Rectangle._hintMarker.getLatLng();
+      const pxLatLng = map.containerPointToLatLng([350, 350]);
+      expect(pxLatLng).to.deep.equal(latlng);
+    });
+
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(8);
   });
@@ -184,6 +190,35 @@ describe('Draw Rectangle', () => {
     cy.window().then(({ map }) => {
       const len = map.pm.getGeomanDrawLayers().length;
       expect(len).to.equal(2);
+
+      const text = rect.getPopup().getContent();
+      expect(text).to.equal('Popup test');
+    });
+  });
+
+  it('disable popup on pmIgnore-layer while drawing', () => {
+    let rect = null;
+    cy.window().then(({ map, L }) => {
+      map.on('pm:create', (e) => {
+        e.layer.bindPopup('Popup test');
+        if (e.layer instanceof L.Rectangle) {
+          e.layer.options.pmIgnore = true;
+          rect = e.layer;
+        }
+      });
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(100, 50).click(700, 400);
+
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector).click(300, 250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.window().then(({ map }) => {
+      const len = map.pm.getGeomanDrawLayers().length;
+      expect(len).to.equal(1);
 
       const text = rect.getPopup().getContent();
       expect(text).to.equal('Popup test');
@@ -990,5 +1025,58 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('edit').click();
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
+  });
+
+  it('prevents drawing rectangle where all corners have the same position', () => {
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(200, 200);
+    cy.get(mapSelector).click(200, 200);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.getGeomanDrawLayers().length).to.eql(0);
+    });
+  });
+
+  it("doesn't snap to the vertex", () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ snapVertex: false });
+    });
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(90, 250).click(150, 50);
+
+    cy.toolbarButton('rectangle')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector).click(150, 60).click(250, 90);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0][1].lat).to.eq(51.52529983831507);
+      expect(layer.getLatLngs()[0][1].lng).to.eq(-0.15003204345703128);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.get(mapSelector)
+      .trigger('mousedown', 150, 60, { which: 1 })
+      .trigger('mousemove', 150, 55, { which: 1 })
+      .trigger('mouseup', 150, 55, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0][1].lat).to.eq(51.525833847122584);
+      expect(layer.getLatLngs()[0][1].lng).to.eq(-0.13286590576171878);
+    });
   });
 });

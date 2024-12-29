@@ -162,6 +162,12 @@ describe('Draw Circle Marker', () => {
     // draw with continueDrawing: ture the second circle
     cy.get(mapSelector).click(300, 200).click(350, 250);
 
+    cy.window().then(({ map }) => {
+      const latlng = map.pm.Draw.CircleMarker._hintMarker.getLatLng();
+      const pxLatLng = map.containerPointToLatLng([350, 250]);
+      expect(pxLatLng).to.deep.equal(latlng);
+    });
+
     // additional click because cypress lose the focus on the window ... wtf ...
     cy.get(mapSelector).click();
 
@@ -436,7 +442,7 @@ describe('Draw Circle Marker', () => {
       const layer = map.pm.getGeomanDrawLayers()[0];
       layer.remove();
     });
-    cy.hasLayers(3);
+    cy.hasLayers(2);
   });
 
   it('check if snapping works with max radius of circle', () => {

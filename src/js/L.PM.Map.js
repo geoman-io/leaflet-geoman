@@ -44,10 +44,40 @@ const Map = L.Class.extend({
     this.Keyboard._initKeyListener(map);
   },
   // eslint-disable-next-line default-param-last
-  setLang(lang = 'en', t, fallback = 'en') {
+  setLang(lang = 'en', override, fallback = 'en') {
+    // Normalize the language code to lowercase and trim any whitespace
+    lang = lang.trim().toLowerCase();
+
+    // First, check if the input is already in the expected format (e.g., 'fr')
+    if (/^[a-z]{2}$/.test(lang)) {
+      // No further processing needed for single-letter codes
+    } else {
+      // Handle formats like 'fr-FR', 'FR', 'fr-fr', 'fr_FR'
+      const normalizedLang = lang
+        .replace(/[-_\s]/g, '-')
+        .replace(/^(\w{2})$/, '$1-');
+      const match = normalizedLang.match(/([a-z]{2})-?([a-z]{2})?/);
+
+      if (match) {
+        // Construct potential keys to search for in the translations object
+        const potentialKeys = [
+          `${match[1]}_${match[2]}`, // e.g., 'fr_BR'
+          `${match[1]}`, // e.g., 'fr'
+        ];
+
+        // Search through the translations object for a matching key
+        for (const key of potentialKeys) {
+          if (translations[key]) {
+            lang = key; // Set lang to the matching key
+            break; // Exit the loop once a match is found
+          }
+        }
+      }
+    }
+
     const oldLang = L.PM.activeLang;
-    if (t) {
-      translations[lang] = merge(translations[fallback], t);
+    if (override) {
+      translations[lang] = merge(translations[fallback], override);
     }
 
     L.PM.activeLang = lang;
@@ -122,8 +152,8 @@ const Map = L.Class.extend({
     let reenableCircle = false;
     if (
       this.map.pm.Draw.Circle.enabled() &&
-      !!this.map.pm.Draw.Circle.options.resizableCircle !==
-        !!options.resizableCircle
+      !!this.map.pm.Draw.Circle.options.resizeableCircle !==
+        !!options.resizeableCircle
     ) {
       this.map.pm.Draw.Circle.disable();
       reenableCircle = true;

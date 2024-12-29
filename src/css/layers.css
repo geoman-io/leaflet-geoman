@@ -1,5 +1,4 @@
-.marker-icon,
-.marker-icon:focus {
+.marker-icon {
   background-color: #ffffff;
   border: 1px solid #3388ff;
   border-radius: 50%;
@@ -10,8 +9,7 @@
   transition: opacity ease 0.3s;
 }
 
-.marker-icon-middle,
-.marker-icon-middle:focus {
+.marker-icon-middle {
   opacity: 0.7;
   margin: -6px 0 0 -6px !important;
   width: 10px !important;
@@ -35,6 +33,9 @@
 .geoman-draw-cursor {
   cursor: crosshair;
 }
+.geoman-draw-cursor .leaflet-interactive {
+  cursor: crosshair;
+}
 
 .rect-style-marker,
 .rect-start-marker {
@@ -56,6 +57,7 @@
 }
 
 .pm-textarea {
+  box-sizing: content-box;
   background-color: #fff;
   color: #000;
   resize: none;

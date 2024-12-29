@@ -82,11 +82,11 @@ Edit.CircleMarker = Edit.extend({
     if (this.layerDragEnabled()) {
       this.disableLayerDrag();
     }
-
+    if (this._helperLayers) {
+      this._helperLayers.clearLayers();
+      this._helperLayers.removeFrom(this._map);
+    }
     if (this.options[this._editableOption]) {
-      if (this._helperLayers) {
-        this._helperLayers.clearLayers();
-      }
       this._map.off('move', this._syncMarkers, this);
       this._outerMarker.off('drag', this._handleOuterMarkerSnapping, this);
     } else {
@@ -128,10 +128,6 @@ Edit.CircleMarker = Edit.extend({
         this._initSnappableMarkers();
         // update marker latlng when snapped latlng radius is out of min/max
         this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
-        // sync the hintline with hint marker
-        this._outerMarker.on('move', this._syncHintLine, this);
-        this._outerMarker.on('move', this._syncCircleRadius, this);
-        this._centerMarker.on('move', this._moveCircle, this);
       } else {
         this._disableSnapping();
       }
@@ -162,6 +158,7 @@ Edit.CircleMarker = Edit.extend({
 
     // cleanup old ones first
     if (this._helperLayers) {
+      this._helperLayers.removeFrom(map);
       this._helperLayers.clearLayers();
     }
 
@@ -198,6 +195,7 @@ Edit.CircleMarker = Edit.extend({
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
       L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
+      marker.on('move', this._moveCircle, this);
     } else {
       marker.dragging.disable();
     }

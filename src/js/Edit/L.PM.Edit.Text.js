@@ -220,7 +220,9 @@ Edit.Text = Edit.extend({
   },
 
   setText(text) {
-    this.textArea.value = text;
+    if (text) {
+      this.textArea.value = text;
+    }
     this._autoResize();
   },
 

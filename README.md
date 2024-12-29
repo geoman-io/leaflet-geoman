@@ -1,6 +1,6 @@
 <p align="center">  
   <a href="https://geoman.io">  
-    <img width="130" alt="Geoman Logo" src="https://geoman-static.onrender.com/assets/logo_white_bg.svg" />  
+    <img width="130" alt="Geoman Logo" src="https://assets.geoman.io/assets/logo_white_bg.svg" />  
   </a>  
 </p>  
 <h1 align="center">  
@@ -23,9 +23,8 @@
   </a>  
 </p>
 
-
 <p align="center">
-    <img src="https://geoman-static.onrender.com/assets/draw-example.png" alt="Demo" />  
+    <img src="https://assets.geoman.io/assets/draw-example.png" alt="Demo" />  
 </p>
 
 ## Documentation
@@ -47,37 +46,37 @@ Please see the existing [Feature Requests here](https://github.com/geoman-io/lea
 Clone the repository and then install all npm packages:
 
 ```
-npm install
+pnpm install
 ```
 
 Compile and run `dev` watch version:
 
 ```
-npm run start
+pnpm run start
 ```
 
 Compile and run `build` version:
 
 ```
-npm run prepare
+pnpm run prepare
 ```
 
 Run cypress test:
 
 ```
-npm run test
+pnpm run test
 ```
 
 Open cypress window:
 
 ```
-npm run cypress
+pnpm run cypress
 ```
 
 Open eslint check:
 
 ```
-npm run lint
+pnpm run lint
 ```
 
 Take a look into [CONTRIBUTING](./CONTRIBUTING.md)

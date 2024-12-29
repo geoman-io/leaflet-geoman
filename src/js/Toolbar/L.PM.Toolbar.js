@@ -34,6 +34,15 @@ const Toolbar = L.Class.extend({
   },
   customButtons: [],
   initialize(map) {
+    // For some reason there is an reference between multiple maps instances
+    this.customButtons = [];
+    this.options.positions = {
+      draw: '',
+      edit: '',
+      options: '',
+      custom: '',
+    };
+
     this.init(map);
   },
   reinit() {
@@ -151,7 +160,7 @@ const Toolbar = L.Class.extend({
   },
   _addButton(name, button) {
     this.buttons[name] = button;
-    this.options[name] = this.options[name] || false;
+    this.options[name] = !!this.options[name] || false;
 
     return this.buttons[name];
   },
@@ -185,17 +194,19 @@ const Toolbar = L.Class.extend({
       name = 'removalMode';
     }
 
+    const toggleBtnName = name;
+
     // as some mode got enabled, we still have to trigger the click on the other buttons
     // to disable their mode
     if (disableOthers) {
-      this.triggerClickOnToggledButtons(this.buttons[name]);
+      this.triggerClickOnToggledButtons(this.buttons[toggleBtnName]);
     }
 
-    if (!this.buttons[name]) {
+    if (!this.buttons[toggleBtnName]) {
       return false;
     }
     // now toggle the state of the button
-    return this.buttons[name].toggle(status);
+    return this.buttons[toggleBtnName].toggle(status);
   },
   _defineButtons() {
     // some buttons are still in their respective classes, like L.PM.Draw.Polygon
@@ -563,7 +574,28 @@ const Toolbar = L.Class.extend({
     this.changeControlOrder();
     return control;
   },
-
+  controlExists(name) {
+    return Boolean(this.getButton(name));
+  },
+  getButton(name) {
+    return this.getButtons()[name];
+  },
+  getButtonsInBlock(name) {
+    const buttonsInBlock = {};
+    if (name) {
+      for (const buttonName in this.getButtons()) {
+        const button = this.getButtons()[buttonName];
+        // draw controls doesn't have a block
+        if (
+          button._button.tool === name ||
+          (name === 'draw' && !button._button.tool)
+        ) {
+          buttonsInBlock[buttonName] = button;
+        }
+      }
+    }
+    return buttonsInBlock;
+  },
   changeControlOrder(order = []) {
     const shapeMapping = this._shapeMapping();
 
@@ -587,7 +619,8 @@ const Toolbar = L.Class.extend({
     });
 
     const drawBtns = Object.keys(buttons).filter(
-      (btn) => !buttons[btn]._button.tool
+      (btn) =>
+        !buttons[btn]._button.tool || buttons[btn]._button.tool === 'draw'
     );
     drawBtns.forEach((btn) => {
       if (_order.indexOf(btn) === -1) {

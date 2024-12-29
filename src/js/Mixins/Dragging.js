@@ -198,7 +198,7 @@ const DragMixin = {
     if (this._layer instanceof L.CircleMarker) {
       let _editableOption = 'resizeableCircleMarker';
       if (this._layer instanceof L.Circle) {
-        _editableOption = 'resizableCircle';
+        _editableOption = 'resizeableCircle';
       }
 
       if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
@@ -369,7 +369,7 @@ const DragMixin = {
 
     if (
       (this._layer instanceof L.Circle &&
-        this._layer.options.resizableCircle) ||
+        this._layer.options.resizeableCircle) ||
       (this._layer instanceof L.CircleMarker &&
         this._layer.options.resizeableCircleMarker)
     ) {

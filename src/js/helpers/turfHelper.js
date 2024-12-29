@@ -1,4 +1,4 @@
-import polygonClipping from 'polygon-clipping';
+import * as polygonClipping from 'polyclip-ts';
 
 export function feature(geom) {
   const feat = { type: 'Feature' };

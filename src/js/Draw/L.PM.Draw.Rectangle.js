@@ -275,6 +275,11 @@ Draw.Rectangle = Draw.extend({
       return;
     }
 
+    if (A.equals(B)) {
+      // rectangle has only one point
+      return;
+    }
+
     // create the final rectangle layer, based on opposite corners A & B
     const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
 
@@ -299,10 +304,13 @@ Draw.Rectangle = Draw.extend({
     // fire the pm:create event and pass shape and layer
     this._fireCreate(rectangleLayer);
 
+    const hintMarkerLatLng = this._hintMarker.getLatLng();
+
     // disable drawing
     this.disable();
     if (this.options.continueDrawing) {
       this.enable();
+      this._hintMarker.setLatLng(hintMarkerLatLng);
     }
   },
   setStyle() {

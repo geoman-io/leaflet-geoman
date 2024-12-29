@@ -684,7 +684,8 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
   });
 
-  it('allowSelfIntersectionEdit on polygon', () => {
+  it('allowSelfIntersectionEdit on polygon', (done) => {
+    cy.timeout(10000);
     cy.window().then(({ map, L, Hand }) => {
       cy.fixture('PolygonIntersects')
         .then((json) => {
@@ -766,12 +767,10 @@ describe('Draw & Edit Poly', () => {
           .up()
           .wait(500); // allowed
 
-        // wait until hand is finished
-        cy.waitUntil(() => cy.window().then(() => handFinish), {
-          timeout: 9000,
-        }).then(() => {
+        setTimeout(() => {
           expect(handFinish).to.equal(true);
-        });
+          done();
+        }, 7000);
       });
     });
   });
@@ -840,6 +839,12 @@ describe('Draw & Edit Poly', () => {
       .click(250, 250)
       .click(250, 300)
       .click(230, 230);
+
+    cy.window().then(({ map }) => {
+      const latlng = map.pm.Draw.Polygon._hintMarker.getLatLng();
+      const pxLatLng = map.containerPointToLatLng([230, 230]);
+      expect(pxLatLng).to.deep.equal(latlng);
+    });
 
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(6);
@@ -1325,6 +1330,139 @@ describe('Draw & Edit Poly', () => {
       const hintMarker = map.pm.Draw.Polygon._hintMarker;
       expect(hintMarker.getLatLng().lat).to.eq(20.53837097209846);
       expect(hintMarker.getLatLng().lng).to.eq(72.22334801861803);
+    });
+  });
+
+  it('prevents removal of the layer if the vertex count is below minimum (removeLayerBelowMinVertexCount)', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ removeLayerBelowMinVertexCount: false });
+    });
+
+    // activate polygon drawing
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polygon
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(150, 50)
+      .click(500, 50)
+      .click(90, 250);
+
+    cy.hasLayers(3);
+
+    // enable global edit mode
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // let's remove one vertex
+    cy.get('.marker-icon:not(.marker-icon-middle)')
+      .last()
+      .trigger('contextmenu');
+
+    cy.hasVertexMarkers(3);
+  });
+
+  it('allows to remove the hole when removeLayerBelowMinVertexCount is false', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ removeLayerBelowMinVertexCount: false });
+    });
+
+    // activate polygon drawing
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polygon
+    cy.get(mapSelector)
+      .click(90, 250)
+      .click(150, 50)
+      .click(500, 50)
+      .click(90, 250);
+
+    // activate cutting drawing
+    cy.toolbarButton('cut')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polygon to cut
+    cy.get(mapSelector)
+      .click(170, 80)
+      .click(320, 80)
+      .click(170, 170)
+      .click(170, 80);
+
+    cy.hasLayers(3);
+
+    // enable global edit mode
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.hasVertexMarkers(6);
+
+    // let's remove a vertex of the hole
+    cy.get(mapSelector).trigger('contextmenu', 170, 170);
+
+    cy.hasVertexMarkers(3);
+
+    // let's remove a vertex of the hole
+    cy.get(mapSelector).trigger('contextmenu', 90, 250);
+
+    cy.hasVertexMarkers(3);
+  });
+
+  it("doesn't snap to the vertex", () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ snapVertex: false });
+    });
+
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(50, 250)
+      .click(150, 50)
+      .click(250, 50)
+      .click(50, 250);
+
+    cy.toolbarButton('polygon')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    cy.get(mapSelector)
+      .click(150, 60)
+      .click(250, 90)
+      .click(200, 90)
+      .click(150, 60);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0][0].lat).to.eq(51.5255134425896);
+      expect(layer.getLatLngs()[0][0].lng).to.eq(-0.15071868896484378);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.get(mapSelector)
+      .trigger('mousedown', 150, 60, { which: 1 })
+      .trigger('mousemove', 150, 55, { which: 1 })
+      .trigger('mouseup', 150, 55, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0][0].lat).to.eq(51.52594064813257);
+      expect(layer.getLatLngs()[0][0].lng).to.eq(-0.15037536621093753);
     });
   });
 });

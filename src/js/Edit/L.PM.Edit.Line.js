@@ -136,6 +136,7 @@ Edit.Line = Edit.extend({
 
     // cleanup old ones first
     if (this._markerGroup) {
+      this._markerGroup.removeFrom(map);
       this._markerGroup.clearLayers();
     }
 
@@ -473,8 +474,12 @@ Edit.Line = Edit.extend({
     let markerArr =
       indexPath.length > 1 ? get(this._markers, parentPath) : this._markers;
 
-    // prevent removal of the layer if the vertex count is below minimum
-    if (!this.options.removeLayerBelowMinVertexCount) {
+    // define whether marker is part of hole
+    const isHole =
+      parentPath[parentPath.length - 1] > 0 && this._layer instanceof L.Polygon;
+
+    // prevent removal of the layer if the vertex count is below minimum when not a hole
+    if (!this.options.removeLayerBelowMinVertexCount && !isHole) {
       // if on a line only 2 vertices left or on a polygon 3 vertices left, don't allow to delete
       if (
         coordsRing.length <= 2 ||
@@ -535,13 +540,16 @@ Edit.Line = Edit.extend({
       // remove the marker and the middlemarkers next to it from the map
       if (marker._middleMarkerPrev) {
         this._markerGroup.removeLayer(marker._middleMarkerPrev);
+        this._removeFromCache(marker._middleMarkerPrev);
       }
       if (marker._middleMarkerNext) {
         this._markerGroup.removeLayer(marker._middleMarkerNext);
+        this._removeFromCache(marker._middleMarkerNext);
       }
 
       // remove the marker from the map
       this._markerGroup.removeLayer(marker);
+      this._removeFromCache(marker);
 
       if (markerArr) {
         let rightMarkerIndex;
@@ -774,7 +782,7 @@ Edit.Line = Edit.extend({
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
-    let intersection = this.hasSelfIntersection();
+    let intersection = !this.options.allowSelfIntersection && this.hasSelfIntersection();
     if (
       intersection &&
       this.options.allowSelfIntersectionEdit &&

@@ -441,6 +441,66 @@ declare module 'leaflet' {
 
     /******************************************
      *
+     * TODO: Union MODE EVENTS ON MAP ONLY
+     *
+     ********************************************/
+
+    /** Fired when Union Mode is toggled. */
+    on(
+      type: 'pm:globalunionmodetoggled',
+      fn: PM.GlobalUnionModeToggledEventHandler
+    ): this;
+    once(
+      type: 'pm:globalunionmodetoggled',
+      fn: PM.GlobalUnionModeToggledEventHandler
+    ): this;
+    off(
+      type: 'pm:globalunionmodetoggled',
+      fn?: PM.GlobalUnionModeToggledEventHandler
+    ): this;
+
+    /** Fired when Union is executed. */
+    on(type: 'pm:union', fn: PM.UnionEventHandler): this;
+    once(type: 'pm:union', fn: PM.UnionEventHandler): this;
+    off(type: 'pm:union', fn: PM.UnionEventHandler): this;
+
+    /******************************************
+     *
+     * TODO: Difference MODE EVENTS ON MAP ONLY
+     *
+     ********************************************/
+
+    /** Fired when Difference Mode is toggled. */
+    on(
+      type: 'pm:globaldifferencemodetoggled',
+      fn: PM.GlobalDifferenceModeToggledEventHandler
+    ): this;
+    once(
+      type: 'pm:globaldifferencemodetoggled',
+      fn: PM.GlobalDifferenceModeToggledEventHandler
+    ): this;
+    off(
+      type: 'pm:globaldifferencemodetoggled',
+      fn?: PM.GlobalDifferenceModeToggledEventHandler
+    ): this;
+
+    /** Fired when Difference is executed. */
+    on(type: 'pm:difference', fn: PM.DifferenceEventHandler): this;
+    once(type: 'pm:difference', fn: PM.DifferenceEventHandler): this;
+    off(type: 'pm:difference', fn?: PM.DifferenceEventHandler): this;
+
+    /** Fired when a layer is added to the selection. */
+    on(type: 'pm:selectionadd', fn: PM.SelectionEventHandler): this;
+    once(type: 'pm:selectionadd', fn: PM.SelectionEventHandler): this;
+    off(type: 'pm:selectionadd', fn: PM.SelectionEventHandler): this;
+
+    /** Fired when a layer is removed from the selection. */
+    on(type: 'pm:selectionremove', fn: PM.SelectionEventHandler): this;
+    once(type: 'pm:selectionremove', fn: PM.SelectionEventHandler): this;
+    off(type: 'pm:selectionremove', fn: PM.SelectionEventHandler): this;
+
+    /******************************************
+     *
      * TODO: TRANSLATION EVENTS ON MAP ONLY
      *
      ********************************************/
@@ -479,7 +539,6 @@ declare module 'leaflet' {
   }
 
   namespace PM {
-
     export const version: string;
 
     /** Supported shape names. 'ImageOverlay' is in Edit Mode only. Also accepts custom shape name. */
@@ -514,7 +573,9 @@ declare module 'leaflet' {
       | 'nl'
       | 'no'
       | 'pl'
+      | 'pt'
       | 'pt_br'
+      | 'pt_pt'
       | 'ro'
       | 'ru'
       | 'sv'
@@ -546,7 +607,11 @@ declare module 'leaflet' {
         PMDragMap,
         PMRemoveMap,
         PMCutMap,
-        PMRotateMap {
+        PMRotateMap,
+        PMScaleMap,
+        PMSelectionMap,
+        PMUnionMap,
+        PMDifferenceMap {
       Toolbar: PMMapToolbar;
 
       Keyboard: PMMapKeyboard;
@@ -591,6 +656,8 @@ declare module 'leaflet' {
         finishCircle?: string;
         placeCircleMarker?: string;
         placeText?: string;
+        selectFirstLayerFor?: string;
+        selectSecondLayerFor?: string;
       };
 
       actions?: {
@@ -616,6 +683,9 @@ declare module 'leaflet' {
         drawTextButton?: string;
         scaleButton?: string;
         autoTracingButton?: string;
+        snapGuidesButton?: string;
+        unionButton?: string;
+        differenceButton?: string;
       };
 
       measurements?: {
@@ -628,7 +698,7 @@ declare module 'leaflet' {
         width?: string;
         coordinates?: string;
         coordinatesMarker?: string;
-      }
+      };
     }
 
     type ACTION_NAMES = 'cancel' | 'removeLastVertex' | 'finish' | 'finishMode';
@@ -636,6 +706,9 @@ declare module 'leaflet' {
     class Action {
       text: string;
       onClick?: (e: any) => void;
+      title?: string;
+      name?: string;
+      isActive?: () => boolean;
     }
 
     type TOOLBAR_CONTROL_ORDER =
@@ -651,6 +724,14 @@ declare module 'leaflet' {
       | 'removalMode'
       | 'rotateMode'
       | 'drawText'
+      | 'scaleMode'
+      | 'pinningOption'
+      | 'snappingOption'
+      | 'autoTracingOption'
+      | 'snapGuidesOption'
+      | 'spitalMode'
+      | 'unionMode'
+      | 'differenceMode'
       | string;
 
     interface PMMapToolbar {
@@ -666,17 +747,32 @@ declare module 'leaflet' {
         position: L.ControlPosition
       ): void;
 
+      /** Returns all of the active buttons */
+      getButtons(): Record<string, L.Control>;
+
+      /** Returns the full button object or undefined if the name does not exist */
+      getButton(name: string): L.Control | undefined;
+
+      /** Checks whether a button has been mounted */
+      controlExists(name: string): boolean;
+
+      /** Returns all of the custom, active buttons */
+      getButtonsInBlock(name: string): Record<string, L.Control>;
+
       /** Returns a Object with the positions for all blocks */
       getBlockPositions(): BlockPositions;
 
       /** To add a custom Control to the Toolbar */
-      createCustomControl(options: CustomControlOptions): void;
+      createCustomControl(options: CustomControlOptions): L.Control;
 
       /** Creates a copy of a draw Control. Returns the drawInstance and the control. */
       copyDrawControl(
         copyInstance: string,
         options?: CustomControlOptions
-      ): void;
+      ): {
+        drawInstance: Draw;
+        control: L.Control;
+      };
 
       /** Change the actions of an existing button. */
       changeActionsOfControl(
@@ -792,6 +888,26 @@ declare module 'leaflet' {
 
       /** Defines in which panes the layers and helper vertices are created. Default: { vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' } */
       panes?: { vertexPane?: PANE; layerPane?: PANE; markerPane?: PANE };
+
+      /** Measurement options */
+      measurements?: {
+        measurement?: boolean;
+        showTooltip?: boolean;
+        showTooltipOnHover?: boolean;
+        totalLength?: boolean;
+        segmentLength?: boolean;
+        area?: boolean;
+        radius?: boolean;
+        perimeter?: boolean;
+        height?: boolean;
+        width?: boolean;
+        coordinates?: boolean;
+        displayFormat?: 'metric' | 'imperial';
+      };
+
+      autoTracing?: boolean;
+
+      selectionLayerStyle?: L.PathOptions;
     }
 
     interface PMDrawMap {
@@ -892,6 +1008,74 @@ declare module 'leaflet' {
       globalRotateModeEnabled(): boolean;
     }
 
+    interface PMScaleMap {
+      /** Enables global scale mode. */
+      enableGlobalScaleMode(): void;
+
+      /** Disables global scale mode. */
+      disableGlobalScaleMode(): void;
+
+      /** Toggles global scale mode. */
+      toggleGlobalScaleMode(): void;
+
+      /** Returns true if global scale mode is enabled. false when disabled. */
+      globalScaleModeEnabled(): boolean;
+    }
+
+    interface PMSelectionMap {
+      /** Enables global selection mode. Optional a filter can be added, which checks if the selection is allowed. */
+      enableSelectionTool(filterFnc?: () => boolean): void;
+
+      /** Disables global selection mode. */
+      disableSelectionTool(): void;
+
+      /** Returns true if global selection mode is enabled. false when disabled. */
+      selectionToolEnabled(): boolean;
+
+      /** Adds a layer to the selection. */
+      addSelection(layer: L.Layer): void;
+
+      /** Removes a layer from the selection. */
+      removeSelection(layer: L.Layer): void;
+
+      /** Returns selected layers. */
+      getSelectedLayers(): L.Layer[];
+    }
+
+    interface PMUnionMap {
+      /** Enables global union mode. */
+      enableGlobalUnionMode(): void;
+
+      /** Disables global union mode. */
+      disableGlobalUnionMode(): void;
+
+      /** Toggles global union mode. */
+      toggleGlobalUnionMode(): void;
+
+      /** Returns true if global union mode is enabled. false when disabled. */
+      globalUnionModeEnabled(): boolean;
+
+      /** Unifies the two layers. */
+      union(layer1: L.Layer, layer2: L.Layer): void;
+    }
+
+    interface PMDifferenceMap {
+      /** Enables global difference mode. */
+      enableGlobalDifferenceMode(): void;
+
+      /** Disables global difference mode. */
+      disableGlobalDifferenceMode(): void;
+
+      /** Toggles global difference mode. */
+      toggleGlobalDifferenceMode(): void;
+
+      /** Returns true if global difference mode is enabled. false when disabled. */
+      globalDifferenceModeEnabled(): boolean;
+
+      /** Subtracts the second selected layer from the first selected layer. */
+      difference(layer1: L.Layer, layer2: L.Layer): void;
+    }
+
     interface PMRotateLayer {
       /** Enables rotate mode on the layer. */
       enableRotate(): void;
@@ -948,12 +1132,7 @@ declare module 'leaflet' {
       event: any;
     }) => boolean;
 
-    interface EditModeOptions {
-      /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
-      snappable?: boolean;
-
-      /** The distance to another vertex when a snap should happen (default:20). */
-      snapDistance?: number;
+    interface EditModeOptions extends SnappingOptions {
 
       /** Allow self intersections (default:true). */
       allowSelfIntersection?: boolean;
@@ -1045,18 +1224,7 @@ declare module 'leaflet' {
       className?: string;
     }
 
-    interface DrawModeOptions {
-      /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
-      snappable?: boolean;
-
-      /** The distance to another vertex when a snap should happen (default:20). */
-      snapDistance?: number;
-
-      /** Allow snapping in the middle of two vertices (middleMarker)(default:false). */
-      snapMiddle?: boolean;
-
-      /** Allow snapping between two vertices. (default: true)*/
-      snapSegment?: boolean;
+    interface DrawModeOptions extends SnappingOptions {
 
       /** Require the last point of a shape to be snapped. (default: false). */
       requireSnapToFinish?: boolean;
@@ -1114,7 +1282,7 @@ declare module 'leaflet' {
       editable?: boolean;
 
       /** Enables radius editing while drawing a Circle (default:true). */
-      resizableCircle?: boolean;
+      resizeableCircle?: boolean;
 
       /** Enables radius editing while drawing a CircleMarker (default:false). */
       resizeableCircleMarker?: boolean;
@@ -1132,6 +1300,23 @@ declare module 'leaflet' {
       layersToCut?: L.Layer[];
 
       textOptions?: TextOptions;
+    }
+
+    interface SnappingOptions {
+      /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
+      snappable?: boolean;
+
+      /** The distance to another vertex when a snap should happen (default:20). */
+      snapDistance?: number;
+
+      /** Allow snapping in the middle of two vertices (middleMarker)(default:false). */
+      snapMiddle?: boolean;
+
+      /** Allow snapping between two vertices. (default: true)*/
+      snapSegment?: boolean;
+
+      /** Allow snapping to vertices. (default: true)*/
+      snapVertex?: boolean;
     }
 
     /**
@@ -1448,7 +1633,7 @@ declare module 'leaflet' {
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
-      intersectionRest: boolean;
+      intersectionReset: boolean;
     }) => void;
     export type LayerResetEventHandler = (e: {
       layer: L.Layer;
@@ -1597,6 +1782,43 @@ declare module 'leaflet' {
       enabled: boolean;
       map: L.Map;
     }) => void;
+
+    /**
+     * UNION MODE MAP EVENT HANDLERS
+     */
+    export type GlobalUnionModeToggledEventHandler = (e: {
+      enabled: boolean;
+      map: L.Map;
+    }) => void;
+
+    /**
+     * UNION EVENT HANDLERS
+     */
+    export type UnionEventHandler = (e: {
+      resultLayer: L.Layer;
+      mergedLayers: L.Layer[];
+    }) => void;
+
+    /**
+     * DIFFERENCE MODE MAP EVENT HANDLERS
+     */
+    export type GlobalDifferenceModeToggledEventHandler = (e: {
+      enabled: boolean;
+      map: L.Map;
+    }) => void;
+
+    /**
+     * DIFFERENCE EVENT HANDLERS
+     */
+    export type DifferenceEventHandler = (e: {
+      resultLayer: L.Layer;
+      subtractedLayers: L.Layer[];
+    }) => void;
+
+    /**
+     * SELECTION EVENT HANDLERS
+     */
+    export type SelectionEventHandler = (e: { layer: L.Layer }) => void;
 
     /**
      * TRANSLATION EVENT HANDLERS

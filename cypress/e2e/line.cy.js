@@ -207,6 +207,12 @@ describe('Draw & Edit Line', () => {
 
     cy.get(mapSelector).click(200, 200).click(250, 250).click(250, 250);
 
+    cy.window().then(({ map }) => {
+      const latlng = map.pm.Draw.Line._hintMarker.getLatLng();
+      const pxLatLng = map.containerPointToLatLng([250, 250]);
+      expect(pxLatLng).to.deep.equal(latlng);
+    });
+
     cy.toolbarButton('edit').click();
     cy.hasVertexMarkers(5);
   });
@@ -323,6 +329,125 @@ describe('Draw & Edit Line', () => {
       const hintLine = map.pm.Draw.Line._hintline;
       expect(layer.options.color).to.eql('red');
       expect(hintLine.options.color).to.eql('red');
+    });
+  });
+
+  it('remove vertex marker from MarkerLimit Cache', () => {
+    cy.toolbarButton('polyline').click();
+
+    cy.get(mapSelector)
+      .click(120, 150)
+      .click(120, 100)
+      .click(300, 100)
+      .click(300, 200)
+      .click(120, 150);
+
+    cy.toolbarButton('edit').click();
+
+    cy.hasVertexMarkers(4);
+    cy.hasMiddleMarkers(3);
+
+    // rightclick on a vertex-marker to delete it
+    cy.get('.marker-icon:not(.marker-icon-middle)')
+      .eq(2)
+      .trigger('contextmenu');
+
+    cy.hasVertexMarkers(3);
+    cy.hasMiddleMarkers(2);
+
+    cy.wait(20);
+
+    cy.window().then(({ map }) => {
+      map.panBy([40, 40], { animate: false });
+    });
+
+    cy.hasVertexMarkers(3);
+    cy.hasMiddleMarkers(2);
+  });
+
+  it("snapping doesn't throw an error when Polyline has only one coordinate", () => {
+    cy.window().then(({ map, L }) => {
+      L.polyline([map.getCenter()]).addTo(map);
+    });
+
+    // activate line drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a line
+    cy.get(mapSelector).click(150, 250);
+  });
+
+  it('prevents removal of the layer if the vertex count is below minimum (removeLayerBelowMinVertexCount)', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ removeLayerBelowMinVertexCount: false });
+    });
+
+    // activate polyline drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polyline
+    cy.get(mapSelector).click(90, 250).click(150, 50).click(150, 50);
+
+    // enable global edit mode
+    cy.toolbarButton('edit')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // let's remove one vertex
+    cy.get('.marker-icon:not(.marker-icon-middle)')
+      .last()
+      .trigger('contextmenu');
+
+    cy.hasVertexMarkers(2);
+  });
+
+  it("doesn't snap to the vertex", () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ snapVertex: false });
+    });
+
+    // activate polyline drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polyline
+    cy.get(mapSelector).click(90, 250).click(150, 50).click(150, 50);
+
+    // activate polyline drawing
+    cy.toolbarButton('polyline')
+      .click()
+      .closest('.button-container')
+      .should('have.class', 'active');
+
+    // draw a polyline
+    cy.get(mapSelector).click(150, 60).click(250, 50).click(250, 50);
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0].lat).to.eq(51.52538802368748);
+      expect(layer.getLatLngs()[0].lng).to.eq(-0.15050450596240997);
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.get(mapSelector)
+      .trigger('mousedown', 150, 60, { which: 1 })
+      .trigger('mousemove', 150, 55, { which: 1 })
+      .trigger('mouseup', 150, 55, { which: 1 });
+
+    cy.window().then(({ map }) => {
+      const layer = map.pm.getGeomanDrawLayers()[1];
+      expect(layer.getLatLngs()[0].lat).to.eq(51.5258877375718);
+      expect(layer.getLatLngs()[0].lng).to.eq(-0.15026355008465944);
     });
   });
 });

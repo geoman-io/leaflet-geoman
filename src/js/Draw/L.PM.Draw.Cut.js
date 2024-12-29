@@ -69,10 +69,13 @@ Draw.Cut = Draw.Polygon.extend({
     });
     this._editedLayers = [];
 
+    const hintMarkerLatLng = this._hintMarker.getLatLng();
+
     // disable drawing
     this.disable();
     if (this.options.continueDrawing) {
       this.enable();
+      this._hintMarker.setLatLng(hintMarkerLatLng);
     }
   },
   cut(layer) {
