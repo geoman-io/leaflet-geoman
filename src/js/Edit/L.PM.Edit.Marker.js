@@ -32,6 +32,9 @@ Edit.Marker = Edit.extend({
 
     this._enabled = true;
 
+    this._layer.on('pm:dragstart', this._onDragStart, this);
+    this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
+
     this._fireEnable();
   },
   disable() {
@@ -88,6 +91,12 @@ Edit.Marker = Edit.extend({
     // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
     this._fireRemove(marker);
     this._fireRemove(this._map, marker);
+  },
+  _onDragStart() {
+    this._map.pm.Draw.Marker._layerIsDragging = true;
+  },
+  _onMarkerDragEnd() {
+    this._map.pm.Draw.Marker._layerIsDragging = false;
   },
   _onDragEnd() {
     this._fireEdit();

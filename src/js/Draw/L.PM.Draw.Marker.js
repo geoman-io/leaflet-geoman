@@ -6,6 +6,8 @@ Draw.Marker = Draw.extend({
     this._map = map;
     this._shape = 'Marker';
     this.toolbarButtonName = 'drawMarker';
+    // with _layerIsDragging we check if a marker is currently dragged and disable marker creation
+    this._layerIsDragging = false;
   },
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
@@ -137,7 +139,7 @@ Draw.Marker = Draw.extend({
     this._fireChange(this._hintMarker.getLatLng(), 'Draw');
   },
   _createMarker(e) {
-    if (!e.latlng) {
+    if (!e.latlng || this._layerIsDragging) {
       return;
     }
 
