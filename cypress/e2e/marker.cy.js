@@ -317,27 +317,31 @@ describe('Draw Marker', () => {
     });
   });
 
-  it('drag in draw mode does not create additional marker', (done) => {
+  it('does not create additional marker while dragging in draw mode ', () => {
     cy.toolbarButton('marker').click();
 
     cy.get(mapSelector).click(150, 250);
-    cy.wait(1000);
 
     cy.window().then(({ map }) => {
       expect(map.pm.getGeomanDrawLayers().length).to.eq(1);
     });
 
-    cy.get(mapSelector).trigger('mousemove', 150, 230);
-    cy.get(mapSelector).trigger('mouseover', 150, 230, { which: 1 });
     cy.get(mapSelector).trigger('mousedown', 150, 230, { which: 1 });
     cy.get(mapSelector).trigger('mousemove', 170, 290, { which: 1 });
+    // Do not create a new marker while dragging
     cy.get(mapSelector).click(170, 290);
-    cy.get(mapSelector).trigger('mouseup', 170, 290, { which: 1, force: true });
+    cy.get(mapSelector).trigger('mouseup', 170, 290, { which: 1 });
     cy.get(mapSelector).trigger('mousemove', 190, 340, { which: 1 });
 
     cy.window().then(({ map }) => {
       expect(map.pm.getGeomanDrawLayers().length).to.eq(1);
-      done();
+    });
+
+    // Create a new marker after dragging with clicking on the icon of a marker
+    cy.get(mapSelector).click(170, 290);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.getGeomanDrawLayers().length).to.eq(2);
     });
   });
 });
