@@ -1465,4 +1465,46 @@ describe('Draw & Edit Poly', () => {
       expect(layer.getLatLngs()[0][0].lng).to.eq(-0.15037536621093753);
     });
   });
+
+  it('keeps alt coordinate after editing a vertex', () => {
+    let polygon;
+
+    cy.window().then(({ map, L }) => {
+      polygon = L.polygon([
+        [
+          [20.53507732696281, 71.98242187500001, 111],
+          [19.87005983797396, 71.97143554687501, 222],
+          [19.782211275967995, 73.35021972656251, 333],
+          [20.55565240377338, 73.48754882812501, 444],
+          [20.53507732696281, 71.98242187500001, 111],
+        ],
+      ]);
+      polygon.addTo(map);
+      map.fitBounds(polygon.getBounds(), { animate: false });
+
+      expect(
+        polygon
+          .getLatLngs()
+          .flat()
+          .map((a) => a.alt)
+          .join(',')
+      ).to.equal('111,222,333,444');
+    });
+
+    cy.toolbarButton('edit').click();
+
+    cy.get(mapSelector).trigger('mousedown', 225, 105, { which: 1 });
+    cy.get(mapSelector).trigger('mousemove', 225, 150, { which: 1 });
+    cy.get(mapSelector).trigger('mouseup', 225, 150, { which: 1 });
+
+    cy.window().then(() => {
+      expect(
+        polygon
+          .getLatLngs()
+          .flat()
+          .map((a) => a.alt)
+          .join(',')
+      ).to.equal('111,222,333,444');
+    });
+  });
 });

@@ -604,6 +604,8 @@ Edit.Line = Edit.extend({
 
     // update coord
     const parent = indexPath.length > 1 ? get(coords, parentPath) : coords;
+    // Can be removed after https://github.com/Leaflet/Leaflet/issues/9689 is fixed
+    latlng.alt = parent[index].alt;
     parent.splice(index, 1, latlng);
 
     // set new coords on layer
@@ -782,7 +784,8 @@ Edit.Line = Edit.extend({
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
-    let intersection = !this.options.allowSelfIntersection && this.hasSelfIntersection();
+    let intersection =
+      !this.options.allowSelfIntersection && this.hasSelfIntersection();
     if (
       intersection &&
       this.options.allowSelfIntersectionEdit &&
