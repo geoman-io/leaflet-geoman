@@ -317,7 +317,7 @@ describe('Draw Marker', () => {
     });
   });
 
-  it('does not create additional marker while dragging in draw mode ', () => {
+  it('does not create additional marker while dragging in draw mode', () => {
     cy.toolbarButton('marker').click();
 
     cy.get(mapSelector).click(150, 250);
