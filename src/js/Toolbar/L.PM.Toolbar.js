@@ -151,6 +151,13 @@ const Toolbar = L.Class.extend({
 
     this.isVisible = false;
   },
+  deleteControl(name) {
+    const btnName = this._btnNameMapping(name);
+    if (this.buttons[btnName]) {
+      this.buttons[btnName].remove();
+      delete this.buttons[btnName];
+    }
+  },
   toggleControls(options = this.options) {
     if (this.isVisible) {
       this.removeControls();

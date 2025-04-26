@@ -1087,6 +1087,9 @@ declare module 'leaflet' {
 
       /** Disable button by control name */
       setButtonDisabled(name: TOOLBAR_CONTROL_ORDER, state: boolean): void;
+
+      /** Removes a custom Control from the Toolbar */
+      deleteControl(name: string): void;
     }
 
     type KEYBOARD_EVENT_TYPE = 'current' | 'keydown' | 'keyup';
