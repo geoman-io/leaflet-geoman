@@ -525,4 +525,46 @@ describe('Testing the Toolbar', () => {
       done();
     });
   });
+
+  it('Deletes custom control and adds a new one with the same name', () => {
+    const clickSpy = cy.spy();
+    const clickSpyNew = cy.spy();
+
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.createCustomControl({
+        name: 'alertBox',
+        onClick: clickSpy,
+        toggle: false,
+        block: 'custom',
+      });
+
+      cy.toolbarButtonContainer('alertBox', map).then((container) => {
+        container[0].children[0].click(); // button
+      });
+    });
+
+    cy.window().then(({ map }) => {
+      // expect needs to be in the this block, otherwise it will be executed before the click event
+      expect(clickSpy.callCount).to.be.eq(1);
+
+      map.pm.Toolbar.deleteControl('alertBox');
+
+      map.pm.Toolbar.createCustomControl({
+        name: 'alertBox',
+        onClick: clickSpyNew,
+        toggle: false,
+        block: 'custom',
+      });
+
+      cy.toolbarButtonContainer('alertBox', map).then((container) => {
+        container[0].children[0].click(); // button
+      });
+    });
+
+    cy.window().then(() => {
+      // expect needs to be in the this block, otherwise it will be executed before the click event
+      expect(clickSpy.callCount).to.be.eq(1);
+      expect(clickSpyNew.callCount).to.be.eq(1);
+    });
+  });
 });
