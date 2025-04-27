@@ -1088,7 +1088,7 @@ declare module 'leaflet' {
       /** Disable button by control name */
       setButtonDisabled(name: TOOLBAR_CONTROL_ORDER, state: boolean): void;
 
-      /** Removes a custom Control from the Toolbar */
+      /** Deletes and removes a Control from the Toolbar */
       deleteControl(name: string): void;
     }
 
