@@ -2204,13 +2204,19 @@ declare module 'leaflet' {
       dragging(): boolean;
     }
 
+    interface Measurement {
+      value: number;
+      unit: string;
+      baseValueMeter: number;
+    }
+
     interface MeasurementData {
-      distance?: number;
-      area?: number;
-      height?: number;
-      width?: number;
-      segmentdistance?: number;
-      radius?: number;
+      distance?: Measurement;
+      area?: Measurement;
+      height?: Measurement;
+      width?: Measurement;
+      segmentdistance?: Measurement;
+      radius?: Measurement;
     }
 
     namespace Utils {
