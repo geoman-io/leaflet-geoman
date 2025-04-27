@@ -24,6 +24,71 @@ describe('Modes', () => {
     cy.hasTotalVertexMarkers(20);
   });
 
+  it('dragging without changing the marker with limits markers works', () => {
+    let layer;
+    let markerHtml;
+
+    cy.window().then(({ map, L }) => {
+      const geojson = {
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [72.799745, 19.030517],
+              [72.804465, 19.029097],
+              [72.803628, 19.030984],
+              [72.802792, 19.03287],
+              [72.807512, 19.03218],
+              [72.803564, 19.034858],
+              [72.801504, 19.035345],
+              [72.799745, 19.030517],
+            ],
+          ],
+        },
+      };
+      // eslint-disable-next-line prefer-destructuring
+      layer = L.geoJSON(geojson).addTo(map).getLayers()[0];
+      map.fitBounds(layer.getBounds());
+
+      map.pm.setGlobalOptions({
+        limitMarkersToCount: 1,
+        allowSelfIntersection: false,
+      });
+
+      layer.on('pm:markerdragstart', (e) => {
+        markerHtml = e.markerEvent.target._icon;
+      });
+    });
+
+    cy.toolbarButton('edit').click();
+
+    // make the marker visible
+    cy.get(mapSelector).trigger('mousemove', 500, 120, { which: 1 });
+
+    cy.get(mapSelector)
+      .trigger('mousedown', 495, 125, { which: 1 })
+      .trigger('mousemove', 500, 307, { which: 1 });
+
+    // let the animation to show the new marker finish
+    cy.wait(100);
+
+    cy.get('.leaflet-marker-icon').should((p) => {
+      expect(p[0]).to.equal(markerHtml);
+    });
+
+    // end dragging
+    cy.get(mapSelector).trigger('mouseup', 500, 307, { which: 1 });
+
+    // make other marker visible
+    cy.get(mapSelector).trigger('mousemove', 310, 330, { which: 1 });
+
+    cy.get('.leaflet-marker-icon').should((p) => {
+      expect(p[0]).to.not.equal(markerHtml);
+    });
+  });
+
   it('properly changes markers on vertex removal', () => {
     cy.drawShape('PolygonPart1');
 
