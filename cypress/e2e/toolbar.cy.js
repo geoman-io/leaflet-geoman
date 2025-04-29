@@ -158,6 +158,41 @@ describe('Testing the Toolbar', () => {
       .and('include', 'Dibujar Marcador de Círculo');
   });
 
+  it('Sets 3-letter language code correctly to fallback when not available', () => {
+    cy.window().then(({ map, L }) => {
+      map.pm.setLang('jam'); // 'jam' translations don't exist
+      expect(L.PM.activeLang).to.equal('en'); // Should fallback to 'en'
+    });
+  });
+
+  it('Sets 3-letter language code with region correctly to fallback when not available', () => {
+    cy.window().then(({ map, L }) => {
+      map.pm.setLang('jam-JM'); // 'jam' translations don't exist
+      expect(L.PM.activeLang).to.equal('en'); // Should fallback to 'en'
+    });
+  });
+
+  it('Sets 2-letter language code with region correctly to base when available', () => {
+    cy.window().then(({ map, L }) => {
+      map.pm.setLang('fr-CA'); // 'fr' translations exist
+      expect(L.PM.activeLang).to.equal('fr'); // Should use 'fr'
+    });
+  });
+
+  it('Sets 2-letter language code ', () => {
+    cy.window().then(({ map, L }) => {
+      map.pm.setLang('de'); // 'fr' translations exist
+      expect(L.PM.activeLang).to.equal('de'); // Should use 'fr'
+    });
+  });
+
+  it('Handles non-existent language code correctly by falling back', () => {
+    cy.window().then(({ map, L }) => {
+      map.pm.setLang('xyz'); // 'xyz' translations don't exist
+      expect(L.PM.activeLang).to.equal('en'); // Should fallback to 'en'
+    });
+  });
+
   it('has functioning actions', () => {
     cy.toolbarButton('polygon').click();
 

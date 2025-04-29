@@ -44,45 +44,71 @@ const Map = L.Class.extend({
     this.Keyboard._initKeyListener(map);
   },
   // eslint-disable-next-line default-param-last
-  setLang(lang = 'en', override, fallback = 'en') {
-    // Normalize the language code to lowercase and trim any whitespace
-    lang = lang.trim().toLowerCase();
+  setLang(langInput = 'en', override, fallback = 'en') {
+    // 1. Normalize input and determine the intended language code
+    const normalizedInput = langInput?.trim().toLowerCase() || '';
+    const originalFallbackLang = fallback?.trim().toLowerCase() || 'en';
+    let intendedLang = originalFallbackLang; // Default intention is the fallback
 
-    // First, check if the input is already in the expected format (e.g., 'fr')
-    if (/^[a-z]{2}$/.test(lang)) {
-      // No further processing needed for single-letter codes
-    } else {
-      // Handle formats like 'fr-FR', 'FR', 'fr-fr', 'fr_FR'
-      const normalizedLang = lang
-        .replace(/[-_\s]/g, '-')
-        .replace(/^(\w{2})$/, '$1-');
-      const match = normalizedLang.match(/([a-z]{2})-?([a-z]{2})?/);
-
-      if (match) {
-        // Construct potential keys to search for in the translations object
-        const potentialKeys = [
-          `${match[1]}_${match[2]}`, // e.g., 'fr_BR'
-          `${match[1]}`, // e.g., 'fr'
-        ];
-
-        // Search through the translations object for a matching key
-        for (const key of potentialKeys) {
-          if (translations[key]) {
-            lang = key; // Set lang to the matching key
-            break; // Exit the loop once a match is found
-          }
-        }
-      }
+    const match = normalizedInput.match(/^([a-z]{2,3})(?:[-_]([a-z]{2}))?.*$/);
+    let baseLang = null;
+    if (match) {
+      [, baseLang] = match;
+    } else if (/^[a-z]{2,3}$/.test(normalizedInput)) {
+      baseLang = normalizedInput;
     }
 
-    const oldLang = L.PM.activeLang;
-    if (override) {
-      translations[lang] = merge(translations[fallback], override);
+    if (baseLang) {
+      intendedLang = baseLang; // If input gives a valid base code, that's the intention
+    } else if (!normalizedInput) {
+      intendedLang = 'en'; // If input is empty/invalid, intention defaults to 'en'
+    }
+    // Now, intendedLang is the primary code derived from input, or the fallback, or 'en'.
+
+    const oldLang = L.PM.activeLang || 'en'; // Store the previous language, default to 'en' if undefined
+
+    // 2. Calculate merged translations for the event *if* override is provided
+    let translationsForEvent = null; // Initialize
+    if (override && typeof override === 'object') {
+      // Find the best base for merging: intended lang -> fallback -> 'en' -> empty
+      const baseForMerge =
+        translations[intendedLang] ||
+        translations[originalFallbackLang] ||
+        translations.en ||
+        {};
+      // Calculate the merged result, but DO NOT assign back to global translations[intendedLang]
+      translationsForEvent = merge({}, baseForMerge, override);
     }
 
-    L.PM.activeLang = lang;
-    this.map.pm.Toolbar.reinit();
-    this._fireLangChange(oldLang, lang, fallback, translations[lang]);
+    // 3. Determine the final active language BASED ON ORIGINAL translations
+    let finalLang = 'en'; // Default final language to 'en'
+    // Check the *original* translations, ignoring any temporary override merge
+    if (translations[intendedLang]) {
+      finalLang = intendedLang; // Use intended if it now exists (due to override or initially)
+    } else if (translations[originalFallbackLang]) {
+      finalLang = originalFallbackLang; // Otherwise, use fallback if it exists
+    }
+    // If neither intended nor fallback exists, finalLang remains 'en'
+
+    // 4. Set active language
+    L.PM.activeLang = finalLang;
+    // 5. Reinitialize toolbar and fire event if the language actually changed
+    if (oldLang !== L.PM.activeLang) {
+      this.map.pm.Toolbar.reinit();
+      // Use the potentially merged translations *only* for the event payload
+      // Fallback to the standard active translations if no override was performed
+      const activeTranslations =
+        translationsForEvent ||
+        translations[L.PM.activeLang] ||
+        translations.en ||
+        {};
+      this._fireLangChange(
+        oldLang,
+        L.PM.activeLang,
+        originalFallbackLang,
+        activeTranslations
+      );
+    }
   },
   addControls(options) {
     this.Toolbar.addControls(options);
