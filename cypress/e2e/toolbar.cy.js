@@ -181,8 +181,8 @@ describe('Testing the Toolbar', () => {
 
   it('Sets 2-letter language code ', () => {
     cy.window().then(({ map, L }) => {
-      map.pm.setLang('de'); // 'fr' translations exist
-      expect(L.PM.activeLang).to.equal('de'); // Should use 'fr'
+      map.pm.setLang('de'); // 'de' translations exist
+      expect(L.PM.activeLang).to.equal('de'); // Should use 'de'
     });
   });
 
