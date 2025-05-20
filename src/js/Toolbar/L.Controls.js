@@ -229,7 +229,7 @@ const PMButton = Control.extend({
       image.setAttribute('src', button.iconUrl);
     }
     if (button.className) {
-      image.classList.add(button.className);
+      image.classList.add(...button.className.split(' '));
     }
 
     DomEvent.disableClickPropagation(newButton);
