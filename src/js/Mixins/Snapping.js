@@ -1,3 +1,4 @@
+import { Circle, CircleMarker, ImageOverlay, LineUtil, Marker, Polygon, Polyline, Rectangle, Util } from 'leaflet';
 import { hasValues, prioritiseSort } from '../helpers';
 
 const SnapMixin = {
@@ -68,7 +69,7 @@ const SnapMixin = {
     marker._snapped = false;
 
     if (!this.throttledList) {
-      this.throttledList = L.Util.throttle(
+      this.throttledList = Util.throttle(
         this._handleThrottleSnapping,
         100,
         this
@@ -109,8 +110,8 @@ const SnapMixin = {
     }
 
     const isMarker =
-      closestLayer.layer instanceof L.Marker ||
-      closestLayer.layer instanceof L.CircleMarker ||
+      closestLayer.layer instanceof Marker ||
+      closestLayer.layer instanceof CircleMarker ||
       !this.options.snapSegment;
 
     // find the final latlng that we want to snap to
@@ -191,10 +192,10 @@ const SnapMixin = {
     // temporary markers of polygon-edits
     map.eachLayer((layer) => {
       if (
-        (layer instanceof L.Polyline ||
-          layer instanceof L.Marker ||
-          layer instanceof L.CircleMarker ||
-          layer instanceof L.ImageOverlay) &&
+        (layer instanceof Polyline ||
+          layer instanceof Marker ||
+          layer instanceof CircleMarker ||
+          layer instanceof ImageOverlay) &&
         layer.options.snapIgnore !== true
       ) {
         // if snapIgnore === false the layer will be always snappable
@@ -208,21 +209,21 @@ const SnapMixin = {
 
         // adds a hidden polygon which matches the border of the circle
         if (
-          (layer instanceof L.Circle || layer instanceof L.CircleMarker) &&
+          (layer instanceof Circle || layer instanceof CircleMarker) &&
           layer.pm &&
           layer.pm._hiddenPolyCircle
         ) {
           layers.push(layer.pm._hiddenPolyCircle);
-        } else if (layer instanceof L.ImageOverlay) {
-          layer = L.rectangle(layer.getBounds());
+        } else if (layer instanceof ImageOverlay) {
+          layer = new Rectangle(layer.getBounds());
         }
         layers.push(layer);
 
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        const debugLine = new Polyline([], { color: 'red', pmIgnore: true });
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
-        if (layer instanceof L.Circle || layer instanceof L.CircleMarker) {
+        if (layer instanceof Circle || layer instanceof CircleMarker) {
           debugIndicatorLines.push(debugLine);
         }
 
@@ -246,7 +247,7 @@ const SnapMixin = {
     if (this._otherSnapLayers) {
       this._otherSnapLayers.forEach(() => {
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        const debugLine = new Polyline([], { color: 'red', pmIgnore: true });
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
       });
@@ -294,7 +295,7 @@ const SnapMixin = {
 
       if (this.debugIndicatorLines) {
         if (!this.debugIndicatorLines[index]) {
-          const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+          const debugLine = new Polyline([], { color: 'red', pmIgnore: true });
           debugLine._pmTempLayer = true;
           this.debugIndicatorLines[index] = debugLine;
         }
@@ -335,7 +336,7 @@ const SnapMixin = {
     // return the closest layer and it's data
     // if there is no closest layer, return an empty object
     const result = this._getClosestLayerByPriority(closestLayers, amount);
-    if (L.Util.isArray(result)) {
+    if (Util.isArray(result)) {
       return result;
     }
     return [result];
@@ -345,10 +346,10 @@ const SnapMixin = {
 
     // is this a marker?
     const isMarker =
-      layer instanceof L.Marker || layer instanceof L.CircleMarker;
+      layer instanceof Marker || layer instanceof CircleMarker;
 
     // is it a polygon?
-    const isPolygon = layer instanceof L.Polygon;
+    const isPolygon = layer instanceof Polygon;
 
     // the point P which we want to snap (probpably the marker that is dragged)
     const P = latlng;
@@ -541,14 +542,14 @@ const SnapMixin = {
     const P = map.project(latlng, maxzoom);
     const A = map.project(latlngA, maxzoom);
     const B = map.project(latlngB, maxzoom);
-    const closest = L.LineUtil.closestPointOnSegment(P, A, B);
+    const closest = LineUtil.closestPointOnSegment(P, A, B);
     return map.unproject(closest, maxzoom);
   },
   _getDistanceToSegment(map, latlng, latlngA, latlngB) {
     const P = map.latLngToContainerPoint(latlng);
     const A = map.latLngToContainerPoint(latlngA);
     const B = map.latLngToContainerPoint(latlngB);
-    return L.LineUtil.pointToSegmentDistance(P, A, B);
+    return LineUtil.pointToSegmentDistance(P, A, B);
   },
   _getDistance(map, latlngA, latlngB) {
     return map

@@ -1,3 +1,4 @@
+import { Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 
 Edit.Marker = Edit.extend({
@@ -12,7 +13,7 @@ Edit.Marker = Edit.extend({
   },
   // TODO: remove default option in next major Release
   enable(options = { draggable: true }) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     // layer is not allowed to edit
     if (!this.options.allowEditing || !this._layer._map) {

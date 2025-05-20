@@ -1,3 +1,4 @@
+import { Circle } from 'leaflet';
 import Draw from './L.PM.Draw';
 
 Draw.Circle = Draw.CircleMarker.extend({
@@ -5,7 +6,7 @@ Draw.Circle = Draw.CircleMarker.extend({
     this._map = map;
     this._shape = 'Circle';
     this.toolbarButtonName = 'drawCircle';
-    this._BaseCircleClass = L.Circle;
+    this._BaseCircleClass = Circle;
     this._minRadiusOption = 'minRadiusCircle';
     this._maxRadiusOption = 'maxRadiusCircle';
     this._editableOption = 'resizeableCircle';

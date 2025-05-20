@@ -1,9 +1,10 @@
+import { Class, LayerGroup, Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 
 // LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Polygon
 // (which inherits from L.PM.Edit) for each layer,
 // so it's not really a parent class
-Edit.LayerGroup = L.Class.extend({
+Edit.LayerGroup = Class.extend({
   initialize(layerGroup) {
     this._layerGroup = layerGroup;
     this._layers = this.getLayers();
@@ -44,7 +45,7 @@ Edit.LayerGroup = L.Class.extend({
     };
     this._layerGroup.on(
       'layeradd',
-      L.Util.throttle(addThrottle, 100, this),
+      Util.throttle(addThrottle, 100, this),
       this
     );
 
@@ -67,7 +68,7 @@ Edit.LayerGroup = L.Class.extend({
     // we run this as throttle because the findLayers() is a larger function
     this._layerGroup.on(
       'layerremove',
-      L.Util.throttle(removeThrottle, 100, this),
+      Util.throttle(removeThrottle, 100, this),
       this
     );
   },
@@ -77,7 +78,7 @@ Edit.LayerGroup = L.Class.extend({
     }
     this._options = options;
     this._layers.forEach((layer) => {
-      if (layer instanceof L.LayerGroup) {
+      if (layer instanceof LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
           _layerIds.push(layer._leaflet_id);
           layer.pm.enable(options, _layerIds);
@@ -92,7 +93,7 @@ Edit.LayerGroup = L.Class.extend({
       this._layers = this.getLayers();
     }
     this._layers.forEach((layer) => {
-      if (layer instanceof L.LayerGroup) {
+      if (layer instanceof LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
           _layerIds.push(layer._leaflet_id);
           layer.pm.disable(_layerIds);
@@ -107,7 +108,7 @@ Edit.LayerGroup = L.Class.extend({
       this._layers = this.getLayers();
     }
     const enabled = this._layers.find((layer) => {
-      if (layer instanceof L.LayerGroup) {
+      if (layer instanceof LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
           _layerIds.push(layer._leaflet_id);
           return layer.pm.enabled(_layerIds);
@@ -124,7 +125,7 @@ Edit.LayerGroup = L.Class.extend({
     }
     this._options = options;
     this._layers.forEach((layer) => {
-      if (layer instanceof L.LayerGroup) {
+      if (layer instanceof LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
           _layerIds.push(layer._leaflet_id);
           layer.pm.toggleEdit(options, _layerIds);
@@ -136,7 +137,7 @@ Edit.LayerGroup = L.Class.extend({
   },
   _initLayer(layer) {
     // add reference for the group to each layer inside said group by id, a layer can have multiple groups
-    const id = L.Util.stamp(this._layerGroup);
+    const id = Util.stamp(this._layerGroup);
     if (!layer.pm._parentLayerGroup) {
       layer.pm._parentLayerGroup = {};
     }
@@ -144,7 +145,7 @@ Edit.LayerGroup = L.Class.extend({
   },
   _removeLayerFromGroup(layer) {
     if (layer.pm && layer.pm._layerGroup) {
-      const id = L.Util.stamp(this._layerGroup);
+      const id = Util.stamp(this._layerGroup);
       delete layer.pm._layerGroup[id];
     }
   },
@@ -173,7 +174,7 @@ Edit.LayerGroup = L.Class.extend({
       // get the layers of LayerGroup children
       this._layerGroup.getLayers().forEach((layer) => {
         layers.push(layer);
-        if (layer instanceof L.LayerGroup) {
+        if (layer instanceof LayerGroup) {
           if (_layerIds.indexOf(layer._leaflet_id) === -1) {
             _layerIds.push(layer._leaflet_id);
             layers = layers.concat(
@@ -188,7 +189,7 @@ Edit.LayerGroup = L.Class.extend({
     }
 
     if (filterGroupsOut) {
-      layers = layers.filter((layer) => !(layer instanceof L.LayerGroup));
+      layers = layers.filter((layer) => !(layer instanceof LayerGroup));
     }
     if (filterGeoman) {
       // filter out layers that don't have leaflet-geoman
@@ -211,7 +212,7 @@ Edit.LayerGroup = L.Class.extend({
     this.options = options;
     this._layers.forEach((layer) => {
       if (layer.pm) {
-        if (layer instanceof L.LayerGroup) {
+        if (layer instanceof LayerGroup) {
           if (_layerIds.indexOf(layer._leaflet_id) === -1) {
             _layerIds.push(layer._leaflet_id);
             layer.pm.setOptions(options, _layerIds);

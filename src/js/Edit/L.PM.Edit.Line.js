@@ -1,9 +1,10 @@
 import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
-import Edit from './L.PM.Edit';
 import { copyLatLngs, hasValues, removeEmptyCoordRings } from '../helpers';
+import Edit from './L.PM.Edit';
 
+import { DivIcon, DomUtil, FeatureGroup, Marker, Polygon, Polyline, Util } from 'leaflet';
 import MarkerLimits from '../Mixins/MarkerLimits';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
@@ -22,7 +23,7 @@ Edit.Line = Edit.extend({
     this._enabled = false;
   },
   enable(options) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     this._map = this._layer._map;
 
@@ -104,7 +105,7 @@ Edit.Line = Edit.extend({
     const el = this._layer._path
       ? this._layer._path
       : this._layer._renderer._container;
-    L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    el.classList.remove('leaflet-pm-draggable');
 
     if (this._layerEdited) {
       this._fireUpdate();
@@ -141,7 +142,7 @@ Edit.Line = Edit.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._markerGroup = new L.FeatureGroup();
+    this._markerGroup = new FeatureGroup();
     this._markerGroup._pmTempLayer = true;
 
     // handle coord-rings (outer, inner, etc)
@@ -181,9 +182,9 @@ Edit.Line = Edit.extend({
 
   // creates initial markers for coordinates
   _createMarker(latlng) {
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -223,7 +224,7 @@ Edit.Line = Edit.extend({
     );
 
     const middleMarker = this._createMarker(latlng);
-    const middleIcon = L.divIcon({
+    const middleIcon = new DivIcon({
       className: 'marker-icon marker-icon-middle',
     });
     middleMarker.setIcon(middleIcon);
@@ -248,7 +249,7 @@ Edit.Line = Edit.extend({
     // TODO: move the next two lines inside _addMarker() as soon as
     // https://github.com/Leaflet/Leaflet/issues/4484
     // is fixed
-    const icon = L.divIcon({ className: 'marker-icon' });
+    const icon = new DivIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
     this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
   },
@@ -277,7 +278,7 @@ Edit.Line = Edit.extend({
     if (!this._vertexValidationDragEnd(middleMarker)) {
       return;
     }
-    const icon = L.divIcon({ className: 'marker-icon' });
+    const icon = new DivIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
     // timeout is needed else this._onVertexClick fires the event because it is called after deleting the flag
     setTimeout(() => {
@@ -429,9 +430,9 @@ Edit.Line = Edit.extend({
         this._updateDisabledMarkerStyle(marker, disabled);
       } else if (marker._icon) {
         if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
-          L.DomUtil.addClass(marker._icon, 'vertexmarker-disabled');
+          marker._icon.classList.add('vertexmarker-disabled');
         } else {
-          L.DomUtil.removeClass(marker._icon, 'vertexmarker-disabled');
+          marker._icon.classList.remove('vertexmarker-disabled');
         }
       }
     });
@@ -476,7 +477,7 @@ Edit.Line = Edit.extend({
 
     // define whether marker is part of hole
     const isHole =
-      parentPath[parentPath.length - 1] > 0 && this._layer instanceof L.Polygon;
+      parentPath[parentPath.length - 1] > 0 && this._layer instanceof Polygon;
 
     // prevent removal of the layer if the vertex count is below minimum when not a hole
     if (!this.options.removeLayerBelowMinVertexCount && !isHole) {
@@ -635,8 +636,8 @@ Edit.Line = Edit.extend({
   _checkMarkerAllowedToDrag(marker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
-    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
-    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+    const prevLine = new Polyline([prevMarker.getLatLng(), marker.getLatLng()]);
+    const nextLine = new Polyline([marker.getLatLng(), nextMarker.getLatLng()]);
 
     let prevLineIntersectionLen = lineIntersect(
       this._layer.toGeoJSON(15),

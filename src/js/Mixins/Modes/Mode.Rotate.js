@@ -1,9 +1,11 @@
+import { LayerGroup, Polyline, Util } from "leaflet";
+
 const GlobalRotateMode = {
   _globalRotateModeEnabled: false,
   enableGlobalRotateMode() {
     this._globalRotateModeEnabled = true;
     const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l) => l instanceof L.Polyline
+      (l) => l instanceof Polyline
     );
     layers.forEach((layer) => {
       if (this._isRelevantForRotate(layer)) {
@@ -12,7 +14,7 @@ const GlobalRotateMode = {
     });
 
     if (!this.throttledReInitRotate) {
-      this.throttledReInitRotate = L.Util.throttle(
+      this.throttledReInitRotate = Util.throttle(
         this.handleLayerAdditionInGlobalRotateMode,
         100,
         this
@@ -31,7 +33,7 @@ const GlobalRotateMode = {
   disableGlobalRotateMode() {
     this._globalRotateModeEnabled = false;
     const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l) => l instanceof L.Polyline
+      (l) => l instanceof Polyline
     );
     layers.forEach((layer) => {
       layer.pm.disableRotate();
@@ -58,8 +60,8 @@ const GlobalRotateMode = {
   _isRelevantForRotate(layer) {
     return (
       layer.pm &&
-      layer instanceof L.Polyline &&
-      !(layer instanceof L.LayerGroup) &&
+      layer instanceof Polyline &&
+      !(layer instanceof LayerGroup) &&
       ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
         (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
@@ -79,7 +81,7 @@ const GlobalRotateMode = {
     }
   },
   _layerAddedRotate({ layer }) {
-    this._addedLayersRotate[L.stamp(layer)] = layer;
+    this._addedLayersRotate[Util.stamp(layer)] = layer;
   },
 };
 export default GlobalRotateMode;

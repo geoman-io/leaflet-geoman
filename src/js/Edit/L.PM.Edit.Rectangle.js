@@ -1,7 +1,8 @@
 // Corner detection based on Leaflet Draw's Edit.Rectangle.js Class:
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
-import Edit from './L.PM.Edit';
+import { DivIcon, FeatureGroup, Marker, Util } from 'leaflet';
 import { calcAngle } from '../helpers';
+import Edit from './L.PM.Edit';
 
 Edit.Rectangle = Edit.Polygon.extend({
   _shape: 'Rectangle',
@@ -16,7 +17,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._markerGroup = new L.FeatureGroup();
+    this._markerGroup = new FeatureGroup();
     this._markerGroup._pmTempLayer = true;
     map.addLayer(this._markerGroup);
 
@@ -48,9 +49,9 @@ Edit.Rectangle = Edit.Polygon.extend({
 
   // creates initial markers for coordinates
   _createMarker(latlng, index) {
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -160,7 +161,7 @@ Edit.Rectangle = Edit.Polygon.extend({
   // params: movedMarker -- the Marker object
   _adjustRectangleForMarkerMove(movedMarker) {
     // update moved marker coordinates
-    L.extend(movedMarker._origLatLng, movedMarker._latlng);
+    Util.extend(movedMarker._origLatLng, movedMarker._latlng);
 
     // update rectangle boundaries, based on moved marker's new LatLng and cached opposite corner's LatLng
     const corners = L.PM.Utils._getRotatedRectangle(

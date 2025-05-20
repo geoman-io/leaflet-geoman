@@ -1,6 +1,7 @@
+import { Polygon, Util } from 'leaflet';
 import get from 'lodash/get';
-import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
 import { calcAngle, copyLatLngs } from '../helpers';
+import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
 
 /**
  * We create a temporary polygon with the same latlngs as the layer that we want to rotate.
@@ -54,7 +55,7 @@ const RotateMixin = {
       if (_i > -1) {
         path.push(_i);
       }
-      if (L.Util.isArray(latlng[0])) {
+      if (Util.isArray(latlng[0])) {
         latlng.forEach((x, i) => forEachLatLng(x, path.slice(), i));
       } else {
         const markers =
@@ -130,7 +131,7 @@ const RotateMixin = {
       return this._rotationCenter;
     }
 
-    const polygon = L.polygon(this._layer.getLatLngs(), {
+    const polygon = new Polygon(this._layer.getLatLngs(), {
       stroke: false,
       fill: false,
       pmIgnore: true,
@@ -174,7 +175,7 @@ const RotateMixin = {
     };
 
     // we create a temp polygon for rotation
-    this._rotatePoly = L.polygon(this._layer.getLatLngs(), options);
+    this._rotatePoly = new Polygon(this._layer.getLatLngs(), options);
     this._rotatePoly._pmTempLayer = true;
     this._rotatePoly.addTo(this._layer._map);
     this._rotatePoly.pm._setAngle(this.getAngle());
@@ -240,7 +241,7 @@ const RotateMixin = {
       )
     );
     // store the new latlngs
-    this._rotateOrgLatLng = L.polygon(this._layer.getLatLngs()).getLatLngs();
+    this._rotateOrgLatLng = new Polygon(this._layer.getLatLngs()).getLatLngs();
     this._setAngle(this.getAngle() + degrees);
     if (
       this.rotateEnabled() &&

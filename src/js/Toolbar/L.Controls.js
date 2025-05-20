@@ -1,7 +1,8 @@
+import { Control, DomEvent, DomUtil, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
-const PMButton = L.Control.extend({
+const PMButton = Control.extend({
   includes: [EventMixin],
   options: {
     position: 'topleft',
@@ -10,7 +11,7 @@ const PMButton = L.Control.extend({
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
     // replaced setOptions with this because classNames returned undefined 🤔
-    this._button = L.Util.extend({}, this.options, options);
+    this._button = Object.assign({}, this.options, options);
   },
   onAdd(map) {
     this._map = map;
@@ -101,7 +102,7 @@ const PMButton = L.Control.extend({
     const pos = this.options.position.indexOf('right') > -1 ? 'pos-right' : '';
 
     // button container
-    const buttonContainer = L.DomUtil.create(
+    const buttonContainer = DomUtil.create(
       'div',
       `button-container  ${pos}`,
       this._container
@@ -112,7 +113,7 @@ const PMButton = L.Control.extend({
     }
 
     // the button itself
-    const newButton = L.DomUtil.create(
+    const newButton = DomUtil.create(
       'a',
       'leaflet-buttons-control-button',
       buttonContainer
@@ -122,7 +123,7 @@ const PMButton = L.Control.extend({
     newButton.href = '#';
 
     // the buttons actions
-    const actionContainer = L.DomUtil.create(
+    const actionContainer = DomUtil.create(
       'div',
       `leaflet-pm-actions-container ${pos}`,
       buttonContainer
@@ -171,7 +172,7 @@ const PMButton = L.Control.extend({
       } else {
         return action;
       }
-      const actionNode = L.DomUtil.create(
+      const actionNode = DomUtil.create(
         'a',
         `leaflet-pm-action ${pos} action-${name}`,
         actionContainer
@@ -186,8 +187,8 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
-      L.DomEvent.disableClickPropagation(actionNode);
-      L.DomEvent.on(actionNode, 'click', L.DomEvent.stop);
+      DomEvent.disableClickPropagation(actionNode);
+      DomEvent.on(actionNode, 'click', DomEvent.stop);
 
       action._node = actionNode;
 
@@ -207,9 +208,9 @@ const PMButton = L.Control.extend({
             this._fireActionClick(action, btnName, button);
           };
 
-          L.DomEvent.addListener(actionNode, 'click', actionClick, this);
-          L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
-          L.DomEvent.addListener(actionNode, 'click', () =>
+          DomEvent.addListener(actionNode, 'click', actionClick, this);
+          DomEvent.addListener(actionNode, 'click', action.onClick, this);
+          DomEvent.addListener(actionNode, 'click', () =>
             this._updateActiveAction(button)
           );
         }
@@ -219,30 +220,30 @@ const PMButton = L.Control.extend({
     this._updateActiveAction(button);
 
     if (button.toggleStatus) {
-      L.DomUtil.addClass(buttonContainer, 'active');
+      buttonContainer.classList.add('active');
     }
 
-    const image = L.DomUtil.create('div', 'control-icon', newButton);
+    const image = DomUtil.create('div', 'control-icon', newButton);
 
     if (button.iconUrl) {
       image.setAttribute('src', button.iconUrl);
     }
     if (button.className) {
-      L.DomUtil.addClass(image, button.className);
+      image.classList.add(button.className);
     }
 
-    L.DomEvent.disableClickPropagation(newButton);
-    L.DomEvent.on(newButton, 'click', L.DomEvent.stop);
+    DomEvent.disableClickPropagation(newButton);
+    DomEvent.on(newButton, 'click', DomEvent.stop);
 
     if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
-      L.DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
-      L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
+      DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
+      DomEvent.addListener(newButton, 'click', this._triggerClick, this);
     }
 
     if (button.disabled) {
-      L.DomUtil.addClass(newButton, 'pm-disabled');
+      newButton.classList.add('pm-disabled');
       newButton.setAttribute('aria-disabled', 'true');
     }
 
@@ -255,11 +256,11 @@ const PMButton = L.Control.extend({
     }
 
     if (!this._button.toggleStatus || this._button.cssToggle === false) {
-      L.DomUtil.removeClass(this.buttonsDomNode, 'active');
-      L.DomUtil.removeClass(this._container, 'activeChild');
+      this.buttonsDomNode.classList.remove('active');
+      this.buttonsDomNode.classList.remove('activeChild');
     } else {
-      L.DomUtil.addClass(this.buttonsDomNode, 'active');
-      L.DomUtil.addClass(this._container, 'activeChild');
+      this.buttonsDomNode.classList.add('active');
+      this.buttonsDomNode.classList.add('activeChild');
     }
   },
 
@@ -296,10 +297,10 @@ const PMButton = L.Control.extend({
     const button = this.buttonsDomNode.children[0];
 
     if (this._button.disabled) {
-      L.DomUtil.addClass(button, className);
+      button.classList.add(className);
       button.setAttribute('aria-disabled', 'true');
     } else {
-      L.DomUtil.removeClass(button, className);
+      button.classList.remove(className);
       button.setAttribute('aria-disabled', 'false');
     }
   },
@@ -307,9 +308,9 @@ const PMButton = L.Control.extend({
     button._preparedActions?.forEach((action) => {
       if (action?._node) {
         if (action.isActive && action.isActive.call(this)) {
-          L.DomUtil.addClass(action._node, 'active-action');
+          action._node.classList.add('active-action');
         } else {
-          L.DomUtil.removeClass(action._node, 'active-action');
+          action._node.classList.remove('active-action');
         }
       }
     });

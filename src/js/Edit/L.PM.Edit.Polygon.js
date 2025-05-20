@@ -1,4 +1,5 @@
 import lineIntersect from '@turf/line-intersect';
+import { Polyline } from 'leaflet';
 import Edit from './L.PM.Edit';
 
 Edit.Polygon = Edit.Line.extend({
@@ -6,8 +7,8 @@ Edit.Polygon = Edit.Line.extend({
   _checkMarkerAllowedToDrag(marker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
-    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
-    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+    const prevLine = new Polyline([prevMarker.getLatLng(), marker.getLatLng()]);
+    const nextLine = new Polyline([marker.getLatLng(), nextMarker.getLatLng()]);
 
     const prevLineIntersectionLen = lineIntersect(
       this._layer.toGeoJSON(15),

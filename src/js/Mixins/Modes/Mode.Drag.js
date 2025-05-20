@@ -1,3 +1,5 @@
+import { LayerGroup, Util } from "leaflet";
+
 const GlobalDragMode = {
   _globalDragModeEnabled: false,
   enableGlobalDragMode() {
@@ -13,7 +15,7 @@ const GlobalDragMode = {
     });
 
     if (!this.throttledReInitDrag) {
-      this.throttledReInitDrag = L.Util.throttle(
+      this.throttledReInitDrag = Util.throttle(
         this.reinitGlobalDragMode,
         100,
         this
@@ -71,12 +73,12 @@ const GlobalDragMode = {
     }
   },
   _layerAddedDrag({ layer }) {
-    this._addedLayersDrag[L.stamp(layer)] = layer;
+    this._addedLayersDrag[Util.stamp(layer)] = layer;
   },
   _isRelevantForDrag(layer) {
     return (
       layer.pm &&
-      !(layer instanceof L.LayerGroup) &&
+      !(layer instanceof LayerGroup) &&
       ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
         (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&

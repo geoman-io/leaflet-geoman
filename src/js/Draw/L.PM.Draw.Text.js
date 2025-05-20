@@ -1,5 +1,6 @@
-import Draw from './L.PM.Draw';
+import { DivIcon, DomUtil, Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
+import Draw from './L.PM.Draw';
 
 Draw.Text = Draw.extend({
   initialize(map) {
@@ -10,7 +11,7 @@ Draw.Text = Draw.extend({
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     // change enabled state
     this._enabled = true;
@@ -22,10 +23,10 @@ Draw.Text = Draw.extend({
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(this._map.getCenter(), {
+    this._hintMarker = new Marker(this._map.getCenter(), {
       interactive: false,
       zIndexOffset: 100,
-      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -33,7 +34,7 @@ Draw.Text = Draw.extend({
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+      this._hintMarker._icon.classList.add('visible');
     }
 
     // add tooltip to hintmarker
@@ -41,7 +42,7 @@ Draw.Text = Draw.extend({
       this._hintMarker
         .bindTooltip(getTranslation('tooltips.placeText'), {
           permanent: true,
-          offset: L.point(0, 10),
+          offset: new Point(0, 10),
           direction: 'bottom',
 
           opacity: 0.8,
@@ -148,7 +149,7 @@ Draw.Text = Draw.extend({
 
     const textAreaIcon = this._createTextIcon(this.textArea);
 
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       textMarker: true,
       _textMarkerOverPM: true, // we need to put this into the options, else we can't catch this in the init method
       icon: textAreaIcon,
@@ -164,7 +165,7 @@ Draw.Text = Draw.extend({
     marker.addTo(this._map.pm._getContainingLayer());
     if (marker.pm) {
       marker.pm.textArea = this.textArea;
-      L.setOptions(marker.pm, {
+      Util.setOptions(marker.pm, {
         removeIfEmpty: this.options.textOptions?.removeIfEmpty ?? true,
       });
 
@@ -201,7 +202,7 @@ Draw.Text = Draw.extend({
   },
 
   _createTextIcon(textArea) {
-    return L.divIcon({
+    return new DivIcon({
       className: 'pm-text-marker',
       html: textArea,
     });

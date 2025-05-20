@@ -1,17 +1,20 @@
 // use function to create a new mixin object for keeping isolation
+
+import { DomEvent } from "leaflet";
+
 // to make it work for multiple map instances
 const createKeyboardMixins = () => ({
   _lastEvents: { keydown: undefined, keyup: undefined, current: undefined },
   _initKeyListener(map) {
     this.map = map;
-    L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
-    L.DomEvent.on(window, 'blur', this._onBlur, this);
+    DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
+    DomEvent.on(window, 'blur', this._onBlur, this);
     // clean up global listeners when current map instance is destroyed
     map.once('unload', this._unbindKeyListenerEvents, this);
   },
   _unbindKeyListenerEvents() {
-    L.DomEvent.off(document, 'keydown keyup', this._onKeyListener, this);
-    L.DomEvent.off(window, 'blur', this._onBlur, this);
+    DomEvent.off(document, 'keydown keyup', this._onKeyListener, this);
+    DomEvent.off(window, 'blur', this._onBlur, this);
   },
   _onKeyListener(e) {
     let focusOn = 'document';

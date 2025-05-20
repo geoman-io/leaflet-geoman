@@ -1,5 +1,6 @@
-import Draw from './L.PM.Draw';
+import { DivIcon, Marker, Polygon } from 'leaflet';
 import { getTranslation } from '../helpers';
+import Draw from './L.PM.Draw';
 
 Draw.Polygon = Draw.Line.extend({
   initialize(map) {
@@ -14,9 +15,9 @@ Draw.Polygon = Draw.Line.extend({
   },
   _createMarker(latlng) {
     // create the new marker
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       draggable: false,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -86,7 +87,7 @@ Draw.Polygon = Draw.Line.extend({
       return;
     }
 
-    const polygonLayer = L.polygon(coords, this.options.pathOptions);
+    const polygonLayer = new Polygon(coords, this.options.pathOptions);
     this._setPane(polygonLayer, 'layerPane');
     this._finishLayer(polygonLayer);
     polygonLayer.addTo(this._map.pm._getContainingLayer());

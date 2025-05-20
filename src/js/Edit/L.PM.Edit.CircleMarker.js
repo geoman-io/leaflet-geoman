@@ -1,5 +1,6 @@
-import Edit from './L.PM.Edit';
+import { Circle, DivIcon, DomUtil, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
 import { destinationOnLine } from '../helpers';
+import Edit from './L.PM.Edit';
 
 Edit.CircleMarker = Edit.extend({
   _shape: 'CircleMarker',
@@ -16,7 +17,7 @@ Edit.CircleMarker = Edit.extend({
   },
   // TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
     // TODO: remove with next major release
     if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;
@@ -166,7 +167,7 @@ Edit.CircleMarker = Edit.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._helperLayers = new L.FeatureGroup();
+    this._helperLayers = new FeatureGroup();
     this._helperLayers._pmTempLayer = true;
     this._helperLayers.addTo(map);
 
@@ -183,13 +184,13 @@ Edit.CircleMarker = Edit.extend({
   },
   _getLatLngOnCircle(center, radius) {
     const pointA = this._map.project(center);
-    const pointB = L.point(pointA.x + radius, pointA.y);
+    const pointB = new Point(pointA.x + radius, pointA.y);
     return this._map.unproject(pointB);
   },
   _createHintLine(markerA, markerB) {
     const A = markerA.getLatLng();
     const B = markerB.getLatLng();
-    this._hintline = L.polyline([A, B], this.options.hintlineStyle);
+    this._hintline = new Polyline([A, B], this.options.hintlineStyle);
     this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
@@ -197,7 +198,7 @@ Edit.CircleMarker = Edit.extend({
   _createCenterMarker(latlng) {
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
-      L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
+      marker._icon.classList.add('leaflet-pm-draggable');
       marker.on('move', this._moveCircle, this);
     } else {
       marker.dragging.disable();
@@ -210,9 +211,9 @@ Edit.CircleMarker = Edit.extend({
     return marker;
   },
   _createMarker(latlng) {
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -316,7 +317,7 @@ Edit.CircleMarker = Edit.extend({
     // dragged marker
     const draggedMarker = e.target;
     if (
-      draggedMarker instanceof L.Marker &&
+      draggedMarker instanceof Marker &&
       !this._vertexValidationDrag(draggedMarker)
     ) {
       return;
@@ -374,7 +375,7 @@ Edit.CircleMarker = Edit.extend({
         map,
         this._layer.getLatLng()
       );
-      const _layer = L.circle(this._layer.getLatLng(), this._layer.options);
+      const _layer = new Circle(this._layer.getLatLng(), this._layer.options);
       _layer.setRadius(radius);
 
       const crsSimple = map && map.pm._isCRSSimple();

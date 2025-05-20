@@ -1,3 +1,4 @@
+import { Circle, CircleMarker, CRS, LatLng, Marker, Polygon, Polyline, Rectangle } from 'leaflet';
 import get from 'lodash/get';
 import translations from '../../assets/translations';
 
@@ -43,7 +44,7 @@ export function removeEmptyCoordRings(arr) {
 function destinationVincenty(lonlat, brng, dist) {
   // rewritten to work with leaflet
   const VincentyConstants = {
-    a: L.CRS.Earth.R,
+    a: CRS.Earth.R,
     b: 6356752.3142,
     f: 1 / 298.257223563,
   };
@@ -112,7 +113,7 @@ function destinationVincenty(lonlat, brng, dist) {
   const lamFunc = lon1 + (lam * 180) / pi; // converts lam radius to degrees
   const lat2a = (lat2 * 180) / pi; // converts lat2a radius to degrees
 
-  return L.latLng(lamFunc, lat2a);
+  return new LatLng(lamFunc, lat2a);
 }
 
 export function createGeodesicPolygon(
@@ -131,11 +132,11 @@ export function createGeodesicPolygon(
     if (withBearing) {
       trueAngle = (i * 360) / sides + rotation;
       newLonlat = destinationVincenty(origin, trueAngle, radius);
-      geomPoint = L.latLng(newLonlat.lng, newLonlat.lat);
+      geomPoint = new LatLng(newLonlat.lng, newLonlat.lat);
     } else {
       const pLat = origin.lat + Math.cos((2 * i * Math.PI) / sides) * radius;
       const pLng = origin.lng + Math.sin((2 * i * Math.PI) / sides) * radius;
-      geomPoint = L.latLng(pLat, pLng);
+      geomPoint = new LatLng(pLat, pLng);
     }
     points.push(geomPoint);
   }
@@ -143,12 +144,12 @@ export function createGeodesicPolygon(
   return points;
 }
 
-/* Copied from L.GeometryUtil */
+/* Copied from GeometryUtil */
 function destination(latlng, heading, distance) {
   heading = (heading + 360) % 360;
   const rad = Math.PI / 180;
   const radInv = 180 / Math.PI;
-  const { R } = L.CRS.Earth; // approximation of Earth's radius
+  const { R } = CRS.Earth; // approximation of Earth's radius
   const lon1 = latlng.lng * rad;
   const lat1 = latlng.lat * rad;
   const rheading = heading * rad;
@@ -171,9 +172,9 @@ function destination(latlng, heading, distance) {
   const optB = lon2 < -180 ? lon2 + 360 : lon2;
 
   lon2 = lon2 > 180 ? optA : optB;
-  return L.latLng([lat2 * radInv, lon2]);
+  return new LatLng([lat2 * radInv, lon2]);
 }
-/* Copied from L.GeometryUtil */
+/* Copied from GeometryUtil */
 export function calcAngle(map, latlngA, latlngB) {
   const pointA = map.latLngToContainerPoint(latlngA);
   const pointB = map.latLngToContainerPoint(latlngB);
@@ -208,22 +209,22 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
   }
 
   function getShape(layer) {
-    if (layer instanceof L.Marker) {
+    if (layer instanceof Marker) {
       return 'Marker';
     }
-    if (layer instanceof L.Circle) {
+    if (layer instanceof Circle) {
       return 'Circle';
     }
-    if (layer instanceof L.CircleMarker) {
+    if (layer instanceof CircleMarker) {
       return 'CircleMarker';
     }
-    if (layer instanceof L.Rectangle) {
+    if (layer instanceof Rectangle) {
       return 'Rectangle';
     }
-    if (layer instanceof L.Polygon) {
+    if (layer instanceof Polygon) {
       return 'Polygon';
     }
-    if (layer instanceof L.Polyline) {
+    if (layer instanceof Polyline) {
       return 'Line';
     }
     return undefined;
@@ -257,10 +258,10 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
 }
 
 export function copyLatLngs(layer, latlngs = layer.getLatLngs()) {
-  if (layer instanceof L.Polygon) {
-    return L.polygon(latlngs).getLatLngs();
+  if (layer instanceof Polygon) {
+    return new Polygon(latlngs).getLatLngs();
   }
-  return L.polyline(latlngs).getLatLngs();
+  return new Polyline(latlngs).getLatLngs();
 }
 
 // Replaces the lat value with the MAX_LATITUDE of CRS if it is lower / higher

@@ -1,3 +1,4 @@
+import { Canvas, Circle, CircleMarker, DomEvent, DomUtil, ImageOverlay, LayerGroup, Marker, Util } from 'leaflet';
 import { getRenderer } from '../helpers';
 
 const DragMixin = {
@@ -18,11 +19,11 @@ const DragMixin = {
     }
 
     if (
-      this._layer instanceof L.Marker ||
-      this._layer instanceof L.ImageOverlay
+      this._layer instanceof Marker ||
+      this._layer instanceof ImageOverlay
     ) {
       // prevents dragging the DOM image instead of the marker
-      L.DomEvent.on(this._getDOMElem(), 'dragstart', this._stopDOMImageDrag);
+      DomEvent.on(this._getDOMElem(), 'dragstart', this._stopDOMImageDrag);
     }
 
     // Disable Leaflet Dragging of Markers
@@ -34,7 +35,7 @@ const DragMixin = {
     this._tempDragCoord = null;
 
     // add CSS class
-    if (getRenderer(this._layer) instanceof L.Canvas) {
+    if (getRenderer(this._layer) instanceof Canvas) {
       this._layer.on('mouseout', this.removeDraggingClass, this);
       this._layer.on('mouseover', this.addDraggingClass, this);
     } else {
@@ -52,7 +53,7 @@ const DragMixin = {
     // check if DOM element exists
     if (container) {
       // add mousedown event to trigger drag
-      if (getRenderer(this._layer) instanceof L.Canvas) {
+      if (getRenderer(this._layer) instanceof Canvas) {
         this._layer.on(
           'touchstart mousedown',
           this._dragMixinOnMouseDown,
@@ -62,7 +63,7 @@ const DragMixin = {
       } else {
         // We can't just use layer.on('mousedown') because on touch devices the event is not fired if user presses on the layer and then drag it.
         // With checking on touchstart and mousedown on the DOM element we can listen on the needed events
-        L.DomEvent.on(
+        DomEvent.on(
           container,
           'touchstart mousedown',
           this._simulateMouseDownEvent,
@@ -77,7 +78,7 @@ const DragMixin = {
     this._layerDragEnabled = false;
 
     // remove CSS class
-    if (getRenderer(this._layer) instanceof L.Canvas) {
+    if (getRenderer(this._layer) instanceof Canvas) {
       this._layer.off('mouseout', this.removeDraggingClass, this);
       this._layer.off('mouseover', this.addDraggingClass, this);
     } else {
@@ -100,7 +101,7 @@ const DragMixin = {
     const container = this._getDOMElem();
     // check if DOM element exists
     if (container) {
-      if (getRenderer(this._layer) instanceof L.Canvas) {
+      if (getRenderer(this._layer) instanceof Canvas) {
         this._layer.off(
           'touchstart mousedown',
           this._dragMixinOnMouseDown,
@@ -109,7 +110,7 @@ const DragMixin = {
         this._map.pm._removeTouchEvents(container);
       } else {
         // disable mousedown event
-        L.DomEvent.off(
+        DomEvent.off(
           container,
           'touchstart mousedown',
           this._simulateMouseDownEvent,
@@ -186,7 +187,7 @@ const DragMixin = {
     // if other layers found, snapping will be disabled
     const layersToSyncFound = this._syncLayers('_dragMixinOnMouseDown', e);
 
-    if (this._layer instanceof L.Marker) {
+    if (this._layer instanceof Marker) {
       if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
         this._initSnappableMarkers();
       } else {
@@ -195,9 +196,9 @@ const DragMixin = {
     }
 
     // we need to disable snapping for CircleMarker because they are snapping because of the check in onLayerDrag -> if(_snapped)
-    if (this._layer instanceof L.CircleMarker) {
+    if (this._layer instanceof CircleMarker) {
       let _editableOption = 'resizeableCircleMarker';
-      if (this._layer instanceof L.Circle) {
+      if (this._layer instanceof Circle) {
         _editableOption = 'resizeableCircle';
       }
 
@@ -223,7 +224,7 @@ const DragMixin = {
     // save for delta calculation
     this._tempDragCoord = e.latlng;
 
-    L.DomEvent.on(
+    DomEvent.on(
       this._map.getContainer(),
       'touchend mouseup',
       this._simulateMouseUpEvent,
@@ -232,7 +233,7 @@ const DragMixin = {
 
     // listen to mousemove on map (instead of polygon),
     // otherwise fast mouse movements stop the drag
-    L.DomEvent.on(
+    DomEvent.on(
       this._map.getContainer(),
       'touchmove mousemove',
       this._simulateMouseMoveEvent,
@@ -248,9 +249,9 @@ const DragMixin = {
     if (!this._dragging) {
       // set state
       this._dragging = true;
-      L.DomUtil.addClass(el, 'leaflet-pm-dragging');
+      el.classList.add('leaflet-pm-dragging');
 
-      if (!(this._layer instanceof L.Marker)) {
+      if (!(this._layer instanceof Marker)) {
         // bring it to front to prevent drag interception
         this._layer.bringToFront();
       }
@@ -272,7 +273,7 @@ const DragMixin = {
     this._onLayerDrag(e);
 
     // update the hidden circle border after dragging
-    if (this._layer instanceof L.CircleMarker) {
+    if (this._layer instanceof CircleMarker) {
       this._layer.pm._updateHiddenPolyCircle();
     }
   },
@@ -289,7 +290,7 @@ const DragMixin = {
     // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
     this._safeToCacheDragState = true;
     // clear up mousemove event
-    L.DomEvent.off(
+    DomEvent.off(
       this._map.getContainer(),
       'touchmove mousemove',
       this._simulateMouseMoveEvent,
@@ -297,7 +298,7 @@ const DragMixin = {
     );
 
     // clear up mouseup event
-    L.DomEvent.off(
+    DomEvent.off(
       this._map.getContainer(),
       'touchend mouseup',
       this._simulateMouseUpEvent,
@@ -310,7 +311,7 @@ const DragMixin = {
     }
 
     // update the hidden circle border after dragging
-    if (this._layer instanceof L.CircleMarker) {
+    if (this._layer instanceof CircleMarker) {
       this._layer.pm._updateHiddenPolyCircle();
     }
 
@@ -323,7 +324,7 @@ const DragMixin = {
       this._dragging = false;
       // if the layer is not on the map, we have no DOM element
       if (el) {
-        L.DomUtil.removeClass(el, 'leaflet-pm-dragging');
+        el.classList.remove('leaflet-pm-dragging');
       }
 
       // fire pm:dragend event
@@ -368,9 +369,9 @@ const DragMixin = {
       });
 
     if (
-      (this._layer instanceof L.Circle &&
+      (this._layer instanceof Circle &&
         this._layer.options.resizeableCircle) ||
-      (this._layer instanceof L.CircleMarker &&
+      (this._layer instanceof CircleMarker &&
         this._layer.options.resizeableCircleMarker)
     ) {
       // create the new coordinates array
@@ -379,8 +380,8 @@ const DragMixin = {
       this._layer.setLatLng(newCoords[0]);
       this._fireChange(this._layer.getLatLng(), 'Edit');
     } else if (
-      this._layer instanceof L.CircleMarker ||
-      this._layer instanceof L.Marker
+      this._layer instanceof CircleMarker ||
+      this._layer instanceof Marker
     ) {
       let coordsRefernce = this._layer.getLatLng();
       if (this._layer._snapped) {
@@ -392,7 +393,7 @@ const DragMixin = {
       // set new coordinates and redraw
       this._layer.setLatLng(newCoords[0]);
       this._fireChange(this._layer.getLatLng(), 'Edit');
-    } else if (this._layer instanceof L.ImageOverlay) {
+    } else if (this._layer instanceof ImageOverlay) {
       // create the new coordinates array
       const newCoords = moveCoords([
         this._layer.getBounds().getNorthWest(),
@@ -420,13 +421,13 @@ const DragMixin = {
   addDraggingClass() {
     const el = this._getDOMElem();
     if (el) {
-      L.DomUtil.addClass(el, 'leaflet-pm-draggable');
+      el.classList.add('leaflet-pm-draggable');
     }
   },
   removeDraggingClass() {
     const el = this._getDOMElem();
     if (el) {
-      L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+      el.classList.remove('leaflet-pm-draggable');
     }
   },
   _getDOMElem() {
@@ -466,12 +467,12 @@ const DragMixin = {
     ) {
       e._fromLayerSync = true;
       let layersToSync = [];
-      if (L.Util.isArray(this.options.syncLayersOnDrag)) {
+      if (Util.isArray(this.options.syncLayersOnDrag)) {
         // layers
         layersToSync = this.options.syncLayersOnDrag;
 
         this.options.syncLayersOnDrag.forEach((layer) => {
-          if (layer instanceof L.LayerGroup) {
+          if (layer instanceof LayerGroup) {
             layersToSync = layersToSync.concat(layer.pm.getLayers(true));
           }
         });
@@ -487,7 +488,7 @@ const DragMixin = {
         }
       }
 
-      if (L.Util.isArray(layersToSync) && layersToSync.length > 0) {
+      if (Util.isArray(layersToSync) && layersToSync.length > 0) {
         // filter out layers that don't have leaflet-geoman and not allowed to drag
         layersToSync = layersToSync
           .filter((layer) => !!layer.pm)

@@ -1,3 +1,5 @@
+import { LayerGroup, Util } from "leaflet";
+
 // this mixin adds a global edit mode to the map
 const GlobalEditMode = {
   _globalEditModeEnabled: false,
@@ -22,7 +24,7 @@ const GlobalEditMode = {
     });
 
     if (!this.throttledReInitEdit) {
-      this.throttledReInitEdit = L.Util.throttle(
+      this.throttledReInitEdit = Util.throttle(
         this.handleLayerAdditionInGlobalEditMode,
         100,
         this
@@ -93,12 +95,12 @@ const GlobalEditMode = {
     }
   },
   _layerAddedEdit({ layer }) {
-    this._addedLayersEdit[L.stamp(layer)] = layer;
+    this._addedLayersEdit[Util.stamp(layer)] = layer;
   },
   _isRelevantForEdit(layer) {
     return (
       layer.pm &&
-      !(layer instanceof L.LayerGroup) &&
+      !(layer instanceof LayerGroup) &&
       ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
         (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&

@@ -1,3 +1,4 @@
+import { DomEvent, DomUtil, Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 
 Edit.Text = Edit.extend({
@@ -7,7 +8,7 @@ Edit.Text = Edit.extend({
     this._enabled = false;
   },
   enable(options) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     if (!this.textArea) {
       return;
@@ -34,12 +35,12 @@ Edit.Text = Edit.extend({
 
     // if shape gets removed from map, disable edit mode
     this._layer.on('remove', this.disable, this);
-    L.DomEvent.on(this.textArea, 'input', this._autoResize, this);
-    L.DomEvent.on(this.textArea, 'focus', this._focusChange, this);
-    L.DomEvent.on(this.textArea, 'blur', this._focusChange, this);
-    this._layer.on('dblclick', L.DomEvent.stop);
+    DomEvent.on(this.textArea, 'input', this._autoResize, this);
+    DomEvent.on(this.textArea, 'focus', this._focusChange, this);
+    DomEvent.on(this.textArea, 'blur', this._focusChange, this);
+    this._layer.on('dblclick', DomEvent.stop);
 
-    L.DomEvent.off(this.textArea, 'mousedown', this._preventTextSelection);
+    DomEvent.off(this.textArea, 'mousedown', this._preventTextSelection);
 
     this._enabled = true;
 
@@ -53,9 +54,9 @@ Edit.Text = Edit.extend({
 
     // remove listener
     this._layer.off('remove', this.disable, this);
-    L.DomEvent.off(this.textArea, 'input', this._autoResize, this);
-    L.DomEvent.off(this.textArea, 'focus', this._focusChange, this);
-    L.DomEvent.off(this.textArea, 'blur', this._focusChange, this);
+    DomEvent.off(this.textArea, 'input', this._autoResize, this);
+    DomEvent.off(this.textArea, 'focus', this._focusChange, this);
+    DomEvent.off(this.textArea, 'blur', this._focusChange, this);
     document.removeEventListener('click', this._documentClickThis, {
       capture: true,
     });
@@ -70,7 +71,7 @@ Edit.Text = Edit.extend({
     this.textArea.focus();
     this.textArea.selectionStart = 0;
     this.textArea.selectionEnd = 0;
-    L.DomEvent.on(this.textArea, 'mousedown', this._preventTextSelection);
+    DomEvent.on(this.textArea, 'mousedown', this._preventTextSelection);
     focusedElement.focus();
 
     this._disableOnBlurActive = false;
@@ -258,7 +259,7 @@ Edit.Text = Edit.extend({
 
     this.textArea.wrap = 'off';
     this.textArea.style.overflow = 'hidden';
-    this.textArea.style.height = L.DomUtil.getStyle(this.textArea, 'font-size');
+    this.textArea.style.height = DomUtil.getStyle(this.textArea, 'font-size');
     this.textArea.style.width = '1px';
 
     if (this._layer.options.text) {

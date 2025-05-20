@@ -1,8 +1,9 @@
+import { Circle, CircleMarker, Class, Icon, ImageOverlay, Marker, Polyline, Util } from 'leaflet';
 import merge from 'lodash/merge';
-import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
+import SnapMixin from '../Mixins/Snapping';
 
-const Draw = L.Class.extend({
+const Draw = Class.extend({
   includes: [SnapMixin, EventMixin],
   options: {
     snappable: true, // TODO: next major Release, rename it to allowSnapping
@@ -20,7 +21,7 @@ const Draw = L.Class.extend({
     finishOn: null,
     markerStyle: {
       draggable: true,
-      icon: L.icon(),
+      icon: new Icon(),
     },
     hideMiddleMarkers: false,
     minRadiusCircle: null,
@@ -43,7 +44,7 @@ const Draw = L.Class.extend({
     snapVertex: true,
   },
   setOptions(options) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
     this.setStyle(this.options);
   },
   setStyle() {},
@@ -53,7 +54,7 @@ const Draw = L.Class.extend({
   initialize(map) {
     // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon
     // Issue https://github.com/Leaflet/Leaflet/issues/7302 - Leaflet v1.7.1
-    const defaultIcon = new L.Icon.Default();
+    const defaultIcon = new Icon.Default();
     defaultIcon.options.tooltipAnchor = [0, 0];
     this.options.markerStyle.icon = defaultIcon;
 
@@ -146,11 +147,11 @@ const Draw = L.Class.extend({
     const layers = [];
     this._map.eachLayer((layer) => {
       if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle ||
-        layer instanceof L.CircleMarker ||
-        layer instanceof L.ImageOverlay
+        layer instanceof Polyline ||
+        layer instanceof Marker ||
+        layer instanceof Circle ||
+        layer instanceof CircleMarker ||
+        layer instanceof ImageOverlay
       ) {
         // filter out everything that's leaflet-geoman specific temporary stuff
         if (!layer._pmTempLayer) {

@@ -1,5 +1,6 @@
-import Draw from './L.PM.Draw';
+import { DivIcon, DomUtil, FeatureGroup, Marker, Point, Rectangle, Util } from 'leaflet';
 import { fixLatOffset, getTranslation } from '../helpers';
+import Draw from './L.PM.Draw';
 
 Draw.Rectangle = Draw.extend({
   initialize(map) {
@@ -10,18 +11,18 @@ Draw.Rectangle = Draw.extend({
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     // enable draw mode
     this._enabled = true;
 
     // create a new layergroup
-    this._layerGroup = new L.FeatureGroup();
+    this._layerGroup = new FeatureGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
 
     // the rectangle we want to draw
-    this._layer = L.rectangle(
+    this._layer = new Rectangle(
       [
         [0, 0],
         [0, 0],
@@ -33,8 +34,8 @@ Draw.Rectangle = Draw.extend({
 
     // this is the marker at the origin of the rectangle
     // this needs to be present, for tracking purposes, but we'll make it invisible if a user doesn't want to see it!
-    this._startMarker = L.marker(this._map.getCenter(), {
-      icon: L.divIcon({ className: 'marker-icon rect-start-marker' }),
+    this._startMarker = new Marker(this._map.getCenter(), {
+      icon: new DivIcon({ className: 'marker-icon rect-start-marker' }),
       draggable: false,
       zIndexOffset: -100,
       opacity: this.options.cursorMarker ? 1 : 0,
@@ -44,9 +45,9 @@ Draw.Rectangle = Draw.extend({
     this._layerGroup.addLayer(this._startMarker);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(this._map.getCenter(), {
+    this._hintMarker = new Marker(this._map.getCenter(), {
       zIndexOffset: 150,
-      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -54,7 +55,7 @@ Draw.Rectangle = Draw.extend({
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+      this._hintMarker._icon.classList.add('visible');
     }
 
     // add tooltip to hintmarker
@@ -62,7 +63,7 @@ Draw.Rectangle = Draw.extend({
       this._hintMarker
         .bindTooltip(getTranslation('tooltips.firstVertex'), {
           permanent: true,
-          offset: L.point(0, 10),
+          offset: new Point(0, 10),
           direction: 'bottom',
 
           opacity: 0.8,
@@ -74,8 +75,8 @@ Draw.Rectangle = Draw.extend({
       // Add two more matching style markers, if cursor marker is rendered
       this._styleMarkers = [];
       for (let i = 0; i < 2; i += 1) {
-        const styleMarker = L.marker(this._map.getCenter(), {
-          icon: L.divIcon({
+        const styleMarker = new Marker(this._map.getCenter(), {
+          icon: new DivIcon({
             className: 'marker-icon rect-style-marker',
           }),
           draggable: false,
@@ -162,13 +163,13 @@ Draw.Rectangle = Draw.extend({
     const latlng = this._hintMarker.getLatLng();
 
     // show and place start marker
-    L.DomUtil.addClass(this._startMarker._icon, 'visible');
+    this._startMarker._icon.classList.add('visible');
     this._startMarker.setLatLng(latlng);
 
     // if we have the other two visibilty markers, show and place them now
     if (this.options.cursorMarker && this._styleMarkers) {
       this._styleMarkers.forEach((styleMarker) => {
-        L.DomUtil.addClass(styleMarker._icon, 'visible');
+        styleMarker._icon.classList.add('visible');
         styleMarker.setLatLng(latlng);
       });
     }
@@ -281,7 +282,7 @@ Draw.Rectangle = Draw.extend({
     }
 
     // create the final rectangle layer, based on opposite corners A & B
-    const rectangleLayer = L.rectangle([A, B], this.options.pathOptions);
+    const rectangleLayer = new Rectangle([A, B], this.options.pathOptions);
 
     // rectangle can only initialized with bounds (not working with rotation) so we update the latlngs
     if (this.options.rectangleAngle) {

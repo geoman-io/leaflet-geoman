@@ -8,38 +8,39 @@
  * Get Pro: https://geoman.io
  */
 
-import './polyfills';
 import packageInfo from '../../package.json';
+import './polyfills';
 
 import Map from './L.PM.Map';
 import Toolbar from './Toolbar/L.PM.Toolbar';
 
 import Draw from './Draw/L.PM.Draw';
-import './Draw/L.PM.Draw.Marker';
-import './Draw/L.PM.Draw.Line';
-import './Draw/L.PM.Draw.Polygon';
-import './Draw/L.PM.Draw.Rectangle';
 import './Draw/L.PM.Draw.CircleMarker';
 import './Draw/L.PM.Draw.Circle';
+import './Draw/L.PM.Draw.Line';
+import './Draw/L.PM.Draw.Marker';
+import './Draw/L.PM.Draw.Polygon';
+import './Draw/L.PM.Draw.Rectangle';
 import './Draw/L.PM.Draw.Cut';
 import './Draw/L.PM.Draw.Text';
 
 import Edit from './Edit/L.PM.Edit';
-import './Edit/L.PM.Edit.LayerGroup';
-import './Edit/L.PM.Edit.Marker';
-import './Edit/L.PM.Edit.Line';
-import './Edit/L.PM.Edit.Polygon';
-import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.CircleMarker';
 import './Edit/L.PM.Edit.Circle';
 import './Edit/L.PM.Edit.ImageOverlay';
+import './Edit/L.PM.Edit.LayerGroup';
+import './Edit/L.PM.Edit.Line';
+import './Edit/L.PM.Edit.Marker';
+import './Edit/L.PM.Edit.Polygon';
+import './Edit/L.PM.Edit.Rectangle';
 import './Edit/L.PM.Edit.Text';
 
-import '../css/layers.css';
 import '../css/controls.css';
+import '../css/layers.css';
 
 import Matrix from './helpers/Matrix';
 
+import { Canvas, Circle, CircleMarker, DomEvent, ImageOverlay, LayerGroup, Map as LeafletMap, Marker, Polygon, Polyline, Rectangle, version } from 'leaflet';
 import Utils from './L.PM.Utils';
 
 L.PM = L.PM || {
@@ -75,7 +76,7 @@ L.PM = L.PM || {
       }
     }
 
-    L.Map.addInitHook(initMap);
+    LeafletMap.addInitHook(initMap);
 
     function initLayerGroup() {
       this.pm = undefined;
@@ -88,7 +89,7 @@ L.PM = L.PM || {
       }
     }
 
-    L.LayerGroup.addInitHook(initLayerGroup);
+    LayerGroup.addInitHook(initLayerGroup);
 
     function initMarker() {
       this.pm = undefined;
@@ -117,7 +118,7 @@ L.PM = L.PM || {
         }
       }
     }
-    L.Marker.addInitHook(initMarker);
+    Marker.addInitHook(initMarker);
 
     function initCircleMarker() {
       this.pm = undefined;
@@ -130,7 +131,7 @@ L.PM = L.PM || {
         this.pm = new L.PM.Edit.CircleMarker(this);
       }
     }
-    L.CircleMarker.addInitHook(initCircleMarker);
+    CircleMarker.addInitHook(initCircleMarker);
 
     function initPolyline() {
       this.pm = undefined;
@@ -144,7 +145,7 @@ L.PM = L.PM || {
       }
     }
 
-    L.Polyline.addInitHook(initPolyline);
+    Polyline.addInitHook(initPolyline);
 
     function initPolygon() {
       this.pm = undefined;
@@ -158,7 +159,7 @@ L.PM = L.PM || {
       }
     }
 
-    L.Polygon.addInitHook(initPolygon);
+    Polygon.addInitHook(initPolygon);
 
     function initRectangle() {
       this.pm = undefined;
@@ -172,7 +173,7 @@ L.PM = L.PM || {
       }
     }
 
-    L.Rectangle.addInitHook(initRectangle);
+    Rectangle.addInitHook(initRectangle);
 
     function initCircle() {
       this.pm = undefined;
@@ -186,7 +187,7 @@ L.PM = L.PM || {
       }
     }
 
-    L.Circle.addInitHook(initCircle);
+    Circle.addInitHook(initCircle);
 
     function initImageOverlay() {
       this.pm = undefined;
@@ -200,10 +201,10 @@ L.PM = L.PM || {
       }
     }
 
-    L.ImageOverlay.addInitHook(initImageOverlay);
+    ImageOverlay.addInitHook(initImageOverlay);
   },
   reInitLayer(layer) {
-    if (layer instanceof L.LayerGroup) {
+    if (layer instanceof LayerGroup) {
       layer.eachLayer((_layer) => {
         this.reInitLayer(_layer);
       });
@@ -214,9 +215,9 @@ L.PM = L.PM || {
       // Opt-In is true and pmIgnore is not false
     } else if (layer.options.pmIgnore) {
       // pmIgnore is true
-    } else if (layer instanceof L.Map) {
+    } else if (layer instanceof LeafletMap) {
       layer.pm = new L.PM.Map(layer);
-    } else if (layer instanceof L.Marker) {
+    } else if (layer instanceof Marker) {
       if (layer.options.textMarker) {
         layer.pm = new L.PM.Edit.Text(layer);
         layer.pm._initTextMarker();
@@ -224,28 +225,28 @@ L.PM = L.PM || {
       } else {
         layer.pm = new L.PM.Edit.Marker(layer);
       }
-    } else if (layer instanceof L.Circle) {
+    } else if (layer instanceof Circle) {
       layer.pm = new L.PM.Edit.Circle(layer);
-    } else if (layer instanceof L.CircleMarker) {
+    } else if (layer instanceof CircleMarker) {
       layer.pm = new L.PM.Edit.CircleMarker(layer);
-    } else if (layer instanceof L.Rectangle) {
+    } else if (layer instanceof Rectangle) {
       layer.pm = new L.PM.Edit.Rectangle(layer);
-    } else if (layer instanceof L.Polygon) {
+    } else if (layer instanceof Polygon) {
       layer.pm = new L.PM.Edit.Polygon(layer);
-    } else if (layer instanceof L.Polyline) {
+    } else if (layer instanceof Polyline) {
       layer.pm = new L.PM.Edit.Line(layer);
-    } else if (layer instanceof L.LayerGroup) {
+    } else if (layer instanceof LayerGroup) {
       layer.pm = new L.PM.Edit.LayerGroup(layer);
-    } else if (layer instanceof L.ImageOverlay) {
+    } else if (layer instanceof ImageOverlay) {
       layer.pm = new L.PM.Edit.ImageOverlay(layer);
     }
   },
 };
 
-if (L.version === '1.7.1') {
+if (version === '1.7.1') {
   // Canvas Mode: After dragging the map the target layer can't be dragged anymore until it is clicked
   // https://github.com/Leaflet/Leaflet/issues/7775 a fix is already merged for the Leaflet 1.8.0 version
-  L.Canvas.include({
+  Canvas.include({
     _onClick(e) {
       const point = this._map.mouseEventToLayerPoint(e);
       let layer;
@@ -264,7 +265,7 @@ if (L.version === '1.7.1') {
         }
       }
       if (clickedLayer) {
-        L.DomEvent.fakeStop(e);
+        DomEvent.fakeStop(e);
         this._fireEvent([clickedLayer], e);
       }
     },

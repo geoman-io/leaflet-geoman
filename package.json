@@ -39,7 +39,7 @@
     "eslint-plugin-cypress": "2.15.1",
     "eslint-plugin-import": "2.29.1",
     "husky": "^9.0.11",
-    "leaflet": "1.9.3",
+    "leaflet": "2.0.0-alpha",
     "lint-staged": "^15.2.5",
     "prettier": "3.2.4",
     "prosthetic-hand": "1.3.1",

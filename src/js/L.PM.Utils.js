@@ -1,3 +1,4 @@
+import { Circle, CircleMarker, ImageOverlay, LatLng, Marker, Point, Polygon, Polyline } from 'leaflet';
 import { createGeodesicPolygon, getTranslation } from './helpers';
 import { _toLatLng, _toPoint } from './helpers/ModeHelper';
 
@@ -14,11 +15,11 @@ const Utils = {
     let layers = [];
     map.eachLayer((layer) => {
       if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle ||
-        layer instanceof L.CircleMarker ||
-        layer instanceof L.ImageOverlay
+        layer instanceof Polyline ||
+        layer instanceof Marker ||
+        layer instanceof Circle ||
+        layer instanceof CircleMarker ||
+        layer instanceof ImageOverlay
       ) {
         layers.push(layer);
       }
@@ -48,7 +49,7 @@ const Utils = {
       const geometry = [polys[i].lat, polys[i].lng];
       polygon.push(geometry);
     }
-    return L.polygon(polygon, circle.options);
+    return new Polygon(polygon, circle.options);
   },
   disablePopup(layer) {
     if (layer.getPopup()) {
@@ -124,7 +125,7 @@ const Utils = {
           result = iRes;
           return true;
         }
-      } else if (v.lat && L.latLng(v).equals(latlng)) {
+      } else if (v.lat && new LatLng(v).equals(latlng)) {
         result = iRes;
         return true;
       }
@@ -217,7 +218,7 @@ const Utils = {
   },
   pxRadiusToMeterRadius(radiusInPx, map, center) {
     const pointA = map.project(center);
-    const pointB = L.point(pointA.x + radiusInPx, pointA.y);
+    const pointB = new Point(pointA.x + radiusInPx, pointA.y);
     return map.distance(map.unproject(pointB), center);
   },
 };

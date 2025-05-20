@@ -1,3 +1,4 @@
+import { DomUtil } from 'leaflet';
 import Edit from './L.PM.Edit';
 
 Edit.Circle = Edit.CircleMarker.extend({
@@ -24,7 +25,7 @@ Edit.Circle = Edit.CircleMarker.extend({
     const el = this._layer._path
       ? this._layer._path
       : this._layer._renderer._container;
-    L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    el.classList.remove('leaflet-pm-draggable');
   },
   _extendingApplyOptions() {},
   _syncMarkers() {},

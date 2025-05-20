@@ -1,3 +1,5 @@
+import { Util } from "leaflet";
+
 const MarkerLimits = {
   filterMarkerGroup() {
     // define cache of markers
@@ -11,7 +13,7 @@ const MarkerLimits = {
     this.applyLimitFilters({});
 
     if (!this.throttledApplyLimitFilters) {
-      this.throttledApplyLimitFilters = L.Util.throttle(
+      this.throttledApplyLimitFilters = Util.throttle(
         this.applyLimitFilters,
         100,
         this

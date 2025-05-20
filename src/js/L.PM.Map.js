@@ -1,14 +1,15 @@
+import { Class, CRS, DomEvent, FeatureGroup, LayerGroup } from 'leaflet';
 import merge from 'lodash/merge';
 import translations from '../assets/translations';
-import GlobalEditMode from './Mixins/Modes/Mode.Edit';
-import GlobalDragMode from './Mixins/Modes/Mode.Drag';
-import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
-import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import EventMixin from './Mixins/Events';
 import createKeyboardMixins from './Mixins/Keyboard';
+import GlobalDragMode from './Mixins/Modes/Mode.Drag';
+import GlobalEditMode from './Mixins/Modes/Mode.Edit';
+import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
+import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import { getRenderer } from './helpers';
 
-const Map = L.Class.extend({
+const Map = Class.extend({
   includes: [
     GlobalEditMode,
     GlobalDragMode,
@@ -214,7 +215,7 @@ const Map = L.Class.extend({
     if (!asGroup) {
       return layers;
     }
-    const group = L.featureGroup();
+    const group = new FeatureGroup();
     group._pmTempLayer = true;
     layers.forEach((layer) => {
       group.addLayer(layer);
@@ -228,7 +229,7 @@ const Map = L.Class.extend({
     if (!asGroup) {
       return layers;
     }
-    const group = L.featureGroup();
+    const group = new FeatureGroup();
     group._pmTempLayer = true;
     layers.forEach((layer) => {
       group.addLayer(layer);
@@ -238,19 +239,19 @@ const Map = L.Class.extend({
   // returns the map instance by default or a layergroup is set through global options
   _getContainingLayer() {
     return this.globalOptions.layerGroup &&
-      this.globalOptions.layerGroup instanceof L.LayerGroup
+      this.globalOptions.layerGroup instanceof LayerGroup
       ? this.globalOptions.layerGroup
       : this.map;
   },
   _isCRSSimple() {
-    return this.map.options.crs === L.CRS.Simple;
+    return this.map.options.crs === CRS.Simple;
   },
   // in Canvas mode we need to convert touch- and pointerevents (IE) to mouseevents, because Leaflet don't support them.
   _touchEventCounter: 0,
   _addTouchEvents(elm) {
     if (this._touchEventCounter === 0) {
-      L.DomEvent.on(elm, 'touchmove', this._canvasTouchMove, this);
-      L.DomEvent.on(
+      DomEvent.on(elm, 'touchmove', this._canvasTouchMove, this);
+      DomEvent.on(
         elm,
         'touchstart touchend touchcancel',
         this._canvasTouchClick,
@@ -261,8 +262,8 @@ const Map = L.Class.extend({
   },
   _removeTouchEvents(elm) {
     if (this._touchEventCounter === 1) {
-      L.DomEvent.off(elm, 'touchmove', this._canvasTouchMove, this);
-      L.DomEvent.off(
+      DomEvent.off(elm, 'touchmove', this._canvasTouchMove, this);
+      DomEvent.off(
         elm,
         'touchstart touchend touchcancel',
         this._canvasTouchClick,

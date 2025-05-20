@@ -1,9 +1,10 @@
-import SnapMixin from '../Mixins/Snapping';
+import { Class, Polygon, Util } from 'leaflet';
 import DragMixin from '../Mixins/Dragging';
-import RotateMixin from '../Mixins/Rotating';
 import EventMixin from '../Mixins/Events';
+import RotateMixin from '../Mixins/Rotating';
+import SnapMixin from '../Mixins/Snapping';
 
-const Edit = L.Class.extend({
+const Edit = Class.extend({
   includes: [DragMixin, SnapMixin, RotateMixin, EventMixin],
   options: {
     snappable: true, // TODO: next major Release, rename it to allowSnapping
@@ -32,7 +33,7 @@ const Edit = L.Class.extend({
     snapVertex: true,
   },
   setOptions(options) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
   },
   getOptions() {
     return this.options;
@@ -40,7 +41,7 @@ const Edit = L.Class.extend({
   applyOptions() {},
   isPolygon() {
     // if it's a polygon, it means the coordinates array is multi dimensional
-    return this._layer instanceof L.Polygon;
+    return this._layer instanceof Polygon;
   },
   getShape() {
     return this._shape;

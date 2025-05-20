@@ -1,10 +1,11 @@
 import PMButton from './L.Controls';
 
+import { Class, Control, DomUtil, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 
-L.Control.PMButton = PMButton;
+Control.PMButton = PMButton;
 
-const Toolbar = L.Class.extend({
+const Toolbar = Class.extend({
   options: {
     drawMarker: true,
     drawRectangle: true,
@@ -60,19 +61,19 @@ const Toolbar = L.Class.extend({
 
     this.buttons = {};
     this.isVisible = false;
-    this.drawContainer = L.DomUtil.create(
+    this.drawContainer = DomUtil.create(
       'div',
       'leaflet-pm-toolbar leaflet-pm-draw leaflet-bar leaflet-control'
     );
-    this.editContainer = L.DomUtil.create(
+    this.editContainer = DomUtil.create(
       'div',
       'leaflet-pm-toolbar leaflet-pm-edit leaflet-bar leaflet-control'
     );
-    this.optionsContainer = L.DomUtil.create(
+    this.optionsContainer = DomUtil.create(
       'div',
       'leaflet-pm-toolbar leaflet-pm-options leaflet-bar leaflet-control'
     );
-    this.customContainer = L.DomUtil.create(
+    this.customContainer = DomUtil.create(
       'div',
       'leaflet-pm-toolbar leaflet-pm-custom leaflet-bar leaflet-control'
     );
@@ -82,7 +83,7 @@ const Toolbar = L.Class.extend({
   _createContainer(name) {
     const container = `${name}Container`;
     if (!this[container]) {
-      this[container] = L.DomUtil.create(
+      this[container] = DomUtil.create(
         'div',
         `leaflet-pm-toolbar leaflet-pm-${name} leaflet-bar leaflet-control`
       );
@@ -105,7 +106,7 @@ const Toolbar = L.Class.extend({
     }
 
     // first set the options
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     this.applyIconStyle();
 
@@ -135,7 +136,7 @@ const Toolbar = L.Class.extend({
     for (const name in buttons) {
       const button = buttons[name];
 
-      L.Util.setOptions(button, {
+      Util.setOptions(button, {
         className: iconClasses.geomanIcons[name],
       });
     }
@@ -410,21 +411,21 @@ const Toolbar = L.Class.extend({
       actions: ['cancel'],
     };
 
-    this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
-    this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
-    this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
-    this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
-    this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
+    this._addButton('drawMarker', new PMButton(drawMarkerButton));
+    this._addButton('drawPolyline', new PMButton(drawLineButton));
+    this._addButton('drawRectangle', new PMButton(drawRectButton));
+    this._addButton('drawPolygon', new PMButton(drawPolyButton));
+    this._addButton('drawCircle', new PMButton(drawCircleButton));
     this._addButton(
       'drawCircleMarker',
-      new L.Control.PMButton(drawCircleMarkerButton)
+      new PMButton(drawCircleMarkerButton)
     );
-    this._addButton('drawText', new L.Control.PMButton(drawTextButton));
-    this._addButton('editMode', new L.Control.PMButton(editButton));
-    this._addButton('dragMode', new L.Control.PMButton(dragButton));
-    this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
-    this._addButton('removalMode', new L.Control.PMButton(deleteButton));
-    this._addButton('rotateMode', new L.Control.PMButton(rotateButton));
+    this._addButton('drawText', new PMButton(drawTextButton));
+    this._addButton('editMode', new PMButton(editButton));
+    this._addButton('dragMode', new PMButton(dragButton));
+    this._addButton('cutPolygon', new PMButton(cutButton));
+    this._addButton('removalMode', new PMButton(deleteButton));
+    this._addButton('rotateMode', new PMButton(rotateButton));
   },
 
   _showHideButtons() {
@@ -576,7 +577,7 @@ const Toolbar = L.Class.extend({
 
     const control = this._addButton(
       options.name,
-      new L.Control.PMButton(_options)
+      new PMButton(_options)
     );
     this.changeControlOrder();
     return control;

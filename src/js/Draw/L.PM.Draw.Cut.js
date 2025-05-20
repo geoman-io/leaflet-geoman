@@ -1,14 +1,15 @@
+import booleanContains from '@turf/boolean-contains';
 import lineIntersect from '@turf/line-intersect';
 import lineSplit from '@turf/line-split';
-import booleanContains from '@turf/boolean-contains';
+import { GeoJSON, LayerGroup, Polygon, Polyline, Util } from 'leaflet';
 import get from 'lodash/get';
-import Draw from './L.PM.Draw';
 import {
   difference,
   flattenPolyline,
   groupToMultiLineString,
   intersect,
 } from '../helpers/turfHelper';
+import Draw from './L.PM.Draw';
 
 Draw.Cut = Draw.Polygon.extend({
   initialize(map) {
@@ -45,7 +46,7 @@ Draw.Cut = Draw.Polygon.extend({
       return;
     }
 
-    const polygonLayer = L.polygon(coords, this.options.pathOptions);
+    const polygonLayer = new Polygon(coords, this.options.pathOptions);
     // readout information about the latlngs like snapping points
     polygonLayer._latlngInfos = this._layer._latlngInfo;
     this.cut(polygonLayer);
@@ -97,7 +98,7 @@ Draw.Cut = Draw.Polygon.extend({
           (L.PM.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
       )
       // only polyline instances
-      .filter((l) => l instanceof L.Polyline)
+      .filter((l) => l instanceof Polyline)
       // exclude the drawn one
       .filter((l) => l !== layer)
       // layer is allowed to cut
@@ -107,7 +108,7 @@ Draw.Cut = Draw.Polygon.extend({
         // TODO: after cutting nothing else can be cutted anymore until a new list is passed, because the layers don't exists anymore. Should we remove the cutted layers from the list?
         if (
           this.options.layersToCut &&
-          L.Util.isArray(this.options.layersToCut) &&
+          Util.isArray(this.options.layersToCut) &&
           this.options.layersToCut.length > 0
         ) {
           return this.options.layersToCut.indexOf(l) > -1;
@@ -125,13 +126,13 @@ Draw.Cut = Draw.Polygon.extend({
 
           if (
             lineInter ||
-            (l instanceof L.Polyline && !(l instanceof L.Polygon))
+            (l instanceof Polyline && !(l instanceof Polygon))
           ) {
             return lineInter;
           }
           return !!intersect(layer.toGeoJSON(15), l.toGeoJSON(15));
         } catch (e) {
-          if (l instanceof L.Polygon) {
+          if (l instanceof Polygon) {
             /* eslint-disable-next-line no-console */
             console.error("You can't cut polygons with self-intersections");
           }
@@ -142,10 +143,10 @@ Draw.Cut = Draw.Polygon.extend({
     // loop through all layers that intersect with the drawn (cutting) layer
     layers.forEach((l) => {
       let newLayer;
-      if (l instanceof L.Polygon) {
-        // Also for L.Rectangle
+      if (l instanceof Polygon) {
+        // Also for Rectangle
         // easiest way to clone the complete latlngs without reference
-        newLayer = L.polygon(l.getLatLngs());
+        newLayer = new Polygon(l.getLatLngs());
         const coords = newLayer.getLatLngs();
 
         // snapping points added to the layer, so borders are cutted correct
@@ -172,7 +173,7 @@ Draw.Cut = Draw.Polygon.extend({
           }
         });
       } else {
-        // L.Polyline
+        // Polyline
         newLayer = l;
       }
 
@@ -180,7 +181,7 @@ Draw.Cut = Draw.Polygon.extend({
       const diff = this._cutLayer(layer, newLayer);
 
       // the resulting layer after the cut
-      let resultLayer = L.geoJSON(diff, l.options);
+      let resultLayer = new GeoJSON(diff, l.options);
       if (resultLayer.getLayers().length === 1) {
         [resultLayer] = resultLayer.getLayers(); // prevent that a unnecessary layergroup is created
       }
@@ -207,7 +208,7 @@ Draw.Cut = Draw.Polygon.extend({
         this._map.pm.removeLayer({ target: resultingLayer });
       }
 
-      if (resultingLayer instanceof L.LayerGroup) {
+      if (resultingLayer instanceof LayerGroup) {
         resultingLayer.eachLayer((_layer) => {
           this._addDrawnLayerProp(_layer);
         });
@@ -218,7 +219,7 @@ Draw.Cut = Draw.Polygon.extend({
 
       if (
         this.options.layersToCut &&
-        L.Util.isArray(this.options.layersToCut) &&
+        Util.isArray(this.options.layersToCut) &&
         this.options.layersToCut.length > 0
       ) {
         const idx = this.options.layersToCut.indexOf(l);
@@ -234,10 +235,10 @@ Draw.Cut = Draw.Polygon.extend({
     });
   },
   _cutLayer(layer, l) {
-    const fg = L.geoJSON();
+    const fg = new GeoJSON();
     let diff;
     // cut
-    if (l instanceof L.Polygon) {
+    if (l instanceof Polygon) {
       // find layer difference
       diff = difference(l.toGeoJSON(15), layer.toGeoJSON(15));
     } else {
@@ -249,9 +250,9 @@ Draw.Cut = Draw.Polygon.extend({
 
         let group;
         if (lineDiff && lineDiff.features.length > 0) {
-          group = L.geoJSON(lineDiff);
+          group = new GeoJSON(lineDiff);
         } else {
-          group = L.geoJSON(feature);
+          group = new GeoJSON(feature);
         }
 
         group.getLayers().forEach((lay) => {
@@ -270,5 +271,5 @@ Draw.Cut = Draw.Polygon.extend({
     }
     return diff;
   },
-  _change: L.Util.falseFn,
+  _change: Util.falseFn,
 });

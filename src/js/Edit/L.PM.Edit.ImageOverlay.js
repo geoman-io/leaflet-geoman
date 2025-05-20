@@ -1,3 +1,4 @@
+import { Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 
 Edit.ImageOverlay = Edit.extend({
@@ -18,7 +19,7 @@ Edit.ImageOverlay = Edit.extend({
   },
   // TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
     this._map = this._layer._map;
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {

@@ -1,3 +1,5 @@
+import { LayerGroup, Util } from "leaflet";
+
 const GlobalRemovalMode = {
   _globalRemovalModeEnabled: false,
   enableGlobalRemovalMode() {
@@ -13,7 +15,7 @@ const GlobalRemovalMode = {
     });
 
     if (!this.throttledReInitRemoval) {
-      this.throttledReInitRemoval = L.Util.throttle(
+      this.throttledReInitRemoval = Util.throttle(
         this.handleLayerAdditionInGlobalRemovalMode,
         100,
         this
@@ -70,7 +72,7 @@ const GlobalRemovalMode = {
     if (removeable) {
       layer.removeFrom(this.map.pm._getContainingLayer());
       layer.remove();
-      if (layer instanceof L.LayerGroup) {
+      if (layer instanceof LayerGroup) {
         this._fireRemoveLayerGroup(layer);
         this._fireRemoveLayerGroup(this.map, layer);
       } else {
@@ -82,7 +84,7 @@ const GlobalRemovalMode = {
   _isRelevantForRemoval(layer) {
     return (
       layer.pm &&
-      !(layer instanceof L.LayerGroup) &&
+      !(layer instanceof LayerGroup) &&
       ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
         (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
@@ -105,7 +107,7 @@ const GlobalRemovalMode = {
     }
   },
   _layerAddedRemoval({ layer }) {
-    this._addedLayersRemoval[L.stamp(layer)] = layer;
+    this._addedLayersRemoval[Util.stamp(layer)] = layer;
   },
 };
 

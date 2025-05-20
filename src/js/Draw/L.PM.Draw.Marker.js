@@ -1,5 +1,6 @@
-import Draw from './L.PM.Draw';
+import { Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
+import Draw from './L.PM.Draw';
 
 Draw.Marker = Draw.extend({
   initialize(map) {
@@ -12,7 +13,7 @@ Draw.Marker = Draw.extend({
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     // change enabled state
     this._enabled = true;
@@ -27,7 +28,7 @@ Draw.Marker = Draw.extend({
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(
+    this._hintMarker = new Marker(
       this._map.getCenter(),
       this.options.markerStyle
     );
@@ -40,7 +41,7 @@ Draw.Marker = Draw.extend({
       this._hintMarker
         .bindTooltip(getTranslation('tooltips.placeMarker'), {
           permanent: true,
-          offset: L.point(0, 10),
+          offset: new Point(0, 10),
           direction: 'bottom',
 
           opacity: 0.8,
@@ -119,7 +120,7 @@ Draw.Marker = Draw.extend({
   },
   isRelevantMarker(layer) {
     return (
-      layer instanceof L.Marker &&
+      layer instanceof Marker &&
       layer.pm &&
       !layer._pmTempLayer &&
       !layer.pm._initTextMarker
@@ -162,7 +163,7 @@ Draw.Marker = Draw.extend({
     const latlng = this._hintMarker.getLatLng();
 
     // create marker
-    const marker = new L.Marker(latlng, this.options.markerStyle);
+    const marker = new Marker(latlng, this.options.markerStyle);
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 

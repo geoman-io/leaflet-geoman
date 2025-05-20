@@ -1,5 +1,6 @@
-import Draw from './L.PM.Draw';
+import { CircleMarker, DivIcon, DomUtil, FeatureGroup, Marker, Point, Util } from 'leaflet';
 import { destinationOnLine, getTranslation } from '../helpers';
+import Draw from './L.PM.Draw';
 
 Draw.CircleMarker = Draw.extend({
   initialize(map) {
@@ -8,7 +9,7 @@ Draw.CircleMarker = Draw.extend({
     this.toolbarButtonName = 'drawCircleMarker';
     // with _layerIsDragging we check if a circlemarker is currently dragged and disable marker creation
     this._layerIsDragging = false;
-    this._BaseCircleClass = L.CircleMarker;
+    this._BaseCircleClass = CircleMarker;
     this._minRadiusOption = 'minRadiusCircleMarker';
     this._maxRadiusOption = 'maxRadiusCircleMarker';
     this._editableOption = 'resizeableCircleMarker';
@@ -17,7 +18,7 @@ Draw.CircleMarker = Draw.extend({
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
     // TODO: remove with next major release
     if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;
@@ -37,11 +38,11 @@ Draw.CircleMarker = Draw.extend({
     if (this.options[this._editableOption]) {
       // we need to set the radius to 0 without overwriting the CircleMarker style
       const templineStyle = {};
-      L.extend(templineStyle, this.options.templineStyle);
+      Object.assign(templineStyle, this.options.templineStyle);
       templineStyle.radius = 0;
 
       // create a new layergroup
-      this._layerGroup = new L.FeatureGroup();
+      this._layerGroup = new FeatureGroup();
       this._layerGroup._pmTempLayer = true;
       this._layerGroup.addTo(this._map);
 
@@ -54,8 +55,8 @@ Draw.CircleMarker = Draw.extend({
       this._layer._pmTempLayer = true;
 
       // this is the marker in the center of the circle
-      this._centerMarker = L.marker(this._map.getCenter(), {
-        icon: L.divIcon({ className: 'marker-icon' }),
+      this._centerMarker = new Marker(this._map.getCenter(), {
+        icon: new DivIcon({ className: 'marker-icon' }),
         draggable: false,
         zIndexOffset: 100,
       });
@@ -63,9 +64,9 @@ Draw.CircleMarker = Draw.extend({
       this._centerMarker._pmTempLayer = true;
 
       // this is the hintmarker on the mouse cursor
-      this._hintMarker = L.marker(this._map.getCenter(), {
+      this._hintMarker = new Marker(this._map.getCenter(), {
         zIndexOffset: 110,
-        icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+        icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
       });
       this._setPane(this._hintMarker, 'vertexPane');
       this._hintMarker._pmTempLayer = true;
@@ -73,7 +74,7 @@ Draw.CircleMarker = Draw.extend({
 
       // show the hintmarker if the option is set
       if (this.options.cursorMarker) {
-        L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+        this._hintMarker._icon.classList.add('visible');
       }
 
       // add tooltip to hintmarker
@@ -81,7 +82,7 @@ Draw.CircleMarker = Draw.extend({
         this._hintMarker
           .bindTooltip(getTranslation('tooltips.startCircle'), {
             permanent: true,
-            offset: L.point(0, 10),
+            offset: new Point(0, 10),
             direction: 'bottom',
 
             opacity: 0.8,
@@ -90,7 +91,7 @@ Draw.CircleMarker = Draw.extend({
       }
 
       // this is the hintline from the hint marker to the center marker
-      this._hintline = L.polyline([], this.options.hintlineStyle);
+      this._hintline = new Polyline([], this.options.hintlineStyle);
       this._setPane(this._hintline, 'layerPane');
       this._hintline._pmTempLayer = true;
       this._layerGroup.addLayer(this._hintline);
@@ -116,7 +117,7 @@ Draw.CircleMarker = Draw.extend({
         this._hintMarker
           .bindTooltip(getTranslation('tooltips.placeCircleMarker'), {
             permanent: true,
-            offset: L.point(0, 10),
+            offset: new Point(0, 10),
             direction: 'bottom',
 
             opacity: 0.8,
@@ -300,8 +301,8 @@ Draw.CircleMarker = Draw.extend({
   },
   isRelevantMarker(layer) {
     return (
-      layer instanceof L.CircleMarker &&
-      !(layer instanceof L.Circle) &&
+      layer instanceof CircleMarker &&
+      !(layer instanceof Circle) &&
       layer.pm &&
       !layer._pmTempLayer
     );
@@ -493,7 +494,7 @@ Draw.CircleMarker = Draw.extend({
   },
   setStyle() {
     const templineStyle = {};
-    L.extend(templineStyle, this.options.templineStyle);
+    Object.assign(templineStyle, this.options.templineStyle);
     if (this.options[this._editableOption]) {
       templineStyle.radius = 0;
     }

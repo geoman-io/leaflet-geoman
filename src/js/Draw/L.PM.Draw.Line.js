@@ -1,6 +1,7 @@
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
 
+import { DivIcon, DomUtil, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 
 Draw.Line = Draw.extend({
@@ -11,7 +12,7 @@ Draw.Line = Draw.extend({
     this._doesSelfIntersect = false;
   },
   enable(options) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     // enable draw mode
     this._enabled = true;
@@ -19,12 +20,12 @@ Draw.Line = Draw.extend({
     this._markers = [];
 
     // create a new layergroup
-    this._layerGroup = new L.FeatureGroup();
+    this._layerGroup = new FeatureGroup();
     this._layerGroup._pmTempLayer = true;
     this._layerGroup.addTo(this._map);
 
     // this is the polyLine that'll make up the polygon
-    this._layer = L.polyline([], {
+    this._layer = new Polyline([], {
       ...this.options.templineStyle,
       pmIgnore: false,
     });
@@ -33,16 +34,16 @@ Draw.Line = Draw.extend({
     this._layerGroup.addLayer(this._layer);
 
     // this is the hintline from the mouse cursor to the last marker
-    this._hintline = L.polyline([], this.options.hintlineStyle);
+    this._hintline = new Polyline([], this.options.hintlineStyle);
     this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(this._map.getCenter(), {
+    this._hintMarker = new Marker(this._map.getCenter(), {
       interactive: false, // always vertex marker below will be triggered from the click event -> _finishShape #911
       zIndexOffset: 100,
-      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -50,7 +51,7 @@ Draw.Line = Draw.extend({
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+      this._hintMarker._icon.classList.add('visible');
     }
 
     // add tooltip to hintmarker
@@ -58,7 +59,7 @@ Draw.Line = Draw.extend({
       this._hintMarker
         .bindTooltip(getTranslation('tooltips.firstVertex'), {
           permanent: true,
-          offset: L.point(0, 10),
+          offset: new Point(0, 10),
           direction: 'bottom',
 
           opacity: 0.8,
@@ -201,7 +202,7 @@ Draw.Line = Draw.extend({
     // intersection on the clone. Phew... - let's do it 💪
 
     // clone layer (polyline is enough, even when it's a polygon)
-    const clone = L.polyline(this._layer.getLatLngs());
+    const clone = new Polyline(this._layer.getLatLngs());
 
     if (addVertex) {
       // get vertex from param or from hintmarker
@@ -365,7 +366,7 @@ Draw.Line = Draw.extend({
     }
 
     // create the leaflet shape and add it to the map
-    const polylineLayer = L.polyline(coords, this.options.pathOptions);
+    const polylineLayer = new Polyline(coords, this.options.pathOptions);
     this._setPane(polylineLayer, 'layerPane');
     this._finishLayer(polylineLayer);
     polylineLayer.addTo(this._map.pm._getContainingLayer());
@@ -388,9 +389,9 @@ Draw.Line = Draw.extend({
   },
   _createMarker(latlng) {
     // create the new marker
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       draggable: false,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
     marker._pmTempLayer = true;
