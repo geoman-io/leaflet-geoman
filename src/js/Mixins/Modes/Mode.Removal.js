@@ -1,4 +1,5 @@
 import { LayerGroup, Util } from "leaflet";
+import Geoman from "../../L.PM";
 
 const GlobalRemovalMode = {
   _globalRemovalModeEnabled: false,
@@ -85,8 +86,8 @@ const GlobalRemovalMode = {
     return (
       layer.pm &&
       !(layer instanceof LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      ((!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
       layer.pm.options.allowRemoval
     );

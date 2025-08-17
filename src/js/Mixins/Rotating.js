@@ -1,7 +1,8 @@
-import { Polygon, Util } from 'leaflet';
+import { Polygon, Rectangle } from 'leaflet';
 import get from 'lodash/get';
 import { calcAngle, copyLatLngs } from '../helpers';
 import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
+import Matrix from '../helpers/Matrix';
 
 /**
  * We create a temporary polygon with the same latlngs as the layer that we want to rotate.
@@ -45,7 +46,7 @@ const RotateMixin = {
         angleDiffRadiant,
         this._initialRotateLatLng,
         this._rotationOriginLatLng,
-        L.PM.Matrix.init(),
+        Matrix.init(),
         this._map
       )
     );
@@ -75,7 +76,7 @@ const RotateMixin = {
         angleDiffRadiant,
         this._rotationLayer.pm._rotateOrgLatLng,
         this._rotationOriginLatLng,
-        L.PM.Matrix.init(),
+        Matrix.init(),
         this._map
       )
     );
@@ -156,7 +157,7 @@ const RotateMixin = {
       this.disableRotate();
     }
 
-    if (this._layer instanceof L.Rectangle && this._angle === undefined) {
+    if (this._layer instanceof Rectangle && this._angle === undefined) {
       this.setInitAngle(
         calcAngle(
           this._layer._map,
@@ -236,7 +237,7 @@ const RotateMixin = {
         rads,
         this._layer.getLatLngs(),
         this._getRotationCenter(),
-        L.PM.Matrix.init(),
+        Matrix.init(),
         this._layer._map
       )
     );
@@ -253,7 +254,7 @@ const RotateMixin = {
           rads,
           this._rotatePoly.getLatLngs(),
           this._getRotationCenter(),
-          L.PM.Matrix.init(),
+          Matrix.init(),
           this._rotatePoly._map
         )
       );

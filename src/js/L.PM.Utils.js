@@ -1,6 +1,7 @@
 import { Circle, CircleMarker, ImageOverlay, LatLng, Marker, Point, Polygon, Polyline } from 'leaflet';
 import { createGeodesicPolygon, getTranslation } from './helpers';
 import { _toLatLng, _toPoint } from './helpers/ModeHelper';
+import Geoman from './L.PM';
 
 const Utils = {
   calcMiddleLatLng(map, latlng1, latlng2) {
@@ -34,8 +35,8 @@ const Utils = {
     // filter out everything that ignore leaflet-geoman
     layers = layers.filter(
       (layer) =>
-        (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+        (!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
     );
 
     return layers;

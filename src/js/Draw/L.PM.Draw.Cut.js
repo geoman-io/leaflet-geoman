@@ -10,6 +10,8 @@ import {
   intersect,
 } from '../helpers/turfHelper';
 import Draw from './L.PM.Draw';
+import Geoman from '../L.PM';
+import Utils from '../L.PM.Utils';
 
 Draw.Cut = Draw.Polygon.extend({
   initialize(map) {
@@ -94,8 +96,8 @@ Draw.Cut = Draw.Polygon.extend({
       // filter out everything that ignore leaflet-geoman
       .filter(
         (l) =>
-          (!L.PM.optIn && !l.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-          (L.PM.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+          (!Geoman.optIn && !l.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+          (Geoman.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
       )
       // only polyline instances
       .filter((l) => l instanceof Polyline)
@@ -163,7 +165,7 @@ Draw.Cut = Draw.Polygon.extend({
               const { segment } = closest;
               if (segment && segment.length === 2) {
                 const { indexPath, parentPath, newIndex } =
-                  L.PM.Utils._getIndexFromSegment(coords, segment);
+                  Utils._getIndexFromSegment(coords, segment);
                 // define the coordsRing that is edited
                 const coordsRing =
                   indexPath.length > 1 ? get(coords, parentPath) : coords;

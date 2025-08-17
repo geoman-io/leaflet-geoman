@@ -8,10 +8,12 @@
  * Get Pro: https://geoman.io
  */
 
+import { Canvas, Circle, CircleMarker, DomEvent, ImageOverlay, LayerGroup, LeafletMap, Marker, Polygon, Polyline, Rectangle, version, Class } from 'leaflet';
+
 import packageInfo from '../../package.json';
 import './polyfills';
 
-import Map from './L.PM.Map';
+import GeomanMap from './L.PM.Map';
 import Toolbar from './Toolbar/L.PM.Toolbar';
 
 import Draw from './Draw/L.PM.Draw';
@@ -40,12 +42,11 @@ import '../css/layers.css';
 
 import Matrix from './helpers/Matrix';
 
-import { Canvas, Circle, CircleMarker, DomEvent, ImageOverlay, LayerGroup, Map as LeafletMap, Marker, Polygon, Polyline, Rectangle, version } from 'leaflet';
 import Utils from './L.PM.Utils';
 
-L.PM = L.PM || {
+const Geoman = {
   version: packageInfo.version,
-  Map,
+  Map: GeomanMap,
   Toolbar,
   Draw,
   Edit,
@@ -63,12 +64,12 @@ L.PM = L.PM || {
     function initMap() {
       this.pm = undefined;
 
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Map(this);
+          this.pm = new GeomanMap(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Map(this);
+        this.pm = new GeomanMap(this);
       }
 
       if (this.pm) {
@@ -80,12 +81,12 @@ L.PM = L.PM || {
 
     function initLayerGroup() {
       this.pm = undefined;
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.LayerGroup(this);
+          this.pm = new Edit.LayerGroup(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.LayerGroup(this);
+        this.pm = new Edit.LayerGroup(this);
       }
     }
 
@@ -94,27 +95,27 @@ L.PM = L.PM || {
     function initMarker() {
       this.pm = undefined;
 
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
           if (this.options.textMarker) {
-            this.pm = new L.PM.Edit.Text(this);
+            this.pm = new Edit.Text(this);
             if (!this.options._textMarkerOverPM) {
               this.pm._initTextMarker();
             }
             delete this.options._textMarkerOverPM;
           } else {
-            this.pm = new L.PM.Edit.Marker(this);
+            this.pm = new Edit.Marker(this);
           }
         }
       } else if (!this.options.pmIgnore) {
         if (this.options.textMarker) {
-          this.pm = new L.PM.Edit.Text(this);
+          this.pm = new Edit.Text(this);
           if (!this.options._textMarkerOverPM) {
             this.pm._initTextMarker();
           }
           delete this.options._textMarkerOverPM;
         } else {
-          this.pm = new L.PM.Edit.Marker(this);
+          this.pm = new Edit.Marker(this);
         }
       }
     }
@@ -123,12 +124,12 @@ L.PM = L.PM || {
     function initCircleMarker() {
       this.pm = undefined;
 
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.CircleMarker(this);
+          this.pm = new Edit.CircleMarker(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.CircleMarker(this);
+        this.pm = new Edit.CircleMarker(this);
       }
     }
     CircleMarker.addInitHook(initCircleMarker);
@@ -136,12 +137,12 @@ L.PM = L.PM || {
     function initPolyline() {
       this.pm = undefined;
 
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Line(this);
+          this.pm = new Edit.Line(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Line(this);
+        this.pm = new Edit.Line(this);
       }
     }
 
@@ -150,12 +151,12 @@ L.PM = L.PM || {
     function initPolygon() {
       this.pm = undefined;
 
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Polygon(this);
+          this.pm = new Edit.Polygon(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Polygon(this);
+        this.pm = new Edit.Polygon(this);
       }
     }
 
@@ -164,12 +165,12 @@ L.PM = L.PM || {
     function initRectangle() {
       this.pm = undefined;
 
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Rectangle(this);
+          this.pm = new Edit.Rectangle(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Rectangle(this);
+        this.pm = new Edit.Rectangle(this);
       }
     }
 
@@ -178,12 +179,12 @@ L.PM = L.PM || {
     function initCircle() {
       this.pm = undefined;
 
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.Circle(this);
+          this.pm = new Edit.Circle(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.Circle(this);
+        this.pm = new Edit.Circle(this);
       }
     }
 
@@ -192,12 +193,12 @@ L.PM = L.PM || {
     function initImageOverlay() {
       this.pm = undefined;
 
-      if (L.PM.optIn) {
+      if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new L.PM.Edit.ImageOverlay(this);
+          this.pm = new Edit.ImageOverlay(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new L.PM.Edit.ImageOverlay(this);
+        this.pm = new Edit.ImageOverlay(this);
       }
     }
 
@@ -211,34 +212,34 @@ L.PM = L.PM || {
     }
     if (layer.pm) {
       // PM is already added to the layer
-    } else if (L.PM.optIn && layer.options.pmIgnore !== false) {
+    } else if (Geoman.optIn && layer.options.pmIgnore !== false) {
       // Opt-In is true and pmIgnore is not false
     } else if (layer.options.pmIgnore) {
       // pmIgnore is true
     } else if (layer instanceof LeafletMap) {
-      layer.pm = new L.PM.Map(layer);
+      layer.pm = new Geoman.Map(layer);
     } else if (layer instanceof Marker) {
       if (layer.options.textMarker) {
-        layer.pm = new L.PM.Edit.Text(layer);
+        layer.pm = new Edit.Text(layer);
         layer.pm._initTextMarker();
         layer.pm._createTextMarker(false);
       } else {
-        layer.pm = new L.PM.Edit.Marker(layer);
+        layer.pm = new Edit.Marker(layer);
       }
     } else if (layer instanceof Circle) {
-      layer.pm = new L.PM.Edit.Circle(layer);
+      layer.pm = new Edit.Circle(layer);
     } else if (layer instanceof CircleMarker) {
-      layer.pm = new L.PM.Edit.CircleMarker(layer);
+      layer.pm = new Edit.CircleMarker(layer);
     } else if (layer instanceof Rectangle) {
-      layer.pm = new L.PM.Edit.Rectangle(layer);
+      layer.pm = new Edit.Rectangle(layer);
     } else if (layer instanceof Polygon) {
-      layer.pm = new L.PM.Edit.Polygon(layer);
+      layer.pm = new Edit.Polygon(layer);
     } else if (layer instanceof Polyline) {
-      layer.pm = new L.PM.Edit.Line(layer);
+      layer.pm = new Edit.Line(layer);
     } else if (layer instanceof LayerGroup) {
-      layer.pm = new L.PM.Edit.LayerGroup(layer);
+      layer.pm = new Edit.LayerGroup(layer);
     } else if (layer instanceof ImageOverlay) {
-      layer.pm = new L.PM.Edit.ImageOverlay(layer);
+      layer.pm = new Edit.ImageOverlay(layer);
     }
   },
 };
@@ -273,4 +274,5 @@ if (version === '1.7.1') {
 }
 
 // initialize leaflet-geoman
-L.PM.initialize();
+// L.PM.initialize();
+export default Geoman;

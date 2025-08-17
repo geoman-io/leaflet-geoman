@@ -1,8 +1,9 @@
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
 
-import { DivIcon, DomUtil, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
+import { DivIcon, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
+import Utils from '../L.PM.Utils';
 
 Draw.Line = Draw.extend({
   initialize(map) {
@@ -308,7 +309,7 @@ Draw.Line = Draw.extend({
     const removedMarker = markers[markers.length - 1];
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = Utils.findDeepMarkerIndex(
       markers,
       removedMarker
     );

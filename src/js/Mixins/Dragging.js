@@ -1,4 +1,4 @@
-import { Canvas, Circle, CircleMarker, DomEvent, DomUtil, ImageOverlay, LayerGroup, Marker, Util } from 'leaflet';
+import { Canvas, Circle, CircleMarker, DomEvent, ImageOverlay, LayerGroup, Marker } from 'leaflet';
 import { getRenderer } from '../helpers';
 
 const DragMixin = {

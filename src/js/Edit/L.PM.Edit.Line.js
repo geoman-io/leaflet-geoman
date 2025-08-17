@@ -4,8 +4,9 @@ import get from 'lodash/get';
 import { copyLatLngs, hasValues, removeEmptyCoordRings } from '../helpers';
 import Edit from './L.PM.Edit';
 
-import { DivIcon, DomUtil, FeatureGroup, Marker, Polygon, Polyline, Util } from 'leaflet';
+import { DivIcon, FeatureGroup, Marker, Polygon, Polyline, Util } from 'leaflet';
 import MarkerLimits from '../Mixins/MarkerLimits';
+import Utils from '../L.PM.Utils';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
@@ -217,7 +218,7 @@ Edit.Line = Edit.extend({
       return false;
     }
 
-    const latlng = L.PM.Utils.calcMiddleLatLng(
+    const latlng = Utils.calcMiddleLatLng(
       this._map,
       leftM.getLatLng(),
       rightM.getLatLng()
@@ -301,7 +302,7 @@ Edit.Line = Edit.extend({
     delete newM.rightM;
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       leftM
     );
@@ -335,7 +336,7 @@ Edit.Line = Edit.extend({
 
     this._fireVertexAdded(
       newM,
-      L.PM.Utils.findDeepMarkerIndex(this._markers, newM).indexPath,
+      Utils.findDeepMarkerIndex(this._markers, newM).indexPath,
       latlng
     );
 
@@ -458,7 +459,7 @@ Edit.Line = Edit.extend({
     let coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -598,7 +599,7 @@ Edit.Line = Edit.extend({
     const latlng = marker.getLatLng();
 
     // get indexPath of Marker
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -614,7 +615,7 @@ Edit.Line = Edit.extend({
   },
 
   _getNeighborMarkers(marker) {
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -677,7 +678,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = Utils.findDeepMarkerIndex(this._markers, marker);
 
     this._fireMarkerDragStart(e, indexPath);
 
@@ -708,7 +709,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -751,7 +752,7 @@ Edit.Line = Edit.extend({
     const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
 
     if (marker._middleMarkerNext) {
-      const middleMarkerNextLatLng = L.PM.Utils.calcMiddleLatLng(
+      const middleMarkerNextLatLng = Utils.calcMiddleLatLng(
         this._map,
         markerLatLng,
         nextMarkerLatLng
@@ -760,7 +761,7 @@ Edit.Line = Edit.extend({
     }
 
     if (marker._middleMarkerPrev) {
-      const middleMarkerPrevLatLng = L.PM.Utils.calcMiddleLatLng(
+      const middleMarkerPrevLatLng = Utils.calcMiddleLatLng(
         this._map,
         markerLatLng,
         prevMarkerLatLng
@@ -783,7 +784,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = Utils.findDDeepMarkerIndex(this._markers, marker);
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
@@ -837,7 +838,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, vertex);
+    const { indexPath } = Utils.findDeepMarkerIndex(this._markers, vertex);
 
     this._fireVertexClick(e, indexPath);
   },

@@ -9,7 +9,7 @@ Draw.Polygon = Draw.Line.extend({
     this.toolbarButtonName = 'drawPolygon';
   },
   enable(options) {
-    L.PM.Draw.Line.prototype.enable.call(this, options);
+    Draw.Line.prototype.enable.call(this, options);
     // Overwrite the shape "Line" of this._layer
     this._layer.pm._shape = 'Polygon';
   },

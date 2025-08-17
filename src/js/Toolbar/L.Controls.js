@@ -1,4 +1,4 @@
-import { Control, DomEvent, DomUtil, Util } from 'leaflet';
+import { Control, DomEvent, DomUtil } from 'leaflet';
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
@@ -10,9 +10,11 @@ const PMButton = Control.extend({
   },
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
-    // replaced setOptions with this because classNames returned undefined 🤔
     this._button = {};
-    Object.assign(this._button, this.options, options);
+    for (const i in this.options) {
+      this._button[i] = this.options[i];
+    }
+    Object.assign(this._button, options);
   },
   onAdd(map) {
     this._map = map;

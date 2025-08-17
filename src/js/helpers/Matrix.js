@@ -5,6 +5,7 @@
  */
 
 import { Point } from "leaflet";
+import Geoman from "../L.PM";
 
 /**
  * @class  L.PM.Matrix
@@ -23,7 +24,7 @@ const Matrix = function Matrix(a, b, c, d, e, f) {
   this._matrix = [a, b, c, d, e, f];
 };
 
-Matrix.init = () => new L.PM.Matrix(1, 0, 0, 1, 0, 0);
+Matrix.init = () => new Geoman.Matrix(1, 0, 0, 1, 0, 0);
 
 Matrix.prototype = {
   /**
@@ -68,7 +69,7 @@ Matrix.prototype = {
    */
   clone() {
     const matrix = this._matrix;
-    return new L.PM.Matrix(
+    return new Geoman.Matrix(
       matrix[0],
       matrix[1],
       matrix[2],
@@ -187,7 +188,7 @@ Matrix.prototype = {
     ];
     let val;
 
-    if (a && a instanceof L.PM.Matrix) {
+    if (a && a instanceof Geoman.Matrix) {
       src = a._matrix;
       other = [
         [src[0], src[2], src[4]],

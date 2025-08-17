@@ -1,5 +1,6 @@
-import { DomEvent, DomUtil, Util } from 'leaflet';
+import { DomEvent, Util } from 'leaflet';
 import Edit from './L.PM.Edit';
+import Draw from '../Draw/L.PM.Draw';
 
 Edit.Text = Edit.extend({
   _shape: 'Text',
@@ -238,12 +239,12 @@ Edit.Text = Edit.extend({
   },
 
   _initTextMarker() {
-    this.textArea = L.PM.Draw.Text.prototype._createTextArea.call(this);
+    this.textArea = Draw.Text.prototype._createTextArea.call(this);
     if (this.options.className) {
       const cssClasses = this.options.className.split(' ');
       this.textArea.classList.add(...cssClasses);
     }
-    const textAreaIcon = L.PM.Draw.Text.prototype._createTextIcon.call(
+    const textAreaIcon = Draw.Text.prototype._createTextIcon.call(
       this,
       this.textArea
     );

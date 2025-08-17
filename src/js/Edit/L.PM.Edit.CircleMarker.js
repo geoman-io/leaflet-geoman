@@ -1,6 +1,7 @@
-import { Circle, DivIcon, DomUtil, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
+import { Circle, DivIcon, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
 import { destinationOnLine } from '../helpers';
 import Edit from './L.PM.Edit';
+import Utils from '../L.PM.Utils';
 
 Edit.CircleMarker = Edit.extend({
   _shape: 'CircleMarker',
@@ -370,7 +371,7 @@ Edit.CircleMarker = Edit.extend({
   _updateHiddenPolyCircle() {
     const map = this._layer._map || this._map;
     if (map) {
-      const radius = L.PM.Utils.pxRadiusToMeterRadius(
+      const radius = Utils.pxRadiusToMeterRadius(
         this._layer.getRadius(),
         map,
         this._layer.getLatLng()
@@ -381,10 +382,10 @@ Edit.CircleMarker = Edit.extend({
       const crsSimple = map && map.pm._isCRSSimple();
       if (this._hiddenPolyCircle) {
         this._hiddenPolyCircle.setLatLngs(
-          L.PM.Utils.circleToPolygon(_layer, 200, !crsSimple).getLatLngs()
+          Utils.circleToPolygon(_layer, 200, !crsSimple).getLatLngs()
         );
       } else {
-        this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(
+        this._hiddenPolyCircle = Utils.circleToPolygon(
           _layer,
           200,
           !crsSimple
@@ -449,14 +450,14 @@ Edit.CircleMarker = Edit.extend({
     return this._map.project(A).distanceTo(this._map.project(B));
   },
   _getMinDistanceInMeter(latlng) {
-    return L.PM.Utils.pxRadiusToMeterRadius(
+    return Utils.pxRadiusToMeterRadius(
       this.options[this._minRadiusOption],
       this._map,
       latlng
     );
   },
   _getMaxDistanceInMeter(latlng) {
-    return L.PM.Utils.pxRadiusToMeterRadius(
+    return Utils.pxRadiusToMeterRadius(
       this.options[this._maxRadiusOption],
       this._map,
       latlng

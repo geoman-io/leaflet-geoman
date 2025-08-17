@@ -1,9 +1,11 @@
 import { LayerGroup, Util } from "leaflet";
+import Geoman from "../../L.PM";
+import Utils from "../../L.PM.Utils";
 
 const GlobalDragMode = {
   _globalDragModeEnabled: false,
   enableGlobalDragMode() {
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
 
     this._globalDragModeEnabled = true;
     this._addedLayersDrag = {};
@@ -32,7 +34,7 @@ const GlobalDragMode = {
     this._fireGlobalDragModeToggled(true);
   },
   disableGlobalDragMode() {
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
 
     this._globalDragModeEnabled = false;
 
@@ -79,8 +81,8 @@ const GlobalDragMode = {
     return (
       layer.pm &&
       !(layer instanceof LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      ((!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
       layer.pm.options.draggable
     );

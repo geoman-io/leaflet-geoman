@@ -8,6 +8,10 @@ import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import { getRenderer } from './helpers';
+import Draw from './Draw/L.PM.Draw';
+import Toolbar from './Toolbar/L.PM.Toolbar';
+import Geoman from './L.PM';
+import Utils from './L.PM.Utils';
 
 const Map = Class.extend({
   includes: [
@@ -19,8 +23,8 @@ const Map = Class.extend({
   ],
   initialize(map) {
     this.map = map;
-    this.Draw = new L.PM.Draw(map);
-    this.Toolbar = new L.PM.Toolbar(map);
+    this.Draw = new Draw(map);
+    this.Toolbar = new Toolbar(map);
     this.Keyboard = createKeyboardMixins();
 
     this.globalOptions = {
@@ -76,12 +80,12 @@ const Map = Class.extend({
       }
     }
 
-    const oldLang = L.PM.activeLang;
+    const oldLang = Geoman.activeLang;
     if (override) {
       translations[lang] = merge(translations[fallback], override);
     }
 
-    L.PM.activeLang = lang;
+    Geoman.activeLang = lang;
     this.map.pm.Toolbar.reinit();
     this._fireLangChange(oldLang, lang, fallback, translations[lang]);
   },
@@ -174,7 +178,7 @@ const Map = Class.extend({
     }
 
     // enable options for Editing
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
     layers.forEach((layer) => {
       layer.pm.setOptions(options);
     });
@@ -188,7 +192,7 @@ const Map = Class.extend({
     this.applyGlobalOptions();
   },
   applyGlobalOptions() {
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
     layers.forEach((layer) => {
       if (layer.pm.enabled()) {
         layer.pm.applyOptions();
@@ -211,7 +215,7 @@ const Map = Class.extend({
     return this.Draw.Cut.disable();
   },
   getGeomanLayers(asGroup = false) {
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
     if (!asGroup) {
       return layers;
     }
@@ -223,7 +227,7 @@ const Map = Class.extend({
     return group;
   },
   getGeomanDrawLayers(asGroup = false) {
-    const layers = L.PM.Utils.findLayers(this.map).filter(
+    const layers = Utils.findLayers(this.map).filter(
       (l) => l._drawnByGeoman === true
     );
     if (!asGroup) {

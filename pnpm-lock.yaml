@@ -28,8 +28,8 @@ importers:
         version: 0.16.5
     devDependencies:
       '@types/leaflet':
-        specifier: ^1.9.12
-        version: 1.9.14
+        specifier: ^1.9
+        version: 1.9.20
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -58,8 +58,8 @@ importers:
         specifier: ^9.0.11
         version: 9.0.11
       leaflet:
-        specifier: 2.0.0-alpha
-        version: 2.0.0-alpha
+        specifier: 2.0.0-alpha.1
+        version: 2.0.0-alpha.1
       lint-staged:
         specifier: ^15.2.5
         version: 15.2.10
@@ -346,17 +346,14 @@ packages:
   '@turf/truncate@6.5.0':
     resolution: {integrity: sha512-pFxg71pLk+eJj134Z9yUoRhIi8vqnnKvCYwdT4x/DQl/19RVdq1tV3yqOT3gcTQNfniteylL5qV1uTBDV5sgrg==}
 
-  '@types/geojson@7946.0.13':
-    resolution: {integrity: sha512-bmrNrgKMOhM3WsafmbGmC+6dsF2Z308vLFsQ3a/bT8X8Sv5clVYpPars/UPq+sAaJP+5OoLAYgwbkS5QEJdLUQ==}
-
   '@types/geojson@7946.0.8':
     resolution: {integrity: sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==}
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
-  '@types/leaflet@1.9.14':
-    resolution: {integrity: sha512-sx2q6MDJaajwhKeVgPSvqXd8rhNJSTA3tMidQGduZn9S6WBYxDkCpSpV5xXEmSg7Cgdk/5vJGhVF1kMYLzauBg==}
+  '@types/leaflet@1.9.20':
+    resolution: {integrity: sha512-rooalPMlk61LCaLOvBF2VIf9M47HgMQqi5xQ9QRi7c8PkdIe0WrIi5IxXUXQjAdL0c+vcQ01mYWbthzmp9GHWw==}
 
   '@types/node@20.11.10':
     resolution: {integrity: sha512-rZEfe/hJSGYmdfX9tvcPMYeYPW2sNl50nsw4jZmRcaG0HIAb0WYEpsB05GOb53vjqpyE9GUhlDQ4jLSoB5q9kg==}
@@ -1212,8 +1209,8 @@ packages:
     resolution: {integrity: sha512-cc8oEVoctTvsFZ/Oje/kGnHbpWHYBe8IAJe4C0QNc3t8uM/0Y8+erSz/7Y1ALuXTEZTMvxXwO6YbX1ey3ujiZw==}
     engines: {node: '> 0.8'}
 
-  leaflet@2.0.0-alpha:
-    resolution: {integrity: sha512-RnEJ3UYcuHPFFsDq0e2/QovyIaR3hhwiQpq3wrKnvprA/lsiAJpcxvkRZL3UwQ2xnKm1r2pYcMa+rcSKVwEQag==}
+  leaflet@2.0.0-alpha.1:
+    resolution: {integrity: sha512-2EJU27z/wljOgQCyybRkfrm5Xc3uy6huKehh0UAPsrAdwnSMxaplsqCl9cXPAuDm6D7uL6PCznYMDVIsaAdSdA==}
 
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -2081,15 +2078,13 @@ snapshots:
       '@turf/helpers': 6.5.0
       '@turf/meta': 6.5.0
 
-  '@types/geojson@7946.0.13': {}
-
   '@types/geojson@7946.0.8': {}
 
   '@types/json5@0.0.29': {}
 
-  '@types/leaflet@1.9.14':
+  '@types/leaflet@1.9.20':
     dependencies:
-      '@types/geojson': 7946.0.13
+      '@types/geojson': 7946.0.8
 
   '@types/node@20.11.10':
     dependencies:
@@ -3072,7 +3067,7 @@ snapshots:
 
   lazy-ass@1.6.0: {}
 
-  leaflet@2.0.0-alpha: {}
+  leaflet@2.0.0-alpha.1: {}
 
   levn@0.4.1:
     dependencies:

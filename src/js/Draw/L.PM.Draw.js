@@ -2,6 +2,7 @@ import { Circle, CircleMarker, Class, Icon, ImageOverlay, Marker, Polyline, Util
 import merge from 'lodash/merge';
 import EventMixin from '../Mixins/Events';
 import SnapMixin from '../Mixins/Snapping';
+import Utils from '../L.PM.Utils';
 
 const Draw = Class.extend({
   includes: [SnapMixin, EventMixin],
@@ -75,7 +76,7 @@ const Draw = Class.extend({
 
     // initiate drawing class for our shapes
     this.shapes.forEach((shape) => {
-      this[shape] = new L.PM.Draw[shape](this._map);
+      this[shape] = new Draw[shape](this._map);
     });
 
     // TODO: Remove this with the next major release
@@ -162,11 +163,11 @@ const Draw = Class.extend({
 
     if (this._enabled) {
       layers.forEach((layer) => {
-        L.PM.Utils.disablePopup(layer);
+        Utils.disablePopup(layer);
       });
     } else {
       layers.forEach((layer) => {
-        L.PM.Utils.enablePopup(layer);
+        Utils.enablePopup(layer);
       });
     }
   },
@@ -176,11 +177,11 @@ const Draw = Class.extend({
     if (this[name]) {
       throw new TypeError('Draw Type already exists');
     }
-    if (!L.PM.Draw[instance]) {
+    if (!Draw[instance]) {
       throw new TypeError(`There is no class L.PM.Draw.${instance}`);
     }
 
-    this[name] = new L.PM.Draw[instance](this._map);
+    this[name] = new Draw[instance](this._map);
     this[name].toolbarButtonName = name;
     this[name]._shape = name;
     this.shapes.push(name);

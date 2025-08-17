@@ -1,4 +1,6 @@
 import { LayerGroup, Util } from "leaflet";
+import Geoman from "../../L.PM";
+import Utils from "../../L.PM.Utils";
 
 // this mixin adds a global edit mode to the map
 const GlobalEditMode = {
@@ -14,7 +16,7 @@ const GlobalEditMode = {
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
 
     // find all layers handled by leaflet-geoman
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
 
     // enable all layers
     layers.forEach((layer) => {
@@ -45,7 +47,7 @@ const GlobalEditMode = {
     this._globalEditModeEnabled = false;
 
     // find all layers handles by leaflet-geoman
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this.map);
 
     // disable all layers
     layers.forEach((layer) => {
@@ -101,8 +103,8 @@ const GlobalEditMode = {
     return (
       layer.pm &&
       !(layer instanceof LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      ((!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
       layer.pm.options.allowEditing
     );

@@ -2,8 +2,10 @@ import { Circle, CircleMarker, CRS, LatLng, Marker, Polygon, Polyline, Rectangle
 import get from 'lodash/get';
 import translations from '../../assets/translations';
 
+import Geoman from '../L.PM';
+
 export function getTranslation(path) {
-  const lang = L.PM.activeLang;
+  const lang = Geoman.activeLang;
   // if translation is not found, fallback to english
   return get(translations[lang], path) || get(translations.en, path) || path;
 }

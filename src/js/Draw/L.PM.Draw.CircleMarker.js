@@ -1,6 +1,7 @@
 import { CircleMarker, DivIcon, Polyline, Circle, FeatureGroup, Marker, Point, Util } from 'leaflet';
 import { destinationOnLine, getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
+import Utils from '../L.PM.Utils';
 
 Draw.CircleMarker = Draw.extend({
   initialize(map) {
@@ -454,14 +455,14 @@ Draw.CircleMarker = Draw.extend({
     return secondLatLng;
   },
   _getMinDistanceInMeter() {
-    return L.PM.Utils.pxRadiusToMeterRadius(
+    return Utils.pxRadiusToMeterRadius(
       this.options[this._minRadiusOption],
       this._map,
       this._centerMarker.getLatLng()
     );
   },
   _getMaxDistanceInMeter() {
-    return L.PM.Utils.pxRadiusToMeterRadius(
+    return Utils.pxRadiusToMeterRadius(
       this.options[this._maxRadiusOption],
       this._map,
       this._centerMarker.getLatLng()

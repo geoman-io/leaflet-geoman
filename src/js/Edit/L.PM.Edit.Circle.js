@@ -1,5 +1,5 @@
-import { DomUtil } from 'leaflet';
 import Edit from './L.PM.Edit';
+import Utils from '../L.PM.Utils';
 
 Edit.Circle = Edit.CircleMarker.extend({
   _shape: 'Circle',
@@ -15,7 +15,7 @@ Edit.Circle = Edit.CircleMarker.extend({
   },
   enable(options) {
     // TODO: this can be removed after the default options of CircleMarker.enable are removed
-    L.PM.Edit.CircleMarker.prototype.enable.call(this, options || {});
+    Edit.CircleMarker.prototype.enable.call(this, options || {});
   },
   _extendingEnable() {},
   _extendingDisable() {
@@ -36,10 +36,10 @@ Edit.Circle = Edit.CircleMarker.extend({
     const crsSimple = this._map && this._map.pm._isCRSSimple();
     if (this._hiddenPolyCircle) {
       this._hiddenPolyCircle.setLatLngs(
-        L.PM.Utils.circleToPolygon(this._layer, 200, !crsSimple).getLatLngs()
+        Utils.circleToPolygon(this._layer, 200, !crsSimple).getLatLngs()
       );
     } else {
-      this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(
+      this._hiddenPolyCircle = Utils.circleToPolygon(
         this._layer,
         200,
         !crsSimple

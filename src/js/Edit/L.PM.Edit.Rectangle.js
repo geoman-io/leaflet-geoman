@@ -1,8 +1,9 @@
 // Corner detection based on Leaflet Draw's Edit.Rectangle.js Class:
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
-import { DivIcon, FeatureGroup, Marker, Util } from 'leaflet';
+import { DivIcon, FeatureGroup, Marker } from 'leaflet';
 import { calcAngle } from '../helpers';
 import Edit from './L.PM.Edit';
+import Utils from '../L.PM.Utils';
 
 Edit.Rectangle = Edit.Polygon.extend({
   _shape: 'Rectangle',
@@ -102,7 +103,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
     draggedMarker._snapped = false;
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
     );
@@ -125,7 +126,7 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     this._adjustRectangleForMarkerMove(draggedMarker);
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
     );
@@ -145,7 +146,7 @@ Edit.Rectangle = Edit.Polygon.extend({
       delete m._oppositeCornerLatLng;
     });
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
     );
@@ -164,7 +165,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     Object.assign(movedMarker._origLatLng, movedMarker._latlng);
 
     // update rectangle boundaries, based on moved marker's new LatLng and cached opposite corner's LatLng
-    const corners = L.PM.Utils._getRotatedRectangle(
+    const corners = Utils._getRotatedRectangle(
       movedMarker.getLatLng(),
       movedMarker._oppositeCornerLatLng,
       this.getAngle(),
@@ -243,7 +244,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     }
 
     const latlngs = this._layer.getLatLngs()[0];
-    return L.PM.Utils._getRotatedRectangle(
+    return Utils._getRotatedRectangle(
       latlngs[0],
       latlngs[2],
       this.getAngle(),

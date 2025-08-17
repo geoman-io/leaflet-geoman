@@ -1,10 +1,12 @@
 import { LayerGroup, Polyline, Util } from "leaflet";
+import Geoman from "../../L.PM";
+import Utils from "../../L.PM.Utils";
 
 const GlobalRotateMode = {
   _globalRotateModeEnabled: false,
   enableGlobalRotateMode() {
     this._globalRotateModeEnabled = true;
-    const layers = L.PM.Utils.findLayers(this.map).filter(
+    const layers = Utils.findLayers(this.map).filter(
       (l) => l instanceof Polyline
     );
     layers.forEach((layer) => {
@@ -32,7 +34,7 @@ const GlobalRotateMode = {
   },
   disableGlobalRotateMode() {
     this._globalRotateModeEnabled = false;
-    const layers = L.PM.Utils.findLayers(this.map).filter(
+    const layers = Utils.findLayers(this.map).filter(
       (l) => l instanceof Polyline
     );
     layers.forEach((layer) => {
@@ -62,8 +64,8 @@ const GlobalRotateMode = {
       layer.pm &&
       layer instanceof Polyline &&
       !(layer instanceof LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      ((!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
       layer.pm.options.allowRotation
     );

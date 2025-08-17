@@ -1,6 +1,7 @@
-import { DivIcon, DomUtil, FeatureGroup, Marker, Point, Rectangle, Util } from 'leaflet';
+import { DivIcon, FeatureGroup, Marker, Point, Rectangle, Util } from 'leaflet';
 import { fixLatOffset, getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
+import Utils from '../L.PM.Utils';
 
 Draw.Rectangle = Draw.extend({
   initialize(map) {
@@ -216,7 +217,7 @@ Draw.Rectangle = Draw.extend({
     const B = fixLatOffset(this._hintMarker.getLatLng(), this._map);
 
     // Create a (maybe rotated) box using corners A & B (A = Starting Position, B = Current Mouse Position)
-    const corners = L.PM.Utils._getRotatedRectangle(
+    const corners = Utils._getRotatedRectangle(
       A,
       B,
       this.options.rectangleAngle || 0,
@@ -248,7 +249,7 @@ Draw.Rectangle = Draw.extend({
   },
   _findCorners() {
     const latlngs = this._layer.getLatLngs()[0];
-    return L.PM.Utils._getRotatedRectangle(
+    return Utils._getRotatedRectangle(
       latlngs[0],
       latlngs[2],
       this.options.rectangleAngle || 0,
@@ -286,7 +287,7 @@ Draw.Rectangle = Draw.extend({
 
     // rectangle can only initialized with bounds (not working with rotation) so we update the latlngs
     if (this.options.rectangleAngle) {
-      const corners = L.PM.Utils._getRotatedRectangle(
+      const corners = Utils._getRotatedRectangle(
         A,
         B,
         this.options.rectangleAngle || 0,

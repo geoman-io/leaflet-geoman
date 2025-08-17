@@ -1,5 +1,7 @@
 import { Circle, CircleMarker, ImageOverlay, LineUtil, Marker, Polygon, Polyline, Rectangle, Util } from 'leaflet';
 import { hasValues, prioritiseSort } from '../helpers';
+import Geoman from '../L.PM';
+import Utils from '../L.PM.Utils';
 
 const SnapMixin = {
   _initSnappableMarkers() {
@@ -201,8 +203,8 @@ const SnapMixin = {
         // if snapIgnore === false the layer will be always snappable
         if (
           layer.options.snapIgnore === undefined &&
-          ((!L.PM.optIn && layer.options.pmIgnore === true) || // if optIn is not set and pmIgnore is true, the layer will be ignored
-            (L.PM.optIn && layer.options.pmIgnore !== false)) // if optIn is true and pmIgnore is not false, the layer will be ignored
+          ((!Geoman.optIn && layer.options.pmIgnore === true) || // if optIn is not set and pmIgnore is true, the layer will be ignored
+            (Geoman.optIn && layer.options.pmIgnore !== false)) // if optIn is true and pmIgnore is not false, the layer will be ignored
         ) {
           return;
         }
@@ -507,7 +509,7 @@ const SnapMixin = {
 
       // snap to middle (M) of segment if option is enabled
       if (this.options.snapMiddle) {
-        const M = L.PM.Utils.calcMiddleLatLng(map, A, B);
+        const M = Utils.calcMiddleLatLng(map, A, B);
         const distanceMC = this._getDistance(map, M, C);
 
         if (distanceMC < distanceAC && distanceMC < distanceBC) {

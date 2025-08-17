@@ -1,4 +1,4 @@
-import { DivIcon, DomUtil, Marker, Point, Util } from 'leaflet';
+import { DivIcon, Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 

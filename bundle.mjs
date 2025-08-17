@@ -24,6 +24,8 @@ const buildOptions = {
   minify: true,
   outfile: './dist/leaflet-geoman.js',
   sourcemap: true,
+  format: 'esm',
+  external: ['leaflet'],
 }
 
 const ctx = await esbuild.context({ ...buildOptions, plugins });
