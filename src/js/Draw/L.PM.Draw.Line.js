@@ -33,13 +33,13 @@ Draw.Line = Draw.extend({
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
-    // this is the hintline from the mouse cursor to the last marker
+    // this is the hintline from the pointer cursor to the last marker
     this._hintline = new Polyline([], this.options.hintlineStyle);
     this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
-    // this is the hintmarker on the mouse cursor
+    // this is the hintmarker on the pointer cursor
     this._hintMarker = new Marker(this._map.getCenter(), {
       interactive: false, // always vertex marker below will be triggered from the click event -> _finishShape #911
       zIndexOffset: 100,
@@ -88,8 +88,8 @@ Draw.Line = Draw.extend({
       }
     }
 
-    // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    // sync hint marker with pointer cursor
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     // sync the hintline with hint marker
     this._hintMarker.on('move', this._syncHintLine, this);
@@ -123,7 +123,7 @@ Draw.Line = Draw.extend({
 
     // unbind listeners
     this._map.off('click', this._createVertex, this);
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.off(this.options.finishOn, this._finishShape, this);
     }

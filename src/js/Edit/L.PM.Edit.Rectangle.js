@@ -161,7 +161,7 @@ Edit.Rectangle = Edit.Polygon.extend({
   // params: movedMarker -- the Marker object
   _adjustRectangleForMarkerMove(movedMarker) {
     // update moved marker coordinates
-    Util.extend(movedMarker._origLatLng, movedMarker._latlng);
+    Object.assign(movedMarker._origLatLng, movedMarker._latlng);
 
     // update rectangle boundaries, based on moved marker's new LatLng and cached opposite corner's LatLng
     const corners = L.PM.Utils._getRotatedRectangle(

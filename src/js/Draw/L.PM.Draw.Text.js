@@ -22,7 +22,7 @@ Draw.Text = Draw.extend({
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
-    // this is the hintmarker on the mouse cursor
+    // this is the hintmarker on the pointer cursor
     this._hintMarker = new Marker(this._map.getCenter(), {
       interactive: false,
       zIndexOffset: 100,
@@ -53,8 +53,8 @@ Draw.Text = Draw.extend({
     // this is just to keep the snappable mixin happy
     this._layer = this._hintMarker;
 
-    // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    // sync hint marker with pointer cursor
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     this._map.getContainer().classList.add('geoman-draw-cursor');
 
@@ -80,9 +80,9 @@ Draw.Text = Draw.extend({
     this._map.getContainer().classList.remove('geoman-draw-cursor');
 
     // remove event listener to sync hint marker
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
 
-    this._map.off('mousemove', this._showHintMarker, this);
+    this._map.off('pointermove', this._showHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -184,8 +184,8 @@ Draw.Text = Draw.extend({
     // disable drawing
     this.disable();
     if (this.options.continueDrawing) {
-      // the user is still typing some text, so we re-enable the layer after moving the mouse
-      this._map.once('mousemove', this._showHintMarkerAfterMoving, this);
+      // the user is still typing some text, so we re-enable the layer after moving the pointer
+      this._map.once('pointermove', this._showHintMarkerAfterMoving, this);
     }
   },
 

@@ -27,7 +27,7 @@ Draw.Marker = Draw.extend({
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
-    // this is the hintmarker on the mouse cursor
+    // this is the hintmarker on the pointer cursor
     this._hintMarker = new Marker(
       this._map.getCenter(),
       this.options.markerStyle
@@ -52,8 +52,8 @@ Draw.Marker = Draw.extend({
     // this is just to keep the snappable mixin happy
     this._layer = this._hintMarker;
 
-    // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    // sync hint marker with pointer cursor
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     // enable edit mode for existing markers
     if (this.options.markerEditable) {
@@ -87,7 +87,7 @@ Draw.Marker = Draw.extend({
     this._hintMarker.remove();
 
     // remove event listener to sync hint marker
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
 
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {

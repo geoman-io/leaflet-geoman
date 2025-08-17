@@ -40,7 +40,7 @@ Edit.Text = Edit.extend({
     DomEvent.on(this.textArea, 'blur', this._focusChange, this);
     this._layer.on('dblclick', DomEvent.stop);
 
-    DomEvent.off(this.textArea, 'mousedown', this._preventTextSelection);
+    DomEvent.off(this.textArea, 'pointerdown', this._preventTextSelection);
 
     this._enabled = true;
 
@@ -71,7 +71,7 @@ Edit.Text = Edit.extend({
     this.textArea.focus();
     this.textArea.selectionStart = 0;
     this.textArea.selectionEnd = 0;
-    DomEvent.on(this.textArea, 'mousedown', this._preventTextSelection);
+    DomEvent.on(this.textArea, 'pointerdown', this._preventTextSelection);
     focusedElement.focus();
 
     this._disableOnBlurActive = false;
@@ -184,7 +184,7 @@ Edit.Text = Edit.extend({
       // save current map dragging state
       if (this._safeToCacheDragState) {
         this._originalMapDragState = this._map.dragging._enabled;
-        // don't cache the state again until another mouse up is registered
+        // don't cache the state again until another pointer up is registered
         this._safeToCacheDragState = false;
       }
       this._map.dragging.disable();
@@ -259,7 +259,7 @@ Edit.Text = Edit.extend({
 
     this.textArea.wrap = 'off';
     this.textArea.style.overflow = 'hidden';
-    this.textArea.style.height = DomUtil.getStyle(this.textArea, 'font-size');
+    this.textArea.style.height = getComputedStyle(this.textArea).fontSize;
     this.textArea.style.width = '1px';
 
     if (this._layer.options.text) {

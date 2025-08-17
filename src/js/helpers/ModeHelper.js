@@ -9,7 +9,7 @@ export function _convertLatLngs(latlng, matrix, map) {
   if (zoom === Infinity) {
     zoom = map.getZoom();
   }
-  if (Util.isArray(latlng)) {
+  if (Array.isArray(latlng)) {
     const latlngs = [];
     latlng.forEach((x) => {
       latlngs.push(_convertLatLngs(x, matrix, map));

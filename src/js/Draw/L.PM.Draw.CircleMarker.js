@@ -1,4 +1,4 @@
-import { CircleMarker, DivIcon, DomUtil, FeatureGroup, Marker, Point, Util } from 'leaflet';
+import { CircleMarker, DivIcon, Polyline, Circle, FeatureGroup, Marker, Point, Util } from 'leaflet';
 import { destinationOnLine, getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 
@@ -63,7 +63,7 @@ Draw.CircleMarker = Draw.extend({
       this._setPane(this._centerMarker, 'vertexPane');
       this._centerMarker._pmTempLayer = true;
 
-      // this is the hintmarker on the mouse cursor
+      // this is the hintmarker on the pointer cursor
       this._hintMarker = new Marker(this._map.getCenter(), {
         zIndexOffset: 110,
         icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
@@ -101,7 +101,7 @@ Draw.CircleMarker = Draw.extend({
       // create a marker on click on the map
       this._map.on('click', this._createMarker, this);
 
-      // this is the hintmarker on the mouse cursor
+      // this is the hintmarker on the pointer cursor
       this._hintMarker = new this._BaseCircleClass(this._map.getCenter(), {
         radius: this._defaultRadius,
         ...this.options.templineStyle,
@@ -126,8 +126,8 @@ Draw.CircleMarker = Draw.extend({
       }
     }
 
-    // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    // sync hint marker with pointer cursor
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     this._extendingEnable();
 
@@ -182,7 +182,7 @@ Draw.CircleMarker = Draw.extend({
     }
 
     // remove event listener to sync hint marker
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);

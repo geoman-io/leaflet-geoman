@@ -11,7 +11,8 @@ const PMButton = Control.extend({
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
     // replaced setOptions with this because classNames returned undefined 🤔
-    this._button = Object.assign({}, this.options, options);
+    this._button = {};
+    Object.assign(this._button, this.options, options);
   },
   onAdd(map) {
     this._map = map;
@@ -208,9 +209,9 @@ const PMButton = Control.extend({
             this._fireActionClick(action, btnName, button);
           };
 
-          DomEvent.addListener(actionNode, 'click', actionClick, this);
-          DomEvent.addListener(actionNode, 'click', action.onClick, this);
-          DomEvent.addListener(actionNode, 'click', () =>
+          DomEvent.on(actionNode, 'click', actionClick, this);
+          DomEvent.on(actionNode, 'click', action.onClick, this);
+          DomEvent.on(actionNode, 'click', () =>
             this._updateActiveAction(button)
           );
         }
@@ -238,8 +239,8 @@ const PMButton = Control.extend({
     if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
-      DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
-      DomEvent.addListener(newButton, 'click', this._triggerClick, this);
+      DomEvent.on(newButton, 'click', this._onBtnClick, this);
+      DomEvent.on(newButton, 'click', this._triggerClick, this);
     }
 
     if (button.disabled) {

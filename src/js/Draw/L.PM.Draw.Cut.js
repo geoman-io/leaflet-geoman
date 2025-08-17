@@ -108,7 +108,7 @@ Draw.Cut = Draw.Polygon.extend({
         // TODO: after cutting nothing else can be cutted anymore until a new list is passed, because the layers don't exists anymore. Should we remove the cutted layers from the list?
         if (
           this.options.layersToCut &&
-          Util.isArray(this.options.layersToCut) &&
+          Array.isArray(this.options.layersToCut) &&
           this.options.layersToCut.length > 0
         ) {
           return this.options.layersToCut.indexOf(l) > -1;
@@ -219,7 +219,7 @@ Draw.Cut = Draw.Polygon.extend({
 
       if (
         this.options.layersToCut &&
-        Util.isArray(this.options.layersToCut) &&
+        Array.isArray(this.options.layersToCut) &&
         this.options.layersToCut.length > 0
       ) {
         const idx = this.options.layersToCut.indexOf(l);

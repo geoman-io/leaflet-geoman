@@ -336,7 +336,7 @@ const SnapMixin = {
     // return the closest layer and it's data
     // if there is no closest layer, return an empty object
     const result = this._getClosestLayerByPriority(closestLayers, amount);
-    if (Util.isArray(result)) {
+    if (Array.isArray(result)) {
       return result;
     }
     return [result];

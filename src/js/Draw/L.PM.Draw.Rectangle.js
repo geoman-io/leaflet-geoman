@@ -44,7 +44,7 @@ Draw.Rectangle = Draw.extend({
     this._startMarker._pmTempLayer = true;
     this._layerGroup.addLayer(this._startMarker);
 
-    // this is the hintmarker on the mouse cursor
+    // this is the hintmarker on the pointer cursor
     this._hintMarker = new Marker(this._map.getCenter(), {
       zIndexOffset: 150,
       icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
@@ -96,8 +96,8 @@ Draw.Rectangle = Draw.extend({
     // create a polygon-point on click
     this._map.on('click', this._placeStartingMarkers, this);
 
-    // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    // sync hint marker with pointer cursor
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -126,7 +126,7 @@ Draw.Rectangle = Draw.extend({
     // unbind listeners
     this._map.off('click', this._finishShape, this);
     this._map.off('click', this._placeStartingMarkers, this);
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
 
     // remove helping layers
     this._map.removeLayer(this._layerGroup);
@@ -241,7 +241,7 @@ Draw.Rectangle = Draw.extend({
         try {
           this._styleMarkers[index].setLatLng(unmarkedCorner);
         } catch (e) {
-          // ignore error - should be fixed with the next mousemove
+          // ignore error - should be fixed with the next pointermove
         }
       });
     }

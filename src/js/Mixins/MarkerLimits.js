@@ -24,17 +24,17 @@ const MarkerLimits = {
     this._layer.on('pm:disable', this._removeMarkerLimitEvents, this);
     this._layer.on('remove', this._removeMarkerLimitEvents, this);
 
-    // add markers closest to the mouse
+    // add markers closest to the pointer
     if (this.options.limitMarkersToCount > -1) {
       // re-init markers when a vertex is removed.
       // The reason is that syncing this cache with a removed marker was impossible to do
       this._layer.on('pm:vertexremoved', this._initMarkers, this);
 
-      this._map.on('mousemove', this.throttledApplyLimitFilters, this);
+      this._map.on('pointermove', this.throttledApplyLimitFilters, this);
     }
   },
   _removeMarkerLimitEvents() {
-    this._map.off('mousemove', this.throttledApplyLimitFilters, this);
+    this._map.off('pointermove', this.throttledApplyLimitFilters, this);
     this._layer.off('pm:edit', this.createCache, this);
     this._layer.off('pm:disable', this._removeMarkerLimitEvents, this);
     this._layer.off('pm:vertexremoved', this._initMarkers, this);
