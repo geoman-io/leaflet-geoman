@@ -282,3 +282,15 @@ export function getRenderer(layer) {
     layer._renderer
   );
 }
+
+/**
+ * Checks if the device has a "fine" pointer (such as a mouse) and can therefore
+ * display the "cursor marker", i.e. the marker that follows the mouse
+ * movements.
+ *
+ * @returns {Boolean} A boolean indicating whether the device has a pointer
+ *   device with a visible cursor.
+ */
+export function deviceHasFinePointer() {
+  return window.matchMedia('(pointer:fine)').matches;
+}

@@ -1,5 +1,5 @@
 import Draw from './L.PM.Draw';
-import { getTranslation } from '../helpers';
+import { getTranslation, deviceHasFinePointer } from '../helpers';
 
 Draw.Marker = Draw.extend({
   initialize(map) {
@@ -62,6 +62,8 @@ Draw.Marker = Draw.extend({
         }
       });
     }
+
+    this._setupTouchScreenTips();
 
     // fire drawstart event
     this._fireDrawStart();
@@ -193,5 +195,57 @@ Draw.Marker = Draw.extend({
     if (this.options.markerStyle?.icon) {
       this._hintMarker?.setIcon(this.options.markerStyle.icon);
     }
+  },
+  _setupTouchScreenTips() {
+    let markerHintTip = null;
+    const updateHintPosition = () => {
+      if (!markerHintTip) {
+        return;
+      }
+
+      const bounds = this._map.getBounds();
+
+      // Calculate the longitude distance of the map's visible area. This allows
+      // for an easy way to figure out the center point of the map.
+      const distance = this._map.distance(
+        bounds.getNorthWest(),
+        bounds.getNorthEast()
+      );
+
+      // Calculate new bounds with the current latitude distance of the visible
+      // map from the northwest point of the map. Within these new bounds, the
+      // east border is at the center of the map.
+      const newBounds = bounds.getNorthWest().toBounds(distance);
+
+      // Set the hint at the top center of the map.
+      markerHintTip.setLatLng([bounds.getNorth(), newBounds.getEast()]);
+    };
+    this._map.on('pm:drawstart', (event) => {
+      if (event.shape === 'Marker' && !deviceHasFinePointer()) {
+        // Hides the "hint marker" as that is confusing for touch screen users.
+        const drawMarker = this._map.pm.Draw.Marker;
+        drawMarker._hintMarker.setOpacity(0);
+        drawMarker._hintMarker.closeTooltip();
+
+        // Creates the touch screen hint "permanently" (while using the tool)
+        // sticked at the top of the map.
+        markerHintTip = L.tooltip([0, 0], {
+          className: 'leaflet-tooltip-stickynote',
+          content: getTranslation('tooltips.placeMarkerTip'),
+          direction: 'bottom',
+          permanent: true,
+        }).addTo(this._map);
+
+        updateHintPosition();
+        this._map.on('zoomlevelschange resize move', updateHintPosition, this);
+      }
+    });
+    this._map.on('pm:drawend', (event) => {
+      if (event.shape === 'Marker' && markerHintTip) {
+        markerHintTip.remove();
+        markerHintTip = null;
+        this._map.off('zoomlevelschange resize move', updateHintPosition, this);
+      }
+    });
   },
 });

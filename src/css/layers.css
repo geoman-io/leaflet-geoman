@@ -90,3 +90,7 @@
 .pm-textarea.pm-hasfocus {
   cursor: auto;
 }
+
+.leaflet-tooltip-stickynote::before {
+  display: none;
+}

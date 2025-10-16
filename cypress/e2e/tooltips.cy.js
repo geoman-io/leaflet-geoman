@@ -54,6 +54,36 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
   });
 
+  it('Has A Sticky Marker Tooltip If No Pointer Device Is Available', () => {
+    cy.window().then((win) => {
+      cy.stub(win, 'matchMedia').callsFake(() => ({
+        matches: false,
+      }));
+    });
+
+    cy.get('.leaflet-tooltip-stickynote').should('not.exist');
+
+    cy.toolbarButton('marker').click();
+    cy.get('.leaflet-tooltip-stickynote').should('exist');
+
+    cy.get('.leaflet-tooltip-stickynote').then((el) => {
+      expect(el).to.have.text('Place the markers by clicking the map');
+    });
+
+    cy.get(mapSelector).click(290, 250);
+
+    cy.wait(500);
+
+    cy.get('.leaflet-tooltip-stickynote').then((el) => {
+      expect(el.length).to.eq(1);
+      expect(el).to.have.text('Place the markers by clicking the map');
+    });
+
+    cy.toolbarButton('marker').click();
+
+    cy.get('.leaflet-tooltip-stickynote').should('not.exist');
+  });
+
   it('Has Rectangle Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
     cy.toolbarButton('rectangle').click();
