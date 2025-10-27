@@ -21,10 +21,10 @@
   "main": "dist/leaflet-geoman.js",
   "types": "dist/leaflet-geoman.d.ts",
   "dependencies": {
-    "@turf/boolean-contains": "^6.5.0",
-    "@turf/kinks": "^6.5.0",
-    "@turf/line-intersect": "^6.5.0",
-    "@turf/line-split": "^6.5.0",
+    "@turf/boolean-contains": "^7.2.0",
+    "@turf/kinks": "^7.2.0",
+    "@turf/line-intersect": "^7.2.0",
+    "@turf/line-split": "^7.2.0",
     "lodash": "4.17.21",
     "polyclip-ts": "^0.16.8"
   },
