@@ -703,8 +703,7 @@ describe('Draw & Edit Poly', () => {
         const handSelfIntersectionFalse = new Hand({
           timing: 'frame',
           onStop() {
-            // commenting out this line, fixes the test?? Why do we expect this assertion to be false here? 
-            //expect(poly.pm.hasSelfIntersection()).to.equal(false);
+            expect(poly.pm.hasSelfIntersection()).to.equal(false);
 
             // Map shouldn't be dragged
             const center = map.getCenter();
