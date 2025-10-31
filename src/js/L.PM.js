@@ -41,6 +41,7 @@ import '../css/controls.css';
 import '../css/layers.css';
 
 import Matrix from './helpers/Matrix';
+import * as helpers from './helpers';
 
 import Utils from './L.PM.Utils';
 
@@ -52,6 +53,7 @@ const Geoman = {
   Edit,
   Utils,
   Matrix,
+  helpers,
   activeLang: 'en',
   optIn: false,
   initialize(options) {
