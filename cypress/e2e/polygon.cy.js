@@ -1260,7 +1260,7 @@ describe('Draw & Edit Poly', () => {
 
     cy.get(mapSelector).click(220, 220);
     cy.get(mapSelector).click(100, 230);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -1484,9 +1484,9 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('edit').click();
 
-    cy.get(mapSelector).trigger('mousedown', 225, 105, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 225, 150, { which: 1 });
-    cy.get(mapSelector).trigger('mouseup', 225, 150, { which: 1 });
+    cy.get(mapSelector).trigger('pointerdown', 225, 105, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 225, 150, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 225, 150, { which: 1 });
 
     cy.window().then(() => {
       expect(

@@ -907,7 +907,7 @@ describe('Draw Rectangle', () => {
       .should('have.class', 'active');
 
     cy.get(mapSelector).click(220, 220);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {

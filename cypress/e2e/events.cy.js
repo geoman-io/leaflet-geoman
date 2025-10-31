@@ -570,7 +570,7 @@ describe('Events', () => {
       });
   });
 
-  it.only('snappingOrder', () => {
+  it('snappingOrder', () => {
     let event = '';
     cy.window().then(({ map }) => {
       map.on('pm:drawstart', (e) => {

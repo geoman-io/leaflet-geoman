@@ -317,7 +317,7 @@ describe('Draw & Edit Line', () => {
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(100, 230);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {

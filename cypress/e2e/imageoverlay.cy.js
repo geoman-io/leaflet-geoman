@@ -36,7 +36,7 @@ describe('Opens Testing Environment', () => {
     });
   });
 
-  it.only('Drags ImageOverlay', () => {
+  it('Drags ImageOverlay', () => {
     let eventcalled = false;
     let io;
     cy.window().then(({ map, L }) => {

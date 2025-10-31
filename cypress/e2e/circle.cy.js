@@ -316,7 +316,7 @@ describe('Draw Circle', () => {
       .should('have.class', 'active');
 
     cy.get(mapSelector).click(200, 200);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -439,7 +439,7 @@ describe('Draw Circle', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -478,7 +478,7 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(300, 200);
   });
 
-  it.only('checks if editing with snappable:false works', () => {
+  it('checks if editing with snappable:false works', () => {
     cy.toolbarButton('circle')
       .click()
       .closest('.button-container')

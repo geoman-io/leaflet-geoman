@@ -44,7 +44,7 @@ describe('Draw Circle Marker', () => {
     createMarkers();
   });
 
-  it.only('handles 6k circle markers in under 1 sec', () => {
+  it('handles 6k circle markers in under 1 sec', () => {
     cy.toolbarButton('circle-marker').click();
 
     cy.get(mapSelector).click(150, 250);
@@ -479,7 +479,7 @@ describe('Draw Circle Marker', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -503,7 +503,7 @@ describe('Draw Circle Marker', () => {
       .should('have.class', 'active');
 
     cy.get(mapSelector).click(200, 200);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
