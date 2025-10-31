@@ -784,7 +784,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = Utils.findDDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = Utils.findDeepMarkerIndex(this._markers, marker);
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
