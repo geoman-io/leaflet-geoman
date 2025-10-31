@@ -23,8 +23,8 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('works without pmIgnore', () => {
-    cy.window().then(({ L }) => {
-      L.PM.setOptIn(false);
+    cy.window().then(({ Geoman }) => {
+      Geoman.setOptIn(false);
       cy.drawShape('MultiPolygon');
     });
 
@@ -34,8 +34,8 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('respects pmIgnore', () => {
-    cy.window().then(({ L }) => {
-      L.PM.setOptIn(false);
+    cy.window().then(({ Geoman }) => {
+      Geoman.setOptIn(false);
       cy.drawShape('MultiPolygon', true);
     });
 
@@ -45,8 +45,8 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('respects optIn', () => {
-    cy.window().then(({ L }) => {
-      L.PM.setOptIn(true);
+    cy.window().then(({ Geoman }) => {
+      Geoman.setOptIn(true);
       cy.drawShape('MultiPolygon');
     });
 
@@ -56,8 +56,8 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('OptIn drawing without error', () => {
-    cy.window().then(({ L }) => {
-      L.PM.setOptIn(true);
+    cy.window().then(({ Geoman }) => {
+      Geoman.setOptIn(true);
     });
     cy.toolbarButton('polygon').click();
     cy.get(mapSelector)
@@ -112,8 +112,8 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('respects pmIgnore with optIn', () => {
-    cy.window().then(({ L }) => {
-      L.PM.setOptIn(true);
+    cy.window().then(({ Geoman }) => {
+      Geoman.setOptIn(true);
       cy.drawShape('MultiPolygon', false);
     });
 
@@ -123,12 +123,12 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('respects optIn and reinit layer', () => {
-    cy.window().then(({ L }) => {
-      L.PM.setOptIn(true);
+    cy.window().then(({ Geoman }) => {
+      Geoman.setOptIn(true);
       cy.drawShape('MultiPolygon').then((poly) => {
         cy.hasVertexMarkers(0); // Not allowed because optIn
-        L.PM.setOptIn(false);
-        L.PM.reInitLayer(poly);
+        Geoman.setOptIn(false);
+        Geoman.reInitLayer(poly);
       });
     });
     cy.toolbarButton('edit').click();
@@ -137,20 +137,20 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('respects optIn and reinit layer with pmIgnore', () => {
-    cy.window().then(({ L }) => {
-      L.PM.setOptIn(true);
+    cy.window().then(({ Geoman }) => {
+      Geoman.setOptIn(true);
       cy.drawShape('MultiPolygon', true).then((poly) => {
         cy.hasVertexMarkers(0); // Not allowed because optIn
-        L.PM.reInitLayer(poly); // Not allowed because pmIgnore is not false
+        Geoman.reInitLayer(poly); // Not allowed because pmIgnore is not false
         cy.hasVertexMarkers(0);
-        L.PM.setOptIn(false);
-        L.PM.reInitLayer(poly); // Not allowed because pmIgnore is true
+        Geoman.setOptIn(false);
+        Geoman.reInitLayer(poly); // Not allowed because pmIgnore is true
         cy.hasVertexMarkers(0);
         poly.options.pmIgnore = false;
         poly.eachLayer((layer) => {
           layer.options.pmIgnore = false;
         });
-        L.PM.reInitLayer(poly); // Allowed because pmIgnore is not true
+        Geoman.reInitLayer(poly); // Allowed because pmIgnore is not true
       });
     });
     cy.toolbarButton('edit').click();
@@ -159,11 +159,11 @@ describe('Draw & Edit Poly', () => {
   });
 
   it('respects optIn and disable optIn', () => {
-    cy.window().then(({ L }) => {
-      L.PM.setOptIn(true);
+    cy.window().then(({ Geoman }) => {
+      Geoman.setOptIn(true);
       cy.drawShape('MultiPolygon');
       cy.drawShape('MultiPolygon', false).then(() => {
-        L.PM.setOptIn(false);
+        Geoman.setOptIn(false);
         cy.drawShape('MultiPolygon');
       });
     });
@@ -212,20 +212,15 @@ describe('Draw & Edit Poly', () => {
 
   it('removes layer when cut completely', () => {
     cy.window().then(({ map }) => {
-      Cypress.$(map).on('pm:create', ({ originalEvent }) => {
-        const { layer } = originalEvent;
+      map.on('pm:create', ({ layer }) => {
         layer.options.cypress = true;
       });
 
-      Cypress.$(map).on('pm:cut', ({ originalEvent }) => {
-        const { layer } = originalEvent;
-
+      map.on('pm:cut', ({ layer }) => {
         expect(Object.keys(layer.getLayers())).to.have.lengthOf(0);
       });
 
-      Cypress.$(map).on('pm:remove', ({ originalEvent }) => {
-        const { layer } = originalEvent;
-
+      map.on('pm:remove', ({ layer }) => {
         /* eslint no-unused-expressions: 0 */
         expect(layer._map).to.be.null;
         expect(layer.options.cypress).to.equal(true);
@@ -424,8 +419,7 @@ describe('Draw & Edit Poly', () => {
     });
 
     cy.get('@poly').then((poly) => {
-      Cypress.$(poly).on('pm:vertexadded', ({ originalEvent: event }) => {
-        const { layer, indexPath, latlng } = event;
+      poly.on('pm:vertexadded', ({ layer, indexPath, latlng }) => {
         const newLatLng = Cypress._.get(layer._latlngs, indexPath);
         expect(latlng.lat).to.equal(newLatLng.lat);
         expect(latlng.lng).to.equal(newLatLng.lng);
@@ -446,18 +440,15 @@ describe('Draw & Edit Poly', () => {
   it('events to be called', () => {
     cy.window().then(({ map }) => {
       // test pm:create event
-      Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
-        const poly = event.layer;
+      map.on('pm:create', ({ layer }) => {
+        const poly = layer;
         poly.pm.enable();
 
         const markers = poly.pm._markers[0];
         expect(markers).to.have.length(4);
       });
 
-      Cypress.$(map).on('pm:remove', ({ originalEvent: event }) => {
-        const layer = event.target;
-
-        /* eslint no-unused-expressions: 0 */
+      map.on('pm:remove', ({ layer }) => {
         expect(layer.map).to.be.undefined;
       });
     });
@@ -549,7 +540,7 @@ describe('Draw & Edit Poly', () => {
 
   it('fire pm:cut AFTER the actual cut is visible on the map', () => {
     cy.window().then(({ map, L }) => {
-      Cypress.$(map).on('pm:cut', () => {
+      map.on('pm:cut', () => {
         const layers = [];
 
         map.eachLayer((layer) => {
@@ -689,7 +680,7 @@ describe('Draw & Edit Poly', () => {
     cy.window().then(({ map, L, Hand }) => {
       cy.fixture('PolygonIntersects')
         .then((json) => {
-          const layer = L.geoJSON(json).getLayers()[0].addTo(map);
+          const layer = new L.GeoJSON(json).getLayers()[0].addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
           return layer;
@@ -718,7 +709,7 @@ describe('Draw & Edit Poly', () => {
             expect(poly.pm.hasSelfIntersection()).to.equal(true);
 
             const toucherSelfIntersectionFalse =
-              handSelfIntersectionFalse.growFinger('mouse');
+              handSelfIntersectionFalse.growFinger('pointer');
             toucherSelfIntersectionFalse
               .wait(100)
               .moveTo(504, 337, 100)
@@ -745,7 +736,7 @@ describe('Draw & Edit Poly', () => {
         });
 
         const toucherSelfIntersectionTrue =
-          handSelfIntersectionTrue.growFinger('mouse');
+          handSelfIntersectionTrue.growFinger('pointer');
         toucherSelfIntersectionTrue
           .wait(100)
           .moveTo(294, 114, 100)
@@ -777,7 +768,7 @@ describe('Draw & Edit Poly', () => {
 
   it('no snapping to polygon with no coords', () => {
     cy.window().then(({ map, L }) => {
-      L.polygon([]).addTo(map);
+      new L.Polygon([]).addTo(map);
     });
 
     // activate line drawing
@@ -1287,7 +1278,7 @@ describe('Draw & Edit Poly', () => {
   it('snap to start marker instead of to the layer below', () => {
     cy.window().then(({ map, L }) => {
       // it was not possible to create this test with creating the polygon by clicking
-      const polygon = L.polygon([
+      const polygon = new L.Polygon([
         [
           [20.53507732696281, 71.98242187500001],
           [19.87005983797396, 71.97143554687501],
@@ -1324,7 +1315,7 @@ describe('Draw & Edit Poly', () => {
       });
     });
 
-    cy.get(mapSelector).trigger('mousemove', 413, 180);
+    cy.get(mapSelector).trigger('pointermove', 413, 180);
 
     cy.window().then(({ map }) => {
       const hintMarker = map.pm.Draw.Polygon._hintMarker;
@@ -1455,9 +1446,9 @@ describe('Draw & Edit Poly', () => {
     cy.toolbarButton('edit').click();
 
     cy.get(mapSelector)
-      .trigger('mousedown', 150, 60, { which: 1 })
-      .trigger('mousemove', 150, 55, { which: 1 })
-      .trigger('mouseup', 150, 55, { which: 1 });
+      .trigger('pointerdown', 150, 60, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 150, 55, { which: 1 })
+      .trigger('pointerup', 150, 55, { which: 1 });
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[1];
@@ -1470,7 +1461,7 @@ describe('Draw & Edit Poly', () => {
     let polygon;
 
     cy.window().then(({ map, L }) => {
-      polygon = L.polygon([
+      polygon = new L.Polygon([
         [
           [20.53507732696281, 71.98242187500001, 111],
           [19.87005983797396, 71.97143554687501, 222],

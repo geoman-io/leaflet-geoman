@@ -367,7 +367,7 @@ describe('Draw & Edit Line', () => {
 
   it("snapping doesn't throw an error when Polyline has only one coordinate", () => {
     cy.window().then(({ map, L }) => {
-      L.polyline([map.getCenter()]).addTo(map);
+      new L.Polyline([map.getCenter()]).addTo(map);
     });
 
     // activate line drawing
@@ -440,9 +440,9 @@ describe('Draw & Edit Line', () => {
     cy.toolbarButton('edit').click();
 
     cy.get(mapSelector)
-      .trigger('mousedown', 150, 60, { which: 1 })
-      .trigger('mousemove', 150, 55, { which: 1 })
-      .trigger('mouseup', 150, 55, { which: 1 });
+      .trigger('pointerdown', 150, 60, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 150, 55, { eventConstructor: 'PointerEvent' })
+      .trigger('pointerup', 150, 55, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[1];

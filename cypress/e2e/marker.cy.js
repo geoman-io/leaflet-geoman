@@ -23,7 +23,7 @@ describe('Draw Marker', () => {
 
   it('removes markers without error', () => {
     cy.window().then(({ map, L }) => {
-      const markerLayer = L.geoJson().addTo(map);
+      const markerLayer = new L.GeoJSON().addTo(map);
 
       map.pm.enableDraw('Marker', {
         snappable: false,
@@ -80,7 +80,7 @@ describe('Draw Marker', () => {
     // Adds a interactive Marker to the map and enable / disable the edit mode to check if a error is thrown because it is not draggable
     cy.window()
       .then(({ map, L }) =>
-        L.marker([51.505, -0.09], { interactive: false }).addTo(map)
+        new L.Marker([51.505, -0.09], { interactive: false }).addTo(map)
       )
       .as('marker');
 
@@ -132,7 +132,7 @@ describe('Draw Marker', () => {
           handFinish = true;
         },
       });
-      const toucherMarker = handMarker.growFinger('mouse');
+      const toucherMarker = handMarker.growFinger('pointer');
       toucherMarker
         .wait(100)
         .moveTo(150, 240, 100)
@@ -173,7 +173,7 @@ describe('Draw Marker', () => {
           done();
         },
       });
-      const toucherMarker = handMarker.growFinger('mouse');
+      const toucherMarker = handMarker.growFinger('pointer');
       toucherMarker
         .wait(100)
         .moveTo(150, 240, 100)
@@ -301,12 +301,12 @@ describe('Draw Marker', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map, L }) => {
       map.pm.setGlobalOptions({
         markerStyle: {
-          icon: L.icon({
+          icon: new L.Icon({
             iconUrl: 'someIcon.png',
           }),
         },
@@ -326,12 +326,12 @@ describe('Draw Marker', () => {
       expect(map.pm.getGeomanDrawLayers().length).to.eq(1);
     });
 
-    cy.get(mapSelector).trigger('mousedown', 150, 230, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 170, 290, { which: 1 });
+    cy.get(mapSelector).trigger('pointerdown', 150, 230, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 170, 290, { which: 1 });
     // Do not create a new marker while dragging
     cy.get(mapSelector).click(170, 290);
-    cy.get(mapSelector).trigger('mouseup', 170, 290, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 190, 340, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 170, 290, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 190, 340, { which: 1 });
 
     cy.window().then(({ map }) => {
       expect(map.pm.getGeomanDrawLayers().length).to.eq(1);

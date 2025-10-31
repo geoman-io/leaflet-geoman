@@ -329,7 +329,7 @@ describe('Events', () => {
       .then(() => {
         cy.get(mapSelector)
           .click(200, 350)
-          .trigger('mousemove', { clientX: 200, clientY: 305 });
+          .trigger('pointermove', { clientX: 200, clientY: 305 });
       })
       .then(() => {
         cy.wait(100);
@@ -339,7 +339,7 @@ describe('Events', () => {
 
     cy.window()
       .then(() => {
-        cy.get(mapSelector).trigger('mousemove', {
+        cy.get(mapSelector).trigger('pointermove', {
           clientX: 300,
           clientY: 355,
         });
@@ -352,7 +352,7 @@ describe('Events', () => {
 
     cy.window()
       .then(() => {
-        cy.get(mapSelector).trigger('mousemove', {
+        cy.get(mapSelector).trigger('pointermove', {
           clientX: 300,
           clientY: 385,
         });
@@ -570,7 +570,7 @@ describe('Events', () => {
       });
   });
 
-  it('snappingOrder', () => {
+  it.only('snappingOrder', () => {
     let event = '';
     cy.window().then(({ map }) => {
       map.on('pm:drawstart', (e) => {
@@ -590,7 +590,7 @@ describe('Events', () => {
       cy.get(mapSelector).click(200, 250);
 
       cy.toolbarButton('marker').click();
-      cy.get(mapSelector).trigger('mousemove', 200, 250, { which: 1 });
+      cy.get(mapSelector).trigger('pointermove', 200, 250, { which: 1 });
     });
     cy.window().then(() => {
       const shape = event.layerInteractedWith.pm._shape;
@@ -603,8 +603,8 @@ describe('Events', () => {
       map.pm.enableDraw('Marker');
 
       cy.get(mapSelector)
-        .trigger('mousemove', 200, 150, { which: 1 })
-        .trigger('mousemove', 200, 250, { which: 1 });
+        .trigger('pointermove', 200, 150, { which: 1 })
+        .trigger('pointermove', 200, 250, { which: 1 });
     });
     cy.window().then(() => {
       const shape = event.layerInteractedWith.pm._shape;

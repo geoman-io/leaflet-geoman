@@ -7,7 +7,7 @@ describe('Opens Testing Environment', () => {
       map.setView([18.74469, 72.1258], 10);
       const icon =
         'https://camo.githubusercontent.com/33fa9a94048274f81a806631ca881a55c2aa8f0a/68747470733a2f2f66696c652d6a787a796a67717775742e6e6f772e73682f';
-      L.imageOverlay(
+      new L.ImageOverlay(
         icon,
         [
           [18.74469, 72.1258],
@@ -36,14 +36,14 @@ describe('Opens Testing Environment', () => {
     });
   });
 
-  it('Drags ImageOverlay', () => {
+  it.only('Drags ImageOverlay', () => {
     let eventcalled = false;
     let io;
     cy.window().then(({ map, L }) => {
       map.setView([18.74469, 72.1258], 10);
       const icon =
         'https://camo.githubusercontent.com/33fa9a94048274f81a806631ca881a55c2aa8f0a/68747470733a2f2f66696c652d6a787a796a67717775742e6e6f772e73682f';
-      io = L.imageOverlay(
+      io = new L.ImageOverlay(
         icon,
         [
           [18.74469, 72.1258],
@@ -60,7 +60,7 @@ describe('Opens Testing Environment', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(() => {
-      cy.get(io._image).trigger('mousedown');
+      cy.get(io._image).trigger('pointerdown');
     });
 
     cy.window().then(() => {

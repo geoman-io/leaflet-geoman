@@ -466,7 +466,7 @@ describe('Testing the Toolbar', () => {
       map.remove();
 
       // create the map
-      map = L.map('map', {
+      map = new L.Map('map', {
         preferCanvas: false,
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([51.505, -0.09], 13);

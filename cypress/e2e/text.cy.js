@@ -3,7 +3,7 @@ describe('Text Layer', () => {
 
   it('Add Text Layer manual', () => {
     cy.window().then(({ map, L }) => {
-      const textLayer = L.marker(map.getCenter(), {
+      const textLayer = new L.Marker(map.getCenter(), {
         textMarker: true,
         text: 'Text Layer',
       }).addTo(map);
@@ -12,7 +12,7 @@ describe('Text Layer', () => {
     });
 
     cy.window().then(({ map, L }) => {
-      const textLayer = L.marker(map.getCenter(), {
+      const textLayer = new L.Marker(map.getCenter(), {
         textMarker: false,
         text: 'Text Layer',
       }).addTo(map);
@@ -21,7 +21,7 @@ describe('Text Layer', () => {
     });
 
     cy.window().then(({ map, L }) => {
-      const textLayer = L.marker(map.getCenter(), {
+      const textLayer = new L.Marker(map.getCenter(), {
         textMarker: true,
       }).addTo(map);
       expect(textLayer.pm.getShape()).to.eq('Text');
@@ -31,10 +31,10 @@ describe('Text Layer', () => {
   });
 
   it('Add Text Layer over OptIn', () => {
-    cy.window().then(({ map, L }) => {
-      L.PM.setOptIn(true);
+    cy.window().then(({ map, L, Geoman }) => {
+      Geoman.setOptIn(true);
 
-      const textLayer = L.marker(map.getCenter(), {
+      const textLayer = new L.Marker(map.getCenter(), {
         textMarker: true,
         text: 'Text Layer',
       }).addTo(map);
@@ -42,7 +42,7 @@ describe('Text Layer', () => {
       expect(map.pm.getGeomanLayers().length).to.eq(0);
 
       textLayer.options.pmIgnore = false;
-      L.PM.reInitLayer(textLayer);
+      Geoman.reInitLayer(textLayer);
 
       expect(map.pm.getGeomanLayers().length).to.eq(1);
     });
@@ -177,7 +177,7 @@ describe('Text Layer', () => {
         expect(textMap).to.eq(null);
       });
 
-      cy.get(mapSelector).trigger('mousemove', 200, 150, { which: 1 });
+      cy.get(mapSelector).trigger('pointermove', 200, 150, { which: 1 });
 
       cy.window().then(({ map }) => {
         const textMap = map.pm.Draw.Text._hintMarker._map;
@@ -400,7 +400,7 @@ describe('Text Layer', () => {
       let textLayer;
       let textArea;
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
@@ -431,7 +431,7 @@ describe('Text Layer', () => {
       let textLayer;
       let textArea;
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
@@ -455,7 +455,7 @@ describe('Text Layer', () => {
       let textLayer;
       let textArea;
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
@@ -478,7 +478,7 @@ describe('Text Layer', () => {
     });
     it('getElement', () => {
       cy.window().then(({ map, L }) => {
-        const textLayer = L.marker(map.getCenter(), {
+        const textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
@@ -488,7 +488,7 @@ describe('Text Layer', () => {
     });
     it('setText', () => {
       cy.window().then(({ map, L }) => {
-        const textLayer = L.marker(map.getCenter(), {
+        const textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
@@ -500,7 +500,7 @@ describe('Text Layer', () => {
     });
     it('getText', () => {
       cy.window().then(({ map, L }) => {
-        const textLayer = L.marker(map.getCenter(), {
+        const textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
@@ -509,7 +509,7 @@ describe('Text Layer', () => {
     });
     it('unselect text on disable', () => {
       cy.window().then(({ map, L }) => {
-        const textLayer = L.marker(map.getCenter(), {
+        const textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
@@ -530,7 +530,7 @@ describe('Text Layer', () => {
 
     it('enable map dragging after blur', () => {
       cy.window().then(({ map, L }) => {
-        const textLayer = L.marker(map.getCenter(), {
+        const textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
@@ -554,7 +554,7 @@ describe('Text Layer', () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: '',
         }).addTo(map);
@@ -578,7 +578,7 @@ describe('Text Layer', () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: '',
         }).addTo(map);
@@ -603,7 +603,7 @@ describe('Text Layer', () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: '',
         }).addTo(map);
@@ -628,7 +628,7 @@ describe('Text Layer', () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: '',
         }).addTo(map);
@@ -649,7 +649,7 @@ describe('Text Layer', () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: '',
         }).addTo(map);
@@ -672,7 +672,7 @@ describe('Text Layer', () => {
       let event = '';
       let count = 0;
       cy.window().then(({ map, L }) => {
-        textLayer = L.marker(map.getCenter(), {
+        textLayer = new L.Marker(map.getCenter(), {
           textMarker: true,
           text: '',
         }).addTo(map);

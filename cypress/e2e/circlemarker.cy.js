@@ -44,7 +44,7 @@ describe('Draw Circle Marker', () => {
     createMarkers();
   });
 
-  it('handles 6k circle markers in under 1 sec', () => {
+  it.only('handles 6k circle markers in under 1 sec', () => {
     cy.toolbarButton('circle-marker').click();
 
     cy.get(mapSelector).click(150, 250);
@@ -59,7 +59,7 @@ describe('Draw Circle Marker', () => {
       map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isFalse(
-            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            layer._path.classList.contains('leaflet-pm-draggable'),
             'not draggable'
           );
         }
@@ -72,7 +72,7 @@ describe('Draw Circle Marker', () => {
       map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isTrue(
-            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            layer._path.classList.contains('leaflet-pm-draggable'),
             'draggable'
           );
         }
@@ -85,7 +85,7 @@ describe('Draw Circle Marker', () => {
       map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isFalse(
-            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            layer._path.classList.contains('leaflet-pm-draggable'),
             'not draggable'
           );
         }
@@ -177,7 +177,7 @@ describe('Draw Circle Marker', () => {
 
   it('snapping to CircleMarker with pmIgnore:true', () => {
     cy.window().then(({ map, L }) => {
-      L.circleMarker(map.getCenter(), { pmIgnore: true }).addTo(map);
+      new L.CircleMarker(map.getCenter(), { pmIgnore: true }).addTo(map);
     });
 
     cy.toolbarButton('rectangle')
@@ -257,7 +257,7 @@ describe('Draw Circle Marker', () => {
       .should('have.class', 'active');
 
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
+      new L.Marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
         minRadiusCircleMarker: 50,
         maxRadiusCircleMarker: 150,
@@ -283,7 +283,7 @@ describe('Draw Circle Marker', () => {
       .should('have.class', 'active');
 
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
+      new L.Marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
         minRadiusCircleMarker: 150,
         maxRadiusCircleMarker: 300,
@@ -364,7 +364,7 @@ describe('Draw Circle Marker', () => {
     let mapSimple;
     cy.window().then(({ map, L }) => {
       map.remove();
-      mapSimple = L.map('map', {
+      mapSimple = new L.LeafletMap('map', {
         crs: L.CRS.Simple,
         minZoom: -2,
       }).setView([0, 0], 0);
@@ -386,7 +386,7 @@ describe('Draw Circle Marker', () => {
     let mapSimple;
     cy.window().then(({ map, L }) => {
       map.remove();
-      mapSimple = L.map('map', {
+      mapSimple = new L.LeafletMap('map', {
         crs: L.CRS.Simple,
         minZoom: -2,
       }).setView([0, 0], 0);

@@ -308,10 +308,10 @@ describe('Draw Rectangle', () => {
     });
 
     // test 5: snapIgnore: undefined, pmIgnore: false, optIn: true --> snappable
-    cy.window().then(({ L }) => {
+    cy.window().then(({ Geoman }) => {
       delete layer.options.snapIgnore;
       layer.options.pmIgnore = false;
-      L.PM.setOptIn(true);
+      Geoman.setOptIn(true);
     });
     cy.toolbarButton('rectangle').click();
     // click or mousemove is needed to init snapList
@@ -323,9 +323,9 @@ describe('Draw Rectangle', () => {
     });
 
     // test 6: snapIgnore: undefined, pmIgnore: true, optIn: true --> not snappable
-    cy.window().then(({ L }) => {
+    cy.window().then(({ Geoman }) => {
       layer.options.pmIgnore = true;
-      L.PM.setOptIn(true);
+      Geoman.setOptIn(true);
     });
     cy.toolbarButton('rectangle').click();
     // click or mousemove is needed to init snapList
@@ -414,7 +414,7 @@ describe('Draw Rectangle', () => {
 
   it('drags a whole LayerGroup', () => {
     cy.window().then(({ map, L }) => {
-      const fg = L.featureGroup().addTo(map);
+      const fg = new L.FeatureGroup().addTo(map);
       map.pm.setGlobalOptions({ layerGroup: fg, syncLayersOnDrag: true });
     });
 
@@ -582,7 +582,7 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ L, map }) => {
       // move the hintMarker outside of the map bounds (max is 85.0511287798)
-      map.pm.Draw.Rectangle._hintMarker.setLatLng(L.latLng(87, -302));
+      map.pm.Draw.Rectangle._hintMarker.setLatLng(new L.LatLng(87, -302));
 
       const drawRect = map.pm.Draw.Rectangle;
 
@@ -613,7 +613,7 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ L, map }) => {
       map.remove();
-      const tiles = L.tileLayer(
+      const tiles = new L.TileLayer(
         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
@@ -622,7 +622,7 @@ describe('Draw Rectangle', () => {
       );
 
       // create the map
-      mapCanvas = L.map('map', {
+      mapCanvas = new L.Map('map', {
         preferCanvas: true,
       })
         .setView([51.505, -0.09], 13)
@@ -700,7 +700,7 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ L, map }) => {
       map.remove();
-      const tiles = L.tileLayer(
+      const tiles = new L.TileLayer(
         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
@@ -709,7 +709,7 @@ describe('Draw Rectangle', () => {
       );
 
       // create the map
-      mapCanvas = L.map('map', {
+      mapCanvas = new L.Map('map', {
         preferCanvas: true,
       })
         .setView([51.505, -0.09], 13)
@@ -756,7 +756,7 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ L, map }) => {
       map.remove();
-      const tiles = L.tileLayer(
+      const tiles = new L.TileLayer(
         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
@@ -765,8 +765,8 @@ describe('Draw Rectangle', () => {
       );
 
       // create the map
-      mapCanvas = L.map('map', {
-        renderer: L.canvas(),
+      mapCanvas = new L.Map('map', {
+        renderer: new L.Canvas(),
       })
         .setView([51.505, -0.09], 13)
         .addLayer(tiles);
@@ -814,7 +814,7 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ L, map }) => {
       map.remove();
-      const tiles = L.tileLayer(
+      const tiles = new L.TileLayer(
         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
@@ -823,8 +823,8 @@ describe('Draw Rectangle', () => {
       );
 
       // create the map
-      mapCanvas = L.map('map', {
-        renderer: L.canvas(),
+      mapCanvas = new L.Map('map', {
+        renderer: new L.Canvas(),
       })
         .setView([51.505, -0.09], 13)
         .addLayer(tiles);
@@ -834,7 +834,7 @@ describe('Draw Rectangle', () => {
 
       mapCanvas.on('pm:create', (e) => {
         rect1 = e.layer;
-        rect2 = L.rectangle(rect1.getBounds(), { renderer: L.svg() }).addTo(
+        rect2 = new L.Rectangle(rect1.getBounds(), { renderer: new L.SVG() }).addTo(
           mapCanvas
         );
       });
@@ -931,7 +931,7 @@ describe('Draw Rectangle', () => {
       .should('have.class', 'active');
 
     cy.get(mapSelector).click(220, 220);
-    cy.get(mapSelector).trigger('mousemove', 500, 300);
+    cy.get(mapSelector).trigger('pointermove', 500, 300);
 
     cy.window().then(({ map }) => {
       const corners = map.pm.Draw.Rectangle._findCorners();
@@ -955,11 +955,11 @@ describe('Draw Rectangle', () => {
       const coords = JSON.parse(
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.122532,51.507986],[-0.117474,51.518864],[-0.06784,51.509926],[-0.072898,51.499046],[-0.122532,51.507986]]]}}'
       );
-      const rectangle = L.rectangle([
+      const rectangle = new L.Rectangle([
         [0, 0],
         [0, 0],
       ]);
-      rectangle.setLatLngs(L.geoJSON(coords).getLayers()[0].getLatLngs());
+      rectangle.setLatLngs(new L.GeoJSON(coords).getLayers()[0].getLatLngs());
       rectangle.addTo(map);
     });
 
@@ -1069,9 +1069,9 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('edit').click();
 
     cy.get(mapSelector)
-      .trigger('mousedown', 150, 60, { which: 1 })
-      .trigger('mousemove', 150, 55, { which: 1 })
-      .trigger('mouseup', 150, 55, { which: 1 });
+      .trigger('pointerdown', 150, 60, {eventConstructor: 'PointerEvent'})
+      .trigger('pointermove', 150, 55, {eventConstructor: 'PointerEvent'})
+      .trigger('pointerup', 150, 55, {eventConstructor: 'PointerEvent'});
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[1];

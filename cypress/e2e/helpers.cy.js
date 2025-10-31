@@ -1,6 +1,11 @@
-import { hasValues } from '../../src/js/helpers';
-
 describe('Helper hasValues', () => {
+  let hasValues;
+  beforeEach(() => {
+    cy.window().then(({ Geoman }) => {
+      hasValues = Geoman.helpers.hasValues;
+    });
+  });
+
   it('should return false for empty arrays', () => {
     // eslint-disable-next-line no-unused-expressions
     expect(hasValues([])).to.be.false;

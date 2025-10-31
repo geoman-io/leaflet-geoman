@@ -23,7 +23,7 @@ describe('Opens Testing Environment', () => {
 
   it('gets all drawn geoman Layers', () => {
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
+      new L.Marker(map.getCenter()).addTo(map);
     });
 
     cy.toolbarButton('polygon').click();
