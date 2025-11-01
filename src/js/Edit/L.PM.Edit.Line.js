@@ -23,7 +23,7 @@ import Utils from '../L.PM.Utils';
 // So I can get 'b' with: arr[0][0][1].
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
-class GeomanEditLine extends Edit {
+export default class GeomanEditPolyline extends Edit {
   static {
     this.include(MarkerLimits);
   }
@@ -874,7 +874,3 @@ class GeomanEditLine extends Edit {
     this._fireVertexClick(e, indexPath);
   }
 }
-
-Edit.Line = GeomanEditLine;
-
-export default GeomanEditLine;

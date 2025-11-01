@@ -2,10 +2,10 @@
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
 import { DivIcon, FeatureGroup, Marker } from 'leaflet';
 import { calcAngle } from '../helpers';
-import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
+import GeomanEditPolygon from './L.PM.Edit.Polygon';
 
-class GeomanEditRectangle extends Edit.Polygon {
+export default class GeomanEditRectangle extends GeomanEditPolygon {
   _shape = 'Rectangle';
   // initializes Rectangle Markers
   _initMarkers() {
@@ -255,7 +255,3 @@ class GeomanEditRectangle extends Edit.Polygon {
     );
   }
 }
-
-Edit.Rectangle = GeomanEditRectangle;
-
-export default GeomanEditRectangle;

@@ -5,7 +5,7 @@ import { DivIcon, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Utils from '../L.PM.Utils';
 
-class GeomanDrawLine extends Draw {
+export default class GeomanDrawPolyline extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Line';
@@ -439,7 +439,3 @@ class GeomanDrawLine extends Draw {
     this._hintline?.setStyle(this.options.hintlineStyle);
   }
 }
-
-Draw.Line = GeomanDrawLine;
-
-export default GeomanDrawLine;

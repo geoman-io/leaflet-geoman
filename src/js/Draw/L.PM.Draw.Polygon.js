@@ -1,8 +1,9 @@
 import { DivIcon, Marker, Polygon } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
+import GeomanDrawLine from './L.PM.Draw.Line';
 
-class GeomanDrawPolygon extends Draw.Line {
+export default class GeomanDrawPolygon extends GeomanDrawLine {
   initialize(map) {
     this._map = map;
     this._shape = 'Polygon';
@@ -116,7 +117,3 @@ class GeomanDrawPolygon extends Draw.Line {
     }
   }
 }
-
-Draw.Polygon = GeomanDrawPolygon;
-
-export default GeomanDrawPolygon;

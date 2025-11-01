@@ -1,7 +1,7 @@
-import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
+import GeomanEditCircleMarker from './L.PM.Edit.CircleMarker';
 
-class GeomanEditCircle extends Edit.CircleMarker {
+export default class GeomanEditCircle extends GeomanEditCircleMarker {
   _shape = 'Circle';
 
   initialize(layer) {
@@ -17,7 +17,7 @@ class GeomanEditCircle extends Edit.CircleMarker {
 
   enable(options) {
     // TODO: this can be removed after the default options of CircleMarker.enable are removed
-    Edit.CircleMarker.prototype.enable.call(this, options || {});
+    GeomanEditCircleMarker.prototype.enable.call(this, options || {});
   }
 
   _extendingEnable() {}
@@ -82,7 +82,3 @@ class GeomanEditCircle extends Edit.CircleMarker {
     this._fireVertexClick(e, undefined);
   }
 }
-
-Edit.Circle = GeomanEditCircle;
-
-export default GeomanEditCircle;

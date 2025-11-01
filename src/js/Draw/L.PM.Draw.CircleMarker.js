@@ -12,7 +12,7 @@ import { destinationOnLine, getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 import Utils from '../L.PM.Utils';
 
-class GeomanDrawCircleMarker extends Draw {
+export default class GeomanDrawCircleMarker extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'CircleMarker';
@@ -536,7 +536,3 @@ class GeomanDrawCircleMarker extends Draw {
     return this._map.project(A).distanceTo(this._map.project(B));
   }
 }
-
-Draw.CircleMarker = GeomanDrawCircleMarker;
-
-export default GeomanDrawCircleMarker;

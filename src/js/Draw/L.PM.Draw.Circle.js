@@ -1,7 +1,7 @@
 import { Circle } from 'leaflet';
-import Draw from './L.PM.Draw';
+import GeomanDrawCircleMarker from './L.PM.Draw.CircleMarker';
 
-class GeomanDrawCircle extends Draw.CircleMarker {
+export default class GeomanDrawCircle extends GeomanDrawCircleMarker {
   initialize(map) {
     this._map = map;
     this._shape = 'Circle';
@@ -33,7 +33,3 @@ class GeomanDrawCircle extends Draw.CircleMarker {
     return this._map.distance(A, B);
   }
 }
-
-Draw.Circle = GeomanDrawCircle;
-
-export default GeomanDrawCircle;

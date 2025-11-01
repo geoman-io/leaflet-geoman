@@ -2,7 +2,7 @@ import { DomEvent, Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 import Draw from '../Draw/L.PM.Draw';
 
-class GeomanEditCircleText extends Edit {
+export default class GeomanEditCircleText extends Edit {
   _shape = 'Text';
 
   initialize(layer) {
@@ -294,7 +294,3 @@ class GeomanEditCircleText extends Edit {
     e.preventDefault();
   }
 }
-
-Edit.Text = GeomanEditCircleText;
-
-export default GeomanEditCircleText;

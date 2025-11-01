@@ -1,7 +1,7 @@
 import { Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 
-class GeomanEditMarker extends Edit {
+export default class GeomanEditMarker extends Edit {
   _shape = 'Marker';
 
   initialize(layer) {
@@ -139,7 +139,3 @@ class GeomanEditMarker extends Edit {
     marker.off('pm:dragstart', this._unsnap, this);
   }
 }
-
-Edit.Marker = GeomanEditMarker;
-
-export default GeomanEditMarker;

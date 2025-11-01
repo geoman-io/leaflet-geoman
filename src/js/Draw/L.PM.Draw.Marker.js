@@ -2,7 +2,7 @@ import { Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 
-class GeomanDrawMarker extends Draw {
+export default class GeomanDrawMarker extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Marker';
@@ -204,7 +204,3 @@ class GeomanDrawMarker extends Draw {
     }
   }
 }
-
-Draw.Marker = GeomanDrawMarker;
-
-export default GeomanDrawMarker;

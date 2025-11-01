@@ -11,7 +11,7 @@ import { destinationOnLine } from '../helpers';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
 
-class GeomanEditCircleMarker extends Edit {
+export default class GeomanEditCircleMarker extends Edit {
   _shape = 'CircleMarker';
 
   initialize(layer) {
@@ -510,7 +510,3 @@ class GeomanEditCircleMarker extends Edit {
     this._fireVertexClick(e, undefined);
   }
 }
-
-Edit.CircleMarker = GeomanEditCircleMarker;
-
-export default GeomanEditCircleMarker;

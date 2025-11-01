@@ -12,8 +12,9 @@ import {
 import Draw from './L.PM.Draw';
 import Geoman from '../L.PM';
 import Utils from '../L.PM.Utils';
+import GeomanDrawPolygon from './L.PM.Draw.Polygon';
 
-class GeomanCut extends Draw.Polygon {
+export default class GeomanCut extends GeomanDrawPolygon {
   initialize(map) {
     this._map = map;
     this._shape = 'Cut';
@@ -275,7 +276,3 @@ class GeomanCut extends Draw.Polygon {
 
   _change = Util.falseFn;
 }
-
-Draw.Cut = GeomanCut;
-
-export default GeomanCut;

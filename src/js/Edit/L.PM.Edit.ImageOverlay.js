@@ -1,7 +1,7 @@
 import { Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 
-class GeomanEditImageOverlay extends Edit {
+export default class GeomanEditImageOverlay extends Edit {
   _shape = 'ImageOverlay';
 
   initialize(layer) {
@@ -95,7 +95,3 @@ class GeomanEditImageOverlay extends Edit {
     return [northwest, northeast, southeast, southwest];
   }
 }
-
-Edit.ImageOverlay = GeomanEditImageOverlay;
-
-export default GeomanEditImageOverlay;

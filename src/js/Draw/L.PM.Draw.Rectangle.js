@@ -3,7 +3,7 @@ import { fixLatOffset, getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 import Utils from '../L.PM.Utils';
 
-class GeomanDrawRectangle extends Draw {
+export default class GeomanDrawRectangle extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Rectangle';
@@ -330,7 +330,3 @@ class GeomanDrawRectangle extends Draw {
     this._layer?.setStyle(this.options.pathOptions);
   }
 }
-
-Draw.Rectangle = GeomanDrawRectangle;
-
-export default GeomanDrawRectangle;

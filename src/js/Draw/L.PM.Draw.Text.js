@@ -2,7 +2,7 @@ import { DivIcon, Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 
-class GeomanDrawText extends Draw {
+export default class GeomanDrawText extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Text';
@@ -214,7 +214,3 @@ class GeomanDrawText extends Draw {
     });
   }
 }
-
-Draw.Text = GeomanDrawText;
-
-export default GeomanDrawText;

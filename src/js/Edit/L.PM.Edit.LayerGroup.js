@@ -1,11 +1,10 @@
 import { Class, LayerGroup, Util } from 'leaflet';
-import Edit from './L.PM.Edit';
 import Geoman from '../L.PM';
 
 // LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Polygon
 // (which inherits from L.PM.Edit) for each layer,
 // so it's not really a parent class
-class GeomanEditLayerGroup extends Class {
+export default class GeomanEditLayerGroup extends Class {
   initialize(layerGroup) {
     this._layerGroup = layerGroup;
     this._layers = this.getLayers();
@@ -236,7 +235,3 @@ class GeomanEditLayerGroup extends Class {
     });
   }
 }
-
-Edit.LayerGroup = GeomanEditLayerGroup;
-
-export default GeomanEditLayerGroup;
