@@ -7,7 +7,7 @@ module.exports = [
   },
   {
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 'latest',
       globals: {
         L: 'readonly',
         window: 'readonly',
