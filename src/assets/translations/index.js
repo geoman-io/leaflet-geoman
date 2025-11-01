@@ -8,11 +8,11 @@ import es from './es.json';
 import nl from './nl.json';
 import fr from './fr.json';
 import zh from './zh.json';
-// eslint-disable-next-line camelcase
+
 import zh_tw from './zh_tw.json';
-// eslint-disable-next-line camelcase
+
 import pt_br from './pt_br.json';
-// eslint-disable-next-line camelcase
+
 import pt_pt from './pt_pt.json';
 import pl from './pl.json';
 import sv from './sv.json';
@@ -29,7 +29,6 @@ import fi from './fi.json';
 import ko from './ko.json';
 import ky from './ky.json';
 
-// eslint-disable-next-line camelcase
 const pt = pt_pt;
 
 export default {
@@ -43,12 +42,12 @@ export default {
   nl,
   fr,
   pt,
-  // eslint-disable-next-line camelcase
+
   pt_br,
-  // eslint-disable-next-line camelcase
+
   pt_pt,
   zh,
-  // eslint-disable-next-line camelcase
+
   zh_tw,
   pl,
   sv,

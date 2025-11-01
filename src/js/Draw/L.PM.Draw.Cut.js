@@ -126,16 +126,12 @@ Draw.Cut = Draw.Polygon.extend({
             !!lineIntersect(layer.toGeoJSON(15), l.toGeoJSON(15)).features
               .length > 0;
 
-          if (
-            lineInter ||
-            (l instanceof Polyline && !(l instanceof Polygon))
-          ) {
+          if (lineInter || (l instanceof Polyline && !(l instanceof Polygon))) {
             return lineInter;
           }
           return !!intersect(layer.toGeoJSON(15), l.toGeoJSON(15));
         } catch (e) {
           if (l instanceof Polygon) {
-            /* eslint-disable-next-line no-console */
             console.error("You can't cut polygons with self-intersections");
           }
           return false;

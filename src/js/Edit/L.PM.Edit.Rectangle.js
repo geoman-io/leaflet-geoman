@@ -204,7 +204,6 @@ Edit.Rectangle = Edit.Polygon.extend({
         marker.setLatLng(markerLatLngs[0]);
       });
     } else if (!markerLatLngs || !markerLatLngs.length) {
-      // eslint-disable-next-line
       console.error('The layer has no LatLngs');
     } else {
       const correctIndex = markerLatLngs.findIndex((latlng) =>

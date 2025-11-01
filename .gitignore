@@ -5,6 +5,7 @@ npm-debug.log
 /.idea/
 /dist/
 \.source*
+/cypress/downloads
 /cypress/screenshots
 /cypress/videos
 .eslintcache

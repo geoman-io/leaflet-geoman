@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 // Array.findIndex Polyfill
 Array.prototype.findIndex =
   Array.prototype.findIndex ||

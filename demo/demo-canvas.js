@@ -1,9 +1,18 @@
-/* eslint-disable no-console */
-import { TileLayer, LeafletMap, CircleMarker, Marker, FeatureGroup, Polygon, Polyline, LayerGroup, GeoJSON } from "leaflet";
+import {
+  TileLayer,
+  LeafletMap,
+  CircleMarker,
+  Marker,
+  FeatureGroup,
+  Polygon,
+  Polyline,
+  LayerGroup,
+  GeoJSON,
+} from 'leaflet';
 import Geoman from 'leaflet-geoman';
 
 Geoman.initialize();
-  
+
 const tiles1 = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:

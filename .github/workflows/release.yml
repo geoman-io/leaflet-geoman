@@ -7,11 +7,11 @@ on:
       - 'v*.*.*'
 
 permissions:
+  id-token: write
   contents: write
 
 env:
   FILE_NAME_PREFIX: geoman-io-leaflet-geoman
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
   build:
@@ -37,34 +37,29 @@ jobs:
             exit 1
           fi
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: pnpm
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          cache: npm
+          registry-url: 'https://registry.npmjs.org'
 
       - uses: actions/cache@v4
-        name: Setup pnpm cache
+        name: Setup npm cache
         with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-store-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-npm-store-
+
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --store-dir ${{ env.STORE_PATH }}
+        run: npm ci
 
       - name: Prepare package
-        run: pnpm pack
+        run: npm pack
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -77,17 +72,7 @@ jobs:
             LICENSE
 
       - name: Publish to NPM
-        shell: bash
-        run: |
-          #!/bin/bash
-
-          # Set npm configurations
-          pnpm config set shamefully-hoist true
-          pnpm config set strict-peer-dependencies false
-
-          # Set auth token
-          pnpm config set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-          pnpm publish --no-git-checks
+        run: npm publish --no-git-checks
 
       - name: Merge changes from develop into master
         # Only run when a tag triggers the workflow

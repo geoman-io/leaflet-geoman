@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import { TileLayer, LeafletMap } from "leaflet";
+import { TileLayer, LeafletMap } from 'leaflet';
 import Geoman from 'leaflet-geoman';
 
 Geoman.initialize();

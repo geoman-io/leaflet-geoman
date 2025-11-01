@@ -1,5 +1,15 @@
-/* eslint-disable no-console */
-import { TileLayer, LeafletMap, Circle, CircleMarker, Marker, FeatureGroup, Polygon, Polyline, LayerGroup, GeoJSON } from "leaflet";
+import {
+  TileLayer,
+  LeafletMap,
+  Circle,
+  CircleMarker,
+  Marker,
+  FeatureGroup,
+  Polygon,
+  Polyline,
+  LayerGroup,
+  GeoJSON,
+} from 'leaflet';
 import Geoman from 'leaflet-geoman';
 
 Geoman.initialize();
@@ -22,9 +32,15 @@ const tiles3 = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
-const map2 = new LeafletMap('example2').setView([51.505, -0.09], 13).addLayer(tiles1);
-const map3 = new LeafletMap('example3').setView([51.505, -0.09], 13).addLayer(tiles2);
-const map4 = new LeafletMap('example4').setView([51.505, -0.09], 13).addLayer(tiles3);
+const map2 = new LeafletMap('example2')
+  .setView([51.505, -0.09], 13)
+  .addLayer(tiles1);
+const map3 = new LeafletMap('example3')
+  .setView([51.505, -0.09], 13)
+  .addLayer(tiles2);
+const map4 = new LeafletMap('example4')
+  .setView([51.505, -0.09], 13)
+  .addLayer(tiles3);
 // map2.dragging.disable();
 
 // map2.on('pm:create', function(e) {
@@ -55,7 +71,6 @@ const m1 = new CircleMarker([51.50313, -0.091223], { radius: 10 });
 const m2 = new Marker([51.50614, -0.0989]);
 const m3 = new Marker([51.50915, -0.096112], { pmIgnore: true });
 
-// eslint-disable-next-line no-unused-vars
 const mGroup = new LayerGroup([m1, m2, m3]).addTo(map2);
 // mGroup.pm.enable();
 
