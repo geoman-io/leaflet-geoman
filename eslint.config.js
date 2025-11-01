@@ -25,6 +25,7 @@ module.exports = [
       'no-restricted-syntax': 0,
       'guard-for-in': 0,
       ...eslintPluginCypress.configs.recommended.rules,
+      'cypress/unsafe-to-chain-command': 0,
     },
   },
   eslintConfigPrettier,
