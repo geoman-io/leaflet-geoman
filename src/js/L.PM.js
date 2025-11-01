@@ -23,7 +23,6 @@ import {
 } from 'leaflet';
 
 import packageInfo from '../../package.json';
-import './polyfills';
 
 import GeomanMap from './L.PM.Map';
 import Toolbar from './Toolbar/L.PM.Toolbar';
