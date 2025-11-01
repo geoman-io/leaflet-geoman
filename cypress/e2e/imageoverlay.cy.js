@@ -52,7 +52,7 @@ describe('Opens Testing Environment', () => {
         { interactive: true }
       ).addTo(map);
 
-      io.pm._simulateMouseDownEvent = () => {
+      io.pm._dragMixinOnPointerDown = () => {
         eventcalled = true;
       };
     });

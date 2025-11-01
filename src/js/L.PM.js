@@ -284,7 +284,7 @@ if (version === '1.7.1') {
   // https://github.com/Leaflet/Leaflet/issues/7775 a fix is already merged for the Leaflet 1.8.0 version
   Canvas.include({
     _onClick(e) {
-      const point = this._map.mouseEventToLayerPoint(e);
+      const point = this._map.pointerEventToLayerPoint(e);
       let layer;
       let clickedLayer;
 

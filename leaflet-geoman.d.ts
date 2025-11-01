@@ -1740,9 +1740,9 @@ declare module 'leaflet' {
       addVertexOn?:
         | 'click'
         | 'dblclick'
-        | 'mousedown'
-        | 'mouseover'
-        | 'mouseout'
+        | 'pointerdown'
+        | 'pointerover'
+        | 'pointerout'
         | 'contextmenu';
 
       /** A function for validation if a vertex (of a Line / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. (default:undefined). */
@@ -1752,9 +1752,9 @@ declare module 'leaflet' {
       removeVertexOn?:
         | 'click'
         | 'dblclick'
-        | 'mousedown'
-        | 'mouseover'
-        | 'mouseout'
+        | 'pointerdown'
+        | 'pointerover'
+        | 'pointerout'
         | 'contextmenu';
 
       /** A function for validation if a vertex (of a Line / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
@@ -1874,9 +1874,9 @@ declare module 'leaflet' {
         | null
         | 'click'
         | 'dblclick'
-        | 'mousedown'
-        | 'mouseover'
-        | 'mouseout'
+        | 'pointerdown'
+        | 'pointerover'
+        | 'pointerout'
         | 'contextmenu'
         | 'snap';
 

@@ -224,7 +224,7 @@ export default class GeomanDrawRectangle extends Draw {
     const A = fixLatOffset(this._startMarker.getLatLng(), this._map);
     const B = fixLatOffset(this._hintMarker.getLatLng(), this._map);
 
-    // Create a (maybe rotated) box using corners A & B (A = Starting Position, B = Current Mouse Position)
+    // Create a (maybe rotated) box using corners A & B (A = Starting Position, B = Current Pointer Position)
     const corners = Utils._getRotatedRectangle(
       A,
       B,

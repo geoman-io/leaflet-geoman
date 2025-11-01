@@ -256,7 +256,7 @@ describe('Draw Rectangle', () => {
 
     // test 1: snapIgnore: undefined, pmIgnore: undefined, optIn: false --> snappable
     cy.toolbarButton('rectangle').click();
-    // click or mousemove is needed to init snapList
+    // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     let layer;
@@ -271,7 +271,7 @@ describe('Draw Rectangle', () => {
       layer.options.snapIgnore = true;
     });
     cy.toolbarButton('rectangle').click();
-    // click or mousemove is needed to init snapList
+    // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
@@ -285,7 +285,7 @@ describe('Draw Rectangle', () => {
       layer.options.pmIgnore = true;
     });
     cy.toolbarButton('rectangle').click();
-    // click or mousemove is needed to init snapList
+    // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
@@ -299,7 +299,7 @@ describe('Draw Rectangle', () => {
       layer.options.pmIgnore = true;
     });
     cy.toolbarButton('rectangle').click();
-    // click or mousemove is needed to init snapList
+    // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
@@ -314,7 +314,7 @@ describe('Draw Rectangle', () => {
       Geoman.setOptIn(true);
     });
     cy.toolbarButton('rectangle').click();
-    // click or mousemove is needed to init snapList
+    // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
@@ -328,7 +328,7 @@ describe('Draw Rectangle', () => {
       Geoman.setOptIn(true);
     });
     cy.toolbarButton('rectangle').click();
-    // click or mousemove is needed to init snapList
+    // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
@@ -341,7 +341,7 @@ describe('Draw Rectangle', () => {
       layer.options.snapIgnore = false;
     });
     cy.toolbarButton('rectangle').click();
-    // click or mousemove is needed to init snapList
+    // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
@@ -432,17 +432,17 @@ describe('Draw Rectangle', () => {
       const center2 = layers[1].getCenter();
 
       const layer = layers[0];
-      layer.pm._dragMixinOnMouseDown({
+      layer.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnMouseMove({
+      layer.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnMouseUp({
+      layer.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([320, 320]),
@@ -472,17 +472,17 @@ describe('Draw Rectangle', () => {
       layer.pm.options.syncLayersOnDrag = layers;
 
       // Drag both layers
-      layer.pm._dragMixinOnMouseDown({
+      layer.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnMouseMove({
+      layer.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnMouseUp({
+      layer.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([320, 320]),
@@ -496,17 +496,17 @@ describe('Draw Rectangle', () => {
 
       const layer2 = layers[1];
       // Drag only layer2
-      layer2.pm._dragMixinOnMouseDown({
+      layer2.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: map.containerPointToLatLng([290, 290]),
       });
-      layer2.pm._dragMixinOnMouseMove({
+      layer2.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: map.containerPointToLatLng([500, 320]),
       });
-      layer2.pm._dragMixinOnMouseUp({
+      layer2.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: map.containerPointToLatLng([320, 320]),
@@ -650,17 +650,17 @@ describe('Draw Rectangle', () => {
       layer.pm.options.syncLayersOnDrag = layers;
 
       // Drag both layers
-      layer.pm._dragMixinOnMouseDown({
+      layer.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnMouseMove({
+      layer.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnMouseUp({
+      layer.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -674,17 +674,17 @@ describe('Draw Rectangle', () => {
 
       const layer2 = layers[1];
       // Drag only layer2
-      layer2.pm._dragMixinOnMouseDown({
+      layer2.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer2.pm._dragMixinOnMouseMove({
+      layer2.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer2.pm._dragMixinOnMouseUp({
+      layer2.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -731,17 +731,17 @@ describe('Draw Rectangle', () => {
       const layer = layers[0];
 
       // Drag both layers
-      layer.pm._dragMixinOnMouseDown({
+      layer.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnMouseMove({
+      layer.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnMouseUp({
+      layer.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -787,17 +787,17 @@ describe('Draw Rectangle', () => {
       const layer = layers[0];
 
       // Drag both layers
-      layer.pm._dragMixinOnMouseDown({
+      layer.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnMouseMove({
+      layer.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnMouseUp({
+      layer.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -834,9 +834,9 @@ describe('Draw Rectangle', () => {
 
       mapCanvas.on('pm:create', (e) => {
         rect1 = e.layer;
-        rect2 = new L.Rectangle(rect1.getBounds(), { renderer: new L.SVG() }).addTo(
-          mapCanvas
-        );
+        rect2 = new L.Rectangle(rect1.getBounds(), {
+          renderer: new L.SVG(),
+        }).addTo(mapCanvas);
       });
     });
 
@@ -852,17 +852,17 @@ describe('Draw Rectangle', () => {
       const layer = rect1;
 
       // Drag both layers
-      layer.pm._dragMixinOnMouseDown({
+      layer.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnMouseMove({
+      layer.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnMouseUp({
+      layer.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -879,17 +879,17 @@ describe('Draw Rectangle', () => {
       const layer = rect2;
 
       // Drag both layers
-      layer.pm._dragMixinOnMouseDown({
+      layer.pm._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnMouseMove({
+      layer.pm._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnMouseUp({
+      layer.pm._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -1069,9 +1069,9 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('edit').click();
 
     cy.get(mapSelector)
-      .trigger('pointerdown', 150, 60, {eventConstructor: 'PointerEvent'})
-      .trigger('pointermove', 150, 55, {eventConstructor: 'PointerEvent'})
-      .trigger('pointerup', 150, 55, {eventConstructor: 'PointerEvent'});
+      .trigger('pointerdown', 150, 60, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 150, 55, { eventConstructor: 'PointerEvent' })
+      .trigger('pointerup', 150, 55, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[1];

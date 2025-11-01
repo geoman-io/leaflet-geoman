@@ -57,24 +57,7 @@ const DragMixin = {
 
     // check if DOM element exists
     if (container) {
-      // add pointerdown event to trigger drag
-      if (getRenderer(this._layer) instanceof Canvas) {
-        this._layer.on(
-          'touchstart pointerdown',
-          this._dragMixinOnMouseDown,
-          this
-        );
-        this._map.pm._addTouchEvents(container);
-      } else {
-        // We can't just use layer.on('pointerdown') because on touch devices the event is not fired if user presses on the layer and then drag it.
-        // With checking on touchstart and pointerdown on the DOM element we can listen on the needed events
-        DomEvent.on(
-          container,
-          'touchstart pointerdown',
-          this._simulateMouseDownEvent,
-          this
-        );
-      }
+      this._layer.on('pointerdown', this._dragMixinOnPointerDown, this);
     }
 
     this._fireDragEnable();
@@ -106,22 +89,7 @@ const DragMixin = {
     const container = this._getDOMElem();
     // check if DOM element exists
     if (container) {
-      if (getRenderer(this._layer) instanceof Canvas) {
-        this._layer.off(
-          'touchstart pointerdown',
-          this._dragMixinOnMouseDown,
-          this
-        );
-        this._map.pm._removeTouchEvents(container);
-      } else {
-        // disable pointerdown event
-        DomEvent.off(
-          container,
-          'touchstart pointerdown',
-          this._simulateMouseDownEvent,
-          this
-        );
-      }
+      this._layer.off('pointerdown', this._dragMixinOnPointerDown, this);
     }
 
     if (this._layerDragged) {
@@ -138,49 +106,7 @@ const DragMixin = {
   layerDragEnabled() {
     return !!this._layerDragEnabled;
   },
-  // We need to simulate a pointerdown event on the layer object. We can't just use layer.on('pointerdown') because on touch devices the event is not fired if user presses on the layer and then drag it.
-  // With checking on touchstart and pointerdown on the DOM element we can listen on the needed events
-  _simulateMouseDownEvent(e) {
-    const first = e.touches ? e.touches[0] : e;
-    const evt = {
-      originalEvent: first,
-      target: this._layer,
-    };
-    // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.pointerEventToContainerPoint(first);
-    evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-
-    this._dragMixinOnMouseDown(evt);
-    return false;
-  },
-  _simulateMouseMoveEvent(e) {
-    const first = e.touches ? e.touches[0] : e;
-    const evt = {
-      originalEvent: first,
-      target: this._layer,
-    };
-    // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.pointerEventToContainerPoint(first);
-    evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-
-    this._dragMixinOnMouseMove(evt);
-    return false;
-  },
-  _simulateMouseUpEvent(e) {
-    const first = e.touches ? e.touches[0] : e;
-    const evt = {
-      originalEvent: first,
-      target: this._layer,
-    };
-    if (e.type.indexOf('touch') === -1) {
-      // we expect in the function to get the clicked latlng / point
-      evt.containerPoint = this._map.pointerEventToContainerPoint(e);
-      evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-    }
-    this._dragMixinOnMouseUp(evt);
-    return false;
-  },
-  _dragMixinOnMouseDown(e) {
+  _dragMixinOnPointerDown(e) {
     // cancel if pointer button is NOT the left button
     if (e.originalEvent.button > 0) {
       return;
@@ -190,7 +116,7 @@ const DragMixin = {
     const fromLayerSync = e._fromLayerSync;
 
     // if other layers found, snapping will be disabled
-    const layersToSyncFound = this._syncLayers('_dragMixinOnMouseDown', e);
+    const layersToSyncFound = this._syncLayers('_dragMixinOnPointerDown', e);
 
     if (this._layer instanceof Marker) {
       if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
@@ -229,27 +155,17 @@ const DragMixin = {
     // save for delta calculation
     this._tempDragCoord = e.latlng;
 
-    DomEvent.on(
-      this._map.getContainer(),
-      'touchend pointerup',
-      this._simulateMouseUpEvent,
-      this
-    );
+    this._map.on('pointerup', this._dragMixinOnPointerUp, this);
 
     // listen to pointermove on map (instead of polygon),
     // otherwise fast pointer movements stop the drag
-    DomEvent.on(
-      this._map.getContainer(),
-      'touchmove pointermove',
-      this._simulateMouseMoveEvent,
-      this
-    );
+    this._map.on('pointermove', this._dragMixinOnPointerMove, this);
   },
-  _dragMixinOnMouseMove(e) {
+  _dragMixinOnPointerMove(e) {
     this._overwriteEventIfItComesFromMarker(e);
     const el = this._getDOMElem();
 
-    this._syncLayers('_dragMixinOnMouseMove', e);
+    this._syncLayers('_dragMixinOnPointerMove', e);
 
     if (!this._dragging) {
       // set state
@@ -282,10 +198,10 @@ const DragMixin = {
       this._layer.pm._updateHiddenPolyCircle();
     }
   },
-  _dragMixinOnMouseUp(e) {
+  _dragMixinOnPointerUp(e) {
     const el = this._getDOMElem();
 
-    this._syncLayers('_dragMixinOnMouseUp', e);
+    this._syncLayers('_dragMixinOnPointerUp', e);
 
     // re-enable map drag
     if (this._originalMapDragState) {
@@ -295,20 +211,10 @@ const DragMixin = {
     // if pointerup event fired, it's safe to cache the map draggable state on the next pointer down
     this._safeToCacheDragState = true;
     // clear up pointermove event
-    DomEvent.off(
-      this._map.getContainer(),
-      'touchmove pointermove',
-      this._simulateMouseMoveEvent,
-      this
-    );
+    this._map.off('pointermove', this._dragMixinOnPointerMove, this);
 
     // clear up pointerup event
-    DomEvent.off(
-      this._map.getContainer(),
-      'touchend pointerup',
-      this._simulateMouseUpEvent,
-      this
-    );
+    this._map.off('pointerup', this._dragMixinOnPointerUp, this);
 
     // if no drag happened, don't do anything
     if (!this._dragging) {
