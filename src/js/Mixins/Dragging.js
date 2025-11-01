@@ -1,4 +1,12 @@
-import { Canvas, Circle, CircleMarker, DomEvent, ImageOverlay, LayerGroup, Marker } from 'leaflet';
+import {
+  Canvas,
+  Circle,
+  CircleMarker,
+  DomEvent,
+  ImageOverlay,
+  LayerGroup,
+  Marker,
+} from 'leaflet';
 import { getRenderer } from '../helpers';
 
 const DragMixin = {
@@ -18,10 +26,7 @@ const DragMixin = {
       this._map = this._layer._map;
     }
 
-    if (
-      this._layer instanceof Marker ||
-      this._layer instanceof ImageOverlay
-    ) {
+    if (this._layer instanceof Marker || this._layer instanceof ImageOverlay) {
       // prevents dragging the DOM image instead of the marker
       DomEvent.on(this._getDOMElem(), 'dragstart', this._stopDOMImageDrag);
     }
@@ -369,8 +374,7 @@ const DragMixin = {
       });
 
     if (
-      (this._layer instanceof Circle &&
-        this._layer.options.resizeableCircle) ||
+      (this._layer instanceof Circle && this._layer.options.resizeableCircle) ||
       (this._layer instanceof CircleMarker &&
         this._layer.options.resizeableCircleMarker)
     ) {
@@ -450,7 +454,9 @@ const DragMixin = {
       e.target.getLatLng && (!e.target._radius || e.target._radius <= 10);
     if (isMarker) {
       // we want the clicked latlng / point, so we overwrite the property e.latlng
-      e.containerPoint = this._map.pointerEventToContainerPoint(e.originalEvent);
+      e.containerPoint = this._map.pointerEventToContainerPoint(
+        e.originalEvent
+      );
       e.latlng = this._map.containerPointToLatLng(e.containerPoint);
     }
   },

@@ -1,4 +1,14 @@
-import { Circle, CircleMarker, ImageOverlay, LineUtil, Marker, Polygon, Polyline, Rectangle, Util } from 'leaflet';
+import {
+  Circle,
+  CircleMarker,
+  ImageOverlay,
+  LineUtil,
+  Marker,
+  Polygon,
+  Polyline,
+  Rectangle,
+  Util,
+} from 'leaflet';
 import { hasValues, prioritiseSort } from '../helpers';
 import Geoman from '../L.PM';
 import Utils from '../L.PM.Utils';
@@ -347,8 +357,7 @@ const SnapMixin = {
     const map = this._map;
 
     // is this a marker?
-    const isMarker =
-      layer instanceof Marker || layer instanceof CircleMarker;
+    const isMarker = layer instanceof Marker || layer instanceof CircleMarker;
 
     // is it a polygon?
     const isPolygon = layer instanceof Polygon;

@@ -4,8 +4,8 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
 
-import { Point } from "leaflet";
-import Geoman from "../L.PM";
+import { Point } from 'leaflet';
+import Geoman from '../L.PM';
 
 /**
  * @class  L.PM.Matrix

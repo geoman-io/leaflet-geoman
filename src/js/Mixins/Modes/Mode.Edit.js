@@ -1,6 +1,6 @@
-import { LayerGroup, Util } from "leaflet";
-import Geoman from "../../L.PM";
-import Utils from "../../L.PM.Utils";
+import { LayerGroup, Util } from 'leaflet';
+import Geoman from '../../L.PM';
+import Utils from '../../L.PM.Utils';
 
 // this mixin adds a global edit mode to the map
 const GlobalEditMode = {

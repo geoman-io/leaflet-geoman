@@ -1,4 +1,12 @@
-import { Circle, DivIcon, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
+import {
+  Circle,
+  DivIcon,
+  FeatureGroup,
+  Marker,
+  Point,
+  Polyline,
+  Util,
+} from 'leaflet';
 import { destinationOnLine } from '../helpers';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
@@ -385,11 +393,7 @@ Edit.CircleMarker = Edit.extend({
           Utils.circleToPolygon(_layer, 200, !crsSimple).getLatLngs()
         );
       } else {
-        this._hiddenPolyCircle = Utils.circleToPolygon(
-          _layer,
-          200,
-          !crsSimple
-        );
+        this._hiddenPolyCircle = Utils.circleToPolygon(_layer, 200, !crsSimple);
       }
 
       if (!this._hiddenPolyCircle._parentCopy) {

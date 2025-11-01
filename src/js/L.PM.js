@@ -8,7 +8,21 @@
  * Get Pro: https://geoman.io
  */
 
-import { Canvas, Circle, CircleMarker, DomEvent, ImageOverlay, LayerGroup, LeafletMap, Marker, Polygon, Polyline, Rectangle, version, Class } from 'leaflet';
+import {
+  Canvas,
+  Circle,
+  CircleMarker,
+  DomEvent,
+  ImageOverlay,
+  LayerGroup,
+  LeafletMap,
+  Marker,
+  Polygon,
+  Polyline,
+  Rectangle,
+  version,
+  Class,
+} from 'leaflet';
 
 import packageInfo from '../../package.json';
 import './polyfills';

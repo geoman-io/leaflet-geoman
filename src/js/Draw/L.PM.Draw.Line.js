@@ -309,10 +309,7 @@ Draw.Line = Draw.extend({
     const removedMarker = markers[markers.length - 1];
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath } = Utils.findDeepMarkerIndex(
-      markers,
-      removedMarker
-    );
+    const { indexPath } = Utils.findDeepMarkerIndex(markers, removedMarker);
 
     // remove last marker from array
     markers.pop();

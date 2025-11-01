@@ -1,6 +1,6 @@
 // use function to create a new mixin object for keeping isolation
 
-import { DomEvent } from "leaflet";
+import { DomEvent } from 'leaflet';
 
 // to make it work for multiple map instances
 const createKeyboardMixins = () => ({

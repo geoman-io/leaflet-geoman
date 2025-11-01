@@ -1,4 +1,13 @@
-import { Circle, CircleMarker, Class, Icon, ImageOverlay, Marker, Polyline, Util } from 'leaflet';
+import {
+  Circle,
+  CircleMarker,
+  Class,
+  Icon,
+  ImageOverlay,
+  Marker,
+  Polyline,
+  Util,
+} from 'leaflet';
 import merge from 'lodash/merge';
 import EventMixin from '../Mixins/Events';
 import SnapMixin from '../Mixins/Snapping';

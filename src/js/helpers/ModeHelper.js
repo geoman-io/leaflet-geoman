@@ -1,4 +1,4 @@
-import { LatLng, Layer } from "leaflet";
+import { LatLng, Layer } from 'leaflet';
 
 export function _convertLatLng(latlng, matrix, map, zoom) {
   return map.unproject(matrix.transform(map.project(latlng, zoom)), zoom);

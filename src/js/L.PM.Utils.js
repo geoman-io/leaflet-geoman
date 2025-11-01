@@ -1,4 +1,13 @@
-import { Circle, CircleMarker, ImageOverlay, LatLng, Marker, Point, Polygon, Polyline } from 'leaflet';
+import {
+  Circle,
+  CircleMarker,
+  ImageOverlay,
+  LatLng,
+  Marker,
+  Point,
+  Polygon,
+  Polyline,
+} from 'leaflet';
 import { createGeodesicPolygon, getTranslation } from './helpers';
 import { _toLatLng, _toPoint } from './helpers/ModeHelper';
 import Geoman from './L.PM';

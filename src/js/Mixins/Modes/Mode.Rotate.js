@@ -1,6 +1,6 @@
-import { LayerGroup, Polyline, Util } from "leaflet";
-import Geoman from "../../L.PM";
-import Utils from "../../L.PM.Utils";
+import { LayerGroup, Polyline, Util } from 'leaflet';
+import Geoman from '../../L.PM';
+import Utils from '../../L.PM.Utils';
 
 const GlobalRotateMode = {
   _globalRotateModeEnabled: false,

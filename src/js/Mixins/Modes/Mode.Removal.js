@@ -1,5 +1,5 @@
-import { LayerGroup, Util } from "leaflet";
-import Geoman from "../../L.PM";
+import { LayerGroup, Util } from 'leaflet';
+import Geoman from '../../L.PM';
 
 const GlobalRemovalMode = {
   _globalRemovalModeEnabled: false,

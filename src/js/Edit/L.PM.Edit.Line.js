@@ -4,7 +4,14 @@ import get from 'lodash/get';
 import { copyLatLngs, hasValues, removeEmptyCoordRings } from '../helpers';
 import Edit from './L.PM.Edit';
 
-import { DivIcon, FeatureGroup, Marker, Polygon, Polyline, Util } from 'leaflet';
+import {
+  DivIcon,
+  FeatureGroup,
+  Marker,
+  Polygon,
+  Polyline,
+  Util,
+} from 'leaflet';
 import MarkerLimits from '../Mixins/MarkerLimits';
 import Utils from '../L.PM.Utils';
 

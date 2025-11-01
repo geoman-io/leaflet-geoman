@@ -416,10 +416,7 @@ const Toolbar = Class.extend({
     this._addButton('drawRectangle', new PMButton(drawRectButton));
     this._addButton('drawPolygon', new PMButton(drawPolyButton));
     this._addButton('drawCircle', new PMButton(drawCircleButton));
-    this._addButton(
-      'drawCircleMarker',
-      new PMButton(drawCircleMarkerButton)
-    );
+    this._addButton('drawCircleMarker', new PMButton(drawCircleMarkerButton));
     this._addButton('drawText', new PMButton(drawTextButton));
     this._addButton('editMode', new PMButton(editButton));
     this._addButton('dragMode', new PMButton(dragButton));
@@ -575,10 +572,7 @@ const Toolbar = Class.extend({
       this.options[options.name] = true;
     }
 
-    const control = this._addButton(
-      options.name,
-      new PMButton(_options)
-    );
+    const control = this._addButton(options.name, new PMButton(_options));
     this.changeControlOrder();
     return control;
   },
