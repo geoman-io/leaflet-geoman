@@ -2,14 +2,15 @@ import { Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 
-Draw.Marker = Draw.extend({
+class GeomanDrawMarker extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Marker';
     this.toolbarButtonName = 'drawMarker';
     // with _layerIsDragging we check if a marker is currently dragged and disable marker creation
     this._layerIsDragging = false;
-  },
+  }
+
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
@@ -67,7 +68,8 @@ Draw.Marker = Draw.extend({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
+  }
+
   disable() {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
@@ -107,17 +109,20 @@ Draw.Marker = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggle(options) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
+  }
+
   isRelevantMarker(layer) {
     return (
       layer instanceof Marker &&
@@ -125,7 +130,8 @@ Draw.Marker = Draw.extend({
       !layer._pmTempLayer &&
       !layer.pm._initTextMarker
     );
-  },
+  }
+
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
@@ -138,7 +144,8 @@ Draw.Marker = Draw.extend({
     }
 
     this._fireChange(this._hintMarker.getLatLng(), 'Draw');
-  },
+  }
+
   _createMarker(e) {
     if (!e.latlng || this._layerIsDragging) {
       return;
@@ -189,10 +196,15 @@ Draw.Marker = Draw.extend({
     if (!this.options.continueDrawing) {
       this.disable();
     }
-  },
+  }
+
   setStyle() {
     if (this.options.markerStyle?.icon) {
       this._hintMarker?.setIcon(this.options.markerStyle.icon);
     }
-  },
-});
+  }
+}
+
+Draw.Marker = GeomanDrawMarker;
+
+export default GeomanDrawMarker;

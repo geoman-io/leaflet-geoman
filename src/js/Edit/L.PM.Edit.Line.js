@@ -23,13 +23,18 @@ import Utils from '../L.PM.Utils';
 // So I can get 'b' with: arr[0][0][1].
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
-Edit.Line = Edit.extend({
-  includes: [MarkerLimits],
-  _shape: 'Line',
+class GeomanEditLine extends Edit {
+  static {
+    this.include(MarkerLimits);
+  }
+
+  _shape = 'Line';
+
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
-  },
+  }
+
   enable(options) {
     Util.setOptions(this, options);
 
@@ -83,7 +88,8 @@ Edit.Line = Edit.extend({
       this.cachedColor = undefined;
     }
     this._fireEnable();
-  },
+  }
+
   disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
@@ -120,10 +126,12 @@ Edit.Line = Edit.extend({
     }
     this._layerEdited = false;
     this._fireDisable();
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
@@ -131,14 +139,16 @@ Edit.Line = Edit.extend({
       this.disable();
     }
     return this.enabled();
-  },
+  }
+
   applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();
     }
-  },
+  }
+
   _initMarkers() {
     const map = this._map;
     const coords = this._layer.getLatLngs();
@@ -186,7 +196,7 @@ Edit.Line = Edit.extend({
 
     // add markerGroup to map
     map.addLayer(this._markerGroup);
-  },
+  }
 
   // creates initial markers for coordinates
   _createMarker(latlng) {
@@ -216,7 +226,7 @@ Edit.Line = Edit.extend({
     this._markerGroup.addLayer(marker);
 
     return marker;
-  },
+  }
 
   // creates the middle markes between coordinates
   _createMiddleMarker(leftM, rightM) {
@@ -247,7 +257,8 @@ Edit.Line = Edit.extend({
     middleMarker.on('movestart', this._onMiddleMarkerMoveStart, this);
 
     return middleMarker;
-  },
+  }
+
   _onMiddleMarkerClick(e) {
     const middleMarker = e.target;
 
@@ -260,7 +271,8 @@ Edit.Line = Edit.extend({
     const icon = new DivIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
     this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
-  },
+  }
+
   _onMiddleMarkerMoveStart(e) {
     const middleMarker = e.target;
     middleMarker.on('moveend', this._onMiddleMarkerMoveEnd, this);
@@ -274,11 +286,13 @@ Edit.Line = Edit.extend({
     // callback as soon as this is fixed:
     // https://github.com/Leaflet/Leaflet/issues/4484
     this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
-  },
+  }
+
   _onMiddleMarkerMovePrevent(e) {
     const middleMarker = e.target;
     this._vertexValidationDrag(middleMarker);
-  },
+  }
+
   _onMiddleMarkerMoveEnd(e) {
     const middleMarker = e.target;
     middleMarker.off('move', this._onMiddleMarkerMovePrevent, this);
@@ -292,7 +306,8 @@ Edit.Line = Edit.extend({
     setTimeout(() => {
       delete middleMarker._dragging;
     }, 100);
-  },
+  }
+
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {
     // first, make this middlemarker a regular marker
@@ -350,13 +365,13 @@ Edit.Line = Edit.extend({
     if (this.options.snappable) {
       this._initSnappableMarkers();
     }
-  },
+  }
 
   hasSelfIntersection() {
     // check for self intersection of the layer and return true/false
     const selfIntersection = kinks(this._layer.toGeoJSON(15));
     return selfIntersection.features.length > 0;
-  },
+  }
 
   _handleSelfIntersectionOnVertexRemoval() {
     // check for selfintersection again (mainly to reset the style)
@@ -370,7 +385,7 @@ Edit.Line = Edit.extend({
       // re-enable markers for the new coords
       this._initMarkers();
     }
-  },
+  }
 
   _handleLayerStyle(flash) {
     const layer = this._layer;
@@ -418,7 +433,8 @@ Edit.Line = Edit.extend({
       }
     }
     return selfIntersection;
-  },
+  }
+
   _flashLayer() {
     if (!this.cachedColor) {
       this.cachedColor = this._layer.options.color;
@@ -431,7 +447,8 @@ Edit.Line = Edit.extend({
       this._layer.setStyle({ color: this.cachedColor });
       this.isRed = false;
     }, 200);
-  },
+  }
+
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
       if (Array.isArray(marker)) {
@@ -444,7 +461,8 @@ Edit.Line = Edit.extend({
         }
       }
     });
-  },
+  }
+
   _removeMarker(e) {
     // the marker that should be removed
     const marker = e.target;
@@ -597,7 +615,8 @@ Edit.Line = Edit.extend({
     // TODO: maybe fire latlng as well?
     this._fireVertexRemoved(marker, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
+
   updatePolygonCoordsFromMarkerDrag(marker) {
     // update polygon coords
     const coords = this._layer.getLatLngs();
@@ -619,7 +638,7 @@ Edit.Line = Edit.extend({
 
     // set new coords on layer
     this._layer.setLatLngs(coords);
-  },
+  }
 
   _getNeighborMarkers(marker) {
     const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
@@ -640,7 +659,8 @@ Edit.Line = Edit.extend({
     const nextMarker = markerArr[nextMarkerIndex];
 
     return { prevMarker, nextMarker };
-  },
+  }
+
   _checkMarkerAllowedToDrag(marker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
@@ -671,7 +691,8 @@ Edit.Line = Edit.extend({
       return false;
     }
     return true;
-  },
+  }
+
   _onMarkerDragStart(e) {
     const marker = e.target;
     this._preventRenderingMarkers(true);
@@ -707,7 +728,8 @@ Edit.Line = Edit.extend({
     } else {
       this._markerAllowedToDrag = null;
     }
-  },
+  }
+
   _onMarkerDrag(e) {
     // dragged marker
     const marker = e.target;
@@ -782,7 +804,8 @@ Edit.Line = Edit.extend({
     }
     this._fireMarkerDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
+
   _onMarkerDragEnd(e) {
     const marker = e.target;
     this._preventRenderingMarkers(false);
@@ -838,7 +861,8 @@ Edit.Line = Edit.extend({
     this._fireEdit();
     this._layerEdited = true;
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
+
   _onVertexClick(e) {
     const vertex = e.target;
     if (vertex._dragging) {
@@ -848,5 +872,9 @@ Edit.Line = Edit.extend({
     const { indexPath } = Utils.findDeepMarkerIndex(this._markers, vertex);
 
     this._fireVertexClick(e, indexPath);
-  },
-});
+  }
+}
+
+Edit.Line = GeomanEditLine;
+
+export default GeomanEditLine;

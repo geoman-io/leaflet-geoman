@@ -2,8 +2,8 @@ import lineIntersect from '@turf/line-intersect';
 import { Polyline } from 'leaflet';
 import Edit from './L.PM.Edit';
 
-Edit.Polygon = Edit.Line.extend({
-  _shape: 'Polygon',
+class GeomanEditPolygon extends Edit.Line {
+  _shape = 'Polygon';
   _checkMarkerAllowedToDrag(marker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
@@ -24,5 +24,9 @@ Edit.Polygon = Edit.Line.extend({
       return false;
     }
     return true;
-  },
-});
+  }
+}
+
+Edit.Polygon = GeomanEditPolygon;
+
+export default GeomanEditPolygon;

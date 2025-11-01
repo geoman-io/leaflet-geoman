@@ -5,35 +5,39 @@ import { getTranslation } from '../helpers';
 
 Control.PMButton = PMButton;
 
-const Toolbar = Class.extend({
-  options: {
-    drawMarker: true,
-    drawRectangle: true,
-    drawPolyline: true,
-    drawPolygon: true,
-    drawCircle: true,
-    drawCircleMarker: true,
-    drawText: true,
-    editMode: true,
-    dragMode: true,
-    cutPolygon: true,
-    removalMode: true,
-    rotateMode: true,
-    snappingOption: true,
-    drawControls: true,
-    editControls: true,
-    optionsControls: true,
-    customControls: true,
-    oneBlock: false,
-    position: 'topleft',
-    positions: {
-      draw: '',
-      edit: '',
-      options: '',
-      custom: '',
-    },
-  },
-  customButtons: [],
+export default class Toolbar extends Class {
+  static {
+    this.setDefaultOptions({
+      drawMarker: true,
+      drawRectangle: true,
+      drawPolyline: true,
+      drawPolygon: true,
+      drawCircle: true,
+      drawCircleMarker: true,
+      drawText: true,
+      editMode: true,
+      dragMode: true,
+      cutPolygon: true,
+      removalMode: true,
+      rotateMode: true,
+      snappingOption: true,
+      drawControls: true,
+      editControls: true,
+      optionsControls: true,
+      customControls: true,
+      oneBlock: false,
+      position: 'topleft',
+      positions: {
+        draw: '',
+        edit: '',
+        options: '',
+        custom: '',
+      },
+    });
+  }
+
+  customButtons = [];
+
   initialize(map) {
     // For some reason there is an reference between multiple maps instances
     this.customButtons = [];
@@ -45,7 +49,8 @@ const Toolbar = Class.extend({
     };
 
     this.init(map);
-  },
+  }
+
   reinit() {
     const addControls = this.isVisible;
 
@@ -55,7 +60,8 @@ const Toolbar = Class.extend({
     if (addControls) {
       this.addControls();
     }
-  },
+  }
+
   init(map) {
     this.map = map;
 
@@ -79,7 +85,8 @@ const Toolbar = Class.extend({
     );
 
     this._defineButtons();
-  },
+  }
+
   _createContainer(name) {
     const container = `${name}Container`;
     if (!this[container]) {
@@ -89,10 +96,11 @@ const Toolbar = Class.extend({
       );
     }
     return this[container];
-  },
+  }
+
   getButtons() {
     return this.buttons;
-  },
+  }
 
   addControls(options = this.options) {
     // adds all buttons to the map specified inside options
@@ -113,7 +121,8 @@ const Toolbar = Class.extend({
     this.isVisible = true;
     // now show the specified buttons
     this._showHideButtons();
-  },
+  }
+
   applyIconStyle() {
     const buttons = this.getButtons();
 
@@ -140,7 +149,8 @@ const Toolbar = Class.extend({
         className: iconClasses.geomanIcons[name],
       });
     }
-  },
+  }
+
   removeControls() {
     // grab all buttons to loop through
     const buttons = this.getButtons();
@@ -151,27 +161,31 @@ const Toolbar = Class.extend({
     }
 
     this.isVisible = false;
-  },
+  }
+
   deleteControl(name) {
     const btnName = this._btnNameMapping(name);
     if (this.buttons[btnName]) {
       this.buttons[btnName].remove();
       delete this.buttons[btnName];
     }
-  },
+  }
+
   toggleControls(options = this.options) {
     if (this.isVisible) {
       this.removeControls();
     } else {
       this.addControls(options);
     }
-  },
+  }
+
   _addButton(name, button) {
     this.buttons[name] = button;
     this.options[name] = !!this.options[name] || false;
 
     return this.buttons[name];
-  },
+  }
+
   triggerClickOnToggledButtons(exceptThisButton) {
     // this function is used when - e.g. drawing mode is enabled and a possible
     // other active mode (like removal tool) is already active.
@@ -188,7 +202,8 @@ const Toolbar = Class.extend({
         button._triggerClick();
       }
     }
-  },
+  }
+
   toggleButton(name, status, disableOthers = true) {
     // does not fire the events/functionality of the button
     // this just changes the state and is used if a functionality (like Draw)
@@ -215,7 +230,8 @@ const Toolbar = Class.extend({
     }
     // now toggle the state of the button
     return this.buttons[toggleBtnName].toggle(status);
-  },
+  }
+
   _defineButtons() {
     // some buttons are still in their respective classes, like L.PM.Draw.Polygon
     const drawMarkerButton = {
@@ -423,7 +439,7 @@ const Toolbar = Class.extend({
     this._addButton('cutPolygon', new PMButton(cutButton));
     this._addButton('removalMode', new PMButton(deleteButton));
     this._addButton('rotateMode', new PMButton(rotateButton));
-  },
+  }
 
   _showHideButtons() {
     // if Toolbar is not visible, we don't need to update button positions
@@ -479,20 +495,24 @@ const Toolbar = Class.extend({
         buttons[btn].addTo(this.map);
       }
     }
-  },
+  }
+
   _getBtnPosition(block) {
     return this.options.positions && this.options.positions[block]
       ? this.options.positions[block]
       : this.options.position;
-  },
+  }
+
   setBlockPosition(block, position) {
     this.options.positions[block] = position;
     this._showHideButtons();
     this.changeControlOrder();
-  },
+  }
+
   getBlockPositions() {
     return this.options.positions;
-  },
+  }
+
   copyDrawControl(copyInstance, options) {
     if (!options) {
       throw new TypeError('Button has no name');
@@ -519,7 +539,8 @@ const Toolbar = Class.extend({
     options = { ...btn, ...options };
     const control = this.createCustomControl(options);
     return { drawInstance, control };
-  },
+  }
+
   createCustomControl(options) {
     if (!options.name) {
       throw new TypeError('Button has no name');
@@ -575,13 +596,16 @@ const Toolbar = Class.extend({
     const control = this._addButton(options.name, new PMButton(_options));
     this.changeControlOrder();
     return control;
-  },
+  }
+
   controlExists(name) {
     return Boolean(this.getButton(name));
-  },
+  }
+
   getButton(name) {
     return this.getButtons()[name];
-  },
+  }
+
   getButtonsInBlock(name) {
     const buttonsInBlock = {};
     if (name) {
@@ -597,7 +621,8 @@ const Toolbar = Class.extend({
       }
     }
     return buttonsInBlock;
-  },
+  }
+
   changeControlOrder(order = []) {
     const shapeMapping = this._shapeMapping();
 
@@ -662,7 +687,8 @@ const Toolbar = Class.extend({
 
     this.map.pm.Toolbar.buttons = newbtnorder;
     this._showHideButtons();
-  },
+  }
+
   getControlOrder() {
     const buttons = this.getButtons();
     const order = [];
@@ -670,7 +696,8 @@ const Toolbar = Class.extend({
       order.push(btn);
     }
     return order;
-  },
+  }
+
   changeActionsOfControl(name, actions) {
     const btnName = this._btnNameMapping(name);
 
@@ -686,7 +713,8 @@ const Toolbar = Class.extend({
     }
     this.buttons[btnName]._button.actions = actions;
     this.changeControlOrder();
-  },
+  }
+
   setButtonDisabled(name, state) {
     const btnName = this._btnNameMapping(name);
     if (state) {
@@ -694,7 +722,8 @@ const Toolbar = Class.extend({
     } else {
       this.buttons[btnName].enable();
     }
-  },
+  }
+
   _shapeMapping() {
     return {
       Marker: 'drawMarker',
@@ -711,11 +740,10 @@ const Toolbar = Class.extend({
       Rotate: 'rotateMode',
       Text: 'drawText',
     };
-  },
+  }
+
   _btnNameMapping(name) {
     const shapeMapping = this._shapeMapping();
     return shapeMapping[name] ? shapeMapping[name] : name;
-  },
-});
-
-export default Toolbar;
+  }
+}

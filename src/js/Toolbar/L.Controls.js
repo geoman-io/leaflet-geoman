@@ -2,12 +2,16 @@ import { Control, DomEvent, DomUtil } from 'leaflet';
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
-const PMButton = Control.extend({
-  includes: [EventMixin],
-  options: {
-    position: 'topleft',
-    disableByOtherButtons: true,
-  },
+export default class PMButton extends Control {
+  static {
+    this.include(EventMixin);
+
+    this.setDefaultOptions({
+      position: 'topleft',
+      disableByOtherButtons: true,
+    });
+  }
+
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
     this._button = {};
@@ -15,7 +19,8 @@ const PMButton = Control.extend({
       this._button[i] = this.options[i];
     }
     Object.assign(this._button, options);
-  },
+  }
+
   onAdd(map) {
     this._map = map;
     if (!this._map.pm.Toolbar.options.oneBlock) {
@@ -36,7 +41,8 @@ const PMButton = Control.extend({
     this._renderButton();
 
     return this._container;
-  },
+  }
+
   _renderButton() {
     const oldDomNode = this.buttonsDomNode;
     this.buttonsDomNode = this._makeButton(this._button);
@@ -45,22 +51,27 @@ const PMButton = Control.extend({
     } else {
       this._container.appendChild(this.buttonsDomNode);
     }
-  },
+  }
+
   onRemove() {
     this.buttonsDomNode.remove();
 
     return this._container;
-  },
+  }
+
   getText() {
     return this._button.text;
-  },
+  }
+
   getIconUrl() {
     return this._button.iconUrl;
-  },
+  }
+
   destroy() {
     this._button = {};
     this._update();
-  },
+  }
+
   toggle(e) {
     if (typeof e === 'boolean') {
       this._button.toggleStatus = e;
@@ -71,23 +82,28 @@ const PMButton = Control.extend({
     this._updateActiveAction(this._button);
 
     return this._button.toggleStatus;
-  },
+  }
+
   toggled() {
     return this._button.toggleStatus;
-  },
+  }
+
   onCreate() {
     this.toggle(false);
-  },
+  }
+
   disable() {
     this.toggle(false); // is needed to prevent active button disabled
     this._button.disabled = true;
     this._updateDisabled();
-  },
+  }
+
   enable() {
     this._button.disabled = false;
     this._updateDisabled();
     this._updateActiveAction(this._button);
-  },
+  }
+
   _triggerClick(e) {
     if (e) {
       // is needed to prevent scrolling when clicking on a-element with href="a"
@@ -100,7 +116,8 @@ const PMButton = Control.extend({
     this._button.onClick(e, { button: this, event: e });
     this._clicked(e);
     this._button.afterClick(e, { button: this, event: e });
-  },
+  }
+
   _makeButton(button) {
     const pos = this.options.position.indexOf('right') > -1 ? 'pos-right' : '';
 
@@ -251,7 +268,7 @@ const PMButton = Control.extend({
     }
 
     return buttonContainer;
-  },
+  }
 
   _applyStyleClasses() {
     if (!this._container) {
@@ -265,7 +282,7 @@ const PMButton = Control.extend({
       this.buttonsDomNode.classList.add('active');
       this.buttonsDomNode.classList.add('activeChild');
     }
-  },
+  }
 
   _onBtnClick() {
     if (this._button.disabled) {
@@ -283,13 +300,13 @@ const PMButton = Control.extend({
       }
     }
     this._fireButtonClick(btnName, this._button);
-  },
+  }
 
   _clicked() {
     if (this._button.doToggle) {
       this.toggle();
     }
-  },
+  }
 
   _updateDisabled() {
     if (!this._container) {
@@ -306,7 +323,8 @@ const PMButton = Control.extend({
       button.classList.remove(className);
       button.setAttribute('aria-disabled', 'false');
     }
-  },
+  }
+
   _updateActiveAction(button) {
     button._preparedActions?.forEach((action) => {
       if (action?._node) {
@@ -317,7 +335,5 @@ const PMButton = Control.extend({
         }
       }
     });
-  },
-});
-
-export default PMButton;
+  }
+}

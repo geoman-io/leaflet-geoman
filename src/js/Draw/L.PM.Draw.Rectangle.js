@@ -3,12 +3,13 @@ import { fixLatOffset, getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 import Utils from '../L.PM.Utils';
 
-Draw.Rectangle = Draw.extend({
+class GeomanDrawRectangle extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Rectangle';
     this.toolbarButtonName = 'drawRectangle';
-  },
+  }
+
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
@@ -110,7 +111,8 @@ Draw.Rectangle = Draw.extend({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
+  }
+
   disable() {
     // disable drawing mode
 
@@ -142,17 +144,20 @@ Draw.Rectangle = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggle(options) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
+  }
+
   _placeStartingMarkers(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
@@ -182,7 +187,8 @@ Draw.Rectangle = Draw.extend({
     this._hintMarker.setTooltipContent(getTranslation('tooltips.finishRect'));
 
     this._setRectangleOrigin();
-  },
+  }
+
   _setRectangleOrigin() {
     const latlng = this._startMarker.getLatLng();
 
@@ -194,7 +200,8 @@ Draw.Rectangle = Draw.extend({
 
       this._hintMarker.on('move', this._syncRectangleSize, this);
     }
-  },
+  }
+
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
@@ -211,7 +218,8 @@ Draw.Rectangle = Draw.extend({
         ? this._layer.getLatLngs()
         : [this._hintMarker.getLatLng()];
     this._fireChange(latlngs, 'Draw');
-  },
+  }
+
   _syncRectangleSize() {
     const A = fixLatOffset(this._startMarker.getLatLng(), this._map);
     const B = fixLatOffset(this._hintMarker.getLatLng(), this._map);
@@ -246,7 +254,8 @@ Draw.Rectangle = Draw.extend({
         }
       });
     }
-  },
+  }
+
   _findCorners() {
     const latlngs = this._layer.getLatLngs()[0];
     return Utils._getRotatedRectangle(
@@ -255,7 +264,8 @@ Draw.Rectangle = Draw.extend({
       this.options.rectangleAngle || 0,
       this._map
     );
-  },
+  }
+
   _finishShape(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
@@ -314,8 +324,13 @@ Draw.Rectangle = Draw.extend({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
+  }
+
   setStyle() {
     this._layer?.setStyle(this.options.pathOptions);
-  },
-});
+  }
+}
+
+Draw.Rectangle = GeomanDrawRectangle;
+
+export default GeomanDrawRectangle;

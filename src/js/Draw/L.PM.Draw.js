@@ -13,54 +13,62 @@ import EventMixin from '../Mixins/Events';
 import SnapMixin from '../Mixins/Snapping';
 import Utils from '../L.PM.Utils';
 
-const Draw = Class.extend({
-  includes: [SnapMixin, EventMixin],
-  options: {
-    snappable: true, // TODO: next major Release, rename it to allowSnapping
-    snapDistance: 20,
-    snapMiddle: false,
-    allowSelfIntersection: true,
-    tooltips: true,
-    templineStyle: {},
-    hintlineStyle: {
-      color: '#3388ff',
-      dashArray: '5,5',
-    },
-    pathOptions: null,
-    cursorMarker: true,
-    finishOn: null,
-    markerStyle: {
-      draggable: true,
-      icon: new Icon(),
-    },
-    hideMiddleMarkers: false,
-    minRadiusCircle: null,
-    maxRadiusCircle: null,
-    minRadiusCircleMarker: null,
-    maxRadiusCircleMarker: null,
-    resizeableCircleMarker: false,
-    resizeableCircle: true,
-    markerEditable: true,
-    continueDrawing: false,
-    snapSegment: true,
-    requireSnapToFinish: false,
-    rectangleAngle: 0,
-    textOptions: {
-      text: null,
-      focusAfterDraw: null,
-      removeIfEmpty: null,
-      className: null,
-    },
-    snapVertex: true,
-  },
+export default class Draw extends Class {
+  static {
+    this.include(SnapMixin);
+    this.include(EventMixin);
+
+    this.setDefaultOptions({
+      snappable: true, // TODO: next major Release, rename it to allowSnapping
+      snapDistance: 20,
+      snapMiddle: false,
+      allowSelfIntersection: true,
+      tooltips: true,
+      templineStyle: {},
+      hintlineStyle: {
+        color: '#3388ff',
+        dashArray: '5,5',
+      },
+      pathOptions: null,
+      cursorMarker: true,
+      finishOn: null,
+      markerStyle: {
+        draggable: true,
+        icon: new Icon(),
+      },
+      hideMiddleMarkers: false,
+      minRadiusCircle: null,
+      maxRadiusCircle: null,
+      minRadiusCircleMarker: null,
+      maxRadiusCircleMarker: null,
+      resizeableCircleMarker: false,
+      resizeableCircle: true,
+      markerEditable: true,
+      continueDrawing: false,
+      snapSegment: true,
+      requireSnapToFinish: false,
+      rectangleAngle: 0,
+      textOptions: {
+        text: null,
+        focusAfterDraw: null,
+        removeIfEmpty: null,
+        className: null,
+      },
+      snapVertex: true,
+    });
+  }
+
   setOptions(options) {
     Util.setOptions(this, options);
     this.setStyle(this.options);
-  },
-  setStyle() {},
+  }
+
+  setStyle() {}
+
   getOptions() {
     return this.options;
-  },
+  }
+
   initialize(map) {
     // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon
     // Issue https://github.com/Leaflet/Leaflet/issues/7302 - Leaflet v1.7.1
@@ -91,22 +99,26 @@ const Draw = Class.extend({
     // TODO: Remove this with the next major release
     this.Marker.setOptions({ continueDrawing: true });
     this.CircleMarker.setOptions({ continueDrawing: true });
-  },
+  }
+
   setPathOptions(options, mergeOptions = false) {
     if (!mergeOptions) {
       this.options.pathOptions = options;
     } else {
       this.options.pathOptions = merge(this.options.pathOptions, options);
     }
-  },
+  }
+
   getShapes() {
     // if somebody wants to know what shapes are available
     return this.shapes;
-  },
+  }
+
   getShape() {
     // return the shape of the current drawing layer
     return this._shape;
-  },
+  }
+
   enable(shape, options) {
     if (!shape) {
       throw new Error(
@@ -121,7 +133,8 @@ const Draw = Class.extend({
 
     // enable draw for a shape
     this[shape].enable(options);
-  },
+  }
+
   disable() {
     // there can only be one drawing mode active at a time on a map
     // so it doesn't matter which one should be disabled.
@@ -129,13 +142,15 @@ const Draw = Class.extend({
     this.shapes.forEach((shape) => {
       this[shape].disable();
     });
-  },
+  }
+
   addControls() {
     // add control buttons for our shapes
     this.shapes.forEach((shape) => {
       this[shape].addButton();
     });
-  },
+  }
+
   getActiveShape() {
     // returns the active shape
     let enabledShape;
@@ -145,7 +160,8 @@ const Draw = Class.extend({
       }
     });
     return enabledShape;
-  },
+  }
+
   _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
     if (this._shape === 'Cut') {
@@ -179,7 +195,7 @@ const Draw = Class.extend({
         Utils.enablePopup(layer);
       });
     }
-  },
+  }
 
   createNewDrawInstance(name, jsClass) {
     const instance = this._getShapeFromBtnName(jsClass);
@@ -203,7 +219,8 @@ const Draw = Class.extend({
     this[name].setOptions(this[name].options);
 
     return this[name];
-  },
+  }
+
   _getShapeFromBtnName(name) {
     const shapeMapping = {
       drawMarker: 'Marker',
@@ -224,7 +241,8 @@ const Draw = Class.extend({
       return shapeMapping[name];
     }
     return this[name] ? this[name]._shape : name;
-  },
+  }
+
   _finishLayer(layer) {
     if (layer.pm) {
       // add the pm options from drawing to the new layer (edit)
@@ -235,10 +253,12 @@ const Draw = Class.extend({
       layer.pm._map = this._map;
     }
     this._addDrawnLayerProp(layer);
-  },
+  }
+
   _addDrawnLayerProp(layer) {
     layer._drawnByGeoman = true;
-  },
+  }
+
   _setPane(layer, type) {
     if (type === 'layerPane') {
       layer.options.pane =
@@ -256,11 +276,10 @@ const Draw = Class.extend({
           this._map.pm.globalOptions.panes.markerPane) ||
         'markerPane';
     }
-  },
+  }
+
   _isFirstLayer() {
     const map = this._map || this._layer._map;
     return map.pm.getGeomanLayers().length === 0;
-  },
-});
-
-export default Draw;
+  }
+}

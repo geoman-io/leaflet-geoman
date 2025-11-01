@@ -1,8 +1,9 @@
 import { Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 
-Edit.Marker = Edit.extend({
-  _shape: 'Marker',
+class GeomanEditMarker extends Edit {
+  _shape = 'Marker';
+
   initialize(layer) {
     // layer is a marker in this case :-)
     this._layer = layer;
@@ -10,7 +11,8 @@ Edit.Marker = Edit.extend({
 
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
-  },
+  }
+
   // TODO: remove default option in next major Release
   enable(options = { draggable: true }) {
     Util.setOptions(this, options);
@@ -37,7 +39,8 @@ Edit.Marker = Edit.extend({
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
 
     this._fireEnable();
-  },
+  }
+
   disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
@@ -58,17 +61,20 @@ Edit.Marker = Edit.extend({
     this._fireDisable();
 
     this._enabled = false;
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
-  },
+  }
+
   applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
@@ -85,24 +91,29 @@ Edit.Marker = Edit.extend({
     if (!this.options.preventMarkerRemoval) {
       this._layer.on('contextmenu', this._removeMarker, this);
     }
-  },
+  }
+
   _removeMarker(e) {
     const marker = e.target;
     marker.remove();
     // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
     this._fireRemove(marker);
     this._fireRemove(this._map, marker);
-  },
+  }
+
   _onDragStart() {
     this._map.pm.Draw.Marker._layerIsDragging = true;
-  },
+  }
+
   _onMarkerDragEnd() {
     this._map.pm.Draw.Marker._layerIsDragging = false;
-  },
+  }
+
   _onDragEnd() {
     this._fireEdit();
     this._layerEdited = true;
-  },
+  }
+
   // overwrite initSnappableMarkers from Snapping.js Mixin
   _initSnappableMarkers() {
     const marker = this._layer;
@@ -119,11 +130,16 @@ Edit.Marker = Edit.extend({
 
     marker.off('pm:dragstart', this._unsnap, this);
     marker.on('pm:dragstart', this._unsnap, this);
-  },
+  }
+
   _disableSnapping() {
     const marker = this._layer;
     marker.off('pm:drag', this._handleSnapping, this);
     marker.off('pm:dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
-  },
-});
+  }
+}
+
+Edit.Marker = GeomanEditMarker;
+
+export default GeomanEditMarker;

@@ -13,12 +13,13 @@ import Draw from './L.PM.Draw';
 import Geoman from '../L.PM';
 import Utils from '../L.PM.Utils';
 
-Draw.Cut = Draw.Polygon.extend({
+class GeomanCut extends Draw.Polygon {
   initialize(map) {
     this._map = map;
     this._shape = 'Cut';
     this.toolbarButtonName = 'cutPolygon';
-  },
+  }
+
   _finishShape() {
     this._editedLayers = [];
     // if self intersection is not allowed, do not finish the shape!
@@ -80,7 +81,8 @@ Draw.Cut = Draw.Polygon.extend({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
+  }
+
   cut(layer) {
     const all = this._map._layers;
     // contains information about snapping points
@@ -231,7 +233,8 @@ Draw.Cut = Draw.Polygon.extend({
         originalLayer: l,
       });
     });
-  },
+  }
+
   _cutLayer(layer, l) {
     const fg = new GeoJSON();
     let diff;
@@ -268,6 +271,11 @@ Draw.Cut = Draw.Polygon.extend({
       }
     }
     return diff;
-  },
-  _change: Util.falseFn,
-});
+  }
+
+  _change = Util.falseFn;
+}
+
+Draw.Cut = GeomanCut;
+
+export default GeomanCut;

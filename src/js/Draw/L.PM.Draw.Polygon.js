@@ -2,17 +2,19 @@ import { DivIcon, Marker, Polygon } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 
-Draw.Polygon = Draw.Line.extend({
+class GeomanDrawPolygon extends Draw.Line {
   initialize(map) {
     this._map = map;
     this._shape = 'Polygon';
     this.toolbarButtonName = 'drawPolygon';
-  },
+  }
+
   enable(options) {
     Draw.Line.prototype.enable.call(this, options);
     // Overwrite the shape "Line" of this._layer
     this._layer.pm._shape = 'Polygon';
-  },
+  }
+
   _createMarker(latlng) {
     // create the new marker
     const marker = new Marker(latlng, {
@@ -46,7 +48,8 @@ Draw.Polygon = Draw.Line.extend({
     }
 
     return marker;
-  },
+  }
+
   _setTooltipText() {
     const { length } = this._layer.getLatLngs().flat();
     let text = '';
@@ -58,7 +61,8 @@ Draw.Polygon = Draw.Line.extend({
       text = getTranslation('tooltips.finishPoly');
     }
     this._hintMarker.setTooltipContent(text);
-  },
+  }
+
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
@@ -110,5 +114,9 @@ Draw.Polygon = Draw.Line.extend({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
-});
+  }
+}
+
+Draw.Polygon = GeomanDrawPolygon;
+
+export default GeomanDrawPolygon;

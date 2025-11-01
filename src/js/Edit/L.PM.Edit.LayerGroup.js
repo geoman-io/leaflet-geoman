@@ -5,7 +5,7 @@ import Geoman from '../L.PM';
 // LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Polygon
 // (which inherits from L.PM.Edit) for each layer,
 // so it's not really a parent class
-Edit.LayerGroup = Class.extend({
+class GeomanEditLayerGroup extends Class {
   initialize(layerGroup) {
     this._layerGroup = layerGroup;
     this._layers = this.getLayers();
@@ -72,7 +72,8 @@ Edit.LayerGroup = Class.extend({
       Util.throttle(removeThrottle, 100, this),
       this
     );
-  },
+  }
+
   enable(options, _layerIds = []) {
     if (_layerIds.length === 0) {
       this._layers = this.getLayers();
@@ -88,7 +89,8 @@ Edit.LayerGroup = Class.extend({
         layer.pm.enable(options);
       }
     });
-  },
+  }
+
   disable(_layerIds = []) {
     if (_layerIds.length === 0) {
       this._layers = this.getLayers();
@@ -103,7 +105,8 @@ Edit.LayerGroup = Class.extend({
         layer.pm.disable();
       }
     });
-  },
+  }
+
   enabled(_layerIds = []) {
     if (_layerIds.length === 0) {
       this._layers = this.getLayers();
@@ -119,7 +122,8 @@ Edit.LayerGroup = Class.extend({
       return layer.pm.enabled();
     });
     return !!enabled;
-  },
+  }
+
   toggleEdit(options, _layerIds = []) {
     if (_layerIds.length === 0) {
       this._layers = this.getLayers();
@@ -135,7 +139,8 @@ Edit.LayerGroup = Class.extend({
         layer.pm.toggleEdit(options);
       }
     });
-  },
+  }
+
   _initLayer(layer) {
     // add reference for the group to each layer inside said group by id, a layer can have multiple groups
     const id = Util.stamp(this._layerGroup);
@@ -143,13 +148,15 @@ Edit.LayerGroup = Class.extend({
       layer.pm._parentLayerGroup = {};
     }
     layer.pm._parentLayerGroup[id] = this._layerGroup;
-  },
+  }
+
   _removeLayerFromGroup(layer) {
     if (layer.pm && layer.pm._layerGroup) {
       const id = Util.stamp(this._layerGroup);
       delete layer.pm._layerGroup[id];
     }
-  },
+  }
+
   dragging() {
     this._layers = this.getLayers();
     if (this._layers) {
@@ -157,13 +164,16 @@ Edit.LayerGroup = Class.extend({
       return !!dragging;
     }
     return false;
-  },
+  }
+
   getOptions() {
     return this.options;
-  },
+  }
+
   _getMap() {
     return this._map || this._layers.find((l) => !!l._map)?._map || null;
-  },
+  }
+
   getLayers(
     deep = false,
     filterGeoman = true,
@@ -205,7 +215,8 @@ Edit.LayerGroup = Class.extend({
       );
     }
     return layers;
-  },
+  }
+
   setOptions(options, _layerIds = []) {
     if (_layerIds.length === 0) {
       this._layers = this.getLayers();
@@ -223,5 +234,9 @@ Edit.LayerGroup = Class.extend({
         }
       }
     });
-  },
-});
+  }
+}
+
+Edit.LayerGroup = GeomanEditLayerGroup;
+
+export default GeomanEditLayerGroup;

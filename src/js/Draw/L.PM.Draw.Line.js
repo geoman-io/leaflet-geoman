@@ -5,13 +5,14 @@ import { DivIcon, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Utils from '../L.PM.Utils';
 
-Draw.Line = Draw.extend({
+class GeomanDrawLine extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Line';
     this.toolbarButtonName = 'drawPolyline';
     this._doesSelfIntersect = false;
-  },
+  }
+
   enable(options) {
     Util.setOptions(this, options);
 
@@ -108,7 +109,8 @@ Draw.Line = Draw.extend({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
+  }
+
   disable() {
     // disable draw mode
 
@@ -147,17 +149,20 @@ Draw.Line = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggle(options) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
+  }
+
   _syncHintLine() {
     const polyPoints = this._layer.getLatLngs();
 
@@ -170,7 +175,8 @@ Draw.Line = Draw.extend({
         this._hintMarker.getLatLng(),
       ]);
     }
-  },
+  }
+
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
@@ -189,12 +195,14 @@ Draw.Line = Draw.extend({
     const latlngs = this._layer._defaultShape().slice();
     latlngs.push(this._hintMarker.getLatLng());
     this._change(latlngs);
-  },
+  }
+
   hasSelfIntersection() {
     // check for self intersection of the layer and return true/false
     const selfIntersection = kinks(this._layer.toGeoJSON(15));
     return selfIntersection.features.length > 0;
-  },
+  }
+
   _handleSelfIntersection(addVertex, latlng) {
     // ok we need to check the self intersection here
     // problem: during draw, the marker on the cursor is not yet part
@@ -233,7 +241,8 @@ Draw.Line = Draw.extend({
       this.isRed = false;
       this._hintline.setStyle(this.options.hintlineStyle);
     }
-  },
+  }
+
   _createVertex(e) {
     // don't create a vertex if we have a selfIntersection and it is not allowed
     if (!this.options.allowSelfIntersection) {
@@ -289,11 +298,13 @@ Draw.Line = Draw.extend({
     if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {
       this._finishShape(e);
     }
-  },
+  }
+
   _setHintLineAfterNewVertex(hintMarkerLatLng) {
     // make the new drawn line (with another style) visible
     this._hintline.setLatLngs([hintMarkerLatLng, hintMarkerLatLng]);
-  },
+  }
+
   _removeLastVertex() {
     const markers = this._markers;
 
@@ -335,7 +346,8 @@ Draw.Line = Draw.extend({
 
     this._fireVertexRemoved(removedMarker, indexPath, 'Draw');
     this._change(this._layer.getLatLngs());
-  },
+  }
+
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
@@ -384,7 +396,8 @@ Draw.Line = Draw.extend({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
+  }
+
   _createMarker(latlng) {
     // create the new marker
     const marker = new Marker(latlng, {
@@ -402,7 +415,8 @@ Draw.Line = Draw.extend({
     marker.on('click', this._finishShape, this);
 
     return marker;
-  },
+  }
+
   _setTooltipText() {
     const { length } = this._layer.getLatLngs().flat();
     let text = '';
@@ -414,12 +428,18 @@ Draw.Line = Draw.extend({
       text = getTranslation('tooltips.finishLine');
     }
     this._hintMarker.setTooltipContent(text);
-  },
+  }
+
   _change(latlngs) {
     this._fireChange(latlngs, 'Draw');
-  },
+  }
+
   setStyle() {
     this._layer?.setStyle(this.options.templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
-  },
-});
+  }
+}
+
+Draw.Line = GeomanDrawLine;
+
+export default GeomanDrawLine;

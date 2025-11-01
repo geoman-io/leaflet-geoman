@@ -12,7 +12,7 @@ import { destinationOnLine, getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 import Utils from '../L.PM.Utils';
 
-Draw.CircleMarker = Draw.extend({
+class GeomanDrawCircleMarker extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'CircleMarker';
@@ -24,7 +24,8 @@ Draw.CircleMarker = Draw.extend({
     this._maxRadiusOption = 'maxRadiusCircleMarker';
     this._editableOption = 'resizeableCircleMarker';
     this._defaultRadius = 10;
-  },
+  }
+
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
@@ -148,7 +149,8 @@ Draw.CircleMarker = Draw.extend({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
+  }
+
   _extendingEnable() {
     if (!this.options[this._editableOption] && this.options.markerEditable) {
       // enable edit mode for existing markers
@@ -161,7 +163,8 @@ Draw.CircleMarker = Draw.extend({
 
     // Must be named bringToBack to work with Leaflet functions.
     this._layer.bringToBack();
-  },
+  }
+
   disable() {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
@@ -205,7 +208,8 @@ Draw.CircleMarker = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
+  }
+
   _extendingDisable() {
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {
@@ -213,17 +217,20 @@ Draw.CircleMarker = Draw.extend({
         layer.pm.disable();
       }
     });
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggle(options) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
+  }
+
   _placeCenterMarker(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
@@ -243,7 +250,8 @@ Draw.CircleMarker = Draw.extend({
     this._map.on('click', this._finishShape, this);
 
     this._placeCircleCenter();
-  },
+  }
+
   _placeCircleCenter() {
     const latlng = this._centerMarker.getLatLng();
 
@@ -261,13 +269,15 @@ Draw.CircleMarker = Draw.extend({
       this._fireCenterPlaced();
       this._fireChange(this._layer.getLatLng(), 'Draw');
     }
-  },
+  }
+
   _syncHintLine() {
     const latlng = this._centerMarker.getLatLng();
     const secondLatLng = this._getNewDestinationOfHintMarker();
     // set coords for hintline from marker to last vertex of drawin polyline
     this._hintline.setLatLngs([latlng, secondLatLng]);
-  },
+  }
+
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
     const B = this._hintMarker.getLatLng();
@@ -287,7 +297,8 @@ Draw.CircleMarker = Draw.extend({
     } else {
       this._layer.setRadius(distance);
     }
-  },
+  }
+
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
@@ -308,7 +319,8 @@ Draw.CircleMarker = Draw.extend({
         ? this._centerMarker.getLatLng()
         : this._hintMarker.getLatLng();
     this._fireChange(latlng, 'Draw');
-  },
+  }
+
   isRelevantMarker(layer) {
     return (
       layer instanceof CircleMarker &&
@@ -316,7 +328,8 @@ Draw.CircleMarker = Draw.extend({
       layer.pm &&
       !layer._pmTempLayer
     );
-  },
+  }
+
   _createMarker(e) {
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
     if (
@@ -361,13 +374,15 @@ Draw.CircleMarker = Draw.extend({
     if (!this.options.continueDrawing) {
       this.disable();
     }
-  },
+  }
+
   _extendingCreateMarker(marker) {
     if (marker.pm && this.options.markerEditable) {
       // enable editing for the marker
       marker.pm.enable();
     }
-  },
+  }
+
   _finishShape(e) {
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
     if (
@@ -427,7 +442,8 @@ Draw.CircleMarker = Draw.extend({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
+  }
+
   _getNewDestinationOfHintMarker() {
     let secondLatLng = this._hintMarker.getLatLng();
     if (this.options[this._editableOption]) {
@@ -462,21 +478,24 @@ Draw.CircleMarker = Draw.extend({
       }
     }
     return secondLatLng;
-  },
+  }
+
   _getMinDistanceInMeter() {
     return Utils.pxRadiusToMeterRadius(
       this.options[this._minRadiusOption],
       this._map,
       this._centerMarker.getLatLng()
     );
-  },
+  }
+
   _getMaxDistanceInMeter() {
     return Utils.pxRadiusToMeterRadius(
       this.options[this._maxRadiusOption],
       this._map,
       this._centerMarker.getLatLng()
     );
-  },
+  }
+
   _handleHintMarkerSnapping() {
     if (this.options[this._editableOption]) {
       if (this._hintMarker._snapped) {
@@ -501,7 +520,8 @@ Draw.CircleMarker = Draw.extend({
       // calculate the new latlng of marker if the snapped latlng radius is out of min/max
       this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
     }
-  },
+  }
+
   setStyle() {
     const templineStyle = {};
     Object.assign(templineStyle, this.options.templineStyle);
@@ -510,8 +530,13 @@ Draw.CircleMarker = Draw.extend({
     }
     this._layer?.setStyle(templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
-  },
+  }
+
   _distanceCalculation(A, B) {
     return this._map.project(A).distanceTo(this._map.project(B));
-  },
-});
+  }
+}
+
+Draw.CircleMarker = GeomanDrawCircleMarker;
+
+export default GeomanDrawCircleMarker;

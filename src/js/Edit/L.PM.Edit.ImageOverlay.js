@@ -1,22 +1,26 @@
 import { Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 
-Edit.ImageOverlay = Edit.extend({
-  _shape: 'ImageOverlay',
+class GeomanEditImageOverlay extends Edit {
+  _shape = 'ImageOverlay';
+
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
-  },
+  }
+
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   // TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
     Util.setOptions(this, options);
@@ -50,7 +54,8 @@ Edit.ImageOverlay = Edit.extend({
     this._otherSnapLayers = this._findCorners();
 
     this._fireEnable();
-  },
+  }
+
   disable() {
     // prevent disabling if layer is being dragged
     if (this._dragging) {
@@ -77,7 +82,8 @@ Edit.ImageOverlay = Edit.extend({
     }
 
     this._enabled = false;
-  },
+  }
+
   _findCorners() {
     const corners = this._layer.getBounds();
 
@@ -87,5 +93,9 @@ Edit.ImageOverlay = Edit.extend({
     const southwest = corners.getSouthWest();
 
     return [northwest, northeast, southeast, southwest];
-  },
-});
+  }
+}
+
+Edit.ImageOverlay = GeomanEditImageOverlay;
+
+export default GeomanEditImageOverlay;

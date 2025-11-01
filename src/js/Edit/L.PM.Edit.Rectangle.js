@@ -5,8 +5,8 @@ import { calcAngle } from '../helpers';
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
 
-Edit.Rectangle = Edit.Polygon.extend({
-  _shape: 'Rectangle',
+class GeomanEditRectangle extends Edit.Polygon {
+  _shape = 'Rectangle';
   // initializes Rectangle Markers
   _initMarkers() {
     const map = this._map;
@@ -38,7 +38,8 @@ Edit.Rectangle = Edit.Polygon.extend({
         marker.setLatLng(latlng);
       }
     });
-  },
+  }
+
   applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
@@ -46,7 +47,7 @@ Edit.Rectangle = Edit.Polygon.extend({
       this._disableSnapping();
     }
     this._addMarkerEvents();
-  },
+  }
 
   // creates initial markers for coordinates
   _createMarker(latlng, index) {
@@ -65,7 +66,8 @@ Edit.Rectangle = Edit.Polygon.extend({
     this._markerGroup.addLayer(marker);
 
     return marker;
-  },
+  }
+
   // Add marker events after adding the snapping events to the markers, beacause of the execution order
   _addMarkerEvents() {
     this._markers[0].forEach((marker) => {
@@ -78,13 +80,14 @@ Edit.Rectangle = Edit.Polygon.extend({
         marker.on('contextmenu', this._removeMarker, this);
       }
     });
-  },
+  }
+
   // Empty callback for 'contextmenu' binding set in L.PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
   // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
   _removeMarker() {
     // The method, it does nothing!!!
     return null;
-  },
+  }
 
   _onMarkerDragStart(e) {
     if (!this._vertexValidation('move', e)) {
@@ -109,7 +112,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     );
 
     this._fireMarkerDragStart(e, indexPath);
-  },
+  }
 
   _onMarkerDrag(e) {
     // dragged marker
@@ -132,7 +135,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     );
     this._fireMarkerDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
 
   _onMarkerDragEnd(e) {
     // dragged marker
@@ -156,7 +159,7 @@ Edit.Rectangle = Edit.Polygon.extend({
     this._fireEdit();
     this._layerEdited = true;
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
 
   // adjusts the rectangle's size and bounds whenever a marker is moved
   // params: movedMarker -- the Marker object
@@ -178,7 +181,7 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     // Redraw the shape (to update altered rectangle)
     this._layer.redraw();
-  },
+  }
 
   // adjusts the position of all Markers
   // params: markerLatLngs -- an array of exactly LatLng objects
@@ -228,7 +231,8 @@ Edit.Rectangle = Edit.Polygon.extend({
         });
       }
     }
-  },
+  }
+
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
   _findCorners() {
@@ -249,5 +253,9 @@ Edit.Rectangle = Edit.Polygon.extend({
       this.getAngle(),
       this._map || this
     );
-  },
-});
+  }
+}
+
+Edit.Rectangle = GeomanEditRectangle;
+
+export default GeomanEditRectangle;

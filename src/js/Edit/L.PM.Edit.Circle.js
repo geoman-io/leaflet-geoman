@@ -1,8 +1,9 @@
 import Edit from './L.PM.Edit';
 import Utils from '../L.PM.Utils';
 
-Edit.Circle = Edit.CircleMarker.extend({
-  _shape: 'Circle',
+class GeomanEditCircle extends Edit.CircleMarker {
+  _shape = 'Circle';
+
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
@@ -12,12 +13,15 @@ Edit.Circle = Edit.CircleMarker.extend({
     this._editableOption = 'resizeableCircle';
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
-  },
+  }
+
   enable(options) {
     // TODO: this can be removed after the default options of CircleMarker.enable are removed
     Edit.CircleMarker.prototype.enable.call(this, options || {});
-  },
-  _extendingEnable() {},
+  }
+
+  _extendingEnable() {}
+
   _extendingDisable() {
     this._layer.off('remove', this.disable, this);
 
@@ -26,12 +30,18 @@ Edit.Circle = Edit.CircleMarker.extend({
       ? this._layer._path
       : this._layer._renderer._container;
     el.classList.remove('leaflet-pm-draggable');
-  },
-  _extendingApplyOptions() {},
-  _syncMarkers() {},
-  _removeMarker() {},
-  _onDragStart() {},
-  _extedingMarkerDragEnd() {},
+  }
+
+  _extendingApplyOptions() {}
+
+  _syncMarkers() {}
+
+  _removeMarker() {}
+
+  _onDragStart() {}
+
+  _extedingMarkerDragEnd() {}
+
   _updateHiddenPolyCircle() {
     const crsSimple = this._map && this._map.pm._isCRSSimple();
     if (this._hiddenPolyCircle) {
@@ -49,16 +59,20 @@ Edit.Circle = Edit.CircleMarker.extend({
     if (!this._hiddenPolyCircle._parentCopy) {
       this._hiddenPolyCircle._parentCopy = this._layer;
     }
-  },
+  }
+
   _distanceCalculation(A, B) {
     return this._map.distance(A, B);
-  },
+  }
+
   _getMinDistanceInMeter() {
     return this.options[this._minRadiusOption];
-  },
+  }
+
   _getMaxDistanceInMeter() {
     return this.options[this._maxRadiusOption];
-  },
+  }
+
   _onVertexClick(e) {
     const vertex = e.target;
     if (vertex._dragging) {
@@ -66,5 +80,9 @@ Edit.Circle = Edit.CircleMarker.extend({
     }
 
     this._fireVertexClick(e, undefined);
-  },
-});
+  }
+}
+
+Edit.Circle = GeomanEditCircle;
+
+export default GeomanEditCircle;

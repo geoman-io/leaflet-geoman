@@ -2,12 +2,14 @@ import { DomEvent, Util } from 'leaflet';
 import Edit from './L.PM.Edit';
 import Draw from '../Draw/L.PM.Draw';
 
-Edit.Text = Edit.extend({
-  _shape: 'Text',
+class GeomanEditCircleText extends Edit {
+  _shape = 'Text';
+
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
-  },
+  }
+
   enable(options) {
     Util.setOptions(this, options);
 
@@ -46,7 +48,8 @@ Edit.Text = Edit.extend({
     this._enabled = true;
 
     this._fireEnable();
-  },
+  }
+
   disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
@@ -84,24 +87,28 @@ Edit.Text = Edit.extend({
     this._fireDisable();
 
     this._enabled = false;
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
-  },
+  }
+
   applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();
     }
-  },
+  }
+
   // overwrite initSnappableMarkers from Snapping.js Mixin
   _initSnappableMarkers() {
     const marker = this._layer;
@@ -118,13 +125,15 @@ Edit.Text = Edit.extend({
 
     marker.off('pm:dragstart', this._unsnap, this);
     marker.on('pm:dragstart', this._unsnap, this);
-  },
+  }
+
   _disableSnapping() {
     const marker = this._layer;
     marker.off('pm:drag', this._handleSnapping, this);
     marker.off('pm:dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
-  },
+  }
+
   _autoResize() {
     this.textArea.style.height = '1px';
     this.textArea.style.width = '1px';
@@ -136,7 +145,7 @@ Edit.Text = Edit.extend({
     this.textArea.style.width = `${width}px`;
     this._layer.options.text = this.getText();
     this._fireTextChange(this.getText());
-  },
+  }
 
   _disableOnBlur() {
     this._disableOnBlurActive = true;
@@ -150,7 +159,8 @@ Edit.Text = Edit.extend({
         });
       }
     }, 100);
-  },
+  }
+
   _documentClick(e) {
     if (e.target !== this.textArea) {
       this.disable();
@@ -158,7 +168,7 @@ Edit.Text = Edit.extend({
         this.remove();
       }
     }
-  },
+  }
 
   _focusChange(e = {}) {
     const focusAlreadySet = this._hasFocus;
@@ -177,7 +187,8 @@ Edit.Text = Edit.extend({
         }
       }
     }
-  },
+  }
+
   _applyFocus() {
     this.textArea.classList.add('pm-hasfocus');
 
@@ -190,7 +201,8 @@ Edit.Text = Edit.extend({
       }
       this._map.dragging.disable();
     }
-  },
+  }
+
   _removeFocus() {
     if (this._map.dragging) {
       if (this._originalMapDragState) {
@@ -200,14 +212,14 @@ Edit.Text = Edit.extend({
     }
 
     this.textArea.classList.remove('pm-hasfocus');
-  },
+  }
 
   focus() {
     if (!this.enabled()) {
       throw new TypeError('Layer is not enabled');
     }
     this.textArea.focus();
-  },
+  }
 
   blur() {
     if (!this.enabled()) {
@@ -217,26 +229,26 @@ Edit.Text = Edit.extend({
     if (this._disableOnBlurActive) {
       this.disable();
     }
-  },
+  }
 
   hasFocus() {
     return this._hasFocus;
-  },
+  }
 
   getElement() {
     return this.textArea;
-  },
+  }
 
   setText(text) {
     if (text) {
       this.textArea.value = text;
     }
     this._autoResize();
-  },
+  }
 
   getText() {
     return this.textArea.value;
-  },
+  }
 
   _initTextMarker() {
     this.textArea = Draw.Text.prototype._createTextArea.call(this);
@@ -251,7 +263,7 @@ Edit.Text = Edit.extend({
     this._layer.setIcon(textAreaIcon);
 
     this._layer.once('add', this._createTextMarker, this);
-  },
+  }
 
   _createTextMarker(enable = false) {
     this._layer.off('add', this._createTextMarker, this);
@@ -275,10 +287,14 @@ Edit.Text = Edit.extend({
       this.focus();
       this._disableOnBlur();
     }
-  },
+  }
 
   // Chrome ignores `user-select: none`, so we need to disable text selection manually
   _preventTextSelection(e) {
     e.preventDefault();
-  },
-});
+  }
+}
+
+Edit.Text = GeomanEditCircleText;
+
+export default GeomanEditCircleText;

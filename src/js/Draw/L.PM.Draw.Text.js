@@ -2,12 +2,13 @@ import { DivIcon, Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
 
-Draw.Text = Draw.extend({
+class GeomanDrawText extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Text';
     this.toolbarButtonName = 'drawText';
-  },
+  }
+
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
@@ -61,7 +62,8 @@ Draw.Text = Draw.extend({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
+  }
+
   disable() {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
@@ -95,17 +97,20 @@ Draw.Text = Draw.extend({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggle(options) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
+  }
+
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
@@ -116,7 +121,8 @@ Draw.Text = Draw.extend({
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
     }
-  },
+  }
+
   _createMarker(e) {
     if (!e.latlng) {
       return;
@@ -187,24 +193,28 @@ Draw.Text = Draw.extend({
       // the user is still typing some text, so we re-enable the layer after moving the pointer
       this._map.once('pointermove', this._showHintMarkerAfterMoving, this);
     }
-  },
+  }
 
   _showHintMarkerAfterMoving(e) {
     this.enable();
     this._hintMarker.setLatLng(e.latlng);
-  },
+  }
 
   _createTextArea() {
     const textArea = document.createElement('textarea');
     textArea.readOnly = true;
     textArea.classList.add('pm-textarea', 'pm-disabled');
     return textArea;
-  },
+  }
 
   _createTextIcon(textArea) {
     return new DivIcon({
       className: 'pm-text-marker',
       html: textArea,
     });
-  },
-});
+  }
+}
+
+Draw.Text = GeomanDrawText;
+
+export default GeomanDrawText;

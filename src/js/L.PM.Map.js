@@ -13,14 +13,15 @@ import Toolbar from './Toolbar/L.PM.Toolbar';
 import Geoman from './L.PM';
 import Utils from './L.PM.Utils';
 
-const Map = Class.extend({
-  includes: [
-    GlobalEditMode,
-    GlobalDragMode,
-    GlobalRemovalMode,
-    GlobalRotateMode,
-    EventMixin,
-  ],
+export default class GeomanMap extends Class {
+  static {
+    this.include(GlobalEditMode);
+    this.include(GlobalDragMode);
+    this.include(GlobalRemovalMode);
+    this.include(GlobalRotateMode);
+    this.include(EventMixin);
+  }
+
   initialize(map) {
     this.map = map;
     this.Draw = new Draw(map);
@@ -47,7 +48,7 @@ const Map = Class.extend({
     };
 
     this.Keyboard._initKeyListener(map);
-  },
+  }
 
   setLang(lang = 'en', override, fallback = 'en') {
     // Normalize the language code to lowercase and trim any whitespace
@@ -88,19 +89,23 @@ const Map = Class.extend({
     Geoman.activeLang = lang;
     this.map.pm.Toolbar.reinit();
     this._fireLangChange(oldLang, lang, fallback, translations[lang]);
-  },
+  }
+
   addControls(options) {
     this.Toolbar.addControls(options);
-  },
+  }
+
   removeControls() {
     this.Toolbar.removeControls();
-  },
+  }
+
   toggleControls() {
     this.Toolbar.toggleControls();
-  },
+  }
+
   controlsVisible() {
     return this.Toolbar.isVisible;
-  },
+  }
 
   enableDraw(shape = 'Polygon', options) {
     // backwards compatible, remove after 3.0
@@ -109,7 +114,8 @@ const Map = Class.extend({
     }
 
     this.Draw.enable(shape, options);
-  },
+  }
+
   disableDraw(shape = 'Polygon') {
     // backwards compatible, remove after 3.0
     if (shape === 'Poly') {
@@ -117,7 +123,8 @@ const Map = Class.extend({
     }
 
     this.Draw.disable(shape);
-  },
+  }
+
   // optionsModifier for special options like ignoreShapes or merge
   setPathOptions(options, optionsModifier = {}) {
     const ignore = optionsModifier.ignoreShapes || [];
@@ -128,11 +135,12 @@ const Map = Class.extend({
         this.map.pm.Draw[shape].setPathOptions(options, mergeOptions);
       }
     });
-  },
+  }
 
   getGlobalOptions() {
     return this.globalOptions;
-  },
+  }
+
   setGlobalOptions(o) {
     // merge passed and existing options
     const options = merge(this.globalOptions, o);
@@ -190,7 +198,8 @@ const Map = Class.extend({
 
     // apply the options (actually trigger the functionality)
     this.applyGlobalOptions();
-  },
+  }
+
   applyGlobalOptions() {
     const layers = Utils.findLayers(this.map);
     layers.forEach((layer) => {
@@ -198,22 +207,28 @@ const Map = Class.extend({
         layer.pm.applyOptions();
       }
     });
-  },
+  }
+
   globalDrawModeEnabled() {
     return !!this.Draw.getActiveShape();
-  },
+  }
+
   globalCutModeEnabled() {
     return !!this.Draw.Cut.enabled();
-  },
+  }
+
   enableGlobalCutMode(options) {
     return this.Draw.Cut.enable(options);
-  },
+  }
+
   toggleGlobalCutMode(options) {
     return this.Draw.Cut.toggle(options);
-  },
+  }
+
   disableGlobalCutMode() {
     return this.Draw.Cut.disable();
-  },
+  }
+
   getGeomanLayers(asGroup = false) {
     const layers = Utils.findLayers(this.map);
     if (!asGroup) {
@@ -225,7 +240,8 @@ const Map = Class.extend({
       group.addLayer(layer);
     });
     return group;
-  },
+  }
+
   getGeomanDrawLayers(asGroup = false) {
     const layers = Utils.findLayers(this.map).filter(
       (l) => l._drawnByGeoman === true
@@ -239,19 +255,23 @@ const Map = Class.extend({
       group.addLayer(layer);
     });
     return group;
-  },
+  }
+
   // returns the map instance by default or a layergroup is set through global options
   _getContainingLayer() {
     return this.globalOptions.layerGroup &&
       this.globalOptions.layerGroup instanceof LayerGroup
       ? this.globalOptions.layerGroup
       : this.map;
-  },
+  }
+
   _isCRSSimple() {
     return this.map.options.crs === CRS.Simple;
-  },
+  }
+
   // in Canvas mode we need to convert touch- and pointerevents (IE) to mouseevents, because Leaflet don't support them.
-  _touchEventCounter: 0,
+  _touchEventCounter = 0;
+
   _addTouchEvents(elm) {
     if (this._touchEventCounter === 0) {
       DomEvent.on(elm, 'touchmove', this._canvasTouchMove, this);
@@ -263,7 +283,8 @@ const Map = Class.extend({
       );
     }
     this._touchEventCounter += 1;
-  },
+  }
+
   _removeTouchEvents(elm) {
     if (this._touchEventCounter === 1) {
       DomEvent.off(elm, 'touchmove', this._canvasTouchMove, this);
@@ -276,10 +297,12 @@ const Map = Class.extend({
     }
     this._touchEventCounter =
       this._touchEventCounter <= 1 ? 0 : this._touchEventCounter - 1;
-  },
+  }
+
   _canvasTouchMove(e) {
     getRenderer(this.map)._onMouseMove(this._createMouseEvent('mousemove', e));
-  },
+  }
+
   _canvasTouchClick(e) {
     let type = '';
     if (e.type === 'touchstart' || e.type === 'pointerdown') {
@@ -293,8 +316,9 @@ const Map = Class.extend({
       return;
     }
     getRenderer(this.map)._onClick(this._createMouseEvent(type, e));
-  },
-  _createMouseEvent(type, e) {
+  }
+
+  static _createMouseEvent(type, e) {
     let mouseEvent;
     const touchEvt = e.touches[0] || e.changedTouches[0];
     try {
@@ -335,7 +359,5 @@ const Map = Class.extend({
       );
     }
     return mouseEvent;
-  },
-});
-
-export default Map;
+  }
+}
