@@ -1,25 +1,30 @@
 /* eslint-disable no-console */
-const tiles1 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+import { TileLayer, LeafletMap, Circle, CircleMarker, Marker, FeatureGroup, Polygon, Polyline, LayerGroup, GeoJSON } from "leaflet";
+import Geoman from 'leaflet-geoman';
+
+Geoman.initialize();
+
+const tiles1 = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
-const tiles2 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const tiles2 = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
-const tiles3 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const tiles3 = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
-const map2 = L.map('example2').setView([51.505, -0.09], 13).addLayer(tiles1);
-const map3 = L.map('example3').setView([51.505, -0.09], 13).addLayer(tiles2);
-const map4 = L.map('example4').setView([51.505, -0.09], 13).addLayer(tiles3);
+const map2 = new LeafletMap('example2').setView([51.505, -0.09], 13).addLayer(tiles1);
+const map3 = new LeafletMap('example3').setView([51.505, -0.09], 13).addLayer(tiles2);
+const map4 = new LeafletMap('example4').setView([51.505, -0.09], 13).addLayer(tiles3);
 // map2.dragging.disable();
 
 // map2.on('pm:create', function(e) {
@@ -46,12 +51,12 @@ const map4 = L.map('example4').setView([51.505, -0.09], 13).addLayer(tiles3);
 //     console.log(e.workingLayer);
 // });
 
-const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
-const m2 = L.marker([51.50614, -0.0989]);
-const m3 = L.marker([51.50915, -0.096112], { pmIgnore: true });
+const m1 = new CircleMarker([51.50313, -0.091223], { radius: 10 });
+const m2 = new Marker([51.50614, -0.0989]);
+const m3 = new Marker([51.50915, -0.096112], { pmIgnore: true });
 
 // eslint-disable-next-line no-unused-vars
-const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
+const mGroup = new LayerGroup([m1, m2, m3]).addTo(map2);
 // mGroup.pm.enable();
 
 map2.pm.addControls({
@@ -184,12 +189,12 @@ const geoJsonData = {
   ],
 };
 
-const theCollection = L.geoJson(geoJsonData, {
+const theCollection = new GeoJSON(geoJsonData, {
   pointToLayer: (feature, latlng) => {
     if (feature.properties.customGeometry) {
-      return new L.Circle(latlng, feature.properties.customGeometry.radius);
+      return new Circle(latlng, feature.properties.customGeometry.radius);
     }
-    return new L.Marker(latlng);
+    return new Marker(latlng);
   },
   // onEachFeature: (feature, layer) => {
   //     layer.addTo(map2);
@@ -254,7 +259,7 @@ map3.pm.enableDraw('Polygon', {
   finishOnDoubleClick: true,
 });
 
-const scotland = L.polygon([
+const scotland = new Polygon([
   [
     [60, -13],
     [60, 0],
@@ -299,7 +304,7 @@ map2.on('pm:create', (e) => {
 
 // Polygon Example
 
-const polygonLayer = L.polygon([
+const polygonLayer = new Polygon([
   [51.509, -0.08],
   [51.503, -0.06],
   [51.51, -0.047],
@@ -372,7 +377,7 @@ polygonLayer.on('pm:markerdragstart', (e) => {
 
 // Layer Group Example
 
-const layerGroupItem1 = L.polyline(
+const layerGroupItem1 = new Polyline(
   [
     [51.51, -0.09],
     [51.513, -0.08],
@@ -380,13 +385,13 @@ const layerGroupItem1 = L.polyline(
   ],
   { pmIgnore: true }
 );
-const layerGroupItem2 = L.polygon([
+const layerGroupItem2 = new Polygon([
   [51.52, -0.06],
   [51.51, -0.07],
   [51.52, -0.05],
 ]);
 
-const layerGroupItem3 = L.polygon([
+const layerGroupItem3 = new Polygon([
   [51.51549835365031, -0.06450164634969281],
   [51.51944818307178, -0.08425079345703125],
   [51.51868369995795, -0.06131630004205801],
@@ -409,13 +414,13 @@ const feature = {
   },
 };
 
-const layerGroup = L.featureGroup([layerGroupItem1]).addTo(map4);
+const layerGroup = new FeatureGroup([layerGroupItem1]).addTo(map4);
 layerGroup.pm.toggleEdit({
   draggable: true,
   snappable: true,
   snapDistance: 30,
 });
-const someLayer = L.geoJSON(feature);
+const someLayer = new GeoJSON(feature);
 
 layerGroup.addLayer(someLayer);
 
@@ -435,7 +440,7 @@ map4.pm.addControls({
 });
 
 map4.pm.enableDraw('Polygon', {
-  finishOn: 'mouseout',
+  finishOn: 'pointerout',
 });
 map4.pm.disableDraw('Polygon');
 
@@ -472,8 +477,8 @@ layerGroup.on('pm:markerdragend', (e) => {
 });
 
 // test with markercluster
-// var markers = L.markerClusterGroup();
-// markers.addLayer(L.marker([51.505, -0.07]));
-// markers.addLayer(L.marker([51.505, -0.08]));
-// markers.addLayer(L.marker([51.505, -0.09]));
+// var markers = new MarkerClusterGroup();
+// markers.addLayer(new Marker([51.505, -0.07]));
+// markers.addLayer(new Marker([51.505, -0.08]));
+// markers.addLayer(new Marker([51.505, -0.09]));
 // map4.addLayer(markers);

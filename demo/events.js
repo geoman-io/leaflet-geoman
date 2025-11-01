@@ -1,10 +1,15 @@
 /* eslint-disable no-console */
-const map = L.map('map').setView([39.74739, -105], 13);
+import { TileLayer, LeafletMap } from "leaflet";
+import Geoman from 'leaflet-geoman';
+
+Geoman.initialize();
+
+const map = new LeafletMap('map').setView([39.74739, -105], 13);
 
 map.pm.addControls();
 map.pm.setLang('de');
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',

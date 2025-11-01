@@ -12,6 +12,17 @@
     <!-- <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />   -->
     <link rel="stylesheet" href="demo.css" />
     <!-- <script src="https://unpkg.com/leaflet.markercluster@1.0.0"></script> -->
+
+    <!-- You can change from the local source to the cdn: -->
+    <!-- https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js -->
+    <script type="importmap">
+    {
+      "imports": {
+        "leaflet": "../node_modules/leaflet/dist/leaflet-src.js",
+        "leaflet-geoman": "../dist/leaflet-geoman.js"
+      }
+    }
+    </script>
   </head>
 
   <body>
@@ -39,10 +50,6 @@
         <div class="map" id="example4"></div>
       </article>
     </div>
-    <script src="https://unpkg.com/leaflet@latest/dist/leaflet.js"></script>
-    <script src="../dist/leaflet-geoman.js"></script>
-    <!-- You can change from the local source to the cdn: -->
-    <!-- <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"></script>   -->
-    <script src="demo.js"></script>
+    <script src="demo.js" type="module"></script>
   </body>
 </html>

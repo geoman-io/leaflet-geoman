@@ -1,8 +1,13 @@
 /* eslint-disable no-console */
 /* eslint-disable no-alert */
-const map = L.map('map').setView([40.0269319, 32.83604819], 13);
+import { TileLayer, LeafletMap } from "leaflet";
+import Geoman from 'leaflet-geoman';
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+Geoman.initialize();
+
+const map = new LeafletMap('map').setView([40.0269319, 32.83604819], 13);
+
+new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -24,7 +29,7 @@ map.pm.Toolbar.createCustomControl({
   className: 'leaflet-pm-icon-marker xyz-class',
   title: 'Count layers',
   onClick: () => {
-    alert(`There are ${L.PM.Utils.findLayers(map).length} layers on the map`);
+    alert(`There are ${Geoman.Utils.findLayers(map).length} layers on the map`);
   },
   toggle: false,
 });

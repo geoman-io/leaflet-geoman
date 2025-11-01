@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+    <meta
+      content="initial-scale=1, maximum-scale=1,user-scalable=no"
+      name="viewport"
+    />
+    <title>Parcel Locator</title>
+
+    <style>
+      .map.mode-create {
+        cursor: crosshair;
+      }
+
+      /* .leaflet-pm-toolbar .icon-freedraw {
+        background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDEyOCAxMjgiIGhlaWdodD0iMTI4cHgiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAxMjggMTI4IiB3aWR0aD0iMTI4cHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0xMjMuMzE1LDE2TDExMi4wMDMsNC42ODZDMTA4Ljg3OCwxLjU2MywxMDQuNzgsMCwxMDAuNjg3LDBzLTguMTg4LDEuNTYzLTExLjMxMyw0LjY4NmwtNjguNjksNjguNjg5ICBDMTcuNTYzLDc2LjUsOC4wMDQsODguNTg2LDgsOTIuNjhMMCwxMjhsMzUuMzEzLThjMCwwLDE2LjE4OC05LjU2MywxOS4zMTMtMTIuNjg4bDY4LjY5LTY4LjY4NyAgQzEyOS41NjIsMzIuMzc1LDEyOS41NjIsMjIuMjQzLDEyMy4zMTUsMTZ6IE0xMC42MDUsMTE3LjM5OGw1LjE5NS0yMi45NTNjMC4wNzQtMC4zMjgsMC4xMjktMC42NjQsMC4xNi0wLjk5MiAgYzAuMDE2LTAuMDQ3LDAuMDU5LTAuMTE3LDAuMDc4LTAuMTY0bDE4LjA5LDE4LjA5NGMtMC42MDUsMC4zNjctMS4yMTUsMC43MzQtMS44MTMsMS4wOTRMMTAuNjA1LDExNy4zOTh6IE00OC45ODQsMTAxLjY0MSAgYy0wLjkwNiwwLjg1OS00LjAzOSwyLjk3Ny03Ljg2Nyw1LjQxNEwyMC4zOTEsODYuMzI4YzIuMTI1LTIuOTE0LDQuNDkyLTUuODQ0LDUuOTQ5LTcuMjk3bDUxLjcyMi01MS43MThsMjIuNjI1LDIyLjYyNSAgTDQ4Ljk4NCwxMDEuNjQxeiBNMTE3LjY1OSwzMi45NjlsLTExLjMxNiwxMS4zMTNMODMuNzE4LDIxLjY1N2wxMS4zMTYtMTEuMzEzQzk2LjU0Miw4LjgyOSw5OC41NSw4LDEwMC42ODcsOCAgczQuMTQ4LDAuODM2LDUuNjYsMi4zNDRsMTEuMzEzLDExLjMxM2MxLjUxMiwxLjUwOCwyLjM0LDMuNTE2LDIuMzQsNS42NTZDMTE5Ljk5OSwyOS40NDYsMTE5LjE2NywzMS40NjEsMTE3LjY1OSwzMi45Njl6IiBmaWxsPSIjNTQ2RTdBIi8+PC9zdmc+');
+      } */
+      .pm-textarea {
+        /*font-size: 13px;*/
+      }
+    </style>
+    <!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/0.0.124/turf.js" integrity="sha512-dy8ekk3QDHnX4esjks0Xvlo/CLRSdHchD2cuRdzx+e97R4EUC2OkBhi+f9+6kU6S7JwO6cIeOPU8WbfakvuPRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>-->
+    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>-->
+    <!--    <script src="https://rawgit.com/Wildhoney/Leaflet.FreeDraw/master/dist/leaflet-freedraw.iife.js"></script>-->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7.1.0/turf.min.js"></script> -->
+    <!-- <link
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      rel="stylesheet"
+    /> -->
+    <link href="../dist/leaflet-geoman.css" rel="stylesheet" />
+    <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet-src.js"></script> -->
+    <link href="../node_modules/leaflet/dist/leaflet.css" rel="stylesheet" />
+
+    <!-- <script src="../node_modules/leaflet/dist/leaflet-src.js"></script>
+    <script src="../dist/leaflet-geoman.js"></script> -->
+    <script type="importmap">
+    {
+      "imports": {
+        "leaflet": "../node_modules/leaflet/dist/leaflet-src.js",
+        "leaflet-geoman": "../dist/leaflet-geoman.js"
+      }
+    }
+    </script>
+  </head>
+
+  <body>
+    <div id="map" style="height: 600px; width: 1000px"></div>
+    <script type="module">
+
+        import L from 'leaflet';
+        window.L = L;
+        import Geoman from 'leaflet-geoman';
+        Geoman.initialize();
+
+      var map = new L.Map('map',{
+        
+    // crs: L.CRS.Simple
+      }).setView([19.04469, 72.9258], 10);
+      const tiles = new L.TileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }
+      )
+      .addTo(map);
+      //
+
+      map.pm.addControls({
+      });
+
+      map.pm.setGlobalOptions({
+        selfIntersection: false
+      })
+
+      window.map = map;
+      window.Geoman = Geoman;
+    </script>
+  </body>
+</html>
