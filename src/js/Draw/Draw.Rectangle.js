@@ -1,7 +1,7 @@
 import { DivIcon, FeatureGroup, Marker, Point, Rectangle, Util } from 'leaflet';
 import { fixLatOffset, getTranslation } from '../helpers';
-import Draw from './L.PM.Draw';
-import Utils from '../L.PM.Utils';
+import Draw from './Draw';
+import Utils from '../GeomanUtils';
 
 export default class GeomanDrawRectangle extends Draw {
   initialize(map) {
@@ -12,7 +12,7 @@ export default class GeomanDrawRectangle extends Draw {
 
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+    // instances of Geoman.Draw. So a dev could set drawing style one time as some kind of config
     Util.setOptions(this, options);
 
     // enable draw mode
@@ -20,7 +20,7 @@ export default class GeomanDrawRectangle extends Draw {
 
     // create a new layergroup
     this._layerGroup = new FeatureGroup();
-    this._layerGroup._pmTempLayer = true;
+    this._layerGroup._geomanTempLayer = true;
     this._layerGroup.addTo(this._map);
 
     // the rectangle we want to draw
@@ -32,7 +32,7 @@ export default class GeomanDrawRectangle extends Draw {
       this.options.pathOptions
     );
     this._setPane(this._layer, 'layerPane');
-    this._layer._pmTempLayer = true;
+    this._layer._geomanTempLayer = true;
 
     // this is the marker at the origin of the rectangle
     // this needs to be present, for tracking purposes, but we'll make it invisible if a user doesn't want to see it!
@@ -46,7 +46,7 @@ export default class GeomanDrawRectangle extends Draw {
       opacity: this.options.cursorMarker ? 1 : 0,
     });
     this._setPane(this._startMarker, 'vertexPane');
-    this._startMarker._pmTempLayer = true;
+    this._startMarker._geomanTempLayer = true;
     this._layerGroup.addLayer(this._startMarker);
 
     // this is the hintmarker on the pointer cursor
@@ -57,7 +57,7 @@ export default class GeomanDrawRectangle extends Draw {
       }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
-    this._hintMarker._pmTempLayer = true;
+    this._hintMarker._geomanTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
     // show the hintmarker if the option is set
@@ -91,7 +91,7 @@ export default class GeomanDrawRectangle extends Draw {
           zIndexOffset: 100,
         });
         this._setPane(styleMarker, 'vertexPane');
-        styleMarker._pmTempLayer = true;
+        styleMarker._geomanTempLayer = true;
         this._layerGroup.addLayer(styleMarker);
 
         this._styleMarkers.push(styleMarker);
@@ -108,7 +108,7 @@ export default class GeomanDrawRectangle extends Draw {
     this._map.on('pointermove', this._syncHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // an array used in the snapping mixin.
     // TODO: think about moving this somewhere else?
@@ -141,7 +141,7 @@ export default class GeomanDrawRectangle extends Draw {
     this._map.removeLayer(this._layerGroup);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, false);
 
     // cleanup snapping
     if (this.options.snappable) {
@@ -310,16 +310,16 @@ export default class GeomanDrawRectangle extends Draw {
         this._map
       );
       rectangleLayer.setLatLngs(corners);
-      if (rectangleLayer.pm) {
-        rectangleLayer.pm._setAngle(this.options.rectangleAngle || 0);
+      if (rectangleLayer.geoman) {
+        rectangleLayer.geoman._setAngle(this.options.rectangleAngle || 0);
       }
     }
 
     this._setPane(rectangleLayer, 'layerPane');
     this._finishLayer(rectangleLayer);
-    rectangleLayer.addTo(this._map.pm._getContainingLayer());
+    rectangleLayer.addTo(this._map.geoman._getContainingLayer());
 
-    // fire the pm:create event and pass shape and layer
+    // fire the geoman:create event and pass shape and layer
     this._fireCreate(rectangleLayer);
 
     const hintMarkerLatLng = this._hintMarker.getLatLng();

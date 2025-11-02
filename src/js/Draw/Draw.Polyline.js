@@ -1,9 +1,9 @@
 import kinks from '@turf/kinks';
-import Draw from './L.PM.Draw';
+import Draw from './Draw';
 
 import { DivIcon, FeatureGroup, Marker, Point, Polyline, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
-import Utils from '../L.PM.Utils';
+import Utils from '../GeomanUtils';
 
 export default class GeomanDrawPolyline extends Draw {
   initialize(map) {
@@ -23,22 +23,22 @@ export default class GeomanDrawPolyline extends Draw {
 
     // create a new layergroup
     this._layerGroup = new FeatureGroup();
-    this._layerGroup._pmTempLayer = true;
+    this._layerGroup._geomanTempLayer = true;
     this._layerGroup.addTo(this._map);
 
     // this is the polyLine that'll make up the polygon
     this._layer = new Polyline([], {
       ...this.options.templineStyle,
-      pmIgnore: false,
+      geomanIgnore: false,
     });
     this._setPane(this._layer, 'layerPane');
-    this._layer._pmTempLayer = true;
+    this._layer._geomanTempLayer = true;
     this._layerGroup.addLayer(this._layer);
 
     // this is the hintline from the pointer cursor to the last marker
     this._hintline = new Polyline([], this.options.hintlineStyle);
     this._setPane(this._hintline, 'layerPane');
-    this._hintline._pmTempLayer = true;
+    this._hintline._geomanTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
     // this is the hintmarker on the pointer cursor
@@ -50,7 +50,7 @@ export default class GeomanDrawPolyline extends Draw {
       }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
-    this._hintMarker._pmTempLayer = true;
+    this._hintMarker._geomanTempLayer = true;
     this._layerGroup.addLayer(this._hintMarker);
 
     // show the hintmarker if the option is set
@@ -99,7 +99,7 @@ export default class GeomanDrawPolyline extends Draw {
     this._hintMarker.on('move', this._syncHintLine, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // an array used in the snapping mixin.
     // TODO: think about moving this somewhere else?
@@ -141,7 +141,7 @@ export default class GeomanDrawPolyline extends Draw {
     this._map.removeLayer(this._layerGroup);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, false);
 
     // cleanup snapping
     if (this.options.snappable) {
@@ -381,9 +381,9 @@ export default class GeomanDrawPolyline extends Draw {
     const polylineLayer = new Polyline(coords, this.options.pathOptions);
     this._setPane(polylineLayer, 'layerPane');
     this._finishLayer(polylineLayer);
-    polylineLayer.addTo(this._map.pm._getContainingLayer());
+    polylineLayer.addTo(this._map.geoman._getContainingLayer());
 
-    // fire the pm:create event and pass shape and layer
+    // fire the geoman:create event and pass shape and layer
     this._fireCreate(polylineLayer);
 
     if (this.options.snappable) {
@@ -407,7 +407,7 @@ export default class GeomanDrawPolyline extends Draw {
       icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
-    marker._pmTempLayer = true;
+    marker._geomanTempLayer = true;
 
     // add it to the map
     this._layerGroup.addLayer(marker);

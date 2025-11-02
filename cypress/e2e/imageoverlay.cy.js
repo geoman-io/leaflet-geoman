@@ -16,9 +16,9 @@ describe('Opens Testing Environment', () => {
         { interactive: true }
       ).addTo(map);
 
-      map.on('pm:drawstart', (e) => {
+      map.on('geoman:drawstart', (e) => {
         const layer = e.workingLayer;
-        layer.on('pm:snap', (x) => {
+        layer.on('geoman:snap', (x) => {
           eventcalled = x.type;
         });
       });
@@ -32,7 +32,7 @@ describe('Opens Testing Environment', () => {
     });
 
     cy.window().then(() => {
-      expect(eventcalled).to.equal('pm:snap');
+      expect(eventcalled).to.equal('geoman:snap');
     });
   });
 
@@ -52,7 +52,7 @@ describe('Opens Testing Environment', () => {
         { interactive: true }
       ).addTo(map);
 
-      io.pm._dragMixinOnPointerDown = () => {
+      io.geoman._dragMixinOnPointerDown = () => {
         eventcalled = true;
       };
     });

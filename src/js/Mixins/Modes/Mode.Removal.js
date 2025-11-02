@@ -1,5 +1,5 @@
 import { LayerGroup, Util } from 'leaflet';
-import Geoman from '../../L.PM';
+import Geoman from '../../Geoman';
 
 const GlobalRemovalMode = {
   _globalRemovalModeEnabled: false,
@@ -8,8 +8,8 @@ const GlobalRemovalMode = {
     // handle existing layers
     this.map.eachLayer((layer) => {
       if (this._isRelevantForRemoval(layer)) {
-        if (layer.pm.enabled()) {
-          layer.pm.disable();
+        if (layer.geoman.enabled()) {
+          layer.geoman.disable();
         }
         layer.on('click', this.removeLayer, this);
       }
@@ -64,28 +64,28 @@ const GlobalRemovalMode = {
     // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
     const removeable =
-      this._isRelevantForRemoval(layer) && !layer.pm.dragging();
+      this._isRelevantForRemoval(layer) && !layer.geoman.dragging();
 
     if (removeable) {
-      layer.removeFrom(this.map.pm._getContainingLayer());
+      layer.removeFrom(this.map.geoman._getContainingLayer());
       layer.remove();
       if (layer instanceof LayerGroup) {
         this._fireRemoveLayerGroup(layer);
         this._fireRemoveLayerGroup(this.map, layer);
       } else {
-        layer.pm._fireRemove(layer);
-        layer.pm._fireRemove(this.map, layer);
+        layer.geoman._fireRemove(layer);
+        layer.geoman._fireRemove(this.map, layer);
       }
     }
   },
   _isRelevantForRemoval(layer) {
     return (
-      layer.pm &&
+      layer.geoman &&
       !(layer instanceof LayerGroup) &&
-      ((!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (Geoman.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
-      layer.pm.options.allowRemoval
+      ((!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.geomanIgnore === false)) && // if optIn is true and geomanIgnore is false
+      !layer._geomanTempLayer &&
+      layer.geoman.options.allowRemoval
     );
   },
   handleLayerAdditionInGlobalRemovalMode() {
@@ -95,8 +95,8 @@ const GlobalRemovalMode = {
       for (const id in layers) {
         const layer = layers[id];
         if (this._isRelevantForRemoval(layer)) {
-          if (layer.pm.enabled()) {
-            layer.pm.disable();
+          if (layer.geoman.enabled()) {
+            layer.geoman.disable();
           }
           layer.on('click', this.removeLayer, this);
         }

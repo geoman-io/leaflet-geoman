@@ -1,6 +1,6 @@
 import { Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
-import Draw from './L.PM.Draw';
+import Draw from './Draw';
 
 export default class GeomanDrawMarker extends Draw {
   initialize(map) {
@@ -13,7 +13,7 @@ export default class GeomanDrawMarker extends Draw {
 
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+    // instances of L.Geoman.Draw. So a dev could set drawing style one time as some kind of config
     Util.setOptions(this, options);
 
     // change enabled state
@@ -26,7 +26,7 @@ export default class GeomanDrawMarker extends Draw {
     this._map.on('click', this._createMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the pointer cursor
     this._hintMarker = new Marker(
@@ -34,7 +34,7 @@ export default class GeomanDrawMarker extends Draw {
       this.options.markerStyle
     );
     this._setPane(this._hintMarker, 'markerPane');
-    this._hintMarker._pmTempLayer = true;
+    this._hintMarker._geomanTempLayer = true;
     this._hintMarker.addTo(this._map);
 
     // add tooltip to hintmarker
@@ -60,7 +60,7 @@ export default class GeomanDrawMarker extends Draw {
     if (this.options.markerEditable) {
       this._map.eachLayer((layer) => {
         if (this.isRelevantMarker(layer)) {
-          layer.pm.enable();
+          layer.geoman.enable();
         }
       });
     }
@@ -94,12 +94,12 @@ export default class GeomanDrawMarker extends Draw {
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {
       if (this.isRelevantMarker(layer)) {
-        layer.pm.disable();
+        layer.geoman.disable();
       }
     });
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, false);
 
     // cleanup snapping
     if (this.options.snappable) {
@@ -126,9 +126,9 @@ export default class GeomanDrawMarker extends Draw {
   isRelevantMarker(layer) {
     return (
       layer instanceof Marker &&
-      layer.pm &&
-      !layer._pmTempLayer &&
-      !layer.pm._initTextMarker
+      layer.geoman &&
+      !layer._geomanTempLayer &&
+      !layer.geoman._initTextMarker
     );
   }
 
@@ -174,21 +174,21 @@ export default class GeomanDrawMarker extends Draw {
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 
-    if (!marker.pm) {
-      // if pm is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
+    if (!marker.geoman) {
+      // if geoman is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
       marker.options.draggable = false;
     }
     // add marker to the map
-    marker.addTo(this._map.pm._getContainingLayer());
+    marker.addTo(this._map.geoman._getContainingLayer());
 
-    if (marker.pm && this.options.markerEditable) {
+    if (marker.geoman && this.options.markerEditable) {
       // enable editing for the marker
-      marker.pm.enable();
+      marker.geoman.enable();
     } else if (marker.dragging) {
       marker.dragging.disable();
     }
 
-    // fire the pm:create event and pass shape and marker
+    // fire the geoman:create event and pass shape and marker
     this._fireCreate(marker);
 
     this._cleanupSnapping();

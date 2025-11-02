@@ -11,7 +11,7 @@ new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
-map.pm.addControls({
+map.geoman.addControls({
   position: 'topleft',
   drawControls: false,
   editControls: true,
@@ -21,7 +21,7 @@ map.pm.addControls({
 });
 
 // Click button -> toggle disabled
-map.pm.Toolbar.createCustomControl({
+map.geoman.Toolbar.createCustomControl({
   name: 'alertBox',
   block: 'custom',
   className: 'leaflet-geoman-icon-marker xyz-class',
@@ -42,19 +42,19 @@ const _actions = [
     name: 'actionName',
   },
 ];
-map.pm.Toolbar.copyDrawControl('Rectangle', {
+map.geoman.Toolbar.copyDrawControl('Rectangle', {
   name: 'RectangleCopy',
   block: 'custom',
   title: 'Display text on hover button',
   actions: _actions,
 });
-map.pm.Draw.RectangleCopy.setPathOptions({ color: 'green' });
+map.geoman.Draw.RectangleCopy.setPathOptions({ color: 'green' });
 
-map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
+map.geoman.Toolbar.changeControlOrder(['RectangleCopy']);
 
-map.on('pm:actionclick', (e) => {
+map.on('geoman:actionclick', (e) => {
   console.log(e);
 });
-map.on('pm:buttonclick', (e) => {
+map.on('geoman:buttonclick', (e) => {
   console.log(e);
 });

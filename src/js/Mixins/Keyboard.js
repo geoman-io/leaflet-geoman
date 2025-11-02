@@ -29,7 +29,7 @@ const createKeyboardMixins = () => ({
     this._lastEvents[e.type] = data;
     this._lastEvents.current = data;
 
-    this.map.pm._fireKeyeventEvent(e, e.type, focusOn);
+    this.map.geoman._fireKeyeventEvent(e, e.type, focusOn);
   },
   _onBlur(e) {
     e.altKey = false;

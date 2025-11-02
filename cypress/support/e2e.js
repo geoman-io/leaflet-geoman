@@ -51,7 +51,7 @@ beforeEach(() => {
       contentWindow.TOP_LEFT_BLOCK_CONTROL_COUNT = 6;
 
       // add leaflet-geoman toolbar
-      map.pm.addControls();
+      map.geoman.addControls();
     },
   });
 

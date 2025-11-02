@@ -11,7 +11,7 @@ import {
 import get from 'lodash/get';
 import translations from '../../assets/translations';
 
-import Geoman from '../L.PM';
+import Geoman from '../Geoman';
 
 export function getTranslation(path) {
   const lang = Geoman.activeLang;

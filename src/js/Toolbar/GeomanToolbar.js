@@ -1,4 +1,4 @@
-import GeomanControl from './L.PM.GeomanControl';
+import GeomanControl from './GeomanControl';
 
 import { Class, DomUtil, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
@@ -218,7 +218,7 @@ export default class Toolbar extends Class {
   }
 
   _defineButtons() {
-    // some buttons are still in their respective classes, like L.PM.Draw.Polygon
+    // some buttons are still in their respective classes, like Geoman.Draw.Polygon
     const drawMarkerButton = {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-marker',
       title: getTranslation('buttonTitles.drawMarkerButton'),
@@ -226,7 +226,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -242,7 +242,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -258,7 +258,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -274,7 +274,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -291,7 +291,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -307,7 +307,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -321,7 +321,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-edit',
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalEditMode();
+        this.map.geoman.toggleGlobalEditMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -336,7 +336,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-drag',
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalDragMode();
+        this.map.geoman.toggleGlobalDragMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -353,7 +353,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // enable polygon drawing mode without snap
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle({
+        this.map.geoman.Draw[ctx.button._button.jsClass].toggle({
           snappable: true,
           cursorMarker: true,
           allowSelfIntersection: false,
@@ -372,7 +372,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-delete',
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalRemovalMode();
+        this.map.geoman.toggleGlobalRemovalMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -387,7 +387,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-rotate',
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalRotateMode();
+        this.map.geoman.toggleGlobalRotateMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -404,7 +404,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -519,7 +519,7 @@ export default class Toolbar extends Class {
     if (this.buttons[options.name]) {
       throw new TypeError('Button with this name already exists');
     }
-    const drawInstance = this.map.pm.Draw.createNewDrawInstance(
+    const drawInstance = this.map.geoman.Draw.createNewDrawInstance(
       options.name,
       instance
     );
@@ -676,7 +676,7 @@ export default class Toolbar extends Class {
       }
     });
 
-    this.map.pm.Toolbar.buttons = newbtnorder;
+    this.map.geoman.Toolbar.buttons = newbtnorder;
     this._showHideButtons();
   }
 

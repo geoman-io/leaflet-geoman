@@ -16,7 +16,7 @@ describe('Opens Testing Environment', () => {
     });
 
     cy.window().then(({ map }) => {
-      const count = map.pm.getGeomanLayers().length;
+      const count = map.geoman.getGeomanLayers().length;
       expect(count).to.equal(1);
     });
   });
@@ -38,9 +38,9 @@ describe('Opens Testing Environment', () => {
     });
 
     cy.window().then(({ map }) => {
-      const count = map.pm.getGeomanLayers().length;
+      const count = map.geoman.getGeomanLayers().length;
       expect(count).to.equal(2);
-      const count2 = map.pm.getGeomanDrawLayers().length;
+      const count2 = map.geoman.getGeomanDrawLayers().length;
       expect(count2).to.equal(1);
     });
   });

@@ -8,10 +8,10 @@ import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalRemovalMode from './Mixins/Modes/Mode.Removal';
 import GlobalRotateMode from './Mixins/Modes/Mode.Rotate';
 import { getRenderer } from './helpers';
-import Draw from './Draw/L.PM.Draw';
-import Toolbar from './Toolbar/L.PM.Toolbar';
-import Geoman from './L.PM';
-import Utils from './L.PM.Utils';
+import Draw from './Draw/Draw';
+import Toolbar from './Toolbar/GeomanToolbar';
+import Geoman from './Geoman';
+import Utils from './GeomanUtils';
 
 export default class GeomanMap extends Class {
   static {
@@ -87,7 +87,7 @@ export default class GeomanMap extends Class {
     }
 
     Geoman.activeLang = lang;
-    this.map.pm.Toolbar.reinit();
+    this.map.geoman.Toolbar.reinit();
     this._fireLangChange(oldLang, lang, fallback, translations[lang]);
   }
 
@@ -120,9 +120,9 @@ export default class GeomanMap extends Class {
     const ignore = optionsModifier.ignoreShapes || [];
     const mergeOptions = optionsModifier.merge || false;
 
-    this.map.pm.Draw.shapes.forEach((shape) => {
+    this.map.geoman.Draw.shapes.forEach((shape) => {
       if (ignore.indexOf(shape) === -1) {
-        this.map.pm.Draw[shape].setPathOptions(options, mergeOptions);
+        this.map.geoman.Draw[shape].setPathOptions(options, mergeOptions);
       }
     });
   }
@@ -138,44 +138,44 @@ export default class GeomanMap extends Class {
     // check if switched the resizeable mode for CircleMarker while drawing
     let reenableCircleMarker = false;
     if (
-      this.map.pm.Draw.CircleMarker.enabled() &&
-      !!this.map.pm.Draw.CircleMarker.options.resizeableCircleMarker !==
+      this.map.geoman.Draw.CircleMarker.enabled() &&
+      !!this.map.geoman.Draw.CircleMarker.options.resizeableCircleMarker !==
         !!options.resizeableCircleMarker
     ) {
-      this.map.pm.Draw.CircleMarker.disable();
+      this.map.geoman.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
     }
     // check if switched the resizeable mode for Circle while drawing
     let reenableCircle = false;
     if (
-      this.map.pm.Draw.Circle.enabled() &&
-      !!this.map.pm.Draw.Circle.options.resizeableCircle !==
+      this.map.geoman.Draw.Circle.enabled() &&
+      !!this.map.geoman.Draw.Circle.options.resizeableCircle !==
         !!options.resizeableCircle
     ) {
-      this.map.pm.Draw.Circle.disable();
+      this.map.geoman.Draw.Circle.disable();
       reenableCircle = true;
     }
 
     // enable options for Drawing Shapes
-    this.map.pm.Draw.shapes.forEach((shape) => {
-      this.map.pm.Draw[shape].setOptions(options);
+    this.map.geoman.Draw.shapes.forEach((shape) => {
+      this.map.geoman.Draw[shape].setOptions(options);
     });
 
     if (reenableCircleMarker) {
-      this.map.pm.Draw.CircleMarker.enable();
+      this.map.geoman.Draw.CircleMarker.enable();
     }
 
     if (reenableCircle) {
-      this.map.pm.Draw.Circle.enable();
+      this.map.geoman.Draw.Circle.enable();
     }
 
     // enable options for Editing
     const layers = Utils.findLayers(this.map);
     layers.forEach((layer) => {
-      layer.pm.setOptions(options);
+      layer.geoman.setOptions(options);
     });
 
-    this.map.fire('pm:globaloptionschanged');
+    this.map.fire('geoman:globaloptionschanged');
 
     // store options
     this.globalOptions = options;
@@ -187,8 +187,8 @@ export default class GeomanMap extends Class {
   applyGlobalOptions() {
     const layers = Utils.findLayers(this.map);
     layers.forEach((layer) => {
-      if (layer.pm.enabled()) {
-        layer.pm.applyOptions();
+      if (layer.geoman.enabled()) {
+        layer.geoman.applyOptions();
       }
     });
   }
@@ -219,7 +219,7 @@ export default class GeomanMap extends Class {
       return layers;
     }
     const group = new FeatureGroup();
-    group._pmTempLayer = true;
+    group._geomanTempLayer = true;
     layers.forEach((layer) => {
       group.addLayer(layer);
     });
@@ -234,7 +234,7 @@ export default class GeomanMap extends Class {
       return layers;
     }
     const group = new FeatureGroup();
-    group._pmTempLayer = true;
+    group._geomanTempLayer = true;
     layers.forEach((layer) => {
       group.addLayer(layer);
     });

@@ -2,7 +2,7 @@ import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import { copyLatLngs, hasValues, removeEmptyCoordRings } from '../helpers';
-import Edit from './L.PM.Edit';
+import Edit from './Edit';
 
 import {
   DivIcon,
@@ -13,7 +13,7 @@ import {
   Util,
 } from 'leaflet';
 import MarkerLimits from '../Mixins/MarkerLimits';
-import Utils from '../L.PM.Utils';
+import Utils from '../GeomanUtils';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
@@ -70,7 +70,7 @@ export default class GeomanEditPolyline extends Edit {
 
     if (!this.options.allowSelfIntersection) {
       this._layer.on(
-        'pm:vertexremoved',
+        'geoman:vertexremoved',
         this._handleSelfIntersectionOnVertexRemoval,
         this
       );
@@ -109,7 +109,7 @@ export default class GeomanEditPolyline extends Edit {
 
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
-        'pm:vertexremoved',
+        'geoman:vertexremoved',
         this._handleSelfIntersectionOnVertexRemoval,
         this
       );
@@ -161,7 +161,7 @@ export default class GeomanEditPolyline extends Edit {
 
     // add markerGroup to map, markerGroup includes regular and middle markers
     this._markerGroup = new FeatureGroup();
-    this._markerGroup._pmTempLayer = true;
+    this._markerGroup._geomanTempLayer = true;
 
     // handle coord-rings (outer, inner, etc)
     const handleRing = (coordsArr) => {
@@ -206,7 +206,7 @@ export default class GeomanEditPolyline extends Edit {
     });
     this._setPane(marker, 'vertexPane');
 
-    marker._pmTempLayer = true;
+    marker._geomanTempLayer = true;
 
     if (this.options.rotate) {
       marker.on('dragstart', this._onRotateStart, this);

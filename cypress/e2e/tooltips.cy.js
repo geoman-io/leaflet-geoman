@@ -5,7 +5,7 @@ describe('Shows Tooltips', () => {
 
   it('Has Working Translations', () => {
     cy.window().then(({ map }) => {
-      map.pm.setLang('de');
+      map.geoman.setLang('de');
     });
 
     cy.toolbarButton('polygon').click();
@@ -21,7 +21,7 @@ describe('Shows Tooltips', () => {
         },
       };
 
-      map.pm.setLang('customName', customTranslation, 'en');
+      map.geoman.setLang('customName', customTranslation, 'en');
     });
 
     cy.toolbarButton('marker').click();
@@ -157,7 +157,7 @@ describe('Shows Tooltips', () => {
 
   it('Properly disables tooltips', () => {
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Polygon', {
+      map.geoman.enableDraw('Polygon', {
         tooltips: false,
       });
     });
@@ -172,13 +172,13 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-geoman-active .action-cancel').click();
 
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Polygon');
+      map.geoman.enableDraw('Polygon');
     });
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
     cy.get('.leaflet-geoman-active .action-cancel').click();
 
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Polygon', {
+      map.geoman.enableDraw('Polygon', {
         tooltips: true,
       });
     });
@@ -193,7 +193,7 @@ describe('Shows Tooltips', () => {
 
   it('Has Working translation for circle marker tooltip', () => {
     cy.window().then(({ map }) => {
-      map.pm.setLang('es');
+      map.geoman.setLang('es');
     });
 
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
@@ -228,7 +228,7 @@ describe('Shows Tooltips', () => {
     });
 
     cy.window().then(({ map }) => {
-      map.pm.Draw.Polygon._removeLastVertex();
+      map.geoman.Draw.Polygon._removeLastVertex();
     });
 
     cy.get('.leaflet-tooltip-bottom').then((el) => {
@@ -246,7 +246,7 @@ describe('Shows Tooltips', () => {
     cy.window().then(({ map, Geoman }) => {
       // we set the language to 'custom'
       // to make sure that it has no fallback we overwrite the fallback with 'xx'
-      map.pm.setLang(
+      map.geoman.setLang(
         'custom',
         {
           tooltips: {

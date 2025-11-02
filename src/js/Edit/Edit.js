@@ -61,25 +61,25 @@ export default class Edit extends Class {
   _setPane(layer, type) {
     if (type === 'layerPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.layerPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.layerPane) ||
         'overlayPane';
     } else if (type === 'vertexPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.vertexPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.vertexPane) ||
         'markerPane';
     } else if (type === 'markerPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.markerPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.markerPane) ||
         'markerPane';
     }
   }
 
   remove() {
     const map = this._map || this._layer._map;
-    map.pm.removeLayer({ target: this._layer });
+    map.geoman.removeLayer({ target: this._layer });
   }
 
   _vertexValidation(type, e) {

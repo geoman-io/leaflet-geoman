@@ -1,5 +1,5 @@
-import Utils from '../L.PM.Utils';
-import GeomanEditCircleMarker from './L.PM.Edit.CircleMarker';
+import Utils from '../GeomanUtils';
+import GeomanEditCircleMarker from './Edit.CircleMarker';
 
 export default class GeomanEditCircle extends GeomanEditCircleMarker {
   _shape = 'Circle';
@@ -43,7 +43,7 @@ export default class GeomanEditCircle extends GeomanEditCircleMarker {
   _onDragEnd() {}
 
   _updateHiddenPolyCircle() {
-    const crsSimple = this._map && this._map.pm._isCRSSimple();
+    const crsSimple = this._map && this._map.geoman._isCRSSimple();
     if (this._hiddenPolyCircle) {
       this._hiddenPolyCircle.setLatLngs(
         Utils.circleToPolygon(this._layer, 200, !crsSimple).getLatLngs()

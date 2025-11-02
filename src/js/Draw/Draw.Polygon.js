@@ -1,7 +1,7 @@
 import { DivIcon, Marker, Polygon } from 'leaflet';
 import { getTranslation } from '../helpers';
-import Draw from './L.PM.Draw';
-import GeomanDrawLine from './L.PM.Draw.Polyline';
+import Draw from './Draw';
+import GeomanDrawLine from './Draw.Polyline';
 
 export default class GeomanDrawPolygon extends GeomanDrawLine {
   initialize(map) {
@@ -13,7 +13,7 @@ export default class GeomanDrawPolygon extends GeomanDrawLine {
   enable(options) {
     Draw.Polyline.prototype.enable.call(this, options);
     // Overwrite the shape "Polyline" of this._layer
-    this._layer.pm._shape = 'Polygon';
+    this._layer.geoman._shape = 'Polygon';
   }
 
   _createMarker(latlng) {
@@ -25,7 +25,7 @@ export default class GeomanDrawPolygon extends GeomanDrawLine {
     this._setPane(marker, 'vertexPane');
 
     // mark this marker as temporary
-    marker._pmTempLayer = true;
+    marker._geomanTempLayer = true;
 
     // add it to the map
     this._layerGroup.addLayer(marker);
@@ -95,9 +95,9 @@ export default class GeomanDrawPolygon extends GeomanDrawLine {
     const polygonLayer = new Polygon(coords, this.options.pathOptions);
     this._setPane(polygonLayer, 'layerPane');
     this._finishLayer(polygonLayer);
-    polygonLayer.addTo(this._map.pm._getContainingLayer());
+    polygonLayer.addTo(this._map.geoman._getContainingLayer());
 
-    // fire the pm:create event and pass shape and layer
+    // fire the geoman:create event and pass shape and layer
     this._fireCreate(polygonLayer);
 
     // clean up snapping states

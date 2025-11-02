@@ -10,8 +10,8 @@ import {
   Util,
 } from 'leaflet';
 import { hasValues, prioritiseSort } from '../helpers';
-import Geoman from '../L.PM';
-import Utils from '../L.PM.Utils';
+import Geoman from '../Geoman';
+import Utils from '../GeomanUtils';
 
 const SnapMixin = {
   _initSnappableMarkers() {
@@ -21,11 +21,11 @@ const SnapMixin = {
 
     this._assignEvents(this._markers);
 
-    this._layer.off('pm:dragstart', this._unsnap, this);
-    this._layer.on('pm:dragstart', this._unsnap, this);
+    this._layer.off('geoman:dragstart', this._unsnap, this);
+    this._layer.on('geoman:dragstart', this._unsnap, this);
   },
   _disableSnapping() {
-    this._layer.off('pm:dragstart', this._unsnap, this);
+    this._layer.off('geoman:dragstart', this._unsnap, this);
   },
   _assignEvents(markerArr) {
     // loop through marker array and assign events to the markers
@@ -71,7 +71,7 @@ const SnapMixin = {
   },
   _handleThrottleSnapping() {
     // we check if the throttledList is existing, else the function is deleted but the `layeradd` event calls it.
-    // this made problems when layer was removed and added to the map in the `pm:create` event
+    // this made problems when layer was removed and added to the map in the `geoman:create` event
     if (this.throttledList) {
       this._createSnapList();
     }
@@ -90,7 +90,10 @@ const SnapMixin = {
 
     // if snapping is disabled via holding ALT during drag, stop right here
     // we need to check for the altKey on the move event, because keydown event is to slow ...
-    if (e?.originalEvent?.altKey || this._map?.pm?.Keyboard.isAltKeyPressed()) {
+    if (
+      e?.originalEvent?.altKey ||
+      this._map?.geoman?.Keyboard.isAltKeyPressed()
+    ) {
       return false;
     }
 
@@ -137,7 +140,7 @@ const SnapMixin = {
     // minimal distance before marker snaps (in pixels)
     const minDistance = this.options.snapDistance;
 
-    // event info for pm:snap and pm:unsnap
+    // event info for geoman:snap and geoman:unsnap
     const eventInfo = {
       marker,
       shape: this._shape,
@@ -213,8 +216,8 @@ const SnapMixin = {
         // if snapIgnore === false the layer will be always snappable
         if (
           layer.options.snapIgnore === undefined &&
-          ((!Geoman.optIn && layer.options.pmIgnore === true) || // if optIn is not set and pmIgnore is true, the layer will be ignored
-            (Geoman.optIn && layer.options.pmIgnore !== false)) // if optIn is true and pmIgnore is not false, the layer will be ignored
+          ((!Geoman.optIn && layer.options.geomanIgnore === true) || // if optIn is not set and geomanIgnore is true, the layer will be ignored
+            (Geoman.optIn && layer.options.geomanIgnore !== false)) // if optIn is true and geomanIgnore is not false, the layer will be ignored
         ) {
           return;
         }
@@ -222,18 +225,21 @@ const SnapMixin = {
         // adds a hidden polygon which matches the border of the circle
         if (
           (layer instanceof Circle || layer instanceof CircleMarker) &&
-          layer.pm &&
-          layer.pm._hiddenPolyCircle
+          layer.geoman &&
+          layer.geoman._hiddenPolyCircle
         ) {
-          layers.push(layer.pm._hiddenPolyCircle);
+          layers.push(layer.geoman._hiddenPolyCircle);
         } else if (layer instanceof ImageOverlay) {
           layer = new Rectangle(layer.getBounds());
         }
         layers.push(layer);
 
         // this is for debugging
-        const debugLine = new Polyline([], { color: 'red', pmIgnore: true });
-        debugLine._pmTempLayer = true;
+        const debugLine = new Polyline([], {
+          color: 'red',
+          geomanIgnore: true,
+        });
+        debugLine._geomanTempLayer = true;
         debugIndicatorLines.push(debugLine);
         if (layer instanceof Circle || layer instanceof CircleMarker) {
           debugIndicatorLines.push(debugLine);
@@ -253,14 +259,17 @@ const SnapMixin = {
     );
 
     // finally remove everything that's leaflet-geoman specific temporary stuff
-    layers = layers.filter((layer) => !layer._pmTempLayer);
+    layers = layers.filter((layer) => !layer._geomanTempLayer);
 
     // save snaplist from layers and the other snap layers added from other classes/scripts
     if (this._otherSnapLayers) {
       this._otherSnapLayers.forEach(() => {
         // this is for debugging
-        const debugLine = new Polyline([], { color: 'red', pmIgnore: true });
-        debugLine._pmTempLayer = true;
+        const debugLine = new Polyline([], {
+          color: 'red',
+          geomanIgnore: true,
+        });
+        debugLine._geomanTempLayer = true;
         debugIndicatorLines.push(debugLine);
       });
       this._snapList = layers.concat(this._otherSnapLayers);
@@ -307,8 +316,11 @@ const SnapMixin = {
 
       if (this.debugIndicatorLines) {
         if (!this.debugIndicatorLines[index]) {
-          const debugLine = new Polyline([], { color: 'red', pmIgnore: true });
-          debugLine._pmTempLayer = true;
+          const debugLine = new Polyline([], {
+            color: 'red',
+            geomanIgnore: true,
+          });
+          debugLine._geomanTempLayer = true;
           this.debugIndicatorLines[index] = debugLine;
         }
 
@@ -470,7 +482,7 @@ const SnapMixin = {
       'Polygon',
       'Rectangle',
     ];
-    const order = this._map.pm.globalOptions.snappingOrder || [];
+    const order = this._map.geoman.globalOptions.snappingOrder || [];
 
     let lastIndex = 0;
     const prioOrder = {};

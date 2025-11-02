@@ -24,7 +24,7 @@ const RotateMixin = {
 
     const originLatLngs = copyLatLngs(
       this._rotationLayer,
-      this._rotationLayer.pm._rotateOrgLatLng
+      this._rotationLayer.geoman._rotateOrgLatLng
     );
 
     this._fireRotationStart(this._rotationLayer, originLatLngs);
@@ -74,7 +74,7 @@ const RotateMixin = {
     this._rotationLayer.setLatLngs(
       this._rotateLayer(
         angleDiffRadiant,
-        this._rotationLayer.pm._rotateOrgLatLng,
+        this._rotationLayer.geoman._rotateOrgLatLng,
         this._rotationOriginLatLng,
         Matrix.init(),
         this._map
@@ -86,11 +86,11 @@ const RotateMixin = {
     angleDiff = angleDiff < 0 ? angleDiff + 360 : angleDiff;
     const angle = angleDiff + this._startAngle;
     this._setAngle(angle);
-    this._rotationLayer.pm._setAngle(angle);
+    this._rotationLayer.geoman._setAngle(angle);
 
     this._fireRotation(this._rotationLayer, angleDiff, oldLatLngs);
     this._fireRotation(this._map, angleDiff, oldLatLngs);
-    this._rotationLayer.pm._fireChange(
+    this._rotationLayer.geoman._fireChange(
       this._rotationLayer.getLatLngs(),
       'Rotation'
     );
@@ -105,14 +105,16 @@ const RotateMixin = {
 
     const originLatLngs = copyLatLngs(
       this._rotationLayer,
-      this._rotationLayer.pm._rotateOrgLatLng
+      this._rotationLayer.geoman._rotateOrgLatLng
     );
     // store the new latlngs
-    this._rotationLayer.pm._rotateOrgLatLng = copyLatLngs(this._rotationLayer);
+    this._rotationLayer.geoman._rotateOrgLatLng = copyLatLngs(
+      this._rotationLayer
+    );
 
     this._fireRotationEnd(this._rotationLayer, startAngle, originLatLngs);
     this._fireRotationEnd(this._map, startAngle, originLatLngs);
-    this._rotationLayer.pm._fireEdit(this._rotationLayer, 'Rotation');
+    this._rotationLayer.geoman._fireEdit(this._rotationLayer, 'Rotation');
 
     this._preventRenderingMarkers(false);
 
@@ -135,7 +137,7 @@ const RotateMixin = {
     const polygon = new Polygon(this._layer.getLatLngs(), {
       stroke: false,
       fill: false,
-      pmIgnore: true,
+      geomanIgnore: true,
     }).addTo(this._layer._map);
     const center = polygon.getCenter();
     polygon.removeFrom(this._layer._map);
@@ -167,29 +169,31 @@ const RotateMixin = {
       );
     }
 
-    // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
+    // We create an hidden polygon. We set geomanIgnore to false, so that the `geoman` property will be always create, also if OptIn == true
     const options = {
       fill: false,
       stroke: false,
-      pmIgnore: false,
+      geomanIgnore: false,
       snapIgnore: true,
     };
 
     // we create a temp polygon for rotation
     this._rotatePoly = new Polygon(this._layer.getLatLngs(), options);
-    this._rotatePoly._pmTempLayer = true;
+    this._rotatePoly._geomanTempLayer = true;
     this._rotatePoly.addTo(this._layer._map);
-    this._rotatePoly.pm._setAngle(this.getAngle());
-    this._rotatePoly.pm.setRotationCenter(this.getRotationCenter());
-    this._rotatePoly.pm.setOptions(this._layer._map.pm.getGlobalOptions());
-    this._rotatePoly.pm.setOptions({
+    this._rotatePoly.geoman._setAngle(this.getAngle());
+    this._rotatePoly.geoman.setRotationCenter(this.getRotationCenter());
+    this._rotatePoly.geoman.setOptions(
+      this._layer._map.geoman.getGlobalOptions()
+    );
+    this._rotatePoly.geoman.setOptions({
       rotate: true,
       snappable: false,
       hideMiddleMarkers: true,
     });
     // we connect the temp polygon (that will be enabled for rotation) with the current layer, so that we can rotate the current layer too
-    this._rotatePoly.pm._rotationLayer = this._layer;
-    this._rotatePoly.pm.enable();
+    this._rotatePoly.geoman._rotationLayer = this._layer;
+    this._rotatePoly.geoman.enable();
 
     // store the original latlngs
     this._rotateOrgLatLng = copyLatLngs(this._layer);
@@ -204,14 +208,14 @@ const RotateMixin = {
   },
   disableRotate() {
     if (this.rotateEnabled()) {
-      if (this._rotatePoly.pm._layerRotated) {
+      if (this._rotatePoly.geoman._layerRotated) {
         this._fireUpdate();
       }
-      this._rotatePoly.pm._layerRotated = false;
+      this._rotatePoly.geoman._layerRotated = false;
       // delete the temp polygon
-      this._rotatePoly.pm.disable();
+      this._rotatePoly.geoman.disable();
       this._rotatePoly.remove();
-      this._rotatePoly.pm.setOptions({ rotate: false });
+      this._rotatePoly.geoman.setOptions({ rotate: false });
       this._rotatePoly = undefined;
       this._rotateOrgLatLng = undefined;
 
@@ -247,7 +251,7 @@ const RotateMixin = {
     if (
       this.rotateEnabled() &&
       this._rotatePoly &&
-      this._rotatePoly.pm.enabled()
+      this._rotatePoly.geoman.enabled()
     ) {
       this._rotatePoly.setLatLngs(
         this._rotateLayer(
@@ -258,7 +262,7 @@ const RotateMixin = {
           this._rotatePoly._map
         )
       );
-      this._rotatePoly.pm._initMarkers();
+      this._rotatePoly.geoman._initMarkers();
     }
 
     // TODO: for negative angle change the difference is always (360 - angle), do we want this?
@@ -295,7 +299,7 @@ const RotateMixin = {
     this._rotationCenter = center;
 
     if (this._rotatePoly) {
-      this._rotatePoly.pm.setRotationCenter(center);
+      this._rotatePoly.geoman.setRotationCenter(center);
     }
   },
 };

@@ -5,10 +5,9 @@
  */
 
 import { Point } from 'leaflet';
-import Geoman from '../L.PM';
 
 /**
- * @class  L.PM.Matrix
+ * @class  Matrix
  *
  * @param {Number} a
  * @param {Number} b
@@ -24,7 +23,7 @@ const Matrix = function Matrix(a, b, c, d, e, f) {
   this._matrix = [a, b, c, d, e, f];
 };
 
-Matrix.init = () => new Geoman.Matrix(1, 0, 0, 1, 0, 0);
+Matrix.init = () => new Matrix(1, 0, 0, 1, 0, 0);
 
 Matrix.prototype = {
   /**
@@ -65,11 +64,11 @@ Matrix.prototype = {
   },
 
   /**
-   * @return {L.PM.Matrix}
+   * @return {Matrix}
    */
   clone() {
     const matrix = this._matrix;
-    return new Geoman.Matrix(
+    return new Matrix(
       matrix[0],
       matrix[1],
       matrix[2],
@@ -81,7 +80,7 @@ Matrix.prototype = {
 
   /**
    * @param {Point|Number} translate
-   * @return {L.PM.Matrix|Point}
+   * @return {Matrix|Point}
    */
   translate(translate) {
     if (translate === undefined) {
@@ -104,7 +103,7 @@ Matrix.prototype = {
   /**
    * @param {Point|Number} scale
    * @param {Point|Number} origin
-   * @return {L.PM.Matrix|Point}
+   * @return {Matrix|Point}
    */
   scale(scale, origin) {
     if (scale === undefined) {
@@ -137,7 +136,7 @@ Matrix.prototype = {
    * m10  m11  y - m10 * x - m11 * y
    * @param {Number}   angle
    * @param {Point=} origin
-   * @return {L.PM.Matrix}
+   * @return {Matrix}
    */
   rotate(angle, origin) {
     const cos = Math.cos(angle);
@@ -157,7 +156,7 @@ Matrix.prototype = {
 
   /**
    * Invert rotation
-   * @return {L.PM.Matrix}
+   * @return {Matrix}
    */
   flip() {
     this._matrix[1] *= -1;
@@ -166,7 +165,7 @@ Matrix.prototype = {
   },
 
   /**
-   * @param {Number|L.PM.Matrix} a
+   * @param {Number|Matrix} a
    * @param {Number} b
    * @param {Number} c
    * @param {Number} d
@@ -188,7 +187,7 @@ Matrix.prototype = {
     ];
     let val;
 
-    if (a && a instanceof Geoman.Matrix) {
+    if (a && a instanceof Matrix) {
       src = a._matrix;
       other = [
         [src[0], src[2], src[4]],

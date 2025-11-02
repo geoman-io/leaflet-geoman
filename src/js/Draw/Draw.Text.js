@@ -1,6 +1,6 @@
 import { DivIcon, Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
-import Draw from './L.PM.Draw';
+import Draw from './Draw';
 
 export default class GeomanDrawText extends Draw {
   initialize(map) {
@@ -11,7 +11,7 @@ export default class GeomanDrawText extends Draw {
 
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+    // instances of L.Geoman.Draw. So a dev could set drawing style one time as some kind of config
     Util.setOptions(this, options);
 
     // change enabled state
@@ -21,7 +21,7 @@ export default class GeomanDrawText extends Draw {
     this._map.on('click', this._createMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the pointer cursor
     this._hintMarker = new Marker(this._map.getCenter(), {
@@ -32,7 +32,7 @@ export default class GeomanDrawText extends Draw {
       }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
-    this._hintMarker._pmTempLayer = true;
+    this._hintMarker._geomanTempLayer = true;
     this._hintMarker.addTo(this._map);
 
     // show the hintmarker if the option is set
@@ -89,7 +89,7 @@ export default class GeomanDrawText extends Draw {
     this._map.off('pointermove', this._showHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, false);
 
     // cleanup snapping
     if (this.options.snappable) {
@@ -159,32 +159,32 @@ export default class GeomanDrawText extends Draw {
 
     const marker = new Marker(latlng, {
       textMarker: true,
-      _textMarkerOverPM: true, // we need to put this into the options, else we can't catch this in the init method
+      _textMarkerOverGeoman: true, // we need to put this into the options, else we can't catch this in the init method
       icon: textAreaIcon,
     });
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 
-    if (!marker.pm) {
-      // if pm is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
+    if (!marker.geoman) {
+      // if geoman is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
       marker.options.draggable = false;
     }
     // add marker to the map
-    marker.addTo(this._map.pm._getContainingLayer());
-    if (marker.pm) {
-      marker.pm.textArea = this.textArea;
-      Util.setOptions(marker.pm, {
+    marker.addTo(this._map.geoman._getContainingLayer());
+    if (marker.geoman) {
+      marker.geoman.textArea = this.textArea;
+      Util.setOptions(marker.geoman, {
         removeIfEmpty: this.options.textOptions?.removeIfEmpty ?? true,
       });
 
       const focusAfterDraw = this.options.textOptions?.focusAfterDraw ?? true;
-      marker.pm._createTextMarker(focusAfterDraw);
+      marker.geoman._createTextMarker(focusAfterDraw);
       if (this.options.textOptions?.text) {
-        marker.pm.setText(this.options.textOptions.text);
+        marker.geoman.setText(this.options.textOptions.text);
       }
     }
 
-    // fire the pm:create event and pass shape and marker
+    // fire the geoman:create event and pass shape and marker
     this._fireCreate(marker);
 
     this._cleanupSnapping();

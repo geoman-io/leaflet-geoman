@@ -1,6 +1,6 @@
 import { LayerGroup, Util } from 'leaflet';
-import Geoman from '../../L.PM';
-import Utils from '../../L.PM.Utils';
+import Geoman from '../../Geoman';
+import Utils from '../../GeomanUtils';
 
 const GlobalDragMode = {
   _globalDragModeEnabled: false,
@@ -12,7 +12,7 @@ const GlobalDragMode = {
 
     layers.forEach((layer) => {
       if (this._isRelevantForDrag(layer)) {
-        layer.pm.enableLayerDrag();
+        layer.geoman.enableLayerDrag();
       }
     });
 
@@ -39,7 +39,7 @@ const GlobalDragMode = {
     this._globalDragModeEnabled = false;
 
     layers.forEach((layer) => {
-      layer.pm.disableLayerDrag();
+      layer.geoman.disableLayerDrag();
     });
 
     // remove map handler
@@ -69,7 +69,7 @@ const GlobalDragMode = {
         const layer = layers[id];
 
         if (this._isRelevantForDrag(layer)) {
-          layer.pm.enableLayerDrag();
+          layer.geoman.enableLayerDrag();
         }
       }
     }
@@ -79,12 +79,12 @@ const GlobalDragMode = {
   },
   _isRelevantForDrag(layer) {
     return (
-      layer.pm &&
+      layer.geoman &&
       !(layer instanceof LayerGroup) &&
-      ((!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (Geoman.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
-      layer.pm.options.draggable
+      ((!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.geomanIgnore === false)) && // if optIn is true and geomanIgnore is false
+      !layer._geomanTempLayer &&
+      layer.geoman.options.draggable
     );
   },
 };

@@ -59,7 +59,7 @@ describe('Draw Rectangle', () => {
     });
 
     cy.get('@marker').then((marker) => {
-      expect(marker._pmTempLayer).to.equal(true);
+      expect(marker._geomanTempLayer).to.equal(true);
       expect(marker.options.draggable).to.equal(false);
     });
   });
@@ -119,7 +119,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).rightclick(300, 250);
 
     cy.window().then(({ map }) => {
-      const rect = map.pm.getGeomanDrawLayers()[0];
+      const rect = map.geoman.getGeomanDrawLayers()[0];
       expect(rect.options.color).to.not.equal('#f00000ff');
     });
   });
@@ -141,7 +141,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).rightclick(300, 250);
 
     cy.window().then(({ map }) => {
-      const rect = map.pm.getGeomanDrawLayers()[0];
+      const rect = map.geoman.getGeomanDrawLayers()[0];
       const geojson = rect.toGeoJSON();
       const coords = geojson.geometry.coordinates;
       expect(coords.length).to.equal(1);
@@ -150,7 +150,7 @@ describe('Draw Rectangle', () => {
 
   it('enable continueDrawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ continueDrawing: true });
+      map.geoman.setGlobalOptions({ continueDrawing: true });
     });
 
     cy.toolbarButton('rectangle').click();
@@ -159,7 +159,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(230, 230).click(350, 350);
 
     cy.window().then(({ map }) => {
-      const latlng = map.pm.Draw.Rectangle._hintMarker.getLatLng();
+      const latlng = map.geoman.Draw.Rectangle._hintMarker.getLatLng();
       const pxLatLng = map.containerPointToLatLng([350, 350]);
       expect(pxLatLng).to.deep.equal(latlng);
     });
@@ -171,7 +171,7 @@ describe('Draw Rectangle', () => {
   it('disable popup on layer while drawing', () => {
     let rect = null;
     cy.window().then(({ map, L }) => {
-      map.on('pm:create', (e) => {
+      map.on('geoman:create', (e) => {
         e.layer.bindPopup('Popup test');
         if (e.layer instanceof L.Rectangle) {
           rect = e.layer;
@@ -188,7 +188,7 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      const len = map.pm.getGeomanDrawLayers().length;
+      const len = map.geoman.getGeomanDrawLayers().length;
       expect(len).to.equal(2);
 
       const text = rect.getPopup().getContent();
@@ -196,13 +196,13 @@ describe('Draw Rectangle', () => {
     });
   });
 
-  it('disable popup on pmIgnore-layer while drawing', () => {
+  it('disable popup on geomanIgnore-layer while drawing', () => {
     let rect = null;
     cy.window().then(({ map, L }) => {
-      map.on('pm:create', (e) => {
+      map.on('geoman:create', (e) => {
         e.layer.bindPopup('Popup test');
         if (e.layer instanceof L.Rectangle) {
-          e.layer.options.pmIgnore = true;
+          e.layer.options.geomanIgnore = true;
           rect = e.layer;
         }
       });
@@ -217,7 +217,7 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      const len = map.pm.getGeomanDrawLayers().length;
+      const len = map.geoman.getGeomanDrawLayers().length;
       expect(len).to.equal(1);
 
       const text = rect.getPopup().getContent();
@@ -227,7 +227,7 @@ describe('Draw Rectangle', () => {
 
   it('prevent not correct created snaplist', () => {
     cy.window().then(({ map }) => {
-      map.on('pm:create', (e) => {
+      map.on('geoman:create', (e) => {
         map.removeLayer(e.layer);
         map.addLayer(e.layer);
       });
@@ -241,11 +241,11 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList).to.equal(undefined);
+      expect(map.geoman.Draw.Rectangle._snapList).to.equal(undefined);
     });
   });
 
-  it('make layer snappable with pmIgnore', () => {
+  it('make layer snappable with geomanIgnore', () => {
     // create snapping layer
     cy.toolbarButton('rectangle')
       .click()
@@ -254,19 +254,19 @@ describe('Draw Rectangle', () => {
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
-    // test 1: snapIgnore: undefined, pmIgnore: undefined, optIn: false --> snappable
+    // test 1: snapIgnore: undefined, geomanIgnore: undefined, optIn: false --> snappable
     cy.toolbarButton('rectangle').click();
     // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     let layer;
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
-      map.pm.disableDraw();
-      [layer] = map.pm.getGeomanDrawLayers();
+      expect(map.geoman.Draw.Rectangle._snapList.length).to.equal(1);
+      map.geoman.disableDraw();
+      [layer] = map.geoman.getGeomanDrawLayers();
     });
 
-    // test 2: snapIgnore: true, pmIgnore: undefined, optIn: false --> not snappable
+    // test 2: snapIgnore: true, geomanIgnore: undefined, optIn: false --> not snappable
     cy.window().then(() => {
       layer.options.snapIgnore = true;
     });
@@ -275,42 +275,42 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
-      map.pm.disableDraw();
+      expect(map.geoman.Draw.Rectangle._snapList.length).to.equal(0);
+      map.geoman.disableDraw();
     });
 
-    // test 3: snapIgnore: false, pmIgnore: true, optIn: false --> snappable
+    // test 3: snapIgnore: false, geomanIgnore: true, optIn: false --> snappable
     cy.window().then(() => {
       layer.options.snapIgnore = false;
-      layer.options.pmIgnore = true;
+      layer.options.geomanIgnore = true;
     });
     cy.toolbarButton('rectangle').click();
     // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
-      map.pm.disableDraw();
+      expect(map.geoman.Draw.Rectangle._snapList.length).to.equal(1);
+      map.geoman.disableDraw();
     });
 
-    // test 4: snapIgnore: undefined, pmIgnore: true, optIn: false --> not snappable
+    // test 4: snapIgnore: undefined, geomanIgnore: true, optIn: false --> not snappable
     cy.window().then(() => {
       delete layer.options.snapIgnore;
-      layer.options.pmIgnore = true;
+      layer.options.geomanIgnore = true;
     });
     cy.toolbarButton('rectangle').click();
     // click or pointermove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
-      map.pm.disableDraw();
+      expect(map.geoman.Draw.Rectangle._snapList.length).to.equal(0);
+      map.geoman.disableDraw();
     });
 
-    // test 5: snapIgnore: undefined, pmIgnore: false, optIn: true --> snappable
+    // test 5: snapIgnore: undefined, geomanIgnore: false, optIn: true --> snappable
     cy.window().then(({ Geoman }) => {
       delete layer.options.snapIgnore;
-      layer.options.pmIgnore = false;
+      layer.options.geomanIgnore = false;
       Geoman.setOptIn(true);
     });
     cy.toolbarButton('rectangle').click();
@@ -318,13 +318,13 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
-      map.pm.disableDraw();
+      expect(map.geoman.Draw.Rectangle._snapList.length).to.equal(1);
+      map.geoman.disableDraw();
     });
 
-    // test 6: snapIgnore: undefined, pmIgnore: true, optIn: true --> not snappable
+    // test 6: snapIgnore: undefined, geomanIgnore: true, optIn: true --> not snappable
     cy.window().then(({ Geoman }) => {
-      layer.options.pmIgnore = true;
+      layer.options.geomanIgnore = true;
       Geoman.setOptIn(true);
     });
     cy.toolbarButton('rectangle').click();
@@ -332,11 +332,11 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
-      map.pm.disableDraw();
+      expect(map.geoman.Draw.Rectangle._snapList.length).to.equal(0);
+      map.geoman.disableDraw();
     });
 
-    // test 7: snapIgnore: false, pmIgnore: true, optIn: true --> snappable
+    // test 7: snapIgnore: false, geomanIgnore: true, optIn: true --> snappable
     cy.window().then(() => {
       layer.options.snapIgnore = false;
     });
@@ -345,14 +345,14 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
-      map.pm.disableDraw();
+      expect(map.geoman.Draw.Rectangle._snapList.length).to.equal(1);
+      map.geoman.disableDraw();
     });
   });
 
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         requireSnapToFinish: true,
         snapSegment: false,
       });
@@ -369,19 +369,19 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
   });
 
   it('requireSnapToFinish not applied for first layer', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         requireSnapToFinish: true,
         snapSegment: false,
       });
@@ -391,14 +391,14 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
 
     cy.toolbarButton('rectangle').click();
     cy.get(mapSelector).click(450, 250).click(390, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
   });
 
@@ -407,15 +407,15 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      expect(layer.pm._map).to.not.eq(undefined);
+      const layer = map.geoman.getGeomanDrawLayers()[0];
+      expect(layer.geoman._map).to.not.eq(undefined);
     });
   });
 
   it('drags a whole LayerGroup', () => {
     cy.window().then(({ map, L }) => {
       const fg = new L.FeatureGroup().addTo(map);
-      map.pm.setGlobalOptions({ layerGroup: fg, syncLayersOnDrag: true });
+      map.geoman.setGlobalOptions({ layerGroup: fg, syncLayersOnDrag: true });
     });
 
     cy.toolbarButton('rectangle').click();
@@ -427,22 +427,22 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      const layers = map.pm.getGeomanDrawLayers();
+      const layers = map.geoman.getGeomanDrawLayers();
       const center1 = layers[0].getCenter();
       const center2 = layers[1].getCenter();
 
       const layer = layers[0];
-      layer.pm._dragMixinOnPointerDown({
+      layer.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnPointerMove({
+      layer.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnPointerUp({
+      layer.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([320, 320]),
@@ -463,26 +463,26 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      const layers = map.pm.getGeomanDrawLayers();
+      const layers = map.geoman.getGeomanDrawLayers();
       let center1 = layers[0].getCenter();
       let center2 = layers[1].getCenter();
 
       const layer = layers[0];
       // if this layer is dragged, all layers on the map should dragged too
-      layer.pm.options.syncLayersOnDrag = layers;
+      layer.geoman.options.syncLayersOnDrag = layers;
 
       // Drag both layers
-      layer.pm._dragMixinOnPointerDown({
+      layer.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnPointerMove({
+      layer.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnPointerUp({
+      layer.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: map.containerPointToLatLng([320, 320]),
@@ -496,17 +496,17 @@ describe('Draw Rectangle', () => {
 
       const layer2 = layers[1];
       // Drag only layer2
-      layer2.pm._dragMixinOnPointerDown({
+      layer2.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: map.containerPointToLatLng([290, 290]),
       });
-      layer2.pm._dragMixinOnPointerMove({
+      layer2.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: map.containerPointToLatLng([500, 320]),
       });
-      layer2.pm._dragMixinOnPointerUp({
+      layer2.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: map.containerPointToLatLng([320, 320]),
@@ -526,7 +526,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      map.pm.getGeomanDrawLayers()[0].pm.options.allowEditing = false;
+      map.geoman.getGeomanDrawLayers()[0].geoman.options.allowEditing = false;
     });
 
     cy.toolbarButton('rectangle')
@@ -554,7 +554,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      map.pm.getGeomanDrawLayers()[0].pm.options.allowRotation = false;
+      map.geoman.getGeomanDrawLayers()[0].geoman.options.allowRotation = false;
     });
 
     cy.toolbarButton('rectangle')
@@ -582,9 +582,9 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ L, map }) => {
       // move the hintMarker outside of the map bounds (max is 85.0511287798)
-      map.pm.Draw.Rectangle._hintMarker.setLatLng(new L.LatLng(87, -302));
+      map.geoman.Draw.Rectangle._hintMarker.setLatLng(new L.LatLng(87, -302));
 
-      const drawRect = map.pm.Draw.Rectangle;
+      const drawRect = map.geoman.Draw.Rectangle;
 
       const markers = [
         drawRect._hintMarker,
@@ -629,7 +629,7 @@ describe('Draw Rectangle', () => {
         .addLayer(tiles);
 
       // add leaflet-geoman toolbar
-      mapCanvas.pm.addControls();
+      mapCanvas.geoman.addControls();
     });
 
     cy.toolbarButton('rectangle').click();
@@ -641,26 +641,26 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(() => {
-      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      const layers = mapCanvas.geoman.getGeomanDrawLayers();
       let center1 = layers[0].getCenter();
       let center2 = layers[1].getCenter();
 
       const layer = layers[0];
       // if this layer is dragged, all layers on the map should dragged too
-      layer.pm.options.syncLayersOnDrag = layers;
+      layer.geoman.options.syncLayersOnDrag = layers;
 
       // Drag both layers
-      layer.pm._dragMixinOnPointerDown({
+      layer.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnPointerMove({
+      layer.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnPointerUp({
+      layer.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -674,17 +674,17 @@ describe('Draw Rectangle', () => {
 
       const layer2 = layers[1];
       // Drag only layer2
-      layer2.pm._dragMixinOnPointerDown({
+      layer2.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer2.pm._dragMixinOnPointerMove({
+      layer2.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer2.pm._dragMixinOnPointerUp({
+      layer2.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer2,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -716,7 +716,7 @@ describe('Draw Rectangle', () => {
         .addLayer(tiles);
 
       // add leaflet-geoman toolbar
-      mapCanvas.pm.addControls();
+      mapCanvas.geoman.addControls();
     });
 
     cy.toolbarButton('rectangle').click();
@@ -725,23 +725,23 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(() => {
-      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      const layers = mapCanvas.geoman.getGeomanDrawLayers();
       const center1 = layers[0].getCenter();
 
       const layer = layers[0];
 
       // Drag both layers
-      layer.pm._dragMixinOnPointerDown({
+      layer.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnPointerMove({
+      layer.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnPointerUp({
+      layer.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -772,7 +772,7 @@ describe('Draw Rectangle', () => {
         .addLayer(tiles);
 
       // add leaflet-geoman toolbar
-      mapCanvas.pm.addControls();
+      mapCanvas.geoman.addControls();
     });
 
     cy.toolbarButton('rectangle').click();
@@ -781,23 +781,23 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(() => {
-      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      const layers = mapCanvas.geoman.getGeomanDrawLayers();
       const center1 = layers[0].getCenter();
 
       const layer = layers[0];
 
       // Drag both layers
-      layer.pm._dragMixinOnPointerDown({
+      layer.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnPointerMove({
+      layer.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnPointerUp({
+      layer.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -830,9 +830,9 @@ describe('Draw Rectangle', () => {
         .addLayer(tiles);
 
       // add leaflet-geoman toolbar
-      mapCanvas.pm.addControls();
+      mapCanvas.geoman.addControls();
 
-      mapCanvas.on('pm:create', (e) => {
+      mapCanvas.on('geoman:create', (e) => {
         rect1 = e.layer;
         rect2 = new L.Rectangle(rect1.getBounds(), {
           renderer: new L.SVG(),
@@ -852,17 +852,17 @@ describe('Draw Rectangle', () => {
       const layer = rect1;
 
       // Drag both layers
-      layer.pm._dragMixinOnPointerDown({
+      layer.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnPointerMove({
+      layer.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnPointerUp({
+      layer.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -879,17 +879,17 @@ describe('Draw Rectangle', () => {
       const layer = rect2;
 
       // Drag both layers
-      layer.pm._dragMixinOnPointerDown({
+      layer.geoman._dragMixinOnPointerDown({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([290, 290]),
       });
-      layer.pm._dragMixinOnPointerMove({
+      layer.geoman._dragMixinOnPointerMove({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([500, 320]),
       });
-      layer.pm._dragMixinOnPointerUp({
+      layer.geoman._dragMixinOnPointerUp({
         originalEvent: { button: 0 },
         target: layer,
         latlng: mapCanvas.containerPointToLatLng([320, 320]),
@@ -913,16 +913,16 @@ describe('Draw Rectangle', () => {
       const style = {
         color: 'red',
       };
-      map.pm.setGlobalOptions({ pathOptions: style });
+      map.geoman.setGlobalOptions({ pathOptions: style });
 
-      const layer = map.pm.Draw.Rectangle._layer;
+      const layer = map.geoman.Draw.Rectangle._layer;
       expect(layer.options.color).to.eql('red');
     });
   });
 
   it('Return correct corners of rotated rectangle while drawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ rectangleAngle: 45 });
+      map.geoman.setGlobalOptions({ rectangleAngle: 45 });
     });
 
     cy.toolbarButton('rectangle')
@@ -934,7 +934,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).trigger('pointermove', 500, 300);
 
     cy.window().then(({ map }) => {
-      const corners = map.pm.Draw.Rectangle._findCorners();
+      const corners = map.geoman.Draw.Rectangle._findCorners();
       expect(
         corners[0].equals([51.50820824957313, -0.13801574707031253])
       ).to.eql(true);
@@ -966,8 +966,8 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
-      const marker1 = layer.pm._markers[0][0];
+      const layer = map.geoman.getGeomanLayers()[0];
+      const marker1 = layer.geoman._markers[0][0];
       marker1.fire('dragstart', { target: marker1 });
       marker1.setLatLng(map.containerPointToLatLng([200, 120]));
       marker1.fire('drag', { target: marker1 });
@@ -1012,8 +1012,8 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ map }) => {
       let count = 0;
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      layer.on('pm:vertexclick', () => {
+      const layer = map.geoman.getGeomanDrawLayers()[0];
+      layer.on('geoman:vertexclick', () => {
         count += 1;
         if (count >= 2) {
           expect(count).to.eql(2);
@@ -1037,13 +1037,13 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 200);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanDrawLayers().length).to.eql(0);
+      expect(map.geoman.getGeomanDrawLayers().length).to.eql(0);
     });
   });
 
   it("doesn't snap to the vertex", () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ snapVertex: false });
+      map.geoman.setGlobalOptions({ snapVertex: false });
     });
 
     cy.toolbarButton('rectangle')
@@ -1061,7 +1061,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(150, 60).click(250, 90);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
+      const layer = map.geoman.getGeomanDrawLayers()[1];
       expect(layer.getLatLngs()[0][1].lat).to.eq(51.52529983831507);
       expect(layer.getLatLngs()[0][1].lng).to.eq(-0.15003204345703128);
     });
@@ -1074,7 +1074,7 @@ describe('Draw Rectangle', () => {
       .trigger('pointerup', 150, 55, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
+      const layer = map.geoman.getGeomanDrawLayers()[1];
       expect(layer.getLatLngs()[0][1].lat).to.eq(51.525833847122584);
       expect(layer.getLatLngs()[0][1].lng).to.eq(-0.13286590576171878);
     });

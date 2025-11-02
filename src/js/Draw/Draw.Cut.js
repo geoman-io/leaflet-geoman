@@ -9,10 +9,10 @@ import {
   groupToMultiLineString,
   intersect,
 } from '../helpers/turfHelper';
-import Draw from './L.PM.Draw';
-import Geoman from '../L.PM';
-import Utils from '../L.PM.Utils';
-import GeomanDrawPolygon from './L.PM.Draw.Polygon';
+import Draw from './Draw';
+import Geoman from '../Geoman';
+import Utils from '../GeomanUtils';
+import GeomanDrawPolygon from './Draw.Polygon';
 
 export default class GeomanCut extends GeomanDrawPolygon {
   initialize(map) {
@@ -63,14 +63,14 @@ export default class GeomanCut extends GeomanDrawPolygon {
     delete this._tempSnapLayerIndex;
 
     this._editedLayers.forEach(({ layer, originalLayer }) => {
-      // fire pm:cut on the cutted layer
+      // fire geoman:cut on the cutted layer
       this._fireCut(originalLayer, layer, originalLayer);
 
-      // fire pm:cut on the map
+      // fire geoman:cut on the map
       this._fireCut(this._map, layer, originalLayer);
 
       // fire edit event after cut
-      originalLayer.pm._fireEdit();
+      originalLayer.geoman._fireEdit();
     });
     this._editedLayers = [];
 
@@ -94,20 +94,20 @@ export default class GeomanCut extends GeomanDrawPolygon {
       // convert object to array
       .map((l) => all[l])
       // only layers handled by leaflet-geoman
-      .filter((l) => l.pm)
-      .filter((l) => !l._pmTempLayer)
+      .filter((l) => l.geoman)
+      .filter((l) => !l._geomanTempLayer)
       // filter out everything that ignore leaflet-geoman
       .filter(
         (l) =>
-          (!Geoman.optIn && !l.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-          (Geoman.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+          (!Geoman.optIn && !l.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+          (Geoman.optIn && l.options.geomanIgnore === false) // if optIn is true and geomanIgnore is false);
       )
       // only polyline instances
       .filter((l) => l instanceof Polyline)
       // exclude the drawn one
       .filter((l) => l !== layer)
       // layer is allowed to cut
-      .filter((l) => l.pm.options.allowCutting)
+      .filter((l) => l.geoman.options.allowCutting)
       // filter out everything that ignore leaflet-geoman
       .filter((l) => {
         // TODO: after cutting nothing else can be cutted anymore until a new list is passed, because the layers don't exists anymore. Should we remove the cutted layers from the list?
@@ -188,25 +188,25 @@ export default class GeomanCut extends GeomanDrawPolygon {
       }
       this._setPane(resultLayer, 'layerPane');
       const resultingLayer = resultLayer.addTo(
-        this._map.pm._getContainingLayer()
+        this._map.geoman._getContainingLayer()
       );
       // give the new layer the original options
-      resultingLayer.pm.enable(l.pm.options);
-      resultingLayer.pm.disable();
+      resultingLayer.geoman.enable(l.geoman.options);
+      resultingLayer.geoman.disable();
 
-      // add templayer prop so pm:remove isn't fired
-      l._pmTempLayer = true;
-      layer._pmTempLayer = true;
+      // add templayer prop so geoman:remove isn't fired
+      l._geomanTempLayer = true;
+      layer._geomanTempLayer = true;
 
       // remove old layer and cutting layer
       l.remove();
-      l.removeFrom(this._map.pm._getContainingLayer());
+      l.removeFrom(this._map.geoman._getContainingLayer());
       layer.remove();
-      layer.removeFrom(this._map.pm._getContainingLayer());
+      layer.removeFrom(this._map.geoman._getContainingLayer());
 
       // Remove it only if it is a layergroup. It can be only not a layergroup if a layer exists
       if (resultingLayer.getLayers && resultingLayer.getLayers().length === 0) {
-        this._map.pm.removeLayer({ target: resultingLayer });
+        this._map.geoman.removeLayer({ target: resultingLayer });
       }
 
       if (resultingLayer instanceof LayerGroup) {

@@ -1,5 +1,5 @@
 import { Util } from 'leaflet';
-import Edit from './L.PM.Edit';
+import Edit from './Edit';
 
 export default class GeomanEditMarker extends Edit {
   _shape = 'Marker';
@@ -9,7 +9,7 @@ export default class GeomanEditMarker extends Edit {
     this._layer = layer;
     this._enabled = false;
 
-    // register dragend event e.g. to fire pm:edit
+    // register dragend event e.g. to fire geoman:edit
     this._layer.on('dragend', this._onDragEnd, this);
   }
 
@@ -35,8 +35,8 @@ export default class GeomanEditMarker extends Edit {
 
     this._enabled = true;
 
-    this._layer.on('pm:dragstart', this._onDragStart, this);
-    this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
+    this._layer.on('geoman:dragstart', this._onDragStart, this);
+    this._layer.on('geoman:dragend', this._onMarkerDragEnd, this);
 
     this._fireEnable();
   }
@@ -96,17 +96,17 @@ export default class GeomanEditMarker extends Edit {
   _removeMarker(e) {
     const marker = e.target;
     marker.remove();
-    // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
+    // TODO: find out why this is fired manually, shouldn't it be catched by GeomanMap 'layerremove'?
     this._fireRemove(marker);
     this._fireRemove(this._map, marker);
   }
 
   _onDragStart() {
-    this._map.pm.Draw.Marker._layerIsDragging = true;
+    this._map.geoman.Draw.Marker._layerIsDragging = true;
   }
 
   _onMarkerDragEnd() {
-    this._map.pm.Draw.Marker._layerIsDragging = false;
+    this._map.geoman.Draw.Marker._layerIsDragging = false;
   }
 
   _onDragEnd() {
@@ -122,20 +122,20 @@ export default class GeomanEditMarker extends Edit {
     this.options.snapSegment =
       this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
-    marker.off('pm:drag', this._handleSnapping, this);
-    marker.on('pm:drag', this._handleSnapping, this);
+    marker.off('geoman:drag', this._handleSnapping, this);
+    marker.on('geoman:drag', this._handleSnapping, this);
 
-    marker.off('pm:dragend', this._cleanupSnapping, this);
-    marker.on('pm:dragend', this._cleanupSnapping, this);
+    marker.off('geoman:dragend', this._cleanupSnapping, this);
+    marker.on('geoman:dragend', this._cleanupSnapping, this);
 
-    marker.off('pm:dragstart', this._unsnap, this);
-    marker.on('pm:dragstart', this._unsnap, this);
+    marker.off('geoman:dragstart', this._unsnap, this);
+    marker.on('geoman:dragstart', this._unsnap, this);
   }
 
   _disableSnapping() {
     const marker = this._layer;
-    marker.off('pm:drag', this._handleSnapping, this);
-    marker.off('pm:dragend', this._cleanupSnapping, this);
-    marker.off('pm:dragstart', this._unsnap, this);
+    marker.off('geoman:drag', this._handleSnapping, this);
+    marker.off('geoman:dragend', this._cleanupSnapping, this);
+    marker.off('geoman:dragstart', this._unsnap, this);
   }
 }

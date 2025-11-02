@@ -1,6 +1,6 @@
 import { DomEvent, Util } from 'leaflet';
-import Edit from './L.PM.Edit';
-import Draw from '../Draw/L.PM.Draw';
+import Edit from './Edit';
+import Draw from '../Draw/Draw';
 
 export default class GeomanEditCircleText extends Edit {
   _shape = 'Text';
@@ -117,21 +117,21 @@ export default class GeomanEditCircleText extends Edit {
     this.options.snapSegment =
       this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
-    marker.off('pm:drag', this._handleSnapping, this);
-    marker.on('pm:drag', this._handleSnapping, this);
+    marker.off('geoman:drag', this._handleSnapping, this);
+    marker.on('geoman:drag', this._handleSnapping, this);
 
-    marker.off('pm:dragend', this._cleanupSnapping, this);
-    marker.on('pm:dragend', this._cleanupSnapping, this);
+    marker.off('geoman:dragend', this._cleanupSnapping, this);
+    marker.on('geoman:dragend', this._cleanupSnapping, this);
 
-    marker.off('pm:dragstart', this._unsnap, this);
-    marker.on('pm:dragstart', this._unsnap, this);
+    marker.off('geoman:dragstart', this._unsnap, this);
+    marker.on('geoman:dragstart', this._unsnap, this);
   }
 
   _disableSnapping() {
     const marker = this._layer;
-    marker.off('pm:drag', this._handleSnapping, this);
-    marker.off('pm:dragend', this._cleanupSnapping, this);
-    marker.off('pm:dragstart', this._unsnap, this);
+    marker.off('geoman:drag', this._handleSnapping, this);
+    marker.off('geoman:dragend', this._cleanupSnapping, this);
+    marker.off('geoman:dragstart', this._unsnap, this);
   }
 
   _autoResize() {

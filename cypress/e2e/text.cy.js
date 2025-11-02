@@ -7,7 +7,7 @@ describe('Text Layer', () => {
         textMarker: true,
         text: 'Text Layer',
       }).addTo(map);
-      expect(textLayer.pm.getShape()).to.eq('Text');
+      expect(textLayer.geoman.getShape()).to.eq('Text');
       textLayer.remove();
     });
 
@@ -16,7 +16,7 @@ describe('Text Layer', () => {
         textMarker: false,
         text: 'Text Layer',
       }).addTo(map);
-      expect(textLayer.pm.getShape()).to.eq('Marker');
+      expect(textLayer.geoman.getShape()).to.eq('Marker');
       textLayer.remove();
     });
 
@@ -24,8 +24,8 @@ describe('Text Layer', () => {
       const textLayer = new L.Marker(map.getCenter(), {
         textMarker: true,
       }).addTo(map);
-      expect(textLayer.pm.getShape()).to.eq('Text');
-      expect(textLayer.pm.getText()).to.eq('');
+      expect(textLayer.geoman.getShape()).to.eq('Text');
+      expect(textLayer.geoman.getText()).to.eq('');
       textLayer.remove();
     });
   });
@@ -39,20 +39,20 @@ describe('Text Layer', () => {
         text: 'Text Layer',
       }).addTo(map);
 
-      expect(map.pm.getGeomanLayers().length).to.eq(0);
+      expect(map.geoman.getGeomanLayers().length).to.eq(0);
 
-      textLayer.options.pmIgnore = false;
+      textLayer.options.geomanIgnore = false;
       Geoman.reInitLayer(textLayer);
 
-      expect(map.pm.getGeomanLayers().length).to.eq(1);
+      expect(map.geoman.getGeomanLayers().length).to.eq(1);
     });
 
     cy.toolbarButton('edit').click();
     cy.get(mapSelector).click(570, 250);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
-      expect(layer.pm.hasFocus()).to.be.eq(true);
+      const layer = map.geoman.getGeomanLayers()[0];
+      expect(layer.geoman.hasFocus()).to.be.eq(true);
     });
   });
 
@@ -74,9 +74,9 @@ describe('Text Layer', () => {
 
       let textArea;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
-        textArea = textLayer.pm.getElement();
+        expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+        const textLayer = map.geoman.getGeomanDrawLayers()[0];
+        textArea = textLayer.geoman.getElement();
         cy.get(textArea).type('Hello World');
       });
 
@@ -104,9 +104,9 @@ describe('Text Layer', () => {
 
       let textArea;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
-        textArea = textLayer.pm.getElement();
+        expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+        const textLayer = map.geoman.getGeomanDrawLayers()[0];
+        textArea = textLayer.geoman.getElement();
         expect(textArea.value).to.eq('');
       });
 
@@ -115,7 +115,7 @@ describe('Text Layer', () => {
       cy.wait(500);
 
       cy.window().then(({ map }) => {
-        expect(0).to.eq(map.pm.getGeomanDrawLayers().length);
+        expect(0).to.eq(map.geoman.getGeomanDrawLayers().length);
       });
     });
 
@@ -129,9 +129,9 @@ describe('Text Layer', () => {
 
       let textArea;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
-        textArea = textLayer.pm.getElement();
+        expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+        const textLayer = map.geoman.getGeomanDrawLayers()[0];
+        textArea = textLayer.geoman.getElement();
         expect(textArea.value).to.eq('');
       });
 
@@ -140,13 +140,13 @@ describe('Text Layer', () => {
       cy.wait(500);
 
       cy.window().then(({ map }) => {
-        expect(0).to.eq(map.pm.getGeomanDrawLayers().length);
+        expect(0).to.eq(map.geoman.getGeomanDrawLayers().length);
       });
     });
 
     it('continue drawing', () => {
       cy.window().then(({ map }) => {
-        map.pm.setGlobalOptions({ continueDrawing: true });
+        map.geoman.setGlobalOptions({ continueDrawing: true });
       });
 
       cy.toolbarButton('text')
@@ -158,9 +158,9 @@ describe('Text Layer', () => {
 
       let textArea;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
-        textArea = textLayer.pm.getElement();
+        expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+        const textLayer = map.geoman.getGeomanDrawLayers()[0];
+        textArea = textLayer.geoman.getElement();
         cy.get(textArea).type('Hello World');
       });
 
@@ -175,21 +175,21 @@ describe('Text Layer', () => {
         expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
           true
         );
-        expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[1];
-        textArea = textLayer.pm.getElement();
+        expect(2).to.eq(map.geoman.getGeomanDrawLayers().length);
+        const textLayer = map.geoman.getGeomanDrawLayers()[1];
+        textArea = textLayer.geoman.getElement();
         cy.get(textArea).type('Geoman!');
 
-        const textMap = map.pm.Draw.Text._hintMarker._map;
+        const textMap = map.geoman.Draw.Text._hintMarker._map;
         expect(textMap).to.eq(null);
       });
 
       cy.get(mapSelector).trigger('pointermove', 200, 150, { which: 1 });
 
       cy.window().then(({ map }) => {
-        const textMap = map.pm.Draw.Text._hintMarker._map;
+        const textMap = map.geoman.Draw.Text._hintMarker._map;
         expect(textMap).to.eq(map);
-        const latlng = map.pm.Draw.Text._hintMarker.getLatLng();
+        const latlng = map.geoman.Draw.Text._hintMarker.getLatLng();
         const pxLatLng = map.containerPointToLatLng([200, 150]);
         expect(pxLatLng).to.deep.equal(latlng);
       });
@@ -207,7 +207,7 @@ describe('Text Layer', () => {
 
     it("uses enableDraw('Text')", () => {
       cy.window().then(({ map }) => {
-        map.pm.enableDraw('Text');
+        map.geoman.enableDraw('Text');
       });
 
       cy.toolbarButton('text')
@@ -218,9 +218,9 @@ describe('Text Layer', () => {
 
       let textArea;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
-        textArea = textLayer.pm.getElement();
+        expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+        const textLayer = map.geoman.getGeomanDrawLayers()[0];
+        textArea = textLayer.geoman.getElement();
         cy.get(textArea).type('Hello World');
       });
 
@@ -248,9 +248,9 @@ describe('Text Layer', () => {
 
       let textArea;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
-        textArea = textLayer.pm.getElement();
+        expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+        const textLayer = map.geoman.getGeomanDrawLayers()[0];
+        textArea = textLayer.geoman.getElement();
         expect(textArea.style.width).to.eq('16px');
         cy.get(textArea).type('Hello World');
       });
@@ -273,9 +273,9 @@ describe('Text Layer', () => {
 
       let textArea;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
-        textArea = textLayer.pm.getElement();
+        expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+        const textLayer = map.geoman.getGeomanDrawLayers()[0];
+        textArea = textLayer.geoman.getElement();
         expect(textArea.style.width).to.eq('16px');
         cy.get(textArea).type('Hello World');
       });
@@ -304,7 +304,7 @@ describe('Text Layer', () => {
     describe('Options', () => {
       it('adds predefined `text`', () => {
         cy.window().then(({ map }) => {
-          map.pm.enableDraw('Text', {
+          map.geoman.enableDraw('Text', {
             textOptions: { text: 'This is nice. ' },
           });
         });
@@ -317,9 +317,9 @@ describe('Text Layer', () => {
 
         let textArea;
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-          const textLayer = map.pm.getGeomanDrawLayers()[0];
-          textArea = textLayer.pm.getElement();
+          expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+          const textLayer = map.geoman.getGeomanDrawLayers()[0];
+          textArea = textLayer.geoman.getElement();
           cy.get(textArea).type('Hello World');
         });
 
@@ -332,7 +332,7 @@ describe('Text Layer', () => {
 
       it('`focusAfterDraw: false`', () => {
         cy.window().then(({ map }) => {
-          map.pm.enableDraw('Text', {
+          map.geoman.enableDraw('Text', {
             textOptions: { focusAfterDraw: false },
           });
         });
@@ -345,9 +345,9 @@ describe('Text Layer', () => {
 
         let textArea;
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-          const textLayer = map.pm.getGeomanDrawLayers()[0];
-          textArea = textLayer.pm.getElement();
+          expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+          const textLayer = map.geoman.getGeomanDrawLayers()[0];
+          textArea = textLayer.geoman.getElement();
           expect(textArea.readOnly).to.eq(true);
           expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
             true
@@ -358,7 +358,7 @@ describe('Text Layer', () => {
       });
       it('`removeIfEmpty: false`', () => {
         cy.window().then(({ map }) => {
-          map.pm.enableDraw('Text', {
+          map.geoman.enableDraw('Text', {
             textOptions: { focusAfterDraw: false },
           });
         });
@@ -371,21 +371,21 @@ describe('Text Layer', () => {
 
         let textArea;
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-          const textLayer = map.pm.getGeomanDrawLayers()[0];
-          textArea = textLayer.pm.getElement();
+          expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+          const textLayer = map.geoman.getGeomanDrawLayers()[0];
+          textArea = textLayer.geoman.getElement();
           expect(textArea.value).to.eq('');
         });
 
         cy.get(mapSelector).click(190, 250);
 
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+          expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
         });
       });
       it('adds css class with `className`', () => {
         cy.window().then(({ map }) => {
-          map.pm.enableDraw('Text', {
+          map.geoman.enableDraw('Text', {
             textOptions: { className: 'test1 test2' },
           });
         });
@@ -398,9 +398,9 @@ describe('Text Layer', () => {
 
         let textArea;
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-          const textLayer = map.pm.getGeomanDrawLayers()[0];
-          textArea = textLayer.pm.getElement();
+          expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
+          const textLayer = map.geoman.getGeomanDrawLayers()[0];
+          textArea = textLayer.geoman.getElement();
           expect(textArea.classList.contains('test1')).to.eq(true);
           expect(textArea.classList.contains('test2')).to.eq(true);
         });
@@ -417,9 +417,9 @@ describe('Text Layer', () => {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
-        textArea = textLayer.pm.getElement();
-        textLayer.pm.enable();
-        textLayer.pm.focus();
+        textArea = textLayer.geoman.getElement();
+        textLayer.geoman.enable();
+        textLayer.geoman.focus();
       });
 
       cy.window().then(() => {
@@ -437,7 +437,7 @@ describe('Text Layer', () => {
       cy.get(mapSelector).click(90, 280);
 
       cy.window().then(() => {
-        textLayer.pm.disable();
+        textLayer.geoman.disable();
         expect(textArea.readOnly).to.eq(true);
         expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
           true
@@ -452,9 +452,9 @@ describe('Text Layer', () => {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
-        textArea = textLayer.pm.getElement();
-        textLayer.pm.enable();
-        textLayer.pm.focus();
+        textArea = textLayer.geoman.getElement();
+        textLayer.geoman.enable();
+        textLayer.geoman.focus();
       });
 
       cy.window().then(() => {
@@ -462,10 +462,10 @@ describe('Text Layer', () => {
         expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
           false
         );
-        textLayer.pm.blur();
-        expect(textLayer.pm.hasFocus()).to.eq(false);
+        textLayer.geoman.blur();
+        expect(textLayer.geoman.hasFocus()).to.eq(false);
 
-        textLayer.pm.disable();
+        textLayer.geoman.disable();
         expect(textArea.readOnly).to.eq(true);
         expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
           true
@@ -480,9 +480,9 @@ describe('Text Layer', () => {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
-        textArea = textLayer.pm.getElement();
-        textLayer.pm.enable();
-        textLayer.pm.focus();
+        textArea = textLayer.geoman.getElement();
+        textLayer.geoman.enable();
+        textLayer.geoman.focus();
       });
 
       cy.window().then(() => {
@@ -490,11 +490,11 @@ describe('Text Layer', () => {
         expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
           false
         );
-        expect(textLayer.pm.hasFocus()).to.eq(true);
-        textLayer.pm.blur();
-        expect(textLayer.pm.hasFocus()).to.eq(false);
+        expect(textLayer.geoman.hasFocus()).to.eq(true);
+        textLayer.geoman.blur();
+        expect(textLayer.geoman.hasFocus()).to.eq(false);
 
-        textLayer.pm.disable();
+        textLayer.geoman.disable();
         expect(textArea.readOnly).to.eq(true);
         expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
           true
@@ -507,7 +507,7 @@ describe('Text Layer', () => {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
-        const textArea = textLayer.pm.getElement();
+        const textArea = textLayer.geoman.getElement();
         expect(textArea.tagName).to.eq('TEXTAREA');
       });
     });
@@ -517,9 +517,9 @@ describe('Text Layer', () => {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
-        const textArea = textLayer.pm.getElement();
+        const textArea = textLayer.geoman.getElement();
         expect(textArea.value).to.eq('Text Layer');
-        textLayer.pm.setText('Other text');
+        textLayer.geoman.setText('Other text');
         expect(textArea.value).to.eq('Other text');
       });
     });
@@ -529,7 +529,7 @@ describe('Text Layer', () => {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
-        expect(textLayer.pm.getText()).to.eq('Text Layer');
+        expect(textLayer.geoman.getText()).to.eq('Text Layer');
       });
     });
     it('unselect text on disable', () => {
@@ -538,16 +538,16 @@ describe('Text Layer', () => {
           textMarker: true,
           text: 'Text Layer',
         }).addTo(map);
-        expect(textLayer.pm.getText()).to.eq('Text Layer');
+        expect(textLayer.geoman.getText()).to.eq('Text Layer');
 
-        const textarea = textLayer.pm.getElement();
-        textLayer.pm.enable();
+        const textarea = textLayer.geoman.getElement();
+        textLayer.geoman.enable();
         textarea.focus();
         textarea.setSelectionRange(2, 5);
         expect(textarea.selectionStart).to.eq(2);
         expect(textarea.selectionEnd).to.eq(5);
 
-        textLayer.pm.disable();
+        textLayer.geoman.disable();
         expect(textarea.selectionStart).to.eq(0);
         expect(textarea.selectionEnd).to.eq(0);
       });
@@ -562,20 +562,20 @@ describe('Text Layer', () => {
 
         expect(map.dragging.enabled()).to.eq(true);
 
-        const textarea = textLayer.pm.getElement();
-        textLayer.pm.enable();
+        const textarea = textLayer.geoman.getElement();
+        textLayer.geoman.enable();
         textarea.focus();
 
         expect(map.dragging.enabled()).to.eq(false);
 
-        textLayer.pm.disable();
+        textLayer.geoman.disable();
 
         expect(map.dragging.enabled()).to.eq(true);
       });
     });
   });
   describe('Events', () => {
-    it("fire event 'pm:textchange'", () => {
+    it("fire event 'geoman:textchange'", () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
@@ -583,23 +583,23 @@ describe('Text Layer', () => {
           textMarker: true,
           text: '',
         }).addTo(map);
-        textLayer.pm.enable();
-        textLayer.pm.focus();
+        textLayer.geoman.enable();
+        textLayer.geoman.focus();
 
-        textLayer.on('pm:textchange', (e) => {
+        textLayer.on('geoman:textchange', (e) => {
           event = e.type;
         });
 
-        cy.get(textLayer.pm.getElement()).type('Hello World');
+        cy.get(textLayer.geoman.getElement()).type('Hello World');
       });
 
       cy.window().then(() => {
-        expect(textLayer.pm.getText()).to.eq('Hello World');
-        expect(event).to.eq('pm:textchange');
+        expect(textLayer.geoman.getText()).to.eq('Hello World');
+        expect(event).to.eq('geoman:textchange');
       });
     });
 
-    it("fire event 'pm:edit'", () => {
+    it("fire event 'geoman:edit'", () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
@@ -607,24 +607,24 @@ describe('Text Layer', () => {
           textMarker: true,
           text: '',
         }).addTo(map);
-        textLayer.pm.enable();
-        textLayer.pm.focus();
+        textLayer.geoman.enable();
+        textLayer.geoman.focus();
 
-        textLayer.on('pm:edit', (e) => {
+        textLayer.on('geoman:edit', (e) => {
           event = e.type;
         });
 
-        cy.get(textLayer.pm.getElement()).type('Hello World');
+        cy.get(textLayer.geoman.getElement()).type('Hello World');
       });
 
       cy.window().then(() => {
-        textLayer.pm.blur();
-        expect(textLayer.pm.getText()).to.eq('Hello World');
-        expect(event).to.eq('pm:edit');
+        textLayer.geoman.blur();
+        expect(textLayer.geoman.getText()).to.eq('Hello World');
+        expect(event).to.eq('geoman:edit');
       });
     });
 
-    it("fire event 'pm:update'", () => {
+    it("fire event 'geoman:update'", () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
@@ -632,24 +632,24 @@ describe('Text Layer', () => {
           textMarker: true,
           text: '',
         }).addTo(map);
-        textLayer.pm.enable();
-        textLayer.pm.focus();
+        textLayer.geoman.enable();
+        textLayer.geoman.focus();
 
-        textLayer.on('pm:update', (e) => {
+        textLayer.on('geoman:update', (e) => {
           event = e.type;
         });
 
-        cy.get(textLayer.pm.getElement()).type('Hello World');
+        cy.get(textLayer.geoman.getElement()).type('Hello World');
       });
 
       cy.window().then(() => {
-        textLayer.pm.disable();
-        expect(textLayer.pm.getText()).to.eq('Hello World');
-        expect(event).to.eq('pm:update');
+        textLayer.geoman.disable();
+        expect(textLayer.geoman.getText()).to.eq('Hello World');
+        expect(event).to.eq('geoman:update');
       });
     });
 
-    it("fire event 'pm:textfocus'", () => {
+    it("fire event 'geoman:textfocus'", () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
@@ -657,20 +657,20 @@ describe('Text Layer', () => {
           textMarker: true,
           text: '',
         }).addTo(map);
-        textLayer.pm.enable();
+        textLayer.geoman.enable();
 
-        textLayer.on('pm:textfocus', (e) => {
+        textLayer.on('geoman:textfocus', (e) => {
           event = e.type;
         });
-        textLayer.pm.focus();
+        textLayer.geoman.focus();
       });
 
       cy.window().then(() => {
-        expect(event).to.eq('pm:textfocus');
+        expect(event).to.eq('geoman:textfocus');
       });
     });
 
-    it("fire event 'pm:textblur'", () => {
+    it("fire event 'geoman:textblur'", () => {
       let textLayer;
       let event = '';
       cy.window().then(({ map, L }) => {
@@ -678,21 +678,21 @@ describe('Text Layer', () => {
           textMarker: true,
           text: '',
         }).addTo(map);
-        textLayer.pm.enable();
+        textLayer.geoman.enable();
 
-        textLayer.on('pm:textblur', (e) => {
+        textLayer.on('geoman:textblur', (e) => {
           event = e.type;
         });
-        textLayer.pm.focus();
-        textLayer.pm.blur();
+        textLayer.geoman.focus();
+        textLayer.geoman.blur();
       });
 
       cy.window().then(() => {
-        expect(event).to.eq('pm:textblur');
+        expect(event).to.eq('geoman:textblur');
       });
     });
 
-    it("fire event 'pm:textblur' only once", () => {
+    it("fire event 'geoman:textblur' only once", () => {
       let textLayer;
       let event = '';
       let count = 0;
@@ -701,20 +701,20 @@ describe('Text Layer', () => {
           textMarker: true,
           text: '',
         }).addTo(map);
-        textLayer.pm.enable();
+        textLayer.geoman.enable();
 
         count = 0;
-        textLayer.on('pm:textblur', (e) => {
+        textLayer.on('geoman:textblur', (e) => {
           count += 1;
           event = e.type;
         });
-        textLayer.pm.focus();
-        textLayer.pm.blur();
-        textLayer.pm.blur();
+        textLayer.geoman.focus();
+        textLayer.geoman.blur();
+        textLayer.geoman.blur();
       });
 
       cy.window().then(() => {
-        expect(event).to.eq('pm:textblur');
+        expect(event).to.eq('geoman:textblur');
         expect(count).to.eq(1);
       });
     });

@@ -10,7 +10,7 @@ import {
 } from 'leaflet';
 import { createGeodesicPolygon, getTranslation } from './helpers';
 import { _toLatLng, _toPoint } from './helpers/ModeHelper';
-import Geoman from './L.PM';
+import Geoman from './Geoman';
 
 const Utils = {
   calcMiddleLatLng(map, latlng1, latlng2) {
@@ -36,16 +36,16 @@ const Utils = {
     });
 
     // filter out layers that don't have the leaflet-geoman instance
-    layers = layers.filter((layer) => !!layer.pm);
+    layers = layers.filter((layer) => !!layer.geoman);
 
     // filter out everything that's leaflet-geoman specific temporary stuff
-    layers = layers.filter((layer) => !layer._pmTempLayer);
+    layers = layers.filter((layer) => !layer._geomanTempLayer);
 
     // filter out everything that ignore leaflet-geoman
     layers = layers.filter(
       (layer) =>
-        (!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (Geoman.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+        (!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.geomanIgnore === false) // if optIn is true and geomanIgnore is false);
     );
 
     return layers;
@@ -100,12 +100,12 @@ const Utils = {
 
     // check if the last group fetch is under 1 sec, then we use the groups from before
     if (
-      !layer._pmLastGroupFetch ||
-      !layer._pmLastGroupFetch.time ||
-      new Date().getTime() - layer._pmLastGroupFetch.time > 1000
+      !layer._geomanLastGroupFetch ||
+      !layer._geomanLastGroupFetch.time ||
+      new Date().getTime() - layer._geomanLastGroupFetch.time > 1000
     ) {
       loopThroughParents(layer);
-      layer._pmLastGroupFetch = {
+      layer._geomanLastGroupFetch = {
         time: new Date().getTime(),
         groups,
         groupIds,
@@ -116,8 +116,8 @@ const Utils = {
       };
     }
     return {
-      groups: layer._pmLastGroupFetch.groups,
-      groupIds: layer._pmLastGroupFetch.groupIds,
+      groups: layer._geomanLastGroupFetch.groups,
+      groupIds: layer._geomanLastGroupFetch.groupIds,
     };
   },
   createGeodesicPolygon,

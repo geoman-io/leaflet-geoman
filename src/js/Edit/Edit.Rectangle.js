@@ -2,8 +2,8 @@
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
 import { DivIcon, FeatureGroup, Marker } from 'leaflet';
 import { calcAngle } from '../helpers';
-import Utils from '../L.PM.Utils';
-import GeomanEditPolygon from './L.PM.Edit.Polygon';
+import Utils from '../GeomanUtils';
+import GeomanEditPolygon from './Edit.Polygon';
 
 export default class GeomanEditRectangle extends GeomanEditPolygon {
   _shape = 'Rectangle';
@@ -19,7 +19,7 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
 
     // add markerGroup to map, markerGroup includes regular and middle markers
     this._markerGroup = new FeatureGroup();
-    this._markerGroup._pmTempLayer = true;
+    this._markerGroup._geomanTempLayer = true;
     map.addLayer(this._markerGroup);
 
     // create markers for four corners of rectangle
@@ -59,7 +59,7 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
 
     marker._origLatLng = latlng;
     marker._index = index;
-    marker._pmTempLayer = true;
+    marker._geomanTempLayer = true;
 
     marker.on('click', this._onVertexClick, this);
 
@@ -82,7 +82,7 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
     });
   }
 
-  // Empty callback for 'contextmenu' binding set in L.PM.Edit.Polyline.js's _createMarker method (AKA, right-click on marker event)
+  // Empty callback for 'contextmenu' binding set in Geoman.Edit.Polyline.js's _createMarker method (AKA, right-click on marker event)
   // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
   _removeMarker() {
     // The method, it does nothing!!!

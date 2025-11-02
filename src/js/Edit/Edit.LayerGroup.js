@@ -1,8 +1,8 @@
 import { Class, LayerGroup, Util } from 'leaflet';
-import Geoman from '../L.PM';
+import Geoman from '../Geoman';
 
-// LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Polygon
-// (which inherits from L.PM.Edit) for each layer,
+// LayerGroup doesn't inherit from Geoman.Edit because it's just calling Geoman.Edit.Polygon
+// (which inherits from Geoman.Edit) for each layer,
 // so it's not really a parent class
 export default class GeomanEditLayerGroup extends Class {
   initialize(layerGroup) {
@@ -18,14 +18,14 @@ export default class GeomanEditLayerGroup extends Class {
     // https://github.com/Leaflet/Leaflet/issues/4861
 
     const addThrottle = (e) => {
-      if (e.layer._pmTempLayer) {
+      if (e.layer._geomanTempLayer) {
         return;
       }
       this._layers = this.getLayers();
       const _initLayers = this._layers.filter(
         (layer) =>
-          !layer.pm._parentLayerGroup ||
-          !(this._layerGroup._leaflet_id in layer.pm._parentLayerGroup)
+          !layer.geoman._parentLayerGroup ||
+          !(this._layerGroup._leaflet_id in layer.geoman._parentLayerGroup)
       );
       // init the newly added layers (can be multiple because of the throttle)
       _initLayers.forEach((layer) => {
@@ -36,7 +36,7 @@ export default class GeomanEditLayerGroup extends Class {
       if (
         _initLayers.length > 0 &&
         this._getMap() &&
-        this._getMap().pm.globalEditModeEnabled()
+        this._getMap().geoman.globalEditModeEnabled()
       ) {
         if (this.enabled()) {
           this.enable(this.getOptions());
@@ -59,7 +59,7 @@ export default class GeomanEditLayerGroup extends Class {
     );
 
     const removeThrottle = (e) => {
-      if (e.target._pmTempLayer) {
+      if (e.target._geomanTempLayer) {
         return;
       }
       this._layers = this.getLayers();
@@ -82,10 +82,10 @@ export default class GeomanEditLayerGroup extends Class {
       if (layer instanceof LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
           _layerIds.push(layer._leaflet_id);
-          layer.pm.enable(options, _layerIds);
+          layer.geoman.enable(options, _layerIds);
         }
       } else {
-        layer.pm.enable(options);
+        layer.geoman.enable(options);
       }
     });
   }
@@ -98,10 +98,10 @@ export default class GeomanEditLayerGroup extends Class {
       if (layer instanceof LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
           _layerIds.push(layer._leaflet_id);
-          layer.pm.disable(_layerIds);
+          layer.geoman.disable(_layerIds);
         }
       } else {
-        layer.pm.disable();
+        layer.geoman.disable();
       }
     });
   }
@@ -114,11 +114,11 @@ export default class GeomanEditLayerGroup extends Class {
       if (layer instanceof LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
           _layerIds.push(layer._leaflet_id);
-          return layer.pm.enabled(_layerIds);
+          return layer.geoman.enabled(_layerIds);
         }
         return false; // enabled is already returned because this is not the first time, so we can return always false
       }
-      return layer.pm.enabled();
+      return layer.geoman.enabled();
     });
     return !!enabled;
   }
@@ -132,10 +132,10 @@ export default class GeomanEditLayerGroup extends Class {
       if (layer instanceof LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id) === -1) {
           _layerIds.push(layer._leaflet_id);
-          layer.pm.toggleEdit(options, _layerIds);
+          layer.geoman.toggleEdit(options, _layerIds);
         }
       } else {
-        layer.pm.toggleEdit(options);
+        layer.geoman.toggleEdit(options);
       }
     });
   }
@@ -143,23 +143,23 @@ export default class GeomanEditLayerGroup extends Class {
   _initLayer(layer) {
     // add reference for the group to each layer inside said group by id, a layer can have multiple groups
     const id = Util.stamp(this._layerGroup);
-    if (!layer.pm._parentLayerGroup) {
-      layer.pm._parentLayerGroup = {};
+    if (!layer.geoman._parentLayerGroup) {
+      layer.geoman._parentLayerGroup = {};
     }
-    layer.pm._parentLayerGroup[id] = this._layerGroup;
+    layer.geoman._parentLayerGroup[id] = this._layerGroup;
   }
 
   _removeLayerFromGroup(layer) {
-    if (layer.pm && layer.pm._layerGroup) {
+    if (layer.geoman && layer.geoman._layerGroup) {
       const id = Util.stamp(this._layerGroup);
-      delete layer.pm._layerGroup[id];
+      delete layer.geoman._layerGroup[id];
     }
   }
 
   dragging() {
     this._layers = this.getLayers();
     if (this._layers) {
-      const dragging = this._layers.find((layer) => layer.pm.dragging());
+      const dragging = this._layers.find((layer) => layer.geoman.dragging());
       return !!dragging;
     }
     return false;
@@ -188,7 +188,7 @@ export default class GeomanEditLayerGroup extends Class {
           if (_layerIds.indexOf(layer._leaflet_id) === -1) {
             _layerIds.push(layer._leaflet_id);
             layers = layers.concat(
-              layer.pm.getLayers(true, true, true, _layerIds)
+              layer.geoman.getLayers(true, true, true, _layerIds)
             );
           }
         }
@@ -203,14 +203,14 @@ export default class GeomanEditLayerGroup extends Class {
     }
     if (filterGeoman) {
       // filter out layers that don't have leaflet-geoman
-      layers = layers.filter((layer) => !!layer.pm);
+      layers = layers.filter((layer) => !!layer.geoman);
       // filter out everything that's leaflet-geoman specific temporary stuff
-      layers = layers.filter((layer) => !layer._pmTempLayer);
+      layers = layers.filter((layer) => !layer._geomanTempLayer);
       // filter out everything that ignore leaflet-geoman
       layers = layers.filter(
         (layer) =>
-          (!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-          (Geoman.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+          (!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+          (Geoman.optIn && layer.options.geomanIgnore === false) // if optIn is true and geomanIgnore is false);
       );
     }
     return layers;
@@ -222,14 +222,14 @@ export default class GeomanEditLayerGroup extends Class {
     }
     this.options = options;
     this._layers.forEach((layer) => {
-      if (layer.pm) {
+      if (layer.geoman) {
         if (layer instanceof LayerGroup) {
           if (_layerIds.indexOf(layer._leaflet_id) === -1) {
             _layerIds.push(layer._leaflet_id);
-            layer.pm.setOptions(options, _layerIds);
+            layer.geoman.setOptions(options, _layerIds);
           }
         } else {
-          layer.pm.setOptions(options);
+          layer.geoman.setOptions(options);
         }
       }
     });

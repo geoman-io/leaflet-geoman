@@ -8,8 +8,8 @@ import {
   Util,
 } from 'leaflet';
 import { destinationOnLine } from '../helpers';
-import Edit from './L.PM.Edit';
-import Utils from '../L.PM.Utils';
+import Edit from './Edit';
+import Utils from '../GeomanUtils';
 
 export default class GeomanEditCircleMarker extends Edit {
   _shape = 'CircleMarker';
@@ -62,8 +62,8 @@ export default class GeomanEditCircleMarker extends Edit {
 
   _extendingEnable() {
     // if CircleMarker is dragged while draw mode
-    this._layer.on('pm:dragstart', this._onDragStart, this);
-    this._layer.on('pm:dragend', this._onDragEnd, this);
+    this._layer.on('geoman:dragstart', this._onDragStart, this);
+    this._layer.on('geoman:dragend', this._onDragEnd, this);
   }
 
   disable() {
@@ -181,7 +181,7 @@ export default class GeomanEditCircleMarker extends Edit {
 
     // add markerGroup to map, markerGroup includes regular and middle markers
     this._helperLayers = new FeatureGroup();
-    this._helperLayers._pmTempLayer = true;
+    this._helperLayers._geomanTempLayer = true;
     this._helperLayers.addTo(map);
 
     // create marker for each coordinate
@@ -207,7 +207,7 @@ export default class GeomanEditCircleMarker extends Edit {
     const B = markerB.getLatLng();
     this._hintline = new Polyline([A, B], this.options.hintlineStyle);
     this._setPane(this._hintline, 'layerPane');
-    this._hintline._pmTempLayer = true;
+    this._hintline._geomanTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
   }
 
@@ -236,7 +236,7 @@ export default class GeomanEditCircleMarker extends Edit {
     this._setPane(marker, 'vertexPane');
 
     marker._origLatLng = latlng;
-    marker._pmTempLayer = true;
+    marker._geomanTempLayer = true;
 
     marker.on('dragstart', this._onVertexDragStart, this);
     marker.on('drag', this._onVertexDrag, this);
@@ -328,7 +328,7 @@ export default class GeomanEditCircleMarker extends Edit {
   }
 
   _onDragStart() {
-    this._map.pm.Draw.CircleMarker._layerIsDragging = true;
+    this._map.geoman.Draw.CircleMarker._layerIsDragging = true;
   }
 
   _onVertexDragStart(e) {
@@ -366,7 +366,7 @@ export default class GeomanEditCircleMarker extends Edit {
   }
 
   _onDragEnd() {
-    this._map.pm.Draw.CircleMarker._layerIsDragging = false;
+    this._map.geoman.Draw.CircleMarker._layerIsDragging = false;
   }
 
   // _initSnappableMarkers when option resizeable is not true
@@ -377,23 +377,23 @@ export default class GeomanEditCircleMarker extends Edit {
     this.options.snapSegment =
       this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
-    marker.off('pm:drag', this._handleSnapping, this);
-    marker.on('pm:drag', this._handleSnapping, this);
+    marker.off('geoman:drag', this._handleSnapping, this);
+    marker.on('geoman:drag', this._handleSnapping, this);
 
-    marker.off('pm:dragend', this._cleanupSnapping, this);
-    marker.on('pm:dragend', this._cleanupSnapping, this);
+    marker.off('geoman:dragend', this._cleanupSnapping, this);
+    marker.on('geoman:dragend', this._cleanupSnapping, this);
 
-    marker.off('pm:dragstart', this._unsnap, this);
-    marker.on('pm:dragstart', this._unsnap, this);
+    marker.off('geoman:dragstart', this._unsnap, this);
+    marker.on('geoman:dragstart', this._unsnap, this);
   }
 
   // _disableSnapping when option resizeable is not true
   _disableSnappingDrag() {
     const marker = this._layer;
 
-    marker.off('pm:drag', this._handleSnapping, this);
-    marker.off('pm:dragend', this._cleanupSnapping, this);
-    marker.off('pm:dragstart', this._unsnap, this);
+    marker.off('geoman:drag', this._handleSnapping, this);
+    marker.off('geoman:dragend', this._cleanupSnapping, this);
+    marker.off('geoman:dragstart', this._unsnap, this);
   }
 
   _updateHiddenPolyCircle() {
@@ -407,7 +407,7 @@ export default class GeomanEditCircleMarker extends Edit {
       const _layer = new Circle(this._layer.getLatLng(), this._layer.options);
       _layer.setRadius(radius);
 
-      const crsSimple = map && map.pm._isCRSSimple();
+      const crsSimple = map && map.geoman._isCRSSimple();
       if (this._hiddenPolyCircle) {
         this._hiddenPolyCircle.setLatLngs(
           Utils.circleToPolygon(_layer, 200, !crsSimple).getLatLngs()

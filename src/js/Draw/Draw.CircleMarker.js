@@ -9,8 +9,8 @@ import {
   Util,
 } from 'leaflet';
 import { destinationOnLine, getTranslation } from '../helpers';
-import Draw from './L.PM.Draw';
-import Utils from '../L.PM.Utils';
+import Draw from './Draw';
+import Utils from '../GeomanUtils';
 
 export default class GeomanDrawCircleMarker extends Draw {
   initialize(map) {
@@ -28,14 +28,14 @@ export default class GeomanDrawCircleMarker extends Draw {
 
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+    // instances of Geoman.Draw. So a dev could set drawing style one time as some kind of config
     Util.setOptions(this, options);
 
     // change enabled state
     this._enabled = true;
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // change map cursor
     this._map.getContainer().classList.add('leaflet-geoman-draw-cursor');
@@ -49,7 +49,7 @@ export default class GeomanDrawCircleMarker extends Draw {
 
       // create a new layergroup
       this._layerGroup = new FeatureGroup();
-      this._layerGroup._pmTempLayer = true;
+      this._layerGroup._geomanTempLayer = true;
       this._layerGroup.addTo(this._map);
 
       // this is the circle we want to draw
@@ -58,7 +58,7 @@ export default class GeomanDrawCircleMarker extends Draw {
         templineStyle
       );
       this._setPane(this._layer, 'layerPane');
-      this._layer._pmTempLayer = true;
+      this._layer._geomanTempLayer = true;
 
       // this is the marker in the center of the circle
       this._centerMarker = new Marker(this._map.getCenter(), {
@@ -67,7 +67,7 @@ export default class GeomanDrawCircleMarker extends Draw {
         zIndexOffset: 100,
       });
       this._setPane(this._centerMarker, 'vertexPane');
-      this._centerMarker._pmTempLayer = true;
+      this._centerMarker._geomanTempLayer = true;
 
       // this is the hintmarker on the pointer cursor
       this._hintMarker = new Marker(this._map.getCenter(), {
@@ -77,7 +77,7 @@ export default class GeomanDrawCircleMarker extends Draw {
         }),
       });
       this._setPane(this._hintMarker, 'vertexPane');
-      this._hintMarker._pmTempLayer = true;
+      this._hintMarker._geomanTempLayer = true;
       this._layerGroup.addLayer(this._hintMarker);
 
       // show the hintmarker if the option is set
@@ -101,7 +101,7 @@ export default class GeomanDrawCircleMarker extends Draw {
       // this is the hintline from the hint marker to the center marker
       this._hintline = new Polyline([], this.options.hintlineStyle);
       this._setPane(this._hintline, 'layerPane');
-      this._hintline._pmTempLayer = true;
+      this._hintline._geomanTempLayer = true;
       this._layerGroup.addLayer(this._hintline);
       // create a polygon-point on click
       this._map.on('click', this._placeCenterMarker, this);
@@ -115,7 +115,7 @@ export default class GeomanDrawCircleMarker extends Draw {
         ...this.options.templineStyle,
       });
       this._setPane(this._hintMarker, 'layerPane');
-      this._hintMarker._pmTempLayer = true;
+      this._hintMarker._geomanTempLayer = true;
       this._hintMarker.addTo(this._map);
       // this is just to keep the snappable mixin happy
       this._layer = this._hintMarker;
@@ -153,7 +153,7 @@ export default class GeomanDrawCircleMarker extends Draw {
       // enable edit mode for existing markers
       this._map.eachLayer((layer) => {
         if (this.isRelevantMarker(layer)) {
-          layer.pm.enable();
+          layer.geoman.enable();
         }
       });
     }
@@ -195,7 +195,7 @@ export default class GeomanDrawCircleMarker extends Draw {
     this._map.off('pointermove', this._syncHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, false);
 
     // cleanup snapping
     if (this.options.snappable) {
@@ -211,7 +211,7 @@ export default class GeomanDrawCircleMarker extends Draw {
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {
       if (this.isRelevantMarker(layer)) {
-        layer.pm.disable();
+        layer.geoman.disable();
       }
     });
   }
@@ -322,8 +322,8 @@ export default class GeomanDrawCircleMarker extends Draw {
     return (
       layer instanceof CircleMarker &&
       !(layer instanceof Circle) &&
-      layer.pm &&
-      !layer._pmTempLayer
+      layer.geoman &&
+      !layer._geomanTempLayer
     );
   }
 
@@ -359,11 +359,11 @@ export default class GeomanDrawCircleMarker extends Draw {
     this._setPane(marker, 'layerPane');
     this._finishLayer(marker);
     // add marker to the map
-    marker.addTo(this._map.pm._getContainingLayer());
+    marker.addTo(this._map.geoman._getContainingLayer());
 
     this._extendingCreateMarker(marker);
 
-    // fire the pm:create event and pass shape and marker
+    // fire the geoman:create event and pass shape and marker
     this._fireCreate(marker);
 
     this._cleanupSnapping();
@@ -374,9 +374,9 @@ export default class GeomanDrawCircleMarker extends Draw {
   }
 
   _extendingCreateMarker(marker) {
-    if (marker.pm && this.options.markerEditable) {
+    if (marker.geoman && this.options.markerEditable) {
       // enable editing for the marker
-      marker.pm.enable();
+      marker.geoman.enable();
     }
   }
 
@@ -421,14 +421,14 @@ export default class GeomanDrawCircleMarker extends Draw {
     const circleLayer = new this._BaseCircleClass(center, options);
     this._setPane(circleLayer, 'layerPane');
     this._finishLayer(circleLayer);
-    circleLayer.addTo(this._map.pm._getContainingLayer());
+    circleLayer.addTo(this._map.geoman._getContainingLayer());
 
-    if (circleLayer.pm) {
+    if (circleLayer.geoman) {
       // create polygon around the circle border
-      circleLayer.pm._updateHiddenPolyCircle();
+      circleLayer.geoman._updateHiddenPolyCircle();
     }
 
-    // fire the pm:create event and pass shape and layer
+    // fire the geoman:create event and pass shape and layer
     this._fireCreate(circleLayer);
 
     const hintMarkerLatLng = this._hintMarker.getLatLng();

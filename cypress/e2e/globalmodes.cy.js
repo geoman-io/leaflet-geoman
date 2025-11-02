@@ -4,7 +4,7 @@ describe('Modes', () => {
     cy.drawShape('MonsterPolygon');
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: -1,
       });
     });
@@ -15,7 +15,7 @@ describe('Modes', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: 20,
       });
     });
@@ -52,12 +52,12 @@ describe('Modes', () => {
       layer = new L.GeoJSON(geojson).addTo(map).getLayers()[0];
       map.fitBounds(layer.getBounds());
 
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: 1,
         allowSelfIntersection: false,
       });
 
-      layer.on('pm:vertexdragstart', (e) => {
+      layer.on('geoman:vertexdragstart', (e) => {
         markerHtml = e.markerEvent.target._icon;
       });
     });
@@ -99,7 +99,7 @@ describe('Modes', () => {
     cy.drawShape('PolygonPart1');
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: 3,
         limitMarkersToViewport: true,
       });
@@ -122,7 +122,7 @@ describe('Modes', () => {
     cy.drawShape('PolygonPart1');
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: 3,
         limitMarkersToViewport: true,
       });
@@ -153,17 +153,17 @@ describe('Modes', () => {
     cy.toolbarButton('delete').click();
   });
 
-  it('unable to remove layer with pmIgnore:true', () => {
+  it('unable to remove layer with geomanIgnore:true', () => {
     cy.window().then(({ L, map }) => {
       const testLayer = new L.FeatureGroup();
       map.addLayer(testLayer);
 
-      map.on('pm:create', ({ layer }) => {
+      map.on('geoman:create', ({ layer }) => {
         const poly = layer;
 
         const coords = poly.getLatLngs();
 
-        const newPoly = new L.Polygon(coords, { pmIgnore: true }).addTo(
+        const newPoly = new L.Polygon(coords, { geomanIgnore: true }).addTo(
           testLayer
         );
         poly.remove();
@@ -203,7 +203,7 @@ describe('Modes', () => {
     cy.window().then(({ map, L }) => {
       map.eachLayer((layer) => {
         if (layer instanceof L.Marker) {
-          assert.isTrue(layer.pm.layerDragEnabled());
+          assert.isTrue(layer.geoman.layerDragEnabled());
         }
       });
     });
@@ -213,7 +213,7 @@ describe('Modes', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon').click();
 
-    // draw a polygon - triggers the event pm:create
+    // draw a polygon - triggers the event geoman:create
     cy.get(mapSelector)
       .click(90, 250)
       .click(100, 50)
@@ -224,11 +224,11 @@ describe('Modes', () => {
     cy.window().then(({ map, L }) => {
       map.eachLayer((l) => {
         if (l instanceof L.Polygon) {
-          l.pm.enable();
+          l.geoman.enable();
         }
       });
 
-      map.pm.enableGlobalDragMode();
+      map.geoman.enableGlobalDragMode();
 
       cy.hasVertexMarkers(0);
     });
@@ -277,7 +277,7 @@ describe('Modes', () => {
     cy.window().then(({ map, L }) => {
       map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
-          assert.isTrue(layer.pm.enabled());
+          assert.isTrue(layer.geoman.enabled());
         }
       });
     });
@@ -339,7 +339,7 @@ describe('Modes', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      map.pm.toggleGlobalEditMode({
+      map.geoman.toggleGlobalEditMode({
         preventMarkerRemoval: true,
       });
     });
@@ -363,7 +363,7 @@ describe('Modes', () => {
   });
   it('re-enable layers that added while in globaleditmode', () => {
     cy.window().then(({ map, L }) => {
-      map.pm.enableGlobalEditMode();
+      map.geoman.enableGlobalEditMode();
 
       const json = JSON.parse(
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-74.058559,40.718564],[-74.058559,40.726045],[-74.03959,40.726045],[-74.03959,40.718564],[-74.058559,40.718564]]]}}'
@@ -411,7 +411,9 @@ describe('Modes', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
+      expect(
+        map.geoman.getGeomanLayers()[0].geoman.layerDragEnabled()
+      ).to.equal(true);
     });
 
     cy.window().then(({ map, L }) => {
@@ -419,8 +421,12 @@ describe('Modes', () => {
     });
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
-      expect(map.pm.getGeomanLayers()[1].pm.layerDragEnabled()).to.equal(true);
+      expect(
+        map.geoman.getGeomanLayers()[0].geoman.layerDragEnabled()
+      ).to.equal(true);
+      expect(
+        map.geoman.getGeomanLayers()[1].geoman.layerDragEnabled()
+      ).to.equal(true);
     });
   });
 
@@ -436,7 +442,9 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.rotateEnabled()).to.equal(true);
+        expect(map.geoman.getGeomanLayers()[0].geoman.rotateEnabled()).to.equal(
+          true
+        );
         done();
       }, 100);
     });
@@ -454,7 +462,7 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.enabled()).to.equal(true);
+        expect(map.geoman.getGeomanLayers()[0].geoman.enabled()).to.equal(true);
         done();
       }, 100);
     });
@@ -472,9 +480,9 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(
-          true
-        );
+        expect(
+          map.geoman.getGeomanLayers()[0].geoman.layerDragEnabled()
+        ).to.equal(true);
         done();
       }, 100);
     });
@@ -492,10 +500,10 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        const layer = map.pm.getGeomanLayers()[0];
-        expect(layer.listens('click', map.pm.removeLayer, map.pm)).to.equal(
-          true
-        );
+        const layer = map.geoman.getGeomanLayers()[0];
+        expect(
+          layer.listens('click', map.geoman.removeLayer, map.geoman)
+        ).to.equal(true);
         done();
       }, 100);
     });

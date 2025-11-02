@@ -1,5 +1,5 @@
 import { Circle } from 'leaflet';
-import GeomanDrawCircleMarker from './L.PM.Draw.CircleMarker';
+import GeomanDrawCircleMarker from './Draw.CircleMarker';
 
 export default class GeomanDrawCircle extends GeomanDrawCircleMarker {
   initialize(map) {

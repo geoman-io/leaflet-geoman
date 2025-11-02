@@ -17,7 +17,7 @@ const plugins = [{
 
 const buildOptions = {
   bundle: true,
-  entryPoints: ['./src/js/L.PM.js'],
+  entryPoints: ['./src/js/Geoman.js'],
   loader: {
     '.js': 'jsx',
     '.css': 'css',

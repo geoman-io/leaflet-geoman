@@ -1,6 +1,6 @@
 import { LayerGroup, Util } from 'leaflet';
-import Geoman from '../../L.PM';
-import Utils from '../../L.PM.Utils';
+import Geoman from '../../Geoman';
+import Utils from '../../GeomanUtils';
 
 // this mixin adds a global edit mode to the map
 const GlobalEditMode = {
@@ -21,7 +21,7 @@ const GlobalEditMode = {
     // enable all layers
     layers.forEach((layer) => {
       if (this._isRelevantForEdit(layer)) {
-        layer.pm.enable(options);
+        layer.geoman.enable(options);
       }
     });
 
@@ -51,7 +51,7 @@ const GlobalEditMode = {
 
     // disable all layers
     layers.forEach((layer) => {
-      layer.pm.disable();
+      layer.geoman.disable();
     });
 
     // cleanup layer off event
@@ -87,7 +87,7 @@ const GlobalEditMode = {
         // enable edit for that layer if it's relevant
 
         if (this._isRelevantForEdit(layer)) {
-          layer.pm.enable({ ...this.globalOptions });
+          layer.geoman.enable({ ...this.globalOptions });
         }
       }
     }
@@ -97,12 +97,12 @@ const GlobalEditMode = {
   },
   _isRelevantForEdit(layer) {
     return (
-      layer.pm &&
+      layer.geoman &&
       !(layer instanceof LayerGroup) &&
-      ((!Geoman.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (Geoman.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
-      layer.pm.options.allowEditing
+      ((!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.geomanIgnore === false)) && // if optIn is true and geomanIgnore is false
+      !layer._geomanTempLayer &&
+      layer.geoman.options.allowEditing
     );
   },
 };

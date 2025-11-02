@@ -16,8 +16,8 @@ describe('Draw & Edit Polyline', () => {
   it('removes last vertex', () => {
     let eventCalled = false;
     cy.window().then(({ map }) => {
-      map.on('pm:drawstart', (e) => {
-        e.workingLayer.on('pm:vertexremoved', () => {
+      map.on('geoman:drawstart', (e) => {
+        e.workingLayer.on('geoman:vertexremoved', () => {
           eventCalled = true;
         });
       });
@@ -51,8 +51,8 @@ describe('Draw & Edit Polyline', () => {
 
   it('respects custom style', () => {
     cy.window().then(({ map }) => {
-      map.on('pm:create', (e) => {
-        e.layer.pm.enable({
+      map.on('geoman:create', (e) => {
+        e.layer.geoman.enable({
           allowSelfIntersection: false,
           snappable: false,
           snapDistance: 20,
@@ -61,7 +61,7 @@ describe('Draw & Edit Polyline', () => {
         e.layer.setStyle({ color: 'black' });
       });
 
-      map.pm.enableDraw('Polygon', {
+      map.geoman.enableDraw('Polygon', {
         snappable: false,
         snapDistance: 20,
         allowSelfIntersection: true,
@@ -189,7 +189,7 @@ describe('Draw & Edit Polyline', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ hideMiddleMarkers: true });
+      map.geoman.setGlobalOptions({ hideMiddleMarkers: true });
     });
 
     cy.toolbarButton('edit').click();
@@ -199,7 +199,7 @@ describe('Draw & Edit Polyline', () => {
 
   it('enable continueDrawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ continueDrawing: true });
+      map.geoman.setGlobalOptions({ continueDrawing: true });
     });
 
     cy.toolbarButton('polyline').click();
@@ -214,7 +214,7 @@ describe('Draw & Edit Polyline', () => {
     cy.get(mapSelector).click(200, 200).click(250, 250).click(250, 250);
 
     cy.window().then(({ map }) => {
-      const latlng = map.pm.Draw.Polyline._hintMarker.getLatLng();
+      const latlng = map.geoman.Draw.Polyline._hintMarker.getLatLng();
       const pxLatLng = map.containerPointToLatLng([250, 250]);
       expect(pxLatLng).to.deep.equal(latlng);
     });
@@ -249,7 +249,7 @@ describe('Draw & Edit Polyline', () => {
     cy.hasMiddleMarkers(6);
 
     cy.window().then(({ map }) => {
-      const layers = map.pm.getGeomanDrawLayers();
+      const layers = map.geoman.getGeomanDrawLayers();
       expect(layers.length).to.eq(1);
       expect(layers[0].getLatLngs().length).to.eq(4);
     });
@@ -257,7 +257,7 @@ describe('Draw & Edit Polyline', () => {
 
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         requireSnapToFinish: true,
         snapSegment: false,
       });
@@ -274,15 +274,15 @@ describe('Draw & Edit Polyline', () => {
     cy.get(mapSelector).click(350, 250).click(190, 160).click(190, 60);
 
     cy.window().then(({ map }) => {
-      map.pm.Draw.Polyline._finishShape();
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      map.geoman.Draw.Polyline._finishShape();
+      expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      map.pm.Draw.Polyline._finishShape();
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      map.geoman.Draw.Polyline._finishShape();
+      expect(2).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
   });
 
@@ -309,7 +309,7 @@ describe('Draw & Edit Polyline', () => {
 
     cy.hasLayers(7);
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = map.geoman.getGeomanDrawLayers()[0];
       layer.remove();
     });
     cy.hasLayers(2);
@@ -329,10 +329,13 @@ describe('Draw & Edit Polyline', () => {
       const style = {
         color: 'red',
       };
-      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+      map.geoman.setGlobalOptions({
+        templineStyle: style,
+        hintlineStyle: style,
+      });
 
-      const layer = map.pm.Draw.Polyline._layer;
-      const hintLine = map.pm.Draw.Polyline._hintline;
+      const layer = map.geoman.Draw.Polyline._layer;
+      const hintLine = map.geoman.Draw.Polyline._hintline;
       expect(layer.options.color).to.eql('red');
       expect(hintLine.options.color).to.eql('red');
     });
@@ -390,7 +393,7 @@ describe('Draw & Edit Polyline', () => {
 
   it('prevents removal of the layer if the vertex count is below minimum (removeLayerBelowMinVertexCount)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ removeLayerBelowMinVertexCount: false });
+      map.geoman.setGlobalOptions({ removeLayerBelowMinVertexCount: false });
     });
 
     // activate polyline drawing
@@ -420,7 +423,7 @@ describe('Draw & Edit Polyline', () => {
 
   it("doesn't snap to the vertex", () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ snapVertex: false });
+      map.geoman.setGlobalOptions({ snapVertex: false });
     });
 
     // activate polyline drawing
@@ -442,7 +445,7 @@ describe('Draw & Edit Polyline', () => {
     cy.get(mapSelector).click(150, 60).click(250, 50).click(250, 50);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
+      const layer = map.geoman.getGeomanDrawLayers()[1];
       expect(layer.getLatLngs()[0].lat).to.eq(51.52538802368748);
       expect(layer.getLatLngs()[0].lng).to.eq(-0.15050450596240997);
     });
@@ -455,7 +458,7 @@ describe('Draw & Edit Polyline', () => {
       .trigger('pointerup', 150, 55, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
+      const layer = map.geoman.getGeomanDrawLayers()[1];
       expect(layer.getLatLngs()[0].lat).to.eq(51.5258877375718);
       expect(layer.getLatLngs()[0].lng).to.eq(-0.15026355008465944);
     });

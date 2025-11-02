@@ -7,7 +7,7 @@ const MarkerLimits = {
     this.createCache();
 
     // refresh cache when layer was edited (e.g. when a vertex was added or removed)
-    this._layer.on('pm:edit', this.createCache, this);
+    this._layer.on('geoman:edit', this.createCache, this);
 
     // apply filter for the first time
     this.applyLimitFilters({});
@@ -21,23 +21,23 @@ const MarkerLimits = {
     }
 
     // remove events when edit mode is disabled
-    this._layer.on('pm:disable', this._removeMarkerLimitEvents, this);
+    this._layer.on('geoman:disable', this._removeMarkerLimitEvents, this);
     this._layer.on('remove', this._removeMarkerLimitEvents, this);
 
     // add markers closest to the pointer
     if (this.options.limitMarkersToCount > -1) {
       // re-init markers when a vertex is removed.
       // The reason is that syncing this cache with a removed marker was impossible to do
-      this._layer.on('pm:vertexremoved', this._initMarkers, this);
+      this._layer.on('geoman:vertexremoved', this._initMarkers, this);
 
       this._map.on('pointermove', this.throttledApplyLimitFilters, this);
     }
   },
   _removeMarkerLimitEvents() {
     this._map.off('pointermove', this.throttledApplyLimitFilters, this);
-    this._layer.off('pm:edit', this.createCache, this);
-    this._layer.off('pm:disable', this._removeMarkerLimitEvents, this);
-    this._layer.off('pm:vertexremoved', this._initMarkers, this);
+    this._layer.off('geoman:edit', this.createCache, this);
+    this._layer.off('geoman:disable', this._removeMarkerLimitEvents, this);
+    this._layer.off('geoman:vertexremoved', this._initMarkers, this);
   },
   createCache() {
     const allMarkers = [...this._markerGroup.getLayers(), ...this.markerCache];

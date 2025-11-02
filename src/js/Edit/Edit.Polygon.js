@@ -1,6 +1,6 @@
 import lineIntersect from '@turf/line-intersect';
 import { Polyline } from 'leaflet';
-import GeomanEditPolyline from './L.PM.Edit.Polyline';
+import GeomanEditPolyline from './Edit.Polyline';
 
 export default class GeomanEditPolygon extends GeomanEditPolyline {
   _shape = 'Polygon';

@@ -23,18 +23,18 @@ export default class GeomanControl extends Control {
 
   onAdd(map) {
     this._map = map;
-    if (!this._map.pm.Toolbar.options.oneBlock) {
+    if (!this._map.geoman.Toolbar.options.oneBlock) {
       if (this._button.tool === 'edit') {
-        this._container = this._map.pm.Toolbar.editContainer;
+        this._container = this._map.geoman.Toolbar.editContainer;
       } else if (this._button.tool === 'options') {
-        this._container = this._map.pm.Toolbar.optionsContainer;
+        this._container = this._map.geoman.Toolbar.optionsContainer;
       } else if (this._button.tool === 'custom') {
-        this._container = this._map.pm.Toolbar.customContainer;
+        this._container = this._map.geoman.Toolbar.customContainer;
       } else {
-        this._container = this._map.pm.Toolbar.drawContainer;
+        this._container = this._map.geoman.Toolbar.drawContainer;
       }
     } else {
-      this._container = this._map.pm.Toolbar._createContainer(
+      this._container = this._map.geoman.Toolbar._createContainer(
         this.options.position
       );
     }
@@ -172,14 +172,14 @@ export default class GeomanControl extends Control {
         text: getTranslation('actions.removeLastVertex'),
         title: getTranslation('actions.removeLastVertex'),
         onClick() {
-          this._map.pm.Draw[button.jsClass]._removeLastVertex();
+          this._map.geoman.Draw[button.jsClass]._removeLastVertex();
         },
       },
       finish: {
         text: getTranslation('actions.finish'),
         title: getTranslation('actions.finish'),
         onClick(e) {
-          this._map.pm.Draw[button.jsClass]._finishShape(e);
+          this._map.geoman.Draw[button.jsClass]._finishShape(e);
         },
       },
     };
@@ -220,7 +220,7 @@ export default class GeomanControl extends Control {
             // is needed to prevent scrolling when clicking on a-element with href="a"
             e.preventDefault();
             let btnName = '';
-            const { buttons } = this._map.pm.Toolbar;
+            const { buttons } = this._map.geoman.Toolbar;
             for (const btn in buttons) {
               if (buttons[btn]._button === button) {
                 btnName = btn;
@@ -295,10 +295,10 @@ export default class GeomanControl extends Control {
       return;
     }
     if (this._button.disableOtherButtons) {
-      this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
+      this._map.geoman.Toolbar.triggerClickOnToggledButtons(this);
     }
     let btnName = '';
-    const { buttons } = this._map.pm.Toolbar;
+    const { buttons } = this._map.geoman.Toolbar;
     for (const btn in buttons) {
       if (buttons[btn]._button === this._button) {
         btnName = btn;

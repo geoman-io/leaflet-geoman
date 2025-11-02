@@ -1,5 +1,5 @@
 import { Util } from 'leaflet';
-import Edit from './L.PM.Edit';
+import Edit from './Edit';
 
 export default class GeomanEditImageOverlay extends Edit {
   _shape = 'ImageOverlay';

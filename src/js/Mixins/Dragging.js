@@ -134,13 +134,13 @@ const DragMixin = {
       }
 
       if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
-        if (!this._layer.pm.options[_editableOption]) {
+        if (!this._layer.geoman.options[_editableOption]) {
           this._initSnappableMarkersDrag();
         }
-      } else if (this._layer.pm.options[_editableOption]) {
-        this._layer.pm._disableSnapping();
+      } else if (this._layer.geoman.options[_editableOption]) {
+        this._layer.geoman._disableSnapping();
       } else {
-        this._layer.pm._disableSnappingDrag();
+        this._layer.geoman._disableSnappingDrag();
       }
     }
 
@@ -182,7 +182,7 @@ const DragMixin = {
         this._map.dragging.disable();
       }
 
-      // fire pm:dragstart event
+      // fire geoman:dragstart event
       this._fireDragStart();
     }
 
@@ -195,7 +195,7 @@ const DragMixin = {
 
     // update the hidden circle border after dragging
     if (this._layer instanceof CircleMarker) {
-      this._layer.pm._updateHiddenPolyCircle();
+      this._layer.geoman._updateHiddenPolyCircle();
     }
   },
   _dragMixinOnPointerUp(e) {
@@ -223,7 +223,7 @@ const DragMixin = {
 
     // update the hidden circle border after dragging
     if (this._layer instanceof CircleMarker) {
-      this._layer.pm._updateHiddenPolyCircle();
+      this._layer.geoman._updateHiddenPolyCircle();
     }
 
     this._layerDragged = true;
@@ -238,7 +238,7 @@ const DragMixin = {
         el.classList.remove('leaflet-geoman-dragging');
       }
 
-      // fire pm:dragend event
+      // fire geoman:dragend event
       this._fireDragEnd();
 
       // fire edit
@@ -325,7 +325,7 @@ const DragMixin = {
     this._tempDragCoord = latlng;
 
     e.layer = this._layer;
-    // fire pm:dragstart event
+    // fire geoman:dragstart event
     this._fireDrag(e);
   },
   addDraggingClass() {
@@ -385,7 +385,7 @@ const DragMixin = {
 
         this.options.syncLayersOnDrag.forEach((layer) => {
           if (layer instanceof LayerGroup) {
-            layersToSync = layersToSync.concat(layer.pm.getLayers(true));
+            layersToSync = layersToSync.concat(layer.geoman.getLayers(true));
           }
         });
       } else if (this.options.syncLayersOnDrag === true) {
@@ -393,8 +393,8 @@ const DragMixin = {
         if (this._parentLayerGroup) {
           for (const key in this._parentLayerGroup) {
             const lg = this._parentLayerGroup[key];
-            if (lg.pm) {
-              layersToSync = lg.pm.getLayers(true);
+            if (lg.geoman) {
+              layersToSync = lg.geoman.getLayers(true);
             }
           }
         }
@@ -403,12 +403,12 @@ const DragMixin = {
       if (Array.isArray(layersToSync) && layersToSync.length > 0) {
         // filter out layers that don't have leaflet-geoman and not allowed to drag
         layersToSync = layersToSync
-          .filter((layer) => !!layer.pm)
-          .filter((layer) => !!layer.pm.options.draggable);
+          .filter((layer) => !!layer.geoman)
+          .filter((layer) => !!layer.geoman.options.draggable);
         layersToSync.forEach((layer) => {
-          if (layer !== this._layer && layer.pm[fnc]) {
+          if (layer !== this._layer && layer.geoman[fnc]) {
             layer._snapped = false;
-            layer.pm[fnc](e);
+            layer.geoman[fnc](e);
           }
         });
       }

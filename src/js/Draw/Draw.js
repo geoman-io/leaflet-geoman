@@ -11,7 +11,7 @@ import {
 import merge from 'lodash/merge';
 import EventMixin from '../Mixins/Events';
 import SnapMixin from '../Mixins/Snapping';
-import Utils from '../L.PM.Utils';
+import Utils from '../GeomanUtils';
 
 export default class Draw extends Class {
   static {
@@ -163,7 +163,7 @@ export default class Draw extends Class {
   }
 
   _setGlobalDrawMode() {
-    // extended to all PM.Draw shapes
+    // extended to all Geoman.Draw shapes
     if (this._shape === 'Cut') {
       this._fireGlobalCutModeToggled();
     } else {
@@ -180,7 +180,7 @@ export default class Draw extends Class {
         layer instanceof ImageOverlay
       ) {
         // filter out everything that's leaflet-geoman specific temporary stuff
-        if (!layer._pmTempLayer) {
+        if (!layer._geomanTempLayer) {
           layers.push(layer);
         }
       }
@@ -203,7 +203,7 @@ export default class Draw extends Class {
       throw new TypeError('Draw Type already exists');
     }
     if (!Draw[instance]) {
-      throw new TypeError(`There is no class L.PM.Draw.${instance}`);
+      throw new TypeError(`There is no class L.Geoman.Draw.${instance}`);
     }
 
     this[name] = new Draw[instance](this._map);
@@ -244,13 +244,13 @@ export default class Draw extends Class {
   }
 
   _finishLayer(layer) {
-    if (layer.pm) {
-      // add the pm options from drawing to the new layer (edit)
-      layer.pm.setOptions(this.options);
+    if (layer.geoman) {
+      // add the geoman options from drawing to the new layer (edit)
+      layer.geoman.setOptions(this.options);
       // set the shape (can be a custom shape)
-      layer.pm._shape = this._shape;
-      // apply the map to the new created layer in the pm object
-      layer.pm._map = this._map;
+      layer.geoman._shape = this._shape;
+      // apply the map to the new created layer in the geoman object
+      layer.geoman._map = this._map;
     }
     this._addDrawnLayerProp(layer);
   }
@@ -262,24 +262,24 @@ export default class Draw extends Class {
   _setPane(layer, type) {
     if (type === 'layerPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.layerPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.layerPane) ||
         'overlayPane';
     } else if (type === 'vertexPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.vertexPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.vertexPane) ||
         'markerPane';
     } else if (type === 'markerPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.markerPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.markerPane) ||
         'markerPane';
     }
   }
 
   _isFirstLayer() {
     const map = this._map || this._layer._map;
-    return map.pm.getGeomanLayers().length === 0;
+    return map.geoman.getGeomanLayers().length === 0;
   }
 }

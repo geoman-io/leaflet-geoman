@@ -117,7 +117,7 @@ Cypress.Commands.add('toolbarButton', (name) =>
 );
 
 Cypress.Commands.add('toolbarButtonContainer', (name, map) => {
-  cy.get(map.pm.Toolbar.buttons[name]._container.children[0]);
+  cy.get(map.geoman.Toolbar.buttons[name]._container.children[0]);
 });
 
 Cypress.Commands.add('drawShape', (shape, ignore) => {
@@ -126,7 +126,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -135,7 +137,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -144,7 +148,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
           return layer;
@@ -155,7 +161,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -165,7 +173,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -176,7 +186,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
         .as('poly')
         .then((json) => {
           const layer = new L.Polygon(json.data.points, {
-            pmIgnore: ignore,
+            geomanIgnore: ignore,
           }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
@@ -211,16 +221,16 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape, ignore)
         .then((json) => {
           const layer = new L.GeoJSON(json, {
-            pmIgnore: ignore,
+            geomanIgnore: ignore,
             pointToLayer: (feature, latlng) => {
               if (feature.properties.customGeometry) {
                 return new L.Circle(
                   latlng,
                   feature.properties.customGeometry.radius,
-                  { pmIgnore: ignore }
+                  { geomanIgnore: ignore }
                 );
               }
-              return new L.Marker(latlng, { pmIgnore: ignore });
+              return new L.Marker(latlng, { geomanIgnore: ignore });
             },
           });
 
