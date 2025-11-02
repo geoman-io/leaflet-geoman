@@ -105,14 +105,6 @@ export default class Toolbar extends Class {
   addControls(options = this.options) {
     // adds all buttons to the map specified inside options
 
-    // make button renaming backwards compatible
-    if (typeof options.editPolygon !== 'undefined') {
-      options.editMode = options.editPolygon;
-    }
-    if (typeof options.deleteLayer !== 'undefined') {
-      options.removalMode = options.deleteLayer;
-    }
-
     // first set the options
     Util.setOptions(this, options);
 
@@ -208,14 +200,6 @@ export default class Toolbar extends Class {
     // does not fire the events/functionality of the button
     // this just changes the state and is used if a functionality (like Draw)
     // is enabled manually via script
-
-    // backwards compatibility with button rename
-    if (name === 'editPolygon') {
-      name = 'editMode';
-    }
-    if (name === 'deleteLayer') {
-      name = 'removalMode';
-    }
 
     const toggleBtnName = name;
 
