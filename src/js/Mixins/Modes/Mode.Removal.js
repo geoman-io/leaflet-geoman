@@ -48,10 +48,6 @@ const GlobalRemovalMode = {
 
     this._fireGlobalRemovalModeToggled(false);
   },
-  // TODO: Remove in the next major release
-  globalRemovalEnabled() {
-    return this.globalRemovalModeEnabled();
-  },
   globalRemovalModeEnabled() {
     return !!this._globalRemovalModeEnabled;
   },

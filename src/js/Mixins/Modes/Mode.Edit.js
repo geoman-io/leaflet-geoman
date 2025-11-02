@@ -64,10 +64,6 @@ const GlobalEditMode = {
     // fire event
     this._fireGlobalEditModeToggled(false);
   },
-  // TODO: Remove in the next major release
-  globalEditEnabled() {
-    return this.globalEditModeEnabled();
-  },
   globalEditModeEnabled() {
     return this._globalEditModeEnabled;
   },
