@@ -1904,7 +1904,7 @@ declare module 'leaflet' {
       /** Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them) (default:true). */
       markerEditable?: boolean;
 
-      /** Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to true for Markers and CircleMarkers and false for all other layers. */
+      /** Draw-Mode stays enabled after finishing a layer to immediately draw the next layer (default: false). */
       continueDrawing?: boolean;
 
       /** Angel of rectangle. */

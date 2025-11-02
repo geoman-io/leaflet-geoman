@@ -17,6 +17,10 @@ describe('Draw Circle Marker', () => {
     // No circle layers
     cy.hasCircleLayers(0);
 
+    cy.window().then(({ map }) => {
+      map.geoman.setGlobalOptions({ continueDrawing: true });
+    });
+
     cy.toolbarButton('circle-marker')
       .click()
       .closest('.leaflet-geoman-button-container')
@@ -233,6 +237,7 @@ describe('Draw Circle Marker', () => {
       map.geoman.setGlobalOptions({
         markerEditable: true,
         preventMarkerRemoval: true,
+        continueDrawing: true,
       });
     });
 
@@ -369,9 +374,9 @@ describe('Draw Circle Marker', () => {
         minZoom: -2,
       }).setView([0, 0], 0);
       mapSimple.geoman.addControls();
-
       mapSimple.geoman.enableDraw('CircleMarker', {
         pathOptions: { radius: 40 },
+        continueDrawing: true,
       });
     });
 
@@ -396,6 +401,7 @@ describe('Draw Circle Marker', () => {
 
       mapSimple.geoman.enableDraw('CircleMarker', {
         resizeableCircleMarker: true,
+        continueDrawing: true,
       });
     });
 
@@ -453,6 +459,7 @@ describe('Draw Circle Marker', () => {
     cy.window().then(({ map }) => {
       map.geoman.setGlobalOptions({
         resizeableCircleMarker: true,
+        continueDrawing: true,
       });
     });
     cy.toolbarButton('circle-marker')
@@ -564,8 +571,6 @@ describe('Draw Circle Marker', () => {
       .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
-
-    cy.toolbarButton('circle-marker').click();
 
     cy.window().then(({ map }) => {
       const layer = map.geoman.getGeomanDrawLayers()[0];

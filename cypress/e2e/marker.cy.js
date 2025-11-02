@@ -57,6 +57,10 @@ describe('Draw Marker', () => {
   });
 
   it('places markers', () => {
+    cy.window().then(({ map }) => {
+      map.geoman.setGlobalOptions({ continueDrawing: true });
+    });
+
     cy.toolbarButton('marker').click();
 
     cy.get(mapSelector)
@@ -231,6 +235,7 @@ describe('Draw Marker', () => {
       map.geoman.setGlobalOptions({
         markerEditable: true,
         preventMarkerRemoval: true,
+        continueDrawing: true,
       });
     });
 
@@ -318,6 +323,10 @@ describe('Draw Marker', () => {
   });
 
   it('does not create additional marker while dragging in draw mode', () => {
+    cy.window().then(({ map }) => {
+      map.geoman.setGlobalOptions({ continueDrawing: true });
+    });
+
     cy.toolbarButton('marker').click();
 
     cy.get(mapSelector).click(150, 250);

@@ -94,10 +94,6 @@ export default class Draw extends Class {
     this.shapes.forEach((shape) => {
       this[shape] = new Draw[shape](this._map);
     });
-
-    // TODO: Remove this with the next major release
-    this.Marker.setOptions({ continueDrawing: true });
-    this.CircleMarker.setOptions({ continueDrawing: true });
   }
 
   setPathOptions(options, mergeOptions = false) {
