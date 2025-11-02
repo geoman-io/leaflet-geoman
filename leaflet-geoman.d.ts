@@ -1641,6 +1641,9 @@ declare module 'leaflet' {
 
       /** Get options */
       getOptions(): DrawModeOptions;
+
+      /** Removes the last vertex from the drawing layer (Works only for Polyline and Polygon). */
+      removeLastVertex(): void;
     }
 
     interface LassoDraw {

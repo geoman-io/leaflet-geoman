@@ -307,7 +307,7 @@ export default class GeomanDrawPolyline extends Draw {
     this._hintline.setLatLngs([hintMarkerLatLng, hintMarkerLatLng]);
   }
 
-  _removeLastVertex() {
+  removeLastVertex() {
     const markers = this._markers;
 
     // if all markers are gone, cancel drawing

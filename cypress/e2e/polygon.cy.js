@@ -372,7 +372,7 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(5);
 
     cy.window().then(({ map }) => {
-      map.geoman.Draw.Polygon._removeLastVertex();
+      map.geoman.Draw.Polygon.removeLastVertex();
     });
 
     cy.hasVertexMarkers(4);

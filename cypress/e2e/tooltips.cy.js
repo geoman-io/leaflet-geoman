@@ -228,7 +228,7 @@ describe('Shows Tooltips', () => {
     });
 
     cy.window().then(({ map }) => {
-      map.geoman.Draw.Polygon._removeLastVertex();
+      map.geoman.Draw.Polygon.removeLastVertex();
     });
 
     cy.get('.leaflet-tooltip-bottom').then((el) => {
