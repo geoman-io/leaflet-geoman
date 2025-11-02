@@ -108,20 +108,10 @@ export default class GeomanMap extends Class {
   }
 
   enableDraw(shape = 'Polygon', options) {
-    // backwards compatible, remove after 3.0
-    if (shape === 'Poly') {
-      shape = 'Polygon';
-    }
-
     this.Draw.enable(shape, options);
   }
 
   disableDraw(shape = 'Polygon') {
-    // backwards compatible, remove after 3.0
-    if (shape === 'Poly') {
-      shape = 'Polygon';
-    }
-
     this.Draw.disable(shape);
   }
 
