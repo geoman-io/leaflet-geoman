@@ -565,7 +565,7 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
+      this._map,
       'geoman:langchange',
       {
         oldLang,
@@ -580,11 +580,11 @@ const EventMixin = {
   // Fired when Drag Mode is toggled.
   _fireGlobalDragModeToggled(enabled, source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
+      this._map,
       'geoman:globaldragmodetoggled',
       {
         enabled,
-        map: this.map,
+        map: this._map,
       },
       source,
       customPayload
@@ -593,11 +593,11 @@ const EventMixin = {
   // Fired when Edit Mode is toggled.
   _fireGlobalEditModeToggled(enabled, source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
+      this._map,
       'geoman:globaleditmodetoggled',
       {
         enabled,
-        map: this.map,
+        map: this._map,
       },
       source,
       customPayload
@@ -610,11 +610,11 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
+      this._map,
       'geoman:globalremovalmodetoggled',
       {
         enabled,
-        map: this.map,
+        map: this._map,
       },
       source,
       customPayload
@@ -650,11 +650,11 @@ const EventMixin = {
   // Fired when Rotation Mode is toggled.
   _fireGlobalRotateModeToggled(source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
+      this._map,
       'geoman:globalrotatemodetoggled',
       {
         enabled: this.globalRotateModeEnabled(),
-        map: this.map,
+        map: this._map,
       },
       source,
       customPayload
@@ -684,7 +684,7 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
+      this._map,
       'geoman:keyevent',
       {
         event,

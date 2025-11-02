@@ -6,7 +6,7 @@ const GlobalRotateMode = {
   _globalRotateModeEnabled: false,
   enableGlobalRotateMode() {
     this._globalRotateModeEnabled = true;
-    const layers = Utils.findLayers(this.map).filter(
+    const layers = Utils.findLayers(this._map).filter(
       (l) => l instanceof Polyline
     );
     layers.forEach((layer) => {
@@ -25,8 +25,8 @@ const GlobalRotateMode = {
 
     this._addedLayersRotate = {};
     // handle layers that are added while in rotate mode
-    this.map.on('layeradd', this._layerAddedRotate, this);
-    this.map.on('layeradd', this.throttledReInitRotate, this);
+    this._map.on('layeradd', this._layerAddedRotate, this);
+    this._map.on('layeradd', this.throttledReInitRotate, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
@@ -34,7 +34,7 @@ const GlobalRotateMode = {
   },
   disableGlobalRotateMode() {
     this._globalRotateModeEnabled = false;
-    const layers = Utils.findLayers(this.map).filter(
+    const layers = Utils.findLayers(this._map).filter(
       (l) => l instanceof Polyline
     );
     layers.forEach((layer) => {
@@ -42,8 +42,8 @@ const GlobalRotateMode = {
     });
 
     // remove map handler
-    this.map.off('layeradd', this._layerAddedRotate, this);
-    this.map.off('layeradd', this.throttledReInitRotate, this);
+    this._map.off('layeradd', this._layerAddedRotate, this);
+    this._map.off('layeradd', this.throttledReInitRotate, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());

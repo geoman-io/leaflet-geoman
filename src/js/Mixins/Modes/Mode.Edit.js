@@ -16,7 +16,7 @@ const GlobalEditMode = {
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
 
     // find all layers handled by leaflet-geoman
-    const layers = Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
 
     // enable all layers
     layers.forEach((layer) => {
@@ -35,9 +35,9 @@ const GlobalEditMode = {
 
     // save the added layers into the _addedLayersEdit array, to read it later out
     this._addedLayersEdit = {};
-    this.map.on('layeradd', this._layerAddedEdit, this);
+    this._map.on('layeradd', this._layerAddedEdit, this);
     // handle layers that are added while in edit mode
-    this.map.on('layeradd', this.throttledReInitEdit, this);
+    this._map.on('layeradd', this.throttledReInitEdit, this);
 
     // fire event
     this._fireGlobalEditModeToggled(true);
@@ -47,7 +47,7 @@ const GlobalEditMode = {
     this._globalEditModeEnabled = false;
 
     // find all layers handles by leaflet-geoman
-    const layers = Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
 
     // disable all layers
     layers.forEach((layer) => {
@@ -55,8 +55,8 @@ const GlobalEditMode = {
     });
 
     // cleanup layer off event
-    this.map.off('layeradd', this._layerAddedEdit, this);
-    this.map.off('layeradd', this.throttledReInitEdit, this);
+    this._map.off('layeradd', this._layerAddedEdit, this);
+    this._map.off('layeradd', this.throttledReInitEdit, this);
 
     // Set toolbar button to currect status
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());

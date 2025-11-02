@@ -5,7 +5,7 @@ import Utils from '../../GeomanUtils';
 const GlobalDragMode = {
   _globalDragModeEnabled: false,
   enableGlobalDragMode() {
-    const layers = Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
 
     this._globalDragModeEnabled = true;
     this._addedLayersDrag = {};
@@ -25,8 +25,8 @@ const GlobalDragMode = {
     }
 
     // add map handler
-    this.map.on('layeradd', this._layerAddedDrag, this);
-    this.map.on('layeradd', this.throttledReInitDrag, this);
+    this._map.on('layeradd', this._layerAddedDrag, this);
+    this._map.on('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
@@ -34,7 +34,7 @@ const GlobalDragMode = {
     this._fireGlobalDragModeToggled(true);
   },
   disableGlobalDragMode() {
-    const layers = Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
 
     this._globalDragModeEnabled = false;
 
@@ -43,8 +43,8 @@ const GlobalDragMode = {
     });
 
     // remove map handler
-    this.map.off('layeradd', this._layerAddedDrag, this);
-    this.map.off('layeradd', this.throttledReInitDrag, this);
+    this._map.off('layeradd', this._layerAddedDrag, this);
+    this._map.off('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());

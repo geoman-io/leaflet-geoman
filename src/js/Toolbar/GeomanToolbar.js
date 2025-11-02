@@ -61,7 +61,7 @@ export default class Toolbar extends Class {
   }
 
   init(map) {
-    this.map = map;
+    this._map = map;
 
     this.buttons = {};
     this.isVisible = false;
@@ -226,7 +226,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -242,7 +242,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -258,7 +258,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -274,7 +274,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -291,7 +291,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -307,7 +307,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -321,7 +321,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-edit',
       onClick: () => {},
       afterClick: () => {
-        this.map.geoman.toggleGlobalEditMode();
+        this._map.geoman.toggleGlobalEditMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -336,7 +336,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-drag',
       onClick: () => {},
       afterClick: () => {
-        this.map.geoman.toggleGlobalDragMode();
+        this._map.geoman.toggleGlobalDragMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -353,7 +353,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // enable polygon drawing mode without snap
-        this.map.geoman.Draw[ctx.button._button.jsClass].toggle({
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle({
           allowSnapping: true,
           cursorMarker: true,
           allowSelfIntersection: false,
@@ -372,7 +372,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-delete',
       onClick: () => {},
       afterClick: () => {
-        this.map.geoman.toggleGlobalRemovalMode();
+        this._map.geoman.toggleGlobalRemovalMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -387,7 +387,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-rotate',
       onClick: () => {},
       afterClick: () => {
-        this.map.geoman.toggleGlobalRotateMode();
+        this._map.geoman.toggleGlobalRotateMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -404,7 +404,7 @@ export default class Toolbar extends Class {
       onClick: () => {},
       afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.geoman.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -481,7 +481,7 @@ export default class Toolbar extends Class {
           block = 'draw';
         }
         buttons[btn].setPosition(this._getBtnPosition(block));
-        buttons[btn].addTo(this.map);
+        buttons[btn].addTo(this._map);
       }
     }
   }
@@ -519,7 +519,7 @@ export default class Toolbar extends Class {
     if (this.buttons[options.name]) {
       throw new TypeError('Button with this name already exists');
     }
-    const drawInstance = this.map.geoman.Draw.createNewDrawInstance(
+    const drawInstance = this._map.geoman.Draw.createNewDrawInstance(
       options.name,
       instance
     );
@@ -676,7 +676,7 @@ export default class Toolbar extends Class {
       }
     });
 
-    this.map.geoman.Toolbar.buttons = newbtnorder;
+    this._map.geoman.Toolbar.buttons = newbtnorder;
     this._showHideButtons();
   }
 

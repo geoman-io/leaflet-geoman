@@ -23,7 +23,7 @@ export default class GeomanMap extends Class {
   }
 
   initialize(map) {
-    this.map = map;
+    this._map = map;
     this.Draw = new Draw(map);
     this.Toolbar = new Toolbar(map);
     this.Keyboard = createKeyboardMixins();
@@ -87,7 +87,7 @@ export default class GeomanMap extends Class {
     }
 
     Geoman.activeLang = lang;
-    this.map.geoman.Toolbar.reinit();
+    this._map.geoman.Toolbar.reinit();
     this._fireLangChange(oldLang, lang, fallback, translations[lang]);
   }
 
@@ -120,9 +120,9 @@ export default class GeomanMap extends Class {
     const ignore = optionsModifier.ignoreShapes || [];
     const mergeOptions = optionsModifier.merge || false;
 
-    this.map.geoman.Draw.shapes.forEach((shape) => {
+    this._map.geoman.Draw.shapes.forEach((shape) => {
       if (ignore.indexOf(shape) === -1) {
-        this.map.geoman.Draw[shape].setPathOptions(options, mergeOptions);
+        this._map.geoman.Draw[shape].setPathOptions(options, mergeOptions);
       }
     });
   }
@@ -138,44 +138,44 @@ export default class GeomanMap extends Class {
     // check if switched the resizeable mode for CircleMarker while drawing
     let reenableCircleMarker = false;
     if (
-      this.map.geoman.Draw.CircleMarker.enabled() &&
-      !!this.map.geoman.Draw.CircleMarker.options.resizeableCircleMarker !==
+      this._map.geoman.Draw.CircleMarker.enabled() &&
+      !!this._map.geoman.Draw.CircleMarker.options.resizeableCircleMarker !==
         !!options.resizeableCircleMarker
     ) {
-      this.map.geoman.Draw.CircleMarker.disable();
+      this._map.geoman.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
     }
     // check if switched the resizeable mode for Circle while drawing
     let reenableCircle = false;
     if (
-      this.map.geoman.Draw.Circle.enabled() &&
-      !!this.map.geoman.Draw.Circle.options.resizeableCircle !==
+      this._map.geoman.Draw.Circle.enabled() &&
+      !!this._map.geoman.Draw.Circle.options.resizeableCircle !==
         !!options.resizeableCircle
     ) {
-      this.map.geoman.Draw.Circle.disable();
+      this._map.geoman.Draw.Circle.disable();
       reenableCircle = true;
     }
 
     // enable options for Drawing Shapes
-    this.map.geoman.Draw.shapes.forEach((shape) => {
-      this.map.geoman.Draw[shape].setOptions(options);
+    this._map.geoman.Draw.shapes.forEach((shape) => {
+      this._map.geoman.Draw[shape].setOptions(options);
     });
 
     if (reenableCircleMarker) {
-      this.map.geoman.Draw.CircleMarker.enable();
+      this._map.geoman.Draw.CircleMarker.enable();
     }
 
     if (reenableCircle) {
-      this.map.geoman.Draw.Circle.enable();
+      this._map.geoman.Draw.Circle.enable();
     }
 
     // enable options for Editing
-    const layers = Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
     layers.forEach((layer) => {
       layer.geoman.setOptions(options);
     });
 
-    this.map.fire('geoman:globaloptionschanged');
+    this._map.fire('geoman:globaloptionschanged');
 
     // store options
     this.globalOptions = options;
@@ -185,7 +185,7 @@ export default class GeomanMap extends Class {
   }
 
   applyGlobalOptions() {
-    const layers = Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
     layers.forEach((layer) => {
       if (layer.geoman.enabled()) {
         layer.geoman.applyOptions();
@@ -214,7 +214,7 @@ export default class GeomanMap extends Class {
   }
 
   getGeomanLayers(asGroup = false) {
-    const layers = Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
     if (!asGroup) {
       return layers;
     }
@@ -227,7 +227,7 @@ export default class GeomanMap extends Class {
   }
 
   getGeomanDrawLayers(asGroup = false) {
-    const layers = Utils.findLayers(this.map).filter(
+    const layers = Utils.findLayers(this._map).filter(
       (l) => l._drawnByGeoman === true
     );
     if (!asGroup) {
@@ -246,10 +246,10 @@ export default class GeomanMap extends Class {
     return this.globalOptions.layerGroup &&
       this.globalOptions.layerGroup instanceof LayerGroup
       ? this.globalOptions.layerGroup
-      : this.map;
+      : this._map;
   }
 
   _isCRSSimple() {
-    return this.map.options.crs === CRS.Simple;
+    return this._map.options.crs === CRS.Simple;
   }
 }

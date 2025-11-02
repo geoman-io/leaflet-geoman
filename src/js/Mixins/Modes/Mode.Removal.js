@@ -6,7 +6,7 @@ const GlobalRemovalMode = {
   enableGlobalRemovalMode() {
     this._globalRemovalModeEnabled = true;
     // handle existing layers
-    this.map.eachLayer((layer) => {
+    this._map.eachLayer((layer) => {
       if (this._isRelevantForRemoval(layer)) {
         if (layer.geoman.enabled()) {
           layer.geoman.disable();
@@ -25,8 +25,8 @@ const GlobalRemovalMode = {
     // save the added layers into the _addedLayersRemoval array, to read it later out
     this._addedLayersRemoval = {};
     // handle layers that are added while in removal mode
-    this.map.on('layeradd', this._layerAddedRemoval, this);
-    this.map.on('layeradd', this.throttledReInitRemoval, this);
+    this._map.on('layeradd', this._layerAddedRemoval, this);
+    this._map.on('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
@@ -35,13 +35,13 @@ const GlobalRemovalMode = {
   },
   disableGlobalRemovalMode() {
     this._globalRemovalModeEnabled = false;
-    this.map.eachLayer((layer) => {
+    this._map.eachLayer((layer) => {
       layer.off('click', this._removeLayer, this);
     });
 
     // remove map handler
-    this.map.off('layeradd', this._layerAddedRemoval, this);
-    this.map.off('layeradd', this.throttledReInitRemoval, this);
+    this._map.off('layeradd', this._layerAddedRemoval, this);
+    this._map.off('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
@@ -67,14 +67,14 @@ const GlobalRemovalMode = {
       this._isRelevantForRemoval(layer) && !layer.geoman.dragging();
 
     if (removeable) {
-      layer.removeFrom(this.map.geoman._getContainingLayer());
+      layer.removeFrom(this._map.geoman._getContainingLayer());
       layer.remove();
       if (layer instanceof LayerGroup) {
         this._fireRemoveLayerGroup(layer);
-        this._fireRemoveLayerGroup(this.map, layer);
+        this._fireRemoveLayerGroup(this._map, layer);
       } else {
         layer.geoman._fireRemove(layer);
-        layer.geoman._fireRemove(this.map, layer);
+        layer.geoman._fireRemove(this._map, layer);
       }
     }
   },
