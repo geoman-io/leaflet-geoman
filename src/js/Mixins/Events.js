@@ -35,7 +35,6 @@ const EventMixin = {
       'pm:create',
       {
         shape: this._shape,
-        marker: layer, // TODO: Deprecated
         layer,
       },
       source,
