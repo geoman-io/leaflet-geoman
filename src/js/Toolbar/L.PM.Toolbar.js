@@ -224,7 +224,7 @@ export default class Toolbar extends Class {
       title: getTranslation('buttonTitles.drawMarkerButton'),
       jsClass: 'Marker',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
@@ -240,7 +240,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-polygon',
       jsClass: 'Polygon',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
@@ -256,7 +256,7 @@ export default class Toolbar extends Class {
       title: getTranslation('buttonTitles.drawLineButton'),
       jsClass: 'Polyline',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
@@ -272,7 +272,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-circle',
       jsClass: 'Circle',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
@@ -289,7 +289,7 @@ export default class Toolbar extends Class {
         'leaflet-geoman-control-icon leaflet-geoman-icon-circle-marker',
       jsClass: 'CircleMarker',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
@@ -305,7 +305,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-rectangle',
       jsClass: 'Rectangle',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },
@@ -351,7 +351,7 @@ export default class Toolbar extends Class {
       className: 'leaflet-geoman-control-icon leaflet-geoman-icon-cut',
       jsClass: 'Cut',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // enable polygon drawing mode without snap
         this.map.pm.Draw[ctx.button._button.jsClass].toggle({
           snappable: true,
@@ -402,7 +402,7 @@ export default class Toolbar extends Class {
       title: getTranslation('buttonTitles.drawTextButton'),
       jsClass: 'Text',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
         this.map.pm.Draw[ctx.button._button.jsClass].toggle();
       },

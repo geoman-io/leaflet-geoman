@@ -1130,7 +1130,7 @@ declare module 'leaflet' {
       actions?: (ACTION_NAMES | Action)[];
 
       /** Function fired after clicking the control. */
-      afterClick?: () => void;
+      afterClick?: (ctx: { button: Button; event: MouseEvent }) => void;
 
       /** CSS class with the Icon. */
       className?: string;
@@ -1145,7 +1145,7 @@ declare module 'leaflet' {
       jsClass?: string;
 
       /** Function fired when clicking the control. */
-      onClick?: () => void;
+      onClick?: (ctx: { button: Button; event: MouseEvent }) => void;
 
       position?: L.ControlPosition;
 
@@ -1173,10 +1173,10 @@ declare module 'leaflet' {
       className?: string;
 
       /** Function fired when clicking the control. */
-      onClick?: () => void;
+      onClick?: (ctx: { button: Button; event: MouseEvent }) => void;
 
       /** Function fired after clicking the control. */
-      afterClick?: () => void;
+      afterClick?: (ctx: { button: Button; event: MouseEvent }) => void;
 
       /** Actions */
       actions?: (ACTION_NAMES | Action)[];

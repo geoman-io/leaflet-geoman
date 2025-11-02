@@ -112,10 +112,9 @@ export default class GeomanControl extends Control {
     if (this._button.disabled) {
       return;
     }
-    // TODO is this a big change when we change from e to a object with the event and the button? Now it's the second argument
-    this._button.onClick(e, { button: this, event: e });
+    this._button.onClick({ button: this, event: e });
     this._clicked(e);
-    this._button.afterClick(e, { button: this, event: e });
+    this._button.afterClick({ button: this, event: e });
   }
 
   _makeButton(button) {
