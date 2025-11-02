@@ -2,7 +2,7 @@ import { Control, DomEvent, DomUtil } from 'leaflet';
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
-export default class PMButton extends Control {
+export default class GeomanControl extends Control {
   static {
     this.include(EventMixin);
 

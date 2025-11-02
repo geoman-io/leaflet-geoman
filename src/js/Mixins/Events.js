@@ -530,7 +530,7 @@ const EventMixin = {
     source = 'Toolbar',
     customPayload = {}
   ) {
-    // this._map is used because this is fired from Controls (PMButton)
+    // this._map is used because this is fired from Controls (GeomanControl)
     this.__fire(
       this._map,
       'pm:actionclick',
@@ -546,7 +546,7 @@ const EventMixin = {
   },
   // Fired when a Toolbar button is clicked
   _fireButtonClick(btnName, button, source = 'Toolbar', customPayload = {}) {
-    // this._map is used because this is fired from Controls (PMButton)
+    // this._map is used because this is fired from Controls (GeomanControl)
     this.__fire(
       this._map,
       'pm:buttonclick',

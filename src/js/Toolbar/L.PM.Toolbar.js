@@ -1,9 +1,7 @@
-import PMButton from './L.Controls';
+import GeomanControl from './L.PM.GeomanControl';
 
-import { Class, Control, DomUtil, Util } from 'leaflet';
+import { Class, DomUtil, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
-
-Control.PMButton = PMButton;
 
 export default class Toolbar extends Class {
   static {
@@ -415,18 +413,21 @@ export default class Toolbar extends Class {
       actions: ['cancel'],
     };
 
-    this._addButton('drawMarker', new PMButton(drawMarkerButton));
-    this._addButton('drawPolyline', new PMButton(drawLineButton));
-    this._addButton('drawRectangle', new PMButton(drawRectButton));
-    this._addButton('drawPolygon', new PMButton(drawPolyButton));
-    this._addButton('drawCircle', new PMButton(drawCircleButton));
-    this._addButton('drawCircleMarker', new PMButton(drawCircleMarkerButton));
-    this._addButton('drawText', new PMButton(drawTextButton));
-    this._addButton('editMode', new PMButton(editButton));
-    this._addButton('dragMode', new PMButton(dragButton));
-    this._addButton('cutPolygon', new PMButton(cutButton));
-    this._addButton('removalMode', new PMButton(deleteButton));
-    this._addButton('rotateMode', new PMButton(rotateButton));
+    this._addButton('drawMarker', new GeomanControl(drawMarkerButton));
+    this._addButton('drawPolyline', new GeomanControl(drawLineButton));
+    this._addButton('drawRectangle', new GeomanControl(drawRectButton));
+    this._addButton('drawPolygon', new GeomanControl(drawPolyButton));
+    this._addButton('drawCircle', new GeomanControl(drawCircleButton));
+    this._addButton(
+      'drawCircleMarker',
+      new GeomanControl(drawCircleMarkerButton)
+    );
+    this._addButton('drawText', new GeomanControl(drawTextButton));
+    this._addButton('editMode', new GeomanControl(editButton));
+    this._addButton('dragMode', new GeomanControl(dragButton));
+    this._addButton('cutPolygon', new GeomanControl(cutButton));
+    this._addButton('removalMode', new GeomanControl(deleteButton));
+    this._addButton('rotateMode', new GeomanControl(rotateButton));
   }
 
   _showHideButtons() {
@@ -583,7 +584,7 @@ export default class Toolbar extends Class {
       this.options[options.name] = true;
     }
 
-    const control = this._addButton(options.name, new PMButton(_options));
+    const control = this._addButton(options.name, new GeomanControl(_options));
     this.changeControlOrder();
     return control;
   }
@@ -736,3 +737,5 @@ export default class Toolbar extends Class {
     return shapeMapping[name] ? shapeMapping[name] : name;
   }
 }
+
+Toolbar.GeomanControl = GeomanControl;
