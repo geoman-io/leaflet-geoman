@@ -79,7 +79,7 @@ export default class Edit extends Class {
 
   remove() {
     const map = this._map || this._layer._map;
-    map.geoman.removeLayer({ target: this._layer });
+    map.geoman._removeLayer({ target: this._layer });
   }
 
   _vertexValidation(type, e) {

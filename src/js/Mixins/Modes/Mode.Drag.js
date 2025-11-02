@@ -18,7 +18,7 @@ const GlobalDragMode = {
 
     if (!this.throttledReInitDrag) {
       this.throttledReInitDrag = Util.throttle(
-        this.reinitGlobalDragMode,
+        this._reinitGlobalDragMode,
         100,
         this
       );
@@ -61,7 +61,7 @@ const GlobalDragMode = {
       this.enableGlobalDragMode();
     }
   },
-  reinitGlobalDragMode() {
+  _reinitGlobalDragMode() {
     const layers = this._addedLayersDrag;
     this._addedLayersDrag = {};
     if (this.globalDragModeEnabled()) {

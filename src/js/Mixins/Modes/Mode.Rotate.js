@@ -17,7 +17,7 @@ const GlobalRotateMode = {
 
     if (!this.throttledReInitRotate) {
       this.throttledReInitRotate = Util.throttle(
-        this.handleLayerAdditionInGlobalRotateMode,
+        this._handleLayerAdditionInGlobalRotateMode,
         100,
         this
       );
@@ -70,7 +70,7 @@ const GlobalRotateMode = {
       layer.geoman.options.allowRotation
     );
   },
-  handleLayerAdditionInGlobalRotateMode() {
+  _handleLayerAdditionInGlobalRotateMode() {
     const layers = this._addedLayersRotate;
     this._addedLayersRotate = {};
     if (this.globalRotateModeEnabled()) {

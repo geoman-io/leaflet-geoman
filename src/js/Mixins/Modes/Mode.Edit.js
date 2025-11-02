@@ -27,7 +27,7 @@ const GlobalEditMode = {
 
     if (!this.throttledReInitEdit) {
       this.throttledReInitEdit = Util.throttle(
-        this.handleLayerAdditionInGlobalEditMode,
+        this._handleLayerAdditionInGlobalEditMode,
         100,
         this
       );
@@ -77,7 +77,7 @@ const GlobalEditMode = {
       this.enableGlobalEditMode(options);
     }
   },
-  handleLayerAdditionInGlobalEditMode() {
+  _handleLayerAdditionInGlobalEditMode() {
     const layers = this._addedLayersEdit;
     this._addedLayersEdit = {};
     if (this.globalEditModeEnabled()) {

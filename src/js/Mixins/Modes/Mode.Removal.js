@@ -11,13 +11,13 @@ const GlobalRemovalMode = {
         if (layer.geoman.enabled()) {
           layer.geoman.disable();
         }
-        layer.on('click', this.removeLayer, this);
+        layer.on('click', this._removeLayer, this);
       }
     });
 
     if (!this.throttledReInitRemoval) {
       this.throttledReInitRemoval = Util.throttle(
-        this.handleLayerAdditionInGlobalRemovalMode,
+        this._handleLayerAdditionInGlobalRemovalMode,
         100,
         this
       );
@@ -36,7 +36,7 @@ const GlobalRemovalMode = {
   disableGlobalRemovalMode() {
     this._globalRemovalModeEnabled = false;
     this.map.eachLayer((layer) => {
-      layer.off('click', this.removeLayer, this);
+      layer.off('click', this._removeLayer, this);
     });
 
     // remove map handler
@@ -59,7 +59,7 @@ const GlobalRemovalMode = {
       this.enableGlobalRemovalMode();
     }
   },
-  removeLayer(e) {
+  _removeLayer(e) {
     const layer = e.target;
     // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
@@ -88,7 +88,7 @@ const GlobalRemovalMode = {
       layer.geoman.options.allowRemoval
     );
   },
-  handleLayerAdditionInGlobalRemovalMode() {
+  _handleLayerAdditionInGlobalRemovalMode() {
     const layers = this._addedLayersRemoval;
     this._addedLayersRemoval = {};
     if (this.globalRemovalModeEnabled()) {
@@ -98,7 +98,7 @@ const GlobalRemovalMode = {
           if (layer.geoman.enabled()) {
             layer.geoman.disable();
           }
-          layer.on('click', this.removeLayer, this);
+          layer.on('click', this._removeLayer, this);
         }
       }
     }

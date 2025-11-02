@@ -192,7 +192,7 @@ export default class GeomanEditPolyline extends Edit {
     this._markers = handleRing(coords);
 
     // handle possible limitation: maximum number of markers
-    this.filterMarkerGroup();
+    this._filterMarkerGroup();
 
     // add markerGroup to map
     map.addLayer(this._markerGroup);

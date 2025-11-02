@@ -206,7 +206,7 @@ export default class GeomanCut extends GeomanDrawPolygon {
 
       // Remove it only if it is a layergroup. It can be only not a layergroup if a layer exists
       if (resultingLayer.getLayers && resultingLayer.getLayers().length === 0) {
-        this._map.geoman.removeLayer({ target: resultingLayer });
+        this._map.geoman._removeLayer({ target: resultingLayer });
       }
 
       if (resultingLayer instanceof LayerGroup) {

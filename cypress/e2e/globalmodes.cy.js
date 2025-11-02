@@ -502,7 +502,7 @@ describe('Modes', () => {
       setTimeout(() => {
         const layer = map.geoman.getGeomanLayers()[0];
         expect(
-          layer.listens('click', map.geoman.removeLayer, map.geoman)
+          layer.listens('click', map.geoman._removeLayer, map.geoman)
         ).to.equal(true);
         done();
       }, 100);

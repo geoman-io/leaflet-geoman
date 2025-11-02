@@ -99,7 +99,6 @@ const DragMixin = {
 
     this._fireDragDisable();
   },
-  // TODO: make this private in the next major release
   dragging() {
     return this._dragging;
   },
