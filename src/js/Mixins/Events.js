@@ -124,7 +124,7 @@ const EventMixin = {
     );
   },
   // Fired when a vertex-marker is started dragging
-  // indexPath is only passed from Line / Polygon
+  // indexPath is only passed from Polyline / Polygon
   _fireMarkerDragStart(
     e,
     indexPath = undefined,
@@ -145,7 +145,7 @@ const EventMixin = {
     );
   },
   // Fired while dragging a vertex-marker
-  // indexPath is only passed from Line / Polygon
+  // indexPath is only passed from Polyline / Polygon
   _fireMarkerDrag(
     e,
     indexPath = undefined,
@@ -166,7 +166,7 @@ const EventMixin = {
     );
   },
   // Fired when a vertex-marker is stopped dragging
-  // indexPath and intersectionReset is only passed from Line / Polygon
+  // indexPath and intersectionReset is only passed from Polyline / Polygon
   _fireMarkerDragEnd(
     e,
     indexPath = undefined,
@@ -313,7 +313,7 @@ const EventMixin = {
       customPayload
     );
   },
-  // Fired when a Line / Polygon has self intersection
+  // Fired when a Polyline / Polygon has self intersection
   _fireIntersect(
     intersection,
     fireLayer = this._layer,

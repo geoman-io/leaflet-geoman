@@ -62,7 +62,7 @@
   background-image: url('../assets/icons/Polygon.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-polyline {
-  background-image: url('../assets/icons/Line.svg');
+  background-image: url('../assets/icons/Polyline.svg');
 }
 .leaflet-pm-toolbar .leaflet-pm-icon-circle {
   background-image: url('../assets/icons/Circle.svg');

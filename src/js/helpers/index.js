@@ -236,7 +236,7 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
       return 'Polygon';
     }
     if (layer instanceof Polyline) {
-      return 'Line';
+      return 'Polyline';
     }
     return undefined;
   }

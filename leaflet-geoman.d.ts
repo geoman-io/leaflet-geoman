@@ -840,7 +840,7 @@ declare module 'leaflet' {
     type SUPPORTED_SHAPES =
       | 'Marker'
       | 'Circle'
-      | 'Line'
+      | 'Polyline'
       | 'Rectangle'
       | 'Polygon'
       | 'Cut'
@@ -1141,7 +1141,7 @@ declare module 'leaflet' {
       /** Control can be toggled. */
       doToggle?: boolean;
 
-      /** Extending Class f. ex. Line, Polygon, ... L.PM.Draw.EXTENDINGCLASS */
+      /** Extending Class f. ex. Polyline, Polygon, ... L.PM.Draw.EXTENDINGCLASS */
       jsClass?: string;
 
       /** Function fired when clicking the control. */
@@ -1210,7 +1210,7 @@ declare module 'leaflet' {
       /** Add the created layers to a layergroup instead to the map. */
       layerGroup?: L.Map | L.LayerGroup;
 
-      /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']. */
+      /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Polyline','Polygon','Rectangle']. */
       snappingOrder?: SUPPORTED_SHAPES[];
 
       /** Defines in which panes the layers and helper vertices are created. Default: { vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' } */
@@ -1630,7 +1630,7 @@ declare module 'leaflet' {
     }
 
     interface DrawShape {
-      /** Applies the styles (templineStyle, hintlineStyle, pathOptions, markerStyle) to the drawing layer. map.pm.Draw.Line.setStyle(options). */
+      /** Applies the styles (templineStyle, hintlineStyle, pathOptions, markerStyle) to the drawing layer. map.pm.Draw.Polyline.setStyle(options). */
       setStyle(options: L.PathOptions | L.CircleMarkerOptions): void;
 
       /** Set path options */
@@ -1736,7 +1736,7 @@ declare module 'leaflet' {
       /** Dragging can be disabled for the layer. (default:true). */
       draggable?: boolean;
 
-      /** Leaflet layer event to add a vertex to a Line or Polygon, like dblclick. (default:click). */
+      /** Leaflet layer event to add a vertex to a Polyline or Polygon, like dblclick. (default:click). */
       addVertexOn?:
         | 'click'
         | 'dblclick'
@@ -1745,10 +1745,10 @@ declare module 'leaflet' {
         | 'pointerout'
         | 'contextmenu';
 
-      /** A function for validation if a vertex (of a Line / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. (default:undefined). */
+      /** A function for validation if a vertex (of a Polyline / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. (default:undefined). */
       addVertexValidation?: VertexValidationHandler;
 
-      /** Leaflet layer event to remove a vertex from a Line or Polygon, like dblclick. (default:contextmenu). */
+      /** Leaflet layer event to remove a vertex from a Polyline or Polygon, like dblclick. (default:contextmenu). */
       removeVertexOn?:
         | 'click'
         | 'dblclick'
@@ -1757,7 +1757,7 @@ declare module 'leaflet' {
         | 'pointerout'
         | 'contextmenu';
 
-      /** A function for validation if a vertex (of a Line / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
+      /** A function for validation if a vertex (of a Polyline / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
       removeVertexValidation?: VertexValidationHandler;
 
       /** A function for validation if a vertex / helper-marker is allowed to move / drag. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
@@ -1980,7 +1980,7 @@ declare module 'leaflet' {
       /** Adds button to draw CircleMarkers (default:true) */
       drawCircleMarker?: boolean;
 
-      /** Adds button to draw Line (default:true) */
+      /** Adds button to draw Polyline (default:true) */
       drawPolyline?: boolean;
 
       /** Adds button to draw Rectangle (default:true) */
@@ -2001,7 +2001,7 @@ declare module 'leaflet' {
       /** Adds button to toggle drag mode for all layers (default:true) */
       dragMode?: boolean;
 
-      /** Adds button to cut a hole in a polygon or line (default:true) */
+      /** Adds button to cut a hole in a polygon or polyline (default:true) */
       cutPolygon?: boolean;
 
       /** Adds a button to remove layers (default:true) */
@@ -2115,7 +2115,7 @@ declare module 'leaflet' {
       /** Returns true if edit mode is enabled. false when disabled. */
       enabled(): boolean;
 
-      /** Returns true if Line or Polygon has a self intersection. */
+      /** Returns true if Polyline or Polygon has a self intersection. */
       hasSelfIntersection(): boolean;
 
       /** Removes the layer with the same checks as GlobalRemovalMode. */

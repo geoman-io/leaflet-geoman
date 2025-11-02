@@ -96,7 +96,7 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
   });
 
-  it('Has Line Tooltips', () => {
+  it('Has Polyline Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
 
     // activate polygon drawing

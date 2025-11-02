@@ -1,4 +1,4 @@
-describe('Draw & Edit Line', () => {
+describe('Draw & Edit Polyline', () => {
   // map and leaflet object
 
   const mapSelector = '#map';
@@ -208,7 +208,7 @@ describe('Draw & Edit Line', () => {
     cy.get(mapSelector).click(200, 200).click(250, 250).click(250, 250);
 
     cy.window().then(({ map }) => {
-      const latlng = map.pm.Draw.Line._hintMarker.getLatLng();
+      const latlng = map.pm.Draw.Polyline._hintMarker.getLatLng();
       const pxLatLng = map.containerPointToLatLng([250, 250]);
       expect(pxLatLng).to.deep.equal(latlng);
     });
@@ -268,14 +268,14 @@ describe('Draw & Edit Line', () => {
     cy.get(mapSelector).click(350, 250).click(190, 160).click(190, 60);
 
     cy.window().then(({ map }) => {
-      map.pm.Draw.Line._finishShape();
+      map.pm.Draw.Polyline._finishShape();
       expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      map.pm.Draw.Line._finishShape();
+      map.pm.Draw.Polyline._finishShape();
       expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
     });
   });
@@ -325,8 +325,8 @@ describe('Draw & Edit Line', () => {
       };
       map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
 
-      const layer = map.pm.Draw.Line._layer;
-      const hintLine = map.pm.Draw.Line._hintline;
+      const layer = map.pm.Draw.Polyline._layer;
+      const hintLine = map.pm.Draw.Polyline._hintline;
       expect(layer.options.color).to.eql('red');
       expect(hintLine.options.color).to.eql('red');
     });

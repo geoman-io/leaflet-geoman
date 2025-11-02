@@ -30,7 +30,7 @@ import Toolbar from './Toolbar/L.PM.Toolbar';
 import Draw from './Draw/L.PM.Draw';
 import GeomanDrawCircleMarker from './Draw/L.PM.Draw.CircleMarker';
 import GeomanDrawCircle from './Draw/L.PM.Draw.Circle';
-import GeomanDrawPolyline from './Draw/L.PM.Draw.Line';
+import GeomanDrawPolyline from './Draw/L.PM.Draw.Polyline';
 import GeomanDrawMarker from './Draw/L.PM.Draw.Marker';
 import GeomanDrawPolygon from './Draw/L.PM.Draw.Polygon';
 import GeomanDrawRectangle from './Draw/L.PM.Draw.Rectangle';
@@ -39,7 +39,7 @@ import GeomanDrawText from './Draw/L.PM.Draw.Text';
 
 Draw.CircleMarker = GeomanDrawCircleMarker;
 Draw.Circle = GeomanDrawCircle;
-Draw.Line = GeomanDrawPolyline;
+Draw.Polyline = GeomanDrawPolyline;
 Draw.Marker = GeomanDrawMarker;
 Draw.Polygon = GeomanDrawPolygon;
 Draw.Rectangle = GeomanDrawRectangle;
@@ -51,7 +51,7 @@ import GeomanEditCircleMarker from './Edit/L.PM.Edit.CircleMarker';
 import GeomanEditCircle from './Edit/L.PM.Edit.Circle';
 import GeomanEditImageOverlay from './Edit/L.PM.Edit.ImageOverlay';
 import GeomanEditLayerGroup from './Edit/L.PM.Edit.LayerGroup';
-import GeomanEditPolyline from './Edit/L.PM.Edit.Line';
+import GeomanEditPolyline from './Edit/L.PM.Edit.Polyline';
 import GeomanEditMarker from './Edit/L.PM.Edit.Marker';
 import GeomanEditPolygon from './Edit/L.PM.Edit.Polygon';
 import GeomanEditRectangle from './Edit/L.PM.Edit.Rectangle';
@@ -61,7 +61,7 @@ Edit.CircleMarker = GeomanEditCircleMarker;
 Edit.Circle = GeomanEditCircle;
 Edit.ImageOverlay = GeomanEditImageOverlay;
 Edit.LayerGroup = GeomanEditLayerGroup;
-Edit.Line = GeomanEditPolyline;
+Edit.Polyline = GeomanEditPolyline;
 Edit.Marker = GeomanEditMarker;
 Edit.Polygon = GeomanEditPolygon;
 Edit.Rectangle = GeomanEditRectangle;
@@ -171,10 +171,10 @@ const Geoman = {
 
       if (Geoman.optIn) {
         if (this.options.pmIgnore === false) {
-          this.pm = new Edit.Line(this);
+          this.pm = new Edit.Polyline(this);
         }
       } else if (!this.options.pmIgnore) {
-        this.pm = new Edit.Line(this);
+        this.pm = new Edit.Polyline(this);
       }
     }
 
@@ -267,7 +267,7 @@ const Geoman = {
     } else if (layer instanceof Polygon) {
       layer.pm = new Edit.Polygon(layer);
     } else if (layer instanceof Polyline) {
-      layer.pm = new Edit.Line(layer);
+      layer.pm = new Edit.Polyline(layer);
     } else if (layer instanceof LayerGroup) {
       layer.pm = new Edit.LayerGroup(layer);
     } else if (layer instanceof ImageOverlay) {

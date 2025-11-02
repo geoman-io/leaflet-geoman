@@ -466,7 +466,7 @@ const SnapMixin = {
       'Marker',
       'CircleMarker',
       'Circle',
-      'Line',
+      'Polyline',
       'Polygon',
       'Rectangle',
     ];

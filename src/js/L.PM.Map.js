@@ -35,7 +35,7 @@ export default class GeomanMap extends Class {
         'Marker',
         'CircleMarker',
         'Circle',
-        'Line',
+        'Polyline',
         'Polygon',
         'Rectangle',
       ],

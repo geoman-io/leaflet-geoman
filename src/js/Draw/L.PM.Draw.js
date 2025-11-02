@@ -83,7 +83,7 @@ export default class Draw extends Class {
     this.shapes = [
       'Marker',
       'CircleMarker',
-      'Line',
+      'Polyline',
       'Polygon',
       'Rectangle',
       'Circle',
@@ -226,7 +226,7 @@ export default class Draw extends Class {
       drawMarker: 'Marker',
       drawCircle: 'Circle',
       drawPolygon: 'Polygon',
-      drawPolyline: 'Line',
+      drawPolyline: 'Polyline',
       drawRectangle: 'Rectangle',
       drawCircleMarker: 'CircleMarker',
       editMode: 'Edit',

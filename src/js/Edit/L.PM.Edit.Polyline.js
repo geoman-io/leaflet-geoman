@@ -28,7 +28,7 @@ export default class GeomanEditPolyline extends Edit {
     this.include(MarkerLimits);
   }
 
-  _shape = 'Line';
+  _shape = 'Polyline';
 
   initialize(layer) {
     this._layer = layer;

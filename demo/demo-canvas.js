@@ -108,7 +108,7 @@ map2.pm.disableDraw('Polygon');
 //     cursorMarker: true
 // });
 
-map2.pm.enableDraw('Line', { allowSelfIntersection: false });
+map2.pm.enableDraw('Polyline', { allowSelfIntersection: false });
 map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
 
 map2.on('pm:globaleditmodetoggled', (e) => {

@@ -82,7 +82,7 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
     });
   }
 
-  // Empty callback for 'contextmenu' binding set in L.PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
+  // Empty callback for 'contextmenu' binding set in L.PM.Edit.Polyline.js's _createMarker method (AKA, right-click on marker event)
   // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
   _removeMarker() {
     // The method, it does nothing!!!

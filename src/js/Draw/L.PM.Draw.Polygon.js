@@ -1,7 +1,7 @@
 import { DivIcon, Marker, Polygon } from 'leaflet';
 import { getTranslation } from '../helpers';
 import Draw from './L.PM.Draw';
-import GeomanDrawLine from './L.PM.Draw.Line';
+import GeomanDrawLine from './L.PM.Draw.Polyline';
 
 export default class GeomanDrawPolygon extends GeomanDrawLine {
   initialize(map) {
@@ -11,8 +11,8 @@ export default class GeomanDrawPolygon extends GeomanDrawLine {
   }
 
   enable(options) {
-    Draw.Line.prototype.enable.call(this, options);
-    // Overwrite the shape "Line" of this._layer
+    Draw.Polyline.prototype.enable.call(this, options);
+    // Overwrite the shape "Polyline" of this._layer
     this._layer.pm._shape = 'Polygon';
   }
 

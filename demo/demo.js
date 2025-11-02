@@ -109,7 +109,7 @@ map2.pm.addControls({
 //     cursorMarker: true
 // });
 
-// map2.pm.enableDraw('Line', { allowSelfIntersection: false });
+// map2.pm.enableDraw('Polyline', { allowSelfIntersection: false });
 // map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
 
 map2.on('pm:globaleditmodetoggled', (e) => {
@@ -349,8 +349,8 @@ polygonLayer.on('pm:intersect', (e) => {
 
 map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
 map2.pm.disableDraw('Polygon');
-map2.pm.enableDraw('Line', { allowSelfIntersection: false });
-map2.pm.disableDraw('Line');
+map2.pm.enableDraw('Polyline', { allowSelfIntersection: false });
+map2.pm.disableDraw('Polyline');
 
 map2.on('pm:create', (e) => {
   // e.layer.pm.enable({ allowSelfIntersection: false });

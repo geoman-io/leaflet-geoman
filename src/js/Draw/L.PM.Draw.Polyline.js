@@ -8,7 +8,7 @@ import Utils from '../L.PM.Utils';
 export default class GeomanDrawPolyline extends Draw {
   initialize(map) {
     this._map = map;
-    this._shape = 'Line';
+    this._shape = 'Polyline';
     this.toolbarButtonName = 'drawPolyline';
     this._doesSelfIntersect = false;
   }
@@ -330,7 +330,7 @@ export default class GeomanDrawPolyline extends Draw {
 
     const markerPrevious = markers[markers.length - 1];
 
-    // no need for findDeepMarkerIndex because the coords are always flat (Polyline) no matter if Line or Polygon
+    // no need for findDeepMarkerIndex because the coords are always flat (Polyline) no matter if Polyline or Polygon
     const indexMarkerPrev = coords.indexOf(markerPrevious.getLatLng());
 
     // +1 don't cut out the previous marker

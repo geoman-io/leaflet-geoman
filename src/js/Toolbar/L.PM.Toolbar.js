@@ -253,7 +253,7 @@ export default class Toolbar extends Class {
     const drawLineButton = {
       className: 'control-icon leaflet-pm-icon-polyline',
       title: getTranslation('buttonTitles.drawLineButton'),
-      jsClass: 'Line',
+      jsClass: 'Polyline',
       onClick: () => {},
       afterClick: (e, ctx) => {
         // toggle drawing mode
@@ -715,7 +715,6 @@ export default class Toolbar extends Class {
       Polygon: 'drawPolygon',
       Rectangle: 'drawRectangle',
       Polyline: 'drawPolyline',
-      Line: 'drawPolyline',
       CircleMarker: 'drawCircleMarker',
       Edit: 'editMode',
       Drag: 'dragMode',
