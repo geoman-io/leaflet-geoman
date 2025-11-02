@@ -71,9 +71,9 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
   // Add marker events after adding the snapping events to the markers, beacause of the execution order
   _addMarkerEvents() {
     this._markers[0].forEach((marker) => {
-      marker.on('dragstart', this._onMarkerDragStart, this);
-      marker.on('drag', this._onMarkerDrag, this);
-      marker.on('dragend', this._onMarkerDragEnd, this);
+      marker.on('dragstart', this._onVertexDragStart, this);
+      marker.on('drag', this._onVertexDrag, this);
+      marker.on('dragend', this._onVertexDragEnd, this);
 
       // TODO: Can we remove this? The _removeMarker Event is a empty function
       if (!this.options.preventMarkerRemoval) {
@@ -89,7 +89,7 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
     return null;
   }
 
-  _onMarkerDragStart(e) {
+  _onVertexDragStart(e) {
     if (!this._vertexValidation('move', e)) {
       return;
     }
@@ -111,10 +111,10 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
       draggedMarker
     );
 
-    this._fireMarkerDragStart(e, indexPath);
+    this._fireVertexDragStart(e, indexPath);
   }
 
-  _onMarkerDrag(e) {
+  _onVertexDrag(e) {
     // dragged marker
     const draggedMarker = e.target;
 
@@ -133,11 +133,11 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
       this._markers,
       draggedMarker
     );
-    this._fireMarkerDrag(e, indexPath);
+    this._fireVertexDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
   }
 
-  _onMarkerDragEnd(e) {
+  _onVertexDragEnd(e) {
     // dragged marker
     const draggedMarker = e.target;
     if (!this._vertexValidationDragEnd(draggedMarker)) {
@@ -153,7 +153,7 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
       this._markers,
       draggedMarker
     );
-    this._fireMarkerDragEnd(e, indexPath);
+    this._fireVertexDragEnd(e, indexPath);
 
     // fire edit event
     this._fireEdit();

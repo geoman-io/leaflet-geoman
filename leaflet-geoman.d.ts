@@ -299,19 +299,19 @@ declare module 'leaflet' {
     off(type: 'pm:vertexclick', fn?: PM.VertexClickEventHandler): this;
 
     /** Fired when dragging of a marker which corresponds to a vertex starts. */
-    on(type: 'pm:markerdragstart', fn: PM.MarkerDragStartEventHandler): this;
-    once(type: 'pm:markerdragstart', fn: PM.MarkerDragStartEventHandler): this;
-    off(type: 'pm:markerdragstart', fn?: PM.MarkerDragStartEventHandler): this;
+    on(type: 'pm:vertexdragstart', fn: PM.VertexDragStartEventHandler): this;
+    once(type: 'pm:vertexdragstart', fn: PM.VertexDragStartEventHandler): this;
+    off(type: 'pm:vertexdragstart', fn?: PM.VertexDragStartEventHandler): this;
 
     /** Fired when dragging a vertex-marker. */
-    on(type: 'pm:markerdrag', fn: PM.MarkerDragEventHandler): this;
-    once(type: 'pm:markerdrag', fn: PM.MarkerDragEventHandler): this;
-    off(type: 'pm:markerdrag', fn?: PM.MarkerDragEventHandler): this;
+    on(type: 'pm:vertexdrag', fn: PM.VertexDragEventHandler): this;
+    once(type: 'pm:vertexdrag', fn: PM.VertexDragEventHandler): this;
+    off(type: 'pm:vertexdrag', fn?: PM.VertexDragEventHandler): this;
 
     /** Fired when dragging of a vertex-marker ends. */
-    on(type: 'pm:markerdragend', fn: PM.MarkerDragEndEventHandler): this;
-    once(type: 'pm:markerdragend', fn: PM.MarkerDragEndEventHandler): this;
-    off(type: 'pm:markerdragend', fn?: PM.MarkerDragEndEventHandler): this;
+    on(type: 'pm:vertexdragend', fn: PM.VertexDragEndEventHandler): this;
+    once(type: 'pm:vertexdragend', fn: PM.VertexDragEndEventHandler): this;
+    off(type: 'pm:vertexdragend', fn?: PM.VertexDragEndEventHandler): this;
 
     /** Fired when coords of a layer are reset. E.g. by self-intersection. */
     on(type: 'pm:layerreset', fn: PM.LayerResetEventHandler): this;
@@ -2344,19 +2344,19 @@ declare module 'leaflet' {
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragStartEventHandler = (e: {
+    export type VertexDragStartEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragEventHandler = (e: {
+    export type VertexDragEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragEndEventHandler = (e: {
+    export type VertexDragEndEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;

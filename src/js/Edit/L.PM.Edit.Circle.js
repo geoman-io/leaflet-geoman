@@ -40,7 +40,7 @@ export default class GeomanEditCircle extends GeomanEditCircleMarker {
 
   _onDragStart() {}
 
-  _extedingMarkerDragEnd() {}
+  _onDragEnd() {}
 
   _updateHiddenPolyCircle() {
     const crsSimple = this._map && this._map.pm._isCRSSimple();

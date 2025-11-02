@@ -266,7 +266,7 @@ map2.on('pm:create', (e) => {
   // e.layer.pm.disable();
   // console.log(e.layer.pm.hasSelfIntersection());
 
-  e.layer.on('pm:markerdragend', (x) => {
+  e.layer.on('pm:vertexdragend', (x) => {
     console.log(x);
   });
 
@@ -294,7 +294,7 @@ polygonLayer.on('pm:vertexremoved', (x) => {
   console.log(x);
 });
 
-polygonLayer.on('pm:markerdragstart', (x) => {
+polygonLayer.on('pm:vertexdragstart', (x) => {
   console.log(x);
 });
 
@@ -390,10 +390,10 @@ layerGroup.on('pm:drag', (e) => {
 layerGroup.on('pm:dragend', (e) => {
   console.log(e);
 });
-layerGroup.on('pm:markerdragstart', (e) => {
+layerGroup.on('pm:vertexdragstart', (e) => {
   console.log(e);
 });
-layerGroup.on('pm:markerdragend', (e) => {
+layerGroup.on('pm:vertexdragend', (e) => {
   console.log(e);
 });
 

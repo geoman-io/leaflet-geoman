@@ -409,8 +409,8 @@ describe('Events', () => {
           layer.on('pm:vertexremoved', logEvent);
           /*
         TODO Can't tested --> needs dragging
-        layer.on('pm:markerdragstart', logEvent);
-        layer.on('pm:markerdragend', logEvent);
+        layer.on('pm:vertexdragstart', logEvent);
+        layer.on('pm:vertexdragend', logEvent);
         layer.on('pm:snap', logEvent);
         layer.on('pm:snapdrag', logEvent);
         layer.on('pm:unsnap', logEvent);

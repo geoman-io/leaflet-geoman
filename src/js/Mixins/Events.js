@@ -125,7 +125,7 @@ const EventMixin = {
   },
   // Fired when a vertex-marker is started dragging
   // indexPath is only passed from Polyline / Polygon
-  _fireMarkerDragStart(
+  _fireVertexDragStart(
     e,
     indexPath = undefined,
     source = 'Edit',
@@ -133,7 +133,7 @@ const EventMixin = {
   ) {
     this.__fire(
       this._layer,
-      'pm:markerdragstart',
+      'pm:vertexdragstart',
       {
         layer: this._layer,
         markerEvent: e,
@@ -146,7 +146,7 @@ const EventMixin = {
   },
   // Fired while dragging a vertex-marker
   // indexPath is only passed from Polyline / Polygon
-  _fireMarkerDrag(
+  _fireVertexDrag(
     e,
     indexPath = undefined,
     source = 'Edit',
@@ -154,7 +154,7 @@ const EventMixin = {
   ) {
     this.__fire(
       this._layer,
-      'pm:markerdrag',
+      'pm:vertexdrag',
       {
         layer: this._layer,
         markerEvent: e,
@@ -167,7 +167,7 @@ const EventMixin = {
   },
   // Fired when a vertex-marker is stopped dragging
   // indexPath and intersectionReset is only passed from Polyline / Polygon
-  _fireMarkerDragEnd(
+  _fireVertexDragEnd(
     e,
     indexPath = undefined,
     intersectionReset = undefined,
@@ -176,7 +176,7 @@ const EventMixin = {
   ) {
     this.__fire(
       this._layer,
-      'pm:markerdragend',
+      'pm:vertexdragend',
       {
         layer: this._layer,
         markerEvent: e,

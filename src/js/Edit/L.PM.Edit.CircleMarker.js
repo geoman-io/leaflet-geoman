@@ -63,8 +63,7 @@ export default class GeomanEditCircleMarker extends Edit {
   _extendingEnable() {
     // if CircleMarker is dragged while draw mode
     this._layer.on('pm:dragstart', this._onDragStart, this);
-    this._layer.on('pm:drag', this._onMarkerDrag, this);
-    this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
+    this._layer.on('pm:dragend', this._onDragEnd, this);
   }
 
   disable() {
@@ -239,9 +238,9 @@ export default class GeomanEditCircleMarker extends Edit {
     marker._origLatLng = latlng;
     marker._pmTempLayer = true;
 
-    marker.on('dragstart', this._onMarkerDragStart, this);
-    marker.on('drag', this._onMarkerDrag, this);
-    marker.on('dragend', this._onMarkerDragEnd, this);
+    marker.on('dragstart', this._onVertexDragStart, this);
+    marker.on('drag', this._onVertexDrag, this);
+    marker.on('dragend', this._onVertexDragEnd, this);
     marker.on('click', this._onVertexClick, this);
 
     this._helperLayers.addLayer(marker);
@@ -332,15 +331,15 @@ export default class GeomanEditCircleMarker extends Edit {
     this._map.pm.Draw.CircleMarker._layerIsDragging = true;
   }
 
-  _onMarkerDragStart(e) {
+  _onVertexDragStart(e) {
     if (!this._vertexValidation('move', e)) {
       return;
     }
 
-    this._fireMarkerDragStart(e);
+    this._fireVertexDragStart(e);
   }
 
-  _onMarkerDrag(e) {
+  _onVertexDrag(e) {
     // dragged marker
     const draggedMarker = e.target;
     if (
@@ -350,12 +349,10 @@ export default class GeomanEditCircleMarker extends Edit {
       return;
     }
 
-    this._fireMarkerDrag(e);
+    this._fireVertexDrag(e);
   }
 
-  _onMarkerDragEnd(e) {
-    this._extedingMarkerDragEnd();
-
+  _onVertexDragEnd(e) {
     // dragged marker
     const draggedMarker = e.target;
     if (!this._vertexValidationDragEnd(draggedMarker)) {
@@ -365,10 +362,10 @@ export default class GeomanEditCircleMarker extends Edit {
       this._fireEdit();
       this._layerEdited = true;
     }
-    this._fireMarkerDragEnd(e);
+    this._fireVertexDragEnd(e);
   }
 
-  _extedingMarkerDragEnd() {
+  _onDragEnd() {
     this._map.pm.Draw.CircleMarker._layerIsDragging = false;
   }
 

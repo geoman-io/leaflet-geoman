@@ -46,9 +46,9 @@ map.on('pm:create', (e) => {
   layer.on('pm:disable', logEvent);
   layer.on('pm:vertexadded', logEvent);
   layer.on('pm:vertexremoved', logEvent);
-  layer.on('pm:markerdragstart', logEvent);
-  layer.on('pm:markerdrag', logEvent);
-  layer.on('pm:markerdragend', logEvent);
+  layer.on('pm:vertexdragstart', logEvent);
+  layer.on('pm:vertexdrag', logEvent);
+  layer.on('pm:vertexdragend', logEvent);
   layer.on('pm:snap', logEvent);
   layer.on('pm:snapdrag', logEvent);
   layer.on('pm:unsnap', logEvent);

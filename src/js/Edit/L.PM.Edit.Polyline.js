@@ -214,9 +214,9 @@ export default class GeomanEditPolyline extends Edit {
       marker.on('dragend', this._onRotateEnd, this);
     } else {
       marker.on('click', this._onVertexClick, this);
-      marker.on('dragstart', this._onMarkerDragStart, this);
-      marker.on('move', this._onMarkerDrag, this);
-      marker.on('dragend', this._onMarkerDragEnd, this);
+      marker.on('dragstart', this._onVertexDragStart, this);
+      marker.on('move', this._onVertexDrag, this);
+      marker.on('dragend', this._onVertexDragEnd, this);
 
       if (!this.options.preventMarkerRemoval) {
         marker.on(this.options.removeVertexOn, this._removeMarker, this);
@@ -617,7 +617,7 @@ export default class GeomanEditPolyline extends Edit {
     this._fireChange(this._layer.getLatLngs(), 'Edit');
   }
 
-  updatePolygonCoordsFromMarkerDrag(marker) {
+  updatePolygonCoordsFromVertexDrag(marker) {
     // update polygon coords
     const coords = this._layer.getLatLngs();
 
@@ -693,7 +693,7 @@ export default class GeomanEditPolyline extends Edit {
     return true;
   }
 
-  _onMarkerDragStart(e) {
+  _onVertexDragStart(e) {
     const marker = e.target;
     this._preventRenderingMarkers(true);
 
@@ -708,7 +708,7 @@ export default class GeomanEditPolyline extends Edit {
 
     const { indexPath } = Utils.findDeepMarkerIndex(this._markers, marker);
 
-    this._fireMarkerDragStart(e, indexPath);
+    this._fireVertexDragStart(e, indexPath);
 
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
@@ -730,7 +730,7 @@ export default class GeomanEditPolyline extends Edit {
     }
   }
 
-  _onMarkerDrag(e) {
+  _onVertexDrag(e) {
     // dragged marker
     const marker = e.target;
 
@@ -762,7 +762,7 @@ export default class GeomanEditPolyline extends Edit {
       return;
     }
 
-    this.updatePolygonCoordsFromMarkerDrag(marker);
+    this.updatePolygonCoordsFromVertexDrag(marker);
 
     // the dragged markers neighbors
     const markerArr =
@@ -802,11 +802,11 @@ export default class GeomanEditPolyline extends Edit {
     if (!this.options.allowSelfIntersection) {
       this._handleLayerStyle();
     }
-    this._fireMarkerDrag(e, indexPath);
+    this._fireVertexDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
   }
 
-  _onMarkerDragEnd(e) {
+  _onVertexDragEnd(e) {
     const marker = e.target;
     this._preventRenderingMarkers(false);
 
@@ -831,7 +831,7 @@ export default class GeomanEditPolyline extends Edit {
     const intersectionReset =
       !this.options.allowSelfIntersection && intersection;
 
-    this._fireMarkerDragEnd(e, indexPath, intersectionReset);
+    this._fireVertexDragEnd(e, indexPath, intersectionReset);
 
     if (intersectionReset) {
       // reset coordinates

@@ -57,7 +57,7 @@ describe('Modes', () => {
         allowSelfIntersection: false,
       });
 
-      layer.on('pm:markerdragstart', (e) => {
+      layer.on('pm:vertexdragstart', (e) => {
         markerHtml = e.markerEvent.target._icon;
       });
     });
