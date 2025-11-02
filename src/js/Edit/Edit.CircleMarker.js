@@ -146,7 +146,7 @@ export default class GeomanEditCircleMarker extends Edit {
         this._disableSnapping();
       }
     } else {
-      if (this.options.draggable) {
+      if (this.options.allowDragging) {
         this.enableLayerDrag();
       }
       // only update the circle border poly
@@ -212,7 +212,7 @@ export default class GeomanEditCircleMarker extends Edit {
 
   _createCenterMarker(latlng) {
     const marker = this._createMarker(latlng);
-    if (this.options.draggable) {
+    if (this.options.allowDragging) {
       marker._icon.classList.add('leaflet-geoman-draggable');
       marker.on('move', this._moveCircle, this);
     } else {

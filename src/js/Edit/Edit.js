@@ -22,7 +22,7 @@ export default class Edit extends Class {
       hideMiddleMarkers: false,
       snapSegment: true,
       syncLayersOnDrag: false,
-      draggable: true, // TODO: next major Release, rename it to allowDragging
+      allowDragging: true,
       allowEditing: true, // disable all interactions on a layer which are activated with `enable()`. For example a Circle can't be dragged in Edit-Mode
       allowRemoval: true,
       allowCutting: true,

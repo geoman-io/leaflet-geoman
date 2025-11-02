@@ -84,7 +84,7 @@ const GlobalDragMode = {
       ((!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
         (Geoman.optIn && layer.options.geomanIgnore === false)) && // if optIn is true and geomanIgnore is false
       !layer._geomanTempLayer &&
-      layer.geoman.options.draggable
+      layer.geoman.options.allowDragging
     );
   },
 };

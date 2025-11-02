@@ -44,7 +44,7 @@ export default class GeomanMap extends Class {
         layerPane: 'overlayPane',
         markerPane: 'markerPane',
       },
-      draggable: true,
+      allowDragging: true,
     };
 
     this.Keyboard._initKeyListener(map);

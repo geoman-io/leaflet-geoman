@@ -60,7 +60,7 @@ describe('Draw Rectangle', () => {
 
     cy.get('@marker').then((marker) => {
       expect(marker._geomanTempLayer).to.equal(true);
-      expect(marker.options.draggable).to.equal(false);
+      expect(marker.options.allowDragging).to.equal(false);
     });
   });
 

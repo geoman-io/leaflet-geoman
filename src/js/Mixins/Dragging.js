@@ -12,7 +12,7 @@ import { getRenderer } from '../helpers';
 const DragMixin = {
   enableLayerDrag() {
     // layer is not allowed to dragged or is not on the map
-    if (!this.options.draggable || !this._layer._map) {
+    if (!this.options.allowDragging || !this._layer._map) {
       return;
     }
 
@@ -403,7 +403,7 @@ const DragMixin = {
         // filter out layers that don't have leaflet-geoman and not allowed to drag
         layersToSync = layersToSync
           .filter((layer) => !!layer.geoman)
-          .filter((layer) => !!layer.geoman.options.draggable);
+          .filter((layer) => !!layer.geoman.options.allowDragging);
         layersToSync.forEach((layer) => {
           if (layer !== this._layer && layer.geoman[fnc]) {
             layer._snapped = false;

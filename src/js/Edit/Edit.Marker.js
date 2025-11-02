@@ -81,7 +81,7 @@ export default class GeomanEditMarker extends Edit {
       this._disableSnapping();
     }
 
-    if (this.options.draggable) {
+    if (this.options.allowDragging) {
       this.enableLayerDrag();
     } else {
       this.disableLayerDrag();

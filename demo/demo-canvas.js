@@ -146,7 +146,7 @@ const geoJsonLayer = new GeoJSON(null, { geomanIgnore: false });
 geoJsonLayer.addTo(map2);
 geoJsonLayer.addData(geoJsonData);
 // geoJsonLayer.geoman.toggleEdit({
-//     draggable: true,
+//     allowDragging: true,
 //     allowSnapping: true,
 // });
 
@@ -160,7 +160,6 @@ map3.geoman.addControls({
 
 const markerStyle = {
   opacity: 0.5,
-  draggable: false,
 };
 
 map3.geoman.enableDraw('Polygon', {
@@ -336,7 +335,7 @@ const feature = {
 
 const layerGroup = new FeatureGroup([layerGroupItem1]).addTo(map4);
 layerGroup.geoman.toggleEdit({
-  draggable: true,
+  allowDragging: true,
   allowSnapping: true,
   snapDistance: 30,
 });

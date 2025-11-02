@@ -33,7 +33,6 @@ export default class Draw extends Class {
       cursorMarker: true,
       finishOn: null,
       markerStyle: {
-        draggable: true,
         icon: new Icon(),
       },
       hideMiddleMarkers: false,

@@ -1734,7 +1734,7 @@ declare module 'leaflet' {
       allowRotation?: boolean;
 
       /** Dragging can be disabled for the layer. (default:true). */
-      draggable?: boolean;
+      allowDragging?: boolean;
 
       /** Leaflet layer event to add a vertex to a Polyline or Polygon, like dblclick. (default:click). */
       addVertexOn?:
@@ -1863,7 +1863,7 @@ declare module 'leaflet' {
       /** Leaflet path options for the drawn layer (Only for L.Path layers). (default:null). */
       pathOptions?: L.PathOptions | L.CircleMarkerOptions;
 
-      /** Leaflet marker options (only for drawing markers). (default:{draggable:true}). */
+      /** Leaflet marker options (only for drawing markers). */
       markerStyle?: L.MarkerOptions;
 
       /** Show a marker at the cursor (default:true). */

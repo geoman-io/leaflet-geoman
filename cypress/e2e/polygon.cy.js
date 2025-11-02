@@ -991,7 +991,7 @@ describe('Draw & Edit Poly', () => {
     });
   });
 
-  it('disable Drag-Mode for layer with draggable: false', () => {
+  it('disable Drag-Mode for layer with allowDragging: false', () => {
     cy.toolbarButton('polygon').click();
     cy.get(mapSelector)
       .click(150, 250)
@@ -1000,7 +1000,7 @@ describe('Draw & Edit Poly', () => {
       .click(150, 250);
 
     cy.window().then(({ map }) => {
-      map.geoman.setGlobalOptions({ draggable: false });
+      map.geoman.setGlobalOptions({ allowDragging: false });
     });
 
     cy.toolbarButton('drag').click();
