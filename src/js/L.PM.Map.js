@@ -135,13 +135,7 @@ export default class GeomanMap extends Class {
     // merge passed and existing options
     const options = merge(this.globalOptions, o);
 
-    // TODO: remove with next major release
-    if (options.editable) {
-      options.resizeableCircleMarker = options.editable;
-      delete options.editable;
-    }
-
-    // check if switched the editable mode for CircleMarker while drawing
+    // check if switched the resizeable mode for CircleMarker while drawing
     let reenableCircleMarker = false;
     if (
       this.map.pm.Draw.CircleMarker.enabled() &&
@@ -151,7 +145,7 @@ export default class GeomanMap extends Class {
       this.map.pm.Draw.CircleMarker.disable();
       reenableCircleMarker = true;
     }
-    // check if switched the editable mode for Circle while drawing
+    // check if switched the resizeable mode for Circle while drawing
     let reenableCircle = false;
     if (
       this.map.pm.Draw.Circle.enabled() &&

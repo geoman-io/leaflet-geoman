@@ -29,11 +29,6 @@ export default class GeomanEditCircleMarker extends Edit {
   // TODO: remove default option in next major Release
   enable(options = { draggable: true, snappable: true }) {
     Util.setOptions(this, options);
-    // TODO: remove with next major release
-    if (this.options.editable) {
-      this.options.resizeableCircleMarker = this.options.editable;
-      delete this.options.editable;
-    }
 
     // layer is not allowed to edit
     // cancel when map isn't available, this happens when it is removed before this fires
@@ -92,7 +87,7 @@ export default class GeomanEditCircleMarker extends Edit {
       return;
     }
 
-    // disable dragging of non-editable circle
+    // disable dragging of non-resizeable circle
     if (this.layerDragEnabled()) {
       this.disableLayerDrag();
     }
@@ -377,7 +372,7 @@ export default class GeomanEditCircleMarker extends Edit {
     this._map.pm.Draw.CircleMarker._layerIsDragging = false;
   }
 
-  // _initSnappableMarkers when option editable is not true
+  // _initSnappableMarkers when option resizeable is not true
   _initSnappableMarkersDrag() {
     const marker = this._layer;
 
@@ -395,7 +390,7 @@ export default class GeomanEditCircleMarker extends Edit {
     marker.on('pm:dragstart', this._unsnap, this);
   }
 
-  // _disableSnapping when option editable is not true
+  // _disableSnapping when option resizeable is not true
   _disableSnappingDrag() {
     const marker = this._layer;
 

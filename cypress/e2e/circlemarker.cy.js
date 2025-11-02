@@ -568,9 +568,12 @@ describe('Draw Circle Marker', () => {
     });
   });
 
-  it('draw a CircleMarker like a Circle with deprecated option `editable`', () => {
+  it('draw a CircleMarker like a Circle with option `resizeableCircleMarker`', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editable: true, continueDrawing: false });
+      map.pm.setGlobalOptions({
+        resizeableCircleMarker: true,
+        continueDrawing: false,
+      });
     });
 
     cy.toolbarButton('circle-marker')
@@ -590,9 +593,9 @@ describe('Draw Circle Marker', () => {
     cy.hasVertexMarkers(2);
   });
 
-  it('on vertex click - editable', (done) => {
+  it('on vertex click - resizeableCircleMarker', (done) => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ editable: true });
+      map.pm.setGlobalOptions({ resizeableCircleMarker: true });
     });
 
     cy.toolbarButton('circle-marker')

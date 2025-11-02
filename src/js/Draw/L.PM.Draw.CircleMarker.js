@@ -30,11 +30,6 @@ export default class GeomanDrawCircleMarker extends Draw {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
     Util.setOptions(this, options);
-    // TODO: remove with next major release
-    if (this.options.editable) {
-      this.options.resizeableCircleMarker = this.options.editable;
-      delete this.options.editable;
-    }
 
     // change enabled state
     this._enabled = true;
