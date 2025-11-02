@@ -21,8 +21,7 @@ export default class GeomanEditImageOverlay extends Edit {
     return this._enabled;
   }
 
-  // TODO: remove default option in next major Release
-  enable(options = { draggable: true, snappable: true }) {
+  enable(options) {
     Util.setOptions(this, options);
     this._map = this._layer._map;
     // cancel when map isn't available, this happens when the polygon is removed before this fires

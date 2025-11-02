@@ -26,8 +26,7 @@ export default class GeomanEditCircleMarker extends Edit {
     this._updateHiddenPolyCircle();
   }
 
-  // TODO: remove default option in next major Release
-  enable(options = { draggable: true, snappable: true }) {
+  enable(options) {
     Util.setOptions(this, options);
 
     // layer is not allowed to edit

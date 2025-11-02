@@ -13,8 +13,7 @@ export default class GeomanEditMarker extends Edit {
     this._layer.on('dragend', this._onDragEnd, this);
   }
 
-  // TODO: remove default option in next major Release
-  enable(options = { draggable: true }) {
+  enable(options) {
     Util.setOptions(this, options);
 
     // layer is not allowed to edit
