@@ -1250,7 +1250,7 @@ declare module 'leaflet' {
       enableDraw(shape: SUPPORTED_SHAPES, options?: DrawModeOptions): void;
 
       /** Disable all drawing */
-      disableDraw(shape?: SUPPORTED_SHAPES): void;
+      disableDraw(): void;
 
       /** Enable Custom Shape Draw Mode with a passed shape from the storage or as GeoJSON. ⭐ */
       enableCustomShapeDraw(

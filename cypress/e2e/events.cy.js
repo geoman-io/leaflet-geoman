@@ -172,7 +172,7 @@ describe('Events', () => {
         map.on('pm:globaldrawmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableDraw('Polygon');
+        map.pm.disableDraw();
       })
       .then(() => {
         cy.wait(100);
@@ -202,7 +202,7 @@ describe('Events', () => {
         map.on('pm:globalcutmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableDraw('Cut');
+        map.pm.disableDraw();
       })
       .then(() => {
         cy.wait(100);
@@ -271,7 +271,7 @@ describe('Events', () => {
         map.on('pm:drawend', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableDraw('Polygon');
+        map.pm.disableDraw();
       })
       .then(() => {
         cy.wait(100);

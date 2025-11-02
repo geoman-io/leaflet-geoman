@@ -102,7 +102,7 @@ map2.pm.addControls({
   removalMode: true,
 });
 
-map2.pm.disableDraw('Polygon');
+map2.pm.disableDraw();
 // map2.pm.enableDraw('Circle', {
 //     snappable: true,
 //     cursorMarker: true
@@ -363,12 +363,12 @@ map4.pm.addControls({
 map4.pm.enableDraw('Polygon', {
   finishOn: 'pointerout',
 });
-map4.pm.disableDraw('Polygon');
+map4.pm.disableDraw();
 
 map4.pm.enableDraw('Marker', {
   snappable: false,
 });
-map4.pm.disableDraw('Marker');
+map4.pm.disableDraw();
 
 // map4.pm.setPathOptions({
 //     color: 'orange',

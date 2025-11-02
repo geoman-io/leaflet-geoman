@@ -107,12 +107,12 @@ export default class GeomanMap extends Class {
     return this.Toolbar.isVisible;
   }
 
-  enableDraw(shape = 'Polygon', options) {
+  enableDraw(shape, options) {
     this.Draw.enable(shape, options);
   }
 
-  disableDraw(shape = 'Polygon') {
-    this.Draw.disable(shape);
+  disableDraw() {
+    this.Draw.disable();
   }
 
   // optionsModifier for special options like ignoreShapes or merge
