@@ -502,9 +502,9 @@ describe('Draw Circle', () => {
 
     // change radius
     cy.get(mapSelector)
-      .trigger('pointerdown', 300, 200, {eventConstructor: 'PointerEvent'})
-      .trigger('pointermove', 300, 250, {eventConstructor: 'PointerEvent'})
-      .trigger('pointerup', 300, 250, {eventConstructor: 'PointerEvent'});
+      .trigger('pointerdown', 300, 200, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 300, 250, { eventConstructor: 'PointerEvent' })
+      .trigger('pointerup', 300, 250, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanLayers()[0];
@@ -515,9 +515,9 @@ describe('Draw Circle', () => {
 
     // change center
     cy.get(mapSelector)
-      .trigger('pointerdown', 200, 200, {eventConstructor: 'PointerEvent'})
-      .trigger('pointermove', 200, 250, {eventConstructor: 'PointerEvent'})
-      .trigger('pointerup', 200, 250, {eventConstructor: 'PointerEvent'});
+      .trigger('pointerdown', 200, 200, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 200, 250, { eventConstructor: 'PointerEvent' })
+      .trigger('pointerup', 200, 250, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanLayers()[0];
@@ -538,9 +538,9 @@ describe('Draw Circle', () => {
 
     // move marker
     cy.get(mapSelector)
-      .trigger('pointerdown', 400, 200, {eventConstructor: 'PointerEvent'})
-      .trigger('pointermove', 390, 230, {eventConstructor: 'PointerEvent'})
-      .trigger('pointerup', 390, 230, {eventConstructor: 'PointerEvent'});
+      .trigger('pointerdown', 400, 200, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 390, 230, { eventConstructor: 'PointerEvent' })
+      .trigger('pointerup', 390, 230, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanLayers()[1];

@@ -173,9 +173,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = new L.Polygon(json.data.points, { pmIgnore: ignore }).addTo(
-            map
-          );
+          const layer = new L.Polygon(json.data.points, {
+            pmIgnore: ignore,
+          }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });

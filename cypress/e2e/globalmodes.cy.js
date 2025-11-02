@@ -48,7 +48,7 @@ describe('Modes', () => {
           ],
         },
       };
-      // eslint-disable-next-line prefer-destructuring
+
       layer = new L.GeoJSON(geojson).addTo(map).getLayers()[0];
       map.fitBounds(layer.getBounds());
 
@@ -65,7 +65,9 @@ describe('Modes', () => {
     cy.toolbarButton('edit').click();
 
     // make the marker visible
-    cy.get(mapSelector).trigger('pointermove', 500, 120, { eventConstructor: 'PointerEvent' });
+    cy.get(mapSelector).trigger('pointermove', 500, 120, {
+      eventConstructor: 'PointerEvent',
+    });
 
     cy.get(mapSelector)
       .trigger('pointerdown', 495, 125, { eventConstructor: 'PointerEvent' })
@@ -79,10 +81,14 @@ describe('Modes', () => {
     });
 
     // end dragging
-    cy.get(mapSelector).trigger('pointerup', 500, 307, { eventConstructor: 'PointerEvent' });
+    cy.get(mapSelector).trigger('pointerup', 500, 307, {
+      eventConstructor: 'PointerEvent',
+    });
 
     // make other marker visible
-    cy.get(mapSelector).trigger('pointermove', 310, 330, { eventConstructor: 'PointerEvent' });
+    cy.get(mapSelector).trigger('pointermove', 310, 330, {
+      eventConstructor: 'PointerEvent',
+    });
 
     cy.get('.leaflet-marker-icon').should((p) => {
       expect(p[0]).to.not.equal(markerHtml);
@@ -155,7 +161,9 @@ describe('Modes', () => {
 
         const coords = poly.getLatLngs();
 
-        const newPoly = new L.Polygon(coords, { pmIgnore: true }).addTo(testLayer);
+        const newPoly = new L.Polygon(coords, { pmIgnore: true }).addTo(
+          testLayer
+        );
         poly.remove();
 
         return newPoly;
