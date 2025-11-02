@@ -29,7 +29,7 @@ export default class GeomanMap extends Class {
     this.Keyboard = createKeyboardMixins();
 
     this.globalOptions = {
-      snappable: true,
+      allowSnapping: true,
       layerGroup: undefined,
       snappingOrder: [
         'Marker',

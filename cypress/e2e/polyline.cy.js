@@ -54,7 +54,7 @@ describe('Draw & Edit Polyline', () => {
       map.on('geoman:create', (e) => {
         e.layer.geoman.enable({
           allowSelfIntersection: false,
-          snappable: false,
+          allowSnapping: false,
           snapDistance: 20,
         });
 
@@ -62,7 +62,7 @@ describe('Draw & Edit Polyline', () => {
       });
 
       map.geoman.enableDraw('Polygon', {
-        snappable: false,
+        allowSnapping: false,
         snapDistance: 20,
         allowSelfIntersection: true,
         finishOn: 'dblclick',

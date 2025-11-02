@@ -19,7 +19,7 @@ export default class Draw extends Class {
     this.include(EventMixin);
 
     this.setDefaultOptions({
-      snappable: true, // TODO: next major Release, rename it to allowSnapping
+      allowSnapping: true,
       snapDistance: 20,
       snapMiddle: false,
       allowSelfIntersection: true,

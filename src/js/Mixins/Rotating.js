@@ -188,7 +188,7 @@ const RotateMixin = {
     );
     this._rotatePoly.geoman.setOptions({
       rotate: true,
-      snappable: false,
+      allowSnapping: false,
       hideMiddleMarkers: true,
     });
     // we connect the temp polygon (that will be enabled for rotation) with the current layer, so that we can rotate the current layer too

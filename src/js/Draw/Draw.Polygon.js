@@ -38,7 +38,7 @@ export default class GeomanDrawPolygon extends GeomanDrawLine {
       // add the first vertex to "other snapping layers" so the polygon is easier to finish
       this._tempSnapLayerIndex = this._otherSnapLayers.push(marker) - 1;
 
-      if (this.options.snappable) {
+      if (this.options.allowSnapping) {
         this._cleanupSnapping();
       }
     } else {

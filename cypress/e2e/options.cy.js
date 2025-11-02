@@ -35,30 +35,30 @@ describe('Options', () => {
     cy.window().then(({ map }) => {
       map.geoman.setGlobalOptions({
         pinning: false,
-        snappable: false,
+        allowSnapping: false,
       });
     });
 
     cy.get('@poly').then((poly) => {
-      expect(poly.geoman.options.snappable).to.equal(false);
+      expect(poly.geoman.options.allowSnapping).to.equal(false);
     });
 
     cy.window().then(({ map }) => {
       map.geoman.setGlobalOptions({
         pinning: true,
-        snappable: true,
+        allowSnapping: true,
       });
     });
 
     cy.get('@poly').then((poly) => {
-      expect(poly.geoman.options.snappable).to.equal(true);
+      expect(poly.geoman.options.allowSnapping).to.equal(true);
     });
   });
 
   it('global options work on Draw', () => {
     cy.window().then(({ map }) => {
       map.geoman.setGlobalOptions({
-        snappable: false,
+        allowSnapping: false,
       });
     });
 
@@ -67,7 +67,7 @@ describe('Options', () => {
     cy.get(mapSelector).click(300, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.geoman.Draw.Marker.options.snappable).to.equal(false);
+      expect(map.geoman.Draw.Marker.options.allowSnapping).to.equal(false);
     });
 
     // cy.get(mapSelector)

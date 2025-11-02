@@ -484,7 +484,7 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(300, 200);
   });
 
-  it('checks if editing with snappable:false works', () => {
+  it('checks if editing with allowSnapping:false works', () => {
     cy.toolbarButton('circle')
       .click()
       .closest('.leaflet-geoman-button-container')
@@ -494,7 +494,7 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(300, 200);
 
     cy.window().then(({ map }) => {
-      map.geoman.setGlobalOptions({ snappable: false });
+      map.geoman.setGlobalOptions({ allowSnapping: false });
     });
 
     cy.window().then(({ map }) => {

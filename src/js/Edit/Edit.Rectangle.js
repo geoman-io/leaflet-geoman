@@ -41,7 +41,7 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
   }
 
   applyOptions() {
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();

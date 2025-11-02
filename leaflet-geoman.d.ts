@@ -1942,7 +1942,7 @@ declare module 'leaflet' {
 
     interface SnappingOptions {
       /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
-      snappable?: boolean;
+      allowSnapping?: boolean;
 
       /** The distance to another vertex when a snap should happen (default:20). */
       snapDistance?: number;

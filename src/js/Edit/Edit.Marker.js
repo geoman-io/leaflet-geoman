@@ -75,7 +75,7 @@ export default class GeomanEditMarker extends Edit {
   }
 
   applyOptions() {
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();

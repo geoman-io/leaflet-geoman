@@ -118,7 +118,7 @@ const DragMixin = {
     const layersToSyncFound = this._syncLayers('_dragMixinOnPointerDown', e);
 
     if (this._layer instanceof Marker) {
-      if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
+      if (this.options.allowSnapping && !fromLayerSync && !layersToSyncFound) {
         this._initSnappableMarkers();
       } else {
         this._disableSnapping();
@@ -132,7 +132,7 @@ const DragMixin = {
         _editableOption = 'resizeableCircle';
       }
 
-      if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
+      if (this.options.allowSnapping && !fromLayerSync && !layersToSyncFound) {
         if (!this._layer.geoman.options[_editableOption]) {
           this._initSnappableMarkersDrag();
         }

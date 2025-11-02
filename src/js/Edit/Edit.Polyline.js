@@ -142,7 +142,7 @@ export default class GeomanEditPolyline extends Edit {
   }
 
   applyOptions() {
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();
@@ -362,7 +362,7 @@ export default class GeomanEditPolyline extends Edit {
       latlng
     );
 
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._initSnappableMarkers();
     }
   }
@@ -841,7 +841,7 @@ export default class GeomanEditPolyline extends Edit {
       // re-enable markers for the new coords
       this._initMarkers();
 
-      if (this.options.snappable) {
+      if (this.options.allowSnapping) {
         this._initSnappableMarkers();
       }
 

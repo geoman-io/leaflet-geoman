@@ -354,7 +354,7 @@ export default class Toolbar extends Class {
       afterClick: (ctx) => {
         // enable polygon drawing mode without snap
         this.map.geoman.Draw[ctx.button._button.jsClass].toggle({
-          snappable: true,
+          allowSnapping: true,
           cursorMarker: true,
           allowSelfIntersection: false,
         });

@@ -135,7 +135,7 @@ export default class GeomanEditCircleMarker extends Edit {
       this._map.on('move', this._syncMarkers, this);
 
       // init snapping in different ways
-      if (this.options.snappable) {
+      if (this.options.allowSnapping) {
         this._initSnappableMarkers();
         // update marker latlng when snapped latlng radius is out of min/max
         this._outerMarker.on('drag', this._handleOuterMarkerSnapping, this);
@@ -152,7 +152,7 @@ export default class GeomanEditCircleMarker extends Edit {
       // only update the circle border poly
       this._map.on('move', this._updateHiddenPolyCircle, this);
 
-      if (this.options.snappable) {
+      if (this.options.allowSnapping) {
         this._initSnappableMarkersDrag();
       } else {
         this._disableSnappingDrag();

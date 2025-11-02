@@ -12,7 +12,7 @@ export default class Edit extends Class {
     this.include(EventMixin);
 
     this.setDefaultOptions({
-      snappable: true, // TODO: next major Release, rename it to allowSnapping
+      allowSnapping: true,
       snapDistance: 20,
       allowSelfIntersection: true,
       allowSelfIntersectionEdit: false,

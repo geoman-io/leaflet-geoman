@@ -26,7 +26,7 @@ describe('Draw Marker', () => {
       const markerLayer = new L.GeoJSON().addTo(map);
 
       map.geoman.enableDraw('Marker', {
-        snappable: false,
+        allowSnapping: false,
       });
 
       cy.get(mapSelector)

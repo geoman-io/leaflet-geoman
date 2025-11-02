@@ -104,7 +104,7 @@ map2.geoman.addControls({
 
 map2.geoman.disableDraw();
 // map2.geoman.enableDraw('Circle', {
-//     snappable: true,
+//     allowSnapping: true,
 //     cursorMarker: true
 // });
 
@@ -147,7 +147,7 @@ geoJsonLayer.addTo(map2);
 geoJsonLayer.addData(geoJsonData);
 // geoJsonLayer.geoman.toggleEdit({
 //     draggable: true,
-//     snappable: true,
+//     allowSnapping: true,
 // });
 
 map3.geoman.addControls({
@@ -164,7 +164,7 @@ const markerStyle = {
 };
 
 map3.geoman.enableDraw('Polygon', {
-  snappable: true,
+  allowSnapping: true,
   templineStyle: {
     color: 'blue',
   },
@@ -337,7 +337,7 @@ const feature = {
 const layerGroup = new FeatureGroup([layerGroupItem1]).addTo(map4);
 layerGroup.geoman.toggleEdit({
   draggable: true,
-  snappable: true,
+  allowSnapping: true,
   snapDistance: 30,
 });
 const someLayer = new GeoJSON(feature);
@@ -366,7 +366,7 @@ map4.geoman.enableDraw('Polygon', {
 map4.geoman.disableDraw();
 
 map4.geoman.enableDraw('Marker', {
-  snappable: false,
+  allowSnapping: false,
 });
 map4.geoman.disableDraw();
 

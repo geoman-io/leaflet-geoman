@@ -144,7 +144,7 @@ export default class GeomanDrawRectangle extends Draw {
     this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, false);
 
     // cleanup snapping
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._cleanupSnapping();
     }
     // fire drawend event
@@ -213,7 +213,7 @@ export default class GeomanDrawRectangle extends Draw {
     this._hintMarker.setLatLng(e.latlng);
 
     // if snapping is enabled, do it
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       const fakeDragEvent = e;
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
