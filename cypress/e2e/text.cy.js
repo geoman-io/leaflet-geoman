@@ -60,14 +60,17 @@ describe('Text Layer', () => {
     it('place text layer and write text', () => {
       cy.toolbarButton('text')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
-      cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+      cy.get(mapSelector).should('have.class', 'leaflet-geoman-draw-cursor');
 
       cy.get(mapSelector).click(90, 250);
 
-      cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
+      cy.get(mapSelector).should(
+        'not.have.class',
+        'leaflet-geoman-draw-cursor'
+      );
 
       let textArea;
       cy.window().then(({ map }) => {
@@ -85,15 +88,17 @@ describe('Text Layer', () => {
 
       cy.window().then(() => {
         expect(textArea.readOnly).to.eq(true);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(true);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          true
+        );
       });
     });
 
     it('place text layer and remove it because it is empty', () => {
       cy.toolbarButton('text')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
       cy.get(mapSelector).click(90, 250);
 
@@ -117,8 +122,8 @@ describe('Text Layer', () => {
     it('place text layer and remove it with click on control', () => {
       cy.toolbarButton('text')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
       cy.get(mapSelector).click(90, 250);
 
@@ -146,8 +151,8 @@ describe('Text Layer', () => {
 
       cy.toolbarButton('text')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
       cy.get(mapSelector).click(90, 250);
 
@@ -167,7 +172,9 @@ describe('Text Layer', () => {
 
       cy.window().then(({ map }) => {
         expect(textArea.readOnly).to.eq(true);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(true);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          true
+        );
         expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
         const textLayer = map.pm.getGeomanDrawLayers()[1];
         textArea = textLayer.pm.getElement();
@@ -192,7 +199,9 @@ describe('Text Layer', () => {
       cy.window().then(() => {
         expect(textArea.value).to.eq('Geoman!');
         expect(textArea.readOnly).to.eq(true);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(true);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          true
+        );
       });
     });
 
@@ -202,8 +211,8 @@ describe('Text Layer', () => {
       });
 
       cy.toolbarButton('text')
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
       cy.get(mapSelector).click(90, 250);
 
@@ -223,15 +232,17 @@ describe('Text Layer', () => {
 
       cy.window().then(() => {
         expect(textArea.readOnly).to.eq(true);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(true);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          true
+        );
       });
     });
 
     it('resizes the textbox while typing', () => {
       cy.toolbarButton('text')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
       cy.get(mapSelector).click(90, 250);
 
@@ -255,8 +266,8 @@ describe('Text Layer', () => {
     it('allows to edit the Text multiple times', () => {
       cy.toolbarButton('text')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
       cy.get(mapSelector).click(90, 250);
 
@@ -299,8 +310,8 @@ describe('Text Layer', () => {
         });
 
         cy.toolbarButton('text')
-          .closest('.button-container')
-          .should('have.class', 'active');
+          .closest('.leaflet-geoman-button-container')
+          .should('have.class', 'leaflet-geoman-active');
 
         cy.get(mapSelector).click(90, 250);
 
@@ -327,8 +338,8 @@ describe('Text Layer', () => {
         });
 
         cy.toolbarButton('text')
-          .closest('.button-container')
-          .should('have.class', 'active');
+          .closest('.leaflet-geoman-button-container')
+          .should('have.class', 'leaflet-geoman-active');
 
         cy.get(mapSelector).click(90, 250);
 
@@ -338,7 +349,9 @@ describe('Text Layer', () => {
           const textLayer = map.pm.getGeomanDrawLayers()[0];
           textArea = textLayer.pm.getElement();
           expect(textArea.readOnly).to.eq(true);
-          expect(textArea.classList.contains('pm-disabled')).to.eq(true);
+          expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+            true
+          );
         });
 
         cy.get(mapSelector).click(90, 280);
@@ -351,8 +364,8 @@ describe('Text Layer', () => {
         });
 
         cy.toolbarButton('text')
-          .closest('.button-container')
-          .should('have.class', 'active');
+          .closest('.leaflet-geoman-button-container')
+          .should('have.class', 'leaflet-geoman-active');
 
         cy.get(mapSelector).click(90, 250);
 
@@ -378,8 +391,8 @@ describe('Text Layer', () => {
         });
 
         cy.toolbarButton('text')
-          .closest('.button-container')
-          .should('have.class', 'active');
+          .closest('.leaflet-geoman-button-container')
+          .should('have.class', 'leaflet-geoman-active');
 
         cy.get(mapSelector).click(90, 250);
 
@@ -411,7 +424,9 @@ describe('Text Layer', () => {
 
       cy.window().then(() => {
         expect(textArea.readOnly).to.eq(false);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(false);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          false
+        );
         cy.get(textArea).type('. Hello World');
       });
 
@@ -424,7 +439,9 @@ describe('Text Layer', () => {
       cy.window().then(() => {
         textLayer.pm.disable();
         expect(textArea.readOnly).to.eq(true);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(true);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          true
+        );
       });
     });
     it('blur()', () => {
@@ -442,13 +459,17 @@ describe('Text Layer', () => {
 
       cy.window().then(() => {
         expect(textArea.readOnly).to.eq(false);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(false);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          false
+        );
         textLayer.pm.blur();
         expect(textLayer.pm.hasFocus()).to.eq(false);
 
         textLayer.pm.disable();
         expect(textArea.readOnly).to.eq(true);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(true);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          true
+        );
       });
     });
     it('hasFocus', () => {
@@ -466,14 +487,18 @@ describe('Text Layer', () => {
 
       cy.window().then(() => {
         expect(textArea.readOnly).to.eq(false);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(false);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          false
+        );
         expect(textLayer.pm.hasFocus()).to.eq(true);
         textLayer.pm.blur();
         expect(textLayer.pm.hasFocus()).to.eq(false);
 
         textLayer.pm.disable();
         expect(textArea.readOnly).to.eq(true);
-        expect(textArea.classList.contains('pm-disabled')).to.eq(true);
+        expect(textArea.classList.contains('leaflet-geoman-disabled')).to.eq(
+          true
+        );
       });
     });
     it('getElement', () => {

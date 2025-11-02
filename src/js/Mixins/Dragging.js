@@ -170,7 +170,7 @@ const DragMixin = {
     if (!this._dragging) {
       // set state
       this._dragging = true;
-      el.classList.add('leaflet-pm-dragging');
+      el.classList.add('leaflet-geoman-dragging');
 
       if (!(this._layer instanceof Marker)) {
         // bring it to front to prevent drag interception
@@ -235,7 +235,7 @@ const DragMixin = {
       this._dragging = false;
       // if the layer is not on the map, we have no DOM element
       if (el) {
-        el.classList.remove('leaflet-pm-dragging');
+        el.classList.remove('leaflet-geoman-dragging');
       }
 
       // fire pm:dragend event
@@ -331,13 +331,13 @@ const DragMixin = {
   addDraggingClass() {
     const el = this._getDOMElem();
     if (el) {
-      el.classList.add('leaflet-pm-draggable');
+      el.classList.add('leaflet-geoman-draggable');
     }
   },
   removeDraggingClass() {
     const el = this._getDOMElem();
     if (el) {
-      el.classList.remove('leaflet-pm-draggable');
+      el.classList.remove('leaflet-geoman-draggable');
     }
   },
   _getDOMElem() {

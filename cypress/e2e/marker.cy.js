@@ -298,8 +298,8 @@ describe('Draw Marker', () => {
   it('change icon of Marker while drawing', () => {
     cy.toolbarButton('marker')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).trigger('pointermove', 300, 300);
 

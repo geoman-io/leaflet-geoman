@@ -16,19 +16,19 @@ describe('Draw Circle', () => {
   it('draws a circle', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
-    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('have.class', 'leaflet-geoman-draw-cursor');
 
     cy.get(mapSelector).click(200, 200).click(250, 250);
 
-    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('not.have.class', 'leaflet-geoman-draw-cursor');
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(2);
     cy.hasMiddleMarkers(0);
@@ -78,8 +78,8 @@ describe('Draw Circle', () => {
   it('uses correct options from setPathOptions', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map, L }) => {
       map.pm.setPathOptions({
@@ -106,8 +106,8 @@ describe('Draw Circle', () => {
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw first circle
     cy.get(mapSelector).click(200, 200).click(250, 250);
@@ -130,8 +130,8 @@ describe('Draw Circle', () => {
   it('set max radius of circle', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map, L }) => {
       new L.Marker(map.getCenter()).addTo(map);
@@ -155,8 +155,8 @@ describe('Draw Circle', () => {
   it('set min radius of circle', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map, L }) => {
       new L.Marker(map.getCenter()).addTo(map);
@@ -271,8 +271,8 @@ describe('Draw Circle', () => {
   it('removes circle if enabled', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(250, 250);
 
@@ -288,8 +288,8 @@ describe('Draw Circle', () => {
   it('check if snapping works with max radius of circle', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(350, 250).click(450, 250);
 
@@ -312,8 +312,8 @@ describe('Draw Circle', () => {
   it('change color of circle while drawing', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).trigger('pointermove', 300, 300);
@@ -334,8 +334,8 @@ describe('Draw Circle', () => {
   it('fires disable event only if it was enabled', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
@@ -366,8 +366,8 @@ describe('Draw Circle', () => {
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
@@ -375,8 +375,8 @@ describe('Draw Circle', () => {
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasCircleLayers(3);
   });
@@ -388,8 +388,8 @@ describe('Draw Circle', () => {
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
@@ -412,15 +412,15 @@ describe('Draw Circle', () => {
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasCircleLayers(1);
 
@@ -436,8 +436,8 @@ describe('Draw Circle', () => {
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).trigger('pointermove', 300, 300);
 
@@ -455,8 +455,8 @@ describe('Draw Circle', () => {
   it('on vertex click', (done) => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 200);
@@ -481,8 +481,8 @@ describe('Draw Circle', () => {
   it('checks if editing with snappable:false works', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 200);

@@ -38,7 +38,7 @@ export default class GeomanDrawCircleMarker extends Draw {
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // change map cursor
-    this._map.getContainer().classList.add('geoman-draw-cursor');
+    this._map.getContainer().classList.add('leaflet-geoman-draw-cursor');
 
     // Draw the CircleMarker like a Circle
     if (this.options[this._editableOption]) {
@@ -62,7 +62,7 @@ export default class GeomanDrawCircleMarker extends Draw {
 
       // this is the marker in the center of the circle
       this._centerMarker = new Marker(this._map.getCenter(), {
-        icon: new DivIcon({ className: 'marker-icon' }),
+        icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
         draggable: false,
         zIndexOffset: 100,
       });
@@ -72,7 +72,9 @@ export default class GeomanDrawCircleMarker extends Draw {
       // this is the hintmarker on the pointer cursor
       this._hintMarker = new Marker(this._map.getCenter(), {
         zIndexOffset: 110,
-        icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
+        icon: new DivIcon({
+          className: 'leaflet-geoman-vertex-icon leaflet-geoman-cursor-marker',
+        }),
       });
       this._setPane(this._hintMarker, 'vertexPane');
       this._hintMarker._pmTempLayer = true;
@@ -80,7 +82,7 @@ export default class GeomanDrawCircleMarker extends Draw {
 
       // show the hintmarker if the option is set
       if (this.options.cursorMarker) {
-        this._hintMarker._icon.classList.add('visible');
+        this._hintMarker._icon.classList.add('leaflet-geoman-visible');
       }
 
       // add tooltip to hintmarker
@@ -169,7 +171,7 @@ export default class GeomanDrawCircleMarker extends Draw {
     this._enabled = false;
 
     // reset cursor
-    this._map.getContainer().classList.remove('geoman-draw-cursor');
+    this._map.getContainer().classList.remove('leaflet-geoman-draw-cursor');
 
     // disable when drawing like a Circle
     if (this.options[this._editableOption]) {

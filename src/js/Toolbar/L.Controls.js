@@ -119,12 +119,15 @@ export default class PMButton extends Control {
   }
 
   _makeButton(button) {
-    const pos = this.options.position.indexOf('right') > -1 ? 'pos-right' : '';
+    const pos =
+      this.options.position.indexOf('right') > -1
+        ? 'leaflet-geoman-pos-right'
+        : '';
 
     // button container
     const buttonContainer = DomUtil.create(
       'div',
-      `button-container  ${pos}`,
+      `leaflet-geoman-button-container  ${pos}`,
       this._container
     );
 
@@ -135,7 +138,7 @@ export default class PMButton extends Control {
     // the button itself
     const newButton = DomUtil.create(
       'a',
-      'leaflet-buttons-control-button',
+      'leaflet-geoman-buttons-control-button',
       buttonContainer
     );
     newButton.setAttribute('role', 'button');
@@ -145,7 +148,7 @@ export default class PMButton extends Control {
     // the buttons actions
     const actionContainer = DomUtil.create(
       'div',
-      `leaflet-pm-actions-container ${pos}`,
+      `leaflet-geoman-actions-container ${pos}`,
       buttonContainer
     );
 
@@ -194,7 +197,7 @@ export default class PMButton extends Control {
       }
       const actionNode = DomUtil.create(
         'a',
-        `leaflet-pm-action ${pos} action-${name}`,
+        `leaflet-geoman-action ${pos} action-${name}`,
         actionContainer
       );
       actionNode.setAttribute('role', 'button');
@@ -240,10 +243,14 @@ export default class PMButton extends Control {
     this._updateActiveAction(button);
 
     if (button.toggleStatus) {
-      buttonContainer.classList.add('active');
+      buttonContainer.classList.add('leaflet-geoman-active');
     }
 
-    const image = DomUtil.create('div', 'control-icon', newButton);
+    const image = DomUtil.create(
+      'div',
+      'leaflet-geoman-control-icon',
+      newButton
+    );
 
     if (button.iconUrl) {
       image.setAttribute('src', button.iconUrl);
@@ -263,7 +270,7 @@ export default class PMButton extends Control {
     }
 
     if (button.disabled) {
-      newButton.classList.add('pm-disabled');
+      newButton.classList.add('leaflet-geoman-disabled');
       newButton.setAttribute('aria-disabled', 'true');
     }
 
@@ -276,11 +283,11 @@ export default class PMButton extends Control {
     }
 
     if (!this._button.toggleStatus || this._button.cssToggle === false) {
-      this.buttonsDomNode.classList.remove('active');
-      this.buttonsDomNode.classList.remove('activeChild');
+      this.buttonsDomNode.classList.remove('leaflet-geoman-active');
+      this.buttonsDomNode.classList.remove('leaflet-geoman-active-child');
     } else {
-      this.buttonsDomNode.classList.add('active');
-      this.buttonsDomNode.classList.add('activeChild');
+      this.buttonsDomNode.classList.add('leaflet-geoman-active');
+      this.buttonsDomNode.classList.add('leaflet-geoman-active-child');
     }
   }
 
@@ -313,7 +320,7 @@ export default class PMButton extends Control {
       return;
     }
 
-    const className = 'pm-disabled';
+    const className = 'leaflet-geoman-disabled';
     const button = this.buttonsDomNode.children[0];
 
     if (this._button.disabled) {
@@ -329,9 +336,9 @@ export default class PMButton extends Control {
     button._preparedActions?.forEach((action) => {
       if (action?._node) {
         if (action.isActive && action.isActive.call(this)) {
-          action._node.classList.add('active-action');
+          action._node.classList.add('leaflet-geoman-active-action');
         } else {
-          action._node.classList.remove('active-action');
+          action._node.classList.remove('leaflet-geoman-active-action');
         }
       }
     });

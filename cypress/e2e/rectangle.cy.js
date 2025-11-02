@@ -4,19 +4,19 @@ describe('Draw Rectangle', () => {
   it('draws a rectangle', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
-    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('have.class', 'leaflet-geoman-draw-cursor');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
-    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('not.have.class', 'leaflet-geoman-draw-cursor');
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(4);
     cy.hasMiddleMarkers(0);
@@ -25,8 +25,8 @@ describe('Draw Rectangle', () => {
   it('properly snaps rectangle edge', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -235,8 +235,8 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -249,8 +249,8 @@ describe('Draw Rectangle', () => {
     // create snapping layer
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -520,8 +520,8 @@ describe('Draw Rectangle', () => {
   it('allows only one of two rectangles to be editable', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -531,15 +531,15 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(500, 200).click(400, 350);
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(4);
     cy.hasMiddleMarkers(0);
@@ -548,8 +548,8 @@ describe('Draw Rectangle', () => {
   it('allows only one of two rectangles to be rotateable', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -559,15 +559,15 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(500, 200).click(400, 350);
 
     cy.toolbarButton('rotate')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(4);
     cy.hasMiddleMarkers(0);
@@ -903,8 +903,8 @@ describe('Draw Rectangle', () => {
   it('change color of Rectangle while drawing', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(220, 220);
     cy.get(mapSelector).trigger('pointermove', 300, 300);
@@ -927,8 +927,8 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(220, 220);
     cy.get(mapSelector).trigger('pointermove', 500, 300);
@@ -1004,8 +1004,8 @@ describe('Draw Rectangle', () => {
   it('on vertex click', (done) => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
@@ -1030,8 +1030,8 @@ describe('Draw Rectangle', () => {
   it('prevents drawing rectangle where all corners have the same position', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(200, 200);
@@ -1048,15 +1048,15 @@ describe('Draw Rectangle', () => {
 
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(90, 250).click(150, 50);
 
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(150, 60).click(250, 90);
 

@@ -169,13 +169,13 @@ describe('Shows Tooltips', () => {
     cy.toolbarButton('polygon').click();
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
 
-    cy.get('.active .action-cancel').click();
+    cy.get('.leaflet-geoman-active .action-cancel').click();
 
     cy.window().then(({ map }) => {
       map.pm.enableDraw('Polygon');
     });
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
-    cy.get('.active .action-cancel').click();
+    cy.get('.leaflet-geoman-active .action-cancel').click();
 
     cy.window().then(({ map }) => {
       map.pm.enableDraw('Polygon', {

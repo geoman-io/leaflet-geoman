@@ -2,7 +2,7 @@ describe('Testing the Toolbar', () => {
   const mapSelector = '#map';
 
   it('Repositions The Toolbar', () => {
-    cy.get('.leaflet-pm-toolbar')
+    cy.get('.leaflet-geoman-toolbar')
       .parent('.leaflet-top.leaflet-left')
       .should('exist');
 
@@ -14,15 +14,17 @@ describe('Testing the Toolbar', () => {
 
     cy.toolbarButton('polygon').click();
 
-    cy.get('.leaflet-pm-actions-container')
+    cy.get('.leaflet-geoman-actions-container')
       .should('have.css', 'right')
       .and('match', /100%/);
 
-    cy.get('.leaflet-pm-toolbar')
+    cy.get('.leaflet-geoman-toolbar')
       .parent('.leaflet-top.leaflet-right')
       .should('exist');
 
-    cy.get('.button-container.active .action-cancel').click();
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-cancel'
+    ).click();
 
     cy.window().then(({ map }) => {
       map.pm.addControls({
@@ -30,7 +32,7 @@ describe('Testing the Toolbar', () => {
       });
     });
 
-    cy.get('.leaflet-pm-toolbar')
+    cy.get('.leaflet-geoman-toolbar')
       .parent('.leaflet-bottom.leaflet-right')
       .should('exist');
 
@@ -40,7 +42,7 @@ describe('Testing the Toolbar', () => {
       });
     });
 
-    cy.get('.leaflet-pm-toolbar')
+    cy.get('.leaflet-geoman-toolbar')
       .parent('.leaflet-bottom.leaflet-left')
       .should('exist');
 
@@ -54,17 +56,17 @@ describe('Testing the Toolbar', () => {
   it('Handles Button States', () => {
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('marker')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('edit')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('polyline').click();
     cy.toolbarButton('polygon').click();
@@ -77,21 +79,21 @@ describe('Testing the Toolbar', () => {
     cy.toolbarButton('circle').click();
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('edit')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
     cy.toolbarButton('polyline')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
     cy.toolbarButton('delete')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
     cy.toolbarButton('rectangle')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
   });
 
   it('Reacts to programmatic state change', () => {
@@ -100,19 +102,19 @@ describe('Testing the Toolbar', () => {
     });
 
     cy.toolbarButton('edit')
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map }) => {
       map.pm.toggleGlobalRemovalMode();
     });
 
     cy.toolbarButton('edit')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
     cy.toolbarButton('delete')
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map }) => {
       map.pm.toggleGlobalRemovalMode();
@@ -121,8 +123,8 @@ describe('Testing the Toolbar', () => {
     });
 
     cy.toolbarButton('delete')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map }) => {
       map.pm.toggleGlobalEditMode();
@@ -132,16 +134,16 @@ describe('Testing the Toolbar', () => {
     });
 
     cy.toolbarButton('delete')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('edit')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('marker')
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('marker').click();
   });
@@ -151,7 +153,9 @@ describe('Testing the Toolbar', () => {
       map.pm.setLang('es');
     });
 
-    cy.get('.leaflet-buttons-control-button .leaflet-pm-icon-circle-marker')
+    cy.get(
+      '.leaflet-geoman-buttons-control-button .leaflet-geoman-icon-circle-marker'
+    )
       .parent()
       .parent()
       .should('have.attr', 'title')
@@ -161,11 +165,17 @@ describe('Testing the Toolbar', () => {
   it('has functioning actions', () => {
     cy.toolbarButton('polygon').click();
 
-    cy.get('.button-container.active .action-cancel').should('exist');
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-cancel'
+    ).should('exist');
 
-    cy.get('.button-container.active .action-cancel').click();
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-cancel'
+    ).click();
 
-    cy.get('.button-container.active .action-cancel').should('not.exist');
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-cancel'
+    ).should('not.exist');
 
     cy.toolbarButton('polygon').click();
 
@@ -178,7 +188,9 @@ describe('Testing the Toolbar', () => {
 
     cy.hasVertexMarkers(6);
 
-    cy.get('.button-container.active .action-finish').click();
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-finish'
+    ).click();
 
     cy.hasVertexMarkers(0);
 
@@ -186,13 +198,15 @@ describe('Testing the Toolbar', () => {
 
     cy.hasVertexMarkers(5);
 
-    cy.get('.button-container.active .action-finishMode').click();
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-finishMode'
+    ).click();
 
     cy.hasVertexMarkers(0);
   });
 
   it('Custom Controls - new button', () => {
-    cy.get('.leaflet-pm-toolbar')
+    cy.get('.leaflet-geoman-toolbar')
       .parent('.leaflet-top.leaflet-left')
       .should('exist');
 
@@ -203,7 +217,7 @@ describe('Testing the Toolbar', () => {
       map.pm.Toolbar.createCustomControl({
         name: 'clickButton',
         block: 'custom',
-        className: 'leaflet-pm-icon-marker',
+        className: 'leaflet-geoman-icon-marker',
         title: 'Count layers',
         onClick: () => {
           testresult = 'clickButton clicked';
@@ -216,7 +230,7 @@ describe('Testing the Toolbar', () => {
           .and('include', 'Count layers');
         container[0].children[0].click(); // button
         expect(testresult).to.equal('clickButton clicked');
-        cy.get(container).should('not.have.class', 'active');
+        cy.get(container).should('not.have.class', 'leaflet-geoman-active');
       });
       expect(map.pm.Toolbar.getButton('clickButton')).to.not.equal(undefined);
       expect(map.pm.Toolbar.controlExists('clickButton')).to.equal(true);
@@ -227,7 +241,7 @@ describe('Testing the Toolbar', () => {
   });
 
   it('Custom Controls - new draw instance', () => {
-    cy.get('.leaflet-pm-toolbar')
+    cy.get('.leaflet-geoman-toolbar')
       .parent('.leaflet-top.leaflet-left')
       .should('exist');
 
@@ -249,7 +263,7 @@ describe('Testing the Toolbar', () => {
       map.pm.Toolbar.copyDrawControl('Polygon', {
         name: 'PolygonCopy',
         block: 'custom',
-        className: 'leaflet-pm-icon-polygon',
+        className: 'leaflet-geoman-icon-polygon',
         title: 'Display text on hover button',
         actions,
       });
@@ -260,7 +274,7 @@ describe('Testing the Toolbar', () => {
           .should('have.attr', 'title')
           .and('include', 'Display text on hover button');
         cy.get(container[0].children[0]).click(); // button
-        cy.get(container).should('have.class', 'active');
+        cy.get(container).should('have.class', 'leaflet-geoman-active');
         const buttonActions = container[0].children[1].children;
         const actioncount = buttonActions.length;
         expect(actioncount).to.equal(3);
@@ -275,7 +289,7 @@ describe('Testing the Toolbar', () => {
           });
 
         cy.get(buttonActions[0]).click();
-        cy.get(container).should('not.have.class', 'active');
+        cy.get(container).should('not.have.class', 'leaflet-geoman-active');
         cy.window().then(() => {
           map.pm.enableDraw('PolygonCopy');
           map.on('pm:create', (e) => {
@@ -285,7 +299,7 @@ describe('Testing the Toolbar', () => {
             });
           });
         });
-        cy.get(container).should('have.class', 'active');
+        cy.get(container).should('have.class', 'leaflet-geoman-active');
         // draw a polygon
         cy.get(mapSelector)
           .click(450, 100)
@@ -308,26 +322,28 @@ describe('Testing the Toolbar', () => {
     cy.window().then(({ map }) => {
       map.pm.removeControls();
     });
-    cy.get('.leaflet-pm-toolbar').should('not.exist');
+    cy.get('.leaflet-geoman-toolbar').should('not.exist');
 
     cy.window().then(({ map }) => {
       map.pm.Toolbar.copyDrawControl('Polygon', { name: 'PolygonCopy' });
     });
 
-    cy.get('.leaflet-pm-toolbar').should('not.exist');
+    cy.get('.leaflet-geoman-toolbar').should('not.exist');
   });
 
   it('Custom Controls - Custom order', () => {
     cy.window().then(({ map }) => {
       map.pm.Toolbar.changeControlOrder(['Rectangle']);
-      cy.get('.leaflet-pm-toolbar.leaflet-pm-draw').then((container) => {
-        cy.get(container[0].children[0]).then((e) => {
-          cy.get(e[0].children[0].children[0]).should(
-            'have.class',
-            'leaflet-pm-icon-rectangle'
-          );
-        });
-      });
+      cy.get('.leaflet-geoman-toolbar.leaflet-geoman-draw').then(
+        (container) => {
+          cy.get(container[0].children[0]).then((e) => {
+            cy.get(e[0].children[0].children[0]).should(
+              'have.class',
+              'leaflet-geoman-icon-rectangle'
+            );
+          });
+        }
+      );
     });
   });
 
@@ -336,9 +352,13 @@ describe('Testing the Toolbar', () => {
       map.pm.addControls({
         oneBlock: true,
       });
-      cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
-        expect(container[0].children.length).to.equal(ONE_BLOCK_CONTROL_COUNT);
-      });
+      cy.get('.leaflet-geoman-toolbar.leaflet-geoman-topleft').then(
+        (container) => {
+          expect(container[0].children.length).to.equal(
+            ONE_BLOCK_CONTROL_COUNT
+          );
+        }
+      );
     });
   });
 
@@ -350,10 +370,10 @@ describe('Testing the Toolbar', () => {
           edit: 'topleft',
         },
       });
-      cy.get('.leaflet-pm-toolbar.leaflet-pm-edit')
+      cy.get('.leaflet-geoman-toolbar.leaflet-geoman-edit')
         .parent('.leaflet-top.leaflet-left')
         .should('exist');
-      cy.get('.leaflet-pm-toolbar.leaflet-pm-draw')
+      cy.get('.leaflet-geoman-toolbar.leaflet-geoman-draw')
         .parent('.leaflet-top.leaflet-right')
         .should('exist');
     });
@@ -378,19 +398,23 @@ describe('Testing the Toolbar', () => {
         map.pm.Toolbar.copyDrawControl('Polygon', {
           name: 'PolygonCopy',
           block: 'custom',
-          className: 'leaflet-pm-icon-polygon',
+          className: 'leaflet-geoman-icon-polygon',
           title: 'Display text on hover button',
         });
-        cy.get('.leaflet-pm-toolbar.leaflet-pm-topright').then((container) => {
-          expect(container[0].children.length).to.equal(
-            TOP_RIGHT_BLOCK_CONTROL_COUNT
-          );
-        });
-        cy.get('.leaflet-pm-toolbar.leaflet-pm-topleft').then((container) => {
-          expect(container[0].children.length).to.equal(
-            TOP_LEFT_BLOCK_CONTROL_COUNT
-          );
-        });
+        cy.get('.leaflet-geoman-toolbar.leaflet-geoman-topright').then(
+          (container) => {
+            expect(container[0].children.length).to.equal(
+              TOP_RIGHT_BLOCK_CONTROL_COUNT
+            );
+          }
+        );
+        cy.get('.leaflet-geoman-toolbar.leaflet-geoman-topleft').then(
+          (container) => {
+            expect(container[0].children.length).to.equal(
+              TOP_LEFT_BLOCK_CONTROL_COUNT
+            );
+          }
+        );
       }
     );
   });
@@ -411,7 +435,9 @@ describe('Testing the Toolbar', () => {
       expect(eventFired).to.equal('drawPolygon');
     });
 
-    cy.get('.button-container.active .action-cancel').click();
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-cancel'
+    ).click();
 
     cy.window().then(() => {
       expect(eventFired).to.equal('Cancel');
@@ -444,8 +470,8 @@ describe('Testing the Toolbar', () => {
 
       cy.toolbarButton('polygon')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active')
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active')
         .then(() => {
           expect(eventFired).to.equal('drawPolygon');
           eventFired = '';
@@ -456,8 +482,8 @@ describe('Testing the Toolbar', () => {
     cy.window().then(() => {
       expect(eventFired).to.not.equal('drawPolygon');
       cy.toolbarButton('polygon')
-        .closest('.button-container')
-        .should('have.not.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.not.class', 'leaflet-geoman-active');
     });
   });
 
@@ -476,7 +502,7 @@ describe('Testing the Toolbar', () => {
       // add leaflet-geoman toolbar
       map.pm.addControls();
 
-      cy.get('.leaflet-pm-toolbar')
+      cy.get('.leaflet-geoman-toolbar')
         .parent('.leaflet-top.leaflet-left')
         .should('exist');
     });

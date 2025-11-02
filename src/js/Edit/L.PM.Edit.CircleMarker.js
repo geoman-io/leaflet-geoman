@@ -214,7 +214,7 @@ export default class GeomanEditCircleMarker extends Edit {
   _createCenterMarker(latlng) {
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
-      marker._icon.classList.add('leaflet-pm-draggable');
+      marker._icon.classList.add('leaflet-geoman-draggable');
       marker.on('move', this._moveCircle, this);
     } else {
       marker.dragging.disable();
@@ -231,7 +231,7 @@ export default class GeomanEditCircleMarker extends Edit {
   _createMarker(latlng) {
     const marker = new Marker(latlng, {
       draggable: true,
-      icon: new DivIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 

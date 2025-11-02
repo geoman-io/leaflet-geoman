@@ -53,7 +53,7 @@ export default class GeomanEditRectangle extends GeomanEditPolygon {
   _createMarker(latlng, index) {
     const marker = new Marker(latlng, {
       draggable: true,
-      icon: new DivIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 

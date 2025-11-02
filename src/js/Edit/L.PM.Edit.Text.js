@@ -34,7 +34,7 @@ export default class GeomanEditCircleText extends Edit {
 
     this._focusChange();
     this.textArea.readOnly = false;
-    this.textArea.classList.remove('pm-disabled');
+    this.textArea.classList.remove('leaflet-geoman-disabled');
 
     // if shape gets removed from map, disable edit mode
     this._layer.on('remove', this.disable, this);
@@ -67,7 +67,7 @@ export default class GeomanEditCircleText extends Edit {
 
     this._focusChange();
     this.textArea.readOnly = true;
-    this.textArea.classList.add('pm-disabled');
+    this.textArea.classList.add('leaflet-geoman-disabled');
 
     // remove selection
     const focusedElement = document.activeElement;
@@ -190,7 +190,7 @@ export default class GeomanEditCircleText extends Edit {
   }
 
   _applyFocus() {
-    this.textArea.classList.add('pm-hasfocus');
+    this.textArea.classList.add('leaflet-geoman-hasfocus');
 
     if (this._map.dragging) {
       // save current map dragging state
@@ -211,7 +211,7 @@ export default class GeomanEditCircleText extends Edit {
       this._safeToCacheDragState = true;
     }
 
-    this.textArea.classList.remove('pm-hasfocus');
+    this.textArea.classList.remove('leaflet-geoman-hasfocus');
   }
 
   focus() {

@@ -45,7 +45,9 @@ export default class GeomanDrawPolyline extends Draw {
     this._hintMarker = new Marker(this._map.getCenter(), {
       interactive: false, // always vertex marker below will be triggered from the click event -> _finishShape #911
       zIndexOffset: 100,
-      icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new DivIcon({
+        className: 'leaflet-geoman-vertex-icon leaflet-geoman-cursor-marker',
+      }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -53,7 +55,7 @@ export default class GeomanDrawPolyline extends Draw {
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      this._hintMarker._icon.classList.add('visible');
+      this._hintMarker._icon.classList.add('leaflet-geoman-visible');
     }
 
     // add tooltip to hintmarker
@@ -70,7 +72,7 @@ export default class GeomanDrawPolyline extends Draw {
     }
 
     // change map cursor
-    this._map.getContainer().classList.add('geoman-draw-cursor');
+    this._map.getContainer().classList.add('leaflet-geoman-draw-cursor');
 
     // create a polygon-point on click
     this._map.on('click', this._createVertex, this);
@@ -122,7 +124,7 @@ export default class GeomanDrawPolyline extends Draw {
     this._enabled = false;
 
     // reset cursor
-    this._map.getContainer().classList.remove('geoman-draw-cursor');
+    this._map.getContainer().classList.remove('leaflet-geoman-draw-cursor');
 
     // unbind listeners
     this._map.off('click', this._createVertex, this);
@@ -402,7 +404,7 @@ export default class GeomanDrawPolyline extends Draw {
     // create the new marker
     const marker = new Marker(latlng, {
       draggable: false,
-      icon: new DivIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
     marker._pmTempLayer = true;

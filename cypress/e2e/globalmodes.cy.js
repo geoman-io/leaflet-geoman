@@ -109,7 +109,9 @@ describe('Modes', () => {
 
     cy.hasTotalVertexMarkers(3);
 
-    cy.get('.marker-icon:not(.marker-icon-middle)')
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    )
       .first()
       .trigger('contextmenu');
 
@@ -331,8 +333,8 @@ describe('Modes', () => {
   it('Test removal when preventMarkerRemoval is passed to global options', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -344,8 +346,8 @@ describe('Modes', () => {
 
     cy.toolbarButton('delete')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 300);
 
@@ -383,12 +385,12 @@ describe('Modes', () => {
 
     cy.toolbarButton('delete')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('edit')
-      .closest('.button-container')
-      .should('not.have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('not.have.class', 'leaflet-geoman-active');
   });
 
   it('re-applies drag mode onAdd', () => {

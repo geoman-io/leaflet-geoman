@@ -67,8 +67,8 @@ describe('Edit LayerGroup', () => {
 
       cy.toolbarButton('rectangle')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
       cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -151,8 +151,8 @@ describe('Edit LayerGroup', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon
     cy.get(mapSelector)
@@ -166,8 +166,8 @@ describe('Edit LayerGroup', () => {
     // activate cutting drawing
     cy.toolbarButton('cut')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon to cut
     cy.get(mapSelector)

@@ -33,11 +33,15 @@ describe('Draw & Edit Polyline', () => {
 
     cy.hasVertexMarkers(5);
 
-    cy.get('.button-container.active .action-removeLastVertex').click();
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-removeLastVertex'
+    ).click();
 
     cy.hasVertexMarkers(4);
 
-    cy.get('.button-container.active .action-removeLastVertex').click();
+    cy.get(
+      '.leaflet-geoman-button-container.leaflet-geoman-active .action-removeLastVertex'
+    ).click();
 
     cy.hasVertexMarkers(3);
     cy.window().then(() => {
@@ -114,10 +118,10 @@ describe('Draw & Edit Polyline', () => {
     // activate line drawing
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
-    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('have.class', 'leaflet-geoman-draw-cursor');
 
     // draw a line
     cy.get(mapSelector)
@@ -127,12 +131,12 @@ describe('Draw & Edit Polyline', () => {
       .click(250, 250)
       .click(250, 250);
 
-    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('not.have.class', 'leaflet-geoman-draw-cursor');
 
     // button should be disabled after successful draw
     cy.toolbarButton('polyline')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
 
     cy.hasLayers(3);
 
@@ -143,7 +147,7 @@ describe('Draw & Edit Polyline', () => {
     cy.hasMiddleMarkers(3);
 
     // press a middle marker
-    cy.get('.marker-icon-middle').first().click();
+    cy.get('.leaflet-geoman-vertex-icon-middle').first().click();
 
     // now there should be one more vertex
     cy.hasVertexMarkers(5);
@@ -152,7 +156,9 @@ describe('Draw & Edit Polyline', () => {
     cy.hasMiddleMarkers(4);
 
     // rightclick on a vertex-marker to delete it
-    cy.get('.marker-icon:not(.marker-icon-middle)')
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    )
       .first()
       .trigger('contextmenu');
 
@@ -171,8 +177,8 @@ describe('Draw & Edit Polyline', () => {
     // activate line drawing
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a line
     cy.get(mapSelector)
@@ -294,8 +300,8 @@ describe('Draw & Edit Polyline', () => {
   it('remove line if enabled', () => {
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(250, 250).click(250, 250);
 
@@ -312,8 +318,8 @@ describe('Draw & Edit Polyline', () => {
   it('change color of line while drawing', () => {
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(100, 230);
@@ -348,7 +354,9 @@ describe('Draw & Edit Polyline', () => {
     cy.hasMiddleMarkers(3);
 
     // rightclick on a vertex-marker to delete it
-    cy.get('.marker-icon:not(.marker-icon-middle)')
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    )
       .eq(2)
       .trigger('contextmenu');
 
@@ -373,8 +381,8 @@ describe('Draw & Edit Polyline', () => {
     // activate line drawing
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a line
     cy.get(mapSelector).click(150, 250);
@@ -388,8 +396,8 @@ describe('Draw & Edit Polyline', () => {
     // activate polyline drawing
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polyline
     cy.get(mapSelector).click(90, 250).click(150, 50).click(150, 50);
@@ -397,11 +405,13 @@ describe('Draw & Edit Polyline', () => {
     // enable global edit mode
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // let's remove one vertex
-    cy.get('.marker-icon:not(.marker-icon-middle)')
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    )
       .last()
       .trigger('contextmenu');
 
@@ -416,8 +426,8 @@ describe('Draw & Edit Polyline', () => {
     // activate polyline drawing
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polyline
     cy.get(mapSelector).click(90, 250).click(150, 50).click(150, 50);
@@ -425,8 +435,8 @@ describe('Draw & Edit Polyline', () => {
     // activate polyline drawing
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polyline
     cy.get(mapSelector).click(150, 60).click(250, 50).click(250, 50);

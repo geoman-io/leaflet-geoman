@@ -20,7 +20,7 @@ export default class GeomanDrawPolygon extends GeomanDrawLine {
     // create the new marker
     const marker = new Marker(latlng, {
       draggable: false,
-      icon: new DivIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 

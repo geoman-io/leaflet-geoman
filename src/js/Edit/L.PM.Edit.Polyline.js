@@ -119,7 +119,7 @@ export default class GeomanEditPolyline extends Edit {
     const el = this._layer._path
       ? this._layer._path
       : this._layer._renderer._container;
-    el.classList.remove('leaflet-pm-draggable');
+    el.classList.remove('leaflet-geoman-draggable');
 
     if (this._layerEdited) {
       this._fireUpdate();
@@ -202,7 +202,7 @@ export default class GeomanEditPolyline extends Edit {
   _createMarker(latlng) {
     const marker = new Marker(latlng, {
       draggable: true,
-      icon: new DivIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -243,7 +243,7 @@ export default class GeomanEditPolyline extends Edit {
 
     const middleMarker = this._createMarker(latlng);
     const middleIcon = new DivIcon({
-      className: 'marker-icon marker-icon-middle',
+      className: 'leaflet-geoman-vertex-icon leaflet-geoman-vertex-icon-middle',
     });
     middleMarker.setIcon(middleIcon);
     middleMarker.leftM = leftM;
@@ -268,7 +268,7 @@ export default class GeomanEditPolyline extends Edit {
     // TODO: move the next two lines inside _addMarker() as soon as
     // https://github.com/Leaflet/Leaflet/issues/4484
     // is fixed
-    const icon = new DivIcon({ className: 'marker-icon' });
+    const icon = new DivIcon({ className: 'leaflet-geoman-vertex-icon' });
     middleMarker.setIcon(icon);
     this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
   }
@@ -300,7 +300,7 @@ export default class GeomanEditPolyline extends Edit {
     if (!this._vertexValidationDragEnd(middleMarker)) {
       return;
     }
-    const icon = new DivIcon({ className: 'marker-icon' });
+    const icon = new DivIcon({ className: 'leaflet-geoman-vertex-icon' });
     middleMarker.setIcon(icon);
     // timeout is needed else this._onVertexClick fires the event because it is called after deleting the flag
     setTimeout(() => {
@@ -455,9 +455,9 @@ export default class GeomanEditPolyline extends Edit {
         this._updateDisabledMarkerStyle(marker, disabled);
       } else if (marker._icon) {
         if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
-          marker._icon.classList.add('vertexmarker-disabled');
+          marker._icon.classList.add('leaflet-geoman-vertex-disabled');
         } else {
-          marker._icon.classList.remove('vertexmarker-disabled');
+          marker._icon.classList.remove('leaflet-geoman-vertex-disabled');
         }
       }
     });

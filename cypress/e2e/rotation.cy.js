@@ -4,8 +4,8 @@ describe('Rotation', () => {
   it('check if getAngle is correct', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -30,8 +30,8 @@ describe('Rotation', () => {
   it('enable / disable Layer Rotate Mode', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -57,8 +57,8 @@ describe('Rotation', () => {
   it('enable / disable Global Rotate Mode', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -84,8 +84,8 @@ describe('Rotation', () => {
 
     cy.toolbarButton('rotate')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(4);
 
@@ -99,15 +99,15 @@ describe('Rotation', () => {
   it('check if Markers are updated', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.toolbarButton('rotate')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(4);
 
@@ -130,8 +130,8 @@ describe('Rotation', () => {
 
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(600, 350);
 
@@ -149,8 +149,8 @@ describe('Rotation', () => {
   it('rotates polygon', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -170,8 +170,8 @@ describe('Rotation', () => {
   it('rotates multi-polygon', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
     cy.get(mapSelector).click(200, 200).click(600, 350);
 
     cy.toolbarButton('cut').click();
@@ -196,8 +196,8 @@ describe('Rotation', () => {
   it('removes hidden rotatePoly if layer is removed', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
     cy.get(mapSelector).click(200, 200).click(600, 350);
 
     cy.window().then(({ map }) => {
@@ -252,8 +252,8 @@ describe('Rotation', () => {
   it('rotateLayerToAngle around arbitrary origins', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -283,8 +283,8 @@ describe('Rotation', () => {
   it('rotates around arbitrary origins', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -337,8 +337,8 @@ describe('Rotation', () => {
   it('apply new rotation center while rotation is enabled', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 

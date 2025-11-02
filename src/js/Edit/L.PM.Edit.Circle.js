@@ -29,7 +29,7 @@ export default class GeomanEditCircle extends GeomanEditCircleMarker {
     const el = this._layer._path
       ? this._layer._path
       : this._layer._renderer._container;
-    el.classList.remove('leaflet-pm-draggable');
+    el.classList.remove('leaflet-geoman-draggable');
   }
 
   _extendingApplyOptions() {}

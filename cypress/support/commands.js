@@ -93,25 +93,27 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
 });
 
 Cypress.Commands.add('hasMiddleMarkers', (count) => {
-  cy.get('.marker-icon-middle').should(($p) => {
+  cy.get('.leaflet-geoman-vertex-icon-middle').should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
 Cypress.Commands.add('hasVertexMarkers', (count) => {
-  cy.get('.marker-icon:not(.marker-icon-middle)').should(($p) => {
+  cy.get(
+    '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+  ).should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
 Cypress.Commands.add('hasTotalVertexMarkers', (count) => {
-  cy.get('.marker-icon').should(($p) => {
+  cy.get('.leaflet-geoman-vertex-icon').should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
 Cypress.Commands.add('toolbarButton', (name) =>
-  cy.get(`.leaflet-pm-icon-${name}`)
+  cy.get(`.leaflet-geoman-icon-${name}`)
 );
 
 Cypress.Commands.add('toolbarButtonContainer', (name, map) => {

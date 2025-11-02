@@ -4,7 +4,7 @@ describe('Draw & Edit Poly', () => {
   it('drages shared vertices when pinned', () => {
     cy.toolbarButton('polygon').click();
 
-    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('have.class', 'leaflet-geoman-draw-cursor');
 
     cy.get(mapSelector)
       .click(120, 150)
@@ -13,7 +13,7 @@ describe('Draw & Edit Poly', () => {
       .click(300, 200)
       .click(120, 150);
 
-    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('not.have.class', 'leaflet-geoman-draw-cursor');
 
     cy.toolbarButton('marker').click();
 
@@ -201,7 +201,7 @@ describe('Draw & Edit Poly', () => {
 
     cy.get(mapSelector).click(90, 250).click(100, 350);
 
-    cy.get('.active .action-finish').click();
+    cy.get('.leaflet-geoman-active .action-finish').click();
 
     cy.toolbarButton('edit').click();
 
@@ -377,11 +377,11 @@ describe('Draw & Edit Poly', () => {
 
     cy.hasVertexMarkers(4);
 
-    cy.get('.active .action-removeLastVertex').click();
+    cy.get('.leaflet-geoman-active .action-removeLastVertex').click();
 
     cy.hasVertexMarkers(3);
 
-    cy.get('.active .action-cancel').click();
+    cy.get('.leaflet-geoman-active .action-cancel').click();
 
     cy.hasVertexMarkers(0);
   });
@@ -393,8 +393,8 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map, L }) => {
       cy.get(mapSelector)
@@ -426,7 +426,7 @@ describe('Draw & Edit Poly', () => {
       });
     });
 
-    cy.get('.marker-icon-middle').click({ multiple: true });
+    cy.get('.leaflet-geoman-vertex-icon-middle').click({ multiple: true });
 
     cy.get('@poly').then((poly) => {
       cy.get('@firstLatLng').then((oldFirst) => {
@@ -456,8 +456,8 @@ describe('Draw & Edit Poly', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon - triggers the event pm:create
     cy.get(mapSelector)
@@ -478,8 +478,8 @@ describe('Draw & Edit Poly', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon
     cy.get(mapSelector)
@@ -492,8 +492,8 @@ describe('Draw & Edit Poly', () => {
 
     // button should be disabled after successful draw
     cy.toolbarButton('polygon')
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
 
     cy.hasLayers(3);
 
@@ -504,14 +504,16 @@ describe('Draw & Edit Poly', () => {
     cy.hasMiddleMarkers(5);
 
     // press a middle marker
-    cy.get('.marker-icon-middle').first().click();
+    cy.get('.leaflet-geoman-vertex-icon-middle').first().click();
 
     // now there should be one more vertex
     cy.hasVertexMarkers(6);
     cy.hasMiddleMarkers(6);
 
     // let's remove one vertex and check it
-    cy.get('.marker-icon:not(.marker-icon-middle)')
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    )
       .last()
       .trigger('contextmenu');
 
@@ -519,7 +521,9 @@ describe('Draw & Edit Poly', () => {
     cy.hasMiddleMarkers(5);
 
     // remove all markers
-    cy.get('.marker-icon:not(.marker-icon-middle)').each(($el, index) => {
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    ).each(($el, index) => {
       if (index >= 3) {
         // the last marker should be removed automatically, so it shouldn't exist
         cy.wrap($el).should('not.exist');
@@ -534,8 +538,8 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
   });
 
   it('fire pm:cut AFTER the actual cut is visible on the map', () => {
@@ -579,8 +583,8 @@ describe('Draw & Edit Poly', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon
     cy.get(mapSelector)
@@ -594,8 +598,8 @@ describe('Draw & Edit Poly', () => {
     // activate cutting drawing
     cy.toolbarButton('cut')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon to cut
     cy.get(mapSelector)
@@ -611,16 +615,16 @@ describe('Draw & Edit Poly', () => {
     // enable global edit mode
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(10);
     cy.hasMiddleMarkers(10);
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.not.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.not.class', 'leaflet-geoman-active');
   });
 
   it('should handle MultiPolygons', () => {
@@ -629,16 +633,16 @@ describe('Draw & Edit Poly', () => {
     // enable global edit mode
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(8);
     cy.hasMiddleMarkers(8);
 
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a line
     cy.get(mapSelector)
@@ -651,23 +655,23 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(13);
     cy.hasMiddleMarkers(12);
 
     cy.toolbarButton('delete')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(650, 100);
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(5);
     cy.hasMiddleMarkers(4);
@@ -774,8 +778,8 @@ describe('Draw & Edit Poly', () => {
     // activate line drawing
     cy.toolbarButton('polyline')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a line
     cy.get(mapSelector).click(150, 250).click(160, 50).click(160, 50);
@@ -1179,7 +1183,9 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('edit').click();
 
-    cy.get('.marker-icon:not(.marker-icon-middle)').each(($el, index) => {
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    ).each(($el, index) => {
       if (index < 2) {
         // remove first two markers
         cy.wrap($el).trigger('contextmenu');
@@ -1241,8 +1247,8 @@ describe('Draw & Edit Poly', () => {
   it('show correct shape for Polygon while drawing', () => {
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(150, 150).click(450, 150).click(450, 400);
 
@@ -1255,8 +1261,8 @@ describe('Draw & Edit Poly', () => {
   it('change color of Polygon while drawing', () => {
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(220, 220);
     cy.get(mapSelector).click(100, 230);
@@ -1332,8 +1338,8 @@ describe('Draw & Edit Poly', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon
     cy.get(mapSelector)
@@ -1347,11 +1353,13 @@ describe('Draw & Edit Poly', () => {
     // enable global edit mode
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // let's remove one vertex
-    cy.get('.marker-icon:not(.marker-icon-middle)')
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    )
       .last()
       .trigger('contextmenu');
 
@@ -1366,8 +1374,8 @@ describe('Draw & Edit Poly', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon
     cy.get(mapSelector)
@@ -1379,8 +1387,8 @@ describe('Draw & Edit Poly', () => {
     // activate cutting drawing
     cy.toolbarButton('cut')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon to cut
     cy.get(mapSelector)
@@ -1394,8 +1402,8 @@ describe('Draw & Edit Poly', () => {
     // enable global edit mode
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(6);
 
@@ -1417,8 +1425,8 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector)
       .click(50, 250)
@@ -1428,8 +1436,8 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector)
       .click(150, 60)

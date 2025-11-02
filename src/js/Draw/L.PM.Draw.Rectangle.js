@@ -37,7 +37,10 @@ export default class GeomanDrawRectangle extends Draw {
     // this is the marker at the origin of the rectangle
     // this needs to be present, for tracking purposes, but we'll make it invisible if a user doesn't want to see it!
     this._startMarker = new Marker(this._map.getCenter(), {
-      icon: new DivIcon({ className: 'marker-icon rect-start-marker' }),
+      icon: new DivIcon({
+        className:
+          'leaflet-geoman-vertex-icon leaflet-geoman-rect-start-marker',
+      }),
       draggable: false,
       zIndexOffset: -100,
       opacity: this.options.cursorMarker ? 1 : 0,
@@ -49,7 +52,9 @@ export default class GeomanDrawRectangle extends Draw {
     // this is the hintmarker on the pointer cursor
     this._hintMarker = new Marker(this._map.getCenter(), {
       zIndexOffset: 150,
-      icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new DivIcon({
+        className: 'leaflet-geoman-vertex-icon leaflet-geoman-cursor-marker',
+      }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -57,7 +62,7 @@ export default class GeomanDrawRectangle extends Draw {
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      this._hintMarker._icon.classList.add('visible');
+      this._hintMarker._icon.classList.add('leaflet-geoman-visible');
     }
 
     // add tooltip to hintmarker
@@ -79,7 +84,8 @@ export default class GeomanDrawRectangle extends Draw {
       for (let i = 0; i < 2; i += 1) {
         const styleMarker = new Marker(this._map.getCenter(), {
           icon: new DivIcon({
-            className: 'marker-icon rect-style-marker',
+            className:
+              'leaflet-geoman-vertex-icon leaflet-geoman-rect-style-marker',
           }),
           draggable: false,
           zIndexOffset: 100,
@@ -93,7 +99,7 @@ export default class GeomanDrawRectangle extends Draw {
     }
 
     // change map cursor
-    this._map.getContainer().classList.add('geoman-draw-cursor');
+    this._map.getContainer().classList.add('leaflet-geoman-draw-cursor');
 
     // create a polygon-point on click
     this._map.on('click', this._placeStartingMarkers, this);
@@ -124,7 +130,7 @@ export default class GeomanDrawRectangle extends Draw {
     this._enabled = false;
 
     // reset cursor
-    this._map.getContainer().classList.remove('geoman-draw-cursor');
+    this._map.getContainer().classList.remove('leaflet-geoman-draw-cursor');
 
     // unbind listeners
     this._map.off('click', this._finishShape, this);
@@ -169,13 +175,13 @@ export default class GeomanDrawRectangle extends Draw {
     const latlng = this._hintMarker.getLatLng();
 
     // show and place start marker
-    this._startMarker._icon.classList.add('visible');
+    this._startMarker._icon.classList.add('leaflet-geoman-visible');
     this._startMarker.setLatLng(latlng);
 
     // if we have the other two visibilty markers, show and place them now
     if (this.options.cursorMarker && this._styleMarkers) {
       this._styleMarkers.forEach((styleMarker) => {
-        styleMarker._icon.classList.add('visible');
+        styleMarker._icon.classList.add('leaflet-geoman-visible');
         styleMarker.setLatLng(latlng);
       });
     }

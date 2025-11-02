@@ -24,7 +24,7 @@ map.pm.addControls({
 map.pm.Toolbar.createCustomControl({
   name: 'alertBox',
   block: 'custom',
-  className: 'leaflet-pm-icon-marker xyz-class',
+  className: 'leaflet-geoman-icon-marker xyz-class',
   title: 'Count layers',
   onClick: () => {
     alert(`There are ${Geoman.Utils.findLayers(map).length} layers on the map`);

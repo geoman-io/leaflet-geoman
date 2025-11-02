@@ -27,7 +27,9 @@ export default class GeomanDrawText extends Draw {
     this._hintMarker = new Marker(this._map.getCenter(), {
       interactive: false,
       zIndexOffset: 100,
-      icon: new DivIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new DivIcon({
+        className: 'leaflet-geoman-vertex-icon leaflet-geoman-cursor-marker',
+      }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -35,7 +37,7 @@ export default class GeomanDrawText extends Draw {
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      this._hintMarker._icon.classList.add('visible');
+      this._hintMarker._icon.classList.add('leaflet-geoman-visible');
     }
 
     // add tooltip to hintmarker
@@ -57,7 +59,7 @@ export default class GeomanDrawText extends Draw {
     // sync hint marker with pointer cursor
     this._map.on('pointermove', this._syncHintMarker, this);
 
-    this._map.getContainer().classList.add('geoman-draw-cursor');
+    this._map.getContainer().classList.add('leaflet-geoman-draw-cursor');
 
     // fire drawstart event
     this._fireDrawStart();
@@ -79,7 +81,7 @@ export default class GeomanDrawText extends Draw {
     // remove hint marker
     this._hintMarker?.remove();
 
-    this._map.getContainer().classList.remove('geoman-draw-cursor');
+    this._map.getContainer().classList.remove('leaflet-geoman-draw-cursor');
 
     // remove event listener to sync hint marker
     this._map.off('pointermove', this._syncHintMarker, this);
@@ -203,13 +205,16 @@ export default class GeomanDrawText extends Draw {
   _createTextArea() {
     const textArea = document.createElement('textarea');
     textArea.readOnly = true;
-    textArea.classList.add('pm-textarea', 'pm-disabled');
+    textArea.classList.add(
+      'leaflet-geoman-textarea',
+      'leaflet-geoman-disabled'
+    );
     return textArea;
   }
 
   _createTextIcon(textArea) {
     return new DivIcon({
-      className: 'pm-text-marker',
+      className: 'leaflet-geoman-text-marker',
       html: textArea,
     });
   }

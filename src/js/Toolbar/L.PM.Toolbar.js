@@ -69,19 +69,19 @@ export default class Toolbar extends Class {
     this.isVisible = false;
     this.drawContainer = DomUtil.create(
       'div',
-      'leaflet-pm-toolbar leaflet-pm-draw leaflet-bar leaflet-control'
+      'leaflet-geoman-toolbar leaflet-geoman-draw leaflet-bar leaflet-control'
     );
     this.editContainer = DomUtil.create(
       'div',
-      'leaflet-pm-toolbar leaflet-pm-edit leaflet-bar leaflet-control'
+      'leaflet-geoman-toolbar leaflet-geoman-edit leaflet-bar leaflet-control'
     );
     this.optionsContainer = DomUtil.create(
       'div',
-      'leaflet-pm-toolbar leaflet-pm-options leaflet-bar leaflet-control'
+      'leaflet-geoman-toolbar leaflet-geoman-options leaflet-bar leaflet-control'
     );
     this.customContainer = DomUtil.create(
       'div',
-      'leaflet-pm-toolbar leaflet-pm-custom leaflet-bar leaflet-control'
+      'leaflet-geoman-toolbar leaflet-geoman-custom leaflet-bar leaflet-control'
     );
 
     this._defineButtons();
@@ -92,7 +92,7 @@ export default class Toolbar extends Class {
     if (!this[container]) {
       this[container] = DomUtil.create(
         'div',
-        `leaflet-pm-toolbar leaflet-pm-${name} leaflet-bar leaflet-control`
+        `leaflet-geoman-toolbar leaflet-geoman-${name} leaflet-bar leaflet-control`
       );
     }
     return this[container];
@@ -120,17 +120,20 @@ export default class Toolbar extends Class {
 
     const iconClasses = {
       geomanIcons: {
-        drawMarker: 'control-icon leaflet-pm-icon-marker',
-        drawPolyline: 'control-icon leaflet-pm-icon-polyline',
-        drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
-        drawPolygon: 'control-icon leaflet-pm-icon-polygon',
-        drawCircle: 'control-icon leaflet-pm-icon-circle',
-        drawCircleMarker: 'control-icon leaflet-pm-icon-circle-marker',
-        editMode: 'control-icon leaflet-pm-icon-edit',
-        dragMode: 'control-icon leaflet-pm-icon-drag',
-        cutPolygon: 'control-icon leaflet-pm-icon-cut',
-        removalMode: 'control-icon leaflet-pm-icon-delete',
-        drawText: 'control-icon leaflet-pm-icon-text',
+        drawMarker: 'leaflet-geoman-control-icon leaflet-geoman-icon-marker',
+        drawPolyline:
+          'leaflet-geoman-control-icon leaflet-geoman-icon-polyline',
+        drawRectangle:
+          'leaflet-geoman-control-icon leaflet-geoman-icon-rectangle',
+        drawPolygon: 'leaflet-geoman-control-icon leaflet-geoman-icon-polygon',
+        drawCircle: 'leaflet-geoman-control-icon leaflet-geoman-icon-circle',
+        drawCircleMarker:
+          'leaflet-geoman-control-icon leaflet-geoman-icon-circle-marker',
+        editMode: 'leaflet-geoman-control-icon leaflet-geoman-icon-edit',
+        dragMode: 'leaflet-geoman-control-icon leaflet-geoman-icon-drag',
+        cutPolygon: 'leaflet-geoman-control-icon leaflet-geoman-icon-cut',
+        removalMode: 'leaflet-geoman-control-icon leaflet-geoman-icon-delete',
+        drawText: 'leaflet-geoman-control-icon leaflet-geoman-icon-text',
       },
     };
 
@@ -219,7 +222,7 @@ export default class Toolbar extends Class {
   _defineButtons() {
     // some buttons are still in their respective classes, like L.PM.Draw.Polygon
     const drawMarkerButton = {
-      className: 'control-icon leaflet-pm-icon-marker',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-marker',
       title: getTranslation('buttonTitles.drawMarkerButton'),
       jsClass: 'Marker',
       onClick: () => {},
@@ -236,7 +239,7 @@ export default class Toolbar extends Class {
 
     const drawPolyButton = {
       title: getTranslation('buttonTitles.drawPolyButton'),
-      className: 'control-icon leaflet-pm-icon-polygon',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-polygon',
       jsClass: 'Polygon',
       onClick: () => {},
       afterClick: (e, ctx) => {
@@ -251,7 +254,7 @@ export default class Toolbar extends Class {
     };
 
     const drawLineButton = {
-      className: 'control-icon leaflet-pm-icon-polyline',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-polyline',
       title: getTranslation('buttonTitles.drawLineButton'),
       jsClass: 'Polyline',
       onClick: () => {},
@@ -268,7 +271,7 @@ export default class Toolbar extends Class {
 
     const drawCircleButton = {
       title: getTranslation('buttonTitles.drawCircleButton'),
-      className: 'control-icon leaflet-pm-icon-circle',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-circle',
       jsClass: 'Circle',
       onClick: () => {},
       afterClick: (e, ctx) => {
@@ -284,7 +287,8 @@ export default class Toolbar extends Class {
 
     const drawCircleMarkerButton = {
       title: getTranslation('buttonTitles.drawCircleMarkerButton'),
-      className: 'control-icon leaflet-pm-icon-circle-marker',
+      className:
+        'leaflet-geoman-control-icon leaflet-geoman-icon-circle-marker',
       jsClass: 'CircleMarker',
       onClick: () => {},
       afterClick: (e, ctx) => {
@@ -300,7 +304,7 @@ export default class Toolbar extends Class {
 
     const drawRectButton = {
       title: getTranslation('buttonTitles.drawRectButton'),
-      className: 'control-icon leaflet-pm-icon-rectangle',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-rectangle',
       jsClass: 'Rectangle',
       onClick: () => {},
       afterClick: (e, ctx) => {
@@ -316,7 +320,7 @@ export default class Toolbar extends Class {
 
     const editButton = {
       title: getTranslation('buttonTitles.editButton'),
-      className: 'control-icon leaflet-pm-icon-edit',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-edit',
       onClick: () => {},
       afterClick: () => {
         this.map.pm.toggleGlobalEditMode();
@@ -331,7 +335,7 @@ export default class Toolbar extends Class {
 
     const dragButton = {
       title: getTranslation('buttonTitles.dragButton'),
-      className: 'control-icon leaflet-pm-icon-drag',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-drag',
       onClick: () => {},
       afterClick: () => {
         this.map.pm.toggleGlobalDragMode();
@@ -346,7 +350,7 @@ export default class Toolbar extends Class {
 
     const cutButton = {
       title: getTranslation('buttonTitles.cutButton'),
-      className: 'control-icon leaflet-pm-icon-cut',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-cut',
       jsClass: 'Cut',
       onClick: () => {},
       afterClick: (e, ctx) => {
@@ -367,7 +371,7 @@ export default class Toolbar extends Class {
 
     const deleteButton = {
       title: getTranslation('buttonTitles.deleteButton'),
-      className: 'control-icon leaflet-pm-icon-delete',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-delete',
       onClick: () => {},
       afterClick: () => {
         this.map.pm.toggleGlobalRemovalMode();
@@ -382,7 +386,7 @@ export default class Toolbar extends Class {
 
     const rotateButton = {
       title: getTranslation('buttonTitles.rotateButton'),
-      className: 'control-icon leaflet-pm-icon-rotate',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-rotate',
       onClick: () => {},
       afterClick: () => {
         this.map.pm.toggleGlobalRotateMode();
@@ -396,7 +400,7 @@ export default class Toolbar extends Class {
     };
 
     const drawTextButton = {
-      className: 'control-icon leaflet-pm-icon-text',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-text',
       title: getTranslation('buttonTitles.drawTextButton'),
       jsClass: 'Text',
       onClick: () => {},
@@ -551,9 +555,11 @@ export default class Toolbar extends Class {
     }
 
     if (!options.className) {
-      options.className = 'control-icon';
-    } else if (options.className.indexOf('control-icon') === -1) {
-      options.className = `control-icon ${options.className}`;
+      options.className = 'leaflet-geoman-control-icon';
+    } else if (
+      options.className.indexOf('leaflet-geoman-control-icon') === -1
+    ) {
+      options.className = `leaflet-geoman-control-icon ${options.className}`;
     }
 
     const _options = {

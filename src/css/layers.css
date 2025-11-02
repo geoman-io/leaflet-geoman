@@ -1,4 +1,4 @@
-.marker-icon {
+.leaflet-geoman-vertex-icon {
   background-color: #ffffff;
   border: 1px solid #3388ff;
   border-radius: 50%;
@@ -9,54 +9,54 @@
   transition: opacity ease 0.3s;
 }
 
-.marker-icon-middle {
+.leaflet-geoman-vertex-icon-middle {
   opacity: 0.7;
   margin: -6px 0 0 -6px !important;
   width: 10px !important;
   height: 10px !important;
 }
 
-.leaflet-pm-draggable {
+.leaflet-geoman-draggable {
   cursor: move !important;
 }
 
-.cursor-marker {
+.leaflet-geoman-cursor-marker {
   cursor: crosshair;
   pointer-events: none;
   opacity: 0;
 }
 
-.cursor-marker.visible {
+.leaflet-geoman-cursor-marker.leaflet-geoman-visible {
   opacity: 1 !important;
 }
 
-.geoman-draw-cursor {
+.leaflet-geoman-draw-cursor {
   cursor: crosshair;
 }
-.geoman-draw-cursor .leaflet-interactive {
+.leaflet-geoman-draw-cursor .leaflet-interactive {
   cursor: crosshair;
 }
 
-.rect-style-marker,
-.rect-start-marker {
+.leaflet-geoman-rect-style-marker,
+.leaflet-geoman-rect-start-marker {
   opacity: 0;
 }
 
-.rect-style-marker.visible,
-.rect-start-marker.visible {
+.leaflet-geoman-rect-style-marker.leaflet-geoman-visible,
+.leaflet-geoman-rect-start-marker.leaflet-geoman-visible {
   opacity: 1 !important;
 }
 
-.vertexmarker-disabled {
+.leaflet-geoman-vertex-disabled {
   opacity: 0.7;
 }
 
-.pm-text-marker {
+.leaflet-geoman-text-marker {
   width: 0;
   height: 0;
 }
 
-.pm-textarea {
+.leaflet-geoman-textarea {
   box-sizing: content-box;
   background-color: #fff;
   color: #000;
@@ -70,23 +70,23 @@
   padding-top: 4px;
 }
 
-.leaflet-pm-draggable .pm-textarea {
+.leaflet-geoman-draggable .leaflet-geoman-textarea {
   cursor: move;
 }
 
-.pm-textarea:focus,
-.pm-textarea:focus-within,
-.pm-textarea:focus-visible,
-.pm-textarea:active {
+.leaflet-geoman-textarea:focus,
+.leaflet-geoman-textarea:focus-within,
+.leaflet-geoman-textarea:focus-visible,
+.leaflet-geoman-textarea:active {
   border: 2px solid #000;
   outline: 0;
 }
 
-.pm-textarea.pm-disabled {
+.leaflet-geoman-textarea.leaflet-geoman-disabled {
   border: none;
   user-select: none;
 }
 
-.pm-textarea.pm-hasfocus {
+.leaflet-geoman-textarea.leaflet-geoman-hasfocus {
   cursor: auto;
 }

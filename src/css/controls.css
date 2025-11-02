@@ -1,52 +1,51 @@
-.leaflet-pm-toolbar {
-}
-
-.leaflet-pm-toolbar .leaflet-buttons-control-button {
+.leaflet-geoman-toolbar .leaflet-geoman-buttons-control-button {
   padding: 5px;
   box-sizing: border-box;
   position: relative;
   z-index: 3;
 }
 
-.leaflet-pm-toolbar
-  .leaflet-pm-actions-container
-  a.leaflet-pm-action:first-child:not(.pos-right),
-.leaflet-pm-toolbar
-  .leaflet-pm-actions-container
-  a.leaflet-pm-action:last-child.pos-right {
+.leaflet-geoman-toolbar
+  .leaflet-geoman-actions-container
+  a.leaflet-geoman-action:first-child:not(.leaflet-geoman-pos-right),
+.leaflet-geoman-toolbar
+  .leaflet-geoman-actions-container
+  a.leaflet-geoman-action:last-child.leaflet-geoman-pos-right {
   border-radius: 0;
 }
 
-.leaflet-pm-toolbar .button-container a.leaflet-buttons-control-button {
+.leaflet-geoman-toolbar
+  .leaflet-geoman-button-container
+  a.leaflet-geoman-buttons-control-button {
   border-radius: 0;
 }
 
-.leaflet-pm-toolbar
-  .button-container:last-child
-  a.leaflet-buttons-control-button {
+.leaflet-geoman-toolbar
+  .leaflet-geoman-button-container:last-child
+  a.leaflet-geoman-buttons-control-button {
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
 }
 
-.leaflet-pm-toolbar
-  .button-container:first-child
-  a.leaflet-buttons-control-button {
+.leaflet-geoman-toolbar
+  .leaflet-geoman-button-container:first-child
+  a.leaflet-geoman-buttons-control-button {
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
 }
 
-.leaflet-pm-toolbar
-  .button-container:last-child
-  a.leaflet-buttons-control-button {
+.leaflet-geoman-toolbar
+  .leaflet-geoman-button-container:last-child
+  a.leaflet-geoman-buttons-control-button {
   border-bottom: none;
 }
 
-.leaflet-pm-toolbar .control-fa-icon {
+.leaflet-geoman-toolbar .control-fa-icon {
   font-size: 19px;
   line-height: 24px;
 }
 
-.leaflet-pm-toolbar .control-icon {
+.leaflet-geoman-toolbar .leaflet-geoman-control-icon {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -55,64 +54,60 @@
   background-position: center center;
 }
 
-.leaflet-pm-toolbar .leaflet-pm-icon-marker {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-marker {
   background-image: url('../assets/icons/Marker.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-polygon {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-polygon {
   background-image: url('../assets/icons/Polygon.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-polyline {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-polyline {
   background-image: url('../assets/icons/Polyline.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-circle {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-circle {
   background-image: url('../assets/icons/Circle.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-circle-marker {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-circle-marker {
   background-image: url('../assets/icons/CircleMarker.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-rectangle {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-rectangle {
   background-image: url('../assets/icons/Rectangle.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-delete {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-delete {
   background-image: url('../assets/icons/Eraser.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-edit {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-edit {
   background-image: url('../assets/icons/Edit_Vertex.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-drag {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-drag {
   background-image: url('../assets/icons/Move.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-cut {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-cut {
   background-image: url('../assets/icons/Scissors.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-snapping {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-snapping {
   background-image: url('../assets/icons/Magnet.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-rotate {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-rotate {
   background-image: url('../assets/icons/Rotate.svg');
 }
-.leaflet-pm-toolbar .leaflet-pm-icon-text {
+.leaflet-geoman-toolbar .leaflet-geoman-icon-text {
   background-image: url('../assets/icons/Text.svg');
 }
 
-.leaflet-buttons-control-button:hover,
-.leaflet-buttons-control-button:focus {
+.leaflet-geoman-buttons-control-button:hover,
+.leaflet-geoman-buttons-control-button:focus {
   cursor: pointer;
   background-color: #f4f4f4;
 }
-.active > .leaflet-buttons-control-button {
+.leaflet-geoman-active > .leaflet-geoman-buttons-control-button {
   box-shadow: inset 0 -1px 5px 2px rgba(81, 77, 77, 0.31);
 }
 
-.leaflet-buttons-control-text-hide {
-  display: none;
-}
-
-.button-container {
+.leaflet-geoman-button-container {
   position: relative;
 }
 
-.button-container .leaflet-pm-actions-container {
+.leaflet-geoman-button-container .leaflet-geoman-actions-container {
   z-index: 2;
   position: absolute;
   top: 0;
@@ -123,34 +118,37 @@
 }
 
 .leaflet-right
-  .leaflet-pm-toolbar
-  .button-container
-  .leaflet-pm-actions-container {
+  .leaflet-geoman-toolbar
+  .leaflet-geoman-button-container
+  .leaflet-geoman-actions-container {
   right: 100%;
   left: auto;
 }
 
-.button-container.active .leaflet-pm-actions-container {
+.leaflet-geoman-button-container.leaflet-geoman-active
+  .leaflet-geoman-actions-container {
   display: block;
 }
 
-.button-container
-  .leaflet-pm-actions-container:not(.pos-right)
-  a.leaflet-pm-action:last-child {
+.leaflet-geoman-button-container
+  .leaflet-geoman-actions-container:not(.leaflet-geoman-pos-right)
+  a.leaflet-geoman-action:last-child {
   border-radius: 0 3px 3px 0;
   border-right: 0;
 }
-.button-container
-  .leaflet-pm-actions-container.pos-right
-  a.leaflet-pm-action:first-child {
+.leaflet-geoman-button-container
+  .leaflet-geoman-actions-container.leaflet-geoman-pos-right
+  a.leaflet-geoman-action:first-child {
   border-radius: 3px 0 0 3px;
 }
-.button-container
-  .leaflet-pm-actions-container.pos-right
-  a.leaflet-pm-action:last-child {
+.leaflet-geoman-button-container
+  .leaflet-geoman-actions-container.leaflet-geoman-pos-right
+  a.leaflet-geoman-action:last-child {
   border-right: 0;
 }
-.button-container .leaflet-pm-actions-container .leaflet-pm-action {
+.leaflet-geoman-button-container
+  .leaflet-geoman-actions-container
+  .leaflet-geoman-action {
   padding: 0 10px;
   background-color: #666;
   color: #fff;
@@ -163,44 +161,51 @@
   line-height: 29px;
   vertical-align: middle;
 }
-.leaflet-pm-toolbar
-  .button-container:first-child.pos-right.active
-  a.leaflet-buttons-control-button {
+.leaflet-geoman-toolbar
+  .leaflet-geoman-button-container:first-child.leaflet-geoman-pos-right.leaflet-geoman-active
+  a.leaflet-geoman-buttons-control-button {
   border-top-left-radius: 0;
 }
-.leaflet-pm-toolbar
-  .button-container:first-child.active:not(.pos-right)
-  a.leaflet-buttons-control-button {
+.leaflet-geoman-toolbar
+  .leaflet-geoman-button-container:first-child.leaflet-geoman-active:not(
+    .leaflet-geoman-pos-right
+  )
+  a.leaflet-geoman-buttons-control-button {
   border-top-right-radius: 0;
 }
 
-.button-container .leaflet-pm-actions-container .leaflet-pm-action:hover,
-.button-container .leaflet-pm-actions-container .leaflet-pm-action:focus {
+.leaflet-geoman-button-container
+  .leaflet-geoman-actions-container
+  .leaflet-geoman-action:hover,
+.leaflet-geoman-button-container
+  .leaflet-geoman-actions-container
+  .leaflet-geoman-action:focus {
   cursor: pointer;
   background-color: #777;
 }
 
-.button-container
-  .leaflet-pm-actions-container
-  .leaflet-pm-action.active-action {
+.leaflet-geoman-button-container
+  .leaflet-geoman-actions-container
+  .leaflet-geoman-action.leaflet-geoman-active-action {
   background-color: #8e8e8e;
 }
 /* That the active control is always over the other controls */
-.leaflet-pm-toolbar.activeChild {
+.leaflet-geoman-toolbar.leaflet-geoman-active-child {
   z-index: 801;
 }
 
-.leaflet-buttons-control-button.pm-disabled {
+.leaflet-geoman-buttons-control-button.leaflet-geoman-disabled {
   background-color: #f4f4f4;
 }
 
-.leaflet-buttons-control-button.pm-disabled > .control-icon {
+.leaflet-geoman-buttons-control-button.leaflet-geoman-disabled
+  > .leaflet-geoman-control-icon {
   filter: opacity(0.6);
 }
 
-.button-container
-  .leaflet-pm-actions-container
-  .pm-action-button-mode.control-icon {
+.leaflet-geoman-button-container
+  .leaflet-geoman-actions-container
+  .leaflet-geoman-action-button-mode.leaflet-geoman-control-icon {
   filter: brightness(0) invert(1);
   width: 18px;
 }
