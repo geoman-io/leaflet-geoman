@@ -913,7 +913,7 @@ describe('Draw Rectangle', () => {
       const style = {
         color: 'red',
       };
-      map.geoman.setGlobalOptions({ pathOptions: style });
+      map.geoman.setGlobalOptions({ templineStyle: style });
 
       const layer = map.geoman.Draw.Rectangle._layer;
       expect(layer.options.color).to.eql('red');

@@ -29,7 +29,7 @@ export default class GeomanDrawRectangle extends Draw {
         [0, 0],
         [0, 0],
       ],
-      this.options.pathOptions
+      this.options.templineStyle
     );
     this._setPane(this._layer, 'layerPane');
     this._layer._geomanTempLayer = true;
@@ -333,6 +333,6 @@ export default class GeomanDrawRectangle extends Draw {
   }
 
   setStyle() {
-    this._layer?.setStyle(this.options.pathOptions);
+    this._layer?.setStyle(this.options.templineStyle);
   }
 }
