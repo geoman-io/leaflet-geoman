@@ -1,38 +1,48 @@
+import { Control, DomEvent, DomUtil } from 'leaflet';
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
-const PMButton = L.Control.extend({
-  includes: [EventMixin],
-  options: {
-    position: 'topleft',
-    disableByOtherButtons: true,
-  },
+export default class GeomanControl extends Control {
+  static {
+    this.include(EventMixin);
+
+    this.setDefaultOptions({
+      position: 'topleft',
+      disableByOtherButtons: true,
+    });
+  }
+
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
   initialize(options) {
-    // replaced setOptions with this because classNames returned undefined 🤔
-    this._button = L.Util.extend({}, this.options, options);
-  },
+    this._button = {};
+    for (const i in this.options) {
+      this._button[i] = this.options[i];
+    }
+    Object.assign(this._button, options);
+  }
+
   onAdd(map) {
     this._map = map;
-    if (!this._map.pm.Toolbar.options.oneBlock) {
+    if (!this._map.geoman.Toolbar.options.oneBlock) {
       if (this._button.tool === 'edit') {
-        this._container = this._map.pm.Toolbar.editContainer;
+        this._container = this._map.geoman.Toolbar.editContainer;
       } else if (this._button.tool === 'options') {
-        this._container = this._map.pm.Toolbar.optionsContainer;
+        this._container = this._map.geoman.Toolbar.optionsContainer;
       } else if (this._button.tool === 'custom') {
-        this._container = this._map.pm.Toolbar.customContainer;
+        this._container = this._map.geoman.Toolbar.customContainer;
       } else {
-        this._container = this._map.pm.Toolbar.drawContainer;
+        this._container = this._map.geoman.Toolbar.drawContainer;
       }
     } else {
-      this._container = this._map.pm.Toolbar._createContainer(
+      this._container = this._map.geoman.Toolbar._createContainer(
         this.options.position
       );
     }
     this._renderButton();
 
     return this._container;
-  },
+  }
+
   _renderButton() {
     const oldDomNode = this.buttonsDomNode;
     this.buttonsDomNode = this._makeButton(this._button);
@@ -41,22 +51,27 @@ const PMButton = L.Control.extend({
     } else {
       this._container.appendChild(this.buttonsDomNode);
     }
-  },
+  }
+
   onRemove() {
     this.buttonsDomNode.remove();
 
     return this._container;
-  },
+  }
+
   getText() {
     return this._button.text;
-  },
+  }
+
   getIconUrl() {
     return this._button.iconUrl;
-  },
+  }
+
   destroy() {
     this._button = {};
     this._update();
-  },
+  }
+
   toggle(e) {
     if (typeof e === 'boolean') {
       this._button.toggleStatus = e;
@@ -67,23 +82,28 @@ const PMButton = L.Control.extend({
     this._updateActiveAction(this._button);
 
     return this._button.toggleStatus;
-  },
+  }
+
   toggled() {
     return this._button.toggleStatus;
-  },
+  }
+
   onCreate() {
     this.toggle(false);
-  },
+  }
+
   disable() {
     this.toggle(false); // is needed to prevent active button disabled
     this._button.disabled = true;
     this._updateDisabled();
-  },
+  }
+
   enable() {
     this._button.disabled = false;
     this._updateDisabled();
     this._updateActiveAction(this._button);
-  },
+  }
+
   _triggerClick(e) {
     if (e) {
       // is needed to prevent scrolling when clicking on a-element with href="a"
@@ -92,18 +112,21 @@ const PMButton = L.Control.extend({
     if (this._button.disabled) {
       return;
     }
-    // TODO is this a big change when we change from e to a object with the event and the button? Now it's the second argument
-    this._button.onClick(e, { button: this, event: e });
+    this._button.onClick({ button: this, event: e });
     this._clicked(e);
-    this._button.afterClick(e, { button: this, event: e });
-  },
+    this._button.afterClick({ button: this, event: e });
+  }
+
   _makeButton(button) {
-    const pos = this.options.position.indexOf('right') > -1 ? 'pos-right' : '';
+    const pos =
+      this.options.position.indexOf('right') > -1
+        ? 'leaflet-geoman-pos-right'
+        : '';
 
     // button container
-    const buttonContainer = L.DomUtil.create(
+    const buttonContainer = DomUtil.create(
       'div',
-      `button-container  ${pos}`,
+      `leaflet-geoman-button-container  ${pos}`,
       this._container
     );
 
@@ -112,9 +135,9 @@ const PMButton = L.Control.extend({
     }
 
     // the button itself
-    const newButton = L.DomUtil.create(
+    const newButton = DomUtil.create(
       'a',
-      'leaflet-buttons-control-button',
+      'leaflet-geoman-buttons-control-button',
       buttonContainer
     );
     newButton.setAttribute('role', 'button');
@@ -122,9 +145,9 @@ const PMButton = L.Control.extend({
     newButton.href = '#';
 
     // the buttons actions
-    const actionContainer = L.DomUtil.create(
+    const actionContainer = DomUtil.create(
       'div',
-      `leaflet-pm-actions-container ${pos}`,
+      `leaflet-geoman-actions-container ${pos}`,
       buttonContainer
     );
 
@@ -149,14 +172,14 @@ const PMButton = L.Control.extend({
         text: getTranslation('actions.removeLastVertex'),
         title: getTranslation('actions.removeLastVertex'),
         onClick() {
-          this._map.pm.Draw[button.jsClass]._removeLastVertex();
+          this._map.geoman.Draw[button.jsClass].removeLastVertex();
         },
       },
       finish: {
         text: getTranslation('actions.finish'),
         title: getTranslation('actions.finish'),
         onClick(e) {
-          this._map.pm.Draw[button.jsClass]._finishShape(e);
+          this._map.geoman.Draw[button.jsClass]._finishShape(e);
         },
       },
     };
@@ -171,9 +194,9 @@ const PMButton = L.Control.extend({
       } else {
         return action;
       }
-      const actionNode = L.DomUtil.create(
+      const actionNode = DomUtil.create(
         'a',
-        `leaflet-pm-action ${pos} action-${name}`,
+        `leaflet-geoman-action ${pos} action-${name}`,
         actionContainer
       );
       actionNode.setAttribute('role', 'button');
@@ -186,8 +209,8 @@ const PMButton = L.Control.extend({
 
       actionNode.innerHTML = action.text;
 
-      L.DomEvent.disableClickPropagation(actionNode);
-      L.DomEvent.on(actionNode, 'click', L.DomEvent.stop);
+      DomEvent.disableClickPropagation(actionNode);
+      DomEvent.on(actionNode, 'click', DomEvent.stop);
 
       action._node = actionNode;
 
@@ -197,7 +220,7 @@ const PMButton = L.Control.extend({
             // is needed to prevent scrolling when clicking on a-element with href="a"
             e.preventDefault();
             let btnName = '';
-            const { buttons } = this._map.pm.Toolbar;
+            const { buttons } = this._map.geoman.Toolbar;
             for (const btn in buttons) {
               if (buttons[btn]._button === button) {
                 btnName = btn;
@@ -207,9 +230,9 @@ const PMButton = L.Control.extend({
             this._fireActionClick(action, btnName, button);
           };
 
-          L.DomEvent.addListener(actionNode, 'click', actionClick, this);
-          L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
-          L.DomEvent.addListener(actionNode, 'click', () =>
+          DomEvent.on(actionNode, 'click', actionClick, this);
+          DomEvent.on(actionNode, 'click', action.onClick, this);
+          DomEvent.on(actionNode, 'click', () =>
             this._updateActiveAction(button)
           );
         }
@@ -219,35 +242,39 @@ const PMButton = L.Control.extend({
     this._updateActiveAction(button);
 
     if (button.toggleStatus) {
-      L.DomUtil.addClass(buttonContainer, 'active');
+      buttonContainer.classList.add('leaflet-geoman-active');
     }
 
-    const image = L.DomUtil.create('div', 'control-icon', newButton);
+    const image = DomUtil.create(
+      'div',
+      'leaflet-geoman-control-icon',
+      newButton
+    );
 
     if (button.iconUrl) {
       image.setAttribute('src', button.iconUrl);
     }
     if (button.className) {
-      L.DomUtil.addClass(image, button.className);
+      image.classList.add(...button.className.split(' '));
     }
 
-    L.DomEvent.disableClickPropagation(newButton);
-    L.DomEvent.on(newButton, 'click', L.DomEvent.stop);
+    DomEvent.disableClickPropagation(newButton);
+    DomEvent.on(newButton, 'click', DomEvent.stop);
 
     if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
-      L.DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
-      L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
+      DomEvent.on(newButton, 'click', this._onBtnClick, this);
+      DomEvent.on(newButton, 'click', this._triggerClick, this);
     }
 
     if (button.disabled) {
-      L.DomUtil.addClass(newButton, 'pm-disabled');
+      newButton.classList.add('leaflet-geoman-disabled');
       newButton.setAttribute('aria-disabled', 'true');
     }
 
     return buttonContainer;
-  },
+  }
 
   _applyStyleClasses() {
     if (!this._container) {
@@ -255,23 +282,23 @@ const PMButton = L.Control.extend({
     }
 
     if (!this._button.toggleStatus || this._button.cssToggle === false) {
-      L.DomUtil.removeClass(this.buttonsDomNode, 'active');
-      L.DomUtil.removeClass(this._container, 'activeChild');
+      this.buttonsDomNode.classList.remove('leaflet-geoman-active');
+      this.buttonsDomNode.classList.remove('leaflet-geoman-active-child');
     } else {
-      L.DomUtil.addClass(this.buttonsDomNode, 'active');
-      L.DomUtil.addClass(this._container, 'activeChild');
+      this.buttonsDomNode.classList.add('leaflet-geoman-active');
+      this.buttonsDomNode.classList.add('leaflet-geoman-active-child');
     }
-  },
+  }
 
   _onBtnClick() {
     if (this._button.disabled) {
       return;
     }
     if (this._button.disableOtherButtons) {
-      this._map.pm.Toolbar.triggerClickOnToggledButtons(this);
+      this._map.geoman.Toolbar.triggerClickOnToggledButtons(this);
     }
     let btnName = '';
-    const { buttons } = this._map.pm.Toolbar;
+    const { buttons } = this._map.geoman.Toolbar;
     for (const btn in buttons) {
       if (buttons[btn]._button === this._button) {
         btnName = btn;
@@ -279,41 +306,40 @@ const PMButton = L.Control.extend({
       }
     }
     this._fireButtonClick(btnName, this._button);
-  },
+  }
 
   _clicked() {
     if (this._button.doToggle) {
       this.toggle();
     }
-  },
+  }
 
   _updateDisabled() {
     if (!this._container) {
       return;
     }
 
-    const className = 'pm-disabled';
+    const className = 'leaflet-geoman-disabled';
     const button = this.buttonsDomNode.children[0];
 
     if (this._button.disabled) {
-      L.DomUtil.addClass(button, className);
+      button.classList.add(className);
       button.setAttribute('aria-disabled', 'true');
     } else {
-      L.DomUtil.removeClass(button, className);
+      button.classList.remove(className);
       button.setAttribute('aria-disabled', 'false');
     }
-  },
+  }
+
   _updateActiveAction(button) {
     button._preparedActions?.forEach((action) => {
       if (action?._node) {
         if (action.isActive && action.isActive.call(this)) {
-          L.DomUtil.addClass(action._node, 'active-action');
+          action._node.classList.add('leaflet-geoman-active-action');
         } else {
-          L.DomUtil.removeClass(action._node, 'active-action');
+          action._node.classList.remove('leaflet-geoman-active-action');
         }
       }
     });
-  },
-});
-
-export default PMButton;
+  }
+}

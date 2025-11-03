@@ -1,3 +1,4 @@
+import { LatLng, Polyline, Util } from 'leaflet';
 import * as polygonClipping from 'polyclip-ts';
 
 export function feature(geom) {
@@ -19,8 +20,8 @@ export function getCoords(geojson) {
 
 export function turfPoint(coords, precision = -1) {
   if (precision > -1) {
-    coords[0] = L.Util.formatNum(coords[0], precision);
-    coords[1] = L.Util.formatNum(coords[1], precision);
+    coords[0] = Util.formatNum(coords[0], precision);
+    coords[1] = Util.formatNum(coords[1], precision);
   }
 
   return feature({ type: 'Point', coordinates: coords });
@@ -82,7 +83,7 @@ export function getDepthOfCoords(coords) {
 }
 
 export function flattenPolyline(polyline) {
-  if (polyline instanceof L.Polyline) {
+  if (polyline instanceof Polyline) {
     polyline = polyline.toGeoJSON(15);
   }
 
@@ -110,7 +111,7 @@ export function groupToMultiLineString(group) {
 
 export function convertToLatLng(coords) {
   const lnglat = getCoords(coords);
-  return L.latLng(lnglat[1], lnglat[0]);
+  return new LatLng(lnglat[1], lnglat[0]);
 }
 
 export function convertArrayToLatLngs(arr) {

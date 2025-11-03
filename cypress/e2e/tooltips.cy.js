@@ -5,7 +5,7 @@ describe('Shows Tooltips', () => {
 
   it('Has Working Translations', () => {
     cy.window().then(({ map }) => {
-      map.pm.setLang('de');
+      map.geoman.setLang('de');
     });
 
     cy.toolbarButton('polygon').click();
@@ -21,7 +21,7 @@ describe('Shows Tooltips', () => {
         },
       };
 
-      map.pm.setLang('customName', customTranslation, 'en');
+      map.geoman.setLang('customName', customTranslation, 'en');
     });
 
     cy.toolbarButton('marker').click();
@@ -39,10 +39,6 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Click to place marker');
     });
-
-    cy.get(mapSelector).click(290, 250);
-
-    cy.wait(500);
 
     cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el.length).to.eq(1);
@@ -96,7 +92,7 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
   });
 
-  it('Has Line Tooltips', () => {
+  it('Has Polyline Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
 
     // activate polygon drawing
@@ -157,7 +153,7 @@ describe('Shows Tooltips', () => {
 
   it('Properly disables tooltips', () => {
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Polygon', {
+      map.geoman.enableDraw('Polygon', {
         tooltips: false,
       });
     });
@@ -169,16 +165,16 @@ describe('Shows Tooltips', () => {
     cy.toolbarButton('polygon').click();
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
 
-    cy.get('.active .action-cancel').click();
+    cy.get('.leaflet-geoman-active .action-cancel').click();
 
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Polygon');
+      map.geoman.enableDraw('Polygon');
     });
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
-    cy.get('.active .action-cancel').click();
+    cy.get('.leaflet-geoman-active .action-cancel').click();
 
     cy.window().then(({ map }) => {
-      map.pm.enableDraw('Polygon', {
+      map.geoman.enableDraw('Polygon', {
         tooltips: true,
       });
     });
@@ -193,7 +189,7 @@ describe('Shows Tooltips', () => {
 
   it('Has Working translation for circle marker tooltip', () => {
     cy.window().then(({ map }) => {
-      map.pm.setLang('es');
+      map.geoman.setLang('es');
     });
 
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
@@ -204,10 +200,6 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Presiona para colocar un marcador de círculo');
     });
-
-    cy.get(mapSelector).click(290, 250);
-
-    cy.wait(500);
 
     cy.get('.leaflet-tooltip-bottom').then((el) => {
       expect(el).to.have.text('Presiona para colocar un marcador de círculo');
@@ -228,7 +220,7 @@ describe('Shows Tooltips', () => {
     });
 
     cy.window().then(({ map }) => {
-      map.pm.Draw.Polygon._removeLastVertex();
+      map.geoman.Draw.Polygon.removeLastVertex();
     });
 
     cy.get('.leaflet-tooltip-bottom').then((el) => {
@@ -243,10 +235,10 @@ describe('Shows Tooltips', () => {
   });
 
   it('Add fallback to english for translations', () => {
-    cy.window().then(({ map, L }) => {
+    cy.window().then(({ map, Geoman }) => {
       // we set the language to 'custom'
       // to make sure that it has no fallback we overwrite the fallback with 'xx'
-      map.pm.setLang(
+      map.geoman.setLang(
         'custom',
         {
           tooltips: {
@@ -256,19 +248,19 @@ describe('Shows Tooltips', () => {
         'xx'
       );
 
-      expect(L.PM.Utils.getTranslation('tooltips.mytext')).to.eq('Some Text');
-      expect(L.PM.Utils.getTranslation('tooltips.placeMarker')).to.eq(
+      expect(Geoman.Utils.getTranslation('tooltips.mytext')).to.eq('Some Text');
+      expect(Geoman.Utils.getTranslation('tooltips.placeMarker')).to.eq(
         'Click to place marker'
       );
     });
   });
 
   it('shows key if no translation is available', () => {
-    cy.window().then(({ L }) => {
-      expect(L.PM.Utils.getTranslation('tooltips.placeMarker')).to.eq(
+    cy.window().then(({ Geoman }) => {
+      expect(Geoman.Utils.getTranslation('tooltips.placeMarker')).to.eq(
         'Click to place marker'
       );
-      expect(L.PM.Utils.getTranslation('tooltips.mytext')).to.eq(
+      expect(Geoman.Utils.getTranslation('tooltips.mytext')).to.eq(
         'tooltips.mytext'
       );
     });

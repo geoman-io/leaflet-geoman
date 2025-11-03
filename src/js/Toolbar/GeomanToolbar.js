@@ -1,38 +1,41 @@
-import PMButton from './L.Controls';
+import GeomanControl from './GeomanControl';
 
+import { Class, DomUtil, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
 
-L.Control.PMButton = PMButton;
+export default class Toolbar extends Class {
+  static {
+    this.setDefaultOptions({
+      drawMarker: true,
+      drawRectangle: true,
+      drawPolyline: true,
+      drawPolygon: true,
+      drawCircle: true,
+      drawCircleMarker: true,
+      drawText: true,
+      editMode: true,
+      dragMode: true,
+      cutPolygon: true,
+      removalMode: true,
+      rotateMode: true,
+      snappingOption: true,
+      drawControls: true,
+      editControls: true,
+      optionsControls: true,
+      customControls: true,
+      oneBlock: false,
+      position: 'topleft',
+      positions: {
+        draw: '',
+        edit: '',
+        options: '',
+        custom: '',
+      },
+    });
+  }
 
-const Toolbar = L.Class.extend({
-  options: {
-    drawMarker: true,
-    drawRectangle: true,
-    drawPolyline: true,
-    drawPolygon: true,
-    drawCircle: true,
-    drawCircleMarker: true,
-    drawText: true,
-    editMode: true,
-    dragMode: true,
-    cutPolygon: true,
-    removalMode: true,
-    rotateMode: true,
-    snappingOption: true,
-    drawControls: true,
-    editControls: true,
-    optionsControls: true,
-    customControls: true,
-    oneBlock: false,
-    position: 'topleft',
-    positions: {
-      draw: '',
-      edit: '',
-      options: '',
-      custom: '',
-    },
-  },
-  customButtons: [],
+  customButtons = [];
+
   initialize(map) {
     // For some reason there is an reference between multiple maps instances
     this.customButtons = [];
@@ -44,7 +47,8 @@ const Toolbar = L.Class.extend({
     };
 
     this.init(map);
-  },
+  }
+
   reinit() {
     const addControls = this.isVisible;
 
@@ -54,92 +58,92 @@ const Toolbar = L.Class.extend({
     if (addControls) {
       this.addControls();
     }
-  },
+  }
+
   init(map) {
-    this.map = map;
+    this._map = map;
 
     this.buttons = {};
     this.isVisible = false;
-    this.drawContainer = L.DomUtil.create(
+    this.drawContainer = DomUtil.create(
       'div',
-      'leaflet-pm-toolbar leaflet-pm-draw leaflet-bar leaflet-control'
+      'leaflet-geoman-toolbar leaflet-geoman-draw leaflet-bar leaflet-control'
     );
-    this.editContainer = L.DomUtil.create(
+    this.editContainer = DomUtil.create(
       'div',
-      'leaflet-pm-toolbar leaflet-pm-edit leaflet-bar leaflet-control'
+      'leaflet-geoman-toolbar leaflet-geoman-edit leaflet-bar leaflet-control'
     );
-    this.optionsContainer = L.DomUtil.create(
+    this.optionsContainer = DomUtil.create(
       'div',
-      'leaflet-pm-toolbar leaflet-pm-options leaflet-bar leaflet-control'
+      'leaflet-geoman-toolbar leaflet-geoman-options leaflet-bar leaflet-control'
     );
-    this.customContainer = L.DomUtil.create(
+    this.customContainer = DomUtil.create(
       'div',
-      'leaflet-pm-toolbar leaflet-pm-custom leaflet-bar leaflet-control'
+      'leaflet-geoman-toolbar leaflet-geoman-custom leaflet-bar leaflet-control'
     );
 
     this._defineButtons();
-  },
+  }
+
   _createContainer(name) {
     const container = `${name}Container`;
     if (!this[container]) {
-      this[container] = L.DomUtil.create(
+      this[container] = DomUtil.create(
         'div',
-        `leaflet-pm-toolbar leaflet-pm-${name} leaflet-bar leaflet-control`
+        `leaflet-geoman-toolbar leaflet-geoman-${name} leaflet-bar leaflet-control`
       );
     }
     return this[container];
-  },
+  }
+
   getButtons() {
     return this.buttons;
-  },
+  }
 
   addControls(options = this.options) {
     // adds all buttons to the map specified inside options
 
-    // make button renaming backwards compatible
-    if (typeof options.editPolygon !== 'undefined') {
-      options.editMode = options.editPolygon;
-    }
-    if (typeof options.deleteLayer !== 'undefined') {
-      options.removalMode = options.deleteLayer;
-    }
-
     // first set the options
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     this.applyIconStyle();
 
     this.isVisible = true;
     // now show the specified buttons
     this._showHideButtons();
-  },
+  }
+
   applyIconStyle() {
     const buttons = this.getButtons();
 
     const iconClasses = {
       geomanIcons: {
-        drawMarker: 'control-icon leaflet-pm-icon-marker',
-        drawPolyline: 'control-icon leaflet-pm-icon-polyline',
-        drawRectangle: 'control-icon leaflet-pm-icon-rectangle',
-        drawPolygon: 'control-icon leaflet-pm-icon-polygon',
-        drawCircle: 'control-icon leaflet-pm-icon-circle',
-        drawCircleMarker: 'control-icon leaflet-pm-icon-circle-marker',
-        editMode: 'control-icon leaflet-pm-icon-edit',
-        dragMode: 'control-icon leaflet-pm-icon-drag',
-        cutPolygon: 'control-icon leaflet-pm-icon-cut',
-        removalMode: 'control-icon leaflet-pm-icon-delete',
-        drawText: 'control-icon leaflet-pm-icon-text',
+        drawMarker: 'leaflet-geoman-control-icon leaflet-geoman-icon-marker',
+        drawPolyline:
+          'leaflet-geoman-control-icon leaflet-geoman-icon-polyline',
+        drawRectangle:
+          'leaflet-geoman-control-icon leaflet-geoman-icon-rectangle',
+        drawPolygon: 'leaflet-geoman-control-icon leaflet-geoman-icon-polygon',
+        drawCircle: 'leaflet-geoman-control-icon leaflet-geoman-icon-circle',
+        drawCircleMarker:
+          'leaflet-geoman-control-icon leaflet-geoman-icon-circle-marker',
+        editMode: 'leaflet-geoman-control-icon leaflet-geoman-icon-edit',
+        dragMode: 'leaflet-geoman-control-icon leaflet-geoman-icon-drag',
+        cutPolygon: 'leaflet-geoman-control-icon leaflet-geoman-icon-cut',
+        removalMode: 'leaflet-geoman-control-icon leaflet-geoman-icon-delete',
+        drawText: 'leaflet-geoman-control-icon leaflet-geoman-icon-text',
       },
     };
 
     for (const name in buttons) {
       const button = buttons[name];
 
-      L.Util.setOptions(button, {
+      Util.setOptions(button, {
         className: iconClasses.geomanIcons[name],
       });
     }
-  },
+  }
+
   removeControls() {
     // grab all buttons to loop through
     const buttons = this.getButtons();
@@ -150,27 +154,31 @@ const Toolbar = L.Class.extend({
     }
 
     this.isVisible = false;
-  },
+  }
+
   deleteControl(name) {
     const btnName = this._btnNameMapping(name);
     if (this.buttons[btnName]) {
       this.buttons[btnName].remove();
       delete this.buttons[btnName];
     }
-  },
+  }
+
   toggleControls(options = this.options) {
     if (this.isVisible) {
       this.removeControls();
     } else {
       this.addControls(options);
     }
-  },
+  }
+
   _addButton(name, button) {
     this.buttons[name] = button;
     this.options[name] = !!this.options[name] || false;
 
     return this.buttons[name];
-  },
+  }
+
   triggerClickOnToggledButtons(exceptThisButton) {
     // this function is used when - e.g. drawing mode is enabled and a possible
     // other active mode (like removal tool) is already active.
@@ -187,19 +195,12 @@ const Toolbar = L.Class.extend({
         button._triggerClick();
       }
     }
-  },
+  }
+
   toggleButton(name, status, disableOthers = true) {
     // does not fire the events/functionality of the button
     // this just changes the state and is used if a functionality (like Draw)
     // is enabled manually via script
-
-    // backwards compatibility with button rename
-    if (name === 'editPolygon') {
-      name = 'editMode';
-    }
-    if (name === 'deleteLayer') {
-      name = 'removalMode';
-    }
 
     const toggleBtnName = name;
 
@@ -214,17 +215,18 @@ const Toolbar = L.Class.extend({
     }
     // now toggle the state of the button
     return this.buttons[toggleBtnName].toggle(status);
-  },
+  }
+
   _defineButtons() {
-    // some buttons are still in their respective classes, like L.PM.Draw.Polygon
+    // some buttons are still in their respective classes, like Geoman.Draw.Polygon
     const drawMarkerButton = {
-      className: 'control-icon leaflet-pm-icon-marker',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-marker',
       title: getTranslation('buttonTitles.drawMarkerButton'),
       jsClass: 'Marker',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -235,12 +237,12 @@ const Toolbar = L.Class.extend({
 
     const drawPolyButton = {
       title: getTranslation('buttonTitles.drawPolyButton'),
-      className: 'control-icon leaflet-pm-icon-polygon',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-polygon',
       jsClass: 'Polygon',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -250,13 +252,13 @@ const Toolbar = L.Class.extend({
     };
 
     const drawLineButton = {
-      className: 'control-icon leaflet-pm-icon-polyline',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-polyline',
       title: getTranslation('buttonTitles.drawLineButton'),
-      jsClass: 'Line',
+      jsClass: 'Polyline',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -267,12 +269,12 @@ const Toolbar = L.Class.extend({
 
     const drawCircleButton = {
       title: getTranslation('buttonTitles.drawCircleButton'),
-      className: 'control-icon leaflet-pm-icon-circle',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-circle',
       jsClass: 'Circle',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -283,12 +285,13 @@ const Toolbar = L.Class.extend({
 
     const drawCircleMarkerButton = {
       title: getTranslation('buttonTitles.drawCircleMarkerButton'),
-      className: 'control-icon leaflet-pm-icon-circle-marker',
+      className:
+        'leaflet-geoman-control-icon leaflet-geoman-icon-circle-marker',
       jsClass: 'CircleMarker',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -299,12 +302,12 @@ const Toolbar = L.Class.extend({
 
     const drawRectButton = {
       title: getTranslation('buttonTitles.drawRectButton'),
-      className: 'control-icon leaflet-pm-icon-rectangle',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-rectangle',
       jsClass: 'Rectangle',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -315,10 +318,10 @@ const Toolbar = L.Class.extend({
 
     const editButton = {
       title: getTranslation('buttonTitles.editButton'),
-      className: 'control-icon leaflet-pm-icon-edit',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-edit',
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalEditMode();
+        this._map.geoman.toggleGlobalEditMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -330,10 +333,10 @@ const Toolbar = L.Class.extend({
 
     const dragButton = {
       title: getTranslation('buttonTitles.dragButton'),
-      className: 'control-icon leaflet-pm-icon-drag',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-drag',
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalDragMode();
+        this._map.geoman.toggleGlobalDragMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -345,13 +348,13 @@ const Toolbar = L.Class.extend({
 
     const cutButton = {
       title: getTranslation('buttonTitles.cutButton'),
-      className: 'control-icon leaflet-pm-icon-cut',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-cut',
       jsClass: 'Cut',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // enable polygon drawing mode without snap
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle({
-          snappable: true,
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle({
+          allowSnapping: true,
           cursorMarker: true,
           allowSelfIntersection: false,
         });
@@ -366,10 +369,10 @@ const Toolbar = L.Class.extend({
 
     const deleteButton = {
       title: getTranslation('buttonTitles.deleteButton'),
-      className: 'control-icon leaflet-pm-icon-delete',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-delete',
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalRemovalMode();
+        this._map.geoman.toggleGlobalRemovalMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -381,10 +384,10 @@ const Toolbar = L.Class.extend({
 
     const rotateButton = {
       title: getTranslation('buttonTitles.rotateButton'),
-      className: 'control-icon leaflet-pm-icon-rotate',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-rotate',
       onClick: () => {},
       afterClick: () => {
-        this.map.pm.toggleGlobalRotateMode();
+        this._map.geoman.toggleGlobalRotateMode();
       },
       doToggle: true,
       toggleStatus: false,
@@ -395,13 +398,13 @@ const Toolbar = L.Class.extend({
     };
 
     const drawTextButton = {
-      className: 'control-icon leaflet-pm-icon-text',
+      className: 'leaflet-geoman-control-icon leaflet-geoman-icon-text',
       title: getTranslation('buttonTitles.drawTextButton'),
       jsClass: 'Text',
       onClick: () => {},
-      afterClick: (e, ctx) => {
+      afterClick: (ctx) => {
         // toggle drawing mode
-        this.map.pm.Draw[ctx.button._button.jsClass].toggle();
+        this._map.geoman.Draw[ctx.button._button.jsClass].toggle();
       },
       doToggle: true,
       toggleStatus: false,
@@ -410,22 +413,22 @@ const Toolbar = L.Class.extend({
       actions: ['cancel'],
     };
 
-    this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
-    this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
-    this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
-    this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
-    this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
+    this._addButton('drawMarker', new GeomanControl(drawMarkerButton));
+    this._addButton('drawPolyline', new GeomanControl(drawLineButton));
+    this._addButton('drawRectangle', new GeomanControl(drawRectButton));
+    this._addButton('drawPolygon', new GeomanControl(drawPolyButton));
+    this._addButton('drawCircle', new GeomanControl(drawCircleButton));
     this._addButton(
       'drawCircleMarker',
-      new L.Control.PMButton(drawCircleMarkerButton)
+      new GeomanControl(drawCircleMarkerButton)
     );
-    this._addButton('drawText', new L.Control.PMButton(drawTextButton));
-    this._addButton('editMode', new L.Control.PMButton(editButton));
-    this._addButton('dragMode', new L.Control.PMButton(dragButton));
-    this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
-    this._addButton('removalMode', new L.Control.PMButton(deleteButton));
-    this._addButton('rotateMode', new L.Control.PMButton(rotateButton));
-  },
+    this._addButton('drawText', new GeomanControl(drawTextButton));
+    this._addButton('editMode', new GeomanControl(editButton));
+    this._addButton('dragMode', new GeomanControl(dragButton));
+    this._addButton('cutPolygon', new GeomanControl(cutButton));
+    this._addButton('removalMode', new GeomanControl(deleteButton));
+    this._addButton('rotateMode', new GeomanControl(rotateButton));
+  }
 
   _showHideButtons() {
     // if Toolbar is not visible, we don't need to update button positions
@@ -478,23 +481,27 @@ const Toolbar = L.Class.extend({
           block = 'draw';
         }
         buttons[btn].setPosition(this._getBtnPosition(block));
-        buttons[btn].addTo(this.map);
+        buttons[btn].addTo(this._map);
       }
     }
-  },
+  }
+
   _getBtnPosition(block) {
     return this.options.positions && this.options.positions[block]
       ? this.options.positions[block]
       : this.options.position;
-  },
+  }
+
   setBlockPosition(block, position) {
     this.options.positions[block] = position;
     this._showHideButtons();
     this.changeControlOrder();
-  },
+  }
+
   getBlockPositions() {
     return this.options.positions;
-  },
+  }
+
   copyDrawControl(copyInstance, options) {
     if (!options) {
       throw new TypeError('Button has no name');
@@ -512,7 +519,7 @@ const Toolbar = L.Class.extend({
     if (this.buttons[options.name]) {
       throw new TypeError('Button with this name already exists');
     }
-    const drawInstance = this.map.pm.Draw.createNewDrawInstance(
+    const drawInstance = this._map.geoman.Draw.createNewDrawInstance(
       options.name,
       instance
     );
@@ -521,7 +528,8 @@ const Toolbar = L.Class.extend({
     options = { ...btn, ...options };
     const control = this.createCustomControl(options);
     return { drawInstance, control };
-  },
+  }
+
   createCustomControl(options) {
     if (!options.name) {
       throw new TypeError('Button has no name');
@@ -548,9 +556,11 @@ const Toolbar = L.Class.extend({
     }
 
     if (!options.className) {
-      options.className = 'control-icon';
-    } else if (options.className.indexOf('control-icon') === -1) {
-      options.className = `control-icon ${options.className}`;
+      options.className = 'leaflet-geoman-control-icon';
+    } else if (
+      options.className.indexOf('leaflet-geoman-control-icon') === -1
+    ) {
+      options.className = `leaflet-geoman-control-icon ${options.className}`;
     }
 
     const _options = {
@@ -574,19 +584,19 @@ const Toolbar = L.Class.extend({
       this.options[options.name] = true;
     }
 
-    const control = this._addButton(
-      options.name,
-      new L.Control.PMButton(_options)
-    );
+    const control = this._addButton(options.name, new GeomanControl(_options));
     this.changeControlOrder();
     return control;
-  },
+  }
+
   controlExists(name) {
     return Boolean(this.getButton(name));
-  },
+  }
+
   getButton(name) {
     return this.getButtons()[name];
-  },
+  }
+
   getButtonsInBlock(name) {
     const buttonsInBlock = {};
     if (name) {
@@ -602,7 +612,8 @@ const Toolbar = L.Class.extend({
       }
     }
     return buttonsInBlock;
-  },
+  }
+
   changeControlOrder(order = []) {
     const shapeMapping = this._shapeMapping();
 
@@ -665,9 +676,10 @@ const Toolbar = L.Class.extend({
       }
     });
 
-    this.map.pm.Toolbar.buttons = newbtnorder;
+    this._map.geoman.Toolbar.buttons = newbtnorder;
     this._showHideButtons();
-  },
+  }
+
   getControlOrder() {
     const buttons = this.getButtons();
     const order = [];
@@ -675,7 +687,8 @@ const Toolbar = L.Class.extend({
       order.push(btn);
     }
     return order;
-  },
+  }
+
   changeActionsOfControl(name, actions) {
     const btnName = this._btnNameMapping(name);
 
@@ -691,7 +704,8 @@ const Toolbar = L.Class.extend({
     }
     this.buttons[btnName]._button.actions = actions;
     this.changeControlOrder();
-  },
+  }
+
   setButtonDisabled(name, state) {
     const btnName = this._btnNameMapping(name);
     if (state) {
@@ -699,7 +713,8 @@ const Toolbar = L.Class.extend({
     } else {
       this.buttons[btnName].enable();
     }
-  },
+  }
+
   _shapeMapping() {
     return {
       Marker: 'drawMarker',
@@ -707,7 +722,6 @@ const Toolbar = L.Class.extend({
       Polygon: 'drawPolygon',
       Rectangle: 'drawRectangle',
       Polyline: 'drawPolyline',
-      Line: 'drawPolyline',
       CircleMarker: 'drawCircleMarker',
       Edit: 'editMode',
       Drag: 'dragMode',
@@ -716,11 +730,12 @@ const Toolbar = L.Class.extend({
       Rotate: 'rotateMode',
       Text: 'drawText',
     };
-  },
+  }
+
   _btnNameMapping(name) {
     const shapeMapping = this._shapeMapping();
     return shapeMapping[name] ? shapeMapping[name] : name;
-  },
-});
+  }
+}
 
-export default Toolbar;
+Toolbar.GeomanControl = GeomanControl;

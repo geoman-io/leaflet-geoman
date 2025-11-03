@@ -1,7 +1,9 @@
-import Edit from './L.PM.Edit';
+import Utils from '../GeomanUtils';
+import GeomanEditCircleMarker from './Edit.CircleMarker';
 
-Edit.Circle = Edit.CircleMarker.extend({
-  _shape: 'Circle',
+export default class GeomanEditCircle extends GeomanEditCircleMarker {
+  _shape = 'Circle';
+
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
@@ -11,12 +13,15 @@ Edit.Circle = Edit.CircleMarker.extend({
     this._editableOption = 'resizeableCircle';
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
-  },
+  }
+
   enable(options) {
     // TODO: this can be removed after the default options of CircleMarker.enable are removed
-    L.PM.Edit.CircleMarker.prototype.enable.call(this, options || {});
-  },
-  _extendingEnable() {},
+    GeomanEditCircleMarker.prototype.enable.call(this, options || {});
+  }
+
+  _extendingEnable() {}
+
   _extendingDisable() {
     this._layer.off('remove', this.disable, this);
 
@@ -24,21 +29,27 @@ Edit.Circle = Edit.CircleMarker.extend({
     const el = this._layer._path
       ? this._layer._path
       : this._layer._renderer._container;
-    L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
-  },
-  _extendingApplyOptions() {},
-  _syncMarkers() {},
-  _removeMarker() {},
-  _onDragStart() {},
-  _extedingMarkerDragEnd() {},
+    el.classList.remove('leaflet-geoman-draggable');
+  }
+
+  _extendingApplyOptions() {}
+
+  _syncMarkers() {}
+
+  _removeMarker() {}
+
+  _onDragStart() {}
+
+  _onDragEnd() {}
+
   _updateHiddenPolyCircle() {
-    const crsSimple = this._map && this._map.pm._isCRSSimple();
+    const crsSimple = this._map && this._map.geoman._isCRSSimple();
     if (this._hiddenPolyCircle) {
       this._hiddenPolyCircle.setLatLngs(
-        L.PM.Utils.circleToPolygon(this._layer, 200, !crsSimple).getLatLngs()
+        Utils.circleToPolygon(this._layer, 200, !crsSimple).getLatLngs()
       );
     } else {
-      this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(
+      this._hiddenPolyCircle = Utils.circleToPolygon(
         this._layer,
         200,
         !crsSimple
@@ -48,16 +59,20 @@ Edit.Circle = Edit.CircleMarker.extend({
     if (!this._hiddenPolyCircle._parentCopy) {
       this._hiddenPolyCircle._parentCopy = this._layer;
     }
-  },
+  }
+
   _distanceCalculation(A, B) {
     return this._map.distance(A, B);
-  },
+  }
+
   _getMinDistanceInMeter() {
     return this.options[this._minRadiusOption];
-  },
+  }
+
   _getMaxDistanceInMeter() {
     return this.options[this._maxRadiusOption];
-  },
+  }
+
   _onVertexClick(e) {
     const vertex = e.target;
     if (vertex._dragging) {
@@ -65,5 +80,5 @@ Edit.Circle = Edit.CircleMarker.extend({
     }
 
     this._fireVertexClick(e, undefined);
-  },
-});
+  }
+}

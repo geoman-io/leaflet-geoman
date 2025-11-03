@@ -11,6 +11,17 @@
     <!-- You can change from the local source to the cdn: -->
     <!-- <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />   -->
     <link rel="stylesheet" href="demo.css" />
+
+    <!-- You can change from the local source to the cdn: -->
+    <!-- https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js -->
+    <script type="importmap">
+    {
+      "imports": {
+        "leaflet": "../node_modules/leaflet/dist/leaflet-src.js",
+        "leaflet-geoman": "../dist/leaflet-geoman.js"
+      }
+    }
+    </script>
   </head>
   <body>
     <div class="wrapper">
@@ -20,10 +31,6 @@
         <div class="map" id="map"></div>
       </article>
     </div>
-    <script src="https://unpkg.com/leaflet@latest/dist/leaflet.js"></script>
-    <script src="../dist/leaflet-geoman.js"></script>
-    <!-- You can change from the local source to the cdn: -->
-    <!-- <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"></script>   -->
-    <script src="events.js"></script>
+    <script src="events.js" type="module"></script>
   </body>
 </html>

@@ -1,13 +1,14 @@
 import lineIntersect from '@turf/line-intersect';
-import Edit from './L.PM.Edit';
+import { Polyline } from 'leaflet';
+import GeomanEditPolyline from './Edit.Polyline';
 
-Edit.Polygon = Edit.Line.extend({
-  _shape: 'Polygon',
+export default class GeomanEditPolygon extends GeomanEditPolyline {
+  _shape = 'Polygon';
   _checkMarkerAllowedToDrag(marker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
-    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
-    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+    const prevLine = new Polyline([prevMarker.getLatLng(), marker.getLatLng()]);
+    const nextLine = new Polyline([marker.getLatLng(), nextMarker.getLatLng()]);
 
     const prevLineIntersectionLen = lineIntersect(
       this._layer.toGeoJSON(15),
@@ -23,5 +24,5 @@ Edit.Polygon = Edit.Line.extend({
       return false;
     }
     return true;
-  },
-});
+  }
+}

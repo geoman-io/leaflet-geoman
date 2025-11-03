@@ -11,11 +11,11 @@ describe('Draw Marker', () => {
     cy.wait(1000);
 
     cy.window().then(({ map, L }) => {
-      map.pm.enableGlobalEditMode();
+      map.geoman.enableGlobalEditMode();
 
       map.eachLayer((layer) => {
         if (layer instanceof L.Marker) {
-          assert.isTrue(layer.pm.layerDragEnabled());
+          assert.isTrue(layer.geoman.layerDragEnabled());
         }
       });
     });
@@ -23,10 +23,10 @@ describe('Draw Marker', () => {
 
   it('removes markers without error', () => {
     cy.window().then(({ map, L }) => {
-      const markerLayer = L.geoJson().addTo(map);
+      const markerLayer = new L.GeoJSON().addTo(map);
 
-      map.pm.enableDraw('Marker', {
-        snappable: false,
+      map.geoman.enableDraw('Marker', {
+        allowSnapping: false,
       });
 
       cy.get(mapSelector)
@@ -43,7 +43,7 @@ describe('Draw Marker', () => {
           });
 
           l.addLayer(m);
-          map.pm.disableDraw();
+          map.geoman.disableDraw();
           l.removeLayer(m);
 
           return m;
@@ -52,11 +52,15 @@ describe('Draw Marker', () => {
     });
 
     cy.get('@markerLayer').then((markerLayer) => {
-      markerLayer.pm.disable();
+      markerLayer.geoman.disable();
     });
   });
 
   it('places markers', () => {
+    cy.window().then(({ map }) => {
+      map.geoman.setGlobalOptions({ continueDrawing: true });
+    });
+
     cy.toolbarButton('marker').click();
 
     cy.get(mapSelector)
@@ -80,7 +84,7 @@ describe('Draw Marker', () => {
     // Adds a interactive Marker to the map and enable / disable the edit mode to check if a error is thrown because it is not draggable
     cy.window()
       .then(({ map, L }) =>
-        L.marker([51.505, -0.09], { interactive: false }).addTo(map)
+        new L.Marker([51.505, -0.09], { interactive: false }).addTo(map)
       )
       .as('marker');
 
@@ -95,21 +99,21 @@ describe('Draw Marker', () => {
     });
   });
 
-  it('calls pm:drag-events on Marker drag', (done) => {
+  it('calls geoman:drag-events on Marker drag', (done) => {
     let handFinish = false;
     let dragstart = false;
     let drag = false;
     let dragend = false;
 
     cy.window().then(({ map }) => {
-      map.on('pm:create', (e) => {
-        e.layer.on('pm:dragstart', () => {
+      map.on('geoman:create', (e) => {
+        e.layer.on('geoman:dragstart', () => {
           dragstart = true;
         });
-        e.layer.on('pm:drag', () => {
+        e.layer.on('geoman:drag', () => {
           drag = true;
         });
-        e.layer.on('pm:dragend', () => {
+        e.layer.on('geoman:dragend', () => {
           dragend = true;
         });
       });
@@ -132,7 +136,7 @@ describe('Draw Marker', () => {
           handFinish = true;
         },
       });
-      const toucherMarker = handMarker.growFinger('mouse');
+      const toucherMarker = handMarker.growFinger('pointer');
       toucherMarker
         .wait(100)
         .moveTo(150, 240, 100)
@@ -158,7 +162,7 @@ describe('Draw Marker', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
+      const marker = map.geoman.getGeomanDrawLayers()[0];
       expect(marker.getLatLng().alt).to.eq(undefined);
       marker.getLatLng().alt = 10;
       expect(marker.getLatLng().alt).to.eq(10);
@@ -168,12 +172,12 @@ describe('Draw Marker', () => {
       const handMarker = new Hand({
         timing: 'frame',
         onStop: () => {
-          const marker = map.pm.getGeomanDrawLayers()[0];
+          const marker = map.geoman.getGeomanDrawLayers()[0];
           expect(marker.getLatLng().alt).to.eq(10);
           done();
         },
       });
-      const toucherMarker = handMarker.growFinger('mouse');
+      const toucherMarker = handMarker.growFinger('pointer');
       toucherMarker
         .wait(100)
         .moveTo(150, 240, 100)
@@ -191,15 +195,15 @@ describe('Draw Marker', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
-      const enabled = marker.pm.enabled();
+      const marker = map.geoman.getGeomanDrawLayers()[0];
+      const enabled = marker.geoman.enabled();
       expect(enabled).to.equal(true);
     });
   });
 
   it('disable continueDrawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ continueDrawing: false });
+      map.geoman.setGlobalOptions({ continueDrawing: false });
     });
 
     cy.toolbarButton('marker').click();
@@ -213,24 +217,25 @@ describe('Draw Marker', () => {
 
   it('disable markerEditable', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ markerEditable: false });
+      map.geoman.setGlobalOptions({ markerEditable: false });
     });
 
     cy.toolbarButton('marker').click();
     cy.get(mapSelector).click(191, 216);
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
-      const enabled = marker.pm.enabled();
+      const marker = map.geoman.getGeomanDrawLayers()[0];
+      const enabled = marker.geoman.enabled();
       expect(enabled).to.equal(false);
     });
   });
 
   it('enable markerEditable but disable MarkerRemoval', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         markerEditable: true,
         preventMarkerRemoval: true,
+        continueDrawing: true,
       });
     });
 
@@ -238,8 +243,8 @@ describe('Draw Marker', () => {
     cy.get(mapSelector).click(191, 216);
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
-      const enabled = marker.pm.enabled();
+      const marker = map.geoman.getGeomanDrawLayers()[0];
+      const enabled = marker.geoman.enabled();
       expect(enabled).to.equal(true);
     });
 
@@ -249,7 +254,7 @@ describe('Draw Marker', () => {
   });
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         requireSnapToFinish: true,
         snapSegment: false,
       });
@@ -266,28 +271,28 @@ describe('Draw Marker', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
   });
-  it('fires pm:update after edit', () => {
+  it('fires geoman:update after edit', () => {
     cy.toolbarButton('marker').click();
     cy.get(mapSelector).click(350, 250);
 
     let updateFired = false;
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
-      marker.on('pm:update', () => {
+      const marker = map.geoman.getGeomanDrawLayers()[0];
+      marker.on('geoman:update', () => {
         updateFired = true;
       });
-      marker.pm.enable();
-      marker.pm._layerEdited = true;
-      marker.pm.disable();
+      marker.geoman.enable();
+      marker.geoman._layerEdited = true;
+      marker.geoman.disable();
     });
 
     cy.window().then(() => {
@@ -298,50 +303,54 @@ describe('Draw Marker', () => {
   it('change icon of Marker while drawing', () => {
     cy.toolbarButton('marker')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map, L }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         markerStyle: {
-          icon: L.icon({
+          icon: new L.Icon({
             iconUrl: 'someIcon.png',
           }),
         },
       });
 
-      const layer = map.pm.Draw.Marker._hintMarker;
+      const layer = map.geoman.Draw.Marker._hintMarker;
       expect(layer._icon.src.endsWith('someIcon.png')).to.eql(true);
     });
   });
 
   it('does not create additional marker while dragging in draw mode', () => {
+    cy.window().then(({ map }) => {
+      map.geoman.setGlobalOptions({ continueDrawing: true });
+    });
+
     cy.toolbarButton('marker').click();
 
     cy.get(mapSelector).click(150, 250);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanDrawLayers().length).to.eq(1);
+      expect(map.geoman.getGeomanDrawLayers().length).to.eq(1);
     });
 
-    cy.get(mapSelector).trigger('mousedown', 150, 230, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 170, 290, { which: 1 });
+    cy.get(mapSelector).trigger('pointerdown', 150, 230, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 170, 290, { which: 1 });
     // Do not create a new marker while dragging
     cy.get(mapSelector).click(170, 290);
-    cy.get(mapSelector).trigger('mouseup', 170, 290, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 190, 340, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 170, 290, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 190, 340, { which: 1 });
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanDrawLayers().length).to.eq(1);
+      expect(map.geoman.getGeomanDrawLayers().length).to.eq(1);
     });
 
     // Create a new marker after dragging with clicking on the icon of a marker
     cy.get(mapSelector).click(170, 290);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanDrawLayers().length).to.eq(2);
+      expect(map.geoman.getGeomanDrawLayers().length).to.eq(2);
     });
   });
 });

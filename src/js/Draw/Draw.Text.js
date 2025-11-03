@@ -1,16 +1,18 @@
-import Draw from './L.PM.Draw';
+import { DivIcon, Marker, Point, Util } from 'leaflet';
 import { getTranslation } from '../helpers';
+import Draw from './Draw';
 
-Draw.Text = Draw.extend({
+export default class GeomanDrawText extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'Text';
     this.toolbarButtonName = 'drawText';
-  },
+  }
+
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
-    L.Util.setOptions(this, options);
+    // instances of L.Geoman.Draw. So a dev could set drawing style one time as some kind of config
+    Util.setOptions(this, options);
 
     // change enabled state
     this._enabled = true;
@@ -19,21 +21,23 @@ Draw.Text = Draw.extend({
     this._map.on('click', this._createMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, true);
 
-    // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(this._map.getCenter(), {
+    // this is the hintmarker on the pointer cursor
+    this._hintMarker = new Marker(this._map.getCenter(), {
       interactive: false,
       zIndexOffset: 100,
-      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new DivIcon({
+        className: 'leaflet-geoman-vertex-icon leaflet-geoman-cursor-marker',
+      }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
-    this._hintMarker._pmTempLayer = true;
+    this._hintMarker._geomanTempLayer = true;
     this._hintMarker.addTo(this._map);
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+      this._hintMarker._icon.classList.add('leaflet-geoman-visible');
     }
 
     // add tooltip to hintmarker
@@ -41,7 +45,7 @@ Draw.Text = Draw.extend({
       this._hintMarker
         .bindTooltip(getTranslation('tooltips.placeText'), {
           permanent: true,
-          offset: L.point(0, 10),
+          offset: new Point(0, 10),
           direction: 'bottom',
 
           opacity: 0.8,
@@ -52,15 +56,16 @@ Draw.Text = Draw.extend({
     // this is just to keep the snappable mixin happy
     this._layer = this._hintMarker;
 
-    // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    // sync hint marker with pointer cursor
+    this._map.on('pointermove', this._syncHintMarker, this);
 
-    this._map.getContainer().classList.add('geoman-draw-cursor');
+    this._map.getContainer().classList.add('leaflet-geoman-draw-cursor');
 
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
+  }
+
   disable() {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
@@ -76,46 +81,50 @@ Draw.Text = Draw.extend({
     // remove hint marker
     this._hintMarker?.remove();
 
-    this._map.getContainer().classList.remove('geoman-draw-cursor');
+    this._map.getContainer().classList.remove('leaflet-geoman-draw-cursor');
 
     // remove event listener to sync hint marker
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
 
-    this._map.off('mousemove', this._showHintMarker, this);
+    this._map.off('pointermove', this._showHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, false);
 
     // cleanup snapping
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._cleanupSnapping();
     }
 
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggle(options) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
+  }
+
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
 
     // if snapping is enabled, do it
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       const fakeDragEvent = e;
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
     }
-  },
+  }
+
   _createMarker(e) {
     if (!e.latlng) {
       return;
@@ -148,34 +157,34 @@ Draw.Text = Draw.extend({
 
     const textAreaIcon = this._createTextIcon(this.textArea);
 
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       textMarker: true,
-      _textMarkerOverPM: true, // we need to put this into the options, else we can't catch this in the init method
+      _textMarkerOverGeoman: true, // we need to put this into the options, else we can't catch this in the init method
       icon: textAreaIcon,
     });
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 
-    if (!marker.pm) {
-      // if pm is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
+    if (!marker.geoman) {
+      // if geoman is not create we don't apply dragging to the marker (draggable is applied to the marker, when it is added to the map )
       marker.options.draggable = false;
     }
     // add marker to the map
-    marker.addTo(this._map.pm._getContainingLayer());
-    if (marker.pm) {
-      marker.pm.textArea = this.textArea;
-      L.setOptions(marker.pm, {
+    marker.addTo(this._map.geoman._getContainingLayer());
+    if (marker.geoman) {
+      marker.geoman.textArea = this.textArea;
+      Util.setOptions(marker.geoman, {
         removeIfEmpty: this.options.textOptions?.removeIfEmpty ?? true,
       });
 
       const focusAfterDraw = this.options.textOptions?.focusAfterDraw ?? true;
-      marker.pm._createTextMarker(focusAfterDraw);
+      marker.geoman._createTextMarker(focusAfterDraw);
       if (this.options.textOptions?.text) {
-        marker.pm.setText(this.options.textOptions.text);
+        marker.geoman.setText(this.options.textOptions.text);
       }
     }
 
-    // fire the pm:create event and pass shape and marker
+    // fire the geoman:create event and pass shape and marker
     this._fireCreate(marker);
 
     this._cleanupSnapping();
@@ -183,27 +192,30 @@ Draw.Text = Draw.extend({
     // disable drawing
     this.disable();
     if (this.options.continueDrawing) {
-      // the user is still typing some text, so we re-enable the layer after moving the mouse
-      this._map.once('mousemove', this._showHintMarkerAfterMoving, this);
+      // the user is still typing some text, so we re-enable the layer after moving the pointer
+      this._map.once('pointermove', this._showHintMarkerAfterMoving, this);
     }
-  },
+  }
 
   _showHintMarkerAfterMoving(e) {
     this.enable();
     this._hintMarker.setLatLng(e.latlng);
-  },
+  }
 
   _createTextArea() {
     const textArea = document.createElement('textarea');
     textArea.readOnly = true;
-    textArea.classList.add('pm-textarea', 'pm-disabled');
+    textArea.classList.add(
+      'leaflet-geoman-textarea',
+      'leaflet-geoman-disabled'
+    );
     return textArea;
-  },
+  }
 
   _createTextIcon(textArea) {
-    return L.divIcon({
-      className: 'pm-text-marker',
+    return new DivIcon({
+      className: 'leaflet-geoman-text-marker',
       html: textArea,
     });
-  },
-});
+  }
+}

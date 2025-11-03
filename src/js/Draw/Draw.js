@@ -1,59 +1,77 @@
+import {
+  Circle,
+  CircleMarker,
+  Class,
+  Icon,
+  ImageOverlay,
+  Marker,
+  Polyline,
+  Util,
+} from 'leaflet';
 import merge from 'lodash/merge';
-import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
+import SnapMixin from '../Mixins/Snapping';
+import Utils from '../GeomanUtils';
 
-const Draw = L.Class.extend({
-  includes: [SnapMixin, EventMixin],
-  options: {
-    snappable: true, // TODO: next major Release, rename it to allowSnapping
-    snapDistance: 20,
-    snapMiddle: false,
-    allowSelfIntersection: true,
-    tooltips: true,
-    templineStyle: {},
-    hintlineStyle: {
-      color: '#3388ff',
-      dashArray: '5,5',
-    },
-    pathOptions: null,
-    cursorMarker: true,
-    finishOn: null,
-    markerStyle: {
-      draggable: true,
-      icon: L.icon(),
-    },
-    hideMiddleMarkers: false,
-    minRadiusCircle: null,
-    maxRadiusCircle: null,
-    minRadiusCircleMarker: null,
-    maxRadiusCircleMarker: null,
-    resizeableCircleMarker: false,
-    resizeableCircle: true,
-    markerEditable: true,
-    continueDrawing: false,
-    snapSegment: true,
-    requireSnapToFinish: false,
-    rectangleAngle: 0,
-    textOptions: {
-      text: null,
-      focusAfterDraw: null,
-      removeIfEmpty: null,
-      className: null,
-    },
-    snapVertex: true,
-  },
+export default class Draw extends Class {
+  static {
+    this.include(SnapMixin);
+    this.include(EventMixin);
+
+    this.setDefaultOptions({
+      allowSnapping: true,
+      snapDistance: 20,
+      snapMiddle: false,
+      allowSelfIntersection: true,
+      tooltips: true,
+      templineStyle: {},
+      hintlineStyle: {
+        color: '#3388ff',
+        dashArray: '5,5',
+      },
+      pathOptions: null,
+      cursorMarker: true,
+      finishOn: null,
+      markerStyle: {
+        icon: new Icon(),
+      },
+      hideMiddleMarkers: false,
+      minRadiusCircle: null,
+      maxRadiusCircle: null,
+      minRadiusCircleMarker: null,
+      maxRadiusCircleMarker: null,
+      resizeableCircleMarker: false,
+      resizeableCircle: true,
+      markerEditable: true,
+      continueDrawing: false,
+      snapSegment: true,
+      requireSnapToFinish: false,
+      rectangleAngle: 0,
+      textOptions: {
+        text: null,
+        focusAfterDraw: null,
+        removeIfEmpty: null,
+        className: null,
+      },
+      snapVertex: true,
+    });
+  }
+
   setOptions(options) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
     this.setStyle(this.options);
-  },
-  setStyle() {},
+  }
+
+  setStyle() {}
+
   getOptions() {
     return this.options;
-  },
+  }
+
   initialize(map) {
     // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon
     // Issue https://github.com/Leaflet/Leaflet/issues/7302 - Leaflet v1.7.1
-    const defaultIcon = new L.Icon.Default();
+    const defaultIcon = new Icon.Default();
     defaultIcon.options.tooltipAnchor = [0, 0];
     this.options.markerStyle.icon = defaultIcon;
 
@@ -64,7 +82,7 @@ const Draw = L.Class.extend({
     this.shapes = [
       'Marker',
       'CircleMarker',
-      'Line',
+      'Polyline',
       'Polygon',
       'Rectangle',
       'Circle',
@@ -74,28 +92,28 @@ const Draw = L.Class.extend({
 
     // initiate drawing class for our shapes
     this.shapes.forEach((shape) => {
-      this[shape] = new L.PM.Draw[shape](this._map);
+      this[shape] = new Draw[shape](this._map);
     });
+  }
 
-    // TODO: Remove this with the next major release
-    this.Marker.setOptions({ continueDrawing: true });
-    this.CircleMarker.setOptions({ continueDrawing: true });
-  },
   setPathOptions(options, mergeOptions = false) {
     if (!mergeOptions) {
       this.options.pathOptions = options;
     } else {
       this.options.pathOptions = merge(this.options.pathOptions, options);
     }
-  },
+  }
+
   getShapes() {
     // if somebody wants to know what shapes are available
     return this.shapes;
-  },
+  }
+
   getShape() {
     // return the shape of the current drawing layer
     return this._shape;
-  },
+  }
+
   enable(shape, options) {
     if (!shape) {
       throw new Error(
@@ -110,7 +128,8 @@ const Draw = L.Class.extend({
 
     // enable draw for a shape
     this[shape].enable(options);
-  },
+  }
+
   disable() {
     // there can only be one drawing mode active at a time on a map
     // so it doesn't matter which one should be disabled.
@@ -118,13 +137,15 @@ const Draw = L.Class.extend({
     this.shapes.forEach((shape) => {
       this[shape].disable();
     });
-  },
+  }
+
   addControls() {
     // add control buttons for our shapes
     this.shapes.forEach((shape) => {
       this[shape].addButton();
     });
-  },
+  }
+
   getActiveShape() {
     // returns the active shape
     let enabledShape;
@@ -134,9 +155,10 @@ const Draw = L.Class.extend({
       }
     });
     return enabledShape;
-  },
+  }
+
   _setGlobalDrawMode() {
-    // extended to all PM.Draw shapes
+    // extended to all Geoman.Draw shapes
     if (this._shape === 'Cut') {
       this._fireGlobalCutModeToggled();
     } else {
@@ -146,14 +168,14 @@ const Draw = L.Class.extend({
     const layers = [];
     this._map.eachLayer((layer) => {
       if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle ||
-        layer instanceof L.CircleMarker ||
-        layer instanceof L.ImageOverlay
+        layer instanceof Polyline ||
+        layer instanceof Marker ||
+        layer instanceof Circle ||
+        layer instanceof CircleMarker ||
+        layer instanceof ImageOverlay
       ) {
         // filter out everything that's leaflet-geoman specific temporary stuff
-        if (!layer._pmTempLayer) {
+        if (!layer._geomanTempLayer) {
           layers.push(layer);
         }
       }
@@ -161,25 +183,25 @@ const Draw = L.Class.extend({
 
     if (this._enabled) {
       layers.forEach((layer) => {
-        L.PM.Utils.disablePopup(layer);
+        Utils.disablePopup(layer);
       });
     } else {
       layers.forEach((layer) => {
-        L.PM.Utils.enablePopup(layer);
+        Utils.enablePopup(layer);
       });
     }
-  },
+  }
 
   createNewDrawInstance(name, jsClass) {
     const instance = this._getShapeFromBtnName(jsClass);
     if (this[name]) {
       throw new TypeError('Draw Type already exists');
     }
-    if (!L.PM.Draw[instance]) {
-      throw new TypeError(`There is no class L.PM.Draw.${instance}`);
+    if (!Draw[instance]) {
+      throw new TypeError(`There is no class L.Geoman.Draw.${instance}`);
     }
 
-    this[name] = new L.PM.Draw[instance](this._map);
+    this[name] = new Draw[instance](this._map);
     this[name].toolbarButtonName = name;
     this[name]._shape = name;
     this.shapes.push(name);
@@ -192,13 +214,14 @@ const Draw = L.Class.extend({
     this[name].setOptions(this[name].options);
 
     return this[name];
-  },
+  }
+
   _getShapeFromBtnName(name) {
     const shapeMapping = {
       drawMarker: 'Marker',
       drawCircle: 'Circle',
       drawPolygon: 'Polygon',
-      drawPolyline: 'Line',
+      drawPolyline: 'Polyline',
       drawRectangle: 'Rectangle',
       drawCircleMarker: 'CircleMarker',
       editMode: 'Edit',
@@ -213,43 +236,45 @@ const Draw = L.Class.extend({
       return shapeMapping[name];
     }
     return this[name] ? this[name]._shape : name;
-  },
+  }
+
   _finishLayer(layer) {
-    if (layer.pm) {
-      // add the pm options from drawing to the new layer (edit)
-      layer.pm.setOptions(this.options);
+    if (layer.geoman) {
+      // add the geoman options from drawing to the new layer (edit)
+      layer.geoman.setOptions(this.options);
       // set the shape (can be a custom shape)
-      layer.pm._shape = this._shape;
-      // apply the map to the new created layer in the pm object
-      layer.pm._map = this._map;
+      layer.geoman._shape = this._shape;
+      // apply the map to the new created layer in the geoman object
+      layer.geoman._map = this._map;
     }
     this._addDrawnLayerProp(layer);
-  },
+  }
+
   _addDrawnLayerProp(layer) {
     layer._drawnByGeoman = true;
-  },
+  }
+
   _setPane(layer, type) {
     if (type === 'layerPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.layerPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.layerPane) ||
         'overlayPane';
     } else if (type === 'vertexPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.vertexPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.vertexPane) ||
         'markerPane';
     } else if (type === 'markerPane') {
       layer.options.pane =
-        (this._map.pm.globalOptions.panes &&
-          this._map.pm.globalOptions.panes.markerPane) ||
+        (this._map.geoman.globalOptions.panes &&
+          this._map.geoman.globalOptions.panes.markerPane) ||
         'markerPane';
     }
-  },
+  }
+
   _isFirstLayer() {
     const map = this._map || this._layer._map;
-    return map.pm.getGeomanLayers().length === 0;
-  },
-});
-
-export default Draw;
+    return map.geoman.getGeomanLayers().length === 0;
+  }
+}

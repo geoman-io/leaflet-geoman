@@ -16,14 +16,14 @@ describe('Opens Testing Environment', () => {
     });
 
     cy.window().then(({ map }) => {
-      const count = map.pm.getGeomanLayers().length;
+      const count = map.geoman.getGeomanLayers().length;
       expect(count).to.equal(1);
     });
   });
 
   it('gets all drawn geoman Layers', () => {
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
+      new L.Marker(map.getCenter()).addTo(map);
     });
 
     cy.toolbarButton('polygon').click();
@@ -38,9 +38,9 @@ describe('Opens Testing Environment', () => {
     });
 
     cy.window().then(({ map }) => {
-      const count = map.pm.getGeomanLayers().length;
+      const count = map.geoman.getGeomanLayers().length;
       expect(count).to.equal(2);
-      const count2 = map.pm.getGeomanDrawLayers().length;
+      const count2 = map.geoman.getGeomanDrawLayers().length;
       expect(count2).to.equal(1);
     });
   });

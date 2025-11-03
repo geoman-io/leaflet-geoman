@@ -1,27 +1,31 @@
-import Draw from './L.PM.Draw';
+import { DivIcon, Marker, Polygon } from 'leaflet';
 import { getTranslation } from '../helpers';
+import Draw from './Draw';
+import GeomanDrawLine from './Draw.Polyline';
 
-Draw.Polygon = Draw.Line.extend({
+export default class GeomanDrawPolygon extends GeomanDrawLine {
   initialize(map) {
     this._map = map;
     this._shape = 'Polygon';
     this.toolbarButtonName = 'drawPolygon';
-  },
+  }
+
   enable(options) {
-    L.PM.Draw.Line.prototype.enable.call(this, options);
-    // Overwrite the shape "Line" of this._layer
-    this._layer.pm._shape = 'Polygon';
-  },
+    Draw.Polyline.prototype.enable.call(this, options);
+    // Overwrite the shape "Polyline" of this._layer
+    this._layer.geoman._shape = 'Polygon';
+  }
+
   _createMarker(latlng) {
     // create the new marker
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       draggable: false,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
     // mark this marker as temporary
-    marker._pmTempLayer = true;
+    marker._geomanTempLayer = true;
 
     // add it to the map
     this._layerGroup.addLayer(marker);
@@ -34,7 +38,7 @@ Draw.Polygon = Draw.Line.extend({
       // add the first vertex to "other snapping layers" so the polygon is easier to finish
       this._tempSnapLayerIndex = this._otherSnapLayers.push(marker) - 1;
 
-      if (this.options.snappable) {
+      if (this.options.allowSnapping) {
         this._cleanupSnapping();
       }
     } else {
@@ -45,7 +49,8 @@ Draw.Polygon = Draw.Line.extend({
     }
 
     return marker;
-  },
+  }
+
   _setTooltipText() {
     const { length } = this._layer.getLatLngs().flat();
     let text = '';
@@ -57,7 +62,8 @@ Draw.Polygon = Draw.Line.extend({
       text = getTranslation('tooltips.finishPoly');
     }
     this._hintMarker.setTooltipContent(text);
-  },
+  }
+
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
@@ -86,12 +92,12 @@ Draw.Polygon = Draw.Line.extend({
       return;
     }
 
-    const polygonLayer = L.polygon(coords, this.options.pathOptions);
+    const polygonLayer = new Polygon(coords, this.options.pathOptions);
     this._setPane(polygonLayer, 'layerPane');
     this._finishLayer(polygonLayer);
-    polygonLayer.addTo(this._map.pm._getContainingLayer());
+    polygonLayer.addTo(this._map.geoman._getContainingLayer());
 
-    // fire the pm:create event and pass shape and layer
+    // fire the geoman:create event and pass shape and layer
     this._fireCreate(polygonLayer);
 
     // clean up snapping states
@@ -109,5 +115,5 @@ Draw.Polygon = Draw.Line.extend({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
-});
+  }
+}

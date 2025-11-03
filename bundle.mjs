@@ -17,7 +17,7 @@ const plugins = [{
 
 const buildOptions = {
   bundle: true,
-  entryPoints: ['./src/js/L.PM.js'],
+  entryPoints: ['./src/js/Geoman.js'],
   loader: {
     '.js': 'jsx',
     '.css': 'css',
@@ -26,6 +26,8 @@ const buildOptions = {
   minify: true,
   outfile: './dist/leaflet-geoman.js',
   sourcemap: true,
+  format: 'esm',
+  external: ['leaflet'],
 }
 
 const ctx = await esbuild.context({ ...buildOptions, plugins });

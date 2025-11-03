@@ -1,3 +1,7 @@
+import { LayerGroup, Util } from 'leaflet';
+import Geoman from '../../Geoman';
+import Utils from '../../GeomanUtils';
+
 // this mixin adds a global edit mode to the map
 const GlobalEditMode = {
   _globalEditModeEnabled: false,
@@ -12,18 +16,18 @@ const GlobalEditMode = {
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
 
     // find all layers handled by leaflet-geoman
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
 
     // enable all layers
     layers.forEach((layer) => {
       if (this._isRelevantForEdit(layer)) {
-        layer.pm.enable(options);
+        layer.geoman.enable(options);
       }
     });
 
     if (!this.throttledReInitEdit) {
-      this.throttledReInitEdit = L.Util.throttle(
-        this.handleLayerAdditionInGlobalEditMode,
+      this.throttledReInitEdit = Util.throttle(
+        this._handleLayerAdditionInGlobalEditMode,
         100,
         this
       );
@@ -31,9 +35,9 @@ const GlobalEditMode = {
 
     // save the added layers into the _addedLayersEdit array, to read it later out
     this._addedLayersEdit = {};
-    this.map.on('layeradd', this._layerAddedEdit, this);
+    this._map.on('layeradd', this._layerAddedEdit, this);
     // handle layers that are added while in edit mode
-    this.map.on('layeradd', this.throttledReInitEdit, this);
+    this._map.on('layeradd', this.throttledReInitEdit, this);
 
     // fire event
     this._fireGlobalEditModeToggled(true);
@@ -43,26 +47,22 @@ const GlobalEditMode = {
     this._globalEditModeEnabled = false;
 
     // find all layers handles by leaflet-geoman
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
 
     // disable all layers
     layers.forEach((layer) => {
-      layer.pm.disable();
+      layer.geoman.disable();
     });
 
     // cleanup layer off event
-    this.map.off('layeradd', this._layerAddedEdit, this);
-    this.map.off('layeradd', this.throttledReInitEdit, this);
+    this._map.off('layeradd', this._layerAddedEdit, this);
+    this._map.off('layeradd', this.throttledReInitEdit, this);
 
     // Set toolbar button to currect status
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
 
     // fire event
     this._fireGlobalEditModeToggled(false);
-  },
-  // TODO: Remove in the next major release
-  globalEditEnabled() {
-    return this.globalEditModeEnabled();
   },
   globalEditModeEnabled() {
     return this._globalEditModeEnabled;
@@ -77,7 +77,7 @@ const GlobalEditMode = {
       this.enableGlobalEditMode(options);
     }
   },
-  handleLayerAdditionInGlobalEditMode() {
+  _handleLayerAdditionInGlobalEditMode() {
     const layers = this._addedLayersEdit;
     this._addedLayersEdit = {};
     if (this.globalEditModeEnabled()) {
@@ -87,22 +87,22 @@ const GlobalEditMode = {
         // enable edit for that layer if it's relevant
 
         if (this._isRelevantForEdit(layer)) {
-          layer.pm.enable({ ...this.globalOptions });
+          layer.geoman.enable({ ...this.globalOptions });
         }
       }
     }
   },
   _layerAddedEdit({ layer }) {
-    this._addedLayersEdit[L.stamp(layer)] = layer;
+    this._addedLayersEdit[Util.stamp(layer)] = layer;
   },
   _isRelevantForEdit(layer) {
     return (
-      layer.pm &&
-      !(layer instanceof L.LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
-      layer.pm.options.allowEditing
+      layer.geoman &&
+      !(layer instanceof LayerGroup) &&
+      ((!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.geomanIgnore === false)) && // if optIn is true and geomanIgnore is false
+      !layer._geomanTempLayer &&
+      layer.geoman.options.allowEditing
     );
   },
 };

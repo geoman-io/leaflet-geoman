@@ -1,28 +1,32 @@
+import { LayerGroup, Util } from 'leaflet';
+import Geoman from '../../Geoman';
+import Utils from '../../GeomanUtils';
+
 const GlobalDragMode = {
   _globalDragModeEnabled: false,
   enableGlobalDragMode() {
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
 
     this._globalDragModeEnabled = true;
     this._addedLayersDrag = {};
 
     layers.forEach((layer) => {
       if (this._isRelevantForDrag(layer)) {
-        layer.pm.enableLayerDrag();
+        layer.geoman.enableLayerDrag();
       }
     });
 
     if (!this.throttledReInitDrag) {
-      this.throttledReInitDrag = L.Util.throttle(
-        this.reinitGlobalDragMode,
+      this.throttledReInitDrag = Util.throttle(
+        this._reinitGlobalDragMode,
         100,
         this
       );
     }
 
     // add map handler
-    this.map.on('layeradd', this._layerAddedDrag, this);
-    this.map.on('layeradd', this.throttledReInitDrag, this);
+    this._map.on('layeradd', this._layerAddedDrag, this);
+    this._map.on('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
@@ -30,17 +34,17 @@ const GlobalDragMode = {
     this._fireGlobalDragModeToggled(true);
   },
   disableGlobalDragMode() {
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = Utils.findLayers(this._map);
 
     this._globalDragModeEnabled = false;
 
     layers.forEach((layer) => {
-      layer.pm.disableLayerDrag();
+      layer.geoman.disableLayerDrag();
     });
 
     // remove map handler
-    this.map.off('layeradd', this._layerAddedDrag, this);
-    this.map.off('layeradd', this.throttledReInitDrag, this);
+    this._map.off('layeradd', this._layerAddedDrag, this);
+    this._map.off('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
@@ -57,7 +61,7 @@ const GlobalDragMode = {
       this.enableGlobalDragMode();
     }
   },
-  reinitGlobalDragMode() {
+  _reinitGlobalDragMode() {
     const layers = this._addedLayersDrag;
     this._addedLayersDrag = {};
     if (this.globalDragModeEnabled()) {
@@ -65,22 +69,22 @@ const GlobalDragMode = {
         const layer = layers[id];
 
         if (this._isRelevantForDrag(layer)) {
-          layer.pm.enableLayerDrag();
+          layer.geoman.enableLayerDrag();
         }
       }
     }
   },
   _layerAddedDrag({ layer }) {
-    this._addedLayersDrag[L.stamp(layer)] = layer;
+    this._addedLayersDrag[Util.stamp(layer)] = layer;
   },
   _isRelevantForDrag(layer) {
     return (
-      layer.pm &&
-      !(layer instanceof L.LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
-      layer.pm.options.draggable
+      layer.geoman &&
+      !(layer instanceof LayerGroup) &&
+      ((!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.geomanIgnore === false)) && // if optIn is true and geomanIgnore is false
+      !layer._geomanTempLayer &&
+      layer.geoman.options.allowDragging
     );
   },
 };

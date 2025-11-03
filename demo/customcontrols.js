@@ -1,12 +1,17 @@
-const map = L.map('map').setView([40.0269319, 32.83604819], 13);
+import { TileLayer, LeafletMap } from 'leaflet';
+import Geoman from 'leaflet-geoman';
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+Geoman.initialize();
+
+const map = new LeafletMap('map').setView([40.0269319, 32.83604819], 13);
+
+new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
-map.pm.addControls({
+map.geoman.addControls({
   position: 'topleft',
   drawControls: false,
   editControls: true,
@@ -16,13 +21,13 @@ map.pm.addControls({
 });
 
 // Click button -> toggle disabled
-map.pm.Toolbar.createCustomControl({
+map.geoman.Toolbar.createCustomControl({
   name: 'alertBox',
   block: 'custom',
-  className: 'leaflet-pm-icon-marker xyz-class',
+  className: 'leaflet-geoman-icon-marker xyz-class',
   title: 'Count layers',
   onClick: () => {
-    alert(`There are ${L.PM.Utils.findLayers(map).length} layers on the map`);
+    alert(`There are ${Geoman.Utils.findLayers(map).length} layers on the map`);
   },
   toggle: false,
 });
@@ -37,19 +42,19 @@ const _actions = [
     name: 'actionName',
   },
 ];
-map.pm.Toolbar.copyDrawControl('Rectangle', {
+map.geoman.Toolbar.copyDrawControl('Rectangle', {
   name: 'RectangleCopy',
   block: 'custom',
   title: 'Display text on hover button',
   actions: _actions,
 });
-map.pm.Draw.RectangleCopy.setPathOptions({ color: 'green' });
+map.geoman.Draw.RectangleCopy.setPathOptions({ color: 'green' });
 
-map.pm.Toolbar.changeControlOrder(['RectangleCopy']);
+map.geoman.Toolbar.changeControlOrder(['RectangleCopy']);
 
-map.on('pm:actionclick', (e) => {
+map.on('geoman:actionclick', (e) => {
   console.log(e);
 });
-map.on('pm:buttonclick', (e) => {
+map.on('geoman:buttonclick', (e) => {
   console.log(e);
 });

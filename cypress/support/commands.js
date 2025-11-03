@@ -63,15 +63,15 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
     const locations = [];
 
     for (let i = 0; i < 3500; i += 1) {
-      locations.push(L.circleMarker(getRandomLatLng(map)));
+      locations.push(new L.CircleMarker(getRandomLatLng(map)));
     }
 
     for (let i = 0; i < 2500; i += 1) {
-      terminals.push(L.circleMarker(getRandomLatLng(map)));
+      terminals.push(new L.CircleMarker(getRandomLatLng(map)));
     }
 
-    const t = L.layerGroup(terminals).addTo(map);
-    const l = L.layerGroup(locations).addTo(map);
+    const t = new L.LayerGroup(terminals).addTo(map);
+    const l = new L.LayerGroup(locations).addTo(map);
 
     const base = {};
 
@@ -80,7 +80,7 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
       Terminals: l,
     };
 
-    L.control.layers(base, overlays).addTo(map);
+    new L.Control.Layers(base, overlays).addTo(map);
   });
 
   cy.window().then(() => {
@@ -93,29 +93,31 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
 });
 
 Cypress.Commands.add('hasMiddleMarkers', (count) => {
-  cy.get('.marker-icon-middle').should(($p) => {
+  cy.get('.leaflet-geoman-vertex-icon-middle').should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
 Cypress.Commands.add('hasVertexMarkers', (count) => {
-  cy.get('.marker-icon:not(.marker-icon-middle)').should(($p) => {
+  cy.get(
+    '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+  ).should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
 Cypress.Commands.add('hasTotalVertexMarkers', (count) => {
-  cy.get('.marker-icon').should(($p) => {
+  cy.get('.leaflet-geoman-vertex-icon').should(($p) => {
     expect($p).to.have.length(count);
   });
 });
 
 Cypress.Commands.add('toolbarButton', (name) =>
-  cy.get(`.leaflet-pm-icon-${name}`)
+  cy.get(`.leaflet-geoman-icon-${name}`)
 );
 
 Cypress.Commands.add('toolbarButtonContainer', (name, map) => {
-  cy.get(map.pm.Toolbar.buttons[name]._container.children[0]);
+  cy.get(map.geoman.Toolbar.buttons[name]._container.children[0]);
 });
 
 Cypress.Commands.add('drawShape', (shape, ignore) => {
@@ -124,7 +126,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -133,7 +137,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -142,7 +148,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
           return layer;
@@ -153,7 +161,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -163,7 +173,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { geomanIgnore: ignore }).addTo(
+            map
+          );
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -173,9 +185,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.polygon(json.data.points, { pmIgnore: ignore }).addTo(
-            map
-          );
+          const layer = new L.Polygon(json.data.points, {
+            geomanIgnore: ignore,
+          }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -186,7 +198,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
         .as('poly')
         .then((json) => {
           //
-          const layer = L.geoJSON(json).addTo(map);
+          const layer = new L.GeoJSON(json).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -196,7 +208,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .then((json) => {
           //
-          const layer = L.geoJSON(json).addTo(map);
+          const layer = new L.GeoJSON(json).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
 
@@ -208,17 +220,17 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     if (shape === 'FeatureCollectionWithCircles') {
       cy.fixture(shape, ignore)
         .then((json) => {
-          const layer = L.geoJson(json, {
-            pmIgnore: ignore,
+          const layer = new L.GeoJSON(json, {
+            geomanIgnore: ignore,
             pointToLayer: (feature, latlng) => {
               if (feature.properties.customGeometry) {
                 return new L.Circle(
                   latlng,
                   feature.properties.customGeometry.radius,
-                  { pmIgnore: ignore }
+                  { geomanIgnore: ignore }
                 );
               }
-              return new L.Marker(latlng, { pmIgnore: ignore });
+              return new L.Marker(latlng, { geomanIgnore: ignore });
             },
           });
 

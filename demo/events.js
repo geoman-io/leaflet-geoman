@@ -1,9 +1,14 @@
-const map = L.map('map').setView([39.74739, -105], 13);
+import { TileLayer, LeafletMap } from 'leaflet';
+import Geoman from 'leaflet-geoman';
 
-map.pm.addControls();
-map.pm.setLang('de');
+Geoman.initialize();
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const map = new LeafletMap('map').setView([39.74739, -105], 13);
+
+map.geoman.addControls();
+map.geoman.setLang('de');
+
+new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -13,70 +18,70 @@ function logEvent(e) {
   console.log(e);
 }
 
-map.on('pm:drawstart', (e) => {
+map.on('geoman:drawstart', (e) => {
   logEvent(e);
   const layer = e.workingLayer;
 
-  layer.on('pm:vertexadded', logEvent);
-  layer.on('pm:snapdrag', logEvent);
-  layer.on('pm:snap', logEvent);
-  layer.on('pm:unsnap', logEvent);
-  layer.on('pm:centerplaced', logEvent);
+  layer.on('geoman:vertexadded', logEvent);
+  layer.on('geoman:snapdrag', logEvent);
+  layer.on('geoman:snap', logEvent);
+  layer.on('geoman:unsnap', logEvent);
+  layer.on('geoman:centerplaced', logEvent);
 });
-map.on('pm:drawend', logEvent);
-map.on('pm:create', (e) => {
+map.on('geoman:drawend', logEvent);
+map.on('geoman:create', (e) => {
   logEvent(e);
   const { layer } = e;
 
-  map.pm.disableDraw();
+  map.geoman.disableDraw();
 
-  layer.pm.enable({
+  layer.geoman.enable({
     allowSelfIntersection: false,
   });
 
   // Edit Event
-  layer.on('pm:edit', logEvent);
-  layer.on('pm:update', logEvent);
-  layer.on('pm:enable', logEvent);
-  layer.on('pm:disable', logEvent);
-  layer.on('pm:vertexadded', logEvent);
-  layer.on('pm:vertexremoved', logEvent);
-  layer.on('pm:markerdragstart', logEvent);
-  layer.on('pm:markerdrag', logEvent);
-  layer.on('pm:markerdragend', logEvent);
-  layer.on('pm:snap', logEvent);
-  layer.on('pm:snapdrag', logEvent);
-  layer.on('pm:unsnap', logEvent);
-  layer.on('pm:intersect', logEvent);
-  layer.on('pm:centerplaced', logEvent);
+  layer.on('geoman:edit', logEvent);
+  layer.on('geoman:update', logEvent);
+  layer.on('geoman:enable', logEvent);
+  layer.on('geoman:disable', logEvent);
+  layer.on('geoman:vertexadded', logEvent);
+  layer.on('geoman:vertexremoved', logEvent);
+  layer.on('geoman:vertexdragstart', logEvent);
+  layer.on('geoman:vertexdrag', logEvent);
+  layer.on('geoman:vertexdragend', logEvent);
+  layer.on('geoman:snap', logEvent);
+  layer.on('geoman:snapdrag', logEvent);
+  layer.on('geoman:unsnap', logEvent);
+  layer.on('geoman:intersect', logEvent);
+  layer.on('geoman:centerplaced', logEvent);
 
   // Drag event
-  layer.on('pm:dragstart', logEvent);
-  layer.on('pm:drag', logEvent);
-  layer.on('pm:dragend', logEvent);
+  layer.on('geoman:dragstart', logEvent);
+  layer.on('geoman:drag', logEvent);
+  layer.on('geoman:dragend', logEvent);
 
   // Cut event
-  layer.on('pm:cut', logEvent);
+  layer.on('geoman:cut', logEvent);
 
   // Remove event
-  layer.on('pm:remove', logEvent);
+  layer.on('geoman:remove', logEvent);
 });
 
 // Toggle mode events
-map.on('pm:globaleditmodetoggled', logEvent);
-map.on('pm:globaldragmodetoggled', logEvent);
-map.on('pm:globalremovalmodetoggled', logEvent);
-map.on('pm:globaldrawmodetoggled', logEvent);
-map.on('pm:globalcutmodetoggled', logEvent);
+map.on('geoman:globaleditmodetoggled', logEvent);
+map.on('geoman:globaldragmodetoggled', logEvent);
+map.on('geoman:globalremovalmodetoggled', logEvent);
+map.on('geoman:globaldrawmodetoggled', logEvent);
+map.on('geoman:globalcutmodetoggled', logEvent);
 
 // Remove event
-map.on('pm:remove', logEvent);
+map.on('geoman:remove', logEvent);
 map.on('layerremove', logEvent);
 
 // Cut event
-map.on('pm:cut', logEvent);
+map.on('geoman:cut', logEvent);
 
 // Language changed
-map.on('pm:langchange', logEvent);
+map.on('geoman:langchange', logEvent);
 
-map.pm.setLang('en');
+map.geoman.setLang('en');

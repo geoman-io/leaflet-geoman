@@ -45,7 +45,7 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "leaflet": "^1.2.0"
+    "leaflet": "^2.0.0-alpha.1"
   },
   "scripts": {
     "start": "npm run dev",

@@ -7,7 +7,7 @@ module.exports = [
   },
   {
     languageOptions: {
-      ecmaVersion: 2020,
+      ecmaVersion: 'latest',
       globals: {
         L: 'readonly',
         window: 'readonly',
@@ -25,6 +25,8 @@ module.exports = [
       'no-restricted-syntax': 0,
       'guard-for-in': 0,
       ...eslintPluginCypress.configs.recommended.rules,
+      'cypress/unsafe-to-chain-command': 0,
+      'cypress/no-unnecessary-waiting': 0,
     },
   },
   eslintConfigPrettier,

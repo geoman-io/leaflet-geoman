@@ -1,20 +1,23 @@
+import { LayerGroup, Util } from 'leaflet';
+import Geoman from '../../Geoman';
+
 const GlobalRemovalMode = {
   _globalRemovalModeEnabled: false,
   enableGlobalRemovalMode() {
     this._globalRemovalModeEnabled = true;
     // handle existing layers
-    this.map.eachLayer((layer) => {
+    this._map.eachLayer((layer) => {
       if (this._isRelevantForRemoval(layer)) {
-        if (layer.pm.enabled()) {
-          layer.pm.disable();
+        if (layer.geoman.enabled()) {
+          layer.geoman.disable();
         }
-        layer.on('click', this.removeLayer, this);
+        layer.on('click', this._removeLayer, this);
       }
     });
 
     if (!this.throttledReInitRemoval) {
-      this.throttledReInitRemoval = L.Util.throttle(
-        this.handleLayerAdditionInGlobalRemovalMode,
+      this.throttledReInitRemoval = Util.throttle(
+        this._handleLayerAdditionInGlobalRemovalMode,
         100,
         this
       );
@@ -22,8 +25,8 @@ const GlobalRemovalMode = {
     // save the added layers into the _addedLayersRemoval array, to read it later out
     this._addedLayersRemoval = {};
     // handle layers that are added while in removal mode
-    this.map.on('layeradd', this._layerAddedRemoval, this);
-    this.map.on('layeradd', this.throttledReInitRemoval, this);
+    this._map.on('layeradd', this._layerAddedRemoval, this);
+    this._map.on('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
@@ -32,22 +35,18 @@ const GlobalRemovalMode = {
   },
   disableGlobalRemovalMode() {
     this._globalRemovalModeEnabled = false;
-    this.map.eachLayer((layer) => {
-      layer.off('click', this.removeLayer, this);
+    this._map.eachLayer((layer) => {
+      layer.off('click', this._removeLayer, this);
     });
 
     // remove map handler
-    this.map.off('layeradd', this._layerAddedRemoval, this);
-    this.map.off('layeradd', this.throttledReInitRemoval, this);
+    this._map.off('layeradd', this._layerAddedRemoval, this);
+    this._map.off('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
 
     this._fireGlobalRemovalModeToggled(false);
-  },
-  // TODO: Remove in the next major release
-  globalRemovalEnabled() {
-    return this.globalRemovalModeEnabled();
   },
   globalRemovalModeEnabled() {
     return !!this._globalRemovalModeEnabled;
@@ -60,52 +59,52 @@ const GlobalRemovalMode = {
       this.enableGlobalRemovalMode();
     }
   },
-  removeLayer(e) {
+  _removeLayer(e) {
     const layer = e.target;
     // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
     const removeable =
-      this._isRelevantForRemoval(layer) && !layer.pm.dragging();
+      this._isRelevantForRemoval(layer) && !layer.geoman.dragging();
 
     if (removeable) {
-      layer.removeFrom(this.map.pm._getContainingLayer());
+      layer.removeFrom(this._map.geoman._getContainingLayer());
       layer.remove();
-      if (layer instanceof L.LayerGroup) {
+      if (layer instanceof LayerGroup) {
         this._fireRemoveLayerGroup(layer);
-        this._fireRemoveLayerGroup(this.map, layer);
+        this._fireRemoveLayerGroup(this._map, layer);
       } else {
-        layer.pm._fireRemove(layer);
-        layer.pm._fireRemove(this.map, layer);
+        layer.geoman._fireRemove(layer);
+        layer.geoman._fireRemove(this._map, layer);
       }
     }
   },
   _isRelevantForRemoval(layer) {
     return (
-      layer.pm &&
-      !(layer instanceof L.LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
-      layer.pm.options.allowRemoval
+      layer.geoman &&
+      !(layer instanceof LayerGroup) &&
+      ((!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.geomanIgnore === false)) && // if optIn is true and geomanIgnore is false
+      !layer._geomanTempLayer &&
+      layer.geoman.options.allowRemoval
     );
   },
-  handleLayerAdditionInGlobalRemovalMode() {
+  _handleLayerAdditionInGlobalRemovalMode() {
     const layers = this._addedLayersRemoval;
     this._addedLayersRemoval = {};
     if (this.globalRemovalModeEnabled()) {
       for (const id in layers) {
         const layer = layers[id];
         if (this._isRelevantForRemoval(layer)) {
-          if (layer.pm.enabled()) {
-            layer.pm.disable();
+          if (layer.geoman.enabled()) {
+            layer.geoman.disable();
           }
-          layer.on('click', this.removeLayer, this);
+          layer.on('click', this._removeLayer, this);
         }
       }
     }
   },
   _layerAddedRemoval({ layer }) {
-    this._addedLayersRemoval[L.stamp(layer)] = layer;
+    this._addedLayersRemoval[Util.stamp(layer)] = layer;
   },
 };
 

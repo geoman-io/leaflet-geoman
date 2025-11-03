@@ -1,13 +1,17 @@
-import Edit from './L.PM.Edit';
+import { DomEvent, Util } from 'leaflet';
+import Edit from './Edit';
+import Draw from '../Draw/Draw';
 
-Edit.Text = Edit.extend({
-  _shape: 'Text',
+export default class GeomanEditCircleText extends Edit {
+  _shape = 'Text';
+
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
-  },
+  }
+
   enable(options) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     if (!this.textArea) {
       return;
@@ -30,21 +34,22 @@ Edit.Text = Edit.extend({
 
     this._focusChange();
     this.textArea.readOnly = false;
-    this.textArea.classList.remove('pm-disabled');
+    this.textArea.classList.remove('leaflet-geoman-disabled');
 
     // if shape gets removed from map, disable edit mode
     this._layer.on('remove', this.disable, this);
-    L.DomEvent.on(this.textArea, 'input', this._autoResize, this);
-    L.DomEvent.on(this.textArea, 'focus', this._focusChange, this);
-    L.DomEvent.on(this.textArea, 'blur', this._focusChange, this);
-    this._layer.on('dblclick', L.DomEvent.stop);
+    DomEvent.on(this.textArea, 'input', this._autoResize, this);
+    DomEvent.on(this.textArea, 'focus', this._focusChange, this);
+    DomEvent.on(this.textArea, 'blur', this._focusChange, this);
+    this._layer.on('dblclick', DomEvent.stop);
 
-    L.DomEvent.off(this.textArea, 'mousedown', this._preventTextSelection);
+    DomEvent.off(this.textArea, 'pointerdown', this._preventTextSelection);
 
     this._enabled = true;
 
     this._fireEnable();
-  },
+  }
+
   disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
@@ -53,16 +58,16 @@ Edit.Text = Edit.extend({
 
     // remove listener
     this._layer.off('remove', this.disable, this);
-    L.DomEvent.off(this.textArea, 'input', this._autoResize, this);
-    L.DomEvent.off(this.textArea, 'focus', this._focusChange, this);
-    L.DomEvent.off(this.textArea, 'blur', this._focusChange, this);
+    DomEvent.off(this.textArea, 'input', this._autoResize, this);
+    DomEvent.off(this.textArea, 'focus', this._focusChange, this);
+    DomEvent.off(this.textArea, 'blur', this._focusChange, this);
     document.removeEventListener('click', this._documentClickThis, {
       capture: true,
     });
 
     this._focusChange();
     this.textArea.readOnly = true;
-    this.textArea.classList.add('pm-disabled');
+    this.textArea.classList.add('leaflet-geoman-disabled');
 
     // remove selection
     const focusedElement = document.activeElement;
@@ -70,7 +75,7 @@ Edit.Text = Edit.extend({
     this.textArea.focus();
     this.textArea.selectionStart = 0;
     this.textArea.selectionEnd = 0;
-    L.DomEvent.on(this.textArea, 'mousedown', this._preventTextSelection);
+    DomEvent.on(this.textArea, 'pointerdown', this._preventTextSelection);
     focusedElement.focus();
 
     this._disableOnBlurActive = false;
@@ -82,24 +87,28 @@ Edit.Text = Edit.extend({
     this._fireDisable();
 
     this._enabled = false;
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
-  },
+  }
+
   applyOptions() {
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();
     }
-  },
+  }
+
   // overwrite initSnappableMarkers from Snapping.js Mixin
   _initSnappableMarkers() {
     const marker = this._layer;
@@ -108,21 +117,23 @@ Edit.Text = Edit.extend({
     this.options.snapSegment =
       this.options.snapSegment === undefined ? true : this.options.snapSegment;
 
-    marker.off('pm:drag', this._handleSnapping, this);
-    marker.on('pm:drag', this._handleSnapping, this);
+    marker.off('geoman:drag', this._handleSnapping, this);
+    marker.on('geoman:drag', this._handleSnapping, this);
 
-    marker.off('pm:dragend', this._cleanupSnapping, this);
-    marker.on('pm:dragend', this._cleanupSnapping, this);
+    marker.off('geoman:dragend', this._cleanupSnapping, this);
+    marker.on('geoman:dragend', this._cleanupSnapping, this);
 
-    marker.off('pm:dragstart', this._unsnap, this);
-    marker.on('pm:dragstart', this._unsnap, this);
-  },
+    marker.off('geoman:dragstart', this._unsnap, this);
+    marker.on('geoman:dragstart', this._unsnap, this);
+  }
+
   _disableSnapping() {
     const marker = this._layer;
-    marker.off('pm:drag', this._handleSnapping, this);
-    marker.off('pm:dragend', this._cleanupSnapping, this);
-    marker.off('pm:dragstart', this._unsnap, this);
-  },
+    marker.off('geoman:drag', this._handleSnapping, this);
+    marker.off('geoman:dragend', this._cleanupSnapping, this);
+    marker.off('geoman:dragstart', this._unsnap, this);
+  }
+
   _autoResize() {
     this.textArea.style.height = '1px';
     this.textArea.style.width = '1px';
@@ -134,7 +145,7 @@ Edit.Text = Edit.extend({
     this.textArea.style.width = `${width}px`;
     this._layer.options.text = this.getText();
     this._fireTextChange(this.getText());
-  },
+  }
 
   _disableOnBlur() {
     this._disableOnBlurActive = true;
@@ -148,7 +159,8 @@ Edit.Text = Edit.extend({
         });
       }
     }, 100);
-  },
+  }
+
   _documentClick(e) {
     if (e.target !== this.textArea) {
       this.disable();
@@ -156,7 +168,7 @@ Edit.Text = Edit.extend({
         this.remove();
       }
     }
-  },
+  }
 
   _focusChange(e = {}) {
     const focusAlreadySet = this._hasFocus;
@@ -175,20 +187,22 @@ Edit.Text = Edit.extend({
         }
       }
     }
-  },
+  }
+
   _applyFocus() {
-    this.textArea.classList.add('pm-hasfocus');
+    this.textArea.classList.add('leaflet-geoman-hasfocus');
 
     if (this._map.dragging) {
       // save current map dragging state
       if (this._safeToCacheDragState) {
         this._originalMapDragState = this._map.dragging._enabled;
-        // don't cache the state again until another mouse up is registered
+        // don't cache the state again until another pointer up is registered
         this._safeToCacheDragState = false;
       }
       this._map.dragging.disable();
     }
-  },
+  }
+
   _removeFocus() {
     if (this._map.dragging) {
       if (this._originalMapDragState) {
@@ -197,15 +211,15 @@ Edit.Text = Edit.extend({
       this._safeToCacheDragState = true;
     }
 
-    this.textArea.classList.remove('pm-hasfocus');
-  },
+    this.textArea.classList.remove('leaflet-geoman-hasfocus');
+  }
 
   focus() {
     if (!this.enabled()) {
       throw new TypeError('Layer is not enabled');
     }
     this.textArea.focus();
-  },
+  }
 
   blur() {
     if (!this.enabled()) {
@@ -215,41 +229,41 @@ Edit.Text = Edit.extend({
     if (this._disableOnBlurActive) {
       this.disable();
     }
-  },
+  }
 
   hasFocus() {
     return this._hasFocus;
-  },
+  }
 
   getElement() {
     return this.textArea;
-  },
+  }
 
   setText(text) {
     if (text) {
       this.textArea.value = text;
     }
     this._autoResize();
-  },
+  }
 
   getText() {
     return this.textArea.value;
-  },
+  }
 
   _initTextMarker() {
-    this.textArea = L.PM.Draw.Text.prototype._createTextArea.call(this);
+    this.textArea = Draw.Text.prototype._createTextArea.call(this);
     if (this.options.className) {
       const cssClasses = this.options.className.split(' ');
       this.textArea.classList.add(...cssClasses);
     }
-    const textAreaIcon = L.PM.Draw.Text.prototype._createTextIcon.call(
+    const textAreaIcon = Draw.Text.prototype._createTextIcon.call(
       this,
       this.textArea
     );
     this._layer.setIcon(textAreaIcon);
 
     this._layer.once('add', this._createTextMarker, this);
-  },
+  }
 
   _createTextMarker(enable = false) {
     this._layer.off('add', this._createTextMarker, this);
@@ -258,7 +272,7 @@ Edit.Text = Edit.extend({
 
     this.textArea.wrap = 'off';
     this.textArea.style.overflow = 'hidden';
-    this.textArea.style.height = L.DomUtil.getStyle(this.textArea, 'font-size');
+    this.textArea.style.height = getComputedStyle(this.textArea).fontSize;
     this.textArea.style.width = '1px';
 
     if (this._layer.options.text) {
@@ -273,10 +287,10 @@ Edit.Text = Edit.extend({
       this.focus();
       this._disableOnBlur();
     }
-  },
+  }
 
   // Chrome ignores `user-select: none`, so we need to disable text selection manually
   _preventTextSelection(e) {
     e.preventDefault();
-  },
-});
+  }
+}

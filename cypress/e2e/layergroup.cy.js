@@ -10,7 +10,7 @@ describe('Edit LayerGroup', () => {
     cy.hasVertexMarkers(0);
   });
 
-  it('respects pmIgnore', () => {
+  it('respects geomanIgnore', () => {
     cy.drawShape('LineString', true);
 
     cy.toolbarButton('edit').click();
@@ -21,23 +21,23 @@ describe('Edit LayerGroup', () => {
     cy.drawShape('FeatureCollectionWithCircles');
 
     cy.get('@featurecol').then((feature) => {
-      feature.pm.enable();
+      feature.geoman.enable();
     });
 
     cy.hasVertexMarkers(21);
 
     cy.get('@featurecol').then((feature) => {
-      feature.pm.disable();
+      feature.geoman.disable();
     });
     cy.hasVertexMarkers(0);
 
     cy.get('@featurecol').then((feature) => {
-      feature.pm.toggleEdit();
+      feature.geoman.toggleEdit();
     });
     cy.hasVertexMarkers(21);
 
     cy.get('@featurecol').then((feature) => {
-      feature.pm.toggleEdit();
+      feature.geoman.toggleEdit();
     });
     cy.hasVertexMarkers(0);
   });
@@ -50,7 +50,7 @@ describe('Edit LayerGroup', () => {
       map.fitBounds(featureGroup.getBounds());
       featureGroup.clearLayers();
 
-      expect(featureGroup.pm._layers).to.have.lengthOf(0);
+      expect(featureGroup.geoman._layers).to.have.lengthOf(0);
     });
   });
 
@@ -60,15 +60,15 @@ describe('Edit LayerGroup', () => {
 
     // Add layer to group
     cy.window().then(({ L, map }) => {
-      fg = L.featureGroup().addTo(map);
-      fg2 = L.featureGroup().addTo(map);
+      fg = new L.FeatureGroup().addTo(map);
+      fg2 = new L.FeatureGroup().addTo(map);
 
-      map.pm.setGlobalOptions({ layerGroup: fg });
+      map.geoman.setGlobalOptions({ layerGroup: fg });
 
       cy.toolbarButton('rectangle')
         .click()
-        .closest('.button-container')
-        .should('have.class', 'active');
+        .closest('.leaflet-geoman-button-container')
+        .should('have.class', 'leaflet-geoman-active');
 
       cy.get(mapSelector).click(200, 200).click(400, 350);
 
@@ -103,7 +103,7 @@ describe('Edit LayerGroup', () => {
       cy.get(mapSelector).click(200, 200).click(400, 350);
     });
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ layerGroup: fg2 });
+      map.geoman.setGlobalOptions({ layerGroup: fg2 });
       cy.hasLayers(5);
 
       cy.toolbarButton('circle').click();
@@ -139,20 +139,20 @@ describe('Edit LayerGroup', () => {
     let firedEvent = '';
 
     cy.window().then(({ map, L }) => {
-      fg = L.featureGroup();
-      fg.on('pm:cut', (e) => {
+      fg = new L.FeatureGroup();
+      fg.on('geoman:cut', (e) => {
         firedEvent = e.type;
       });
 
-      map.on('pm:create', (e) => {
+      map.on('geoman:create', (e) => {
         e.layer.addTo(fg);
       });
     });
     // activate polygon drawing
     cy.toolbarButton('polygon')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon
     cy.get(mapSelector)
@@ -166,8 +166,8 @@ describe('Edit LayerGroup', () => {
     // activate cutting drawing
     cy.toolbarButton('cut')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw a polygon to cut
     cy.get(mapSelector)
@@ -179,23 +179,23 @@ describe('Edit LayerGroup', () => {
       .click(450, 100);
 
     cy.window().then(() => {
-      expect(firedEvent).to.equal('pm:cut');
+      expect(firedEvent).to.equal('geoman:cut');
     });
   });
 
   it('event is fired only once if group has multiple sub-groups with the same layer', () => {
     let firedEventCount = 0;
     cy.window().then(({ map, L }) => {
-      const group = L.featureGroup().addTo(map);
-      const layers = L.featureGroup().addTo(group);
-      const markers = L.featureGroup().addTo(group);
-      const markersChild = L.featureGroup().addTo(markers);
-      L.marker(map.getCenter())
+      const group = new L.FeatureGroup().addTo(map);
+      const layers = new L.FeatureGroup().addTo(group);
+      const markers = new L.FeatureGroup().addTo(group);
+      const markersChild = new L.FeatureGroup().addTo(markers);
+      new L.Marker(map.getCenter())
         .addTo(layers)
         .addTo(markers)
         .addTo(markersChild);
 
-      group.on('pm:enable', () => {
+      group.on('geoman:enable', () => {
         firedEventCount += 1;
       });
     });
@@ -212,25 +212,25 @@ describe('Edit LayerGroup', () => {
   it('event is fired on every parent group of a layer (once)', () => {
     let firedEventCount = 0;
     cy.window().then(({ map, L }) => {
-      const group = L.featureGroup().addTo(map);
-      const layers = L.featureGroup().addTo(group);
-      const markers = L.featureGroup().addTo(group);
-      const markersChild = L.featureGroup().addTo(markers);
-      L.marker(map.getCenter())
+      const group = new L.FeatureGroup().addTo(map);
+      const layers = new L.FeatureGroup().addTo(group);
+      const markers = new L.FeatureGroup().addTo(group);
+      const markersChild = new L.FeatureGroup().addTo(markers);
+      new L.Marker(map.getCenter())
         .addTo(layers)
         .addTo(markers)
         .addTo(markersChild);
 
-      group.on('pm:enable', () => {
+      group.on('geoman:enable', () => {
         firedEventCount += 1;
       });
-      layers.on('pm:enable', () => {
+      layers.on('geoman:enable', () => {
         firedEventCount += 1;
       });
-      markers.on('pm:enable', () => {
+      markers.on('geoman:enable', () => {
         firedEventCount += 1;
       });
-      markersChild.on('pm:enable', () => {
+      markersChild.on('geoman:enable', () => {
         firedEventCount += 1;
       });
     });
@@ -249,7 +249,7 @@ describe('Edit LayerGroup', () => {
 
     let firedEventCount = 0;
     cy.get('@feature').then((feature) => {
-      feature.on('pm:enable', () => {
+      feature.on('geoman:enable', () => {
         firedEventCount += 1;
       });
     });
@@ -266,9 +266,9 @@ describe('Edit LayerGroup', () => {
   it('new added layers will be changed to edit mode if editmode is enabled', () => {
     cy.window().then(({ map, L }) => {
       map.setView([4.009783550466563, 104.00000000000006], 8);
-      const fg = L.featureGroup().addTo(map);
+      const fg = new L.FeatureGroup().addTo(map);
 
-      map.on('pm:create layeradd', (e) => {
+      map.on('geoman:create layeradd', (e) => {
         e.layer.addTo(fg);
       });
     });
@@ -287,9 +287,9 @@ describe('Edit LayerGroup', () => {
   it('new drawn markers not enable other layers in the same layergroup', () => {
     cy.window().then(({ map, L }) => {
       map.setView([4.009783550466563, 104.00000000000006], 8);
-      const fg = L.featureGroup().addTo(map);
+      const fg = new L.FeatureGroup().addTo(map);
 
-      map.on('pm:create layeradd', (e) => {
+      map.on('geoman:create layeradd', (e) => {
         e.layer.addTo(fg);
       });
     });
@@ -311,23 +311,23 @@ describe('Edit LayerGroup', () => {
       cy.fixture('LineString')
         .as('poly')
         .then((json) => {
-          layerGroup = L.geoJson(json, { pmIgnore: true }).addTo(map);
+          layerGroup = new L.GeoJSON(json, { geomanIgnore: true }).addTo(map);
           const bounds = layerGroup.getBounds();
           map.fitBounds(bounds);
         });
     });
 
-    cy.window().then(({ map, L }) => {
-      expect(map.pm.getGeomanLayers().length).to.eq(0);
+    cy.window().then(({ map, Geoman }) => {
+      expect(map.geoman.getGeomanLayers().length).to.eq(0);
 
       // enable all child layers of the group
-      layerGroup.setStyle({ pmIgnore: false });
+      layerGroup.setStyle({ geomanIgnore: false });
       // enable the group self
-      layerGroup.options.pmIgnore = false;
-      L.PM.reInitLayer(layerGroup);
+      layerGroup.options.geomanIgnore = false;
+      Geoman.reInitLayer(layerGroup);
 
-      expect(layerGroup.pm).to.not.eq(undefined);
-      expect(map.pm.getGeomanLayers().length).to.eq(6);
+      expect(layerGroup.geoman).to.not.eq(undefined);
+      expect(map.geoman.getGeomanLayers().length).to.eq(6);
     });
   });
 
@@ -339,14 +339,14 @@ describe('Edit LayerGroup', () => {
     cy.get(mapSelector).click(350, 200).click(400, 400);
 
     cy.window().then(({ map, L }) => {
-      const fg = L.featureGroup().addTo(map);
-      const layers = map.pm.getGeomanDrawLayers();
+      const fg = new L.FeatureGroup().addTo(map);
+      const layers = map.geoman.getGeomanDrawLayers();
       layers.forEach((layer) => {
         fg.addLayer(layer);
       });
-      fg.pm.setOptions({ syncLayersOnDrag: true });
+      fg.geoman.setOptions({ syncLayersOnDrag: true });
 
-      expect(layers[1].pm.options.syncLayersOnDrag).to.eq(true);
+      expect(layers[1].geoman.options.syncLayersOnDrag).to.eq(true);
     });
   });
 });

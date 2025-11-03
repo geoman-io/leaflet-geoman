@@ -28,7 +28,7 @@ body:
     id: geoman-version
     attributes:
       label: Geoman version
-      description: You can get the Geoman version via `L.PM.version`
+      description: You can get the Geoman version via `Geoman.version`
     validations:
       required: true
 

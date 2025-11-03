@@ -1,304 +1,304 @@
 describe('Events', () => {
   const mapSelector = '#map';
 
-  it('pm:langchange', () => {
+  it('geoman:langchange', () => {
     let calledevent = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:langchange', (e) => {
+        map.on('geoman:langchange', (e) => {
           calledevent = e.type;
         });
 
-        map.pm.setLang('de');
+        map.geoman.setLang('de');
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:langchange');
+        expect(calledevent).to.equal('geoman:langchange');
         calledevent = '';
       });
   });
 
-  it('pm:globaleditmodetoggled', () => {
+  it('geoman:globaleditmodetoggled', () => {
     let calledevent = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globaleditmodetoggled', (e) => {
+        map.on('geoman:globaleditmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.enableGlobalEditMode();
+        map.geoman.enableGlobalEditMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globaleditmodetoggled');
+        expect(calledevent).to.equal('geoman:globaleditmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globaleditmodetoggled', (e) => {
+        map.on('geoman:globaleditmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableGlobalEditMode();
+        map.geoman.disableGlobalEditMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globaleditmodetoggled');
+        expect(calledevent).to.equal('geoman:globaleditmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globaleditmodetoggled', (e) => {
+        map.on('geoman:globaleditmodetoggled', (e) => {
           calledevent = e.type;
         });
 
-        map.pm.toggleGlobalEditMode();
+        map.geoman.toggleGlobalEditMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globaleditmodetoggled');
+        expect(calledevent).to.equal('geoman:globaleditmodetoggled');
         calledevent = '';
       });
   });
 
-  it('pm:globaldragmodetoggled', () => {
+  it('geoman:globaldragmodetoggled', () => {
     let calledevent = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globaldragmodetoggled', (e) => {
+        map.on('geoman:globaldragmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.enableGlobalDragMode();
+        map.geoman.enableGlobalDragMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globaldragmodetoggled');
+        expect(calledevent).to.equal('geoman:globaldragmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globaldragmodetoggled', (e) => {
+        map.on('geoman:globaldragmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableGlobalDragMode();
+        map.geoman.disableGlobalDragMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globaldragmodetoggled');
+        expect(calledevent).to.equal('geoman:globaldragmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globaldragmodetoggled', (e) => {
+        map.on('geoman:globaldragmodetoggled', (e) => {
           calledevent = e.type;
         });
 
-        map.pm.toggleGlobalDragMode();
+        map.geoman.toggleGlobalDragMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globaldragmodetoggled');
+        expect(calledevent).to.equal('geoman:globaldragmodetoggled');
         calledevent = '';
       });
   });
 
-  it('pm:globalremovalmodetoggled', () => {
+  it('geoman:globalremovalmodetoggled', () => {
     let calledevent = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globalremovalmodetoggled', (e) => {
+        map.on('geoman:globalremovalmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.enableGlobalRemovalMode();
+        map.geoman.enableGlobalRemovalMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globalremovalmodetoggled');
+        expect(calledevent).to.equal('geoman:globalremovalmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globalremovalmodetoggled', (e) => {
+        map.on('geoman:globalremovalmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableGlobalRemovalMode();
+        map.geoman.disableGlobalRemovalMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globalremovalmodetoggled');
+        expect(calledevent).to.equal('geoman:globalremovalmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globalremovalmodetoggled', (e) => {
+        map.on('geoman:globalremovalmodetoggled', (e) => {
           calledevent = e.type;
         });
 
-        map.pm.toggleGlobalRemovalMode();
+        map.geoman.toggleGlobalRemovalMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globalremovalmodetoggled');
+        expect(calledevent).to.equal('geoman:globalremovalmodetoggled');
         calledevent = '';
       });
   });
 
-  it('pm:globaldrawmodetoggled', () => {
+  it('geoman:globaldrawmodetoggled', () => {
     let calledevent = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globaldrawmodetoggled', (e) => {
+        map.on('geoman:globaldrawmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.enableDraw('Polygon');
+        map.geoman.enableDraw('Polygon');
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globaldrawmodetoggled');
+        expect(calledevent).to.equal('geoman:globaldrawmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globaldrawmodetoggled', (e) => {
+        map.on('geoman:globaldrawmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableDraw('Polygon');
+        map.geoman.disableDraw();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globaldrawmodetoggled');
+        expect(calledevent).to.equal('geoman:globaldrawmodetoggled');
         calledevent = '';
       });
   });
 
-  it('pm:globalcutmodetoggled', () => {
+  it('geoman:globalcutmodetoggled', () => {
     let calledevent = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globalcutmodetoggled', (e) => {
+        map.on('geoman:globalcutmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.enableDraw('Cut');
+        map.geoman.enableDraw('Cut');
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globalcutmodetoggled');
+        expect(calledevent).to.equal('geoman:globalcutmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globalcutmodetoggled', (e) => {
+        map.on('geoman:globalcutmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableDraw('Cut');
+        map.geoman.disableDraw();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globalcutmodetoggled');
+        expect(calledevent).to.equal('geoman:globalcutmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globalcutmodetoggled', (e) => {
+        map.on('geoman:globalcutmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.enableGlobalCutMode();
+        map.geoman.enableGlobalCutMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globalcutmodetoggled');
+        expect(calledevent).to.equal('geoman:globalcutmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globalcutmodetoggled', (e) => {
+        map.on('geoman:globalcutmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableGlobalCutMode();
+        map.geoman.disableGlobalCutMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globalcutmodetoggled');
+        expect(calledevent).to.equal('geoman:globalcutmodetoggled');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:globalcutmodetoggled', (e) => {
+        map.on('geoman:globalcutmodetoggled', (e) => {
           calledevent = e.type;
         });
-        map.pm.toggleGlobalCutMode();
+        map.geoman.toggleGlobalCutMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:globalcutmodetoggled');
+        expect(calledevent).to.equal('geoman:globalcutmodetoggled');
         calledevent = '';
       });
   });
 
-  it('pm:drawstart & pm:drawend', () => {
+  it('geoman:drawstart & geoman:drawend', () => {
     let calledevent = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:drawstart', (e) => {
+        map.on('geoman:drawstart', (e) => {
           calledevent = e.type;
         });
-        map.pm.enableDraw('Polygon');
+        map.geoman.enableDraw('Polygon');
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:drawstart');
+        expect(calledevent).to.equal('geoman:drawstart');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:drawend', (e) => {
+        map.on('geoman:drawend', (e) => {
           calledevent = e.type;
         });
-        map.pm.disableDraw('Polygon');
+        map.geoman.disableDraw();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:drawend');
+        expect(calledevent).to.equal('geoman:drawend');
         calledevent = '';
       });
   });
 
-  it('pm:create', () => {
+  it('geoman:create', () => {
     let calledevent = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:create', (e) => {
+        map.on('geoman:create', (e) => {
           calledevent = e.type;
         });
-        map.pm.enableDraw('Circle');
+        map.geoman.enableDraw('Circle');
 
         cy.get(mapSelector).click(200, 200).click(250, 250);
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:create');
+        expect(calledevent).to.equal('geoman:create');
         calledevent = '';
       });
   });
-  it('Events while drawing: pm:vertexadded, pm:snapdrag, pm:snap, pm:unsnap, pm:centerplaced', () => {
+  it('Events while drawing: geoman:vertexadded, geoman:snapdrag, geoman:snap, geoman:unsnap, geoman:centerplaced', () => {
     let calledevent = '';
 
     cy.window()
@@ -307,21 +307,21 @@ describe('Events', () => {
           calledevent = e.type;
         }
 
-        map.on('pm:drawstart', (e) => {
+        map.on('geoman:drawstart', (e) => {
           const layer = e.workingLayer;
-          layer.on('pm:vertexadded', logEvent);
-          layer.on('pm:snapdrag', logEvent);
-          layer.on('pm:snap', logEvent);
-          layer.on('pm:unsnap', logEvent);
-          layer.on('pm:centerplaced', logEvent);
+          layer.on('geoman:vertexadded', logEvent);
+          layer.on('geoman:snapdrag', logEvent);
+          layer.on('geoman:snap', logEvent);
+          layer.on('geoman:unsnap', logEvent);
+          layer.on('geoman:centerplaced', logEvent);
         });
-        map.pm.enableDraw('Polygon');
+        map.geoman.enableDraw('Polygon');
 
         cy.get(mapSelector).click(200, 300);
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:vertexadded');
+        expect(calledevent).to.equal('geoman:vertexadded');
         calledevent = '';
       });
 
@@ -329,42 +329,42 @@ describe('Events', () => {
       .then(() => {
         cy.get(mapSelector)
           .click(200, 350)
-          .trigger('mousemove', { clientX: 200, clientY: 305 });
+          .trigger('pointermove', { clientX: 200, clientY: 305 });
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:snap');
+        expect(calledevent).to.equal('geoman:snap');
         calledevent = '';
       });
 
     cy.window()
       .then(() => {
-        cy.get(mapSelector).trigger('mousemove', {
+        cy.get(mapSelector).trigger('pointermove', {
           clientX: 300,
           clientY: 355,
         });
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:unsnap');
+        expect(calledevent).to.equal('geoman:unsnap');
         calledevent = '';
       });
 
     cy.window()
       .then(() => {
-        cy.get(mapSelector).trigger('mousemove', {
+        cy.get(mapSelector).trigger('pointermove', {
           clientX: 300,
           clientY: 385,
         });
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:snapdrag');
+        expect(calledevent).to.equal('geoman:snapdrag');
         calledevent = '';
       });
   });
 
-  it(' pm:centerplaced event while drawing', () => {
+  it(' geoman:centerplaced event while drawing', () => {
     let calledevent = '';
 
     cy.window()
@@ -373,21 +373,21 @@ describe('Events', () => {
           calledevent = e.type;
         }
 
-        map.on('pm:drawstart', (e) => {
+        map.on('geoman:drawstart', (e) => {
           const layer = e.workingLayer;
-          layer.on('pm:centerplaced', logEvent);
+          layer.on('geoman:centerplaced', logEvent);
         });
-        map.pm.enableDraw('Circle');
+        map.geoman.enableDraw('Circle');
         cy.get(mapSelector).click(200, 385).click(200, 200);
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:centerplaced');
+        expect(calledevent).to.equal('geoman:centerplaced');
         calledevent = '';
       });
   });
 
-  it('Events while editing: pm:edit,pm:update,pm:enable,pm:disable,pm:vertexadded,pm:vertexremoved', () => {
+  it('Events while editing: geoman:edit,geoman:update,geoman:enable,geoman:disable,geoman:vertexadded,geoman:vertexremoved', () => {
     let calledevent = '';
     let calledeventArr = [];
 
@@ -398,31 +398,31 @@ describe('Events', () => {
           calledeventArr[e.type] = e.type;
         }
 
-        map.on('pm:create', ({ layer }) => {
-          map.pm.disableDraw();
+        map.on('geoman:create', ({ layer }) => {
+          map.geoman.disableDraw();
 
-          layer.on('pm:edit', logEvent);
-          layer.on('pm:update', logEvent);
-          layer.on('pm:enable', logEvent);
-          layer.on('pm:disable', logEvent);
-          layer.on('pm:vertexadded', logEvent);
-          layer.on('pm:vertexremoved', logEvent);
+          layer.on('geoman:edit', logEvent);
+          layer.on('geoman:update', logEvent);
+          layer.on('geoman:enable', logEvent);
+          layer.on('geoman:disable', logEvent);
+          layer.on('geoman:vertexadded', logEvent);
+          layer.on('geoman:vertexremoved', logEvent);
           /*
         TODO Can't tested --> needs dragging
-        layer.on('pm:markerdragstart', logEvent);
-        layer.on('pm:markerdragend', logEvent);
-        layer.on('pm:snap', logEvent);
-        layer.on('pm:snapdrag', logEvent);
-        layer.on('pm:unsnap', logEvent);
-        layer.on('pm:intersect', logEvent);
-        layer.on('pm:centerplaced', logEvent);
+        layer.on('geoman:vertexdragstart', logEvent);
+        layer.on('geoman:vertexdragend', logEvent);
+        layer.on('geoman:snap', logEvent);
+        layer.on('geoman:snapdrag', logEvent);
+        layer.on('geoman:unsnap', logEvent);
+        layer.on('geoman:intersect', logEvent);
+        layer.on('geoman:centerplaced', logEvent);
          */
 
-          layer.pm.enable({
+          layer.geoman.enable({
             allowSelfIntersection: false,
           });
         });
-        map.pm.enableDraw('Polygon');
+        map.geoman.enableDraw('Polygon');
 
         cy.get(mapSelector)
 
@@ -433,7 +433,7 @@ describe('Events', () => {
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:enable');
+        expect(calledevent).to.equal('geoman:enable');
         calledevent = '';
       });
 
@@ -443,7 +443,7 @@ describe('Events', () => {
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:vertexadded');
+        expect(calledevent).to.equal('geoman:vertexadded');
         calledevent = '';
       });
 
@@ -453,46 +453,46 @@ describe('Events', () => {
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:vertexremoved');
+        expect(calledevent).to.equal('geoman:vertexremoved');
         calledevent = '';
       });
 
     cy.window()
       .then(({ map }) => {
-        map.pm.disableGlobalEditMode();
+        map.geoman.disableGlobalEditMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledeventArr['pm:update']).to.equal('pm:update');
+        expect(calledeventArr['geoman:update']).to.equal('geoman:update');
         calledevent = '';
         calledeventArr = [];
       });
 
     cy.window()
       .then(({ map }) => {
-        map.pm.toggleGlobalEditMode();
-        map.pm.toggleGlobalEditMode();
+        map.geoman.toggleGlobalEditMode();
+        map.geoman.toggleGlobalEditMode();
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:disable');
+        expect(calledevent).to.equal('geoman:disable');
         calledevent = '';
       });
   });
 
-  it('pm:cut', () => {
+  it('geoman:cut', () => {
     let calledevent = '';
     let calledevent2 = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:create', ({ layer }) => {
-          layer.on('pm:cut', (e) => {
+        map.on('geoman:create', ({ layer }) => {
+          layer.on('geoman:cut', (e) => {
             calledevent = e.type;
           });
         });
 
-        map.on('pm:cut', (e) => {
+        map.on('geoman:cut', (e) => {
           calledevent2 = e.type;
         });
 
@@ -519,26 +519,26 @@ describe('Events', () => {
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:cut');
-        expect(calledevent2).to.equal('pm:cut');
+        expect(calledevent).to.equal('geoman:cut');
+        expect(calledevent2).to.equal('geoman:cut');
         calledevent = '';
       });
   });
 
-  it('pm:remove', () => {
+  it('geoman:remove', () => {
     let calledevent = '';
     let calledevent2 = '';
     let calledevent3 = '';
 
     cy.window()
       .then(({ map }) => {
-        map.on('pm:create', ({ layer }) => {
-          layer.on('pm:remove', (e) => {
+        map.on('geoman:create', ({ layer }) => {
+          layer.on('geoman:remove', (e) => {
             calledevent = e.type;
           });
         });
 
-        map.on('pm:remove', (e) => {
+        map.on('geoman:remove', (e) => {
           calledevent2 = e.type;
         });
         map.on('layerremove', (e) => {
@@ -561,8 +561,8 @@ describe('Events', () => {
       })
       .then(() => {
         cy.wait(100);
-        expect(calledevent).to.equal('pm:remove');
-        expect(calledevent2).to.equal('pm:remove');
+        expect(calledevent).to.equal('geoman:remove');
+        expect(calledevent2).to.equal('geoman:remove');
         expect(calledevent3).to.equal('layerremove');
         calledevent = '';
         calledevent2 = '';
@@ -573,13 +573,13 @@ describe('Events', () => {
   it('snappingOrder', () => {
     let event = '';
     cy.window().then(({ map }) => {
-      map.on('pm:drawstart', (e) => {
-        e.workingLayer.on('pm:snap', (x) => {
+      map.on('geoman:drawstart', (e) => {
+        e.workingLayer.on('geoman:snap', (x) => {
           event = x;
         });
       });
 
-      map.pm.setGlobalOptions({ snappingOrder: ['Marker'] });
+      map.geoman.setGlobalOptions({ snappingOrder: ['Marker'] });
     });
 
     cy.window().then(() => {
@@ -590,24 +590,24 @@ describe('Events', () => {
       cy.get(mapSelector).click(200, 250);
 
       cy.toolbarButton('marker').click();
-      cy.get(mapSelector).trigger('mousemove', 200, 250, { which: 1 });
+      cy.get(mapSelector).trigger('pointermove', 200, 250, { which: 1 });
     });
     cy.window().then(() => {
-      const shape = event.layerInteractedWith.pm._shape;
+      const shape = event.layerInteractedWith.geoman._shape;
       expect(shape).to.eq('Marker');
     });
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ snappingOrder: ['CircleMarker'] });
+      map.geoman.setGlobalOptions({ snappingOrder: ['CircleMarker'] });
 
-      map.pm.enableDraw('Marker');
+      map.geoman.enableDraw('Marker');
 
       cy.get(mapSelector)
-        .trigger('mousemove', 200, 150, { which: 1 })
-        .trigger('mousemove', 200, 250, { which: 1 });
+        .trigger('pointermove', 200, 150, { which: 1 })
+        .trigger('pointermove', 200, 250, { which: 1 });
     });
     cy.window().then(() => {
-      const shape = event.layerInteractedWith.pm._shape;
+      const shape = event.layerInteractedWith.geoman._shape;
       expect(shape).to.eq('CircleMarker');
     });
   });

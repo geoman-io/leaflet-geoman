@@ -1,48 +1,55 @@
-import Draw from './L.PM.Draw';
+import {
+  CircleMarker,
+  DivIcon,
+  Polyline,
+  Circle,
+  FeatureGroup,
+  Marker,
+  Point,
+  Util,
+} from 'leaflet';
 import { destinationOnLine, getTranslation } from '../helpers';
+import Draw from './Draw';
+import Utils from '../GeomanUtils';
 
-Draw.CircleMarker = Draw.extend({
+export default class GeomanDrawCircleMarker extends Draw {
   initialize(map) {
     this._map = map;
     this._shape = 'CircleMarker';
     this.toolbarButtonName = 'drawCircleMarker';
     // with _layerIsDragging we check if a circlemarker is currently dragged and disable marker creation
     this._layerIsDragging = false;
-    this._BaseCircleClass = L.CircleMarker;
+    this._BaseCircleClass = CircleMarker;
     this._minRadiusOption = 'minRadiusCircleMarker';
     this._maxRadiusOption = 'maxRadiusCircleMarker';
     this._editableOption = 'resizeableCircleMarker';
     this._defaultRadius = 10;
-  },
+  }
+
   enable(options) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
-    L.Util.setOptions(this, options);
-    // TODO: remove with next major release
-    if (this.options.editable) {
-      this.options.resizeableCircleMarker = this.options.editable;
-      delete this.options.editable;
-    }
+    // instances of Geoman.Draw. So a dev could set drawing style one time as some kind of config
+    Util.setOptions(this, options);
 
     // change enabled state
     this._enabled = true;
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // change map cursor
-    this._map.getContainer().classList.add('geoman-draw-cursor');
+    this._map.getContainer().classList.add('leaflet-geoman-draw-cursor');
 
     // Draw the CircleMarker like a Circle
     if (this.options[this._editableOption]) {
       // we need to set the radius to 0 without overwriting the CircleMarker style
       const templineStyle = {};
-      L.extend(templineStyle, this.options.templineStyle);
+      Object.assign(templineStyle, this.options.templineStyle);
       templineStyle.radius = 0;
 
       // create a new layergroup
-      this._layerGroup = new L.FeatureGroup();
-      this._layerGroup._pmTempLayer = true;
+      this._layerGroup = new FeatureGroup();
+      this._layerGroup._geomanTempLayer = true;
       this._layerGroup.addTo(this._map);
 
       // this is the circle we want to draw
@@ -51,29 +58,31 @@ Draw.CircleMarker = Draw.extend({
         templineStyle
       );
       this._setPane(this._layer, 'layerPane');
-      this._layer._pmTempLayer = true;
+      this._layer._geomanTempLayer = true;
 
       // this is the marker in the center of the circle
-      this._centerMarker = L.marker(this._map.getCenter(), {
-        icon: L.divIcon({ className: 'marker-icon' }),
+      this._centerMarker = new Marker(this._map.getCenter(), {
+        icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
         draggable: false,
         zIndexOffset: 100,
       });
       this._setPane(this._centerMarker, 'vertexPane');
-      this._centerMarker._pmTempLayer = true;
+      this._centerMarker._geomanTempLayer = true;
 
-      // this is the hintmarker on the mouse cursor
-      this._hintMarker = L.marker(this._map.getCenter(), {
+      // this is the hintmarker on the pointer cursor
+      this._hintMarker = new Marker(this._map.getCenter(), {
         zIndexOffset: 110,
-        icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+        icon: new DivIcon({
+          className: 'leaflet-geoman-vertex-icon leaflet-geoman-cursor-marker',
+        }),
       });
       this._setPane(this._hintMarker, 'vertexPane');
-      this._hintMarker._pmTempLayer = true;
+      this._hintMarker._geomanTempLayer = true;
       this._layerGroup.addLayer(this._hintMarker);
 
       // show the hintmarker if the option is set
       if (this.options.cursorMarker) {
-        L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+        this._hintMarker._icon.classList.add('leaflet-geoman-visible');
       }
 
       // add tooltip to hintmarker
@@ -81,7 +90,7 @@ Draw.CircleMarker = Draw.extend({
         this._hintMarker
           .bindTooltip(getTranslation('tooltips.startCircle'), {
             permanent: true,
-            offset: L.point(0, 10),
+            offset: new Point(0, 10),
             direction: 'bottom',
 
             opacity: 0.8,
@@ -90,9 +99,9 @@ Draw.CircleMarker = Draw.extend({
       }
 
       // this is the hintline from the hint marker to the center marker
-      this._hintline = L.polyline([], this.options.hintlineStyle);
+      this._hintline = new Polyline([], this.options.hintlineStyle);
       this._setPane(this._hintline, 'layerPane');
-      this._hintline._pmTempLayer = true;
+      this._hintline._geomanTempLayer = true;
       this._layerGroup.addLayer(this._hintline);
       // create a polygon-point on click
       this._map.on('click', this._placeCenterMarker, this);
@@ -100,13 +109,13 @@ Draw.CircleMarker = Draw.extend({
       // create a marker on click on the map
       this._map.on('click', this._createMarker, this);
 
-      // this is the hintmarker on the mouse cursor
+      // this is the hintmarker on the pointer cursor
       this._hintMarker = new this._BaseCircleClass(this._map.getCenter(), {
         radius: this._defaultRadius,
         ...this.options.templineStyle,
       });
       this._setPane(this._hintMarker, 'layerPane');
-      this._hintMarker._pmTempLayer = true;
+      this._hintMarker._geomanTempLayer = true;
       this._hintMarker.addTo(this._map);
       // this is just to keep the snappable mixin happy
       this._layer = this._hintMarker;
@@ -116,7 +125,7 @@ Draw.CircleMarker = Draw.extend({
         this._hintMarker
           .bindTooltip(getTranslation('tooltips.placeCircleMarker'), {
             permanent: true,
-            offset: L.point(0, 10),
+            offset: new Point(0, 10),
             direction: 'bottom',
 
             opacity: 0.8,
@@ -125,8 +134,8 @@ Draw.CircleMarker = Draw.extend({
       }
     }
 
-    // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    // sync hint marker with pointer cursor
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     this._extendingEnable();
 
@@ -137,20 +146,22 @@ Draw.CircleMarker = Draw.extend({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
+  }
+
   _extendingEnable() {
     if (!this.options[this._editableOption] && this.options.markerEditable) {
       // enable edit mode for existing markers
       this._map.eachLayer((layer) => {
         if (this.isRelevantMarker(layer)) {
-          layer.pm.enable();
+          layer.geoman.enable();
         }
       });
     }
 
     // Must be named bringToBack to work with Leaflet functions.
     this._layer.bringToBack();
-  },
+  }
+
   disable() {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
@@ -160,7 +171,7 @@ Draw.CircleMarker = Draw.extend({
     this._enabled = false;
 
     // reset cursor
-    this._map.getContainer().classList.remove('geoman-draw-cursor');
+    this._map.getContainer().classList.remove('leaflet-geoman-draw-cursor');
 
     // disable when drawing like a Circle
     if (this.options[this._editableOption]) {
@@ -181,38 +192,42 @@ Draw.CircleMarker = Draw.extend({
     }
 
     // remove event listener to sync hint marker
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
-    this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
+    this._map.geoman.Toolbar.toggleButton(this.toolbarButtonName, false);
 
     // cleanup snapping
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._cleanupSnapping();
     }
 
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
+  }
+
   _extendingDisable() {
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {
       if (this.isRelevantMarker(layer)) {
-        layer.pm.disable();
+        layer.geoman.disable();
       }
     });
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggle(options) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
+  }
+
   _placeCenterMarker(e) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
@@ -232,7 +247,8 @@ Draw.CircleMarker = Draw.extend({
     this._map.on('click', this._finishShape, this);
 
     this._placeCircleCenter();
-  },
+  }
+
   _placeCircleCenter() {
     const latlng = this._centerMarker.getLatLng();
 
@@ -250,13 +266,15 @@ Draw.CircleMarker = Draw.extend({
       this._fireCenterPlaced();
       this._fireChange(this._layer.getLatLng(), 'Draw');
     }
-  },
+  }
+
   _syncHintLine() {
     const latlng = this._centerMarker.getLatLng();
     const secondLatLng = this._getNewDestinationOfHintMarker();
     // set coords for hintline from marker to last vertex of drawin polyline
     this._hintline.setLatLngs([latlng, secondLatLng]);
-  },
+  }
+
   _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
     const B = this._hintMarker.getLatLng();
@@ -276,7 +294,8 @@ Draw.CircleMarker = Draw.extend({
     } else {
       this._layer.setRadius(distance);
     }
-  },
+  }
+
   _syncHintMarker(e) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
@@ -284,7 +303,7 @@ Draw.CircleMarker = Draw.extend({
     this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
 
     // if snapping is enabled, do it
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       const fakeDragEvent = e;
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
@@ -297,15 +316,17 @@ Draw.CircleMarker = Draw.extend({
         ? this._centerMarker.getLatLng()
         : this._hintMarker.getLatLng();
     this._fireChange(latlng, 'Draw');
-  },
+  }
+
   isRelevantMarker(layer) {
     return (
-      layer instanceof L.CircleMarker &&
-      !(layer instanceof L.Circle) &&
-      layer.pm &&
-      !layer._pmTempLayer
+      layer instanceof CircleMarker &&
+      !(layer instanceof Circle) &&
+      layer.geoman &&
+      !layer._geomanTempLayer
     );
-  },
+  }
+
   _createMarker(e) {
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
     if (
@@ -338,11 +359,11 @@ Draw.CircleMarker = Draw.extend({
     this._setPane(marker, 'layerPane');
     this._finishLayer(marker);
     // add marker to the map
-    marker.addTo(this._map.pm._getContainingLayer());
+    marker.addTo(this._map.geoman._getContainingLayer());
 
     this._extendingCreateMarker(marker);
 
-    // fire the pm:create event and pass shape and marker
+    // fire the geoman:create event and pass shape and marker
     this._fireCreate(marker);
 
     this._cleanupSnapping();
@@ -350,13 +371,15 @@ Draw.CircleMarker = Draw.extend({
     if (!this.options.continueDrawing) {
       this.disable();
     }
-  },
+  }
+
   _extendingCreateMarker(marker) {
-    if (marker.pm && this.options.markerEditable) {
+    if (marker.geoman && this.options.markerEditable) {
       // enable editing for the marker
-      marker.pm.enable();
+      marker.geoman.enable();
     }
-  },
+  }
+
   _finishShape(e) {
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
     if (
@@ -398,14 +421,14 @@ Draw.CircleMarker = Draw.extend({
     const circleLayer = new this._BaseCircleClass(center, options);
     this._setPane(circleLayer, 'layerPane');
     this._finishLayer(circleLayer);
-    circleLayer.addTo(this._map.pm._getContainingLayer());
+    circleLayer.addTo(this._map.geoman._getContainingLayer());
 
-    if (circleLayer.pm) {
+    if (circleLayer.geoman) {
       // create polygon around the circle border
-      circleLayer.pm._updateHiddenPolyCircle();
+      circleLayer.geoman._updateHiddenPolyCircle();
     }
 
-    // fire the pm:create event and pass shape and layer
+    // fire the geoman:create event and pass shape and layer
     this._fireCreate(circleLayer);
 
     const hintMarkerLatLng = this._hintMarker.getLatLng();
@@ -416,7 +439,8 @@ Draw.CircleMarker = Draw.extend({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
+  }
+
   _getNewDestinationOfHintMarker() {
     let secondLatLng = this._hintMarker.getLatLng();
     if (this.options[this._editableOption]) {
@@ -451,21 +475,24 @@ Draw.CircleMarker = Draw.extend({
       }
     }
     return secondLatLng;
-  },
+  }
+
   _getMinDistanceInMeter() {
-    return L.PM.Utils.pxRadiusToMeterRadius(
+    return Utils.pxRadiusToMeterRadius(
       this.options[this._minRadiusOption],
       this._map,
       this._centerMarker.getLatLng()
     );
-  },
+  }
+
   _getMaxDistanceInMeter() {
-    return L.PM.Utils.pxRadiusToMeterRadius(
+    return Utils.pxRadiusToMeterRadius(
       this.options[this._maxRadiusOption],
       this._map,
       this._centerMarker.getLatLng()
     );
-  },
+  }
+
   _handleHintMarkerSnapping() {
     if (this.options[this._editableOption]) {
       if (this._hintMarker._snapped) {
@@ -490,17 +517,19 @@ Draw.CircleMarker = Draw.extend({
       // calculate the new latlng of marker if the snapped latlng radius is out of min/max
       this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
     }
-  },
+  }
+
   setStyle() {
     const templineStyle = {};
-    L.extend(templineStyle, this.options.templineStyle);
+    Object.assign(templineStyle, this.options.templineStyle);
     if (this.options[this._editableOption]) {
       templineStyle.radius = 0;
     }
     this._layer?.setStyle(templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
-  },
+  }
+
   _distanceCalculation(A, B) {
     return this._map.project(A).distanceTo(this._map.project(B));
-  },
-});
+  }
+}

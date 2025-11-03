@@ -1,10 +1,19 @@
 import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
-import Edit from './L.PM.Edit';
 import { copyLatLngs, hasValues, removeEmptyCoordRings } from '../helpers';
+import Edit from './Edit';
 
+import {
+  DivIcon,
+  FeatureGroup,
+  Marker,
+  Polygon,
+  Polyline,
+  Util,
+} from 'leaflet';
 import MarkerLimits from '../Mixins/MarkerLimits';
+import Utils from '../GeomanUtils';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
@@ -14,15 +23,20 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 // So I can get 'b' with: arr[0][0][1].
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
-Edit.Line = Edit.extend({
-  includes: [MarkerLimits],
-  _shape: 'Line',
+export default class GeomanEditPolyline extends Edit {
+  static {
+    this.include(MarkerLimits);
+  }
+
+  _shape = 'Polyline';
+
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
-  },
+  }
+
   enable(options) {
-    L.Util.setOptions(this, options);
+    Util.setOptions(this, options);
 
     this._map = this._layer._map;
 
@@ -56,7 +70,7 @@ Edit.Line = Edit.extend({
 
     if (!this.options.allowSelfIntersection) {
       this._layer.on(
-        'pm:vertexremoved',
+        'geoman:vertexremoved',
         this._handleSelfIntersectionOnVertexRemoval,
         this
       );
@@ -74,7 +88,8 @@ Edit.Line = Edit.extend({
       this.cachedColor = undefined;
     }
     this._fireEnable();
-  },
+  }
+
   disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
@@ -94,7 +109,7 @@ Edit.Line = Edit.extend({
 
     if (!this.options.allowSelfIntersection) {
       this._layer.off(
-        'pm:vertexremoved',
+        'geoman:vertexremoved',
         this._handleSelfIntersectionOnVertexRemoval,
         this
       );
@@ -104,17 +119,19 @@ Edit.Line = Edit.extend({
     const el = this._layer._path
       ? this._layer._path
       : this._layer._renderer._container;
-    L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    el.classList.remove('leaflet-geoman-draggable');
 
     if (this._layerEdited) {
       this._fireUpdate();
     }
     this._layerEdited = false;
     this._fireDisable();
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
+  }
+
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
@@ -122,14 +139,16 @@ Edit.Line = Edit.extend({
       this.disable();
     }
     return this.enabled();
-  },
+  }
+
   applyOptions() {
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();
     }
-  },
+  }
+
   _initMarkers() {
     const map = this._map;
     const coords = this._layer.getLatLngs();
@@ -141,8 +160,8 @@ Edit.Line = Edit.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._markerGroup = new L.FeatureGroup();
-    this._markerGroup._pmTempLayer = true;
+    this._markerGroup = new FeatureGroup();
+    this._markerGroup._geomanTempLayer = true;
 
     // handle coord-rings (outer, inner, etc)
     const handleRing = (coordsArr) => {
@@ -173,21 +192,21 @@ Edit.Line = Edit.extend({
     this._markers = handleRing(coords);
 
     // handle possible limitation: maximum number of markers
-    this.filterMarkerGroup();
+    this._filterMarkerGroup();
 
     // add markerGroup to map
     map.addLayer(this._markerGroup);
-  },
+  }
 
   // creates initial markers for coordinates
   _createMarker(latlng) {
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
-    marker._pmTempLayer = true;
+    marker._geomanTempLayer = true;
 
     if (this.options.rotate) {
       marker.on('dragstart', this._onRotateStart, this);
@@ -195,9 +214,9 @@ Edit.Line = Edit.extend({
       marker.on('dragend', this._onRotateEnd, this);
     } else {
       marker.on('click', this._onVertexClick, this);
-      marker.on('dragstart', this._onMarkerDragStart, this);
-      marker.on('move', this._onMarkerDrag, this);
-      marker.on('dragend', this._onMarkerDragEnd, this);
+      marker.on('dragstart', this._onVertexDragStart, this);
+      marker.on('move', this._onVertexDrag, this);
+      marker.on('dragend', this._onVertexDragEnd, this);
 
       if (!this.options.preventMarkerRemoval) {
         marker.on(this.options.removeVertexOn, this._removeMarker, this);
@@ -207,7 +226,7 @@ Edit.Line = Edit.extend({
     this._markerGroup.addLayer(marker);
 
     return marker;
-  },
+  }
 
   // creates the middle markes between coordinates
   _createMiddleMarker(leftM, rightM) {
@@ -216,15 +235,15 @@ Edit.Line = Edit.extend({
       return false;
     }
 
-    const latlng = L.PM.Utils.calcMiddleLatLng(
+    const latlng = Utils.calcMiddleLatLng(
       this._map,
       leftM.getLatLng(),
       rightM.getLatLng()
     );
 
     const middleMarker = this._createMarker(latlng);
-    const middleIcon = L.divIcon({
-      className: 'marker-icon marker-icon-middle',
+    const middleIcon = new DivIcon({
+      className: 'leaflet-geoman-vertex-icon leaflet-geoman-vertex-icon-middle',
     });
     middleMarker.setIcon(middleIcon);
     middleMarker.leftM = leftM;
@@ -238,7 +257,8 @@ Edit.Line = Edit.extend({
     middleMarker.on('movestart', this._onMiddleMarkerMoveStart, this);
 
     return middleMarker;
-  },
+  }
+
   _onMiddleMarkerClick(e) {
     const middleMarker = e.target;
 
@@ -248,10 +268,11 @@ Edit.Line = Edit.extend({
     // TODO: move the next two lines inside _addMarker() as soon as
     // https://github.com/Leaflet/Leaflet/issues/4484
     // is fixed
-    const icon = L.divIcon({ className: 'marker-icon' });
+    const icon = new DivIcon({ className: 'leaflet-geoman-vertex-icon' });
     middleMarker.setIcon(icon);
     this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
-  },
+  }
+
   _onMiddleMarkerMoveStart(e) {
     const middleMarker = e.target;
     middleMarker.on('moveend', this._onMiddleMarkerMoveEnd, this);
@@ -265,11 +286,13 @@ Edit.Line = Edit.extend({
     // callback as soon as this is fixed:
     // https://github.com/Leaflet/Leaflet/issues/4484
     this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
-  },
+  }
+
   _onMiddleMarkerMovePrevent(e) {
     const middleMarker = e.target;
     this._vertexValidationDrag(middleMarker);
-  },
+  }
+
   _onMiddleMarkerMoveEnd(e) {
     const middleMarker = e.target;
     middleMarker.off('move', this._onMiddleMarkerMovePrevent, this);
@@ -277,13 +300,14 @@ Edit.Line = Edit.extend({
     if (!this._vertexValidationDragEnd(middleMarker)) {
       return;
     }
-    const icon = L.divIcon({ className: 'marker-icon' });
+    const icon = new DivIcon({ className: 'leaflet-geoman-vertex-icon' });
     middleMarker.setIcon(icon);
     // timeout is needed else this._onVertexClick fires the event because it is called after deleting the flag
     setTimeout(() => {
       delete middleMarker._dragging;
     }, 100);
-  },
+  }
+
   // adds a new marker from a middlemarker
   _addMarker(newM, leftM, rightM) {
     // first, make this middlemarker a regular marker
@@ -300,7 +324,7 @@ Edit.Line = Edit.extend({
     delete newM.rightM;
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       leftM
     );
@@ -334,20 +358,20 @@ Edit.Line = Edit.extend({
 
     this._fireVertexAdded(
       newM,
-      L.PM.Utils.findDeepMarkerIndex(this._markers, newM).indexPath,
+      Utils.findDeepMarkerIndex(this._markers, newM).indexPath,
       latlng
     );
 
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._initSnappableMarkers();
     }
-  },
+  }
 
   hasSelfIntersection() {
     // check for self intersection of the layer and return true/false
     const selfIntersection = kinks(this._layer.toGeoJSON(15));
     return selfIntersection.features.length > 0;
-  },
+  }
 
   _handleSelfIntersectionOnVertexRemoval() {
     // check for selfintersection again (mainly to reset the style)
@@ -361,7 +385,7 @@ Edit.Line = Edit.extend({
       // re-enable markers for the new coords
       this._initMarkers();
     }
-  },
+  }
 
   _handleLayerStyle(flash) {
     const layer = this._layer;
@@ -409,7 +433,8 @@ Edit.Line = Edit.extend({
       }
     }
     return selfIntersection;
-  },
+  }
+
   _flashLayer() {
     if (!this.cachedColor) {
       this.cachedColor = this._layer.options.color;
@@ -422,20 +447,22 @@ Edit.Line = Edit.extend({
       this._layer.setStyle({ color: this.cachedColor });
       this.isRed = false;
     }, 200);
-  },
+  }
+
   _updateDisabledMarkerStyle(markers, disabled) {
     markers.forEach((marker) => {
       if (Array.isArray(marker)) {
         this._updateDisabledMarkerStyle(marker, disabled);
       } else if (marker._icon) {
         if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
-          L.DomUtil.addClass(marker._icon, 'vertexmarker-disabled');
+          marker._icon.classList.add('leaflet-geoman-vertex-disabled');
         } else {
-          L.DomUtil.removeClass(marker._icon, 'vertexmarker-disabled');
+          marker._icon.classList.remove('leaflet-geoman-vertex-disabled');
         }
       }
     });
-  },
+  }
+
   _removeMarker(e) {
     // the marker that should be removed
     const marker = e.target;
@@ -457,7 +484,7 @@ Edit.Line = Edit.extend({
     let coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -476,7 +503,7 @@ Edit.Line = Edit.extend({
 
     // define whether marker is part of hole
     const isHole =
-      parentPath[parentPath.length - 1] > 0 && this._layer instanceof L.Polygon;
+      parentPath[parentPath.length - 1] > 0 && this._layer instanceof Polygon;
 
     // prevent removal of the layer if the vertex count is below minimum when not a hole
     if (!this.options.removeLayerBelowMinVertexCount && !isHole) {
@@ -588,8 +615,9 @@ Edit.Line = Edit.extend({
     // TODO: maybe fire latlng as well?
     this._fireVertexRemoved(marker, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
-  updatePolygonCoordsFromMarkerDrag(marker) {
+  }
+
+  updatePolygonCoordsFromVertexDrag(marker) {
     // update polygon coords
     const coords = this._layer.getLatLngs();
 
@@ -597,7 +625,7 @@ Edit.Line = Edit.extend({
     const latlng = marker.getLatLng();
 
     // get indexPath of Marker
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -610,10 +638,10 @@ Edit.Line = Edit.extend({
 
     // set new coords on layer
     this._layer.setLatLngs(coords);
-  },
+  }
 
   _getNeighborMarkers(marker) {
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -631,12 +659,13 @@ Edit.Line = Edit.extend({
     const nextMarker = markerArr[nextMarkerIndex];
 
     return { prevMarker, nextMarker };
-  },
+  }
+
   _checkMarkerAllowedToDrag(marker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
-    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
-    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+    const prevLine = new Polyline([prevMarker.getLatLng(), marker.getLatLng()]);
+    const nextLine = new Polyline([marker.getLatLng(), nextMarker.getLatLng()]);
 
     let prevLineIntersectionLen = lineIntersect(
       this._layer.toGeoJSON(15),
@@ -662,8 +691,9 @@ Edit.Line = Edit.extend({
       return false;
     }
     return true;
-  },
-  _onMarkerDragStart(e) {
+  }
+
+  _onVertexDragStart(e) {
     const marker = e.target;
     this._preventRenderingMarkers(true);
 
@@ -676,9 +706,9 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = Utils.findDeepMarkerIndex(this._markers, marker);
 
-    this._fireMarkerDragStart(e, indexPath);
+    this._fireVertexDragStart(e, indexPath);
 
     // if self intersection isn't allowed, save the coords upon dragstart
     // in case we need to reset the layer
@@ -698,8 +728,9 @@ Edit.Line = Edit.extend({
     } else {
       this._markerAllowedToDrag = null;
     }
-  },
-  _onMarkerDrag(e) {
+  }
+
+  _onVertexDrag(e) {
     // dragged marker
     const marker = e.target;
 
@@ -707,7 +738,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = Utils.findDeepMarkerIndex(
       this._markers,
       marker
     );
@@ -731,7 +762,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    this.updatePolygonCoordsFromMarkerDrag(marker);
+    this.updatePolygonCoordsFromVertexDrag(marker);
 
     // the dragged markers neighbors
     const markerArr =
@@ -750,7 +781,7 @@ Edit.Line = Edit.extend({
     const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
 
     if (marker._middleMarkerNext) {
-      const middleMarkerNextLatLng = L.PM.Utils.calcMiddleLatLng(
+      const middleMarkerNextLatLng = Utils.calcMiddleLatLng(
         this._map,
         markerLatLng,
         nextMarkerLatLng
@@ -759,7 +790,7 @@ Edit.Line = Edit.extend({
     }
 
     if (marker._middleMarkerPrev) {
-      const middleMarkerPrevLatLng = L.PM.Utils.calcMiddleLatLng(
+      const middleMarkerPrevLatLng = Utils.calcMiddleLatLng(
         this._map,
         markerLatLng,
         prevMarkerLatLng
@@ -771,10 +802,11 @@ Edit.Line = Edit.extend({
     if (!this.options.allowSelfIntersection) {
       this._handleLayerStyle();
     }
-    this._fireMarkerDrag(e, indexPath);
+    this._fireVertexDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
-  _onMarkerDragEnd(e) {
+  }
+
+  _onVertexDragEnd(e) {
     const marker = e.target;
     this._preventRenderingMarkers(false);
 
@@ -782,7 +814,7 @@ Edit.Line = Edit.extend({
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, marker);
+    const { indexPath } = Utils.findDeepMarkerIndex(this._markers, marker);
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
@@ -799,7 +831,7 @@ Edit.Line = Edit.extend({
     const intersectionReset =
       !this.options.allowSelfIntersection && intersection;
 
-    this._fireMarkerDragEnd(e, indexPath, intersectionReset);
+    this._fireVertexDragEnd(e, indexPath, intersectionReset);
 
     if (intersectionReset) {
       // reset coordinates
@@ -809,7 +841,7 @@ Edit.Line = Edit.extend({
       // re-enable markers for the new coords
       this._initMarkers();
 
-      if (this.options.snappable) {
+      if (this.options.allowSnapping) {
         this._initSnappableMarkers();
       }
 
@@ -829,15 +861,16 @@ Edit.Line = Edit.extend({
     this._fireEdit();
     this._layerEdited = true;
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
+
   _onVertexClick(e) {
     const vertex = e.target;
     if (vertex._dragging) {
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(this._markers, vertex);
+    const { indexPath } = Utils.findDeepMarkerIndex(this._markers, vertex);
 
     this._fireVertexClick(e, indexPath);
-  },
-});
+  }
+}

@@ -1,79 +1,101 @@
-const tiles1 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+import {
+  TileLayer,
+  LeafletMap,
+  Circle,
+  CircleMarker,
+  Marker,
+  FeatureGroup,
+  Polygon,
+  Polyline,
+  LayerGroup,
+  GeoJSON,
+} from 'leaflet';
+import Geoman from 'leaflet-geoman';
+
+Geoman.initialize();
+
+const tiles1 = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
-const tiles2 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const tiles2 = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
-const tiles3 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const tiles3 = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
-const map2 = L.map('example2').setView([51.505, -0.09], 13).addLayer(tiles1);
-const map3 = L.map('example3').setView([51.505, -0.09], 13).addLayer(tiles2);
-const map4 = L.map('example4').setView([51.505, -0.09], 13).addLayer(tiles3);
+const map2 = new LeafletMap('example2')
+  .setView([51.505, -0.09], 13)
+  .addLayer(tiles1);
+const map3 = new LeafletMap('example3')
+  .setView([51.505, -0.09], 13)
+  .addLayer(tiles2);
+const map4 = new LeafletMap('example4')
+  .setView([51.505, -0.09], 13)
+  .addLayer(tiles3);
 // map2.dragging.disable();
 
-// map2.on('pm:create', function(e) {
-//     // alert('pm:create event fired. See console for details');
+// map2.on('geoman:create', function(e) {
+//     // alert('geoman:create event fired. See console for details');
 //     console.log(e);
 
 //     const layer = e.layer;
-//     layer.on('pm:cut', function(ev) {
+//     layer.on('geoman:cut', function(ev) {
 //         console.log('cut event on layer');
 //         console.log(ev);
 //     });
 // });
-// map2.on('pm:cut', function(e) {
+// map2.on('geoman:cut', function(e) {
 //     console.log('cut event on map');
 //     console.log(e);
 // });
-// map2.on('pm:remove', function(e) {
-//     console.log('pm:remove event fired. See console for details');
-//     // alert('pm:remove event fired. See console for details');
+// map2.on('geoman:remove', function(e) {
+//     console.log('geoman:remove event fired. See console for details');
+//     // alert('geoman:remove event fired. See console for details');
 //     console.log(e);
 // });
-// map2.on('pm:drawstart', function(e) {
+// map2.on('geoman:drawstart', function(e) {
 //     console.log(e);
 //     console.log(e.workingLayer);
 // });
 
-const m1 = L.circleMarker([51.50313, -0.091223], { radius: 10 });
-const m2 = L.marker([51.50614, -0.0989]);
-const m3 = L.marker([51.50915, -0.096112], { pmIgnore: true });
+const m1 = new CircleMarker([51.50313, -0.091223], { radius: 10 });
+const m2 = new Marker([51.50614, -0.0989]);
+const m3 = new Marker([51.50915, -0.096112], { geomanIgnore: true });
 
-const mGroup = L.layerGroup([m1, m2, m3]).addTo(map2);
-// mGroup.pm.enable();
+const mGroup = new LayerGroup([m1, m2, m3]).addTo(map2);
+// mGroup.geoman.enable();
 
-map2.pm.addControls({
+map2.geoman.addControls({
   drawMarker: false,
   drawPolygon: true,
   editMode: false,
   drawPolyline: false,
   removalMode: true,
 });
-// map2.pm.addControls({
+// map2.geoman.addControls({
 //     drawMarker: false,
 //     drawPolygon: true,
 //     editMode: false,
 //     drawPolyline: false,
 //     removalMode: false,
 // });
-// map2.pm.addControls({
+// map2.geoman.addControls({
 //     drawMarker: true,
 //     drawPolygon: false,
 //     editMode: false,
 //     drawPolyline: false,
 //     removalMode: true,
 // });
-map2.pm.addControls({
+map2.geoman.addControls({
   drawMarker: true,
   drawPolygon: true,
   editMode: true,
@@ -81,16 +103,16 @@ map2.pm.addControls({
   removalMode: true,
 });
 
-// map2.pm.disableDraw('Polygon');
-// map2.pm.enableDraw('Circle', {
-//     snappable: true,
+// map2.geoman.disableDraw();
+// map2.geoman.enableDraw('Circle', {
+//     allowSnapping: true,
 //     cursorMarker: true
 // });
 
-// map2.pm.enableDraw('Line', { allowSelfIntersection: false });
-// map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
+// map2.geoman.enableDraw('Polyline', { allowSelfIntersection: false });
+// map2.geoman.enableDraw('Polygon', { allowSelfIntersection: false });
 
-map2.on('pm:globaleditmodetoggled', (e) => {
+map2.on('geoman:globaleditmodetoggled', (e) => {
   console.log(e);
 });
 
@@ -182,12 +204,12 @@ const geoJsonData = {
   ],
 };
 
-const theCollection = L.geoJson(geoJsonData, {
+const theCollection = new GeoJSON(geoJsonData, {
   pointToLayer: (feature, latlng) => {
     if (feature.properties.customGeometry) {
-      return new L.Circle(latlng, feature.properties.customGeometry.radius);
+      return new Circle(latlng, feature.properties.customGeometry.radius);
     }
-    return new L.Marker(latlng);
+    return new Marker(latlng);
   },
   // onEachFeature: (feature, layer) => {
   //     layer.addTo(map2);
@@ -201,25 +223,25 @@ map2.fitBounds(b);
 
 console.log(theCollection);
 
-theCollection.on('pm:edit', (e) => {
+theCollection.on('geoman:edit', (e) => {
   console.log(e);
 });
 
-theCollection.on('pm:dragstart', (e) => {
+theCollection.on('geoman:dragstart', (e) => {
   console.log(e);
 });
 
 // const geoJsonButton = document.getElementById('test-geojson');
-// const geoJsonLayer = L.geoJson(null, { pmIgnore: false });
+// const geoJsonLayer = L.geoJson(null, { geomanIgnore: false });
 // geoJsonLayer.addTo(map2);
 // geoJsonLayer.addData(geoJsonData);
 
-// geoJsonLayer.pm.toggleEdit({
-//     draggable: true,
-//     snappable: true,
+// geoJsonLayer.geoman.toggleEdit({
+//     allowDragging: true,
+//     allowSnapping: true,
 // });
 
-map3.pm.addControls({
+map3.geoman.addControls({
   drawMarker: true,
   drawPolygon: true,
   editMode: true,
@@ -229,11 +251,10 @@ map3.pm.addControls({
 
 const markerStyle = {
   opacity: 0.5,
-  draggable: false,
 };
 
-map3.pm.enableDraw('Polygon', {
-  snappable: true,
+map3.geoman.enableDraw('Polygon', {
+  allowSnapping: true,
   templineStyle: {
     color: 'blue',
   },
@@ -248,11 +269,10 @@ map3.pm.enableDraw('Polygon', {
   },
   markerStyle,
   cursorMarker: false,
-  // finishOn: 'contextmenu',
-  finishOnDoubleClick: true,
+  finishOn: 'dblclick',
 });
 
-const scotland = L.polygon([
+const scotland = new Polygon([
   [
     [60, -13],
     [60, 0],
@@ -273,31 +293,31 @@ const bounds = scotland.getBounds();
 map3.fitBounds(bounds);
 
 // geoJsonLayer.addEventListener('click', function(e) {
-//     geoJsonLayer.pm.toggleEdit();
+//     geoJsonLayer.geoman.toggleEdit();
 // });
 
-// geoJsonLayer.on('pm:drag', function(e) {
+// geoJsonLayer.on('geoman:drag', function(e) {
 //     console.log(e);
 // });
 
-map2.on('pm:drawstart', (e) => {
+map2.on('geoman:drawstart', (e) => {
   const layer = e.workingLayer;
   // console.log(layer);
-  layer.on('pm:centerplaced', (x) => {
+  layer.on('geoman:centerplaced', (x) => {
     console.log(x);
   });
 });
-map2.on('pm:create', (e) => {
+map2.on('geoman:create', (e) => {
   const { layer } = e;
   // console.log(layer);
-  layer.on('pm:centerplaced', (x) => {
+  layer.on('geoman:centerplaced', (x) => {
     console.log(x);
   });
 });
 
 // Polygon Example
 
-const polygonLayer = L.polygon([
+const polygonLayer = new Polygon([
   [51.509, -0.08],
   [51.503, -0.06],
   [51.51, -0.047],
@@ -305,86 +325,86 @@ const polygonLayer = L.polygon([
   .addTo(map3)
   .addTo(map2);
 
-// polygonLayer.pm.toggleEdit({
+// polygonLayer.geoman.toggleEdit({
 //     allowSelfIntersection: false,
 //     preventVertexEdit: true,
 //     preventMarkerRemoval: false,
 // });
 
-polygonLayer.on('pm:update', (e) => {
+polygonLayer.on('geoman:update', (e) => {
   console.log(e);
 });
 
-polygonLayer.on('pm:intersect', (e) => {
+polygonLayer.on('geoman:intersect', (e) => {
   console.log(e);
 });
 
-// map2.pm.toggleGlobalEditMode({
+// map2.geoman.toggleGlobalEditMode({
 //     allowSelfIntersection: false,
 //     preventMarkerRemoval: false,
 //     preventVertexEdit: false,
 // });
-// map2.pm.disableGlobalEditMode();
+// map2.geoman.disableGlobalEditMode();
 
-map2.pm.enableDraw('Polygon', { allowSelfIntersection: false });
-map2.pm.disableDraw('Polygon');
-map2.pm.enableDraw('Line', { allowSelfIntersection: false });
-map2.pm.disableDraw('Line');
+map2.geoman.enableDraw('Polygon', { allowSelfIntersection: false });
+map2.geoman.disableDraw();
+map2.geoman.enableDraw('Polyline', { allowSelfIntersection: false });
+map2.geoman.disableDraw();
 
-map2.on('pm:create', (e) => {
-  // e.layer.pm.enable({ allowSelfIntersection: false });
-  // e.layer.pm.disable();
-  // console.log(e.layer.pm.hasSelfIntersection());
+map2.on('geoman:create', (e) => {
+  // e.layer.geoman.enable({ allowSelfIntersection: false });
+  // e.layer.geoman.disable();
+  // console.log(e.layer.geoman.hasSelfIntersection());
 
-  e.layer.on('pm:markerdragend', (x) => {
+  e.layer.on('geoman:vertexdragend', (x) => {
     console.log(x);
   });
 
-  e.layer.on('pm:update', (x) => {
+  e.layer.on('geoman:update', (x) => {
     console.log(x);
   });
 
-  e.layer.on('pm:cut', (x) => {
+  e.layer.on('geoman:cut', (x) => {
     console.log(x);
   });
 });
 
-map2.on('pm:drawstart', (e) => {
+map2.on('geoman:drawstart', (e) => {
   const layer = e.workingLayer;
-  layer.on('pm:vertexadded', (x) => {
+  layer.on('geoman:vertexadded', (x) => {
     console.log(x);
-    console.log(x.workingLayer.pm.hasSelfIntersection());
+    console.log(x.workingLayer.geoman.hasSelfIntersection());
   });
 });
 
-polygonLayer.on('pm:vertexadded', (e) => {
+polygonLayer.on('geoman:vertexadded', (e) => {
   console.log(e);
 });
-polygonLayer.on('pm:vertexremoved', (e) => {
+polygonLayer.on('geoman:vertexremoved', (e) => {
   console.log(e);
 });
 
-polygonLayer.on('pm:markerdragstart', (e) => {
+polygonLayer.on('geoman:vertexdragstart', (e) => {
   console.log(e);
 });
 
 // Layer Group Example
 
-const layerGroupItem1 = L.polyline(
+const layerGroupItem1 = new Polyline(
   [
     [51.51, -0.09],
     [51.513, -0.08],
     [51.514, -0.11],
   ],
-  { pmIgnore: true }
+  { geomanIgnore: true }
 );
-const layerGroupItem2 = L.polygon([
+const layerGroupItem2 = new Polygon([
   [51.52, -0.06],
   [51.51, -0.07],
   [51.52, -0.05],
 ]);
 
-const layerGroupItem3 = L.polygon([
+const layerGroupItem3 = new Polygon([
   [51.51549835365031, -0.06450164634969281],
   [51.51944818307178, -0.08425079345703125],
   [51.51868369995795, -0.06131630004205801],
@@ -407,42 +427,42 @@ const feature = {
   },
 };
 
-const layerGroup = L.featureGroup([layerGroupItem1]).addTo(map4);
-layerGroup.pm.toggleEdit({
-  draggable: true,
-  snappable: true,
+const layerGroup = new FeatureGroup([layerGroupItem1]).addTo(map4);
+layerGroup.geoman.toggleEdit({
+  allowDragging: true,
+  allowSnapping: true,
   snapDistance: 30,
 });
-const someLayer = L.geoJSON(feature);
+const someLayer = new GeoJSON(feature);
 
 layerGroup.addLayer(someLayer);
 
 someLayer.addData(feature);
 
-layerGroup.on('pm:snap', (e) => {
+layerGroup.on('geoman:snap', (e) => {
   console.log('snap');
   console.log(e);
 });
-layerGroup.on('pm:unsnap', (e) => {
+layerGroup.on('geoman:unsnap', (e) => {
   console.log('unsnap');
   console.log(e);
 });
 
-map4.pm.addControls({
+map4.geoman.addControls({
   position: 'topright',
 });
 
-map4.pm.enableDraw('Polygon', {
-  finishOn: 'mouseout',
+map4.geoman.enableDraw('Polygon', {
+  finishOn: 'pointerout',
 });
-map4.pm.disableDraw('Polygon');
+map4.geoman.disableDraw();
 
-map4.pm.enableDraw('Marker', {
-  snappable: false,
+map4.geoman.enableDraw('Marker', {
+  allowSnapping: false,
 });
-map4.pm.disableDraw('Marker');
+map4.geoman.disableDraw();
 
-// map4.pm.setPathOptions({
+// map4.geoman.setPathOptions({
 //     color: 'orange',
 //     fillColor: 'green',
 //     fillOpacity: 0.4,
@@ -453,25 +473,25 @@ layerGroup.addLayer(layerGroupItem3);
 // layerGroup.addLayer(layerGroupItem4);
 // layerGroup.addLayer(layerGroupItem5);
 
-layerGroup.on('pm:dragstart', (e) => {
+layerGroup.on('geoman:dragstart', (e) => {
   console.log(e);
 });
-layerGroup.on('pm:drag', (e) => {
+layerGroup.on('geoman:drag', (e) => {
   console.log(e);
 });
-layerGroup.on('pm:dragend', (e) => {
+layerGroup.on('geoman:dragend', (e) => {
   console.log(e);
 });
-layerGroup.on('pm:markerdragstart', (e) => {
+layerGroup.on('geoman:vertexdragstart', (e) => {
   console.log(e);
 });
-layerGroup.on('pm:markerdragend', (e) => {
+layerGroup.on('geoman:vertexdragend', (e) => {
   console.log(e);
 });
 
 // test with markercluster
-// var markers = L.markerClusterGroup();
-// markers.addLayer(L.marker([51.505, -0.07]));
-// markers.addLayer(L.marker([51.505, -0.08]));
-// markers.addLayer(L.marker([51.505, -0.09]));
+// var markers = new MarkerClusterGroup();
+// markers.addLayer(new Marker([51.505, -0.07]));
+// markers.addLayer(new Marker([51.505, -0.08]));
+// markers.addLayer(new Marker([51.505, -0.09]));
 // map4.addLayer(markers);

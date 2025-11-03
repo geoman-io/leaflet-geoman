@@ -4,7 +4,7 @@ describe('Modes', () => {
     cy.drawShape('MonsterPolygon');
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: -1,
       });
     });
@@ -15,7 +15,7 @@ describe('Modes', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: 20,
       });
     });
@@ -48,16 +48,16 @@ describe('Modes', () => {
           ],
         },
       };
-      // eslint-disable-next-line prefer-destructuring
-      layer = L.geoJSON(geojson).addTo(map).getLayers()[0];
+
+      layer = new L.GeoJSON(geojson).addTo(map).getLayers()[0];
       map.fitBounds(layer.getBounds());
 
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: 1,
         allowSelfIntersection: false,
       });
 
-      layer.on('pm:markerdragstart', (e) => {
+      layer.on('geoman:vertexdragstart', (e) => {
         markerHtml = e.markerEvent.target._icon;
       });
     });
@@ -65,11 +65,13 @@ describe('Modes', () => {
     cy.toolbarButton('edit').click();
 
     // make the marker visible
-    cy.get(mapSelector).trigger('mousemove', 500, 120, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 500, 120, {
+      eventConstructor: 'PointerEvent',
+    });
 
     cy.get(mapSelector)
-      .trigger('mousedown', 495, 125, { which: 1 })
-      .trigger('mousemove', 500, 307, { which: 1 });
+      .trigger('pointerdown', 495, 125, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 500, 307, { eventConstructor: 'PointerEvent' });
 
     // let the animation to show the new marker finish
     cy.wait(100);
@@ -79,10 +81,14 @@ describe('Modes', () => {
     });
 
     // end dragging
-    cy.get(mapSelector).trigger('mouseup', 500, 307, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 500, 307, {
+      eventConstructor: 'PointerEvent',
+    });
 
     // make other marker visible
-    cy.get(mapSelector).trigger('mousemove', 310, 330, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 310, 330, {
+      eventConstructor: 'PointerEvent',
+    });
 
     cy.get('.leaflet-marker-icon').should((p) => {
       expect(p[0]).to.not.equal(markerHtml);
@@ -93,7 +99,7 @@ describe('Modes', () => {
     cy.drawShape('PolygonPart1');
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: 3,
         limitMarkersToViewport: true,
       });
@@ -103,7 +109,9 @@ describe('Modes', () => {
 
     cy.hasTotalVertexMarkers(3);
 
-    cy.get('.marker-icon:not(.marker-icon-middle)')
+    cy.get(
+      '.leaflet-geoman-vertex-icon:not(.leaflet-geoman-vertex-icon-middle)'
+    )
       .first()
       .trigger('contextmenu');
 
@@ -114,7 +122,7 @@ describe('Modes', () => {
     cy.drawShape('PolygonPart1');
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         limitMarkersToCount: 3,
         limitMarkersToViewport: true,
       });
@@ -132,7 +140,11 @@ describe('Modes', () => {
   it('properly removes layers', () => {
     cy.toolbarButton('marker').click();
 
-    cy.get(mapSelector).click(90, 250).click(120, 250);
+    cy.get(mapSelector).click(90, 250);
+
+    cy.toolbarButton('marker').click();
+
+    cy.get(mapSelector).click(120, 250);
 
     cy.toolbarButton('delete').click();
 
@@ -145,17 +157,19 @@ describe('Modes', () => {
     cy.toolbarButton('delete').click();
   });
 
-  it('unable to remove layer with pmIgnore:true', () => {
+  it('unable to remove layer with geomanIgnore:true', () => {
     cy.window().then(({ L, map }) => {
       const testLayer = new L.FeatureGroup();
       map.addLayer(testLayer);
 
-      Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
-        const poly = event.layer;
+      map.on('geoman:create', ({ layer }) => {
+        const poly = layer;
 
         const coords = poly.getLatLngs();
 
-        const newPoly = L.polygon(coords, { pmIgnore: true }).addTo(testLayer);
+        const newPoly = new L.Polygon(coords, { geomanIgnore: true }).addTo(
+          testLayer
+        );
         poly.remove();
 
         return newPoly;
@@ -193,7 +207,7 @@ describe('Modes', () => {
     cy.window().then(({ map, L }) => {
       map.eachLayer((layer) => {
         if (layer instanceof L.Marker) {
-          assert.isTrue(layer.pm.layerDragEnabled());
+          assert.isTrue(layer.geoman.layerDragEnabled());
         }
       });
     });
@@ -203,7 +217,7 @@ describe('Modes', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon').click();
 
-    // draw a polygon - triggers the event pm:create
+    // draw a polygon - triggers the event geoman:create
     cy.get(mapSelector)
       .click(90, 250)
       .click(100, 50)
@@ -214,11 +228,11 @@ describe('Modes', () => {
     cy.window().then(({ map, L }) => {
       map.eachLayer((l) => {
         if (l instanceof L.Polygon) {
-          l.pm.enable();
+          l.geoman.enable();
         }
       });
 
-      map.pm.enableGlobalDragMode();
+      map.geoman.enableGlobalDragMode();
 
       cy.hasVertexMarkers(0);
     });
@@ -251,7 +265,7 @@ describe('Modes', () => {
     cy.hasVertexMarkers(4);
 
     cy.window().then(({ map, L }) => {
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.hasVertexMarkers(8);
@@ -267,7 +281,7 @@ describe('Modes', () => {
     cy.window().then(({ map, L }) => {
       map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
-          assert.isTrue(layer.pm.enabled());
+          assert.isTrue(layer.geoman.enabled());
         }
       });
     });
@@ -277,8 +291,10 @@ describe('Modes', () => {
 
   it('re-applies removal mode onAdd', () => {
     cy.toolbarButton('marker').click();
+    cy.get(mapSelector).click(90, 250);
 
-    cy.get(mapSelector).click(90, 250).click(120, 250);
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector).click(120, 250);
 
     cy.toolbarButton('delete').click();
 
@@ -287,8 +303,8 @@ describe('Modes', () => {
     cy.hasLayers(2);
 
     cy.window().then(({ map, L }) => {
-      L.marker([51.505, -0.09]).addTo(map);
-      L.marker([51.505, -0.08]).addTo(map);
+      new L.Marker([51.505, -0.09]).addTo(map);
+      new L.Marker([51.505, -0.08]).addTo(map);
     });
 
     cy.window().then(({ map, L }) => {
@@ -304,8 +320,6 @@ describe('Modes', () => {
     cy.toolbarButton('marker').click();
 
     cy.get(mapSelector).click(90, 250);
-
-    cy.toolbarButton('marker').click();
 
     cy.get(mapSelector).click(90, 245);
 
@@ -323,21 +337,21 @@ describe('Modes', () => {
   it('Test removal when preventMarkerRemoval is passed to global options', () => {
     cy.toolbarButton('rectangle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      map.pm.toggleGlobalEditMode({
+      map.geoman.toggleGlobalEditMode({
         preventMarkerRemoval: true,
       });
     });
 
     cy.toolbarButton('delete')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 300);
 
@@ -353,7 +367,7 @@ describe('Modes', () => {
   });
   it('re-enable layers that added while in globaleditmode', () => {
     cy.window().then(({ map, L }) => {
-      map.pm.enableGlobalEditMode();
+      map.geoman.enableGlobalEditMode();
 
       const json = JSON.parse(
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-74.058559,40.718564],[-74.058559,40.726045],[-74.03959,40.726045],[-74.03959,40.718564],[-74.058559,40.718564]]]}}'
@@ -361,8 +375,8 @@ describe('Modes', () => {
       const json2 = JSON.parse(
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-74.035277,40.703719],[-74.035277,40.712633],[-74.017596,40.712633],[-74.017596,40.703719],[-74.035277,40.703719]]]}}'
       );
-      const p2 = L.geoJson(json).addTo(map);
-      L.geoJson(json2).addTo(map);
+      const p2 = new L.GeoJSON(json).addTo(map);
+      new L.GeoJSON(json2).addTo(map);
 
       map.fitBounds(p2.getBounds());
       map.setZoom(13);
@@ -375,12 +389,12 @@ describe('Modes', () => {
 
     cy.toolbarButton('delete')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.toolbarButton('edit')
-      .closest('.button-container')
-      .should('not.have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('not.have.class', 'leaflet-geoman-active');
   });
 
   it('re-applies drag mode onAdd', () => {
@@ -401,16 +415,22 @@ describe('Modes', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
+      expect(
+        map.geoman.getGeomanLayers()[0].geoman.layerDragEnabled()
+      ).to.equal(true);
     });
 
     cy.window().then(({ map, L }) => {
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
-      expect(map.pm.getGeomanLayers()[1].pm.layerDragEnabled()).to.equal(true);
+      expect(
+        map.geoman.getGeomanLayers()[0].geoman.layerDragEnabled()
+      ).to.equal(true);
+      expect(
+        map.geoman.getGeomanLayers()[1].geoman.layerDragEnabled()
+      ).to.equal(true);
     });
   });
 
@@ -421,12 +441,14 @@ describe('Modes', () => {
       const jsonString =
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
       const poly = JSON.parse(jsonString);
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.rotateEnabled()).to.equal(true);
+        expect(map.geoman.getGeomanLayers()[0].geoman.rotateEnabled()).to.equal(
+          true
+        );
         done();
       }, 100);
     });
@@ -439,12 +461,12 @@ describe('Modes', () => {
       const jsonString =
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
       const poly = JSON.parse(jsonString);
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.enabled()).to.equal(true);
+        expect(map.geoman.getGeomanLayers()[0].geoman.enabled()).to.equal(true);
         done();
       }, 100);
     });
@@ -457,14 +479,14 @@ describe('Modes', () => {
       const jsonString =
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
       const poly = JSON.parse(jsonString);
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(
-          true
-        );
+        expect(
+          map.geoman.getGeomanLayers()[0].geoman.layerDragEnabled()
+        ).to.equal(true);
         done();
       }, 100);
     });
@@ -477,15 +499,15 @@ describe('Modes', () => {
       const jsonString =
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
       const poly = JSON.parse(jsonString);
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        const layer = map.pm.getGeomanLayers()[0];
-        expect(layer.listens('click', map.pm.removeLayer, map.pm)).to.equal(
-          true
-        );
+        const layer = map.geoman.getGeomanLayers()[0];
+        expect(
+          layer.listens('click', map.geoman._removeLayer, map.geoman)
+        ).to.equal(true);
         done();
       }, 100);
     });

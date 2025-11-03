@@ -1,10 +1,12 @@
 // Corner detection based on Leaflet Draw's Edit.Rectangle.js Class:
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
-import Edit from './L.PM.Edit';
+import { DivIcon, FeatureGroup, Marker } from 'leaflet';
 import { calcAngle } from '../helpers';
+import Utils from '../GeomanUtils';
+import GeomanEditPolygon from './Edit.Polygon';
 
-Edit.Rectangle = Edit.Polygon.extend({
-  _shape: 'Rectangle',
+export default class GeomanEditRectangle extends GeomanEditPolygon {
+  _shape = 'Rectangle';
   // initializes Rectangle Markers
   _initMarkers() {
     const map = this._map;
@@ -16,8 +18,8 @@ Edit.Rectangle = Edit.Polygon.extend({
     }
 
     // add markerGroup to map, markerGroup includes regular and middle markers
-    this._markerGroup = new L.FeatureGroup();
-    this._markerGroup._pmTempLayer = true;
+    this._markerGroup = new FeatureGroup();
+    this._markerGroup._geomanTempLayer = true;
     map.addLayer(this._markerGroup);
 
     // create markers for four corners of rectangle
@@ -36,55 +38,58 @@ Edit.Rectangle = Edit.Polygon.extend({
         marker.setLatLng(latlng);
       }
     });
-  },
+  }
+
   applyOptions() {
-    if (this.options.snappable) {
+    if (this.options.allowSnapping) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();
     }
     this._addMarkerEvents();
-  },
+  }
 
   // creates initial markers for coordinates
   _createMarker(latlng, index) {
-    const marker = new L.Marker(latlng, {
+    const marker = new Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new DivIcon({ className: 'leaflet-geoman-vertex-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
     marker._origLatLng = latlng;
     marker._index = index;
-    marker._pmTempLayer = true;
+    marker._geomanTempLayer = true;
 
     marker.on('click', this._onVertexClick, this);
 
     this._markerGroup.addLayer(marker);
 
     return marker;
-  },
+  }
+
   // Add marker events after adding the snapping events to the markers, beacause of the execution order
   _addMarkerEvents() {
     this._markers[0].forEach((marker) => {
-      marker.on('dragstart', this._onMarkerDragStart, this);
-      marker.on('drag', this._onMarkerDrag, this);
-      marker.on('dragend', this._onMarkerDragEnd, this);
+      marker.on('dragstart', this._onVertexDragStart, this);
+      marker.on('drag', this._onVertexDrag, this);
+      marker.on('dragend', this._onVertexDragEnd, this);
 
       // TODO: Can we remove this? The _removeMarker Event is a empty function
       if (!this.options.preventMarkerRemoval) {
         marker.on('contextmenu', this._removeMarker, this);
       }
     });
-  },
-  // Empty callback for 'contextmenu' binding set in L.PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
+  }
+
+  // Empty callback for 'contextmenu' binding set in Geoman.Edit.Polyline.js's _createMarker method (AKA, right-click on marker event)
   // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
   _removeMarker() {
     // The method, it does nothing!!!
     return null;
-  },
+  }
 
-  _onMarkerDragStart(e) {
+  _onVertexDragStart(e) {
     if (!this._vertexValidation('move', e)) {
       return;
     }
@@ -101,15 +106,15 @@ Edit.Rectangle = Edit.Polygon.extend({
     // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
     draggedMarker._snapped = false;
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
     );
 
-    this._fireMarkerDragStart(e, indexPath);
-  },
+    this._fireVertexDragStart(e, indexPath);
+  }
 
-  _onMarkerDrag(e) {
+  _onVertexDrag(e) {
     // dragged marker
     const draggedMarker = e.target;
 
@@ -124,15 +129,15 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     this._adjustRectangleForMarkerMove(draggedMarker);
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
     );
-    this._fireMarkerDrag(e, indexPath);
+    this._fireVertexDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
 
-  _onMarkerDragEnd(e) {
+  _onVertexDragEnd(e) {
     // dragged marker
     const draggedMarker = e.target;
     if (!this._vertexValidationDragEnd(draggedMarker)) {
@@ -144,26 +149,26 @@ Edit.Rectangle = Edit.Polygon.extend({
       delete m._oppositeCornerLatLng;
     });
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
     );
-    this._fireMarkerDragEnd(e, indexPath);
+    this._fireVertexDragEnd(e, indexPath);
 
     // fire edit event
     this._fireEdit();
     this._layerEdited = true;
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
 
   // adjusts the rectangle's size and bounds whenever a marker is moved
   // params: movedMarker -- the Marker object
   _adjustRectangleForMarkerMove(movedMarker) {
     // update moved marker coordinates
-    L.extend(movedMarker._origLatLng, movedMarker._latlng);
+    Object.assign(movedMarker._origLatLng, movedMarker._latlng);
 
     // update rectangle boundaries, based on moved marker's new LatLng and cached opposite corner's LatLng
-    const corners = L.PM.Utils._getRotatedRectangle(
+    const corners = Utils._getRotatedRectangle(
       movedMarker.getLatLng(),
       movedMarker._oppositeCornerLatLng,
       this.getAngle(),
@@ -176,7 +181,7 @@ Edit.Rectangle = Edit.Polygon.extend({
 
     // Redraw the shape (to update altered rectangle)
     this._layer.redraw();
-  },
+  }
 
   // adjusts the position of all Markers
   // params: markerLatLngs -- an array of exactly LatLng objects
@@ -226,7 +231,8 @@ Edit.Rectangle = Edit.Polygon.extend({
         });
       }
     }
-  },
+  }
+
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
   _findCorners() {
@@ -241,11 +247,11 @@ Edit.Rectangle = Edit.Polygon.extend({
     }
 
     const latlngs = this._layer.getLatLngs()[0];
-    return L.PM.Utils._getRotatedRectangle(
+    return Utils._getRotatedRectangle(
       latlngs[0],
       latlngs[2],
       this.getAngle(),
       this._map || this
     );
-  },
-});
+  }
+}

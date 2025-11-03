@@ -6,7 +6,7 @@ declare module 'leaflet' {
    * Extends built in leaflet Layer Options.
    */
   interface LayerOptions {
-    pmIgnore?: boolean;
+    geomanIgnore?: boolean;
     snapIgnore?: boolean;
     /** Layers can be excluded from splitting with splitMark: false and splitOnlyMarkedLayers: false. Or included with splitMark: true and splitOnlyMarkedLayers: true. ⭐ */
     splitMark?: boolean;
@@ -16,34 +16,34 @@ declare module 'leaflet' {
    * Extends built in leaflet Map Options.
    */
   interface MapOptions {
-    pmIgnore?: boolean;
+    geomanIgnore?: boolean;
   }
 
   /**
    * Extends built in leaflet Map.
    */
   interface Map {
-    pm: PM.PMMap;
+    geoman: Geoman.GeomanMap;
   }
 
   /**
    * Extends built in leaflet Path.
    */
   interface Path {
-    pm: PM.PMLayer;
+    geoman: Geoman.GeomanLayer;
   }
   /**
    * Extends built in leaflet ImageOverlay.
    */
   interface ImageOverlay {
-    pm: PM.PMLayer;
+    geoman: Geoman.GeomanLayer;
   }
 
   /**
    * Extends built in leaflet LayerGroup.
    */
   interface LayerGroup {
-    pm: PM.PMLayerGroup;
+    geoman: Geoman.GeomanLayerGroup;
   }
 
   /**
@@ -61,7 +61,7 @@ declare module 'leaflet' {
    * Extends built in leaflet Marker.
    */
   interface Marker {
-    pm: PM.PMLayer;
+    geoman: Geoman.GeomanLayer;
   }
 
   /**
@@ -80,69 +80,69 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when a layer is removed via Removal Mode. */
-    on(type: 'pm:remove', fn: PM.RemoveEventHandler): this;
-    once(type: 'pm:remove', fn: PM.RemoveEventHandler): this;
-    off(type: 'pm:remove', fn?: PM.RemoveEventHandler): this;
+    on(type: 'geoman:remove', fn: Geoman.RemoveEventHandler): this;
+    once(type: 'geoman:remove', fn: Geoman.RemoveEventHandler): this;
+    off(type: 'geoman:remove', fn?: Geoman.RemoveEventHandler): this;
 
     /** Fired when the layer being cut. Draw+Edit Mode*/
-    on(type: 'pm:cut', fn: PM.CutEventHandler): this;
-    once(type: 'pm:cut', fn: PM.CutEventHandler): this;
-    off(type: 'pm:cut', fn?: PM.CutEventHandler): this;
+    on(type: 'geoman:cut', fn: Geoman.CutEventHandler): this;
+    once(type: 'geoman:cut', fn: Geoman.CutEventHandler): this;
+    off(type: 'geoman:cut', fn?: Geoman.CutEventHandler): this;
 
     /** Fired when the layer being split. Draw+Edit Mode ⭐*/
-    on(type: 'pm:split', fn: PM.SplitEventHandler): this;
-    once(type: 'pm:split', fn: PM.SplitEventHandler): this;
-    off(type: 'pm:split', fn?: PM.SplitEventHandler): this;
+    on(type: 'geoman:split', fn: Geoman.SplitEventHandler): this;
+    once(type: 'geoman:split', fn: Geoman.SplitEventHandler): this;
+    off(type: 'geoman:split', fn?: Geoman.SplitEventHandler): this;
 
     /** Fired when rotation is enabled for a layer. */
-    on(type: 'pm:rotateenable', fn: PM.RotateEnableEventHandler): this;
-    once(type: 'pm:rotateenable', fn: PM.RotateEnableEventHandler): this;
-    off(type: 'pm:rotateenable', fn?: PM.RotateEnableEventHandler): this;
+    on(type: 'geoman:rotateenable', fn: Geoman.RotateEnableEventHandler): this;
+    once(type: 'geoman:rotateenable', fn: Geoman.RotateEnableEventHandler): this;
+    off(type: 'geoman:rotateenable', fn?: Geoman.RotateEnableEventHandler): this;
 
     /** Fired when rotation is disabled for a layer. */
-    on(type: 'pm:rotatedisable', fn: PM.RotateDisableEventHandler): this;
-    once(type: 'pm:rotatedisable', fn: PM.RotateDisableEventHandler): this;
-    off(type: 'pm:rotatedisable', fn?: PM.RotateDisableEventHandler): this;
+    on(type: 'geoman:rotatedisable', fn: Geoman.RotateDisableEventHandler): this;
+    once(type: 'geoman:rotatedisable', fn: Geoman.RotateDisableEventHandler): this;
+    off(type: 'geoman:rotatedisable', fn?: Geoman.RotateDisableEventHandler): this;
 
     /** Fired when rotation starts on a layer. */
-    on(type: 'pm:rotatestart', fn: PM.RotateStartEventHandler): this;
-    once(type: 'pm:rotatestart', fn: PM.RotateStartEventHandler): this;
-    off(type: 'pm:rotatestart', fn?: PM.RotateStartEventHandler): this;
+    on(type: 'geoman:rotatestart', fn: Geoman.RotateStartEventHandler): this;
+    once(type: 'geoman:rotatestart', fn: Geoman.RotateStartEventHandler): this;
+    off(type: 'geoman:rotatestart', fn?: Geoman.RotateStartEventHandler): this;
 
     /** Fired when a layer is rotated. */
-    on(type: 'pm:rotate', fn: PM.RotateEventHandler): this;
-    once(type: 'pm:rotate', fn: PM.RotateEventHandler): this;
-    off(type: 'pm:rotate', fn?: PM.RotateEventHandler): this;
+    on(type: 'geoman:rotate', fn: Geoman.RotateEventHandler): this;
+    once(type: 'geoman:rotate', fn: Geoman.RotateEventHandler): this;
+    off(type: 'geoman:rotate', fn?: Geoman.RotateEventHandler): this;
 
     /** Fired when rotation ends on a layer. */
-    on(type: 'pm:rotateend', fn: PM.RotateEndEventHandler): this;
-    once(type: 'pm:rotateend', fn: PM.RotateEndEventHandler): this;
-    off(type: 'pm:rotateend', fn?: PM.RotateEndEventHandler): this;
+    on(type: 'geoman:rotateend', fn: Geoman.RotateEndEventHandler): this;
+    once(type: 'geoman:rotateend', fn: Geoman.RotateEndEventHandler): this;
+    off(type: 'geoman:rotateend', fn?: Geoman.RotateEndEventHandler): this;
 
     /** Fired when scaling is enabled for a layer. */
-    on(type: 'pm:scaleenable', fn: PM.ScaleEnableEventHandler): this;
-    once(type: 'pm:scaleenable', fn: PM.ScaleEnableEventHandler): this;
-    off(type: 'pm:scaleenable', fn?: PM.ScaleEnableEventHandler): this;
+    on(type: 'geoman:scaleenable', fn: Geoman.ScaleEnableEventHandler): this;
+    once(type: 'geoman:scaleenable', fn: Geoman.ScaleEnableEventHandler): this;
+    off(type: 'geoman:scaleenable', fn?: Geoman.ScaleEnableEventHandler): this;
 
     /** Fired when scaling is disabled for a layer. */
-    on(type: 'pm:scaledisable', fn: PM.ScaleDisableEventHandler): this;
-    once(type: 'pm:scaledisable', fn: PM.ScaleDisableEventHandler): this;
-    off(type: 'pm:scaledisable', fn?: PM.ScaleDisableEventHandler): this;
+    on(type: 'geoman:scaledisable', fn: Geoman.ScaleDisableEventHandler): this;
+    once(type: 'geoman:scaledisable', fn: Geoman.ScaleDisableEventHandler): this;
+    off(type: 'geoman:scaledisable', fn?: Geoman.ScaleDisableEventHandler): this;
 
     /** Fired when scaling starts on a layer. */
-    on(type: 'pm:scalestart', fn: PM.ScaleStartEventHandler): this;
-    once(type: 'pm:scalestart', fn: PM.ScaleStartEventHandler): this;
-    off(type: 'pm:scalestart', fn?: PM.ScaleStartEventHandler): this;
+    on(type: 'geoman:scalestart', fn: Geoman.ScaleStartEventHandler): this;
+    once(type: 'geoman:scalestart', fn: Geoman.ScaleStartEventHandler): this;
+    off(type: 'geoman:scalestart', fn?: Geoman.ScaleStartEventHandler): this;
 
     /** Fired when a layer is scaled. */
-    on(type: 'pm:scale', fn: PM.ScaleEventHandler): this;
-    once(type: 'pm:scale', fn: PM.ScaleEventHandler): this;
-    off(type: 'pm:scale', fn?: PM.ScaleEventHandler): this;
+    on(type: 'geoman:scale', fn: Geoman.ScaleEventHandler): this;
+    once(type: 'geoman:scale', fn: Geoman.ScaleEventHandler): this;
+    off(type: 'geoman:scale', fn?: Geoman.ScaleEventHandler): this;
 
     /** Fired when scaling ends on a layer. */
-    on(type: 'pm:scaleend', fn: PM.ScaleEndEventHandler): this;
-    once(type: 'pm:scaleend', fn: PM.ScaleEndEventHandler): this;
-    off(type: 'pm:scaleend', fn?: PM.ScaleEndEventHandler): this;
+    on(type: 'geoman:scaleend', fn: Geoman.ScaleEndEventHandler): this;
+    once(type: 'geoman:scaleend', fn: Geoman.ScaleEndEventHandler): this;
+    off(type: 'geoman:scaleend', fn?: Geoman.ScaleEndEventHandler): this;
 
     /******************************************
      *
@@ -151,24 +151,24 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired during a marker move/drag. */
-    on(type: 'pm:snapdrag', fn: PM.SnapEventHandler): this;
-    once(type: 'pm:snapdrag', fn: PM.SnapEventHandler): this;
-    off(type: 'pm:snapdrag', fn?: PM.SnapEventHandler): this;
+    on(type: 'geoman:snapdrag', fn: Geoman.SnapEventHandler): this;
+    once(type: 'geoman:snapdrag', fn: Geoman.SnapEventHandler): this;
+    off(type: 'geoman:snapdrag', fn?: Geoman.SnapEventHandler): this;
 
     /** Fired when a vertex is snapped. */
-    on(type: 'pm:snap', fn: PM.SnapEventHandler): this;
-    once(type: 'pm:snap', fn: PM.SnapEventHandler): this;
-    off(type: 'pm:snap', fn?: PM.SnapEventHandler): this;
+    on(type: 'geoman:snap', fn: Geoman.SnapEventHandler): this;
+    once(type: 'geoman:snap', fn: Geoman.SnapEventHandler): this;
+    off(type: 'geoman:snap', fn?: Geoman.SnapEventHandler): this;
 
     /** Fired when a vertex is unsnapped. */
-    on(type: 'pm:unsnap', fn: PM.SnapEventHandler): this;
-    once(type: 'pm:unsnap', fn: PM.SnapEventHandler): this;
-    off(type: 'pm:unsnap', fn?: PM.SnapEventHandler): this;
+    on(type: 'geoman:unsnap', fn: Geoman.SnapEventHandler): this;
+    once(type: 'geoman:unsnap', fn: Geoman.SnapEventHandler): this;
+    off(type: 'geoman:unsnap', fn?: Geoman.SnapEventHandler): this;
 
     /** Called when the center of a circle is placed/moved. */
-    on(type: 'pm:centerplaced', fn: PM.CenterPlacedEventHandler): this;
-    once(type: 'pm:centerplaced', fn: PM.CenterPlacedEventHandler): this;
-    off(type: 'pm:centerplaced', fn?: PM.CenterPlacedEventHandler): this;
+    on(type: 'geoman:centerplaced', fn: Geoman.CenterPlacedEventHandler): this;
+    once(type: 'geoman:centerplaced', fn: Geoman.CenterPlacedEventHandler): this;
+    off(type: 'geoman:centerplaced', fn?: Geoman.CenterPlacedEventHandler): this;
 
     /******************************************
      *
@@ -177,9 +177,9 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when a layer is edited. */
-    on(type: 'pm:edit', fn: PM.EditEventHandler): this;
-    once(type: 'pm:edit', fn: PM.EditEventHandler): this;
-    off(type: 'pm:edit', fn?: PM.EditEventHandler): this;
+    on(type: 'geoman:edit', fn: Geoman.EditEventHandler): this;
+    once(type: 'geoman:edit', fn: Geoman.EditEventHandler): this;
+    off(type: 'geoman:edit', fn?: Geoman.EditEventHandler): this;
 
     /******************************************
      *
@@ -189,65 +189,65 @@ declare module 'leaflet' {
 
     /** Fired when Drawing Mode is toggled. */
     on(
-      type: 'pm:globaldrawmodetoggled',
-      fn: PM.GlobalDrawModeToggledEventHandler,
+      type: 'geoman:globaldrawmodetoggled',
+      fn: Geoman.GlobalDrawModeToggledEventHandler,
       context?: any
     ): L.Evented;
     once(
-      type: 'pm:globaldrawmodetoggled',
-      fn: PM.GlobalDrawModeToggledEventHandler,
+      type: 'geoman:globaldrawmodetoggled',
+      fn: Geoman.GlobalDrawModeToggledEventHandler,
       context?: any
     ): L.Evented;
     off(
-      type: 'pm:globaldrawmodetoggled',
-      fn?: PM.GlobalDrawModeToggledEventHandler,
+      type: 'geoman:globaldrawmodetoggled',
+      fn?: Geoman.GlobalDrawModeToggledEventHandler,
       context?: any
     ): L.Evented;
 
     /** Called when drawing mode is enabled. Payload includes the shape type and working layer. */
     on(
-      type: 'pm:drawstart',
-      fn: PM.DrawStartEventHandler,
+      type: 'geoman:drawstart',
+      fn: Geoman.DrawStartEventHandler,
       context?: any
     ): L.Evented;
     once(
-      type: 'pm:drawstart',
-      fn: PM.DrawStartEventHandler,
+      type: 'geoman:drawstart',
+      fn: Geoman.DrawStartEventHandler,
       context?: any
     ): L.Evented;
     off(
-      type: 'pm:drawstart',
-      fn?: PM.DrawStartEventHandler,
+      type: 'geoman:drawstart',
+      fn?: Geoman.DrawStartEventHandler,
       context?: any
     ): L.Evented;
 
     /** Called when drawing mode is disabled. Payload includes the shape type. */
     on(
-      type: 'pm:drawend',
-      fn: PM.DrawEndEventHandler,
+      type: 'geoman:drawend',
+      fn: Geoman.DrawEndEventHandler,
       context?: any
     ): L.Evented;
     once(
-      type: 'pm:drawend',
-      fn: PM.DrawEndEventHandler,
+      type: 'geoman:drawend',
+      fn: Geoman.DrawEndEventHandler,
       context?: any
     ): L.Evented;
     off(
-      type: 'pm:drawend',
-      fn?: PM.DrawEndEventHandler,
+      type: 'geoman:drawend',
+      fn?: Geoman.DrawEndEventHandler,
       context?: any
     ): L.Evented;
 
     /** Called when drawing mode is disabled. Payload includes the shape type. */
-    on(type: 'pm:create', fn: PM.CreateEventHandler, context?: any): L.Evented;
+    on(type: 'geoman:create', fn: Geoman.CreateEventHandler, context?: any): L.Evented;
     once(
-      type: 'pm:create',
-      fn: PM.CreateEventHandler,
+      type: 'geoman:create',
+      fn: Geoman.CreateEventHandler,
       context?: any
     ): L.Evented;
     off(
-      type: 'pm:create',
-      fn?: PM.CreateEventHandler,
+      type: 'geoman:create',
+      fn?: Geoman.CreateEventHandler,
       context?: any
     ): L.Evented;
 
@@ -258,9 +258,9 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Called when a new vertex is added. */
-    on(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler): this;
-    once(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler): this;
-    off(type: 'pm:vertexadded', fn?: PM.VertexAddedEventHandler): this;
+    on(type: 'geoman:vertexadded', fn: Geoman.VertexAddedEventHandler): this;
+    once(type: 'geoman:vertexadded', fn: Geoman.VertexAddedEventHandler): this;
+    off(type: 'geoman:vertexadded', fn?: Geoman.VertexAddedEventHandler): this;
 
     /******************************************
      *
@@ -269,117 +269,117 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when edit mode is disabled and a layer is edited and its coordinates have changed. */
-    on(type: 'pm:update', fn: PM.UpdateEventHandler): this;
-    once(type: 'pm:update', fn: PM.UpdateEventHandler): this;
-    off(type: 'pm:update', fn?: PM.UpdateEventHandler): this;
+    on(type: 'geoman:update', fn: Geoman.UpdateEventHandler): this;
+    once(type: 'geoman:update', fn: Geoman.UpdateEventHandler): this;
+    off(type: 'geoman:update', fn?: Geoman.UpdateEventHandler): this;
 
     /** Fired when edit mode on a layer is enabled. */
-    on(type: 'pm:enable', fn: PM.EnableEventHandler): this;
-    once(type: 'pm:enable', fn: PM.EnableEventHandler): this;
-    off(type: 'pm:enable', fn?: PM.EnableEventHandler): this;
+    on(type: 'geoman:enable', fn: Geoman.EnableEventHandler): this;
+    once(type: 'geoman:enable', fn: Geoman.EnableEventHandler): this;
+    off(type: 'geoman:enable', fn?: Geoman.EnableEventHandler): this;
 
     /** Fired when edit mode on a layer is disabled. */
-    on(type: 'pm:disable', fn: PM.DisableEventHandler): this;
-    once(type: 'pm:disable', fn: PM.DisableEventHandler): this;
-    off(type: 'pm:disable', fn?: PM.DisableEventHandler): this;
+    on(type: 'geoman:disable', fn: Geoman.DisableEventHandler): this;
+    once(type: 'geoman:disable', fn: Geoman.DisableEventHandler): this;
+    off(type: 'geoman:disable', fn?: Geoman.DisableEventHandler): this;
 
     /** Fired when a vertex is added. */
-    on(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler2): this;
-    once(type: 'pm:vertexadded', fn: PM.VertexAddedEventHandler2): this;
-    off(type: 'pm:vertexadded', fn?: PM.VertexAddedEventHandler2): this;
+    on(type: 'geoman:vertexadded', fn: Geoman.VertexAddedEventHandler2): this;
+    once(type: 'geoman:vertexadded', fn: Geoman.VertexAddedEventHandler2): this;
+    off(type: 'geoman:vertexadded', fn?: Geoman.VertexAddedEventHandler2): this;
 
     /** Fired when a vertex is removed. */
-    on(type: 'pm:vertexremoved', fn: PM.VertexRemovedEventHandler): this;
-    once(type: 'pm:vertexremoved', fn: PM.VertexRemovedEventHandler): this;
-    off(type: 'pm:vertexremoved', fn?: PM.VertexRemovedEventHandler): this;
+    on(type: 'geoman:vertexremoved', fn: Geoman.VertexRemovedEventHandler): this;
+    once(type: 'geoman:vertexremoved', fn: Geoman.VertexRemovedEventHandler): this;
+    off(type: 'geoman:vertexremoved', fn?: Geoman.VertexRemovedEventHandler): this;
 
     /** Fired when a vertex is clicked. */
-    on(type: 'pm:vertexclick', fn: PM.VertexClickEventHandler): this;
-    once(type: 'pm:vertexclick', fn: PM.VertexClickEventHandler): this;
-    off(type: 'pm:vertexclick', fn?: PM.VertexClickEventHandler): this;
+    on(type: 'geoman:vertexclick', fn: Geoman.VertexClickEventHandler): this;
+    once(type: 'geoman:vertexclick', fn: Geoman.VertexClickEventHandler): this;
+    off(type: 'geoman:vertexclick', fn?: Geoman.VertexClickEventHandler): this;
 
     /** Fired when dragging of a marker which corresponds to a vertex starts. */
-    on(type: 'pm:markerdragstart', fn: PM.MarkerDragStartEventHandler): this;
-    once(type: 'pm:markerdragstart', fn: PM.MarkerDragStartEventHandler): this;
-    off(type: 'pm:markerdragstart', fn?: PM.MarkerDragStartEventHandler): this;
+    on(type: 'geoman:vertexdragstart', fn: Geoman.VertexDragStartEventHandler): this;
+    once(type: 'geoman:vertexdragstart', fn: Geoman.VertexDragStartEventHandler): this;
+    off(type: 'geoman:vertexdragstart', fn?: Geoman.VertexDragStartEventHandler): this;
 
     /** Fired when dragging a vertex-marker. */
-    on(type: 'pm:markerdrag', fn: PM.MarkerDragEventHandler): this;
-    once(type: 'pm:markerdrag', fn: PM.MarkerDragEventHandler): this;
-    off(type: 'pm:markerdrag', fn?: PM.MarkerDragEventHandler): this;
+    on(type: 'geoman:vertexdrag', fn: Geoman.VertexDragEventHandler): this;
+    once(type: 'geoman:vertexdrag', fn: Geoman.VertexDragEventHandler): this;
+    off(type: 'geoman:vertexdrag', fn?: Geoman.VertexDragEventHandler): this;
 
     /** Fired when dragging of a vertex-marker ends. */
-    on(type: 'pm:markerdragend', fn: PM.MarkerDragEndEventHandler): this;
-    once(type: 'pm:markerdragend', fn: PM.MarkerDragEndEventHandler): this;
-    off(type: 'pm:markerdragend', fn?: PM.MarkerDragEndEventHandler): this;
+    on(type: 'geoman:vertexdragend', fn: Geoman.VertexDragEndEventHandler): this;
+    once(type: 'geoman:vertexdragend', fn: Geoman.VertexDragEndEventHandler): this;
+    off(type: 'geoman:vertexdragend', fn?: Geoman.VertexDragEndEventHandler): this;
 
     /** Fired when coords of a layer are reset. E.g. by self-intersection. */
-    on(type: 'pm:layerreset', fn: PM.LayerResetEventHandler): this;
-    once(type: 'pm:layerreset', fn: PM.LayerResetEventHandler): this;
-    off(type: 'pm:layerreset', fn?: PM.LayerResetEventHandler): this;
+    on(type: 'geoman:layerreset', fn: Geoman.LayerResetEventHandler): this;
+    once(type: 'geoman:layerreset', fn: Geoman.LayerResetEventHandler): this;
+    off(type: 'geoman:layerreset', fn?: Geoman.LayerResetEventHandler): this;
 
     /** When allowSelfIntersection: false, this event is fired as soon as a self-intersection is detected. */
-    on(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
-    once(type: 'pm:intersect', fn: PM.IntersectEventHandler): this;
-    off(type: 'pm:intersect', fn?: PM.IntersectEventHandler): this;
+    on(type: 'geoman:intersect', fn: Geoman.IntersectEventHandler): this;
+    once(type: 'geoman:intersect', fn: Geoman.IntersectEventHandler): this;
+    off(type: 'geoman:intersect', fn?: Geoman.IntersectEventHandler): this;
 
     /** Fired coordinates of the layer changed. */
-    on(type: 'pm:change', fn: PM.ChangeEventHandler): this;
-    once(type: 'pm:change', fn: PM.ChangeEventHandler): this;
-    off(type: 'pm:change', fn?: PM.ChangeEventHandler): this;
+    on(type: 'geoman:change', fn: Geoman.ChangeEventHandler): this;
+    once(type: 'geoman:change', fn: Geoman.ChangeEventHandler): this;
+    off(type: 'geoman:change', fn?: Geoman.ChangeEventHandler): this;
 
     /** Fired when the text of a layer is changed. */
-    on(type: 'pm:textchange', fn: PM.TextChangeEventHandler): this;
-    once(type: 'pm:textchange', fn: PM.TextChangeEventHandler): this;
-    off(type: 'pm:textchange', fn?: PM.TextChangeEventHandler): this;
+    on(type: 'geoman:textchange', fn: Geoman.TextChangeEventHandler): this;
+    once(type: 'geoman:textchange', fn: Geoman.TextChangeEventHandler): this;
+    off(type: 'geoman:textchange', fn?: Geoman.TextChangeEventHandler): this;
 
     /** Fired when the text layer is focused. */
-    on(type: 'pm:textfocus', fn: PM.TextFocusEventHandler): this;
-    once(type: 'pm:textfocus', fn: PM.TextFocusEventHandler): this;
-    off(type: 'pm:textfocus', fn?: PM.TextFocusEventHandler): this;
+    on(type: 'geoman:textfocus', fn: Geoman.TextFocusEventHandler): this;
+    once(type: 'geoman:textfocus', fn: Geoman.TextFocusEventHandler): this;
+    off(type: 'geoman:textfocus', fn?: Geoman.TextFocusEventHandler): this;
 
     /** Fired when the text layer is blurred.  */
-    on(type: 'pm:textblur', fn: PM.TextBlurEventHandler): this;
-    once(type: 'pm:textblur', fn: PM.TextBlurEventHandler): this;
-    off(type: 'pm:textblur', fn?: PM.TextBlurEventHandler): this;
+    on(type: 'geoman:textblur', fn: Geoman.TextBlurEventHandler): this;
+    once(type: 'geoman:textblur', fn: Geoman.TextBlurEventHandler): this;
+    off(type: 'geoman:textblur', fn?: Geoman.TextBlurEventHandler): this;
 
     /** Fired when the layer violates requireContainment.  */
     on(
-      type: 'pm:containmentviolation',
-      fn: PM.ContainmentViolationEventHandler
+      type: 'geoman:containmentviolation',
+      fn: Geoman.ContainmentViolationEventHandler
     ): this;
     once(
-      type: 'pm:containmentviolation',
-      fn: PM.ContainmentViolationEventHandler
+      type: 'geoman:containmentviolation',
+      fn: Geoman.ContainmentViolationEventHandler
     ): this;
     off(
-      type: 'pm:containmentviolation',
-      fn?: PM.ContainmentViolationEventHandler
+      type: 'geoman:containmentviolation',
+      fn?: Geoman.ContainmentViolationEventHandler
     ): this;
 
     /** Fired when the layer violates preventIntersection.  */
     on(
-      type: 'pm:intersectionviolation',
-      fn: PM.IntersectionViolationEventHandler
+      type: 'geoman:intersectionviolation',
+      fn: Geoman.IntersectionViolationEventHandler
     ): this;
     once(
-      type: 'pm:intersectionviolation',
-      fn: PM.IntersectionViolationEventHandler
+      type: 'geoman:intersectionviolation',
+      fn: Geoman.IntersectionViolationEventHandler
     ): this;
     off(
-      type: 'pm:intersectionviolation',
-      fn?: PM.IntersectionViolationEventHandler
+      type: 'geoman:intersectionviolation',
+      fn?: Geoman.IntersectionViolationEventHandler
     ): this;
 
     /** Fired when the layer changes are canceled. */
-    on(type: 'pm:cancel', fn: PM.CancelEventHandler): this;
-    once(type: 'pm:cancel', fn: PM.CancelEventHandler): this;
-    off(type: 'pm:cancel', fn?: PM.CancelEventHandler): this;
+    on(type: 'geoman:cancel', fn: Geoman.CancelEventHandler): this;
+    once(type: 'geoman:cancel', fn: Geoman.CancelEventHandler): this;
+    off(type: 'geoman:cancel', fn?: Geoman.CancelEventHandler): this;
 
     /** Fired when the layer removing is canceled and the layer is re-added to the map. */
-    on(type: 'pm:undoremove', fn: PM.UndoRemoveEventHandler): this;
-    once(type: 'pm:undoremove', fn: PM.UndoRemoveEventHandler): this;
-    off(type: 'pm:undoremove', fn?: PM.UndoRemoveEventHandler): this;
+    on(type: 'geoman:undoremove', fn: Geoman.UndoRemoveEventHandler): this;
+    once(type: 'geoman:undoremove', fn: Geoman.UndoRemoveEventHandler): this;
+    off(type: 'geoman:undoremove', fn?: Geoman.UndoRemoveEventHandler): this;
 
     /******************************************
      *
@@ -389,16 +389,16 @@ declare module 'leaflet' {
 
     /** Fired when Edit Mode is toggled. */
     on(
-      type: 'pm:globaleditmodetoggled',
-      fn: PM.GlobalEditModeToggledEventHandler
+      type: 'geoman:globaleditmodetoggled',
+      fn: Geoman.GlobalEditModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globaleditmodetoggled',
-      fn: PM.GlobalEditModeToggledEventHandler
+      type: 'geoman:globaleditmodetoggled',
+      fn: Geoman.GlobalEditModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globaleditmodetoggled',
-      fn?: PM.GlobalEditModeToggledEventHandler
+      type: 'geoman:globaleditmodetoggled',
+      fn?: Geoman.GlobalEditModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -409,16 +409,16 @@ declare module 'leaflet' {
 
     /** Fired when Drag Mode is toggled. */
     on(
-      type: 'pm:globaldragmodetoggled',
-      fn: PM.GlobalDragModeToggledEventHandler
+      type: 'geoman:globaldragmodetoggled',
+      fn: Geoman.GlobalDragModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globaldragmodetoggled',
-      fn: PM.GlobalDragModeToggledEventHandler
+      type: 'geoman:globaldragmodetoggled',
+      fn: Geoman.GlobalDragModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globaldragmodetoggled',
-      fn?: PM.GlobalDragModeToggledEventHandler
+      type: 'geoman:globaldragmodetoggled',
+      fn?: Geoman.GlobalDragModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -428,29 +428,29 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when a layer starts being dragged. */
-    on(type: 'pm:dragstart', fn: PM.DragStartEventHandler): this;
-    once(type: 'pm:dragstart', fn: PM.DragStartEventHandler): this;
-    off(type: 'pm:dragstart', fn?: PM.DragStartEventHandler): this;
+    on(type: 'geoman:dragstart', fn: Geoman.DragStartEventHandler): this;
+    once(type: 'geoman:dragstart', fn: Geoman.DragStartEventHandler): this;
+    off(type: 'geoman:dragstart', fn?: Geoman.DragStartEventHandler): this;
 
     /** Fired when a layer is dragged. */
-    on(type: 'pm:drag', fn: PM.DragEventHandler): this;
-    once(type: 'pm:drag', fn: PM.DragEventHandler): this;
-    off(type: 'pm:drag', fn?: PM.DragEventHandler): this;
+    on(type: 'geoman:drag', fn: Geoman.DragEventHandler): this;
+    once(type: 'geoman:drag', fn: Geoman.DragEventHandler): this;
+    off(type: 'geoman:drag', fn?: Geoman.DragEventHandler): this;
 
     /** Fired when a layer stops being dragged. */
-    on(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
-    once(type: 'pm:dragend', fn: PM.DragEndEventHandler): this;
-    off(type: 'pm:dragend', fn?: PM.DragEndEventHandler): this;
+    on(type: 'geoman:dragend', fn: Geoman.DragEndEventHandler): this;
+    once(type: 'geoman:dragend', fn: Geoman.DragEndEventHandler): this;
+    off(type: 'geoman:dragend', fn?: Geoman.DragEndEventHandler): this;
 
     /** Fired when drag mode on a layer is enabled. */
-    on(type: 'pm:dragenable', fn: PM.DragEnableEventHandler): this;
-    once(type: 'pm:dragenable', fn: PM.DragEnableEventHandler): this;
-    off(type: 'pm:dragenable', fn?: PM.DragEnableEventHandler): this;
+    on(type: 'geoman:dragenable', fn: Geoman.DragEnableEventHandler): this;
+    once(type: 'geoman:dragenable', fn: Geoman.DragEnableEventHandler): this;
+    off(type: 'geoman:dragenable', fn?: Geoman.DragEnableEventHandler): this;
 
     /** Fired when drag mode on a layer is disabled. */
-    on(type: 'pm:dragdisable', fn: PM.DragDisableEventHandler): this;
-    once(type: 'pm:dragdisable', fn: PM.DragDisableEventHandler): this;
-    off(type: 'pm:dragdisable', fn?: PM.DragDisableEventHandler): this;
+    on(type: 'geoman:dragdisable', fn: Geoman.DragDisableEventHandler): this;
+    once(type: 'geoman:dragdisable', fn: Geoman.DragDisableEventHandler): this;
+    off(type: 'geoman:dragdisable', fn?: Geoman.DragDisableEventHandler): this;
 
     /******************************************
      *
@@ -460,16 +460,16 @@ declare module 'leaflet' {
 
     /** Fired when Removal Mode is toggled. */
     on(
-      type: 'pm:globalremovalmodetoggled',
-      fn: PM.GlobalRemovalModeToggledEventHandler
+      type: 'geoman:globalremovalmodetoggled',
+      fn: Geoman.GlobalRemovalModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalremovalmodetoggled',
-      fn: PM.GlobalRemovalModeToggledEventHandler
+      type: 'geoman:globalremovalmodetoggled',
+      fn: Geoman.GlobalRemovalModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalremovalmodetoggled',
-      fn?: PM.GlobalRemovalModeToggledEventHandler
+      type: 'geoman:globalremovalmodetoggled',
+      fn?: Geoman.GlobalRemovalModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -480,16 +480,16 @@ declare module 'leaflet' {
 
     /** Fired when a layer is removed via Removal Mode. */
     on(
-      type: 'pm:globalcutmodetoggled',
-      fn: PM.GlobalCutModeToggledEventHandler
+      type: 'geoman:globalcutmodetoggled',
+      fn: Geoman.GlobalCutModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalcutmodetoggled',
-      fn: PM.GlobalCutModeToggledEventHandler
+      type: 'geoman:globalcutmodetoggled',
+      fn: Geoman.GlobalCutModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalcutmodetoggled',
-      fn?: PM.GlobalCutModeToggledEventHandler
+      type: 'geoman:globalcutmodetoggled',
+      fn?: Geoman.GlobalCutModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -500,16 +500,16 @@ declare module 'leaflet' {
 
     /** Fired when Rotate Mode is toggled. */
     on(
-      type: 'pm:globalrotatemodetoggled',
-      fn: PM.GlobalRotateModeToggledEventHandler
+      type: 'geoman:globalrotatemodetoggled',
+      fn: Geoman.GlobalRotateModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalrotatemodetoggled',
-      fn: PM.GlobalRotateModeToggledEventHandler
+      type: 'geoman:globalrotatemodetoggled',
+      fn: Geoman.GlobalRotateModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalrotatemodetoggled',
-      fn?: PM.GlobalRotateModeToggledEventHandler
+      type: 'geoman:globalrotatemodetoggled',
+      fn?: Geoman.GlobalRotateModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -520,22 +520,22 @@ declare module 'leaflet' {
 
     /** Fired when Union Mode is toggled. */
     on(
-      type: 'pm:globalunionmodetoggled',
-      fn: PM.GlobalUnionModeToggledEventHandler
+      type: 'geoman:globalunionmodetoggled',
+      fn: Geoman.GlobalUnionModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalunionmodetoggled',
-      fn: PM.GlobalUnionModeToggledEventHandler
+      type: 'geoman:globalunionmodetoggled',
+      fn: Geoman.GlobalUnionModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalunionmodetoggled',
-      fn?: PM.GlobalUnionModeToggledEventHandler
+      type: 'geoman:globalunionmodetoggled',
+      fn?: Geoman.GlobalUnionModeToggledEventHandler
     ): this;
 
     /** Fired when Union is executed. */
-    on(type: 'pm:union', fn: PM.UnionEventHandler): this;
-    once(type: 'pm:union', fn: PM.UnionEventHandler): this;
-    off(type: 'pm:union', fn: PM.UnionEventHandler): this;
+    on(type: 'geoman:union', fn: Geoman.UnionEventHandler): this;
+    once(type: 'geoman:union', fn: Geoman.UnionEventHandler): this;
+    off(type: 'geoman:union', fn: Geoman.UnionEventHandler): this;
 
     /******************************************
      *
@@ -545,22 +545,22 @@ declare module 'leaflet' {
 
     /** Fired when Difference Mode is toggled. */
     on(
-      type: 'pm:globaldifferencemodetoggled',
-      fn: PM.GlobalDifferenceModeToggledEventHandler
+      type: 'geoman:globaldifferencemodetoggled',
+      fn: Geoman.GlobalDifferenceModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globaldifferencemodetoggled',
-      fn: PM.GlobalDifferenceModeToggledEventHandler
+      type: 'geoman:globaldifferencemodetoggled',
+      fn: Geoman.GlobalDifferenceModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globaldifferencemodetoggled',
-      fn?: PM.GlobalDifferenceModeToggledEventHandler
+      type: 'geoman:globaldifferencemodetoggled',
+      fn?: Geoman.GlobalDifferenceModeToggledEventHandler
     ): this;
 
     /** Fired when Difference is executed. */
-    on(type: 'pm:difference', fn: PM.DifferenceEventHandler): this;
-    once(type: 'pm:difference', fn: PM.DifferenceEventHandler): this;
-    off(type: 'pm:difference', fn?: PM.DifferenceEventHandler): this;
+    on(type: 'geoman:difference', fn: Geoman.DifferenceEventHandler): this;
+    once(type: 'geoman:difference', fn: Geoman.DifferenceEventHandler): this;
+    off(type: 'geoman:difference', fn?: Geoman.DifferenceEventHandler): this;
 
     /******************************************
      *
@@ -569,14 +569,14 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when a layer is added to the selection. */
-    on(type: 'pm:selectionadd', fn: PM.SelectionEventHandler): this;
-    once(type: 'pm:selectionadd', fn: PM.SelectionEventHandler): this;
-    off(type: 'pm:selectionadd', fn: PM.SelectionEventHandler): this;
+    on(type: 'geoman:selectionadd', fn: Geoman.SelectionEventHandler): this;
+    once(type: 'geoman:selectionadd', fn: Geoman.SelectionEventHandler): this;
+    off(type: 'geoman:selectionadd', fn: Geoman.SelectionEventHandler): this;
 
     /** Fired when a layer is removed from the selection. */
-    on(type: 'pm:selectionremove', fn: PM.SelectionEventHandler): this;
-    once(type: 'pm:selectionremove', fn: PM.SelectionEventHandler): this;
-    off(type: 'pm:selectionremove', fn: PM.SelectionEventHandler): this;
+    on(type: 'geoman:selectionremove', fn: Geoman.SelectionEventHandler): this;
+    once(type: 'geoman:selectionremove', fn: Geoman.SelectionEventHandler): this;
+    off(type: 'geoman:selectionremove', fn: Geoman.SelectionEventHandler): this;
 
     /******************************************
      *
@@ -586,30 +586,30 @@ declare module 'leaflet' {
 
     /** Fired when SendToBack Mode is toggled. */
     on(
-      type: 'pm:globalbringtobackmodetoggled',
-      fn: PM.GlobalSendToBackModeToggledEventHandler
+      type: 'geoman:globalbringtobackmodetoggled',
+      fn: Geoman.GlobalSendToBackModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalbringtobackmodetoggled',
-      fn: PM.GlobalSendToBackModeToggledEventHandler
+      type: 'geoman:globalbringtobackmodetoggled',
+      fn: Geoman.GlobalSendToBackModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalbringtobackmodetoggled',
-      fn?: PM.GlobalSendToBackModeToggledEventHandler
+      type: 'geoman:globalbringtobackmodetoggled',
+      fn?: Geoman.GlobalSendToBackModeToggledEventHandler
     ): this;
 
     /** Fired when BringToFront Mode is toggled. */
     on(
-      type: 'pm:globalbringtofrontmodetoggled',
-      fn: PM.GlobalBringToFrontModeToggledEventHandler
+      type: 'geoman:globalbringtofrontmodetoggled',
+      fn: Geoman.GlobalBringToFrontModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalbringtofrontmodetoggled',
-      fn: PM.GlobalBringToFrontModeToggledEventHandler
+      type: 'geoman:globalbringtofrontmodetoggled',
+      fn: Geoman.GlobalBringToFrontModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalbringtofrontmodetoggled',
-      fn?: PM.GlobalBringToFrontModeToggledEventHandler
+      type: 'geoman:globalbringtofrontmodetoggled',
+      fn?: Geoman.GlobalBringToFrontModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -620,22 +620,22 @@ declare module 'leaflet' {
 
     /** Fired when CopyLayer Mode is toggled. */
     on(
-      type: 'pm:globalcopylayermodetoggled',
-      fn: PM.GlobalCopyLayerModeToggledEventHandler
+      type: 'geoman:globalcopylayermodetoggled',
+      fn: Geoman.GlobalCopyLayerModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalcopylayermodetoggled',
-      fn: PM.GlobalCopyLayerModeToggledEventHandler
+      type: 'geoman:globalcopylayermodetoggled',
+      fn: Geoman.GlobalCopyLayerModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalcopylayermodetoggled',
-      fn?: PM.GlobalCopyLayerModeToggledEventHandler
+      type: 'geoman:globalcopylayermodetoggled',
+      fn?: Geoman.GlobalCopyLayerModeToggledEventHandler
     ): this;
 
     /** Fired when CopyLayer is executed. */
-    on(type: 'pm:copylayer', fn: PM.CopyLayerEventHandler): this;
-    once(type: 'pm:copylayer', fn: PM.CopyLayerEventHandler): this;
-    off(type: 'pm:copylayer', fn?: PM.CopyLayerEventHandler): this;
+    on(type: 'geoman:copylayer', fn: Geoman.CopyLayerEventHandler): this;
+    once(type: 'geoman:copylayer', fn: Geoman.CopyLayerEventHandler): this;
+    off(type: 'geoman:copylayer', fn?: Geoman.CopyLayerEventHandler): this;
 
     /******************************************
      *
@@ -645,16 +645,16 @@ declare module 'leaflet' {
 
     /** Fired when CopyLayer Mode is toggled. */
     on(
-      type: 'pm:globallinesimplificationmodetoggled',
-      fn: PM.GlobalLineSimplificationModeToggledEventHandler
+      type: 'geoman:globallinesimplificationmodetoggled',
+      fn: Geoman.GlobalLineSimplificationModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globallinesimplificationmodetoggled',
-      fn: PM.GlobalLineSimplificationModeToggledEventHandler
+      type: 'geoman:globallinesimplificationmodetoggled',
+      fn: Geoman.GlobalLineSimplificationModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globallinesimplificationmodetoggled',
-      fn?: PM.GlobalLineSimplificationModeToggledEventHandler
+      type: 'geoman:globallinesimplificationmodetoggled',
+      fn?: Geoman.GlobalLineSimplificationModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -665,22 +665,22 @@ declare module 'leaflet' {
 
     /** Fired when Lasso Mode is toggled. */
     on(
-      type: 'pm:globallassomodetoggled',
-      fn: PM.GlobalLassoModeToggledEventHandler
+      type: 'geoman:globallassomodetoggled',
+      fn: Geoman.GlobalLassoModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globallassomodetoggled',
-      fn: PM.GlobalLassoModeToggledEventHandler
+      type: 'geoman:globallassomodetoggled',
+      fn: Geoman.GlobalLassoModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globallassomodetoggled',
-      fn?: PM.GlobalLassoModeToggledEventHandler
+      type: 'geoman:globallassomodetoggled',
+      fn?: Geoman.GlobalLassoModeToggledEventHandler
     ): this;
 
     /** Fired when the Lasso has been drawn. */
-    on(type: 'pm:lasso-select', fn: PM.LassoSelectEventHandler): this;
-    once(type: 'pm:lasso-select', fn: PM.LassoSelectEventHandler): this;
-    off(type: 'pm:lasso-select', fn?: PM.LassoSelectEventHandler): this;
+    on(type: 'geoman:lasso-select', fn: Geoman.LassoSelectEventHandler): this;
+    once(type: 'geoman:lasso-select', fn: Geoman.LassoSelectEventHandler): this;
+    off(type: 'geoman:lasso-select', fn?: Geoman.LassoSelectEventHandler): this;
 
     /******************************************
      *
@@ -689,9 +689,9 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Standard Leaflet event. Fired when any layer is removed. */
-    on(type: 'pm:langchange', fn: PM.LangChangeEventHandler): this;
-    once(type: 'pm:langchange', fn: PM.LangChangeEventHandler): this;
-    off(type: 'pm:langchange', fn?: PM.LangChangeEventHandler): this;
+    on(type: 'geoman:langchange', fn: Geoman.LangChangeEventHandler): this;
+    once(type: 'geoman:langchange', fn: Geoman.LangChangeEventHandler): this;
+    off(type: 'geoman:langchange', fn?: Geoman.LangChangeEventHandler): this;
 
     /******************************************
      *
@@ -700,14 +700,14 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when a Toolbar button is clicked. */
-    on(type: 'pm:buttonclick', fn: PM.ButtonClickEventHandler): this;
-    once(type: 'pm:buttonclick', fn: PM.ButtonClickEventHandler): this;
-    off(type: 'pm:buttonclick', fn?: PM.ButtonClickEventHandler): this;
+    on(type: 'geoman:buttonclick', fn: Geoman.ButtonClickEventHandler): this;
+    once(type: 'geoman:buttonclick', fn: Geoman.ButtonClickEventHandler): this;
+    off(type: 'geoman:buttonclick', fn?: Geoman.ButtonClickEventHandler): this;
 
     /** Fired when a Toolbar action is clicked. */
-    on(type: 'pm:actionclick', fn: PM.ActionClickEventHandler): this;
-    once(type: 'pm:actionclick', fn: PM.ActionClickEventHandler): this;
-    off(type: 'pm:actionclick', fn?: PM.ActionClickEventHandler): this;
+    on(type: 'geoman:actionclick', fn: Geoman.ActionClickEventHandler): this;
+    once(type: 'geoman:actionclick', fn: Geoman.ActionClickEventHandler): this;
+    off(type: 'geoman:actionclick', fn?: Geoman.ActionClickEventHandler): this;
 
     /******************************************
      *
@@ -716,9 +716,9 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when `keydown` or `keyup` on the document is fired. */
-    on(type: 'pm:keyevent', fn: PM.KeyboardKeyEventHandler): this;
-    once(type: 'pm:keyevent', fn: PM.KeyboardKeyEventHandler): this;
-    off(type: 'pm:keyevent', fn?: PM.KeyboardKeyEventHandler): this;
+    on(type: 'geoman:keyevent', fn: Geoman.KeyboardKeyEventHandler): this;
+    once(type: 'geoman:keyevent', fn: Geoman.KeyboardKeyEventHandler): this;
+    off(type: 'geoman:keyevent', fn?: Geoman.KeyboardKeyEventHandler): this;
 
     /******************************************
      *
@@ -728,16 +728,16 @@ declare module 'leaflet' {
 
     /** Fired when global options are changed. */
     on(
-      type: 'pm:globaloptionschanged',
-      fn: PM.GlobalOptionsChangedEventHandler
+      type: 'geoman:globaloptionschanged',
+      fn: Geoman.GlobalOptionsChangedEventHandler
     ): this;
     once(
-      type: 'pm:globaloptionschanged',
-      fn: PM.GlobalOptionsChangedEventHandler
+      type: 'geoman:globaloptionschanged',
+      fn: Geoman.GlobalOptionsChangedEventHandler
     ): this;
     off(
-      type: 'pm:globaloptionschanged',
-      fn?: PM.GlobalOptionsChangedEventHandler
+      type: 'geoman:globaloptionschanged',
+      fn?: Geoman.GlobalOptionsChangedEventHandler
     ): this;
 
     /******************************************
@@ -747,28 +747,28 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when auto tracing is started and connected with a layer. ⭐ */
-    on(type: 'pm:autotracestart', fn: PM.AutoTraceEventHandler): this;
-    once(type: 'pm:autotracestart', fn: PM.AutoTraceEventHandler): this;
-    off(type: 'pm:autotracestart', fn?: PM.AutoTraceEventHandler): this;
+    on(type: 'geoman:autotracestart', fn: Geoman.AutoTraceEventHandler): this;
+    once(type: 'geoman:autotracestart', fn: Geoman.AutoTraceEventHandler): this;
+    off(type: 'geoman:autotracestart', fn?: Geoman.AutoTraceEventHandler): this;
 
     /** Fired when auto tracing hintline is changed. ⭐ */
     on(
-      type: 'pm:autotracelinechange',
-      fn: PM.AutoTraceLineChangeEventHandler
+      type: 'geoman:autotracelinechange',
+      fn: Geoman.AutoTraceLineChangeEventHandler
     ): this;
     once(
-      type: 'pm:autotracelinechange',
-      fn: PM.AutoTraceLineChangeEventHandler
+      type: 'geoman:autotracelinechange',
+      fn: Geoman.AutoTraceLineChangeEventHandler
     ): this;
     off(
-      type: 'pm:autotracelinechange',
-      fn?: PM.AutoTraceLineChangeEventHandler
+      type: 'geoman:autotracelinechange',
+      fn?: Geoman.AutoTraceLineChangeEventHandler
     ): this;
 
     /** 	Fired when auto tracing is ended. ⭐ */
-    on(type: 'pm:autotraceend', fn: PM.AutoTraceEventHandler): this;
-    once(type: 'pm:autotraceend', fn: PM.AutoTraceEventHandler): this;
-    off(type: 'pm:autotraceend', fn?: PM.AutoTraceEventHandler): this;
+    on(type: 'geoman:autotraceend', fn: Geoman.AutoTraceEventHandler): this;
+    once(type: 'geoman:autotraceend', fn: Geoman.AutoTraceEventHandler): this;
+    off(type: 'geoman:autotraceend', fn?: Geoman.AutoTraceEventHandler): this;
 
     /******************************************
      *
@@ -778,16 +778,16 @@ declare module 'leaflet' {
 
     /** Fired when a layer is split via Split Mode. */
     on(
-      type: 'pm:globalsplitmodetoggled',
-      fn: PM.GlobalSplitModeToggledEventHandler
+      type: 'geoman:globalsplitmodetoggled',
+      fn: Geoman.GlobalSplitModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalsplitmodetoggled',
-      fn: PM.GlobalSplitModeToggledEventHandler
+      type: 'geoman:globalsplitmodetoggled',
+      fn: Geoman.GlobalSplitModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalsplitmodetoggled',
-      fn?: PM.GlobalSplitModeToggledEventHandler
+      type: 'geoman:globalsplitmodetoggled',
+      fn?: Geoman.GlobalSplitModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -798,16 +798,16 @@ declare module 'leaflet' {
 
     /** Fired when Scale Mode is toggled. */
     on(
-      type: 'pm:globalscalemodetoggled',
-      fn: PM.GlobalScaleModeToggledEventHandler
+      type: 'geoman:globalscalemodetoggled',
+      fn: Geoman.GlobalScaleModeToggledEventHandler
     ): this;
     once(
-      type: 'pm:globalscalemodetoggled',
-      fn: PM.GlobalScaleModeToggledEventHandler
+      type: 'geoman:globalscalemodetoggled',
+      fn: Geoman.GlobalScaleModeToggledEventHandler
     ): this;
     off(
-      type: 'pm:globalscalemodetoggled',
-      fn?: PM.GlobalScaleModeToggledEventHandler
+      type: 'geoman:globalscalemodetoggled',
+      fn?: Geoman.GlobalScaleModeToggledEventHandler
     ): this;
 
     /******************************************
@@ -817,9 +817,9 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when cancel of Mode is called. */
-    on(type: 'pm:globalcancel', fn: PM.GlobalCancelEventHandler): this;
-    once(type: 'pm:globalcancel', fn: PM.GlobalCancelEventHandler): this;
-    off(type: 'pm:globalcancel', fn?: PM.GlobalCancelEventHandler): this;
+    on(type: 'geoman:globalcancel', fn: Geoman.GlobalCancelEventHandler): this;
+    once(type: 'geoman:globalcancel', fn: Geoman.GlobalCancelEventHandler): this;
+    off(type: 'geoman:globalcancel', fn?: Geoman.GlobalCancelEventHandler): this;
 
     /******************************************
      *
@@ -828,19 +828,19 @@ declare module 'leaflet' {
      ********************************************/
 
     /** Fired when an error is thrown. */
-    on(type: 'pm:error', fn: PM.ErrorEventHandler): this;
-    once(type: 'pm:error', fn: PM.ErrorEventHandler): this;
-    off(type: 'pm:error', fn?: PM.ErrorEventHandler): this;
+    on(type: 'geoman:error', fn: Geoman.ErrorEventHandler): this;
+    once(type: 'geoman:error', fn: Geoman.ErrorEventHandler): this;
+    off(type: 'geoman:error', fn?: Geoman.ErrorEventHandler): this;
   }
 
-  namespace PM {
+  namespace Geoman {
     export const version: string;
 
     /** Supported shape names. 'ImageOverlay' is in Edit Mode only. Also accepts custom shape name. */
     type SUPPORTED_SHAPES =
       | 'Marker'
       | 'Circle'
-      | 'Line'
+      | 'Polyline'
       | 'Rectangle'
       | 'Polygon'
       | 'Cut'
@@ -884,36 +884,36 @@ declare module 'leaflet' {
     /**
      * Changes default registration of leaflet-geoman on leaflet layers.
      *
-     * @param optIn - if true, a layers pmIgnore property has to be set to false to get initiated.
+     * @param optIn - if true, a layers geomanIgnore property has to be set to false to get initiated.
      */
     function setOptIn(optIn: boolean): void;
 
     /**
      * Enable leaflet-geoman on an ignored layer.
      *
-     * @param layer - re-reads layer.options.pmIgnore to initialize leaflet-geoman.
+     * @param layer - re-reads layer.options.geomanIgnore to initialize leaflet-geoman.
      */
     function reInitLayer(layer: L.Layer): void;
 
     /**
-     * PM map interface.
+     * Geoman map interface.
      */
-    interface PMMap
-      extends PMDrawMap,
-        PMEditMap,
-        PMDragMap,
-        PMRemoveMap,
-        PMCutMap,
-        PMRotateMap,
-        PMScaleMap,
-        PMSelectionMap,
-        PMUnionMap,
-        PMLineSimplificationMap,
-        PMDifferenceMap,
-        PMLassoMap {
-      Toolbar: PMMapToolbar;
+    interface GeomanMap
+      extends GeomanDrawMap,
+        GeomanEditMap,
+        GeomanDragMap,
+        GeomanRemoveMap,
+        GeomanCutMap,
+        GeomanRotateMap,
+        GeomanScaleMap,
+        GeomanSelectionMap,
+        GeomanUnionMap,
+        GeomanLineSimplificationMap,
+        GeomanDifferenceMap,
+        GeomanLassoMap {
+      Toolbar: GeomanMapToolbar;
 
-      Keyboard: PMMapKeyboard;
+      Keyboard: GeomanMapKeyboard;
 
       /** Adds the Toolbar to the map. */
       addControls(options?: ToolbarOptions): void;
@@ -1050,7 +1050,7 @@ declare module 'leaflet' {
       | 'drawCustomShape'
       | string;
 
-    interface PMMapToolbar {
+    interface GeomanMapToolbar {
       /** Pass an array of button names to reorder the buttons in the Toolbar. */
       changeControlOrder(order?: TOOLBAR_CONTROL_ORDER[]): void;
 
@@ -1105,7 +1105,7 @@ declare module 'leaflet' {
 
     type KEYBOARD_EVENT_TYPE = 'current' | 'keydown' | 'keyup';
 
-    interface PMMapKeyboard {
+    interface GeomanMapKeyboard {
       /** Pass an array of button names to reorder the buttons in the Toolbar. */
       getLastKeyEvent(type: KEYBOARD_EVENT_TYPE[]): KeyboardKeyEventHandler;
 
@@ -1130,7 +1130,7 @@ declare module 'leaflet' {
       actions?: (ACTION_NAMES | Action)[];
 
       /** Function fired after clicking the control. */
-      afterClick?: () => void;
+      afterClick?: (ctx: { button: Button; event: MouseEvent }) => void;
 
       /** CSS class with the Icon. */
       className?: string;
@@ -1141,11 +1141,11 @@ declare module 'leaflet' {
       /** Control can be toggled. */
       doToggle?: boolean;
 
-      /** Extending Class f. ex. Line, Polygon, ... L.PM.Draw.EXTENDINGCLASS */
+      /** Extending Class f. ex. Polyline, Polygon, ... L.Geoman.Draw.EXTENDINGCLASS */
       jsClass?: string;
 
       /** Function fired when clicking the control. */
-      onClick?: () => void;
+      onClick?: (ctx: { button: Button; event: MouseEvent }) => void;
 
       position?: L.ControlPosition;
 
@@ -1173,10 +1173,10 @@ declare module 'leaflet' {
       className?: string;
 
       /** Function fired when clicking the control. */
-      onClick?: () => void;
+      onClick?: (ctx: { button: Button; event: MouseEvent }) => void;
 
       /** Function fired after clicking the control. */
-      afterClick?: () => void;
+      afterClick?: (ctx: { button: Button; event: MouseEvent }) => void;
 
       /** Actions */
       actions?: (ACTION_NAMES | Action)[];
@@ -1210,7 +1210,7 @@ declare module 'leaflet' {
       /** Add the created layers to a layergroup instead to the map. */
       layerGroup?: L.Map | L.LayerGroup;
 
-      /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Line','Polygon','Rectangle']. */
+      /** Prioritize the order of snapping. Default: ['Marker','CircleMarker','Circle','Polyline','Polygon','Rectangle']. */
       snappingOrder?: SUPPORTED_SHAPES[];
 
       /** Defines in which panes the layers and helper vertices are created. Default: { vertexPane: 'markerPane', layerPane: 'overlayPane', markerPane: 'markerPane' } */
@@ -1245,12 +1245,12 @@ declare module 'leaflet' {
       cutAsCircle?: boolean;
     }
 
-    interface PMDrawMap {
+    interface GeomanDrawMap {
       /** Enable Draw Mode with the passed shape. */
       enableDraw(shape: SUPPORTED_SHAPES, options?: DrawModeOptions): void;
 
       /** Disable all drawing */
-      disableDraw(shape?: SUPPORTED_SHAPES): void;
+      disableDraw(): void;
 
       /** Enable Custom Shape Draw Mode with a passed shape from the storage or as GeoJSON. ⭐ */
       enableCustomShapeDraw(
@@ -1314,7 +1314,7 @@ declare module 'leaflet' {
       removeCustomShapeFromToolbar(name: string): void;
     }
 
-    interface PMEditMap {
+    interface GeomanEditMap {
       /** Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar */
       enableGlobalEditMode(options?: EditModeOptions): void;
 
@@ -1328,7 +1328,7 @@ declare module 'leaflet' {
       globalEditModeEnabled(): boolean;
     }
 
-    interface PMDragMap {
+    interface GeomanDragMap {
       /** Enables global drag mode. */
       enableGlobalDragMode(): void;
 
@@ -1345,7 +1345,7 @@ declare module 'leaflet' {
       cancelGlobalDragMode(): void;
     }
 
-    interface PMRemoveMap {
+    interface GeomanRemoveMap {
       /** Enables global removal mode. */
       enableGlobalRemovalMode(): void;
 
@@ -1362,7 +1362,7 @@ declare module 'leaflet' {
       cancelGlobalRemovalMode(): void;
     }
 
-    interface PMCutMap {
+    interface GeomanCutMap {
       /** Enables global cut mode. */
       enableGlobalCutMode(options?: CutModeOptions): void;
 
@@ -1376,7 +1376,7 @@ declare module 'leaflet' {
       globalCutModeEnabled(): boolean;
     }
 
-    interface PMRotateMap {
+    interface GeomanRotateMap {
       /** Enables global rotate mode. */
       enableGlobalRotateMode(): void;
 
@@ -1393,7 +1393,7 @@ declare module 'leaflet' {
       cancelGlobalRotateMode(): void;
     }
 
-    interface PMScaleMap {
+    interface GeomanScaleMap {
       /** Enables global scale mode. ⭐ */
       enableGlobalScaleMode(): void;
 
@@ -1410,7 +1410,7 @@ declare module 'leaflet' {
       cancelGlobalScaleMode(): void;
     }
 
-    interface PMSelectionMap {
+    interface GeomanSelectionMap {
       /** Enables global selection mode. Optional a filter can be added, which checks if the selection is allowed. ⭐ */
       enableSelectionTool(filterFnc?: () => boolean): void;
 
@@ -1433,7 +1433,7 @@ declare module 'leaflet' {
       isLayerSelected(layer: L.Layer): boolean;
     }
 
-    interface PMUnionMap {
+    interface GeomanUnionMap {
       /** Enables global union mode. ⭐ */
       enableGlobalUnionMode(): void;
 
@@ -1450,7 +1450,7 @@ declare module 'leaflet' {
       union(layer1: L.Layer, layer2: L.Layer): void;
     }
 
-    interface PMDifferenceMap {
+    interface GeomanDifferenceMap {
       /** Enables global difference mode. ⭐ */
       enableGlobalDifferenceMode(): void;
 
@@ -1467,7 +1467,7 @@ declare module 'leaflet' {
       difference(layer1: L.Layer, layer2: L.Layer): void;
     }
 
-    interface PMCopyLayerMap {
+    interface GeomanCopyLayerMap {
       /** Enables global CopyLayer mode. ⭐ */
       enableGlobalCopyLayerMode(): void;
 
@@ -1484,7 +1484,7 @@ declare module 'leaflet' {
       resetCopyLayerMode(): void;
     }
 
-    interface PMLineSimplificationMap {
+    interface GeomanLineSimplificationMap {
       /** Enables global LineSimplification mode. ⭐ */
       enableGlobalLineSimplificationMode(): void;
 
@@ -1501,7 +1501,7 @@ declare module 'leaflet' {
       cancelGlobalLineSimplificationMode(): void;
     }
 
-    interface PMLassoMap {
+    interface GeomanLassoMap {
       /** Enables global Lasso mode. ⭐ */
       enableGlobalLassoMode(options?: LassoModeOptions): void;
 
@@ -1536,7 +1536,7 @@ declare module 'leaflet' {
       getLassoSelectMode(): LASSO_SELECT_MODES;
     }
 
-    interface PMRotateLayer {
+    interface GeomanRotateLayer {
       /** Enables rotate mode on the layer. */
       enableRotate(): void;
 
@@ -1565,7 +1565,7 @@ declare module 'leaflet' {
       setRotationCenter(center: L.LatLng | null): void;
     }
 
-    interface PMScaleLayer {
+    interface GeomanScaleLayer {
       /** Enables Scale  mode on the layer. ⭐ */
       enableScale(): void;
 
@@ -1579,7 +1579,7 @@ declare module 'leaflet' {
       scaleLayer(percent: number | { w: number; h: number }): void;
     }
 
-    interface PMSplitMap {
+    interface GeomanSplitMap {
       /** Enables global split mode. ⭐ */
       enableGlobalSplitMode(options?: SplitModeOptions): void;
 
@@ -1592,7 +1592,7 @@ declare module 'leaflet' {
       /** Returns true if global split mode is enabled. false when disabled. ⭐ */
       globalSplitModeEnabled(): boolean;
     }
-    interface PMBringToFrontMap {
+    interface GeomanBringToFrontMap {
       /** Enables global BringToFront mode. ⭐ */
       enableGlobalBringToFrontMode(): void;
 
@@ -1605,7 +1605,7 @@ declare module 'leaflet' {
       /** Returns true if global BringToFront mode is enabled. false when disabled. ⭐ */
       globalBringToFrontModeEnabled(): boolean;
     }
-    interface PMSendToBackMap {
+    interface GeomanSendToBackMap {
       /** Enables global SendToBack mode. ⭐ */
       enableGlobalSendToBackMode(): void;
 
@@ -1630,7 +1630,7 @@ declare module 'leaflet' {
     }
 
     interface DrawShape {
-      /** Applies the styles (templineStyle, hintlineStyle, pathOptions, markerStyle) to the drawing layer. map.pm.Draw.Line.setStyle(options). */
+      /** Applies the styles (templineStyle, hintlineStyle, pathOptions, markerStyle) to the drawing layer. map.geoman.Draw.Polyline.setStyle(options). */
       setStyle(options: L.PathOptions | L.CircleMarkerOptions): void;
 
       /** Set path options */
@@ -1641,6 +1641,9 @@ declare module 'leaflet' {
 
       /** Get options */
       getOptions(): DrawModeOptions;
+
+      /** Removes the last vertex from the drawing layer (Works only for Polyline and Polygon). */
+      removeLastVertex(): void;
     }
 
     interface LassoDraw {
@@ -1721,7 +1724,7 @@ declare module 'leaflet' {
       /** Defines which layers should dragged with this layer together. true syncs all layers in the same LayerGroup(s) or you pass an `Array` of layers to sync. (default:false). */
       syncLayersOnDrag?: L.Layer[] | boolean;
 
-      /** Edit-Mode for the layer can disabled (`pm.enable()`). (default:true). */
+      /** Edit-Mode for the layer can disabled (`geoman.enable()`). (default:true). */
       allowEditing?: boolean;
 
       /** Removing can be disabled for the layer. (default:true). */
@@ -1734,30 +1737,30 @@ declare module 'leaflet' {
       allowRotation?: boolean;
 
       /** Dragging can be disabled for the layer. (default:true). */
-      draggable?: boolean;
+      allowDragging?: boolean;
 
-      /** Leaflet layer event to add a vertex to a Line or Polygon, like dblclick. (default:click). */
+      /** Leaflet layer event to add a vertex to a Polyline or Polygon, like dblclick. (default:click). */
       addVertexOn?:
         | 'click'
         | 'dblclick'
-        | 'mousedown'
-        | 'mouseover'
-        | 'mouseout'
+        | 'pointerdown'
+        | 'pointerover'
+        | 'pointerout'
         | 'contextmenu';
 
-      /** A function for validation if a vertex (of a Line / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. (default:undefined). */
+      /** A function for validation if a vertex (of a Polyline / Polygon) is allowed to add. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. (default:undefined). */
       addVertexValidation?: VertexValidationHandler;
 
-      /** Leaflet layer event to remove a vertex from a Line or Polygon, like dblclick. (default:contextmenu). */
+      /** Leaflet layer event to remove a vertex from a Polyline or Polygon, like dblclick. (default:contextmenu). */
       removeVertexOn?:
         | 'click'
         | 'dblclick'
-        | 'mousedown'
-        | 'mouseover'
-        | 'mouseout'
+        | 'pointerdown'
+        | 'pointerover'
+        | 'pointerout'
         | 'contextmenu';
 
-      /** A function for validation if a vertex (of a Line / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
+      /** A function for validation if a vertex (of a Polyline / Polygon) is allowed to remove. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
       removeVertexValidation?: VertexValidationHandler;
 
       /** A function for validation if a vertex / helper-marker is allowed to move / drag. It passes a object with `[layer, marker, event}`. For example to check if the layer has a certain property or if the `Ctrl` key is pressed. */
@@ -1863,7 +1866,7 @@ declare module 'leaflet' {
       /** Leaflet path options for the drawn layer (Only for L.Path layers). (default:null). */
       pathOptions?: L.PathOptions | L.CircleMarkerOptions;
 
-      /** Leaflet marker options (only for drawing markers). (default:{draggable:true}). */
+      /** Leaflet marker options (only for drawing markers). */
       markerStyle?: L.MarkerOptions;
 
       /** Show a marker at the cursor (default:true). */
@@ -1874,9 +1877,9 @@ declare module 'leaflet' {
         | null
         | 'click'
         | 'dblclick'
-        | 'mousedown'
-        | 'mouseover'
-        | 'mouseout'
+        | 'pointerdown'
+        | 'pointerover'
+        | 'pointerout'
         | 'contextmenu'
         | 'snap';
 
@@ -1895,11 +1898,6 @@ declare module 'leaflet' {
       /** Set the max radius of a CircleMarker. (default:null). */
       maxRadiusCircleMarker?: number;
 
-      /**
-       * @deprecated Use resizeableCircleMarker instead
-       */
-      editable?: boolean;
-
       /** Enables radius editing while drawing a Circle (default:true). */
       resizeableCircle?: boolean;
 
@@ -1909,7 +1907,7 @@ declare module 'leaflet' {
       /** Markers and CircleMarkers are editable during the draw-session (you can drag them around immediately after drawing them) (default:true). */
       markerEditable?: boolean;
 
-      /** Draw-Mode stays enabled after finishing a layer to immediately draw the next layer. Defaults to true for Markers and CircleMarkers and false for all other layers. */
+      /** Draw-Mode stays enabled after finishing a layer to immediately draw the next layer (default: false). */
       continueDrawing?: boolean;
 
       /** Angel of rectangle. */
@@ -1947,7 +1945,7 @@ declare module 'leaflet' {
 
     interface SnappingOptions {
       /** Enable snapping to other layers vertices for precision drawing. Can be disabled by holding the ALT key (default:true). */
-      snappable?: boolean;
+      allowSnapping?: boolean;
 
       /** The distance to another vertex when a snap should happen (default:20). */
       snapDistance?: number;
@@ -1965,7 +1963,7 @@ declare module 'leaflet' {
     type CancelActionModes = 'editMode' | 'dragMode' | 'removalMode' | 'rotateMode' | 'scaleMode' | 'lineSimplificationMode';
 
     /**
-     * PM toolbar options.
+     * Geoman toolbar options.
      */
     interface ToolbarOptions {
       /** Toolbar position. */
@@ -1980,7 +1978,7 @@ declare module 'leaflet' {
       /** Adds button to draw CircleMarkers (default:true) */
       drawCircleMarker?: boolean;
 
-      /** Adds button to draw Line (default:true) */
+      /** Adds button to draw Polyline (default:true) */
       drawPolyline?: boolean;
 
       /** Adds button to draw Rectangle (default:true) */
@@ -2001,7 +1999,7 @@ declare module 'leaflet' {
       /** Adds button to toggle drag mode for all layers (default:true) */
       dragMode?: boolean;
 
-      /** Adds button to cut a hole in a polygon or line (default:true) */
+      /** Adds button to cut a hole in a polygon or polyline (default:true) */
       cutPolygon?: boolean;
 
       /** Adds a button to remove layers (default:true) */
@@ -2096,7 +2094,7 @@ declare module 'leaflet' {
       options?: L.ControlPosition;
     }
 
-    interface PMEditLayer extends PMEditTextLayer {
+    interface GeomanEditLayer extends GeomanEditTextLayer {
       /** Enables edit mode. The passed options are preserved, even when the mode is enabled via the Toolbar */
       enable(options?: EditModeOptions): void;
 
@@ -2115,7 +2113,7 @@ declare module 'leaflet' {
       /** Returns true if edit mode is enabled. false when disabled. */
       enabled(): boolean;
 
-      /** Returns true if Line or Polygon has a self intersection. */
+      /** Returns true if Polyline or Polygon has a self intersection. */
       hasSelfIntersection(): boolean;
 
       /** Removes the layer with the same checks as GlobalRemovalMode. */
@@ -2125,7 +2123,7 @@ declare module 'leaflet' {
       cancel(): void;
     }
 
-    interface PMEditTextLayer {
+    interface GeomanEditTextLayer {
       /** Activate text editing of Text-Layer. */
       focus(): void;
 
@@ -2145,7 +2143,7 @@ declare module 'leaflet' {
       getText(): string;
     }
 
-    interface PMDragLayer {
+    interface GeomanDragLayer {
       /** Enables dragging for the layer. */
       enableLayerDrag(): void;
 
@@ -2159,22 +2157,22 @@ declare module 'leaflet' {
       layerDragEnabled(): boolean;
     }
 
-    interface PMMeasurementLayer {
+    interface GeomanMeasurementLayer {
       /** Contains the measurements of the last calculation. ⭐ */
       measurements: MeasurementData;
     }
 
-    interface PMLayer
-      extends PMRotateLayer,
-        PMEditLayer,
-        PMDragLayer,
-        PMMeasurementLayer,
-        PMScaleLayer {
+    interface GeomanLayer
+      extends GeomanRotateLayer,
+        GeomanEditLayer,
+        GeomanDragLayer,
+        GeomanMeasurementLayer,
+        GeomanScaleLayer {
       /** Get shape of the layer. */
       getShape(): SUPPORTED_SHAPES;
     }
 
-    interface PMLayerGroup {
+    interface GeomanLayerGroup {
       /** Enables edit mode for all child layers. The passed options are preserved, even when the mode is enabled via the Toolbar */
       enable(options?: EditModeOptions): void;
 
@@ -2269,18 +2267,18 @@ declare module 'leaflet' {
 
     export type GlobalDrawModeToggledEventHandler = (event: {
       enabled: boolean;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       map: L.Map;
     }) => void;
     export type DrawStartEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
     }) => void;
     export type DrawEndEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type CreateEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
 
@@ -2289,13 +2287,13 @@ declare module 'leaflet' {
      */
 
     export type VertexAddedEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
       marker: L.Marker;
       latlng: L.LatLng;
     }) => void;
     export type SnapEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       distance: number;
       layer: L.Layer;
       workingLayer: L.Layer;
@@ -2305,7 +2303,7 @@ declare module 'leaflet' {
       snapLatLng: L.LatLng;
     }) => void;
     export type CenterPlacedEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
       latlng: L.LatLng;
     }) => void;
@@ -2315,19 +2313,19 @@ declare module 'leaflet' {
      */
 
     export type EditEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
     export type UpdateEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
     export type EnableEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
     export type DisableEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
     export type VertexAddedEventHandler2 = (e: {
@@ -2335,66 +2333,66 @@ declare module 'leaflet' {
       indexPath: number;
       latlng: L.LatLng;
       marker: L.Marker;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type VertexRemovedEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       marker: L.Marker;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type VertexClickEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragStartEventHandler = (e: {
+    export type VertexDragStartEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragEventHandler = (e: {
+    export type VertexDragEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragEndEventHandler = (e: {
+    export type VertexDragEndEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       intersectionReset: boolean;
     }) => void;
     export type LayerResetEventHandler = (e: {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type IntersectEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
       intersection: L.LatLng;
     }) => void;
     export type ChangeEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
       latlngs: L.LatLng | L.LatLng[];
     }) => void;
     export type TextChangeEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
       text: string;
     }) => void;
     export type TextFocusEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
     export type TextBlurEventHandler = (e: {
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
     export type ContainmentViolationEventHandler = (e: {
@@ -2427,7 +2425,7 @@ declare module 'leaflet' {
      */
     export type DragStartEventHandler = (e: {
       layer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type DragEventHandler = (e: {
       layer: L.Layer;
@@ -2435,19 +2433,19 @@ declare module 'leaflet' {
       latlng: L.LatLng;
       layerPoint: L.Point;
       originalEvent: any;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type DragEndEventHandler = (e: {
       layer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type DragEnableEventHandler = (e: {
       layer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type DragDisableEventHandler = (e: {
       layer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
 
     /**
@@ -2456,7 +2454,7 @@ declare module 'leaflet' {
 
     export type RemoveEventHandler = (e: {
       layer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
 
     /**
@@ -2477,7 +2475,7 @@ declare module 'leaflet' {
     export type CutEventHandler = (e: {
       layer: L.Layer;
       originalLayer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
 
     /**
@@ -2486,11 +2484,11 @@ declare module 'leaflet' {
     export type RotateEnableEventHandler = (e: {
       layer: L.Layer;
       helpLayer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type RotateDisableEventHandler = (e: {
       layer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type RotateStartEventHandler = (e: {
       layer: L.Layer;
@@ -2625,7 +2623,7 @@ declare module 'leaflet' {
       activeLang: string;
       oldLang: string;
       fallback: string;
-      translations: PM.Translations;
+      translations: Geoman.Translations;
     }) => void;
 
     /**
@@ -2633,13 +2631,13 @@ declare module 'leaflet' {
      */
     export type ButtonClickEventHandler = (e: {
       btnName: string;
-      button: PM.Button;
+      button: Geoman.Button;
     }) => void;
     export type ActionClickEventHandler = (e: {
       text: string;
       action: string;
       btnName: string;
-      button: PM.Button;
+      button: Geoman.Button;
     }) => void;
 
     /**
@@ -2675,7 +2673,7 @@ declare module 'leaflet' {
       layers: L.Layer[];
       originalLayer: L.Layer;
       splitLayer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
 
     /**
@@ -2684,11 +2682,11 @@ declare module 'leaflet' {
     export type ScaleEnableEventHandler = (e: {
       layer: L.Layer;
       helpLayer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type ScaleDisableEventHandler = (e: {
       layer: L.Layer;
-      shape: PM.SUPPORTED_SHAPES;
+      shape: Geoman.SUPPORTED_SHAPES;
     }) => void;
     export type ScaleStartEventHandler = (e: {
       layer: L.Layer;

@@ -17,7 +17,7 @@ describe('Options', () => {
           let l;
           map.eachLayer((layer) => {
             if (layer instanceof L.Polygon) {
-              layer.pm.enable();
+              layer.geoman.enable();
               l = layer;
             }
           });
@@ -33,32 +33,32 @@ describe('Options', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         pinning: false,
-        snappable: false,
+        allowSnapping: false,
       });
     });
 
     cy.get('@poly').then((poly) => {
-      expect(poly.pm.options.snappable).to.equal(false);
+      expect(poly.geoman.options.allowSnapping).to.equal(false);
     });
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         pinning: true,
-        snappable: true,
+        allowSnapping: true,
       });
     });
 
     cy.get('@poly').then((poly) => {
-      expect(poly.pm.options.snappable).to.equal(true);
+      expect(poly.geoman.options.allowSnapping).to.equal(true);
     });
   });
 
   it('global options work on Draw', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
-        snappable: false,
+      map.geoman.setGlobalOptions({
+        allowSnapping: false,
       });
     });
 
@@ -67,7 +67,7 @@ describe('Options', () => {
     cy.get(mapSelector).click(300, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Marker.options.snappable).to.equal(false);
+      expect(map.geoman.Draw.Marker.options.allowSnapping).to.equal(false);
     });
 
     // cy.get(mapSelector)
@@ -102,43 +102,49 @@ describe('Options', () => {
 
   it('merge PathOptions', () => {
     cy.window().then(({ map }) => {
-      map.pm.setPathOptions({
+      map.geoman.setPathOptions({
         color: 'red',
       });
-      expect(map.pm.Draw.Line.options.pathOptions.color).to.equal('red');
-      expect(map.pm.Draw.Line.options.pathOptions.borderColor).to.equal(
+      expect(map.geoman.Draw.Polyline.options.pathOptions.color).to.equal(
+        'red'
+      );
+      expect(map.geoman.Draw.Polyline.options.pathOptions.borderColor).to.equal(
         undefined
       );
 
-      map.pm.setPathOptions({
+      map.geoman.setPathOptions({
         borderColor: 'green',
       });
-      expect(map.pm.Draw.Line.options.pathOptions.color).to.equal(undefined);
-      expect(map.pm.Draw.Line.options.pathOptions.borderColor).to.equal(
+      expect(map.geoman.Draw.Polyline.options.pathOptions.color).to.equal(
+        undefined
+      );
+      expect(map.geoman.Draw.Polyline.options.pathOptions.borderColor).to.equal(
         'green'
       );
 
-      map.pm.setPathOptions(
+      map.geoman.setPathOptions(
         {
           color: 'red',
         },
         { merge: true }
       );
-      expect(map.pm.Draw.Line.options.pathOptions.color).to.equal('red');
-      expect(map.pm.Draw.Line.options.pathOptions.borderColor).to.equal(
+      expect(map.geoman.Draw.Polyline.options.pathOptions.color).to.equal(
+        'red'
+      );
+      expect(map.geoman.Draw.Polyline.options.pathOptions.borderColor).to.equal(
         'green'
       );
     });
   });
 
-  it('fires `pm:globaloptionschanged`', () => {
+  it('fires `geoman:globaloptionschanged`', () => {
     cy.window().then(({ map }) => {
       let fired = false;
-      map.on('pm:globaloptionschanged', () => {
+      map.on('geoman:globaloptionschanged', () => {
         fired = true;
       });
 
-      map.pm.setGlobalOptions({ snapSegment: false });
+      map.geoman.setGlobalOptions({ snapSegment: false });
 
       expect(fired).to.equal(true);
     });

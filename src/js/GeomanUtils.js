@@ -1,5 +1,16 @@
+import {
+  Circle,
+  CircleMarker,
+  ImageOverlay,
+  LatLng,
+  Marker,
+  Point,
+  Polygon,
+  Polyline,
+} from 'leaflet';
 import { createGeodesicPolygon, getTranslation } from './helpers';
 import { _toLatLng, _toPoint } from './helpers/ModeHelper';
+import Geoman from './Geoman';
 
 const Utils = {
   calcMiddleLatLng(map, latlng1, latlng2) {
@@ -14,27 +25,27 @@ const Utils = {
     let layers = [];
     map.eachLayer((layer) => {
       if (
-        layer instanceof L.Polyline ||
-        layer instanceof L.Marker ||
-        layer instanceof L.Circle ||
-        layer instanceof L.CircleMarker ||
-        layer instanceof L.ImageOverlay
+        layer instanceof Polyline ||
+        layer instanceof Marker ||
+        layer instanceof Circle ||
+        layer instanceof CircleMarker ||
+        layer instanceof ImageOverlay
       ) {
         layers.push(layer);
       }
     });
 
     // filter out layers that don't have the leaflet-geoman instance
-    layers = layers.filter((layer) => !!layer.pm);
+    layers = layers.filter((layer) => !!layer.geoman);
 
     // filter out everything that's leaflet-geoman specific temporary stuff
-    layers = layers.filter((layer) => !layer._pmTempLayer);
+    layers = layers.filter((layer) => !layer._geomanTempLayer);
 
     // filter out everything that ignore leaflet-geoman
     layers = layers.filter(
       (layer) =>
-        (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+        (!Geoman.optIn && !layer.options.geomanIgnore) || // if optIn is not set / true and geomanIgnore is not set / true (default)
+        (Geoman.optIn && layer.options.geomanIgnore === false) // if optIn is true and geomanIgnore is false);
     );
 
     return layers;
@@ -48,7 +59,7 @@ const Utils = {
       const geometry = [polys[i].lat, polys[i].lng];
       polygon.push(geometry);
     }
-    return L.polygon(polygon, circle.options);
+    return new Polygon(polygon, circle.options);
   },
   disablePopup(layer) {
     if (layer.getPopup()) {
@@ -89,12 +100,12 @@ const Utils = {
 
     // check if the last group fetch is under 1 sec, then we use the groups from before
     if (
-      !layer._pmLastGroupFetch ||
-      !layer._pmLastGroupFetch.time ||
-      new Date().getTime() - layer._pmLastGroupFetch.time > 1000
+      !layer._geomanLastGroupFetch ||
+      !layer._geomanLastGroupFetch.time ||
+      new Date().getTime() - layer._geomanLastGroupFetch.time > 1000
     ) {
       loopThroughParents(layer);
-      layer._pmLastGroupFetch = {
+      layer._geomanLastGroupFetch = {
         time: new Date().getTime(),
         groups,
         groupIds,
@@ -105,8 +116,8 @@ const Utils = {
       };
     }
     return {
-      groups: layer._pmLastGroupFetch.groups,
-      groupIds: layer._pmLastGroupFetch.groupIds,
+      groups: layer._geomanLastGroupFetch.groups,
+      groupIds: layer._geomanLastGroupFetch.groupIds,
     };
   },
   createGeodesicPolygon,
@@ -124,7 +135,7 @@ const Utils = {
           result = iRes;
           return true;
         }
-      } else if (v.lat && L.latLng(v).equals(latlng)) {
+      } else if (v.lat && new LatLng(v).equals(latlng)) {
         result = iRes;
         return true;
       }
@@ -217,7 +228,7 @@ const Utils = {
   },
   pxRadiusToMeterRadius(radiusInPx, map, center) {
     const pointA = map.project(center);
-    const pointB = L.point(pointA.x + radiusInPx, pointA.y);
+    const pointB = new Point(pointA.x + radiusInPx, pointA.y);
     return map.distance(map.unproject(pointB), center);
   },
 };

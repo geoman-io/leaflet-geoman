@@ -23,9 +23,11 @@ beforeEach(() => {
   // create the map
   cy.visit('/index.html', {
     onLoad: (contentWindow) => {
-      const { L } = contentWindow;
+      const { L, Geoman } = contentWindow;
 
-      const tiles = L.tileLayer(
+      Geoman.initialize();
+
+      const tiles = new L.TileLayer(
         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
@@ -35,7 +37,7 @@ beforeEach(() => {
       );
 
       // create the map
-      const map = L.map('map', {
+      const map = new L.LeafletMap('map', {
         preferCanvas: false,
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       })
@@ -49,7 +51,7 @@ beforeEach(() => {
       contentWindow.TOP_LEFT_BLOCK_CONTROL_COUNT = 6;
 
       // add leaflet-geoman toolbar
-      map.pm.addControls();
+      map.geoman.addControls();
     },
   });
 
@@ -68,7 +70,6 @@ beforeEach(() => {
             try {
               this._onStop(this);
             } catch (e) {
-              /* eslint-disable-next-line no-console */
               console.error(e);
               throw e;
             }

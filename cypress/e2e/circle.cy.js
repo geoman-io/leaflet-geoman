@@ -16,19 +16,19 @@ describe('Draw Circle', () => {
   it('draws a circle', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
-    cy.get(mapSelector).should('have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('have.class', 'leaflet-geoman-draw-cursor');
 
     cy.get(mapSelector).click(200, 200).click(250, 250);
 
-    cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
+    cy.get(mapSelector).should('not.have.class', 'leaflet-geoman-draw-cursor');
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasVertexMarkers(2);
     cy.hasMiddleMarkers(0);
@@ -59,7 +59,7 @@ describe('Draw Circle', () => {
           radius: 20,
         },
       };
-      map.pm.enableDraw('Circle', options);
+      map.geoman.enableDraw('Circle', options);
 
       cy.get(mapSelector)
         .click(200, 200)
@@ -78,11 +78,11 @@ describe('Draw Circle', () => {
   it('uses correct options from setPathOptions', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map, L }) => {
-      map.pm.setPathOptions({
+      map.geoman.setPathOptions({
         color: 'yellow',
       });
 
@@ -101,13 +101,13 @@ describe('Draw Circle', () => {
 
   it('enable continueDrawing', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ continueDrawing: true });
+      map.geoman.setGlobalOptions({ continueDrawing: true });
     });
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     // draw first circle
     cy.get(mapSelector).click(200, 200).click(250, 250);
@@ -116,7 +116,7 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(300, 200).click(350, 250);
 
     cy.window().then(({ map }) => {
-      const latlng = map.pm.Draw.Circle._hintMarker.getLatLng();
+      const latlng = map.geoman.Draw.Circle._hintMarker.getLatLng();
       const pxLatLng = map.containerPointToLatLng([350, 250]);
       expect(pxLatLng).to.deep.equal(latlng);
     });
@@ -130,12 +130,12 @@ describe('Draw Circle', () => {
   it('set max radius of circle', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
-      map.pm.setGlobalOptions({
+      new L.Marker(map.getCenter()).addTo(map);
+      map.geoman.setGlobalOptions({
         minRadiusCircle: 500,
         maxRadiusCircle: 1500,
       });
@@ -143,7 +143,7 @@ describe('Draw Circle', () => {
         .click(250, 200)
         .click(400, 190)
         .then(() => {
-          const layers = map.pm.getGeomanDrawLayers();
+          const layers = map.geoman.getGeomanDrawLayers();
           layers.forEach((layer) => {
             if (layer instanceof L.Circle) {
               expect(layer.getRadius()).to.equal(1500);
@@ -155,12 +155,12 @@ describe('Draw Circle', () => {
   it('set min radius of circle', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
-      map.pm.setGlobalOptions({
+      new L.Marker(map.getCenter()).addTo(map);
+      map.geoman.setGlobalOptions({
         minRadiusCircle: 1500,
         maxRadiusCircle: 3000,
       });
@@ -168,7 +168,7 @@ describe('Draw Circle', () => {
         .click(250, 200)
         .click(300, 190)
         .then(() => {
-          const layers = map.pm.getGeomanDrawLayers();
+          const layers = map.geoman.getGeomanDrawLayers();
           layers.forEach((layer) => {
             if (layer instanceof L.Circle) {
               expect(layer.getRadius()).to.equal(1500);
@@ -179,7 +179,7 @@ describe('Draw Circle', () => {
   });
   it('requireSnapToFinish', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         requireSnapToFinish: true,
         snapSegment: false,
       });
@@ -196,13 +196,13 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq(map.geoman.getGeomanDrawLayers().length);
     });
   });
 
@@ -210,12 +210,12 @@ describe('Draw Circle', () => {
     let mapSimple;
     cy.window().then(({ map, L }) => {
       map.remove();
-      mapSimple = L.map('map', {
+      mapSimple = new L.LeafletMap('map', {
         crs: L.CRS.Simple,
         minZoom: -2,
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([0, 0], 0);
-      mapSimple.pm.addControls();
+      mapSimple.geoman.addControls();
     });
 
     cy.toolbarButton('circle').click();
@@ -224,14 +224,14 @@ describe('Draw Circle', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(() => {
-      expect(1).to.eq(mapSimple.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(mapSimple.geoman.getGeomanDrawLayers().length);
 
-      const circle = mapSimple.pm.getGeomanDrawLayers()[0];
+      const circle = mapSimple.geoman.getGeomanDrawLayers()[0];
 
       // move marker
-      const marker = circle.pm._markers[1];
+      const marker = circle.geoman._markers[1];
       marker.setLatLng([marker.getLatLng().lng, marker.getLatLng().lat + 10]);
-      circle.pm._resizeCircle();
+      circle.geoman._resizeCircle();
 
       expect(167).to.eq(Math.floor(circle.getRadius()));
     });
@@ -241,12 +241,12 @@ describe('Draw Circle', () => {
     let mapSimple;
     cy.window().then(({ map, L }) => {
       map.remove();
-      mapSimple = L.map('map', {
+      mapSimple = new L.LeafletMap('map', {
         crs: L.CRS.Simple,
         minZoom: -2,
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([0, 0], 0);
-      mapSimple.pm.addControls();
+      mapSimple.geoman.addControls();
     });
 
     cy.toolbarButton('circle').click();
@@ -256,7 +256,7 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(350, 450).click(465, 250);
 
     cy.window().then(() => {
-      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      const radius = mapSimple.geoman.getGeomanDrawLayers()[1].getRadius();
       expect(radius).to.greaterThan(223);
       expect(radius).to.below(226);
     });
@@ -265,14 +265,14 @@ describe('Draw Circle', () => {
     cy.toolbarButton('circle').click();
     cy.window().then(({ map }) => {
       // if map property is null, then it is not visible
-      expect(!!map.pm.Draw.Circle._layer._map).to.eq(false);
+      expect(!!map.geoman.Draw.Circle._layer._map).to.eq(false);
     });
   });
   it('removes circle if enabled', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200).click(250, 250);
 
@@ -280,7 +280,7 @@ describe('Draw Circle', () => {
 
     cy.hasLayers(7);
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = map.geoman.getGeomanDrawLayers()[0];
       layer.remove();
     });
     cy.hasLayers(2);
@@ -288,13 +288,13 @@ describe('Draw Circle', () => {
   it('check if snapping works with max radius of circle', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(350, 250).click(450, 250);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         maxRadiusCircle: 1500,
       });
     });
@@ -303,8 +303,8 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(355, 250).click(475, 250);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      const layer2 = map.pm.getGeomanDrawLayers()[1];
+      const layer = map.geoman.getGeomanDrawLayers()[0];
+      const layer2 = map.geoman.getGeomanDrawLayers()[1];
       expect(layer.getLatLng().equals(layer2.getLatLng())).to.eq(true);
     });
   });
@@ -312,20 +312,23 @@ describe('Draw Circle', () => {
   it('change color of circle while drawing', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
         color: 'red',
       };
-      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+      map.geoman.setGlobalOptions({
+        templineStyle: style,
+        hintlineStyle: style,
+      });
 
-      const layer = map.pm.Draw.Circle._layer;
-      const hintLine = map.pm.Draw.Circle._hintline;
+      const layer = map.geoman.Draw.Circle._layer;
+      const hintLine = map.geoman.Draw.Circle._hintline;
       expect(layer.options.color).to.eql('red');
       expect(hintLine.options.color).to.eql('red');
     });
@@ -334,31 +337,31 @@ describe('Draw Circle', () => {
   it('fires disable event only if it was enabled', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = map.geoman.getGeomanDrawLayers()[0];
 
       let disableFired = false;
-      layer.on('pm:disable', () => {
+      layer.on('geoman:disable', () => {
         disableFired = true;
       });
-      layer.pm.disable();
+      layer.geoman.disable();
       expect(disableFired).to.eql(false);
 
-      layer.pm.enable();
-      layer.pm.disable();
+      layer.geoman.enable();
+      layer.geoman.disable();
       expect(disableFired).to.eql(true);
     });
   });
 
   it('creates circles (non-resizeableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({
+      map.geoman.setGlobalOptions({
         resizeableCircle: false,
         continueDrawing: true,
       });
@@ -366,8 +369,8 @@ describe('Draw Circle', () => {
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
@@ -375,52 +378,52 @@ describe('Draw Circle', () => {
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasCircleLayers(3);
   });
 
   it('disable dragging correctly (non-resizeableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ resizeableCircle: false });
+      map.geoman.setGlobalOptions({ resizeableCircle: false });
     });
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 300);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = map.geoman.getGeomanDrawLayers()[0];
 
-      expect(layer.pm.layerDragEnabled()).to.eql(false);
-      layer.pm.enable();
-      expect(layer.pm.layerDragEnabled()).to.eql(true);
-      layer.pm.disable();
-      expect(layer.pm.layerDragEnabled()).to.eql(false);
+      expect(layer.geoman.layerDragEnabled()).to.eql(false);
+      layer.geoman.enable();
+      expect(layer.geoman.layerDragEnabled()).to.eql(true);
+      layer.geoman.disable();
+      expect(layer.geoman.layerDragEnabled()).to.eql(false);
     });
   });
 
   it('deletes no circles by right-click (non-resizeableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ resizeableCircle: false });
+      map.geoman.setGlobalOptions({ resizeableCircle: false });
     });
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
 
     cy.toolbarButton('edit')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.hasCircleLayers(1);
 
@@ -431,23 +434,26 @@ describe('Draw Circle', () => {
 
   it('change color of circleMarker while drawing (non-resizeableCircle)', () => {
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ resizeableCircle: false });
+      map.geoman.setGlobalOptions({ resizeableCircle: false });
     });
 
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
         color: 'red',
       };
-      map.pm.setGlobalOptions({ templineStyle: style, hintlineStyle: style });
+      map.geoman.setGlobalOptions({
+        templineStyle: style,
+        hintlineStyle: style,
+      });
 
-      const layer = map.pm.Draw.Circle._layer;
+      const layer = map.geoman.Draw.Circle._layer;
       expect(layer.options.color).to.eql('red');
     });
   });
@@ -455,16 +461,16 @@ describe('Draw Circle', () => {
   it('on vertex click', (done) => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 200);
 
     cy.window().then(({ map }) => {
       let count = 0;
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      layer.on('pm:vertexclick', () => {
+      const layer = map.geoman.getGeomanDrawLayers()[0];
+      layer.on('geoman:vertexclick', () => {
         count += 1;
         if (count >= 2) {
           expect(count).to.eql(2);
@@ -478,21 +484,21 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(300, 200);
   });
 
-  it('checks if editing with snappable:false works', () => {
+  it('checks if editing with allowSnapping:false works', () => {
     cy.toolbarButton('circle')
       .click()
-      .closest('.button-container')
-      .should('have.class', 'active');
+      .closest('.leaflet-geoman-button-container')
+      .should('have.class', 'leaflet-geoman-active');
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(300, 200);
 
     cy.window().then(({ map }) => {
-      map.pm.setGlobalOptions({ snappable: false });
+      map.geoman.setGlobalOptions({ allowSnapping: false });
     });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
+      const layer = map.geoman.getGeomanLayers()[0];
       expect(layer.getLatLng().lat).to.eq(51.51034504891232);
       expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
       expect(layer.getRadius()).to.eq(1187.9783670191234);
@@ -502,12 +508,12 @@ describe('Draw Circle', () => {
 
     // change radius
     cy.get(mapSelector)
-      .trigger('mousedown', 300, 200, { which: 1 })
-      .trigger('mousemove', 300, 250, { which: 1 })
-      .trigger('mouseup', 300, 250, { which: 1 });
+      .trigger('pointerdown', 300, 200, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 300, 250, { eventConstructor: 'PointerEvent' })
+      .trigger('pointerup', 300, 250, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
+      const layer = map.geoman.getGeomanLayers()[0];
       expect(layer.getLatLng().lat).to.eq(51.51034504891232);
       expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
       expect(layer.getRadius()).to.eq(1328.278061564339);
@@ -515,12 +521,12 @@ describe('Draw Circle', () => {
 
     // change center
     cy.get(mapSelector)
-      .trigger('mousedown', 200, 200, { which: 1 })
-      .trigger('mousemove', 200, 250, { which: 1 })
-      .trigger('mouseup', 200, 250, { which: 1 });
+      .trigger('pointerdown', 200, 200, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 200, 250, { eventConstructor: 'PointerEvent' })
+      .trigger('pointerup', 200, 250, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
+      const layer = map.geoman.getGeomanLayers()[0];
       expect(layer.getLatLng().lat).to.eq(51.50500286265417);
       expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
       expect(layer.getRadius()).to.eq(1328.278061564339);
@@ -538,12 +544,12 @@ describe('Draw Circle', () => {
 
     // move marker
     cy.get(mapSelector)
-      .trigger('mousedown', 400, 200, { which: 1 })
-      .trigger('mousemove', 390, 230, { which: 1 })
-      .trigger('mouseup', 390, 230, { which: 1 });
+      .trigger('pointerdown', 400, 200, { eventConstructor: 'PointerEvent' })
+      .trigger('pointermove', 390, 230, { eventConstructor: 'PointerEvent' })
+      .trigger('pointerup', 390, 230, { eventConstructor: 'PointerEvent' });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[1];
+      const layer = map.geoman.getGeomanLayers()[1];
       expect(layer.getLatLng().lat).to.eq(51.51034504891232);
       expect(layer.getLatLng().lng).to.eq(-0.12428283691406251);
       expect(layer.getRadius()).to.eq(1240.3294565841613);

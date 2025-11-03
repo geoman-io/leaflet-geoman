@@ -1,4 +1,5 @@
 import merge from 'lodash/merge';
+import Utils from '../GeomanUtils';
 
 const EventMixin = {
   // Draw Events
@@ -6,7 +7,7 @@ const EventMixin = {
   _fireDrawStart(source = 'Draw', customPayload = {}) {
     this.__fire(
       this._map,
-      'pm:drawstart',
+      'geoman:drawstart',
       {
         shape: this._shape,
         workingLayer: this._layer,
@@ -19,7 +20,7 @@ const EventMixin = {
   _fireDrawEnd(source = 'Draw', customPayload = {}) {
     this.__fire(
       this._map,
-      'pm:drawend',
+      'geoman:drawend',
       {
         shape: this._shape,
       },
@@ -31,10 +32,9 @@ const EventMixin = {
   _fireCreate(layer, source = 'Draw', customPayload = {}) {
     this.__fire(
       this._map,
-      'pm:create',
+      'geoman:create',
       {
         shape: this._shape,
-        marker: layer, // TODO: Deprecated
         layer,
       },
       source,
@@ -49,7 +49,7 @@ const EventMixin = {
 
     this.__fire(
       this._layer,
-      'pm:centerplaced',
+      'geoman:centerplaced',
       {
         shape: this._shape,
         workingLayer,
@@ -61,7 +61,7 @@ const EventMixin = {
     );
   },
   // Fired when layer is cutted
-  // TODO: is Cut "Draw" or "Edit"? The event `pm:edit` in the same scope is called as source "Edit"
+  // TODO: is Cut "Draw" or "Edit"? The event `geoman:edit` in the same scope is called as source "Edit"
   _fireCut(
     fireLayer,
     layer,
@@ -71,7 +71,7 @@ const EventMixin = {
   ) {
     this.__fire(
       fireLayer,
-      'pm:cut',
+      'geoman:cut',
       {
         shape: this._shape,
         layer,
@@ -87,7 +87,7 @@ const EventMixin = {
   _fireEdit(fireLayer = this._layer, source = 'Edit', customPayload = {}) {
     this.__fire(
       fireLayer,
-      'pm:edit',
+      'geoman:edit',
       { layer: this._layer, shape: this.getShape() },
       source,
       customPayload
@@ -97,7 +97,7 @@ const EventMixin = {
   _fireEnable(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:enable',
+      'geoman:enable',
       { layer: this._layer, shape: this.getShape() },
       source,
       customPayload
@@ -107,7 +107,7 @@ const EventMixin = {
   _fireDisable(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:disable',
+      'geoman:disable',
       { layer: this._layer, shape: this.getShape() },
       source,
       customPayload
@@ -117,15 +117,15 @@ const EventMixin = {
   _fireUpdate(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:update',
+      'geoman:update',
       { layer: this._layer, shape: this.getShape() },
       source,
       customPayload
     );
   },
   // Fired when a vertex-marker is started dragging
-  // indexPath is only passed from Line / Polygon
-  _fireMarkerDragStart(
+  // indexPath is only passed from Polyline / Polygon
+  _fireVertexDragStart(
     e,
     indexPath = undefined,
     source = 'Edit',
@@ -133,7 +133,7 @@ const EventMixin = {
   ) {
     this.__fire(
       this._layer,
-      'pm:markerdragstart',
+      'geoman:vertexdragstart',
       {
         layer: this._layer,
         markerEvent: e,
@@ -145,8 +145,8 @@ const EventMixin = {
     );
   },
   // Fired while dragging a vertex-marker
-  // indexPath is only passed from Line / Polygon
-  _fireMarkerDrag(
+  // indexPath is only passed from Polyline / Polygon
+  _fireVertexDrag(
     e,
     indexPath = undefined,
     source = 'Edit',
@@ -154,7 +154,7 @@ const EventMixin = {
   ) {
     this.__fire(
       this._layer,
-      'pm:markerdrag',
+      'geoman:vertexdrag',
       {
         layer: this._layer,
         markerEvent: e,
@@ -166,8 +166,8 @@ const EventMixin = {
     );
   },
   // Fired when a vertex-marker is stopped dragging
-  // indexPath and intersectionReset is only passed from Line / Polygon
-  _fireMarkerDragEnd(
+  // indexPath and intersectionReset is only passed from Polyline / Polygon
+  _fireVertexDragEnd(
     e,
     indexPath = undefined,
     intersectionReset = undefined,
@@ -176,7 +176,7 @@ const EventMixin = {
   ) {
     this.__fire(
       this._layer,
-      'pm:markerdragend',
+      'geoman:vertexdragend',
       {
         layer: this._layer,
         markerEvent: e,
@@ -192,7 +192,7 @@ const EventMixin = {
   _fireDragStart(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:dragstart',
+      'geoman:dragstart',
       {
         layer: this._layer,
         shape: this.getShape(),
@@ -205,7 +205,7 @@ const EventMixin = {
   _fireDrag(e, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:drag',
+      'geoman:drag',
       { ...e, shape: this.getShape() },
       source,
       customPayload
@@ -215,7 +215,7 @@ const EventMixin = {
   _fireDragEnd(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:dragend',
+      'geoman:dragend',
       {
         layer: this._layer,
         shape: this.getShape(),
@@ -228,7 +228,7 @@ const EventMixin = {
   _fireDragEnable(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:dragenable',
+      'geoman:dragenable',
       { layer: this._layer, shape: this.getShape() },
       source,
       customPayload
@@ -238,7 +238,7 @@ const EventMixin = {
   _fireDragDisable(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:dragdisable',
+      'geoman:dragdisable',
       { layer: this._layer, shape: this.getShape() },
       source,
       customPayload
@@ -253,7 +253,7 @@ const EventMixin = {
   ) {
     this.__fire(
       fireLayer,
-      'pm:remove',
+      'geoman:remove',
       { layer: refLayer, shape: this.getShape() },
       source,
       customPayload
@@ -269,7 +269,7 @@ const EventMixin = {
   ) {
     this.__fire(
       this._layer,
-      'pm:vertexadded',
+      'geoman:vertexadded',
       {
         layer: this._layer,
         workingLayer: this._layer,
@@ -286,7 +286,7 @@ const EventMixin = {
   _fireVertexRemoved(marker, indexPath, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:vertexremoved',
+      'geoman:vertexremoved',
       {
         layer: this._layer,
         marker,
@@ -302,7 +302,7 @@ const EventMixin = {
   _fireVertexClick(e, indexPath, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:vertexclick',
+      'geoman:vertexclick',
       {
         layer: this._layer,
         markerEvent: e,
@@ -313,7 +313,7 @@ const EventMixin = {
       customPayload
     );
   },
-  // Fired when a Line / Polygon has self intersection
+  // Fired when a Polyline / Polygon has self intersection
   _fireIntersect(
     intersection,
     fireLayer = this._layer,
@@ -322,7 +322,7 @@ const EventMixin = {
   ) {
     this.__fire(
       fireLayer,
-      'pm:intersect',
+      'geoman:intersect',
       {
         layer: this._layer,
         intersection,
@@ -336,7 +336,7 @@ const EventMixin = {
   _fireLayerReset(e, indexPath, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:layerreset',
+      'geoman:layerreset',
       {
         layer: this._layer,
         markerEvent: e,
@@ -352,7 +352,7 @@ const EventMixin = {
   _fireChange(latlngs, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:change',
+      'geoman:change',
       {
         layer: this._layer,
         latlngs,
@@ -367,7 +367,7 @@ const EventMixin = {
   _fireTextChange(text, source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:textchange',
+      'geoman:textchange',
       {
         layer: this._layer,
         text,
@@ -382,7 +382,7 @@ const EventMixin = {
   _fireTextFocus(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:textfocus',
+      'geoman:textfocus',
       {
         layer: this._layer,
         shape: this.getShape(),
@@ -395,7 +395,7 @@ const EventMixin = {
   _fireTextBlur(source = 'Edit', customPayload = {}) {
     this.__fire(
       this._layer,
-      'pm:textblur',
+      'geoman:textblur',
       {
         layer: this._layer,
         shape: this.getShape(),
@@ -408,15 +408,15 @@ const EventMixin = {
   // Snapping Events
   // Fired during a marker move/drag and other layers are existing
   _fireSnapDrag(fireLayer, eventInfo, source = 'Snapping', customPayload = {}) {
-    this.__fire(fireLayer, 'pm:snapdrag', eventInfo, source, customPayload);
+    this.__fire(fireLayer, 'geoman:snapdrag', eventInfo, source, customPayload);
   },
   // Fired when a vertex is snapped
   _fireSnap(fireLayer, eventInfo, source = 'Snapping', customPayload = {}) {
-    this.__fire(fireLayer, 'pm:snap', eventInfo, source, customPayload);
+    this.__fire(fireLayer, 'geoman:snap', eventInfo, source, customPayload);
   },
   // Fired when a vertex is unsnapped
   _fireUnsnap(fireLayer, eventInfo, source = 'Snapping', customPayload = {}) {
-    this.__fire(fireLayer, 'pm:unsnap', eventInfo, source, customPayload);
+    this.__fire(fireLayer, 'geoman:unsnap', eventInfo, source, customPayload);
   },
 
   // Rotation Events
@@ -429,7 +429,7 @@ const EventMixin = {
   ) {
     this.__fire(
       fireLayer,
-      'pm:rotateenable',
+      'geoman:rotateenable',
       {
         layer: this._layer,
         helpLayer: this._rotatePoly,
@@ -443,7 +443,7 @@ const EventMixin = {
   _fireRotationDisable(fireLayer, source = 'Rotation', customPayload = {}) {
     this.__fire(
       fireLayer,
-      'pm:rotatedisable',
+      'geoman:rotatedisable',
       {
         layer: this._layer,
         shape: this.getShape(),
@@ -461,7 +461,7 @@ const EventMixin = {
   ) {
     this.__fire(
       fireLayer,
-      'pm:rotatestart',
+      'geoman:rotatestart',
       {
         layer: this._rotationLayer,
         helpLayer: this._layer,
@@ -483,12 +483,12 @@ const EventMixin = {
   ) {
     this.__fire(
       fireLayer,
-      'pm:rotate',
+      'geoman:rotate',
       {
         layer: rotationLayer,
         helpLayer: this._layer,
         startAngle: this._startAngle,
-        angle: rotationLayer.pm.getAngle(),
+        angle: rotationLayer.geoman.getAngle(),
         angleDiff,
         oldLatLngs,
         newLatLngs: rotationLayer.getLatLngs(),
@@ -507,12 +507,12 @@ const EventMixin = {
   ) {
     this.__fire(
       fireLayer,
-      'pm:rotateend',
+      'geoman:rotateend',
       {
         layer: this._rotationLayer,
         helpLayer: this._layer,
         startAngle,
-        angle: this._rotationLayer.pm.getAngle(),
+        angle: this._rotationLayer.geoman.getAngle(),
         originLatLngs,
         newLatLngs: this._rotationLayer.getLatLngs(),
       },
@@ -530,10 +530,10 @@ const EventMixin = {
     source = 'Toolbar',
     customPayload = {}
   ) {
-    // this._map is used because this is fired from L.Controls (PMButton)
+    // this._map is used because this is fired from Controls (GeomanControl)
     this.__fire(
       this._map,
-      'pm:actionclick',
+      'geoman:actionclick',
       {
         text: action.text,
         action,
@@ -546,10 +546,10 @@ const EventMixin = {
   },
   // Fired when a Toolbar button is clicked
   _fireButtonClick(btnName, button, source = 'Toolbar', customPayload = {}) {
-    // this._map is used because this is fired from L.Controls (PMButton)
+    // this._map is used because this is fired from Controls (GeomanControl)
     this.__fire(
       this._map,
-      'pm:buttonclick',
+      'geoman:buttonclick',
       { btnName, button },
       source,
       customPayload
@@ -565,8 +565,8 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
-      'pm:langchange',
+      this._map,
+      'geoman:langchange',
       {
         oldLang,
         activeLang,
@@ -580,11 +580,11 @@ const EventMixin = {
   // Fired when Drag Mode is toggled.
   _fireGlobalDragModeToggled(enabled, source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
-      'pm:globaldragmodetoggled',
+      this._map,
+      'geoman:globaldragmodetoggled',
       {
         enabled,
-        map: this.map,
+        map: this._map,
       },
       source,
       customPayload
@@ -593,11 +593,11 @@ const EventMixin = {
   // Fired when Edit Mode is toggled.
   _fireGlobalEditModeToggled(enabled, source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
-      'pm:globaleditmodetoggled',
+      this._map,
+      'geoman:globaleditmodetoggled',
       {
         enabled,
-        map: this.map,
+        map: this._map,
       },
       source,
       customPayload
@@ -610,11 +610,11 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
-      'pm:globalremovalmodetoggled',
+      this._map,
+      'geoman:globalremovalmodetoggled',
       {
         enabled,
-        map: this.map,
+        map: this._map,
       },
       source,
       customPayload
@@ -624,7 +624,7 @@ const EventMixin = {
   _fireGlobalCutModeToggled(source = 'Global', customPayload = {}) {
     this.__fire(
       this._map,
-      'pm:globalcutmodetoggled',
+      'geoman:globalcutmodetoggled',
       {
         enabled: !!this._enabled,
         map: this._map,
@@ -637,7 +637,7 @@ const EventMixin = {
   _fireGlobalDrawModeToggled(source = 'Global', customPayload = {}) {
     this.__fire(
       this._map,
-      'pm:globaldrawmodetoggled',
+      'geoman:globaldrawmodetoggled',
       {
         enabled: this._enabled,
         shape: this._shape,
@@ -650,11 +650,11 @@ const EventMixin = {
   // Fired when Rotation Mode is toggled.
   _fireGlobalRotateModeToggled(source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
-      'pm:globalrotatemodetoggled',
+      this._map,
+      'geoman:globalrotatemodetoggled',
       {
         enabled: this.globalRotateModeEnabled(),
-        map: this.map,
+        map: this._map,
       },
       source,
       customPayload
@@ -669,7 +669,7 @@ const EventMixin = {
   ) {
     this.__fire(
       fireLayer,
-      'pm:remove',
+      'geoman:remove',
       { layer: refLayer, shape: undefined },
       source,
       customPayload
@@ -684,8 +684,8 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
-      'pm:keyevent',
+      this._map,
+      'geoman:keyevent',
       {
         event,
         eventType,
@@ -699,7 +699,7 @@ const EventMixin = {
   // private (very private) fire function
   __fire(fireLayer, type, payload, source, customPayload = {}) {
     payload = merge(payload, customPayload, { source });
-    L.PM.Utils._fireEvent(fireLayer, type, payload);
+    Utils._fireEvent(fireLayer, type, payload);
   },
 };
 

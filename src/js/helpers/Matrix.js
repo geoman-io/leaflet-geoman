@@ -4,8 +4,10 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
 
+import { Point } from 'leaflet';
+
 /**
- * @class  L.PM.Matrix
+ * @class  Matrix
  *
  * @param {Number} a
  * @param {Number} b
@@ -21,12 +23,12 @@ const Matrix = function Matrix(a, b, c, d, e, f) {
   this._matrix = [a, b, c, d, e, f];
 };
 
-Matrix.init = () => new L.PM.Matrix(1, 0, 0, 1, 0, 0);
+Matrix.init = () => new Matrix(1, 0, 0, 1, 0, 0);
 
 Matrix.prototype = {
   /**
-   * @param  {L.Point} point
-   * @return {L.Point}
+   * @param  {Point} point
+   * @return {Point}
    */
   transform(point) {
     return this._transform(point.clone());
@@ -38,8 +40,8 @@ Matrix.prototype = {
    * [ x ] = [ a  b  tx ] [ x ] = [ a * x + b * y + tx ]
    * [ y ] = [ c  d  ty ] [ y ] = [ c * x + d * y + ty ]
    *
-   * @param  {L.Point} point
-   * @return {L.Point}
+   * @param  {Point} point
+   * @return {Point}
    */
   _transform(point) {
     const matrix = this._matrix;
@@ -50,23 +52,23 @@ Matrix.prototype = {
   },
 
   /**
-   * @param  {L.Point} point
-   * @return {L.Point}
+   * @param  {Point} point
+   * @return {Point}
    */
   untransform(point) {
     const matrix = this._matrix;
-    return new L.Point(
+    return new Point(
       (point.x / matrix[0] - matrix[4]) / matrix[0],
       (point.y / matrix[2] - matrix[5]) / matrix[2]
     );
   },
 
   /**
-   * @return {L.PM.Matrix}
+   * @return {Matrix}
    */
   clone() {
     const matrix = this._matrix;
-    return new L.PM.Matrix(
+    return new Matrix(
       matrix[0],
       matrix[1],
       matrix[2],
@@ -77,12 +79,12 @@ Matrix.prototype = {
   },
 
   /**
-   * @param {L.Point|Number} translate
-   * @return {L.PM.Matrix|L.Point}
+   * @param {Point|Number} translate
+   * @return {Matrix|Point}
    */
   translate(translate) {
     if (translate === undefined) {
-      return new L.Point(this._matrix[4], this._matrix[5]);
+      return new Point(this._matrix[4], this._matrix[5]);
     }
 
     let translateX;
@@ -99,18 +101,18 @@ Matrix.prototype = {
   },
 
   /**
-   * @param {L.Point|Number} scale
-   * @param {L.Point|Number} origin
-   * @return {L.PM.Matrix|L.Point}
+   * @param {Point|Number} scale
+   * @param {Point|Number} origin
+   * @return {Matrix|Point}
    */
   scale(scale, origin) {
     if (scale === undefined) {
-      return new L.Point(this._matrix[0], this._matrix[3]);
+      return new Point(this._matrix[0], this._matrix[3]);
     }
 
     let scaleX;
     let scaleY;
-    origin = origin || L.point(0, 0);
+    origin = origin || new Point(0, 0);
     if (typeof scale === 'number') {
       scaleX = scale;
       scaleY = scale;
@@ -133,14 +135,14 @@ Matrix.prototype = {
    * m00  m01  x - m00 * x - m01 * y
    * m10  m11  y - m10 * x - m11 * y
    * @param {Number}   angle
-   * @param {L.Point=} origin
-   * @return {L.PM.Matrix}
+   * @param {Point=} origin
+   * @return {Matrix}
    */
   rotate(angle, origin) {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
 
-    origin = origin || new L.Point(0, 0);
+    origin = origin || new Point(0, 0);
 
     return this._add(cos, sin, -sin, cos, origin.x, origin.y)._add(
       1,
@@ -154,7 +156,7 @@ Matrix.prototype = {
 
   /**
    * Invert rotation
-   * @return {L.PM.Matrix}
+   * @return {Matrix}
    */
   flip() {
     this._matrix[1] *= -1;
@@ -163,7 +165,7 @@ Matrix.prototype = {
   },
 
   /**
-   * @param {Number|L.PM.Matrix} a
+   * @param {Number|Matrix} a
    * @param {Number} b
    * @param {Number} c
    * @param {Number} d
@@ -185,7 +187,7 @@ Matrix.prototype = {
     ];
     let val;
 
-    if (a && a instanceof L.PM.Matrix) {
+    if (a && a instanceof Matrix) {
       src = a._matrix;
       other = [
         [src[0], src[2], src[4]],

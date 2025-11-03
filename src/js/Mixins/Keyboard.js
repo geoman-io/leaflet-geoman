@@ -1,24 +1,27 @@
 // use function to create a new mixin object for keeping isolation
+
+import { DomEvent } from 'leaflet';
+
 // to make it work for multiple map instances
 const createKeyboardMixins = () => ({
   _lastEvents: { keydown: undefined, keyup: undefined, current: undefined },
   _initKeyListener(map) {
-    this.map = map;
-    L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
-    L.DomEvent.on(window, 'blur', this._onBlur, this);
+    this._map = map;
+    DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
+    DomEvent.on(window, 'blur', this._onBlur, this);
     // clean up global listeners when current map instance is destroyed
     map.once('unload', this._unbindKeyListenerEvents, this);
   },
   _unbindKeyListenerEvents() {
-    L.DomEvent.off(document, 'keydown keyup', this._onKeyListener, this);
-    L.DomEvent.off(window, 'blur', this._onBlur, this);
+    DomEvent.off(document, 'keydown keyup', this._onKeyListener, this);
+    DomEvent.off(window, 'blur', this._onBlur, this);
   },
   _onKeyListener(e) {
     let focusOn = 'document';
 
     // .contains only supported since IE9, if you want to use Geoman with IE8 or lower you need to implement a polyfill for .contains
     // with focusOn the user can add a check if the key was pressed while the user interacts with the map
-    if (this.map.getContainer().contains(e.target)) {
+    if (this._map.getContainer().contains(e.target)) {
       focusOn = 'map';
     }
 
@@ -26,7 +29,7 @@ const createKeyboardMixins = () => ({
     this._lastEvents[e.type] = data;
     this._lastEvents.current = data;
 
-    this.map.pm._fireKeyeventEvent(e, e.type, focusOn);
+    this._map.geoman._fireKeyeventEvent(e, e.type, focusOn);
   },
   _onBlur(e) {
     e.altKey = false;

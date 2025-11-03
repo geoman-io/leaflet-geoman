@@ -1,24 +1,28 @@
-import Edit from './L.PM.Edit';
+import { Util } from 'leaflet';
+import Edit from './Edit';
 
-Edit.ImageOverlay = Edit.extend({
-  _shape: 'ImageOverlay',
+export default class GeomanEditImageOverlay extends Edit {
+  _shape = 'ImageOverlay';
+
   initialize(layer) {
     this._layer = layer;
     this._enabled = false;
-  },
+  }
+
   toggleEdit(options) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
-  },
+  }
+
   enabled() {
     return this._enabled;
-  },
-  // TODO: remove default option in next major Release
-  enable(options = { draggable: true, snappable: true }) {
-    L.Util.setOptions(this, options);
+  }
+
+  enable(options) {
+    Util.setOptions(this, options);
     this._map = this._layer._map;
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {
@@ -49,7 +53,8 @@ Edit.ImageOverlay = Edit.extend({
     this._otherSnapLayers = this._findCorners();
 
     this._fireEnable();
-  },
+  }
+
   disable() {
     // prevent disabling if layer is being dragged
     if (this._dragging) {
@@ -76,7 +81,8 @@ Edit.ImageOverlay = Edit.extend({
     }
 
     this._enabled = false;
-  },
+  }
+
   _findCorners() {
     const corners = this._layer.getBounds();
 
@@ -86,5 +92,5 @@ Edit.ImageOverlay = Edit.extend({
     const southwest = corners.getSouthWest();
 
     return [northwest, northeast, southeast, southwest];
-  },
-});
+  }
+}
