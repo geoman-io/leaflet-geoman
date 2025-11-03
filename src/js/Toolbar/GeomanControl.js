@@ -172,7 +172,7 @@ export default class GeomanControl extends Control {
         text: getTranslation('actions.removeLastVertex'),
         title: getTranslation('actions.removeLastVertex'),
         onClick() {
-          this._map.geoman.Draw[button.jsClass]._removeLastVertex();
+          this._map.geoman.Draw[button.jsClass].removeLastVertex();
         },
       },
       finish: {

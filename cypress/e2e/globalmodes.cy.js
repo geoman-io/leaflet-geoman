@@ -140,7 +140,11 @@ describe('Modes', () => {
   it('properly removes layers', () => {
     cy.toolbarButton('marker').click();
 
-    cy.get(mapSelector).click(90, 250).click(120, 250);
+    cy.get(mapSelector).click(90, 250);
+
+    cy.toolbarButton('marker').click();
+
+    cy.get(mapSelector).click(120, 250);
 
     cy.toolbarButton('delete').click();
 
@@ -287,8 +291,10 @@ describe('Modes', () => {
 
   it('re-applies removal mode onAdd', () => {
     cy.toolbarButton('marker').click();
+    cy.get(mapSelector).click(90, 250);
 
-    cy.get(mapSelector).click(90, 250).click(120, 250);
+    cy.toolbarButton('marker').click();
+    cy.get(mapSelector).click(120, 250);
 
     cy.toolbarButton('delete').click();
 
@@ -314,8 +320,6 @@ describe('Modes', () => {
     cy.toolbarButton('marker').click();
 
     cy.get(mapSelector).click(90, 250);
-
-    cy.toolbarButton('marker').click();
 
     cy.get(mapSelector).click(90, 245);
 
