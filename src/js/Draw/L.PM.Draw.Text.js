@@ -81,7 +81,7 @@ Draw.Text = Draw.extend({
     // remove event listener to sync hint marker
     this._map.off('mousemove', this._syncHintMarker, this);
 
-    this._map.off('mousemove', this._showHintMarker, this);
+    this._map.off('mousemove', this._showHintMarkerAfterMoving, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
