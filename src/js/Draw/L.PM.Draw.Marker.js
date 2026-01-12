@@ -197,43 +197,51 @@ Draw.Marker = Draw.extend({
     }
   },
   _setupTouchScreenTips() {
-    let markerHintTip = null;
+    this._markerHintTip = null;
 
-    this._map.on('pm:drawstart', (event) => {
-      if (event.shape === 'Marker' && !deviceHasFinePointer()) {
-        // Hides the "hint marker" as that is confusing for touch screen users.
-        const drawMarker = this._map.pm.Draw.Marker;
-        drawMarker._hintMarker.remove();
+    if (!deviceHasFinePointer()) {
+      this._map.on('pm:drawstart', (event) => {
+        if (event.shape === 'Marker') {
+          // Hides the "hint marker" as that is confusing for touch screen users.
+          event.workingLayer.remove();
 
-        // Creates the touch screen hint "permanently" (while using the tool)
-        // sticked at the top of the map.
-        markerHintTip = L.tooltip([0, 0], {
-          className: 'leaflet-tooltip-stickynote',
-          content: getTranslation('tooltips.placeMarkerTip'),
-          direction: 'bottom',
-          permanent: true,
-        }).addTo(this._map);
+          // Creates the touch screen hint "permanently" (while using the tool)
+          // sticked at the top of the map.
+          this._markerHintTip = L.tooltip([0, 0], {
+            className: 'leaflet-tooltip-stickynote',
+            content: getTranslation('tooltips.placeMarkerTip'),
+            direction: 'bottom',
+            permanent: true,
+          }).addTo(this._map);
 
-        const updateHandler = () => this._updateHintPosition(markerHintTip);
-
-        updateHandler();
-        this._map.on('zoomlevelschange resize move', updateHandler, this);
-      }
-    });
+          this._markerHintTipUpdateHandler = L.Util.throttle(
+            this._updateHintPosition,
+            100,
+            this
+          );
+          this._markerHintTipUpdateHandler();
+          this._map.on(
+            'zoomlevelschange resize move',
+            this._markerHintTipUpdateHandler,
+            this
+          );
+        }
+      });
+    }
     this._map.on('pm:drawend', (event) => {
-      if (event.shape === 'Marker' && markerHintTip) {
-        markerHintTip.remove();
-        markerHintTip = null;
+      if (event.shape === 'Marker' && this._markerHintTip) {
+        this._markerHintTip.remove();
+        this._markerHintTip = null;
         this._map.off(
           'zoomlevelschange resize move',
-          this._updateHintPosition,
+          this._markerHintTipUpdateHandler,
           this
         );
       }
     });
   },
-  _updateHintPosition(markerHintTip) {
-    if (!markerHintTip) {
+  _updateHintPosition() {
+    if (!this._markerHintTip) {
       return;
     }
 
@@ -252,6 +260,6 @@ Draw.Marker = Draw.extend({
     const newBounds = bounds.getNorthWest().toBounds(distance);
 
     // Set the hint at the top center of the map.
-    markerHintTip.setLatLng([bounds.getNorth(), newBounds.getEast()]);
+    this._markerHintTip.setLatLng([bounds.getNorth(), newBounds.getEast()]);
   },
 });
