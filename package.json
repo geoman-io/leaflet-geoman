@@ -40,7 +40,7 @@
     "@turf/kinks": "^7.3.1",
     "@turf/line-intersect": "^7.3.1",
     "@turf/line-split": "^7.3.1",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "polyclip-ts": "^0.16.8"
   },
   "devDependencies": {
