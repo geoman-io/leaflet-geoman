@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Cliquez pour placer un marqueur",
+    "placeMarkerTouch": "Appuyez sur la carte pour placer un marqueur",
     "firstVertex": "Cliquez pour placer le premier sommet",
     "continueLine": "Cliquez pour continuer à dessiner",
     "finishLine": "Cliquez sur n'importe quel marqueur pour terminer",

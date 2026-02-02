@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Kattintson a jelölő elhelyezéséhez",
+    "placeMarkerTouch": "Érintse meg a térképet a jelölő elhelyezéséhez",
     "firstVertex": "Kattintson az első pont elhelyezéséhez",
     "continueLine": "Kattintson a következő pont elhelyezéséhez",
     "finishLine": "A befejezéshez kattintson egy meglévő pontra",

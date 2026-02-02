@@ -7,6 +7,11 @@ export function getTranslation(path) {
   return get(translations[lang], path) || get(translations.en, path) || path;
 }
 
+export function hasFinePointer() {
+  // Default to true (desktop) if matchMedia is unavailable (older browsers)
+  return !window.matchMedia || window.matchMedia('(pointer: fine)').matches;
+}
+
 export function hasValues(list) {
   for (let i = 0; i < list.length; i += 1) {
     const item = list[i];

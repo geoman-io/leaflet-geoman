@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Adaugă un punct",
+    "placeMarkerTouch": "Atingeți harta pentru a plasa un punct",
     "firstVertex": "Apasă aici pentru a adăuga primul Vertex",
     "continueLine": "Apasă aici pentru a continua desenul",
     "finishLine": "Apasă pe orice obiect pentru a finisa desenul",

@@ -1,5 +1,5 @@
 import Draw from './L.PM.Draw';
-import { getTranslation } from '../helpers';
+import { getTranslation, hasFinePointer } from '../helpers';
 
 Draw.Marker = Draw.extend({
   initialize(map) {
@@ -17,6 +17,9 @@ Draw.Marker = Draw.extend({
     // change enabled state
     this._enabled = true;
 
+    // Detect if device has a fine pointer (mouse) vs coarse pointer (touch)
+    this._isTouchDevice = !hasFinePointer();
+
     // change map cursor
     this._map.getContainer().classList.add('geoman-draw-cursor');
 
@@ -26,33 +29,48 @@ Draw.Marker = Draw.extend({
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
-    // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(
-      this._map.getCenter(),
-      this.options.markerStyle
-    );
-    this._setPane(this._hintMarker, 'markerPane');
-    this._hintMarker._pmTempLayer = true;
-    this._hintMarker.addTo(this._map);
+    if (this._isTouchDevice) {
+      // Touch device: Create fixed-position hint instead of cursor-following marker
+      this._createTouchHint();
 
-    // add tooltip to hintmarker
-    if (this.options.tooltips) {
-      this._hintMarker
-        .bindTooltip(getTranslation('tooltips.placeMarker'), {
-          permanent: true,
-          offset: L.point(0, 10),
-          direction: 'bottom',
+      // Create a minimal hidden hint marker to satisfy the snappable mixin interface.
+      // Note: Snapping is effectively disabled on touch devices since there's no
+      // continuous cursor position to snap. The marker exists only for API compatibility.
+      this._hintMarker = L.marker(this._map.getCenter(), {
+        ...this.options.markerStyle,
+        opacity: 0,
+        interactive: false,
+      });
+      this._setPane(this._hintMarker, 'markerPane');
+      this._hintMarker._pmTempLayer = true;
+    } else {
+      // Desktop: Use existing hint marker behavior
+      this._hintMarker = L.marker(
+        this._map.getCenter(),
+        this.options.markerStyle
+      );
+      this._setPane(this._hintMarker, 'markerPane');
+      this._hintMarker._pmTempLayer = true;
+      this._hintMarker.addTo(this._map);
 
-          opacity: 0.8,
-        })
-        .openTooltip();
+      // add tooltip to hintmarker
+      if (this.options.tooltips) {
+        this._hintMarker
+          .bindTooltip(getTranslation('tooltips.placeMarker'), {
+            permanent: true,
+            offset: L.point(0, 10),
+            direction: 'bottom',
+            opacity: 0.8,
+          })
+          .openTooltip();
+      }
+
+      // sync hint marker with mouse cursor
+      this._map.on('mousemove', this._syncHintMarker, this);
     }
 
     // this is just to keep the snappable mixin happy
     this._layer = this._hintMarker;
-
-    // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
 
     // enable edit mode for existing markers
     if (this.options.markerEditable) {
@@ -82,11 +100,14 @@ Draw.Marker = Draw.extend({
     // undbind click event, don't create a marker on click anymore
     this._map.off('click', this._createMarker, this);
 
-    // remove hint marker
-    this._hintMarker.remove();
-
-    // remove event listener to sync hint marker
-    this._map.off('mousemove', this._syncHintMarker, this);
+    // cleanup based on device type
+    if (this._isTouchDevice) {
+      this._removeTouchHint();
+      this._hintMarker = null;
+    } else {
+      this._hintMarker.remove();
+      this._map.off('mousemove', this._syncHintMarker, this);
+    }
 
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {
@@ -192,6 +213,20 @@ Draw.Marker = Draw.extend({
   setStyle() {
     if (this.options.markerStyle?.icon) {
       this._hintMarker?.setIcon(this.options.markerStyle.icon);
+    }
+  },
+  _createTouchHint() {
+    if (!this.options.tooltips) {
+      return;
+    }
+    this._touchHint = L.DomUtil.create('div', 'leaflet-pm-touch-hint');
+    this._touchHint.textContent = getTranslation('tooltips.placeMarkerTouch');
+    this._map.getContainer().appendChild(this._touchHint);
+  },
+  _removeTouchHint() {
+    if (this._touchHint && this._touchHint.parentNode) {
+      this._touchHint.parentNode.removeChild(this._touchHint);
+      this._touchHint = null;
     }
   },
 });

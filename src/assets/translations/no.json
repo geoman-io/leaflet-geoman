@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Klikk for å plassere punkt",
+    "placeMarkerTouch": "Trykk på kartet for å plassere et punkt",
     "firstVertex": "Klikk for å plassere første punkt",
     "continueLine": "Klikk for å tegne videre",
     "finishLine": "Klikk på et eksisterende punkt for å fullføre",

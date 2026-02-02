@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "İşaretçi yerleştirmek için tıklayın",
+    "placeMarkerTouch": "İşaretçi yerleştirmek için haritaya dokunun",
     "firstVertex": "İlk tepe noktasını yerleştirmek için tıklayın",
     "continueLine": "Çizime devam etmek için tıklayın",
     "finishLine": "Bitirmek için mevcut herhangi bir işaretçiyi tıklayın",

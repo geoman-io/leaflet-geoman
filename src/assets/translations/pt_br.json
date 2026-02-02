@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Clique para posicionar o marcador",
+    "placeMarkerTouch": "Toque no mapa para posicionar um marcador",
     "firstVertex": "Clique para posicionar o primeiro vértice",
     "continueLine": "Clique para continuar desenhando",
     "finishLine": "Clique em qualquer marcador existente para finalizar",

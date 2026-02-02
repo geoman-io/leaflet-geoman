@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Kliknutím vytvoříte značku",
+    "placeMarkerTouch": "Klepnutím na mapu umístíte značku",
     "firstVertex": "Kliknutím vytvoříte první objekt",
     "continueLine": "Kliknutím pokračujte v kreslení",
     "finishLine": "Kliknutí na libovolnou existující značku pro dokončení",

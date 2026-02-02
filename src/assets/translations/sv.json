@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Klicka för att placera markör",
+    "placeMarkerTouch": "Tryck på kartan för att placera en markör",
     "firstVertex": "Klicka för att placera första hörnet",
     "continueLine": "Klicka för att fortsätta rita",
     "finishLine": "Klicka på en existerande punkt för att slutföra",

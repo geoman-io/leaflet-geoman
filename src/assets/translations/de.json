@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Platziere den Marker mit Klick",
+    "placeMarkerTouch": "Tippe auf die Karte, um einen Marker zu platzieren",
     "firstVertex": "Platziere den ersten Marker mit Klick",
     "continueLine": "Klicke, um weiter zu zeichnen",
     "finishLine": "Beende mit Klick auf existierenden Marker",

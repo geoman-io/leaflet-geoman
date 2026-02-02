@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "クリックしてマーカーを配置",
+    "placeMarkerTouch": "地図をタップしてマーカーを配置",
     "firstVertex": "クリックして最初の頂点を配置",
     "continueLine": "クリックして描画を続ける",
     "finishLine": "任意のマーカーをクリックして終了",

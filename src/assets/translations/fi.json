@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Klikkaa asettaaksesi merkin",
+    "placeMarkerTouch": "Napauta karttaa asettaaksesi merkin",
     "firstVertex": "Klikkaa asettaakseni ensimmäisen osuuden",
     "continueLine": "Klikkaa jatkaaksesi piirtämistä",
     "finishLine": "Klikkaa olemassa olevaa merkkiä lopettaaksesi",

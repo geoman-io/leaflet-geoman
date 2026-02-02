@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "마커 위치를 클릭하세요",
+    "placeMarkerTouch": "지도를 탭하여 마커를 배치하세요",
     "firstVertex": "첫번째 꼭지점 위치을 클릭하세요",
     "continueLine": "계속 그리려면 클릭하세요",
     "finishLine": "끝내려면 기존 마커를 클릭하세요",

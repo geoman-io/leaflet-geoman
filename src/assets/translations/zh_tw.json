@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "單擊放置標記",
+    "placeMarkerTouch": "點擊地圖放置標記",
     "firstVertex": "單擊放置第一個頂點",
     "continueLine": "單擊繼續繪製",
     "finishLine": "單擊任何存在的標記以完成",

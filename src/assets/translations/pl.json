@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Kliknij, aby umieścić znacznik",
+    "placeMarkerTouch": "Dotknij mapę, aby umieścić znacznik",
     "firstVertex": "Kliknij, aby umieścić pierwszy wierzchołek",
     "continueLine": "Kliknij, aby kontynuować rysowanie",
     "finishLine": "Kliknij dowolny istniejący znacznik, aby zakończyć",

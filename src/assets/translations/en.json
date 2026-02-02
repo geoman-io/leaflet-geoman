@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Click to place marker",
+    "placeMarkerTouch": "Tap the map to place a marker",
     "firstVertex": "Click to place first vertex",
     "continueLine": "Click to continue drawing",
     "finishLine": "Click any existing marker to finish",

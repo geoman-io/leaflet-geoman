@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Klik untuk menempatkan marker",
+    "placeMarkerTouch": "Ketuk peta untuk menempatkan marker",
     "firstVertex": "Klik untuk menempatkan vertex pertama",
     "continueLine": "Klik untuk meneruskan digitasi",
     "finishLine": "Klik pada sembarang marker yang ada untuk mengakhiri",

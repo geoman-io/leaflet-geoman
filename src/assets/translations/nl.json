@@ -1,6 +1,7 @@
 {
   "tooltips": {
     "placeMarker": "Klik om een marker te plaatsen",
+    "placeMarkerTouch": "Tik op de kaart om een marker te plaatsen",
     "firstVertex": "Klik om het eerste punt te plaatsen",
     "continueLine": "Klik om te blijven tekenen",
     "finishLine": "Klik op een bestaand punt om te beëindigen",
