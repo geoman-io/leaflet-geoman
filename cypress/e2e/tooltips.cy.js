@@ -52,6 +52,34 @@ describe('Shows Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
   });
 
+  // Test adapted from PR #1597 (JoonasAapro) for touch hint feature
+  it('Shows touch hint on devices without fine pointer', () => {
+    // Mock matchMedia to simulate coarse pointer (touch device)
+    cy.window().then((win) => {
+      cy.stub(win, 'matchMedia').callsFake((query) => ({
+        matches: query === '(pointer: coarse)',
+      }));
+    });
+
+    cy.get('.leaflet-pm-touch-hint').should('not.exist');
+
+    cy.toolbarButton('marker').click();
+    cy.get('.leaflet-pm-touch-hint').should('exist');
+
+    cy.get('.leaflet-pm-touch-hint').then((el) => {
+      expect(el).to.have.text('Tap the map to place a marker');
+    });
+
+    cy.get(mapSelector).click(290, 250);
+
+    // Hint should persist after placing marker (continueDrawing default)
+    cy.get('.leaflet-pm-touch-hint').should('exist');
+
+    cy.toolbarButton('marker').click();
+
+    cy.get('.leaflet-pm-touch-hint').should('not.exist');
+  });
+
   it('Has Rectangle Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
     cy.toolbarButton('rectangle').click();
