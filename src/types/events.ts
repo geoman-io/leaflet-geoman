@@ -21,9 +21,7 @@ export type DrawStartEventHandler = (e: {
   workingLayer: L.Layer;
 }) => void;
 
-export type DrawEndEventHandler = (e: {
-  shape: SUPPORTED_SHAPES;
-}) => void;
+export type DrawEndEventHandler = (e: { shape: SUPPORTED_SHAPES }) => void;
 
 export type CreateEventHandler = (e: {
   shape: SUPPORTED_SHAPES;
@@ -162,13 +160,9 @@ export type TextBlurEventHandler = (e: {
   layer: L.Layer;
 }) => void;
 
-export type ContainmentViolationEventHandler = (e: {
-  layer: L.Layer;
-}) => void;
+export type ContainmentViolationEventHandler = (e: { layer: L.Layer }) => void;
 
-export type IntersectionViolationEventHandler = (e: {
-  layer: L.Layer;
-}) => void;
+export type IntersectionViolationEventHandler = (e: { layer: L.Layer }) => void;
 
 export type CancelEventHandler = (e: { layer: L.Layer }) => void;
 
@@ -509,7 +503,4 @@ export type GlobalCancelEventHandler = (e: {
  * ERROR EVENT HANDLERS
  */
 
-export type ErrorEventHandler = (e: {
-  message: string;
-  error: Error;
-}) => void;
+export type ErrorEventHandler = (e: { message: string; error: Error }) => void;

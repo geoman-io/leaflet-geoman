@@ -75,7 +75,11 @@ declare const L: typeof import('leaflet') & {
     PMButton: PMButtonConstructor;
   };
   DomUtil: {
-    create: (tagName: string, className?: string, container?: HTMLElement) => HTMLElement;
+    create: (
+      tagName: string,
+      className?: string,
+      container?: HTMLElement
+    ) => HTMLElement;
   };
   Util: {
     setOptions: <T extends object>(obj: T, options: object) => T;
@@ -83,7 +87,8 @@ declare const L: typeof import('leaflet') & {
 };
 
 // Extend L.Control with PMButton
-(L.Control as { PMButton?: PMButtonConstructor }).PMButton = PMButton as unknown as PMButtonConstructor;
+(L.Control as { PMButton?: PMButtonConstructor }).PMButton =
+  PMButton as unknown as PMButtonConstructor;
 
 /**
  * Toolbar options
@@ -128,9 +133,11 @@ type ExtendedMap = L.Map & {
   pm: {
     Draw: {
       createNewDrawInstance: (name: string, copyInstance: string) => unknown;
-      [key: string]: {
-        toggle: (options?: object) => void;
-      } | ((name: string, copyInstance: string) => unknown);
+      [key: string]:
+        | {
+            toggle: (options?: object) => void;
+          }
+        | ((name: string, copyInstance: string) => unknown);
     };
     Toolbar: IToolbar;
     toggleGlobalEditMode: () => void;
@@ -183,20 +190,30 @@ interface IToolbar {
   toggleControls(options?: Partial<ToolbarOptions>): void;
   _addButton(name: string, button: IPMButton): IPMButton;
   triggerClickOnToggledButtons(exceptThisButton?: IPMButton): void;
-  toggleButton(name: string, status: boolean, disableOthers?: boolean): boolean | false;
+  toggleButton(
+    name: string,
+    status: boolean,
+    disableOthers?: boolean
+  ): boolean | false;
   _defineButtons(): void;
   _showHideButtons(): void;
   _getBtnPosition(block: string): string;
   setBlockPosition(block: string, position: string): void;
   getBlockPositions(): ToolbarOptions['positions'];
-  copyDrawControl(copyInstance: string, options: string | CustomControlOptions): { drawInstance: unknown; control: IPMButton };
+  copyDrawControl(
+    copyInstance: string,
+    options: string | CustomControlOptions
+  ): { drawInstance: unknown; control: IPMButton };
   createCustomControl(options: CustomControlOptions): IPMButton;
   controlExists(name: string): boolean;
   getButton(name: string): IPMButton | undefined;
   getButtonsInBlock(name: string): Record<string, IPMButton>;
   changeControlOrder(order?: string[]): void;
   getControlOrder(): string[];
-  changeActionsOfControl(name: string, actions: (string | ButtonAction)[]): void;
+  changeActionsOfControl(
+    name: string,
+    actions: (string | ButtonAction)[]
+  ): void;
   setButtonDisabled(name: string, state: boolean): void;
   _shapeMapping(): Record<string, string>;
   _btnNameMapping(name: string): string;
@@ -361,7 +378,10 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       delete this.buttons[btnName];
     }
   },
-  toggleControls(this: IToolbar, options: Partial<ToolbarOptions> = this.options) {
+  toggleControls(
+    this: IToolbar,
+    options: Partial<ToolbarOptions> = this.options
+  ) {
     if (this.isVisible) {
       this.removeControls();
     } else {
@@ -391,7 +411,12 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       }
     }
   },
-  toggleButton(this: IToolbar, name: string, status: boolean, disableOthers = true) {
+  toggleButton(
+    this: IToolbar,
+    name: string,
+    status: boolean,
+    disableOthers = true
+  ) {
     // does not fire the events/functionality of the button
     // this just changes the state and is used if a functionality (like Draw)
     // is enabled manually via script
@@ -428,7 +453,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       afterClick: (_e, ctx) => {
         // toggle drawing mode
         if (ctx) {
-          (this.map.pm.Draw[ctx.button._button.jsClass!] as { toggle: () => void }).toggle();
+          (
+            this.map.pm.Draw[ctx.button._button.jsClass!] as {
+              toggle: () => void;
+            }
+          ).toggle();
         }
       },
       doToggle: true,
@@ -446,7 +475,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       afterClick: (_e, ctx) => {
         // toggle drawing mode
         if (ctx) {
-          (this.map.pm.Draw[ctx.button._button.jsClass!] as { toggle: () => void }).toggle();
+          (
+            this.map.pm.Draw[ctx.button._button.jsClass!] as {
+              toggle: () => void;
+            }
+          ).toggle();
         }
       },
       doToggle: true,
@@ -464,7 +497,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       afterClick: (_e, ctx) => {
         // toggle drawing mode
         if (ctx) {
-          (this.map.pm.Draw[ctx.button._button.jsClass!] as { toggle: () => void }).toggle();
+          (
+            this.map.pm.Draw[ctx.button._button.jsClass!] as {
+              toggle: () => void;
+            }
+          ).toggle();
         }
       },
       doToggle: true,
@@ -482,7 +519,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       afterClick: (_e, ctx) => {
         // toggle drawing mode
         if (ctx) {
-          (this.map.pm.Draw[ctx.button._button.jsClass!] as { toggle: () => void }).toggle();
+          (
+            this.map.pm.Draw[ctx.button._button.jsClass!] as {
+              toggle: () => void;
+            }
+          ).toggle();
         }
       },
       doToggle: true,
@@ -500,7 +541,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       afterClick: (_e, ctx) => {
         // toggle drawing mode
         if (ctx) {
-          (this.map.pm.Draw[ctx.button._button.jsClass!] as { toggle: () => void }).toggle();
+          (
+            this.map.pm.Draw[ctx.button._button.jsClass!] as {
+              toggle: () => void;
+            }
+          ).toggle();
         }
       },
       doToggle: true,
@@ -518,7 +563,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       afterClick: (_e, ctx) => {
         // toggle drawing mode
         if (ctx) {
-          (this.map.pm.Draw[ctx.button._button.jsClass!] as { toggle: () => void }).toggle();
+          (
+            this.map.pm.Draw[ctx.button._button.jsClass!] as {
+              toggle: () => void;
+            }
+          ).toggle();
         }
       },
       doToggle: true,
@@ -566,7 +615,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       afterClick: (_e, ctx) => {
         // enable polygon drawing mode without snap
         if (ctx) {
-          (this.map.pm.Draw[ctx.button._button.jsClass!] as { toggle: (options: object) => void }).toggle({
+          (
+            this.map.pm.Draw[ctx.button._button.jsClass!] as {
+              toggle: (options: object) => void;
+            }
+          ).toggle({
             snappable: true,
             cursorMarker: true,
             allowSelfIntersection: false,
@@ -619,7 +672,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       afterClick: (_e, ctx) => {
         // toggle drawing mode
         if (ctx) {
-          (this.map.pm.Draw[ctx.button._button.jsClass!] as { toggle: () => void }).toggle();
+          (
+            this.map.pm.Draw[ctx.button._button.jsClass!] as {
+              toggle: () => void;
+            }
+          ).toggle();
         }
       },
       doToggle: true,
@@ -629,21 +686,54 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
       actions: ['cancel'],
     };
 
-    this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton) as unknown as IPMButton);
-    this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton) as unknown as IPMButton);
-    this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton) as unknown as IPMButton);
-    this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton) as unknown as IPMButton);
-    this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton) as unknown as IPMButton);
+    this._addButton(
+      'drawMarker',
+      new L.Control.PMButton(drawMarkerButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'drawPolyline',
+      new L.Control.PMButton(drawLineButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'drawRectangle',
+      new L.Control.PMButton(drawRectButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'drawPolygon',
+      new L.Control.PMButton(drawPolyButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'drawCircle',
+      new L.Control.PMButton(drawCircleButton) as unknown as IPMButton
+    );
     this._addButton(
       'drawCircleMarker',
       new L.Control.PMButton(drawCircleMarkerButton) as unknown as IPMButton
     );
-    this._addButton('drawText', new L.Control.PMButton(drawTextButton) as unknown as IPMButton);
-    this._addButton('editMode', new L.Control.PMButton(editButton) as unknown as IPMButton);
-    this._addButton('dragMode', new L.Control.PMButton(dragButton) as unknown as IPMButton);
-    this._addButton('cutPolygon', new L.Control.PMButton(cutButton) as unknown as IPMButton);
-    this._addButton('removalMode', new L.Control.PMButton(deleteButton) as unknown as IPMButton);
-    this._addButton('rotateMode', new L.Control.PMButton(rotateButton) as unknown as IPMButton);
+    this._addButton(
+      'drawText',
+      new L.Control.PMButton(drawTextButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'editMode',
+      new L.Control.PMButton(editButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'dragMode',
+      new L.Control.PMButton(dragButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'cutPolygon',
+      new L.Control.PMButton(cutButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'removalMode',
+      new L.Control.PMButton(deleteButton) as unknown as IPMButton
+    );
+    this._addButton(
+      'rotateMode',
+      new L.Control.PMButton(rotateButton) as unknown as IPMButton
+    );
   },
 
   _showHideButtons(this: IToolbar) {
@@ -702,7 +792,8 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
     }
   },
   _getBtnPosition(this: IToolbar, block: string) {
-    return this.options.positions && this.options.positions[block as keyof typeof this.options.positions]
+    return this.options.positions &&
+      this.options.positions[block as keyof typeof this.options.positions]
       ? this.options.positions[block as keyof typeof this.options.positions]
       : this.options.position;
   },
@@ -714,7 +805,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
   getBlockPositions(this: IToolbar) {
     return this.options.positions;
   },
-  copyDrawControl(this: IToolbar, copyInstance: string, options: string | CustomControlOptions) {
+  copyDrawControl(
+    this: IToolbar,
+    copyInstance: string,
+    options: string | CustomControlOptions
+  ) {
     if (!options) {
       throw new TypeError('Button has no name');
     } else if (typeof options !== 'object') {
@@ -895,7 +990,11 @@ const Toolbar = (L.Class as { extend: (props: object) => unknown }).extend({
     }
     return order;
   },
-  changeActionsOfControl(this: IToolbar, name: string, actions: (string | ButtonAction)[]) {
+  changeActionsOfControl(
+    this: IToolbar,
+    name: string,
+    actions: (string | ButtonAction)[]
+  ) {
     const btnName = this._btnNameMapping(name);
 
     if (!btnName) {

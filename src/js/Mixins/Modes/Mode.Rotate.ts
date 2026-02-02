@@ -85,8 +85,16 @@ const GlobalRotateMode: IGlobalRotateMode = {
 
     this._addedLayersRotate = {};
     // handle layers that are added while in rotate mode
-    this.map.on('layeradd', this._layerAddedRotate as L.LeafletEventHandlerFn, this);
-    this.map.on('layeradd', this.throttledReInitRotate as L.LeafletEventHandlerFn, this);
+    this.map.on(
+      'layeradd',
+      this._layerAddedRotate as L.LeafletEventHandlerFn,
+      this
+    );
+    this.map.on(
+      'layeradd',
+      this.throttledReInitRotate as L.LeafletEventHandlerFn,
+      this
+    );
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
@@ -102,8 +110,16 @@ const GlobalRotateMode: IGlobalRotateMode = {
     });
 
     // remove map handler
-    this.map.off('layeradd', this._layerAddedRotate as L.LeafletEventHandlerFn, this);
-    this.map.off('layeradd', this.throttledReInitRotate as L.LeafletEventHandlerFn, this);
+    this.map.off(
+      'layeradd',
+      this._layerAddedRotate as L.LeafletEventHandlerFn,
+      this
+    );
+    this.map.off(
+      'layeradd',
+      this.throttledReInitRotate as L.LeafletEventHandlerFn,
+      this
+    );
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());

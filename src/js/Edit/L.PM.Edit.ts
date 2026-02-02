@@ -9,7 +9,10 @@ declare const L: typeof import('leaflet') & {
     extend: <T>(props: T) => new (...args: unknown[]) => T;
   };
   Util: {
-    setOptions: <T extends { options: object }>(obj: T, options: object) => void;
+    setOptions: <T extends { options: object }>(
+      obj: T,
+      options: object
+    ) => void;
   };
 };
 
@@ -107,9 +110,15 @@ export interface IEdit {
   applyOptions(): void;
   isPolygon(): boolean;
   getShape(): string | undefined;
-  _setPane(layer: PMLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: PMLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   remove(): void;
-  _vertexValidation(type: 'move' | 'add' | 'remove', e: L.LeafletEvent & { target: ExtendedMarker }): boolean;
+  _vertexValidation(
+    type: 'move' | 'add' | 'remove',
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ): boolean;
   _vertexValidationDrag(marker: ExtendedMarker): boolean;
   _vertexValidationDragEnd(marker: ExtendedMarker): boolean;
 }
@@ -158,22 +167,23 @@ const Edit = L.Class.extend({
   getShape(this: IEdit) {
     return this._shape;
   },
-  _setPane(this: IEdit, layer: PMLayer, type: 'layerPane' | 'vertexPane' | 'markerPane') {
+  _setPane(
+    this: IEdit,
+    layer: PMLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ) {
     const map = this._map as ExtendedMap;
     if (type === 'layerPane') {
       layer.options.pane =
-        (map.pm.globalOptions.panes &&
-          map.pm.globalOptions.panes.layerPane) ||
+        (map.pm.globalOptions.panes && map.pm.globalOptions.panes.layerPane) ||
         'overlayPane';
     } else if (type === 'vertexPane') {
       layer.options.pane =
-        (map.pm.globalOptions.panes &&
-          map.pm.globalOptions.panes.vertexPane) ||
+        (map.pm.globalOptions.panes && map.pm.globalOptions.panes.vertexPane) ||
         'markerPane';
     } else if (type === 'markerPane') {
       layer.options.pane =
-        (map.pm.globalOptions.panes &&
-          map.pm.globalOptions.panes.markerPane) ||
+        (map.pm.globalOptions.panes && map.pm.globalOptions.panes.markerPane) ||
         'markerPane';
     }
   },
@@ -181,7 +191,11 @@ const Edit = L.Class.extend({
     const map = (this._map || this._layer._map) as ExtendedMap;
     map.pm.removeLayer({ target: this._layer });
   },
-  _vertexValidation(this: IEdit, type: 'move' | 'add' | 'remove', e: L.LeafletEvent & { target: ExtendedMarker }) {
+  _vertexValidation(
+    this: IEdit,
+    type: 'move' | 'add' | 'remove',
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ) {
     const marker = e.target;
     const args: VertexValidationArgs = { layer: this._layer, marker, event: e };
 
@@ -195,7 +209,9 @@ const Edit = L.Class.extend({
     }
 
     // if validation goes wrong, we return false
-    const validationFunc = this.options[validationFnc] as VertexValidationFn | undefined;
+    const validationFunc = this.options[validationFnc] as
+      | VertexValidationFn
+      | undefined;
     if (
       validationFunc &&
       typeof validationFunc === 'function' &&

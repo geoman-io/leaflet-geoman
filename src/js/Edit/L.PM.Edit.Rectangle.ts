@@ -103,13 +103,20 @@ interface IEditRectangle {
   _findCorners(): L.LatLng[];
 
   // From parent / mixins
-  _setPane(layer: PMTempLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   _initSnappableMarkers(): void;
   _disableSnapping(): void;
   _onVertexClick(e: L.LeafletEvent): void;
   _fireMarkerDragStart(e: L.LeafletEvent, indexPath: number[]): void;
   _fireMarkerDrag(e: L.LeafletEvent, indexPath: number[]): void;
-  _fireMarkerDragEnd(e: L.LeafletEvent, indexPath: number[], intersectionReset?: boolean): void;
+  _fireMarkerDragEnd(
+    e: L.LeafletEvent,
+    indexPath: number[],
+    intersectionReset?: boolean
+  ): void;
   _fireEdit(): void;
   _fireChange(latlngs: L.LatLng[] | L.LatLng[][], source: string): void;
   _vertexValidation(

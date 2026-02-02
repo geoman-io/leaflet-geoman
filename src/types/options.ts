@@ -393,7 +393,11 @@ export type TOOLBAR_CONTROL_ORDER =
   | 'drawCustomShape'
   | string;
 
-export type ACTION_NAMES = 'cancel' | 'removeLastVertex' | 'finish' | 'finishMode';
+export type ACTION_NAMES =
+  | 'cancel'
+  | 'removeLastVertex'
+  | 'finish'
+  | 'finishMode';
 
 export interface Action {
   text: string;

@@ -15,7 +15,12 @@ type LineStringCoords = Position[];
 type PolygonCoords = Position[][];
 type MultiLineStringCoords = Position[][];
 type MultiPolygonCoords = Position[][][];
-type Coordinates = Position | LineStringCoords | PolygonCoords | MultiLineStringCoords | MultiPolygonCoords;
+type Coordinates =
+  | Position
+  | LineStringCoords
+  | PolygonCoords
+  | MultiLineStringCoords
+  | MultiPolygonCoords;
 
 /**
  * GeoJSON geometry types
@@ -45,7 +50,12 @@ interface MultiPolygonGeometry {
   coordinates: MultiPolygonCoords;
 }
 
-type Geometry = PointGeometry | LineStringGeometry | MultiLineStringGeometry | PolygonGeometry | MultiPolygonGeometry;
+type Geometry =
+  | PointGeometry
+  | LineStringGeometry
+  | MultiLineStringGeometry
+  | PolygonGeometry
+  | MultiPolygonGeometry;
 
 /**
  * GeoJSON feature
@@ -81,7 +91,8 @@ export function feature<G extends Geometry>(geom: G): Feature<G> {
  * Get geometry from a GeoJSON feature or return the geometry directly
  */
 export function getGeometry(geojson: GeoJSONInput): Geometry {
-  if ((geojson as Feature).type === 'Feature') return (geojson as Feature).geometry;
+  if ((geojson as Feature).type === 'Feature')
+    return (geojson as Feature).geometry;
   return geojson as Geometry;
 }
 
@@ -89,7 +100,11 @@ export function getGeometry(geojson: GeoJSONInput): Geometry {
  * Get coordinates from a GeoJSON feature or geometry
  */
 export function getCoords(geojson: GeoJSONInput | Coordinates): Coordinates {
-  if (geojson && (geojson as Feature).geometry && (geojson as Feature).geometry.coordinates) {
+  if (
+    geojson &&
+    (geojson as Feature).geometry &&
+    (geojson as Feature).geometry.coordinates
+  ) {
     return (geojson as Feature).geometry.coordinates;
   }
   return geojson as Coordinates;
@@ -98,7 +113,10 @@ export function getCoords(geojson: GeoJSONInput | Coordinates): Coordinates {
 /**
  * Create a GeoJSON Point feature
  */
-export function turfPoint(coords: Position, precision = -1): Feature<PointGeometry> {
+export function turfPoint(
+  coords: Position,
+  precision = -1
+): Feature<PointGeometry> {
   if (precision > -1) {
     coords[0] = L.Util.formatNum(coords[0], precision);
     coords[1] = L.Util.formatNum(coords[1], precision);
@@ -110,14 +128,18 @@ export function turfPoint(coords: Position, precision = -1): Feature<PointGeomet
 /**
  * Create a GeoJSON LineString feature
  */
-export function turfLineString(coords: LineStringCoords): Feature<LineStringGeometry> {
+export function turfLineString(
+  coords: LineStringCoords
+): Feature<LineStringGeometry> {
   return feature({ type: 'LineString', coordinates: coords });
 }
 
 /**
  * Create a GeoJSON MultiLineString feature
  */
-export function turfMultiLineString(coords: MultiLineStringCoords): Feature<MultiLineStringGeometry> {
+export function turfMultiLineString(
+  coords: MultiLineStringCoords
+): Feature<MultiLineStringGeometry> {
   return feature({ type: 'MultiLineString', coordinates: coords });
 }
 
@@ -131,7 +153,9 @@ export function turfPolygon(coords: PolygonCoords): Feature<PolygonGeometry> {
 /**
  * Create a GeoJSON MultiPolygon feature
  */
-export function turfMultiPolygon(coords: MultiPolygonCoords): Feature<MultiPolygonGeometry> {
+export function turfMultiPolygon(
+  coords: MultiPolygonCoords
+): Feature<MultiPolygonGeometry> {
   return feature({ type: 'MultiPolygon', coordinates: coords });
 }
 
@@ -196,15 +220,24 @@ export function getDepthOfCoords(coords: unknown): number {
  * Flatten a polyline to an array of LineString features
  */
 export function flattenPolyline(
-  polyline: L.Polyline | Feature<LineStringGeometry | MultiLineStringGeometry> | GeoJSON.Feature
+  polyline:
+    | L.Polyline
+    | Feature<LineStringGeometry | MultiLineStringGeometry>
+    | GeoJSON.Feature
 ): Feature<LineStringGeometry>[] {
-  let geojson: Feature<LineStringGeometry | MultiLineStringGeometry> | GeoJSON.Feature = polyline as Feature<LineStringGeometry | MultiLineStringGeometry>;
+  let geojson:
+    | Feature<LineStringGeometry | MultiLineStringGeometry>
+    | GeoJSON.Feature = polyline as Feature<
+    LineStringGeometry | MultiLineStringGeometry
+  >;
   if (polyline instanceof L.Polyline) {
     geojson = polyline.toGeoJSON(15);
   }
 
   const geojsonInput = geojson as unknown as GeoJSONInput;
-  const coords = getCoords(geojsonInput) as LineStringCoords | MultiLineStringCoords;
+  const coords = getCoords(geojsonInput) as
+    | LineStringCoords
+    | MultiLineStringCoords;
   const depth = getDepthOfCoords(coords);
   const features: Feature<LineStringGeometry>[] = [];
   if (depth > 1) {
@@ -221,10 +254,16 @@ export function flattenPolyline(
 /**
  * Convert a LayerGroup to a MultiLineString feature
  */
-export function groupToMultiLineString(group: L.LayerGroup): Feature<MultiLineStringGeometry> {
+export function groupToMultiLineString(
+  group: L.LayerGroup
+): Feature<MultiLineStringGeometry> {
   const coords: MultiLineStringCoords = [];
   group.eachLayer((layer) => {
-    coords.push(getCoords((layer as L.Polyline).toGeoJSON(15) as unknown as GeoJSONInput) as LineStringCoords);
+    coords.push(
+      getCoords(
+        (layer as L.Polyline).toGeoJSON(15) as unknown as GeoJSONInput
+      ) as LineStringCoords
+    );
   });
   return turfMultiLineString(coords);
 }
@@ -232,7 +271,9 @@ export function groupToMultiLineString(group: L.LayerGroup): Feature<MultiLineSt
 /**
  * Convert GeoJSON coordinates to Leaflet LatLng
  */
-export function convertToLatLng(coords: Feature<PointGeometry> | Position): L.LatLng {
+export function convertToLatLng(
+  coords: Feature<PointGeometry> | Position
+): L.LatLng {
   const lnglat = getCoords(coords) as Position;
   return L.latLng(lnglat[1], lnglat[0]);
 }

@@ -23,8 +23,18 @@ declare const L: typeof import('leaflet') & {
     extend: <T>(props: T) => new (...args: unknown[]) => T;
   };
   DomEvent: {
-    on: (el: HTMLElement, types: string, fn: (e: Event) => void, context: unknown) => void;
-    off: (el: HTMLElement, types: string, fn: (e: Event) => void, context: unknown) => void;
+    on: (
+      el: HTMLElement,
+      types: string,
+      fn: (e: Event) => void,
+      context: unknown
+    ) => void;
+    off: (
+      el: HTMLElement,
+      types: string,
+      fn: (e: Event) => void,
+      context: unknown
+    ) => void;
   };
   featureGroup: () => ExtendedFeatureGroup;
   CRS: {
@@ -176,7 +186,12 @@ export interface IMapPM {
   _canvasTouchClick(e: TouchEvent): void;
   _createMouseEvent(type: string, e: TouchEvent): MouseEvent;
   // From EventMixin
-  _fireLangChange?: (oldLang: string, newLang: string, fallback: string, translation: unknown) => void;
+  _fireLangChange?: (
+    oldLang: string,
+    newLang: string,
+    fallback: string,
+    translation: unknown
+  ) => void;
 }
 
 const Map = L.Class.extend({
@@ -223,12 +238,20 @@ const Map = L.Class.extend({
 
     const oldLang = L.PM.activeLang;
     if (override) {
-      (translations as TranslationsRecord)[lang] = merge((translations as TranslationsRecord)[fallback], override);
+      (translations as TranslationsRecord)[lang] = merge(
+        (translations as TranslationsRecord)[fallback],
+        override
+      );
     }
 
     L.PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
-    this._fireLangChange?.(oldLang, lang, fallback, (translations as TranslationsRecord)[lang]);
+    this._fireLangChange?.(
+      oldLang,
+      lang,
+      fallback,
+      (translations as TranslationsRecord)[lang]
+    );
   },
   addControls(this: IMapPM, options?: object) {
     this.Toolbar.addControls(options);
@@ -260,13 +283,20 @@ const Map = L.Class.extend({
     this.Draw.disable(shape);
   },
   // optionsModifier for special options like ignoreShapes or merge
-  setPathOptions(this: IMapPM, options: object, optionsModifier: PathOptionsModifier = {}) {
+  setPathOptions(
+    this: IMapPM,
+    options: object,
+    optionsModifier: PathOptionsModifier = {}
+  ) {
     const ignore = optionsModifier.ignoreShapes || [];
     const mergeOptions = optionsModifier.merge || false;
 
     this.map.pm.Draw.shapes.forEach((shape) => {
       if (ignore.indexOf(shape) === -1) {
-        (this.map.pm.Draw[shape] as unknown as DrawShape).setPathOptions(options, mergeOptions);
+        (this.map.pm.Draw[shape] as unknown as DrawShape).setPathOptions(
+          options,
+          mergeOptions
+        );
       }
     });
   },
@@ -395,7 +425,12 @@ const Map = L.Class.extend({
   _touchEventCounter: 0,
   _addTouchEvents(this: IMapPM, elm: HTMLElement) {
     if (this._touchEventCounter === 0) {
-      L.DomEvent.on(elm, 'touchmove', this._canvasTouchMove as (e: Event) => void, this);
+      L.DomEvent.on(
+        elm,
+        'touchmove',
+        this._canvasTouchMove as (e: Event) => void,
+        this
+      );
       L.DomEvent.on(
         elm,
         'touchstart touchend touchcancel',
@@ -407,7 +442,12 @@ const Map = L.Class.extend({
   },
   _removeTouchEvents(this: IMapPM, elm: HTMLElement) {
     if (this._touchEventCounter === 1) {
-      L.DomEvent.off(elm, 'touchmove', this._canvasTouchMove as (e: Event) => void, this);
+      L.DomEvent.off(
+        elm,
+        'touchmove',
+        this._canvasTouchMove as (e: Event) => void,
+        this
+      );
       L.DomEvent.off(
         elm,
         'touchstart touchend touchcancel',
@@ -419,7 +459,9 @@ const Map = L.Class.extend({
       this._touchEventCounter <= 1 ? 0 : this._touchEventCounter - 1;
   },
   _canvasTouchMove(this: IMapPM, e: TouchEvent) {
-    (getRenderer(this.map as unknown as L.Path) as ExtendedRenderer)._onMouseMove(this._createMouseEvent('mousemove', e));
+    (
+      getRenderer(this.map as unknown as L.Path) as ExtendedRenderer
+    )._onMouseMove(this._createMouseEvent('mousemove', e));
   },
   _canvasTouchClick(this: IMapPM, e: TouchEvent) {
     let type = '';
@@ -433,7 +475,9 @@ const Map = L.Class.extend({
     if (!type) {
       return;
     }
-    (getRenderer(this.map as unknown as L.Path) as ExtendedRenderer)._onClick(this._createMouseEvent(type, e));
+    (getRenderer(this.map as unknown as L.Path) as ExtendedRenderer)._onClick(
+      this._createMouseEvent(type, e)
+    );
   },
   _createMouseEvent(this: IMapPM, type: string, e: TouchEvent): MouseEvent {
     let mouseEvent: MouseEvent;
@@ -453,7 +497,9 @@ const Map = L.Class.extend({
         shiftKey: e.shiftKey,
         metaKey: e.metaKey,
         button: (e as unknown as { button?: number }).button ?? 0,
-        relatedTarget: (e as unknown as { relatedTarget?: EventTarget }).relatedTarget ?? null,
+        relatedTarget:
+          (e as unknown as { relatedTarget?: EventTarget }).relatedTarget ??
+          null,
       });
     } catch (ex) {
       mouseEvent = document.createEvent('MouseEvents');
@@ -472,7 +518,8 @@ const Map = L.Class.extend({
         e.shiftKey,
         e.metaKey,
         (e as unknown as { button?: number }).button ?? 0,
-        (e as unknown as { relatedTarget?: EventTarget }).relatedTarget as Element ?? null
+        ((e as unknown as { relatedTarget?: EventTarget })
+          .relatedTarget as Element) ?? null
       );
     }
     return mouseEvent;

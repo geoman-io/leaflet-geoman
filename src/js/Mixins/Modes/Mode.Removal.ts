@@ -105,8 +105,16 @@ const GlobalRemovalMode: IGlobalRemovalMode = {
     // save the added layers into the _addedLayersRemoval array, to read it later out
     this._addedLayersRemoval = {};
     // handle layers that are added while in removal mode
-    this.map.on('layeradd', this._layerAddedRemoval as L.LeafletEventHandlerFn, this);
-    this.map.on('layeradd', this.throttledReInitRemoval as L.LeafletEventHandlerFn, this);
+    this.map.on(
+      'layeradd',
+      this._layerAddedRemoval as L.LeafletEventHandlerFn,
+      this
+    );
+    this.map.on(
+      'layeradd',
+      this.throttledReInitRemoval as L.LeafletEventHandlerFn,
+      this
+    );
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
@@ -120,8 +128,16 @@ const GlobalRemovalMode: IGlobalRemovalMode = {
     });
 
     // remove map handler
-    this.map.off('layeradd', this._layerAddedRemoval as L.LeafletEventHandlerFn, this);
-    this.map.off('layeradd', this.throttledReInitRemoval as L.LeafletEventHandlerFn, this);
+    this.map.off(
+      'layeradd',
+      this._layerAddedRemoval as L.LeafletEventHandlerFn,
+      this
+    );
+    this.map.off(
+      'layeradd',
+      this.throttledReInitRemoval as L.LeafletEventHandlerFn,
+      this
+    );
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());

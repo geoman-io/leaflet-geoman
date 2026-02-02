@@ -10,11 +10,7 @@ declare const L: typeof import('leaflet') & {
   };
   Util: {
     stamp: (obj: object) => number;
-    throttle: <T>(
-      fn: T,
-      time: number,
-      context?: unknown
-    ) => T;
+    throttle: <T>(fn: T, time: number, context?: unknown) => T;
   };
 };
 
@@ -182,7 +178,11 @@ const EditLayerGroup = L.Class.extend({
       this
     );
   },
-  enable(this: IEditLayerGroup, options?: EditOptions, _layerIds: number[] = []) {
+  enable(
+    this: IEditLayerGroup,
+    options?: EditOptions,
+    _layerIds: number[] = []
+  ) {
     if (_layerIds.length === 0) {
       this._layers = this.getLayers();
     }
@@ -232,7 +232,11 @@ const EditLayerGroup = L.Class.extend({
     });
     return !!enabled;
   },
-  toggleEdit(this: IEditLayerGroup, options?: EditOptions, _layerIds: number[] = []) {
+  toggleEdit(
+    this: IEditLayerGroup,
+    options?: EditOptions,
+    _layerIds: number[] = []
+  ) {
     if (_layerIds.length === 0) {
       this._layers = this.getLayers();
     }

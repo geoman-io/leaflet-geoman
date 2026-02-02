@@ -84,8 +84,16 @@ const GlobalDragMode: IGlobalDragMode = {
     }
 
     // add map handler
-    this.map.on('layeradd', this._layerAddedDrag as L.LeafletEventHandlerFn, this);
-    this.map.on('layeradd', this.throttledReInitDrag as L.LeafletEventHandlerFn, this);
+    this.map.on(
+      'layeradd',
+      this._layerAddedDrag as L.LeafletEventHandlerFn,
+      this
+    );
+    this.map.on(
+      'layeradd',
+      this.throttledReInitDrag as L.LeafletEventHandlerFn,
+      this
+    );
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
@@ -102,8 +110,16 @@ const GlobalDragMode: IGlobalDragMode = {
     });
 
     // remove map handler
-    this.map.off('layeradd', this._layerAddedDrag as L.LeafletEventHandlerFn, this);
-    this.map.off('layeradd', this.throttledReInitDrag as L.LeafletEventHandlerFn, this);
+    this.map.off(
+      'layeradd',
+      this._layerAddedDrag as L.LeafletEventHandlerFn,
+      this
+    );
+    this.map.off(
+      'layeradd',
+      this.throttledReInitDrag as L.LeafletEventHandlerFn,
+      this
+    );
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());

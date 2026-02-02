@@ -111,7 +111,10 @@ interface IDrawPolygon {
   _finishShape(): void;
 
   // From parent class / mixins
-  _setPane(layer: L.Layer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: L.Layer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   _fireCreate(layer: L.Layer): void;
   _handleSelfIntersection(addVertex: boolean, latlng?: L.LatLng): void;
   _cleanupSnapping(): void;

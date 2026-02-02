@@ -4,7 +4,11 @@ import merge from 'lodash/merge';
 declare const L: typeof import('leaflet') & {
   PM: {
     Utils: {
-      _fireEvent: (layer: L.Layer | L.Map, type: string, payload: object) => void;
+      _fireEvent: (
+        layer: L.Layer | L.Map,
+        type: string,
+        payload: object
+      ) => void;
     };
   };
 };
@@ -45,7 +49,11 @@ export interface IEventMixin {
   // Draw Events
   _fireDrawStart(source?: string, customPayload?: EventPayload): void;
   _fireDrawEnd(source?: string, customPayload?: EventPayload): void;
-  _fireCreate(layer: L.Layer, source?: string, customPayload?: EventPayload): void;
+  _fireCreate(
+    layer: L.Layer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
   _fireCenterPlaced(source?: string, customPayload?: EventPayload): void;
   _fireCut(
     fireLayer: L.Layer | L.Map,
@@ -56,7 +64,11 @@ export interface IEventMixin {
   ): void;
 
   // Edit Events
-  _fireEdit(fireLayer?: L.Layer, source?: string, customPayload?: EventPayload): void;
+  _fireEdit(
+    fireLayer?: L.Layer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
   _fireEnable(source?: string, customPayload?: EventPayload): void;
   _fireDisable(source?: string, customPayload?: EventPayload): void;
   _fireUpdate(source?: string, customPayload?: EventPayload): void;
@@ -80,7 +92,11 @@ export interface IEventMixin {
     customPayload?: EventPayload
   ): void;
   _fireDragStart(source?: string, customPayload?: EventPayload): void;
-  _fireDrag(e: L.LeafletEvent, source?: string, customPayload?: EventPayload): void;
+  _fireDrag(
+    e: L.LeafletEvent,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
   _fireDragEnd(source?: string, customPayload?: EventPayload): void;
   _fireDragEnable(source?: string, customPayload?: EventPayload): void;
   _fireDragDisable(source?: string, customPayload?: EventPayload): void;
@@ -126,7 +142,11 @@ export interface IEventMixin {
     source?: string,
     customPayload?: EventPayload
   ): void;
-  _fireTextChange(text: string, source?: string, customPayload?: EventPayload): void;
+  _fireTextChange(
+    text: string,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
   _fireTextFocus(source?: string, customPayload?: EventPayload): void;
   _fireTextBlur(source?: string, customPayload?: EventPayload): void;
 
@@ -221,9 +241,18 @@ export interface IEventMixin {
     source?: string,
     customPayload?: EventPayload
   ): void;
-  _fireGlobalCutModeToggled(source?: string, customPayload?: EventPayload): void;
-  _fireGlobalDrawModeToggled(source?: string, customPayload?: EventPayload): void;
-  _fireGlobalRotateModeToggled(source?: string, customPayload?: EventPayload): void;
+  _fireGlobalCutModeToggled(
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireGlobalDrawModeToggled(
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireGlobalRotateModeToggled(
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
   _fireRemoveLayerGroup(
     fireLayer: L.Layer | L.Map,
     refLayer?: L.Layer,
@@ -313,7 +342,13 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
   },
   // Fired when layer is cutted
   // TODO: is Cut "Draw" or "Edit"? The event `pm:edit` in the same scope is called as source "Edit"
-  _fireCut(fireLayer, layer, originalLayer, source = 'Draw', customPayload = {}) {
+  _fireCut(
+    fireLayer,
+    layer,
+    originalLayer,
+    source = 'Draw',
+    customPayload = {}
+  ) {
     this.__fire(
       fireLayer,
       'pm:cut',
@@ -371,7 +406,12 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
   },
   // Fired when a vertex-marker is started dragging
   // indexPath is only passed from Line / Polygon
-  _fireMarkerDragStart(e, indexPath = undefined, source = 'Edit', customPayload = {}) {
+  _fireMarkerDragStart(
+    e,
+    indexPath = undefined,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     this.__fire(
       this._layer,
       'pm:markerdragstart',
@@ -387,7 +427,12 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
   },
   // Fired while dragging a vertex-marker
   // indexPath is only passed from Line / Polygon
-  _fireMarkerDrag(e, indexPath = undefined, source = 'Edit', customPayload = {}) {
+  _fireMarkerDrag(
+    e,
+    indexPath = undefined,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     this.__fire(
       this._layer,
       'pm:markerdrag',
@@ -481,7 +526,12 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
     );
   },
   // Fired when a layer is removed
-  _fireRemove(fireLayer, refLayer = fireLayer as L.Layer, source = 'Edit', customPayload = {}) {
+  _fireRemove(
+    fireLayer,
+    refLayer = fireLayer as L.Layer,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     this.__fire(
       fireLayer,
       'pm:remove',
@@ -491,7 +541,13 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
     );
   },
   // Fired when a vertex-marker is created
-  _fireVertexAdded(marker, indexPath, latlng, source = 'Edit', customPayload = {}) {
+  _fireVertexAdded(
+    marker,
+    indexPath,
+    latlng,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     this.__fire(
       this._layer,
       'pm:vertexadded',
@@ -539,7 +595,12 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
     );
   },
   // Fired when a Line / Polygon has self intersection
-  _fireIntersect(intersection, fireLayer?, source = 'Edit', customPayload = {}) {
+  _fireIntersect(
+    intersection,
+    fireLayer?,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     const layer = fireLayer ?? this._layer;
     this.__fire(
       layer,
@@ -642,7 +703,12 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
 
   // Rotation Events
   // Fired when rotation is enabled
-  _fireRotationEnable(fireLayer, _helpLayer, source = 'Rotation', customPayload = {}) {
+  _fireRotationEnable(
+    fireLayer,
+    _helpLayer,
+    source = 'Rotation',
+    customPayload = {}
+  ) {
     this.__fire(
       fireLayer,
       'pm:rotateenable',
@@ -669,7 +735,12 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
     );
   },
   // Fired when rotation starts
-  _fireRotationStart(fireLayer, originLatLngs, source = 'Rotation', customPayload = {}) {
+  _fireRotationStart(
+    fireLayer,
+    originLatLngs,
+    source = 'Rotation',
+    customPayload = {}
+  ) {
     this.__fire(
       fireLayer,
       'pm:rotatestart',
@@ -710,7 +781,13 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
     );
   },
   // Fired when rotation ends
-  _fireRotationEnd(fireLayer, startAngle, originLatLngs, source = 'Rotation', customPayload = {}) {
+  _fireRotationEnd(
+    fireLayer,
+    startAngle,
+    originLatLngs,
+    source = 'Rotation',
+    customPayload = {}
+  ) {
     this.__fire(
       fireLayer,
       'pm:rotateend',
@@ -729,7 +806,13 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
 
   // Global Events
   // Fired when a Toolbar action is clicked
-  _fireActionClick(action, btnName, button, source = 'Toolbar', customPayload = {}) {
+  _fireActionClick(
+    action,
+    btnName,
+    button,
+    source = 'Toolbar',
+    customPayload = {}
+  ) {
     // this._map is used because this is fired from L.Controls (PMButton)
     this.__fire(
       this._map,
@@ -747,10 +830,23 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
   // Fired when a Toolbar button is clicked
   _fireButtonClick(btnName, button, source = 'Toolbar', customPayload = {}) {
     // this._map is used because this is fired from L.Controls (PMButton)
-    this.__fire(this._map, 'pm:buttonclick', { btnName, button }, source, customPayload);
+    this.__fire(
+      this._map,
+      'pm:buttonclick',
+      { btnName, button },
+      source,
+      customPayload
+    );
   },
   // Fired when language is changed
-  _fireLangChange(oldLang, activeLang, fallback, translations, source = 'Global', customPayload = {}) {
+  _fireLangChange(
+    oldLang,
+    activeLang,
+    fallback,
+    translations,
+    source = 'Global',
+    customPayload = {}
+  ) {
     this.__fire(
       this.map!,
       'pm:langchange',
@@ -791,7 +887,11 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
     );
   },
   // Fired when Removal Mode is toggled.
-  _fireGlobalRemovalModeToggled(enabled, source = 'Global', customPayload = {}) {
+  _fireGlobalRemovalModeToggled(
+    enabled,
+    source = 'Global',
+    customPayload = {}
+  ) {
     this.__fire(
       this.map!,
       'pm:globalremovalmodetoggled',
@@ -844,7 +944,12 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
     );
   },
   // Fired when LayerGroup is removed
-  _fireRemoveLayerGroup(fireLayer, refLayer = fireLayer as L.Layer, source = 'Edit', customPayload = {}) {
+  _fireRemoveLayerGroup(
+    fireLayer,
+    refLayer = fireLayer as L.Layer,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     this.__fire(
       fireLayer,
       'pm:remove',
@@ -854,7 +959,13 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
     );
   },
   // Fired when `keydown` or `keyup` on the document is fired.
-  _fireKeyeventEvent(event, eventType, focusOn, source = 'Global', customPayload = {}) {
+  _fireKeyeventEvent(
+    event,
+    eventType,
+    focusOn,
+    source = 'Global',
+    customPayload = {}
+  ) {
     this.__fire(
       this.map!,
       'pm:keyevent',

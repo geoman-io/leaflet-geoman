@@ -7,15 +7,29 @@ declare const L: typeof import('leaflet') & {
     extend: (props: object) => unknown;
   };
   DomUtil: {
-    create: (tagName: string, className?: string, container?: HTMLElement) => HTMLElement;
+    create: (
+      tagName: string,
+      className?: string,
+      container?: HTMLElement
+    ) => HTMLElement;
     addClass: (el: HTMLElement, name: string) => void;
     removeClass: (el: HTMLElement, name: string) => void;
   };
   DomEvent: {
     disableClickPropagation: (el: HTMLElement) => void;
-    on: (el: HTMLElement, types: string, fn: L.LeafletEventHandlerFn, context?: object) => void;
+    on: (
+      el: HTMLElement,
+      types: string,
+      fn: L.LeafletEventHandlerFn,
+      context?: object
+    ) => void;
     stop: L.LeafletEventHandlerFn;
-    addListener: (el: HTMLElement, types: string, fn: L.LeafletEventHandlerFn, context?: object) => void;
+    addListener: (
+      el: HTMLElement,
+      types: string,
+      fn: L.LeafletEventHandlerFn,
+      context?: object
+    ) => void;
   };
   Util: {
     extend: <T extends object, U extends object>(dest: T, src: U) => T & U;
@@ -60,8 +74,14 @@ interface ButtonOptions {
   jsClass?: string;
   actions: (string | ButtonAction)[];
   _preparedActions?: PreparedAction[];
-  onClick: (e: Event | undefined, context: { button: IPMButton; event: Event | undefined }) => void;
-  afterClick: (e: Event | undefined, context: { button: IPMButton; event: Event | undefined }) => void;
+  onClick: (
+    e: Event | undefined,
+    context: { button: IPMButton; event: Event | undefined }
+  ) => void;
+  afterClick: (
+    e: Event | undefined,
+    context: { button: IPMButton; event: Event | undefined }
+  ) => void;
 }
 
 /**
@@ -79,10 +99,13 @@ type ExtendedMap = L.Map & {
       _createContainer: (position: string) => HTMLElement;
       triggerClickOnToggledButtons: (excludeButton: IPMButton) => void;
     };
-    Draw: Record<string, {
-      _removeLastVertex: () => void;
-      _finishShape: (e?: Event) => void;
-    }>;
+    Draw: Record<
+      string,
+      {
+        _removeLastVertex: () => void;
+        _finishShape: (e?: Event) => void;
+      }
+    >;
   };
 };
 
@@ -117,7 +140,11 @@ interface IPMButton {
 
   // From EventMixin
   _fireButtonClick: (btnName: string, button: ButtonOptions) => void;
-  _fireActionClick: (action: ButtonAction, btnName: string, button: ButtonOptions) => void;
+  _fireActionClick: (
+    action: ButtonAction,
+    btnName: string,
+    button: ButtonOptions
+  ) => void;
 }
 
 const PMButton = (L.Control as { extend: (props: object) => unknown }).extend({
@@ -326,11 +353,22 @@ const PMButton = (L.Control as { extend: (props: object) => unknown }).extend({
             this._fireActionClick(action!, btnName, button);
           };
 
-          L.DomEvent.addListener(actionNode, 'click', actionClick as unknown as L.LeafletEventHandlerFn, this);
-          L.DomEvent.addListener(actionNode, 'click', action.onClick as unknown as L.LeafletEventHandlerFn, this);
-          L.DomEvent.addListener(actionNode, 'click', (() =>
-            this._updateActiveAction(button)) as unknown as L.LeafletEventHandlerFn
+          L.DomEvent.addListener(
+            actionNode,
+            'click',
+            actionClick as unknown as L.LeafletEventHandlerFn,
+            this
           );
+          L.DomEvent.addListener(
+            actionNode,
+            'click',
+            action.onClick as unknown as L.LeafletEventHandlerFn,
+            this
+          );
+          L.DomEvent.addListener(actionNode, 'click', (() =>
+            this._updateActiveAction(
+              button
+            )) as unknown as L.LeafletEventHandlerFn);
         }
       }
       return action as PreparedAction;
@@ -356,8 +394,18 @@ const PMButton = (L.Control as { extend: (props: object) => unknown }).extend({
     if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
-      L.DomEvent.addListener(newButton, 'click', this._onBtnClick as unknown as L.LeafletEventHandlerFn, this);
-      L.DomEvent.addListener(newButton, 'click', this._triggerClick as unknown as L.LeafletEventHandlerFn, this);
+      L.DomEvent.addListener(
+        newButton,
+        'click',
+        this._onBtnClick as unknown as L.LeafletEventHandlerFn,
+        this
+      );
+      L.DomEvent.addListener(
+        newButton,
+        'click',
+        this._triggerClick as unknown as L.LeafletEventHandlerFn,
+        this
+      );
     }
 
     if (button.disabled) {

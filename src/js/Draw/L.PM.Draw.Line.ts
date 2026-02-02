@@ -142,14 +142,30 @@ interface IDrawLine {
   setStyle(): void;
 
   // From mixins
-  _setPane(layer: PMTempLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   _fireDrawStart(): void;
   _fireDrawEnd(): void;
   _fireCreate(layer: L.Layer): void;
   _fireChange(latlngs: L.LatLng[], source: string): void;
-  _fireVertexAdded(marker: L.Marker, indexPath: number[] | undefined, latlng: L.LatLng, source: string): void;
-  _fireVertexRemoved(marker: L.Marker, indexPath: number[], source: string): void;
-  _fireIntersect(intersection: SelfIntersectionResult, map: ExtendedMap, source: string): void;
+  _fireVertexAdded(
+    marker: L.Marker,
+    indexPath: number[] | undefined,
+    latlng: L.LatLng,
+    source: string
+  ): void;
+  _fireVertexRemoved(
+    marker: L.Marker,
+    indexPath: number[],
+    source: string
+  ): void;
+  _fireIntersect(
+    intersection: SelfIntersectionResult,
+    map: ExtendedMap,
+    source: string
+  ): void;
   _setGlobalDrawMode(): void;
   _cleanupSnapping(): void;
   _handleSnapping(e: L.LeafletEvent, selfSnapOnly?: boolean): void;
@@ -234,7 +250,11 @@ const DrawLine = (
     // finish on layer event
     // #http://leafletjs.com/reference.html#interactive-layer-click
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
-      this._map.on(this.options.finishOn, this._finishShape as L.LeafletEventHandlerFn, this);
+      this._map.on(
+        this.options.finishOn,
+        this._finishShape as L.LeafletEventHandlerFn,
+        this
+      );
     }
 
     // prevent zoom on double click if finishOn is === dblclick
@@ -283,7 +303,11 @@ const DrawLine = (
     this._map.off('click', this._createVertex, this);
     this._map.off('mousemove', this._syncHintMarker, this);
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
-      this._map.off(this.options.finishOn, this._finishShape as L.LeafletEventHandlerFn, this);
+      this._map.off(
+        this.options.finishOn,
+        this._finishShape as L.LeafletEventHandlerFn,
+        this
+      );
     }
 
     if (this.tempMapDoubleClickZoomState) {

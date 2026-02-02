@@ -17,7 +17,10 @@ declare const L: typeof import('leaflet') & {
     extend: <T>(props: T) => new (...args: unknown[]) => T;
   };
   Util: {
-    setOptions: <T extends { options: object }>(obj: T, options: object) => void;
+    setOptions: <T extends { options: object }>(
+      obj: T,
+      options: object
+    ) => void;
   };
   Icon: {
     Default: new () => L.Icon & {
@@ -157,7 +160,10 @@ export interface IDraw {
   _getShapeFromBtnName(name: string): string;
   _finishLayer(layer: PMLayer): void;
   _addDrawnLayerProp(layer: PMLayer): void;
-  _setPane(layer: PMLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: PMLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   _isFirstLayer(): boolean;
   // From EventMixin
   _fireGlobalCutModeToggled?: () => void;
@@ -351,10 +357,14 @@ const Draw = L.Class.extend({
 
     // needed when extended / copied from a custom instance
     if (this[jsClass]) {
-      (this[name] as DrawInstance).setOptions((this[jsClass] as DrawInstance).options);
+      (this[name] as DrawInstance).setOptions(
+        (this[jsClass] as DrawInstance).options
+      );
     }
     // Re-init the options, so it is not referenced with the default Draw class
-    (this[name] as DrawInstance).setOptions((this[name] as DrawInstance).options);
+    (this[name] as DrawInstance).setOptions(
+      (this[name] as DrawInstance).options
+    );
 
     return this[name] as DrawInstance;
   },
@@ -393,7 +403,11 @@ const Draw = L.Class.extend({
   _addDrawnLayerProp(this: IDraw, layer: PMLayer) {
     layer._drawnByGeoman = true;
   },
-  _setPane(this: IDraw, layer: PMLayer, type: 'layerPane' | 'vertexPane' | 'markerPane') {
+  _setPane(
+    this: IDraw,
+    layer: PMLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ) {
     if (type === 'layerPane') {
       layer.options.pane =
         (this._map.pm.globalOptions.panes &&

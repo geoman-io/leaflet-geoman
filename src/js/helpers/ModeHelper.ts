@@ -65,7 +65,10 @@ interface LayerWithLatLng extends L.Layer {
 /**
  * Convert a LatLng (or layer with getLatLng) to a Point
  */
-export function _toPoint(map: L.Map, latlng: L.LatLng | LayerWithLatLng): L.Point {
+export function _toPoint(
+  map: L.Map,
+  latlng: L.LatLng | LayerWithLatLng
+): L.Point {
   let inputLatLng = latlng;
   if (latlng instanceof L.Layer) {
     inputLatLng = (latlng as LayerWithLatLng).getLatLng();

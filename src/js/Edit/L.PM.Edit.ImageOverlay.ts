@@ -74,7 +74,10 @@ const EditImageOverlay = (
     this._layer = layer as ExtendedImageOverlay;
     this._enabled = false;
   },
-  toggleEdit(this: IEditImageOverlay, options?: Partial<ImageOverlayEditOptions>) {
+  toggleEdit(
+    this: IEditImageOverlay,
+    options?: Partial<ImageOverlayEditOptions>
+  ) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
@@ -87,7 +90,10 @@ const EditImageOverlay = (
   // TODO: remove default option in next major Release
   enable(
     this: IEditImageOverlay,
-    options: Partial<ImageOverlayEditOptions> = { draggable: true, snappable: true }
+    options: Partial<ImageOverlayEditOptions> = {
+      draggable: true,
+      snappable: true,
+    }
   ) {
     L.Util.setOptions(this, options);
     this._map = this._layer._map as unknown as ExtendedMap;

@@ -104,9 +104,17 @@ const GlobalEditMode: IGlobalEditMode = {
 
     // save the added layers into the _addedLayersEdit array, to read it later out
     this._addedLayersEdit = {};
-    this.map.on('layeradd', this._layerAddedEdit as L.LeafletEventHandlerFn, this);
+    this.map.on(
+      'layeradd',
+      this._layerAddedEdit as L.LeafletEventHandlerFn,
+      this
+    );
     // handle layers that are added while in edit mode
-    this.map.on('layeradd', this.throttledReInitEdit as L.LeafletEventHandlerFn, this);
+    this.map.on(
+      'layeradd',
+      this.throttledReInitEdit as L.LeafletEventHandlerFn,
+      this
+    );
 
     // fire event
     this._fireGlobalEditModeToggled(true);
@@ -124,8 +132,16 @@ const GlobalEditMode: IGlobalEditMode = {
     });
 
     // cleanup layer off event
-    this.map.off('layeradd', this._layerAddedEdit as L.LeafletEventHandlerFn, this);
-    this.map.off('layeradd', this.throttledReInitEdit as L.LeafletEventHandlerFn, this);
+    this.map.off(
+      'layeradd',
+      this._layerAddedEdit as L.LeafletEventHandlerFn,
+      this
+    );
+    this.map.off(
+      'layeradd',
+      this.throttledReInitEdit as L.LeafletEventHandlerFn,
+      this
+    );
 
     // Set toolbar button to currect status
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
@@ -141,7 +157,10 @@ const GlobalEditMode: IGlobalEditMode = {
     return this._globalEditModeEnabled;
   },
   // TODO: this should maybe removed, it will overwrite explicit options on the layers
-  toggleGlobalEditMode(this: IGlobalEditMode, options: GlobalOptions = this.globalOptions) {
+  toggleGlobalEditMode(
+    this: IGlobalEditMode,
+    options: GlobalOptions = this.globalOptions
+  ) {
     if (this.globalEditModeEnabled()) {
       // disable
       this.disableGlobalEditMode();

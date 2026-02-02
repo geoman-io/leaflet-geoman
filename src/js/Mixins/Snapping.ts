@@ -9,7 +9,11 @@ declare const L: typeof import('leaflet') & {
     };
   };
   Util: {
-    throttle: <T extends (...args: unknown[]) => unknown>(fn: T, time: number, context: unknown) => T;
+    throttle: <T extends (...args: unknown[]) => unknown>(
+      fn: T,
+      time: number,
+      context: unknown
+    ) => T;
     isArray: (obj: unknown) => boolean;
   };
   LineUtil: {
@@ -84,9 +88,17 @@ export interface SnapMixinContext {
   };
   _layer: L.Layer & {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    on: (event: string, handler: (...args: any[]) => void, context: unknown) => void;
+    on: (
+      event: string,
+      handler: (...args: any[]) => void,
+      context: unknown
+    ) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    off: (event: string, handler: (...args: any[]) => void, context: unknown) => void;
+    off: (
+      event: string,
+      handler: (...args: any[]) => void,
+      context: unknown
+    ) => void;
   };
   _markers: (L.Marker | L.Marker[])[];
   _shape: string;
@@ -123,11 +135,18 @@ export interface ISnapMixin {
   _assignEvents(markerArr: (L.Marker | L.Marker[])[]): void;
   _cleanupSnapping(e?: L.LeafletEvent): void;
   _handleThrottleSnapping(): void;
-  _handleSnapping(e: L.LeafletMouseEvent & { target: SnappableMarker }, selfSnapOnly?: boolean): boolean;
+  _handleSnapping(
+    e: L.LeafletMouseEvent & { target: SnappableMarker },
+    selfSnapOnly?: boolean
+  ): boolean;
   _createSnapList(): void;
   _handleSnapLayerRemoval(e: { layer: PMLayer }): void;
   _calcClosestLayer(latlng: L.LatLng, layers: PMLayer[]): ClosestLayerResult;
-  _calcClosestLayers(latlng: L.LatLng, layers: PMLayer[], amount?: number): ClosestLayerResult[];
+  _calcClosestLayers(
+    latlng: L.LatLng,
+    layers: PMLayer[],
+    amount?: number
+  ): ClosestLayerResult[];
   _calcLayerDistances(latlng: L.LatLng, layer: PMLayer): ClosestLayerResult;
   _calcLatLngDistances(
     latlng: L.LatLng,
@@ -135,11 +154,24 @@ export interface ISnapMixin {
     map: L.Map,
     closedShape?: boolean
   ): ClosestLayerResult;
-  _getClosestLayerByPriority(layers: ClosestLayerResult[], amount?: number): ClosestLayerResult | ClosestLayerResult[];
+  _getClosestLayerByPriority(
+    layers: ClosestLayerResult[],
+    amount?: number
+  ): ClosestLayerResult | ClosestLayerResult[];
   _checkPrioritiySnapping(closestLayer: ClosestLayerResult): L.LatLng;
   _unsnap(): void;
-  _getClosestPointOnSegment(map: L.Map, latlng: L.LatLng, latlngA: L.LatLng, latlngB: L.LatLng): L.LatLng;
-  _getDistanceToSegment(map: L.Map, latlng: L.LatLng, latlngA: L.LatLng, latlngB: L.LatLng): number;
+  _getClosestPointOnSegment(
+    map: L.Map,
+    latlng: L.LatLng,
+    latlngA: L.LatLng,
+    latlngB: L.LatLng
+  ): L.LatLng;
+  _getDistanceToSegment(
+    map: L.Map,
+    latlng: L.LatLng,
+    latlngA: L.LatLng,
+    latlngB: L.LatLng
+  ): number;
   _getDistance(map: L.Map, latlngA: L.LatLng, latlngB: L.LatLng): number;
 }
 
@@ -173,12 +205,28 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
 
       // add handleSnapping event on drag
       // Cast through unknown since our handler is compatible at runtime but types don't overlap
-      marker.off('drag', this._handleSnapping as unknown as L.LeafletEventHandlerFn, this);
-      marker.on('drag', this._handleSnapping as unknown as L.LeafletEventHandlerFn, this);
+      marker.off(
+        'drag',
+        this._handleSnapping as unknown as L.LeafletEventHandlerFn,
+        this
+      );
+      marker.on(
+        'drag',
+        this._handleSnapping as unknown as L.LeafletEventHandlerFn,
+        this
+      );
 
       // cleanup event on dragend
-      marker.off('dragend', this._cleanupSnapping as unknown as L.LeafletEventHandlerFn, this);
-      marker.on('dragend', this._cleanupSnapping as unknown as L.LeafletEventHandlerFn, this);
+      marker.off(
+        'dragend',
+        this._cleanupSnapping as unknown as L.LeafletEventHandlerFn,
+        this
+      );
+      marker.on(
+        'dragend',
+        this._cleanupSnapping as unknown as L.LeafletEventHandlerFn,
+        this
+      );
     });
   },
 
@@ -215,7 +263,10 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
     }
   },
 
-  _handleSnapping(e: L.LeafletMouseEvent & { target: SnappableMarker }, selfSnapOnly = false) {
+  _handleSnapping(
+    e: L.LeafletMouseEvent & { target: SnappableMarker },
+    selfSnapOnly = false
+  ) {
     const marker = e.target;
     marker._snapped = false;
 
@@ -384,7 +435,10 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
         layers.push(pmLayer);
 
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true }) as L.Polyline & { _pmTempLayer?: boolean };
+        const debugLine = L.polyline([], {
+          color: 'red',
+          pmIgnore: true,
+        }) as L.Polyline & { _pmTempLayer?: boolean };
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
         if (layer instanceof L.Circle || layer instanceof L.CircleMarker) {
@@ -401,7 +455,9 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
 
     // also remove everything that has no coordinates yet
     layers = layers.filter(
-      (layer) => layer._latlng || (layer._latlngs && hasValues(layer._latlngs as unknown[]))
+      (layer) =>
+        layer._latlng ||
+        (layer._latlngs && hasValues(layer._latlngs as unknown[]))
     );
 
     // finally remove everything that's leaflet-geoman specific temporary stuff
@@ -411,7 +467,10 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
     if (this._otherSnapLayers) {
       this._otherSnapLayers.forEach(() => {
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true }) as L.Polyline & { _pmTempLayer?: boolean };
+        const debugLine = L.polyline([], {
+          color: 'red',
+          pmIgnore: true,
+        }) as L.Polyline & { _pmTempLayer?: boolean };
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
       });
@@ -463,7 +522,10 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
 
       if (this.debugIndicatorLines) {
         if (!this.debugIndicatorLines[index]) {
-          const debugLine = L.polyline([], { color: 'red', pmIgnore: true }) as L.Polyline & { _pmTempLayer?: boolean };
+          const debugLine = L.polyline([], {
+            color: 'red',
+            pmIgnore: true,
+          }) as L.Polyline & { _pmTempLayer?: boolean };
           debugLine._pmTempLayer = true;
           this.debugIndicatorLines[index] = debugLine;
         }
@@ -547,49 +609,63 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
     // the closest segment (line between two points) of the layer
     let closestSegment: [L.LatLng, L.LatLng] | undefined;
 
-    const loopThroughCoords = (coords: L.LatLng[] | L.LatLng[][] | L.LatLng[][][]) => {
-      (coords as L.LatLng[]).forEach((coord: L.LatLng | L.LatLng[] | L.LatLng[][], index: number) => {
-        if (Array.isArray(coord)) {
-          loopThroughCoords(coord as L.LatLng[] | L.LatLng[][]);
-          return;
-        }
-
-        if (this.options.snapSegment) {
-          // take this coord (A)...
-          const A = coord;
-          let nextIndex: number | undefined;
-
-          // and the next coord (B) as points
-          if (closedShape) {
-            nextIndex = index + 1 === (coords as L.LatLng[]).length ? 0 : index + 1;
-          } else {
-            nextIndex = index + 1 === (coords as L.LatLng[]).length ? undefined : index + 1;
+    const loopThroughCoords = (
+      coords: L.LatLng[] | L.LatLng[][] | L.LatLng[][][]
+    ) => {
+      (coords as L.LatLng[]).forEach(
+        (coord: L.LatLng | L.LatLng[] | L.LatLng[][], index: number) => {
+          if (Array.isArray(coord)) {
+            loopThroughCoords(coord as L.LatLng[] | L.LatLng[][]);
+            return;
           }
 
-          const B = nextIndex !== undefined ? (coords as L.LatLng[])[nextIndex] : undefined;
-          if (B) {
-            // calc the distance between latlng and AB-segment
-            const distance = this._getDistanceToSegment(map, latlng, A, B);
+          if (this.options.snapSegment) {
+            // take this coord (A)...
+            const A = coord;
+            let nextIndex: number | undefined;
 
-            // is the distance shorter than the previous one? Save it and the segment
-            if (shortestDistance === undefined || distance < shortestDistance) {
-              shortestDistance = distance;
-              closestSegment = [A, B];
+            // and the next coord (B) as points
+            if (closedShape) {
+              nextIndex =
+                index + 1 === (coords as L.LatLng[]).length ? 0 : index + 1;
+            } else {
+              nextIndex =
+                index + 1 === (coords as L.LatLng[]).length
+                  ? undefined
+                  : index + 1;
+            }
+
+            const B =
+              nextIndex !== undefined
+                ? (coords as L.LatLng[])[nextIndex]
+                : undefined;
+            if (B) {
+              // calc the distance between latlng and AB-segment
+              const distance = this._getDistanceToSegment(map, latlng, A, B);
+
+              // is the distance shorter than the previous one? Save it and the segment
+              if (
+                shortestDistance === undefined ||
+                distance < shortestDistance
+              ) {
+                shortestDistance = distance;
+                closestSegment = [A, B];
+              }
+            }
+          } else {
+            // Only snap on the coords
+            const distancePoint = this._getDistance(map, latlng, coord);
+
+            if (
+              shortestDistance === undefined ||
+              distancePoint < shortestDistance
+            ) {
+              shortestDistance = distancePoint;
+              closestCoord = coord;
             }
           }
-        } else {
-          // Only snap on the coords
-          const distancePoint = this._getDistance(map, latlng, coord);
-
-          if (
-            shortestDistance === undefined ||
-            distancePoint < shortestDistance
-          ) {
-            shortestDistance = distancePoint;
-            closestCoord = coord;
-          }
         }
-      });
+      );
     };
 
     loopThroughCoords(latlngs);
@@ -620,7 +696,9 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
 
   _getClosestLayerByPriority(layers, amount = 1) {
     // sort the layers by creation, so it is snapping to the oldest layer from the same shape
-    layers = layers.sort((a, b) => (a.layer?._leaflet_id || 0) - (b.layer?._leaflet_id || 0));
+    layers = layers.sort(
+      (a, b) => (a.layer?._leaflet_id || 0) - (b.layer?._leaflet_id || 0)
+    );
 
     const shapes = [
       'Marker',
@@ -644,7 +722,12 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
 
     // sort layers by priority
     // Cast comparator since ClosestLayerResult is structurally compatible with SortableItem
-    layers.sort(prioritiseSort('instanceofShape', prioOrder) as (a: ClosestLayerResult, b: ClosestLayerResult) => number);
+    layers.sort(
+      prioritiseSort('instanceofShape', prioOrder) as (
+        a: ClosestLayerResult,
+        b: ClosestLayerResult
+      ) => number
+    );
     if (amount === 1) {
       return layers[0] || {};
     }

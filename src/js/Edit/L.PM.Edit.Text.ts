@@ -174,9 +174,24 @@ const EditText = (
 
     // if shape gets removed from map, disable edit mode
     this._layer.on('remove', this.disable, this);
-    L.DomEvent.on(this.textArea, 'input', this._autoResize as (e: Event) => void, this);
-    L.DomEvent.on(this.textArea, 'focus', this._focusChange as (e: Event) => void, this);
-    L.DomEvent.on(this.textArea, 'blur', this._focusChange as (e: Event) => void, this);
+    L.DomEvent.on(
+      this.textArea,
+      'input',
+      this._autoResize as (e: Event) => void,
+      this
+    );
+    L.DomEvent.on(
+      this.textArea,
+      'focus',
+      this._focusChange as (e: Event) => void,
+      this
+    );
+    L.DomEvent.on(
+      this.textArea,
+      'blur',
+      this._focusChange as (e: Event) => void,
+      this
+    );
     this._layer.on('dblclick', L.DomEvent.stop);
 
     L.DomEvent.off(this.textArea, 'mousedown', this._preventTextSelection);
@@ -193,9 +208,24 @@ const EditText = (
 
     // remove listener
     this._layer.off('remove', this.disable, this);
-    L.DomEvent.off(this.textArea, 'input', this._autoResize as (e: Event) => void, this);
-    L.DomEvent.off(this.textArea, 'focus', this._focusChange as (e: Event) => void, this);
-    L.DomEvent.off(this.textArea, 'blur', this._focusChange as (e: Event) => void, this);
+    L.DomEvent.off(
+      this.textArea,
+      'input',
+      this._autoResize as (e: Event) => void,
+      this
+    );
+    L.DomEvent.off(
+      this.textArea,
+      'focus',
+      this._focusChange as (e: Event) => void,
+      this
+    );
+    L.DomEvent.off(
+      this.textArea,
+      'blur',
+      this._focusChange as (e: Event) => void,
+      this
+    );
     if (this._documentClickThis) {
       document.removeEventListener('click', this._documentClickThis, {
         capture: true,
@@ -390,11 +420,19 @@ const EditText = (
     );
     this._layer.setIcon(textAreaIcon);
 
-    this._layer.once('add', this._createTextMarker as unknown as L.LeafletEventHandlerFn, this);
+    this._layer.once(
+      'add',
+      this._createTextMarker as unknown as L.LeafletEventHandlerFn,
+      this
+    );
   },
 
   _createTextMarker(this: IEditText, enable: boolean | L.LeafletEvent = false) {
-    this._layer.off('add', this._createTextMarker as unknown as L.LeafletEventHandlerFn, this);
+    this._layer.off(
+      'add',
+      this._createTextMarker as unknown as L.LeafletEventHandlerFn,
+      this
+    );
 
     const element = this._layer.getElement();
     if (element) {
@@ -403,7 +441,8 @@ const EditText = (
 
     this.textArea.wrap = 'off';
     this.textArea.style.overflow = 'hidden';
-    this.textArea.style.height = L.DomUtil.getStyle(this.textArea, 'font-size') || '';
+    this.textArea.style.height =
+      L.DomUtil.getStyle(this.textArea, 'font-size') || '';
     this.textArea.style.width = '1px';
 
     if (this._layer.options.text) {

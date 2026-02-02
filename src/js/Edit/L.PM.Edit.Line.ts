@@ -153,8 +153,12 @@ interface IEditLine {
     rightM: ExtendedMarker | undefined
   ): ExtendedMarker | false;
   _onMiddleMarkerClick(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMiddleMarkerMoveStart(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMiddleMarkerMovePrevent(e: L.LeafletEvent & { target: ExtendedMarker }): void;
+  _onMiddleMarkerMoveStart(
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ): void;
+  _onMiddleMarkerMovePrevent(
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ): void;
   _onMiddleMarkerMoveEnd(e: L.LeafletEvent & { target: ExtendedMarker }): void;
   _addMarker(
     newM: ExtendedMarker,
@@ -180,7 +184,10 @@ interface IEditLine {
 
   // From parent / mixins
   isPolygon(): boolean;
-  _setPane(layer: PMTempLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   _initSnappableMarkers(): void;
   _disableSnapping(): void;
   _fireEnable(): void;
@@ -188,12 +195,20 @@ interface IEditLine {
   _fireUpdate(): void;
   _fireEdit(): void;
   _fireChange(latlngs: L.LatLng[] | L.LatLng[][], source: string): void;
-  _fireVertexAdded(marker: ExtendedMarker, indexPath: number[], latlng: L.LatLng): void;
+  _fireVertexAdded(
+    marker: ExtendedMarker,
+    indexPath: number[],
+    latlng: L.LatLng
+  ): void;
   _fireVertexRemoved(marker: ExtendedMarker, indexPath: number[]): void;
   _fireVertexClick(e: L.LeafletEvent, indexPath: number[]): void;
   _fireMarkerDragStart(e: L.LeafletEvent, indexPath: number[]): void;
   _fireMarkerDrag(e: L.LeafletEvent, indexPath: number[]): void;
-  _fireMarkerDragEnd(e: L.LeafletEvent, indexPath: number[], intersectionReset: boolean): void;
+  _fireMarkerDragEnd(
+    e: L.LeafletEvent,
+    indexPath: number[],
+    intersectionReset: boolean
+  ): void;
   _fireLayerReset(e: L.LeafletEvent, indexPath: number[]): void;
   _fireIntersect(intersection: KinksResult): void;
   _vertexValidation(
@@ -395,9 +410,17 @@ const EditLine = (
       marker.on('dragend', this._onRotateEnd, this);
     } else {
       marker.on('click', this._onVertexClick as L.LeafletEventHandlerFn, this);
-      marker.on('dragstart', this._onMarkerDragStart as L.LeafletEventHandlerFn, this);
+      marker.on(
+        'dragstart',
+        this._onMarkerDragStart as L.LeafletEventHandlerFn,
+        this
+      );
       marker.on('move', this._onMarkerDrag as L.LeafletEventHandlerFn, this);
-      marker.on('dragend', this._onMarkerDragEnd as L.LeafletEventHandlerFn, this);
+      marker.on(
+        'dragend',
+        this._onMarkerDragEnd as L.LeafletEventHandlerFn,
+        this
+      );
 
       if (!this.options.preventMarkerRemoval) {
         marker.on(
@@ -802,7 +825,9 @@ const EditLine = (
     coords = removeEmptyCoordRings(coords) as L.LatLng[] | L.LatLng[][];
     this._layer.setLatLngs(coords);
     // remove empty marker arrays
-    this._markers = removeEmptyCoordRings(this._markers as unknown[]) as MarkerArray;
+    this._markers = removeEmptyCoordRings(
+      this._markers as unknown[]
+    ) as MarkerArray;
 
     // No need to calculate the middle marker when the layer was removed
     if (!layerRemoved) {
@@ -845,9 +870,13 @@ const EditLine = (
         // don't create middlemarkers if there is only one marker left
         if (rightMarkerIndex !== leftMarkerIndex) {
           const leftM =
-            leftMarkerIndex !== undefined ? markerArr[leftMarkerIndex] : undefined;
+            leftMarkerIndex !== undefined
+              ? markerArr[leftMarkerIndex]
+              : undefined;
           const rightM =
-            rightMarkerIndex !== undefined ? markerArr[rightMarkerIndex] : undefined;
+            rightMarkerIndex !== undefined
+              ? markerArr[rightMarkerIndex]
+              : undefined;
           if (this.options.hideMiddleMarkers !== true) {
             this._createMiddleMarker(leftM, rightM);
           }

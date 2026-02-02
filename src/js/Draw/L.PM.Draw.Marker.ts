@@ -4,7 +4,10 @@ import { getTranslation, hasFinePointer } from '../helpers';
 // Declare the global L
 declare const L: typeof import('leaflet') & {
   Util: {
-    setOptions: <T extends { options: object }>(obj: T, options: object) => void;
+    setOptions: <T extends { options: object }>(
+      obj: T,
+      options: object
+    ) => void;
   };
   DomUtil: {
     create: (tag: string, className: string) => HTMLElement;
@@ -111,7 +114,9 @@ export interface IDrawMarker {
 
 // Extend the Draw class with Marker functionality
 // Using type assertion since Draw.extend returns a class constructor
-const DrawMarker = (Draw as unknown as { extend: (props: object) => unknown }).extend({
+const DrawMarker = (
+  Draw as unknown as { extend: (props: object) => unknown }
+).extend({
   initialize(this: IDrawMarker, map: L.Map) {
     this._map = map as unknown as ExtendedMap;
     this._shape = 'Marker';
@@ -294,7 +299,8 @@ const DrawMarker = (Draw as unknown as { extend: (props: object) => unknown }).e
     const latlng = this._hintMarker!.getLatLng();
 
     // create marker
-    const marker = new L.Marker(latlng, this.options.markerStyle) as PMLayer & L.Marker;
+    const marker = new L.Marker(latlng, this.options.markerStyle) as PMLayer &
+      L.Marker;
     this._setPane?.(marker, 'markerPane');
     this._finishLayer?.(marker);
 

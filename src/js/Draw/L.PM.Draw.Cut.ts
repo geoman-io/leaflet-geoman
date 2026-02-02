@@ -157,11 +157,21 @@ interface IDrawCut {
   _change(): void;
 
   // From parent class / mixins
-  _setPane(layer: PMLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
-  _fireCut(target: L.Map | PMLayer, layer: L.Layer, originalLayer: PMLayer): void;
+  _setPane(
+    layer: PMLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
+  _fireCut(
+    target: L.Map | PMLayer,
+    layer: L.Layer,
+    originalLayer: PMLayer
+  ): void;
   _handleSelfIntersection(addVertex: boolean, latlng?: L.LatLng): void;
   _cleanupSnapping(): void;
-  _calcClosestLayer(latlng: L.LatLng, layers: L.Layer[]): ClosestLayerResult | null;
+  _calcClosestLayer(
+    latlng: L.LatLng,
+    layers: L.Layer[]
+  ): ClosestLayerResult | null;
   _addDrawnLayerProp(layer: L.Layer): void;
   _isFirstLayer(): boolean;
   disable(): void;
@@ -298,7 +308,12 @@ const DrawCut = (
           ) {
             return lineInter;
           }
-          return !!intersect(layer.toGeoJSON(15) as unknown as Parameters<typeof intersect>[0], polylineLayer.toGeoJSON(15) as unknown as Parameters<typeof intersect>[0]);
+          return !!intersect(
+            layer.toGeoJSON(15) as unknown as Parameters<typeof intersect>[0],
+            polylineLayer.toGeoJSON(15) as unknown as Parameters<
+              typeof intersect
+            >[0]
+          );
         } catch {
           if (l instanceof L.Polygon) {
             console.error("You can't cut polygons with self-intersections");
@@ -376,9 +391,7 @@ const DrawCut = (
         this._map.pm._getContainingLayer() as unknown as L.Map
       );
       layer.remove();
-      layer.removeFrom(
-        this._map.pm._getContainingLayer() as unknown as L.Map
-      );
+      layer.removeFrom(this._map.pm._getContainingLayer() as unknown as L.Map);
 
       // Remove it only if it is a layergroup. It can be only not a layergroup if a layer exists
       const layerGroup = resultingLayer as unknown as L.LayerGroup;
@@ -425,7 +438,10 @@ const DrawCut = (
     // cut
     if (l instanceof L.Polygon) {
       // find layer difference
-      diff = difference(l.toGeoJSON(15) as unknown as Parameters<typeof difference>[0], layer.toGeoJSON(15) as unknown as Parameters<typeof difference>[0]) as unknown as GeoJSON.GeoJsonObject;
+      diff = difference(
+        l.toGeoJSON(15) as unknown as Parameters<typeof difference>[0],
+        layer.toGeoJSON(15) as unknown as Parameters<typeof difference>[0]
+      ) as unknown as GeoJSON.GeoJsonObject;
     } else {
       const features = flattenPolyline(l);
 

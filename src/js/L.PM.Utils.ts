@@ -8,7 +8,10 @@ declare const L: typeof import('leaflet') & {
   };
   latLng: (coords: { lat: number; lng: number }) => L.LatLng;
   point: (x: number, y: number) => L.Point;
-  polygon: <T = unknown>(latlngs: L.LatLng[] | number[][], options?: L.PolylineOptions) => L.Polygon<T>;
+  polygon: <T = unknown>(
+    latlngs: L.LatLng[] | number[][],
+    options?: L.PolylineOptions
+  ) => L.Polygon<T>;
 };
 
 /**
@@ -76,18 +79,49 @@ interface ExtendedMarker extends L.Marker {
 export interface IUtils {
   calcMiddleLatLng(map: L.Map, latlng1: L.LatLng, latlng2: L.LatLng): L.LatLng;
   findLayers(map: L.Map): PMLayer[];
-  circleToPolygon(circle: ExtendedCircle, sides?: number, withBearing?: boolean): L.Polygon;
+  circleToPolygon(
+    circle: ExtendedCircle,
+    sides?: number,
+    withBearing?: boolean
+  ): L.Polygon;
   disablePopup(layer: PMLayer): void;
   enablePopup(layer: PMLayer): void;
-  _fireEvent(layer: PMLayer, type: string, data: unknown, propagate?: boolean): void;
-  getAllParentGroups(layer: PMLayer): { groupIds: string[]; groups: L.LayerGroup[] };
+  _fireEvent(
+    layer: PMLayer,
+    type: string,
+    data: unknown,
+    propagate?: boolean
+  ): void;
+  getAllParentGroups(layer: PMLayer): {
+    groupIds: string[];
+    groups: L.LayerGroup[];
+  };
   createGeodesicPolygon: typeof createGeodesicPolygon;
   getTranslation: typeof getTranslation;
-  findDeepCoordIndex(arr: L.LatLng[] | L.LatLng[][] | L.LatLng[][][], latlng: L.LatLng, exact?: boolean): DeepCoordIndexResult;
-  findDeepMarkerIndex(arr: L.Marker[] | L.Marker[][] | L.Marker[][][], marker: ExtendedMarker): DeepCoordIndexResult;
-  _getIndexFromSegment(coords: L.LatLng[] | L.LatLng[][] | L.LatLng[][][], segment: [L.LatLng, L.LatLng] | null): SegmentIndexResult | null;
-  _getRotatedRectangle(A: L.LatLng, B: L.LatLng, rotation: number, map: L.Map): L.LatLng[];
-  pxRadiusToMeterRadius(radiusInPx: number, map: L.Map, center: L.LatLng): number;
+  findDeepCoordIndex(
+    arr: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
+    latlng: L.LatLng,
+    exact?: boolean
+  ): DeepCoordIndexResult;
+  findDeepMarkerIndex(
+    arr: L.Marker[] | L.Marker[][] | L.Marker[][][],
+    marker: ExtendedMarker
+  ): DeepCoordIndexResult;
+  _getIndexFromSegment(
+    coords: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
+    segment: [L.LatLng, L.LatLng] | null
+  ): SegmentIndexResult | null;
+  _getRotatedRectangle(
+    A: L.LatLng,
+    B: L.LatLng,
+    rotation: number,
+    map: L.Map
+  ): L.LatLng[];
+  pxRadiusToMeterRadius(
+    radiusInPx: number,
+    map: L.Map,
+    center: L.LatLng
+  ): number;
 }
 
 const Utils: IUtils = {
@@ -206,25 +240,31 @@ const Utils: IUtils = {
 
     type LatLngOrArray = L.LatLng | L.LatLng[] | L.LatLng[][] | L.LatLng[][][];
 
-    const run = (path: number[]) => (v: LatLngOrArray, i: number): boolean => {
-      const iRes = path.concat(i);
+    const run =
+      (path: number[]) =>
+      (v: LatLngOrArray, i: number): boolean => {
+        const iRes = path.concat(i);
 
-      if (exact) {
-        const coord = v as L.LatLng;
-        if (coord.lat && coord.lat === latlng.lat && coord.lng === latlng.lng) {
-          result = iRes;
-          return true;
+        if (exact) {
+          const coord = v as L.LatLng;
+          if (
+            coord.lat &&
+            coord.lat === latlng.lat &&
+            coord.lng === latlng.lng
+          ) {
+            result = iRes;
+            return true;
+          }
+        } else {
+          const coord = v as L.LatLng;
+          if (coord.lat && L.latLng(coord).equals(latlng)) {
+            result = iRes;
+            return true;
+          }
         }
-      } else {
-        const coord = v as L.LatLng;
-        if (coord.lat && L.latLng(coord).equals(latlng)) {
-          result = iRes;
-          return true;
-        }
-      }
 
-      return Array.isArray(v) && (v as LatLngOrArray[]).some(run(iRes));
-    };
+        return Array.isArray(v) && (v as LatLngOrArray[]).some(run(iRes));
+      };
     (arr as LatLngOrArray[]).some(run([]));
 
     let returnVal: DeepCoordIndexResult = {};
@@ -243,19 +283,25 @@ const Utils: IUtils = {
     // thanks for the function, Felix Heck
     let result: number[] | undefined;
 
-    type MarkerOrArray = ExtendedMarker | L.Marker[] | L.Marker[][] | L.Marker[][][];
+    type MarkerOrArray =
+      | ExtendedMarker
+      | L.Marker[]
+      | L.Marker[][]
+      | L.Marker[][][];
 
-    const run = (path: number[]) => (v: MarkerOrArray, i: number): boolean => {
-      const iRes = path.concat(i);
+    const run =
+      (path: number[]) =>
+      (v: MarkerOrArray, i: number): boolean => {
+        const iRes = path.concat(i);
 
-      const m = v as ExtendedMarker;
-      if (m._leaflet_id === marker._leaflet_id) {
-        result = iRes;
-        return true;
-      }
+        const m = v as ExtendedMarker;
+        if (m._leaflet_id === marker._leaflet_id) {
+          result = iRes;
+          return true;
+        }
 
-      return Array.isArray(v) && (v as MarkerOrArray[]).some(run(iRes));
-    };
+        return Array.isArray(v) && (v as MarkerOrArray[]).some(run(iRes));
+      };
     (arr as MarkerOrArray[]).some(run([]));
 
     let returnVal: DeepCoordIndexResult = {};

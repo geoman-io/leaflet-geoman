@@ -169,7 +169,10 @@ interface IDrawCircleMarker {
   _distanceCalculation(A: L.LatLng, B: L.LatLng): number;
 
   // From mixins
-  _setPane(layer: PMTempLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   _fireDrawStart(): void;
   _fireDrawEnd(): void;
   _fireCreate(layer: L.Layer): void;
@@ -557,7 +560,10 @@ const DrawCircleMarker = (
       this.disable();
     }
   },
-  _extendingCreateMarker(this: IDrawCircleMarker, marker: ExtendedCircleMarker) {
+  _extendingCreateMarker(
+    this: IDrawCircleMarker,
+    marker: ExtendedCircleMarker
+  ) {
     if (marker.pm && this.options.markerEditable) {
       // enable editing for the marker
       marker.pm.enable();
@@ -733,7 +739,11 @@ const DrawCircleMarker = (
     (this._layer as L.CircleMarker)?.setStyle(templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle || {});
   },
-  _distanceCalculation(this: IDrawCircleMarker, A: L.LatLng, B: L.LatLng): number {
+  _distanceCalculation(
+    this: IDrawCircleMarker,
+    A: L.LatLng,
+    B: L.LatLng
+  ): number {
     return this._map.project(A).distanceTo(this._map.project(B));
   },
 });

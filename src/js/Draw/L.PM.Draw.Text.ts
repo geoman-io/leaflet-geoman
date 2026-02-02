@@ -105,7 +105,10 @@ interface IDrawText {
   _createTextIcon(textArea: HTMLTextAreaElement): L.DivIcon;
 
   // From mixins
-  _setPane(layer: PMTempLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   _fireDrawStart(): void;
   _fireDrawEnd(): void;
   _fireCreate(layer: L.Layer): void;

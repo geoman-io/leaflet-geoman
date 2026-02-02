@@ -22,8 +22,16 @@ interface MarkerWithLatLng extends L.Marker {
  */
 export interface MarkerLimitsMixinContext {
   _layer: L.Layer & {
-    on: (event: string, handler: (...args: unknown[]) => void, context: unknown) => void;
-    off: (event: string, handler: (...args: unknown[]) => void, context: unknown) => void;
+    on: (
+      event: string,
+      handler: (...args: unknown[]) => void,
+      context: unknown
+    ) => void;
+    off: (
+      event: string,
+      handler: (...args: unknown[]) => void,
+      context: unknown
+    ) => void;
   };
   _map: L.Map;
   _markerGroup: L.LayerGroup;
@@ -54,7 +62,8 @@ export interface IMarkerLimitsMixin {
 /**
  * MarkerLimits mixin - handles limiting visible markers during editing
  */
-const MarkerLimits: IMarkerLimitsMixin & ThisType<MarkerLimitsMixinContext & IMarkerLimitsMixin> = {
+const MarkerLimits: IMarkerLimitsMixin &
+  ThisType<MarkerLimitsMixinContext & IMarkerLimitsMixin> = {
   markerCache: [],
   _preventRenderMarkers: false,
 
@@ -107,7 +116,9 @@ const MarkerLimits: IMarkerLimitsMixin & ThisType<MarkerLimitsMixinContext & IMa
   },
 
   _removeFromCache(marker) {
-    const markerCacheIndex = this.markerCache.indexOf(marker as MarkerWithLatLng);
+    const markerCacheIndex = this.markerCache.indexOf(
+      marker as MarkerWithLatLng
+    );
     if (markerCacheIndex > -1) {
       this.markerCache.splice(markerCacheIndex, 1);
     }

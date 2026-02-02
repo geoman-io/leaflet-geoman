@@ -180,7 +180,10 @@ interface IEditCircleMarker {
   _onVertexClick(e: L.LeafletEvent & { target: ExtendedMarker }): void;
 
   // From parent / mixins
-  _setPane(layer: PMTempLayer, type: 'layerPane' | 'vertexPane' | 'markerPane'): void;
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
   _fireEnable(): void;
   _fireDisable(): void;
   _fireUpdate(): void;
@@ -227,7 +230,10 @@ const EditCircleMarker = (
   // TODO: remove default option in next major Release
   enable(
     this: IEditCircleMarker,
-    options: Partial<CircleMarkerEditOptions> = { draggable: true, snappable: true }
+    options: Partial<CircleMarkerEditOptions> = {
+      draggable: true,
+      snappable: true,
+    }
   ) {
     L.Util.setOptions(this, options);
     // TODO: remove with next major release
@@ -332,7 +338,10 @@ const EditCircleMarker = (
   enabled(this: IEditCircleMarker) {
     return this._enabled;
   },
-  toggleEdit(this: IEditCircleMarker, options?: Partial<CircleMarkerEditOptions>) {
+  toggleEdit(
+    this: IEditCircleMarker,
+    options?: Partial<CircleMarkerEditOptions>
+  ) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
@@ -402,7 +411,11 @@ const EditCircleMarker = (
     this._markers = [this._centerMarker, this._outerMarker];
     this._createHintLine(this._centerMarker, this._outerMarker);
   },
-  _getLatLngOnCircle(this: IEditCircleMarker, center: L.LatLng, radius: number) {
+  _getLatLngOnCircle(
+    this: IEditCircleMarker,
+    center: L.LatLng,
+    radius: number
+  ) {
     const pointA = this._map.project(center);
     const pointB = L.point(pointA.x + radius, pointA.y);
     return this._map.unproject(pointB);
@@ -422,7 +435,10 @@ const EditCircleMarker = (
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
   },
-  _createCenterMarker(this: IEditCircleMarker, latlng: L.LatLng): ExtendedMarker {
+  _createCenterMarker(
+    this: IEditCircleMarker,
+    latlng: L.LatLng
+  ): ExtendedMarker {
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
       L.DomUtil.addClass(marker._icon!, 'leaflet-pm-draggable');
@@ -432,7 +448,10 @@ const EditCircleMarker = (
     }
     return marker;
   },
-  _createOuterMarker(this: IEditCircleMarker, latlng: L.LatLng): ExtendedMarker {
+  _createOuterMarker(
+    this: IEditCircleMarker,
+    latlng: L.LatLng
+  ): ExtendedMarker {
     const marker = this._createMarker(latlng);
     marker.on('drag', this._resizeCircle, this);
     return marker;
@@ -453,7 +472,11 @@ const EditCircleMarker = (
       this
     );
     marker.on('drag', this._onMarkerDrag as L.LeafletEventHandlerFn, this);
-    marker.on('dragend', this._onMarkerDragEnd as L.LeafletEventHandlerFn, this);
+    marker.on(
+      'dragend',
+      this._onMarkerDragEnd as L.LeafletEventHandlerFn,
+      this
+    );
     marker.on('click', this._onVertexClick as L.LeafletEventHandlerFn, this);
 
     this._helperLayers.addLayer(marker);
@@ -697,14 +720,18 @@ const EditCircleMarker = (
   },
   _getMinDistanceInMeter(this: IEditCircleMarker, latlng: L.LatLng) {
     return L.PM.Utils.pxRadiusToMeterRadius(
-      this.options[this._minRadiusOption as keyof CircleMarkerEditOptions] as number,
+      this.options[
+        this._minRadiusOption as keyof CircleMarkerEditOptions
+      ] as number,
       this._map,
       latlng
     );
   },
   _getMaxDistanceInMeter(this: IEditCircleMarker, latlng: L.LatLng) {
     return L.PM.Utils.pxRadiusToMeterRadius(
-      this.options[this._maxRadiusOption as keyof CircleMarkerEditOptions] as number,
+      this.options[
+        this._maxRadiusOption as keyof CircleMarkerEditOptions
+      ] as number,
       this._map,
       latlng
     );

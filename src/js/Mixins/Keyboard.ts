@@ -1,8 +1,18 @@
 // Declare the global L
 declare const L: typeof import('leaflet') & {
   DomEvent: {
-    on: (el: Document | Window, types: string, fn: (e: Event) => void, context: unknown) => void;
-    off: (el: Document | Window, types: string, fn: (e: Event) => void, context: unknown) => void;
+    on: (
+      el: Document | Window,
+      types: string,
+      fn: (e: Event) => void,
+      context: unknown
+    ) => void;
+    off: (
+      el: Document | Window,
+      types: string,
+      fn: (e: Event) => void,
+      context: unknown
+    ) => void;
   };
 };
 
@@ -29,7 +39,10 @@ interface LastEventsStore {
  * PM Map interface for keyboard operations
  */
 interface PMMap {
-  getGlobalOptions: () => { exitModeOnEscape?: boolean; finishOnEnter?: boolean };
+  getGlobalOptions: () => {
+    exitModeOnEscape?: boolean;
+    finishOnEnter?: boolean;
+  };
   globalDrawModeEnabled: () => boolean;
   globalEditModeEnabled: () => boolean;
   globalDragModeEnabled: () => boolean;
@@ -42,7 +55,11 @@ interface PMMap {
   disableGlobalRemovalMode: () => void;
   disableGlobalRotateMode: () => void;
   disableGlobalCutMode: () => void;
-  _fireKeyeventEvent: (event: KeyboardEvent, eventType: string, focusOn: string) => void;
+  _fireKeyeventEvent: (
+    event: KeyboardEvent,
+    eventType: string,
+    focusOn: string
+  ) => void;
   Draw: {
     getActiveShape: () => string | null;
     [key: string]: unknown;
@@ -100,12 +117,18 @@ export interface IKeyboardMixin {
  * Factory function to create a new keyboard mixin object for keeping isolation
  * to make it work for multiple map instances
  */
-const createKeyboardMixins = (): IKeyboardMixin & ThisType<KeyboardMixinContext & IKeyboardMixin> => ({
+const createKeyboardMixins = (): IKeyboardMixin &
+  ThisType<KeyboardMixinContext & IKeyboardMixin> => ({
   _lastEvents: { keydown: undefined, keyup: undefined, current: undefined },
 
   _initKeyListener(map) {
     this.map = map as unknown as PMEnabledMap;
-    L.DomEvent.on(document, 'keydown keyup', this._onKeyListener as (e: Event) => void, this);
+    L.DomEvent.on(
+      document,
+      'keydown keyup',
+      this._onKeyListener as (e: Event) => void,
+      this
+    );
     L.DomEvent.on(window, 'blur', this._onBlur as (e: Event) => void, this);
     // clean up global listeners when current map instance is destroyed
     map.once('unload', this._unbindKeyListenerEvents, this);
@@ -232,11 +255,15 @@ const createKeyboardMixins = (): IKeyboardMixin & ThisType<KeyboardMixinContext 
 
     // For Line, Polygon, Cut - need to check vertex count
     if (drawInstance._layer && 'getLatLngs' in drawInstance._layer) {
-      const coords = drawInstance._layer.getLatLngs() as L.LatLng[] | L.LatLng[][];
+      const coords = drawInstance._layer.getLatLngs() as
+        | L.LatLng[]
+        | L.LatLng[][];
 
       // Line needs at least 2 points (uses flat coords)
       if (activeShape === 'Line') {
-        const flatCoords = Array.isArray(coords[0]) ? (coords as L.LatLng[][]).flat() : coords;
+        const flatCoords = Array.isArray(coords[0])
+          ? (coords as L.LatLng[][]).flat()
+          : coords;
         return flatCoords.length >= 2;
       }
 
@@ -251,7 +278,12 @@ const createKeyboardMixins = (): IKeyboardMixin & ThisType<KeyboardMixinContext 
   },
 
   _unbindKeyListenerEvents() {
-    L.DomEvent.off(document, 'keydown keyup', this._onKeyListener as (e: Event) => void, this);
+    L.DomEvent.off(
+      document,
+      'keydown keyup',
+      this._onKeyListener as (e: Event) => void,
+      this
+    );
     L.DomEvent.off(window, 'blur', this._onBlur as (e: Event) => void, this);
   },
 
@@ -286,7 +318,11 @@ const createKeyboardMixins = (): IKeyboardMixin & ThisType<KeyboardMixinContext 
   _onBlur(e) {
     const modifiedEvent = e as FocusEvent & { altKey: boolean };
     modifiedEvent.altKey = false;
-    const data: KeyEventData = { event: e, eventType: e.type, focusOn: 'document' };
+    const data: KeyEventData = {
+      event: e,
+      eventType: e.type,
+      focusOn: 'document',
+    };
     this._lastEvents[e.type] = data;
     this._lastEvents.current = data;
   },

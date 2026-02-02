@@ -3,8 +3,18 @@ import { getRenderer } from '../helpers';
 // Declare the global L
 declare const L: typeof import('leaflet') & {
   DomEvent: {
-    on: (el: HTMLElement | Document | Window, types: string, fn: (e: Event) => void | boolean, context: unknown) => void;
-    off: (el: HTMLElement | Document | Window, types: string, fn: (e: Event) => void | boolean, context: unknown) => void;
+    on: (
+      el: HTMLElement | Document | Window,
+      types: string,
+      fn: (e: Event) => void | boolean,
+      context: unknown
+    ) => void;
+    off: (
+      el: HTMLElement | Document | Window,
+      types: string,
+      fn: (e: Event) => void | boolean,
+      context: unknown
+    ) => void;
   };
   DomUtil: {
     addClass: (el: HTMLElement, name: string) => void;
@@ -62,9 +72,17 @@ type DraggableLayer = L.Layer & {
     draggable?: boolean;
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  on: (event: string, handler: (...args: any[]) => void, context: unknown) => void;
+  on: (
+    event: string,
+    handler: (...args: any[]) => void,
+    context: unknown
+  ) => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  off: (event: string, handler: (...args: any[]) => void, context: unknown) => void;
+  off: (
+    event: string,
+    handler: (...args: any[]) => void,
+    context: unknown
+  ) => void;
 };
 
 /**
@@ -149,7 +167,15 @@ export interface DragMixinContext {
   _fireDrag: (e: SimulatedEvent) => void;
   _fireEdit: () => void;
   _fireUpdate: () => void;
-  _fireChange: (coords: L.LatLng | L.LatLngBounds | L.LatLng[] | L.LatLng[][] | L.LatLng[][][], source: string) => void;
+  _fireChange: (
+    coords:
+      | L.LatLng
+      | L.LatLngBounds
+      | L.LatLng[]
+      | L.LatLng[][]
+      | L.LatLng[][][],
+    source: string
+  ) => void;
   _initSnappableMarkers?: () => void;
   _disableSnapping?: () => void;
   _initSnappableMarkersDrag?: () => void;
@@ -326,7 +352,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       target: this._layer,
     };
     // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(first as MouseEvent | Touch);
+    evt.containerPoint = this._map.mouseEventToContainerPoint(
+      first as MouseEvent | Touch
+    );
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
 
     this._dragMixinOnMouseDown(evt);
@@ -340,7 +368,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       target: this._layer,
     };
     // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.mouseEventToContainerPoint(first as MouseEvent | Touch);
+    evt.containerPoint = this._map.mouseEventToContainerPoint(
+      first as MouseEvent | Touch
+    );
     evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
 
     this._dragMixinOnMouseMove(evt);
@@ -355,7 +385,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     };
     if (e.type.indexOf('touch') === -1) {
       // we expect in the function to get the clicked latlng / point
-      evt.containerPoint = this._map.mouseEventToContainerPoint(e as MouseEvent);
+      evt.containerPoint = this._map.mouseEventToContainerPoint(
+        e as MouseEvent
+      );
       evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
     }
     this._dragMixinOnMouseUp(evt);
@@ -384,7 +416,8 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
 
     // we need to disable snapping for CircleMarker because they are snapping because of the check in onLayerDrag -> if(_snapped)
     if (this._layer instanceof L.CircleMarker) {
-      let _editableOption: 'resizeableCircleMarker' | 'resizeableCircle' = 'resizeableCircleMarker';
+      let _editableOption: 'resizeableCircleMarker' | 'resizeableCircle' =
+        'resizeableCircleMarker';
       if (this._layer instanceof L.Circle) {
         _editableOption = 'resizeableCircle';
       }
@@ -540,7 +573,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       coords.map((currentLatLng) => {
         if (Array.isArray(currentLatLng)) {
           // do this recursively as coords might be nested
-          return moveCoords(currentLatLng as unknown as LatLngWithAlt[]) as unknown as LatLngWithAlt;
+          return moveCoords(
+            currentLatLng as unknown as LatLngWithAlt[]
+          ) as unknown as LatLngWithAlt;
         }
 
         // move the coord and return it
@@ -593,7 +628,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       this._fireChange(this._layer.getBounds!(), 'Edit');
     } else {
       // create the new coordinates array
-      const newCoords = moveCoords(this._layer.getLatLngs!() as unknown as LatLngWithAlt[]);
+      const newCoords = moveCoords(
+        this._layer.getLatLngs!() as unknown as LatLngWithAlt[]
+      );
 
       // set new coordinates and redraw
       this._layer.setLatLngs!(newCoords as unknown as L.LatLng[]);
@@ -640,7 +677,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       target.getLatLng && (!target._radius || target._radius <= 10);
     if (isMarker) {
       // we want the clicked latlng / point, so we overwrite the property e.latlng
-      e.containerPoint = this._map.mouseEventToContainerPoint(e.originalEvent as MouseEvent);
+      e.containerPoint = this._map.mouseEventToContainerPoint(
+        e.originalEvent as MouseEvent
+      );
       e.latlng = this._map.containerPointToLatLng(e.containerPoint);
     }
   },
@@ -685,7 +724,10 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
         // filter out layers that don't have leaflet-geoman and not allowed to drag
         const syncableLayers = layersToSync
           .filter((layer) => !!(layer as unknown as DraggableLayer).pm)
-          .filter((layer) => !!(layer as unknown as DraggableLayer).pm.options.draggable);
+          .filter(
+            (layer) =>
+              !!(layer as unknown as DraggableLayer).pm.options.draggable
+          );
         syncableLayers.forEach((layer) => {
           const draggableLayer = layer as unknown as DraggableLayer;
           if (draggableLayer !== this._layer && draggableLayer.pm[fnc]) {
