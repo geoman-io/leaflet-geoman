@@ -53,17 +53,13 @@ export interface IGlobalRotateMode {
   globalRotateModeEnabled(): boolean;
   toggleGlobalRotateMode(): void;
   _isRelevantForRotate(layer: PMLayer): boolean;
-  _isRelevantForRemoval(layer: PMLayer): boolean;
   handleLayerAdditionInGlobalRotateMode(): void;
   _layerAddedRotate(e: LayerAddEvent): void;
   _fireGlobalRotateModeToggled(): void;
 }
 
-const GlobalRotateMode: IGlobalRotateMode = {
+const GlobalRotateMode = {
   _globalRotateModeEnabled: false,
-  _addedLayersRotate: {},
-  map: null as unknown as L.Map,
-  Toolbar: null as unknown as IGlobalRotateMode['Toolbar'],
   enableGlobalRotateMode(this: IGlobalRotateMode) {
     this._globalRotateModeEnabled = true;
     const layers = L.PM.Utils.findLayers(this.map).filter(
@@ -146,10 +142,6 @@ const GlobalRotateMode: IGlobalRotateMode = {
       !!layer.pm.options.allowRotation
     );
   },
-  _isRelevantForRemoval() {
-    // This method is called but should be _isRelevantForRotate - appears to be a bug in original code
-    return false;
-  },
   handleLayerAdditionInGlobalRotateMode(this: IGlobalRotateMode) {
     const layers = this._addedLayersRotate;
     this._addedLayersRotate = {};
@@ -165,9 +157,6 @@ const GlobalRotateMode: IGlobalRotateMode = {
   },
   _layerAddedRotate(this: IGlobalRotateMode, { layer }: LayerAddEvent) {
     this._addedLayersRotate[L.Util.stamp(layer)] = layer;
-  },
-  _fireGlobalRotateModeToggled() {
-    // Implemented in Events mixin
   },
 };
 

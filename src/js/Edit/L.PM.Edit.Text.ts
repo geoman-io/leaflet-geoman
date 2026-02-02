@@ -463,6 +463,22 @@ const EditText = (
   _preventTextSelection(e: Event) {
     e.preventDefault();
   },
+
+  remove(this: IEditText) {
+    const map = (this._map ||
+      (this._layer as unknown as { _map: ExtendedMap })._map) as ExtendedMap;
+    // Fire remove events before removing the layer
+    this._layer.fire('pm:remove', {
+      layer: this._layer,
+      shape: this._shape,
+    });
+    map.fire('pm:remove', {
+      layer: this._layer,
+      shape: this._shape,
+    });
+    // Remove the layer from the map
+    this._layer.remove();
+  },
 });
 
 // Assign to Edit class

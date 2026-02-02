@@ -68,12 +68,8 @@ export interface IGlobalEditMode {
 }
 
 // this mixin adds a global edit mode to the map
-const GlobalEditMode: IGlobalEditMode = {
+const GlobalEditMode = {
   _globalEditModeEnabled: false,
-  _addedLayersEdit: {},
-  map: null as unknown as L.Map,
-  globalOptions: {},
-  Toolbar: null as unknown as IGlobalEditMode['Toolbar'],
   enableGlobalEditMode(this: IGlobalEditMode, o?: GlobalOptions) {
     const options = {
       ...o,
@@ -196,9 +192,6 @@ const GlobalEditMode: IGlobalEditMode = {
       !layer._pmTempLayer &&
       !!layer.pm.options.allowEditing
     );
-  },
-  _fireGlobalEditModeToggled() {
-    // Implemented in Events mixin
   },
 };
 

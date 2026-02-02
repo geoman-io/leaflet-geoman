@@ -58,11 +58,8 @@ export interface IGlobalDragMode {
   _fireGlobalDragModeToggled(enabled: boolean): void;
 }
 
-const GlobalDragMode: IGlobalDragMode = {
+const GlobalDragMode = {
   _globalDragModeEnabled: false,
-  _addedLayersDrag: {},
-  map: null as unknown as L.Map,
-  Toolbar: null as unknown as IGlobalDragMode['Toolbar'],
   enableGlobalDragMode(this: IGlobalDragMode) {
     const layers = L.PM.Utils.findLayers(this.map);
 
@@ -161,9 +158,6 @@ const GlobalDragMode: IGlobalDragMode = {
       !layer._pmTempLayer &&
       !!layer.pm.options.draggable
     );
-  },
-  _fireGlobalDragModeToggled() {
-    // Implemented in Events mixin
   },
 };
 

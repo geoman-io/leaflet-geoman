@@ -3,8 +3,8 @@ declare const L: typeof import('leaflet') & {
   PM: {
     optIn: boolean;
   };
+  stamp: (obj: object) => number;
   Util: {
-    stamp: (obj: object) => number;
     throttle: <T>(fn: T, time: number, context?: unknown) => T;
   };
 };
@@ -77,21 +77,17 @@ export interface IGlobalRemovalMode {
   _fireRemoveLayerGroup(layerOrMap: L.Layer | L.Map, layer?: L.Layer): void;
 }
 
-const GlobalRemovalMode: IGlobalRemovalMode = {
+const GlobalRemovalMode = {
   _globalRemovalModeEnabled: false,
-  _addedLayersRemoval: {},
-  map: null as unknown as ExtendedMap,
-  Toolbar: null as unknown as IGlobalRemovalMode['Toolbar'],
   enableGlobalRemovalMode(this: IGlobalRemovalMode) {
     this._globalRemovalModeEnabled = true;
     // handle existing layers
     this.map.eachLayer((layer) => {
-      const pmLayer = layer as PMLayer;
-      if (this._isRelevantForRemoval(pmLayer)) {
-        if (pmLayer.pm?.enabled()) {
-          pmLayer.pm.disable();
+      if (this._isRelevantForRemoval(layer as PMLayer)) {
+        if ((layer as PMLayer).pm!.enabled()) {
+          (layer as PMLayer).pm!.disable();
         }
-        pmLayer.on('click', this.removeLayer as L.LeafletEventHandlerFn, this);
+        layer.on('click', this.removeLayer, this);
       }
     });
 
@@ -105,16 +101,8 @@ const GlobalRemovalMode: IGlobalRemovalMode = {
     // save the added layers into the _addedLayersRemoval array, to read it later out
     this._addedLayersRemoval = {};
     // handle layers that are added while in removal mode
-    this.map.on(
-      'layeradd',
-      this._layerAddedRemoval as L.LeafletEventHandlerFn,
-      this
-    );
-    this.map.on(
-      'layeradd',
-      this.throttledReInitRemoval as L.LeafletEventHandlerFn,
-      this
-    );
+    this.map.on('layeradd', this._layerAddedRemoval, this);
+    this.map.on('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
@@ -124,20 +112,12 @@ const GlobalRemovalMode: IGlobalRemovalMode = {
   disableGlobalRemovalMode(this: IGlobalRemovalMode) {
     this._globalRemovalModeEnabled = false;
     this.map.eachLayer((layer) => {
-      layer.off('click', this.removeLayer as L.LeafletEventHandlerFn, this);
+      layer.off('click', this.removeLayer, this);
     });
 
     // remove map handler
-    this.map.off(
-      'layeradd',
-      this._layerAddedRemoval as L.LeafletEventHandlerFn,
-      this
-    );
-    this.map.off(
-      'layeradd',
-      this.throttledReInitRemoval as L.LeafletEventHandlerFn,
-      this
-    );
+    this.map.off('layeradd', this._layerAddedRemoval, this);
+    this.map.off('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
@@ -164,7 +144,7 @@ const GlobalRemovalMode: IGlobalRemovalMode = {
     // only remove layer, if it's handled by leaflet-geoman,
     // not a tempLayer and not currently being dragged
     const removeable =
-      this._isRelevantForRemoval(layer) && !layer.pm?.dragging();
+      this._isRelevantForRemoval(layer) && !layer.pm!.dragging();
 
     if (removeable) {
       layer.removeFrom(this.map.pm._getContainingLayer() as L.Map);
@@ -173,19 +153,19 @@ const GlobalRemovalMode: IGlobalRemovalMode = {
         this._fireRemoveLayerGroup(layer);
         this._fireRemoveLayerGroup(this.map, layer);
       } else {
-        layer.pm?._fireRemove(layer);
-        layer.pm?._fireRemove(this.map, layer);
+        layer.pm!._fireRemove(layer);
+        layer.pm!._fireRemove(this.map, layer);
       }
     }
   },
   _isRelevantForRemoval(layer: PMLayer) {
     return (
-      !!layer.pm &&
+      layer.pm &&
       !(layer instanceof L.LayerGroup) &&
       ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
         (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
-      !!layer.pm.options.allowRemoval
+      layer.pm.options.allowRemoval
     );
   },
   handleLayerAdditionInGlobalRemovalMode(this: IGlobalRemovalMode) {
@@ -195,22 +175,16 @@ const GlobalRemovalMode: IGlobalRemovalMode = {
       for (const id in layers) {
         const layer = layers[id];
         if (this._isRelevantForRemoval(layer)) {
-          if (layer.pm?.enabled()) {
-            layer.pm.disable();
+          if (layer.pm!.enabled()) {
+            layer.pm!.disable();
           }
-          layer.on('click', this.removeLayer as L.LeafletEventHandlerFn, this);
+          layer.on('click', this.removeLayer, this);
         }
       }
     }
   },
   _layerAddedRemoval(this: IGlobalRemovalMode, { layer }: LayerAddEvent) {
-    this._addedLayersRemoval[L.Util.stamp(layer)] = layer;
-  },
-  _fireGlobalRemovalModeToggled() {
-    // Implemented in Events mixin
-  },
-  _fireRemoveLayerGroup() {
-    // Implemented in Events mixin
+    this._addedLayersRemoval[L.stamp(layer)] = layer;
   },
 };
 
