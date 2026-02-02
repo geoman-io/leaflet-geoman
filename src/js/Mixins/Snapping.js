@@ -63,7 +63,7 @@ const SnapMixin = {
       this._createSnapList();
     }
   },
-  _handleSnapping(e) {
+  _handleSnapping(e, selfSnapOnly = false) {
     const marker = e.target;
     marker._snapped = false;
 
@@ -81,27 +81,36 @@ const SnapMixin = {
       return false;
     }
 
-    // create a list of layers that the marker could snap to
-    // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
-    // after dragstart/movestart so it wouldn't fire for them
-    if (this._snapList === undefined) {
-      this._createSnapList();
+    // Determine which snap list to use
+    let snapList;
+    if (selfSnapOnly) {
+      // Self-snap mode: only snap to _otherSnapLayers (first point of current polygon)
+      // This allows polygon completion even when global snapping is disabled
+      if (!this._otherSnapLayers || this._otherSnapLayers.length === 0) {
+        return false;
+      }
+      snapList = this._otherSnapLayers;
+    } else {
+      // Normal mode: create full snap list of all snappable layers
+      // this isn't inside a movestart/dragstart callback because middlemarkers are initialized
+      // after dragstart/movestart so it wouldn't fire for them
+      if (this._snapList === undefined) {
+        this._createSnapList();
 
-      // re-create the snaplist again when a layer is added during draw
-      this._map.off('layeradd', this.throttledList, this);
-      this._map.on('layeradd', this.throttledList, this);
+        // re-create the snaplist again when a layer is added during draw
+        this._map.off('layeradd', this.throttledList, this);
+        this._map.on('layeradd', this.throttledList, this);
+      }
+      snapList = this._snapList;
     }
 
     // if there are no layers to snap to, stop here
-    if (this._snapList.length <= 0) {
+    if (snapList.length <= 0) {
       return false;
     }
 
     // get the closest layer, it's closest latlng, segment and the distance
-    const closestLayer = this._calcClosestLayer(
-      marker.getLatLng(),
-      this._snapList
-    );
+    const closestLayer = this._calcClosestLayer(marker.getLatLng(), snapList);
 
     // if no layers found. Can happen when circle is the only visible layer on the map and the hidden snapping-border circle layer is also on the map
     if (Object.keys(closestLayer).length === 0) {

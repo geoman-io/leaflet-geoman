@@ -178,6 +178,12 @@ Draw.Line = Draw.extend({
       const fakeDragEvent = e;
       fakeDragEvent.target = this._hintMarker;
       this._handleSnapping(fakeDragEvent);
+    } else if (this._otherSnapLayers && this._otherSnapLayers.length > 0) {
+      // Even when global snapping is disabled, allow self-snapping to the
+      // first point of the current polygon to enable shape completion
+      const fakeDragEvent = e;
+      fakeDragEvent.target = this._hintMarker;
+      this._handleSnapping(fakeDragEvent, true);
     }
 
     // if self-intersection is forbidden, handle it
