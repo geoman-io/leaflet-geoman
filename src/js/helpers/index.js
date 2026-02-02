@@ -8,8 +8,18 @@ export function getTranslation(path) {
 }
 
 export function hasFinePointer() {
-  // Default to true (desktop) if matchMedia is unavailable (older browsers)
-  return !window.matchMedia || window.matchMedia('(pointer: fine)').matches;
+  // If matchMedia is unavailable (older browsers), assume desktop
+  if (!window.matchMedia) {
+    return true;
+  }
+  // Only treat as touch device if coarse pointer is explicitly detected.
+  // This handles headless browsers (like Cypress) where neither fine nor coarse may match.
+  const hasCoarse = window.matchMedia('(pointer: coarse)').matches;
+  if (hasCoarse) {
+    return false;
+  }
+  // Default to desktop behavior
+  return true;
 }
 
 export function hasValues(list) {
