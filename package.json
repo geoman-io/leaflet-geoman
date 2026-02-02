@@ -49,14 +49,11 @@
     "cross-env": "^10.1.0",
     "cypress": "^15.9.0",
     "esbuild": "^0.27.2",
-    "eslint": "9.39.2",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-cypress": "5.2.1",
-    "eslint-plugin-import": "2.32.0",
+    "oxlint": "^1.0.0",
+    "oxfmt": "^0.28.0",
     "husky": "^9.1.7",
     "leaflet": "1.9.4",
     "lint-staged": "^16.2.7",
-    "prettier": "3.8.1",
     "prosthetic-hand": "1.3.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
@@ -78,10 +75,8 @@
     "test:all": "npm run test:unit && npm run test",
     "cypress": "cypress open",
     "prepare": "npm run build && husky",
-    "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
-    "eslint": "eslint \"{src,demo}/**/*.js\" --fix ",
-    "prettier": "prettier --write \"{src,demo}/**/*.{js,css}\" --log-level=warn",
-    "lint": "npm run eslint && npm run prettier",
+    "lint": "oxlint src demo --fix && oxfmt --write src demo",
+    "lint:check": "oxlint src demo && oxfmt --check src demo",
     "typecheck": "tsc --noEmit"
   },
   "repository": {
@@ -98,14 +93,8 @@
     "url": "https://github.com/geoman-io/leaflet-geoman/issues"
   },
   "homepage": "https://geoman.io",
-  "prettier": {
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": true,
-    "singleQuote": true
-  },
   "lint-staged": {
-    "*.js": "eslint \"{src,demo}/**/*.js\" --fix",
-    "*.{js,css,md}": "prettier --write \"{src,demo}/**/*.{js,css}\""
+    "*.js": "oxlint --fix",
+    "*.{js,css}": "oxfmt --write"
   }
 }

@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import"],
+  "globals": {
+    "L": "readonly",
+    "window": "readonly",
+    "document": "readonly",
+    "cy": "readonly",
+    "Cypress": "readonly",
+    "expect": "readonly",
+    "describe": "readonly",
+    "it": "readonly",
+    "beforeEach": "readonly",
+    "afterEach": "readonly"
+  },
+  "ignorePatterns": ["cypress/libs/**", "dist/**", "node_modules/**"],
+  "rules": {
+    "no-unused-vars": "off",
+    "no-param-reassign": "off",
+    "guard-for-in": "off",
+    "import/prefer-default-export": "off"
+  }
+}

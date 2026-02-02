@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,7 +17,9 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          sans-serif;
         background: #1a1a2e;
         color: #eee;
         height: 100vh;
@@ -178,7 +180,7 @@
 
       .toggle-slider:before {
         position: absolute;
-        content: "";
+        content: '';
         height: 16px;
         width: 16px;
         left: 3px;
@@ -382,7 +384,7 @@
                   <small>Snap to other layers</small>
                 </div>
                 <label class="toggle">
-                  <input type="checkbox" id="opt-snappable" checked>
+                  <input type="checkbox" id="opt-snappable" checked />
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -392,7 +394,14 @@
                   Snap Distance
                   <small>Pixels</small>
                 </div>
-                <input type="number" class="number-input" id="opt-snapDistance" value="20" min="1" max="100">
+                <input
+                  type="number"
+                  class="number-input"
+                  id="opt-snapDistance"
+                  value="20"
+                  min="1"
+                  max="100"
+                />
               </div>
 
               <div class="option-row">
@@ -401,7 +410,7 @@
                   <small>Drag layers when editing</small>
                 </div>
                 <label class="toggle">
-                  <input type="checkbox" id="opt-draggable" checked>
+                  <input type="checkbox" id="opt-draggable" checked />
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -412,7 +421,7 @@
                   <small>Press Esc to exit modes</small>
                 </div>
                 <label class="toggle">
-                  <input type="checkbox" id="opt-exitModeOnEscape">
+                  <input type="checkbox" id="opt-exitModeOnEscape" />
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -423,7 +432,7 @@
                   <small>Press Enter to complete</small>
                 </div>
                 <label class="toggle">
-                  <input type="checkbox" id="opt-finishOnEnter">
+                  <input type="checkbox" id="opt-finishOnEnter" />
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -434,7 +443,7 @@
                   <small>Snap to segment midpoints</small>
                 </div>
                 <label class="toggle">
-                  <input type="checkbox" id="opt-snapMiddle">
+                  <input type="checkbox" id="opt-snapMiddle" />
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -445,7 +454,11 @@
                   <small>Allow overlapping edges</small>
                 </div>
                 <label class="toggle">
-                  <input type="checkbox" id="opt-allowSelfIntersection" checked>
+                  <input
+                    type="checkbox"
+                    id="opt-allowSelfIntersection"
+                    checked
+                  />
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -457,19 +470,23 @@
             <h2>Quick Actions</h2>
             <div class="quick-actions">
               <button class="action-btn" id="btn-enable-edit">Edit All</button>
-              <button class="action-btn" id="btn-disable-edit">Disable Edit</button>
+              <button class="action-btn" id="btn-disable-edit">
+                Disable Edit
+              </button>
               <button class="action-btn" id="btn-export">Export GeoJSON</button>
-              <button class="action-btn danger" id="btn-clear">Clear All</button>
+              <button class="action-btn danger" id="btn-clear">
+                Clear All
+              </button>
             </div>
           </section>
 
           <!-- Keyboard Shortcuts -->
           <section class="sidebar-section">
             <h2>Keyboard Shortcuts</h2>
-            <div style="font-size: 12px; color: #888; line-height: 2;">
-              <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> Toggle DevPanel<br>
-              <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> Export to Console<br>
-              <kbd>Esc</kbd> Exit current mode<br>
+            <div style="font-size: 12px; color: #888; line-height: 2">
+              <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>D</kbd> Toggle DevPanel<br />
+              <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> Export to Console<br />
+              <kbd>Esc</kbd> Exit current mode<br />
               <kbd>Enter</kbd> Complete drawing
             </div>
           </section>
@@ -496,7 +513,7 @@
             <span class="status-dot" id="status-remove"></span>
             Remove
           </div>
-          <div class="status-item" style="margin-left: auto;">
+          <div class="status-item" style="margin-left: auto">
             Layers: <span id="status-layers">0</span>
           </div>
         </div>
@@ -519,7 +536,8 @@
 
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
 
       // Add Geoman controls
@@ -583,7 +601,7 @@
       }
 
       const testCases = {
-        'empty': () => {
+        empty: () => {
           clearAllLayers();
           map.setView([51.505, -0.09], 13);
         },
@@ -592,36 +610,48 @@
           clearAllLayers();
 
           // Polygon
-          createPolygon([
-            [51.509, -0.08],
-            [51.503, -0.06],
-            [51.51, -0.047]
-          ], { color: '#e94560' });
+          createPolygon(
+            [
+              [51.509, -0.08],
+              [51.503, -0.06],
+              [51.51, -0.047],
+            ],
+            { color: '#e94560' }
+          );
 
           // Rectangle
-          createRectangle([
-            [51.49, -0.1],
-            [51.5, -0.08]
-          ], { color: '#0f3460' });
+          createRectangle(
+            [
+              [51.49, -0.1],
+              [51.5, -0.08],
+            ],
+            { color: '#0f3460' }
+          );
 
           // Polyline
-          createPolyline([
-            [51.505, -0.11],
-            [51.51, -0.1],
-            [51.515, -0.11],
-            [51.52, -0.1]
-          ], { color: '#4caf50' });
+          createPolyline(
+            [
+              [51.505, -0.11],
+              [51.51, -0.1],
+              [51.515, -0.11],
+              [51.52, -0.1],
+            ],
+            { color: '#4caf50' }
+          );
 
           // Circle
           createCircle([51.508, -0.06], {
             radius: 200,
-            color: '#ff9800'
+            color: '#ff9800',
           });
 
           // Marker
           createMarker([51.5, -0.05]);
 
-          map.fitBounds([[51.48, -0.12], [51.53, -0.04]]);
+          map.fitBounds([
+            [51.48, -0.12],
+            [51.53, -0.04],
+          ]);
         },
 
         'complex-polygon': () => {
@@ -638,7 +668,7 @@
             const radius = i % 2 === 0 ? outerRadius : innerRadius;
             points.push([
               center[0] + Math.cos(angle) * radius,
-              center[1] + Math.sin(angle) * radius * 1.5
+              center[1] + Math.sin(angle) * radius * 1.5,
             ]);
           }
 
@@ -649,13 +679,13 @@
             [51.52, -0.12],
             [51.52, -0.06],
             [51.54, -0.06],
-            [51.54, -0.12]
+            [51.54, -0.12],
           ];
           const hole = [
             [51.525, -0.11],
             [51.525, -0.07],
             [51.535, -0.07],
-            [51.535, -0.11]
+            [51.535, -0.11],
           ];
 
           createPolygon([outer, hole], { color: '#4caf50' });
@@ -670,32 +700,44 @@
           const group = L.featureGroup().addTo(map);
 
           // Add shapes to the group
-          const p1 = L.polygon([
-            [51.51, -0.1],
-            [51.51, -0.08],
-            [51.52, -0.08],
-            [51.52, -0.1]
-          ], { color: '#e94560' }).addTo(group);
+          const p1 = L.polygon(
+            [
+              [51.51, -0.1],
+              [51.51, -0.08],
+              [51.52, -0.08],
+              [51.52, -0.1],
+            ],
+            { color: '#e94560' }
+          ).addTo(group);
           p1._drawnByGeoman = true;
 
-          const p2 = L.polygon([
-            [51.50, -0.1],
-            [51.50, -0.08],
-            [51.51, -0.08],
-            [51.51, -0.1]
-          ], { color: '#0f3460' }).addTo(group);
+          const p2 = L.polygon(
+            [
+              [51.5, -0.1],
+              [51.5, -0.08],
+              [51.51, -0.08],
+              [51.51, -0.1],
+            ],
+            { color: '#0f3460' }
+          ).addTo(group);
           p2._drawnByGeoman = true;
 
-          const line = L.polyline([
-            [51.505, -0.1],
-            [51.515, -0.09],
-            [51.505, -0.08]
-          ], { color: '#4caf50' }).addTo(group);
+          const line = L.polyline(
+            [
+              [51.505, -0.1],
+              [51.515, -0.09],
+              [51.505, -0.08],
+            ],
+            { color: '#4caf50' }
+          ).addTo(group);
           line._drawnByGeoman = true;
 
           // Nested group
           const nestedGroup = L.featureGroup().addTo(map);
-          const c1 = L.circle([51.508, -0.06], { radius: 150, color: '#ff9800' }).addTo(nestedGroup);
+          const c1 = L.circle([51.508, -0.06], {
+            radius: 150,
+            color: '#ff9800',
+          }).addTo(nestedGroup);
           c1._drawnByGeoman = true;
           const m1 = L.marker([51.508, -0.06]).addTo(nestedGroup);
           m1._drawnByGeoman = true;
@@ -703,7 +745,7 @@
           map.fitBounds(group.getBounds().extend(nestedGroup.getBounds()));
         },
 
-        'circles': () => {
+        circles: () => {
           clearAllLayers();
 
           // Various circles
@@ -713,7 +755,10 @@
 
           // Circle markers
           createCircleMarker([51.508, -0.07], { radius: 15, color: '#ff9800' });
-          createCircleMarker([51.502, -0.085], { radius: 10, color: '#9c27b0' });
+          createCircleMarker([51.502, -0.085], {
+            radius: 10,
+            color: '#9c27b0',
+          });
 
           // Regular markers
           createMarker([51.505, -0.09]);
@@ -727,35 +772,44 @@
           clearAllLayers();
 
           // Figure-8 / self-intersecting polygon
-          createPolygon([
-            [51.51, -0.1],
-            [51.51, -0.07],
-            [51.5, -0.1],
-            [51.5, -0.07]
-          ], { color: '#e94560' });
+          createPolygon(
+            [
+              [51.51, -0.1],
+              [51.51, -0.07],
+              [51.5, -0.1],
+              [51.5, -0.07],
+            ],
+            { color: '#e94560' }
+          );
 
           // Bowtie shape
-          createPolygon([
-            [51.52, -0.09],
-            [51.525, -0.06],
-            [51.52, -0.06],
-            [51.525, -0.09]
-          ], { color: '#ff9800' });
+          createPolygon(
+            [
+              [51.52, -0.09],
+              [51.525, -0.06],
+              [51.52, -0.06],
+              [51.525, -0.09],
+            ],
+            { color: '#ff9800' }
+          );
 
           map.setView([51.51, -0.08], 14);
-        }
+        },
       };
 
       // ============================================
       // Helper Functions
       // ============================================
       function clearAllLayers() {
-        map.pm.getGeomanDrawLayers().forEach(layer => {
+        map.pm.getGeomanDrawLayers().forEach((layer) => {
           map.removeLayer(layer);
         });
         // Also remove any feature groups
-        map.eachLayer(layer => {
-          if (layer instanceof L.FeatureGroup && !(layer instanceof L.TileLayer)) {
+        map.eachLayer((layer) => {
+          if (
+            layer instanceof L.FeatureGroup &&
+            !(layer instanceof L.TileLayer)
+          ) {
             map.removeLayer(layer);
           }
         });
@@ -765,10 +819,18 @@
       function updateStatus() {
         const pm = map.pm;
 
-        document.getElementById('status-draw').classList.toggle('active', pm.globalDrawModeEnabled());
-        document.getElementById('status-edit').classList.toggle('active', pm.globalEditModeEnabled());
-        document.getElementById('status-drag').classList.toggle('active', pm.globalDragModeEnabled());
-        document.getElementById('status-remove').classList.toggle('active', pm.globalRemovalModeEnabled());
+        document
+          .getElementById('status-draw')
+          .classList.toggle('active', pm.globalDrawModeEnabled());
+        document
+          .getElementById('status-edit')
+          .classList.toggle('active', pm.globalEditModeEnabled());
+        document
+          .getElementById('status-drag')
+          .classList.toggle('active', pm.globalDragModeEnabled());
+        document
+          .getElementById('status-remove')
+          .classList.toggle('active', pm.globalRemovalModeEnabled());
 
         const layers = pm.getGeomanDrawLayers();
         document.getElementById('status-layers').textContent = layers.length;
@@ -779,7 +841,7 @@
       // ============================================
 
       // Test case buttons
-      document.querySelectorAll('[data-testcase]').forEach(btn => {
+      document.querySelectorAll('[data-testcase]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const testCase = btn.dataset.testcase;
           if (testCases[testCase]) {
@@ -797,7 +859,10 @@
         'opt-exitModeOnEscape': { type: 'boolean', option: 'exitModeOnEscape' },
         'opt-finishOnEnter': { type: 'boolean', option: 'finishOnEnter' },
         'opt-snapMiddle': { type: 'boolean', option: 'snapMiddle' },
-        'opt-allowSelfIntersection': { type: 'boolean', option: 'allowSelfIntersection' },
+        'opt-allowSelfIntersection': {
+          type: 'boolean',
+          option: 'allowSelfIntersection',
+        },
       };
 
       Object.entries(optionInputs).forEach(([id, config]) => {
@@ -805,38 +870,44 @@
         if (!el) return;
 
         el.addEventListener('change', () => {
-          const value = config.type === 'boolean' ? el.checked : parseInt(el.value, 10);
+          const value =
+            config.type === 'boolean' ? el.checked : parseInt(el.value, 10);
           map.pm.setGlobalOptions({ [config.option]: value });
           console.log(`[Geoman] Set ${config.option} = ${value}`);
         });
       });
 
       // Quick action buttons
-      document.getElementById('btn-enable-edit').addEventListener('click', () => {
-        map.pm.getGeomanDrawLayers().forEach(layer => {
-          if (layer.pm && !layer.pm.enabled()) {
-            layer.pm.enable();
-          }
+      document
+        .getElementById('btn-enable-edit')
+        .addEventListener('click', () => {
+          map.pm.getGeomanDrawLayers().forEach((layer) => {
+            if (layer.pm && !layer.pm.enabled()) {
+              layer.pm.enable();
+            }
+          });
         });
-      });
 
-      document.getElementById('btn-disable-edit').addEventListener('click', () => {
-        map.pm.getGeomanDrawLayers().forEach(layer => {
-          if (layer.pm && layer.pm.enabled()) {
-            layer.pm.disable();
-          }
+      document
+        .getElementById('btn-disable-edit')
+        .addEventListener('click', () => {
+          map.pm.getGeomanDrawLayers().forEach((layer) => {
+            if (layer.pm && layer.pm.enabled()) {
+              layer.pm.disable();
+            }
+          });
         });
-      });
 
       document.getElementById('btn-export').addEventListener('click', () => {
         const layers = map.pm.getGeomanDrawLayers();
-        const features = layers.map(layer => layer.toGeoJSON());
+        const features = layers.map((layer) => layer.toGeoJSON());
         const geojson = { type: 'FeatureCollection', features };
 
         console.log('%c[GeoJSON Export]', 'color: #4caf50; font-weight: bold;');
         console.log(geojson);
 
-        navigator.clipboard.writeText(JSON.stringify(geojson, null, 2))
+        navigator.clipboard
+          .writeText(JSON.stringify(geojson, null, 2))
           .then(() => console.log('Copied to clipboard!'))
           .catch(() => console.log('Copy to clipboard failed'));
       });
@@ -856,10 +927,10 @@
         'pm:create',
         'pm:remove',
         'layeradd',
-        'layerremove'
+        'layerremove',
       ];
 
-      statusEvents.forEach(event => {
+      statusEvents.forEach((event) => {
         map.on(event, updateStatus);
       });
 
@@ -882,7 +953,10 @@
       window.devPanel = devPanel;
       window.map = map;
 
-      console.log('%c[Geoman DevDemo] Ready!', 'color: #e94560; font-weight: bold; font-size: 14px;');
+      console.log(
+        '%c[Geoman DevDemo] Ready!',
+        'color: #e94560; font-weight: bold; font-size: 14px;'
+      );
       console.log('Press Ctrl+Shift+D to toggle the DevPanel');
       console.log('Access map via window.map, devPanel via window.devPanel');
     </script>
