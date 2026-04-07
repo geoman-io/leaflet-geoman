@@ -5,11 +5,18 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true,
-    "declaration": false,
+    "noEmit": false,
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "outDir": "./dist/esm",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "checkJs": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "types": ["leaflet"]
   },
-  "include": ["leaflet-geoman.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "leaflet-geoman.d.ts"],
+  "exclude": ["node_modules", "dist", "cypress", "**/*.test.ts", "**/*.test.js"]
 }

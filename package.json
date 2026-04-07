@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.21",
+    "@types/lodash": "^4.17.23",
     "@vitest/coverage-v8": "^4.0.18",
     "cross-env": "^10.1.0",
     "cypress": "^15.9.0",
