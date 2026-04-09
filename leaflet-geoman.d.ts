@@ -2289,19 +2289,27 @@ declare module 'leaflet' {
      * DRAW MODE MAP EVENT HANDLERS
      */
 
-    export type GlobalDrawModeToggledEventHandler = (event: {
+    /** Base properties present on all PM event payloads. */
+    export interface BaseEventPayload {
+      /** The source that triggered the event (e.g. 'Draw', 'Edit', 'Global'). */
+      source: string;
+      /** Custom payload properties merged at fire time. */
+      [key: string]: any;
+    }
+
+    export type GlobalDrawModeToggledEventHandler = (event: BaseEventPayload & {
       enabled: boolean;
       shape: PM.SUPPORTED_SHAPES;
       map: L.Map;
     }) => void;
-    export type DrawStartEventHandler = (e: {
+    export type DrawStartEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
     }) => void;
-    export type DrawEndEventHandler = (e: {
+    export type DrawEndEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type CreateEventHandler = (e: {
+    export type CreateEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
@@ -2310,13 +2318,13 @@ declare module 'leaflet' {
      * DRAW MODE LAYER EVENT HANDLERS
      */
 
-    export type VertexAddedEventHandler = (e: {
+    export type VertexAddedEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
       marker: L.Marker;
       latlng: L.LatLng;
     }) => void;
-    export type SnapEventHandler = (e: {
+    export type SnapEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       distance: number;
       layer: L.Layer;
@@ -2326,7 +2334,7 @@ declare module 'leaflet' {
       segement: any;
       snapLatLng: L.LatLng;
     }) => void;
-    export type CenterPlacedEventHandler = (e: {
+    export type CenterPlacedEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       workingLayer: L.Layer;
       latlng: L.LatLng;
@@ -2336,102 +2344,102 @@ declare module 'leaflet' {
      * EDIT MODE LAYER EVENT HANDLERS
      */
 
-    export type EditEventHandler = (e: {
+    export type EditEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
-    export type UpdateEventHandler = (e: {
+    export type UpdateEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
-    export type EnableEventHandler = (e: {
+    export type EnableEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
-    export type DisableEventHandler = (e: {
+    export type DisableEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
-    export type VertexAddedEventHandler2 = (e: {
+    export type VertexAddedEventHandler2 = (e: BaseEventPayload & {
       layer: L.Layer;
       indexPath: number;
       latlng: L.LatLng;
       marker: L.Marker;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type VertexRemovedEventHandler = (e: {
+    export type VertexRemovedEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       indexPath: number;
       marker: L.Marker;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type VertexClickEventHandler = (e: {
+    export type VertexClickEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragStartEventHandler = (e: {
+    export type MarkerDragStartEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragEventHandler = (e: {
+    export type MarkerDragEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type MarkerDragEndEventHandler = (e: {
+    export type MarkerDragEndEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
       intersectionReset: boolean;
     }) => void;
-    export type LayerResetEventHandler = (e: {
+    export type LayerResetEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       indexPath: number;
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type IntersectEventHandler = (e: {
+    export type IntersectEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
       intersection: L.LatLng;
     }) => void;
-    export type ChangeEventHandler = (e: {
+    export type ChangeEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
       latlngs: L.LatLng | L.LatLng[];
     }) => void;
-    export type TextChangeEventHandler = (e: {
+    export type TextChangeEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
       text: string;
     }) => void;
-    export type TextFocusEventHandler = (e: {
+    export type TextFocusEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
-    export type TextBlurEventHandler = (e: {
+    export type TextBlurEventHandler = (e: BaseEventPayload & {
       shape: PM.SUPPORTED_SHAPES;
       layer: L.Layer;
     }) => void;
-    export type ContainmentViolationEventHandler = (e: {
+    export type ContainmentViolationEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
     }) => void;
-    export type IntersectionViolationEventHandler = (e: {
+    export type IntersectionViolationEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
     }) => void;
-    export type CancelEventHandler = (e: { layer: L.Layer }) => void;
-    export type UndoRemoveEventHandler = (e: { layer: L.Layer }) => void;
+    export type CancelEventHandler = (e: BaseEventPayload & { layer: L.Layer }) => void;
+    export type UndoRemoveEventHandler = (e: BaseEventPayload & { layer: L.Layer }) => void;
 
     /**
      * EDIT MODE MAP EVENT HANDLERS
      */
-    export type GlobalEditModeToggledEventHandler = (event: {
+    export type GlobalEditModeToggledEventHandler = (event: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2439,7 +2447,7 @@ declare module 'leaflet' {
     /**
      * DRAG MODE MAP EVENT HANDLERS
      */
-    export type GlobalDragModeToggledEventHandler = (event: {
+    export type GlobalDragModeToggledEventHandler = (event: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2447,11 +2455,11 @@ declare module 'leaflet' {
     /**
      * DRAG MODE LAYER EVENT HANDLERS
      */
-    export type DragStartEventHandler = (e: {
+    export type DragStartEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type DragEventHandler = (e: {
+    export type DragEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       containerPoint: any;
       latlng: L.LatLng;
@@ -2459,15 +2467,15 @@ declare module 'leaflet' {
       originalEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type DragEndEventHandler = (e: {
+    export type DragEndEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type DragEnableEventHandler = (e: {
+    export type DragEnableEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type DragDisableEventHandler = (e: {
+    export type DragDisableEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
@@ -2476,7 +2484,7 @@ declare module 'leaflet' {
      * REMOVE MODE LAYER EVENT HANDLERS
      */
 
-    export type RemoveEventHandler = (e: {
+    export type RemoveEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
@@ -2484,7 +2492,7 @@ declare module 'leaflet' {
     /**
      * REMOVE MODE MAP EVENT HANDLERS
      */
-    export type GlobalRemovalModeToggledEventHandler = (e: {
+    export type GlobalRemovalModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2492,11 +2500,11 @@ declare module 'leaflet' {
     /**
      * CUT MODE MAP EVENT HANDLERS
      */
-    export type GlobalCutModeToggledEventHandler = (e: {
+    export type GlobalCutModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
-    export type CutEventHandler = (e: {
+    export type CutEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       originalLayer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
@@ -2505,22 +2513,22 @@ declare module 'leaflet' {
     /**
      * ROTATE MODE LAYER EVENT HANDLERS
      */
-    export type RotateEnableEventHandler = (e: {
+    export type RotateEnableEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       helpLayer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type RotateDisableEventHandler = (e: {
+    export type RotateDisableEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type RotateStartEventHandler = (e: {
+    export type RotateStartEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       helpLayer: L.Layer;
       startAngle: number;
       originLatLngs: L.LatLng[];
     }) => void;
-    export type RotateEventHandler = (e: {
+    export type RotateEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       helpLayer: L.Layer;
       startAngle: number;
@@ -2529,7 +2537,7 @@ declare module 'leaflet' {
       oldLatLngs: L.LatLng[];
       newLatLngs: L.LatLng[];
     }) => void;
-    export type RotateEndEventHandler = (e: {
+    export type RotateEndEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       helpLayer: L.Layer;
       startAngle: number;
@@ -2541,7 +2549,7 @@ declare module 'leaflet' {
     /**
      * ROTATE MODE MAP EVENT HANDLERS
      */
-    export type GlobalRotateModeToggledEventHandler = (e: {
+    export type GlobalRotateModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2549,7 +2557,7 @@ declare module 'leaflet' {
     /**
      * UNION MODE MAP EVENT HANDLERS
      */
-    export type GlobalUnionModeToggledEventHandler = (e: {
+    export type GlobalUnionModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2557,7 +2565,7 @@ declare module 'leaflet' {
     /**
      * UNION EVENT HANDLERS
      */
-    export type UnionEventHandler = (e: {
+    export type UnionEventHandler = (e: BaseEventPayload & {
       resultLayer: L.Layer;
       mergedLayers: L.Layer[];
     }) => void;
@@ -2565,7 +2573,7 @@ declare module 'leaflet' {
     /**
      * DIFFERENCE MODE MAP EVENT HANDLERS
      */
-    export type GlobalDifferenceModeToggledEventHandler = (e: {
+    export type GlobalDifferenceModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2573,7 +2581,7 @@ declare module 'leaflet' {
     /**
      * DIFFERENCE EVENT HANDLERS
      */
-    export type DifferenceEventHandler = (e: {
+    export type DifferenceEventHandler = (e: BaseEventPayload & {
       resultLayer: L.Layer;
       subtractedLayers: L.Layer[];
     }) => void;
@@ -2581,12 +2589,12 @@ declare module 'leaflet' {
     /**
      * SELECTION EVENT HANDLERS
      */
-    export type SelectionEventHandler = (e: { layer: L.Layer }) => void;
+    export type SelectionEventHandler = (e: BaseEventPayload & { layer: L.Layer }) => void;
 
     /**
      * SendToBack MODE MAP EVENT HANDLERS
      */
-    export type GlobalSendToBackModeToggledEventHandler = (e: {
+    export type GlobalSendToBackModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2594,7 +2602,7 @@ declare module 'leaflet' {
     /**
      * BringToFront MODE MAP EVENT HANDLERS
      */
-    export type GlobalBringToFrontModeToggledEventHandler = (e: {
+    export type GlobalBringToFrontModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2602,14 +2610,14 @@ declare module 'leaflet' {
     /**
      * CopyLayer MODE MAP EVENT HANDLERS
      */
-    export type GlobalCopyLayerModeToggledEventHandler = (e: {
+    export type GlobalCopyLayerModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
     /**
      * CopyLayer EVENT HANDLERS
      */
-    export type CopyLayerEventHandler = (e: {
+    export type CopyLayerEventHandler = (e: BaseEventPayload & {
       sourceLayer: L.Layer;
       newLayer: L.Layer;
       shape: SUPPORTED_SHAPES;
@@ -2618,7 +2626,7 @@ declare module 'leaflet' {
     /**
      * CopyLayer MODE MAP EVENT HANDLERS
      */
-    export type GlobalLineSimplificationModeToggledEventHandler = (e: {
+    export type GlobalLineSimplificationModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2626,7 +2634,7 @@ declare module 'leaflet' {
     /**
      * Lasso MODE MAP EVENT HANDLERS
      */
-    export type GlobalLassoModeToggledEventHandler = (e: {
+    export type GlobalLassoModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2634,7 +2642,7 @@ declare module 'leaflet' {
     /**
      * DIFFERENCE EVENT HANDLERS
      */
-    export type LassoSelectEventHandler = (e: {
+    export type LassoSelectEventHandler = (e: BaseEventPayload & {
       lassoCoords: L.LatLng[];
       selectionChangedLayers: L.Layer[];
       selectedLayers: L.Layer[];
@@ -2643,7 +2651,7 @@ declare module 'leaflet' {
     /**
      * TRANSLATION EVENT HANDLERS
      */
-    export type LangChangeEventHandler = (e: {
+    export type LangChangeEventHandler = (e: BaseEventPayload & {
       activeLang: string;
       oldLang: string;
       fallback: string;
@@ -2653,11 +2661,11 @@ declare module 'leaflet' {
     /**
      * CONTROL MAP EVENT HANDLERS
      */
-    export type ButtonClickEventHandler = (e: {
+    export type ButtonClickEventHandler = (e: BaseEventPayload & {
       btnName: string;
       button: PM.Button;
     }) => void;
-    export type ActionClickEventHandler = (e: {
+    export type ActionClickEventHandler = (e: BaseEventPayload & {
       text: string;
       action: string;
       btnName: string;
@@ -2667,7 +2675,7 @@ declare module 'leaflet' {
     /**
      * KEYBOARD EVENT HANDLERS
      */
-    export type KeyboardKeyEventHandler = (e: {
+    export type KeyboardKeyEventHandler = (e: BaseEventPayload & {
       focusOn: 'document' | 'map';
       eventType: 'keydown' | 'keyup';
       event: any;
@@ -2676,24 +2684,24 @@ declare module 'leaflet' {
     /**
      * GLOBAL OPTIONS CHANGED EVENT HANDLERS
      */
-    export type GlobalOptionsChangedEventHandler = (e: { event: any }) => void;
+    export type GlobalOptionsChangedEventHandler = (e: BaseEventPayload & { event: any }) => void;
 
     /**
      * AUTO TRACE EVENT HANDLERS
      */
-    export type AutoTraceEventHandler = (e: { event: any }) => void;
-    export type AutoTraceLineChangeEventHandler = (e: {
+    export type AutoTraceEventHandler = (e: BaseEventPayload & { event: any }) => void;
+    export type AutoTraceLineChangeEventHandler = (e: BaseEventPayload & {
       hintLatLngs: L.LatLng[];
     }) => void;
 
     /**
      * Split MODE MAP EVENT HANDLERS
      */
-    export type GlobalSplitModeToggledEventHandler = (e: {
+    export type GlobalSplitModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
-    export type SplitEventHandler = (e: {
+    export type SplitEventHandler = (e: BaseEventPayload & {
       layers: L.Layer[];
       originalLayer: L.Layer;
       splitLayer: L.Layer;
@@ -2703,27 +2711,27 @@ declare module 'leaflet' {
     /**
      * SCALE MODE LAYER EVENT HANDLERS
      */
-    export type ScaleEnableEventHandler = (e: {
+    export type ScaleEnableEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       helpLayer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type ScaleDisableEventHandler = (e: {
+    export type ScaleDisableEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       shape: PM.SUPPORTED_SHAPES;
     }) => void;
-    export type ScaleStartEventHandler = (e: {
+    export type ScaleStartEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       helpLayer: L.Layer;
       originLatLngs: L.LatLng[];
     }) => void;
-    export type ScaleEventHandler = (e: {
+    export type ScaleEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       helpLayer: L.Layer;
       oldLatLngs: L.LatLng[];
       newLatLngs: L.LatLng[];
     }) => void;
-    export type ScaleEndEventHandler = (e: {
+    export type ScaleEndEventHandler = (e: BaseEventPayload & {
       layer: L.Layer;
       helpLayer: L.Layer;
       originLatLngs: L.LatLng[];
@@ -2733,7 +2741,7 @@ declare module 'leaflet' {
     /**
      * SCALE MODE MAP EVENT HANDLERS
      */
-    export type GlobalScaleModeToggledEventHandler = (e: {
+    export type GlobalScaleModeToggledEventHandler = (e: BaseEventPayload & {
       enabled: boolean;
       map: L.Map;
     }) => void;
@@ -2741,11 +2749,11 @@ declare module 'leaflet' {
     /**
      * CANCEL MODE MAP EVENT HANDLERS
      */
-    export type GlobalCancelEventHandler = (e: { map: L.Map }) => void;
+    export type GlobalCancelEventHandler = (e: BaseEventPayload & { map: L.Map }) => void;
 
     /**
      * ERROR MAP EVENT HANDLERS
      */
-    export type ErrorEventHandler = (e: { message: string, source: string, payload: any }) => void;
+    export type ErrorEventHandler = (e: BaseEventPayload & { message: string, source: string, payload: any }) => void;
   }
 }
