@@ -36,27 +36,27 @@
     "./dist/leaflet-geoman.css": "./dist/leaflet-geoman.css"
   },
   "dependencies": {
-    "@turf/boolean-contains": "^7.3.3",
-    "@turf/kinks": "^7.3.3",
-    "@turf/line-intersect": "^7.3.3",
-    "@turf/line-split": "^7.3.3",
+    "@turf/boolean-contains": "^7.3.4",
+    "@turf/kinks": "^7.3.4",
+    "@turf/line-intersect": "^7.3.4",
+    "@turf/line-split": "^7.3.4",
     "lodash": "4.18.1",
     "polyclip-ts": "^0.16.8"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.21",
-    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/coverage-v8": "^4.1.4",
     "cross-env": "^10.1.0",
-    "cypress": "^15.9.0",
+    "cypress": "^15.13.1",
     "esbuild": "^0.28.0",
-    "oxlint": "^1.0.0",
+    "oxlint": "^1.59.0",
     "oxfmt": "^0.44.0",
     "husky": "^9.1.7",
     "leaflet": "1.9.4",
-    "lint-staged": "^16.2.7",
-    "prosthetic-hand": "1.4.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "lint-staged": "^16.4.0",
+    "prosthetic-hand": "2.2.1",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.4"
   },
   "peerDependencies": {
     "leaflet": "^1.2.0"
