@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="./node_modules/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="dist/leaflet-geoman.css" />
     <script src="./node_modules/leaflet/dist/leaflet-src.js"></script>
-    <script src="./node_modules/prosthetic-hand/dist/prosthetic-hand.js"></script>
     <!--
             <script src="../../leaflet-measure-path/leaflet-measure-path.js"></script>
         -->
@@ -17,6 +16,10 @@
     <script src="cypress/libs/proj4-2.8.0.min.js"></script>
     <script src="cypress/libs/proj4leaflet-1.0.2.min.js"></script>
 
+    <script type="module">
+      import Hand from './node_modules/prosthetic-hand/lib/Hand.js';
+      window.Hand = Hand;
+    </script>
     <style>
       html,
       body {
