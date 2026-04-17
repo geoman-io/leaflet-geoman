@@ -31,6 +31,40 @@
 
 Visit [geoman.io/docs](https://www.geoman.io/docs) to get started.
 
+### TypeScript
+
+The `layer` property on Geoman event payloads is typed as the base `L.Layer` because events like `pm:edit` fire for every shape type. To access shape-specific APIs such as `Polygon.getLatLngs()`, narrow the type using one of the two patterns below.
+
+#### `instanceof` narrowing (recommended)
+
+TypeScript narrows the type automatically inside the `if` block — no cast needed.
+
+```ts
+import { Map, Polygon } from 'leaflet';
+
+map.on('pm:edit', (e) => {
+  if (e.layer instanceof Polygon) {
+    e.layer.getLatLngs();
+  }
+});
+```
+
+#### `as` cast branched on `e.shape`
+
+When you already know the shape from `e.shape` (a `PM.SUPPORTED_SHAPES` value), you can cast directly:
+
+```ts
+import { Polygon } from 'leaflet';
+
+map.on('pm:edit', (e) => {
+  if (e.shape === 'Polygon') {
+    (e.layer as Polygon).getLatLngs();
+  }
+});
+```
+
+The event payload type is `PM.EditEventHandler` (see `leaflet-geoman.d.ts`), which exposes `shape: PM.SUPPORTED_SHAPES` and `layer: L.Layer`.
+
 ## Demo
 
 Check out the full power of Leaflet-Geoman Pro on [geoman.io/demo](https://www.geoman.io/demo)
