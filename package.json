@@ -50,11 +50,11 @@
     "cypress": "^15.13.1",
     "esbuild": "^0.28.0",
     "oxlint": "^1.59.0",
-    "oxfmt": "^0.44.0",
+    "oxfmt": "^0.47.0",
     "husky": "^9.1.7",
     "leaflet": "1.9.4",
     "lint-staged": "^16.4.0",
-    "prosthetic-hand": "2.2.1",
+    "prosthetic-hand": "2.2.2",
     "typescript": "^6.0.2",
     "vitest": "^4.1.4"
   },
