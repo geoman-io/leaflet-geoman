@@ -31,6 +31,29 @@
 
 Visit [geoman.io/docs](https://www.geoman.io/docs) to get started.
 
+### TypeScript: casting the event payload
+
+The `layer` field on Geoman event payloads is typed as `L.Layer`, so reach for the concrete subtype before calling layer-specific methods. Branch on `e.shape` and cast, or narrow with `instanceof` first:
+
+```typescript
+import { Polygon } from 'leaflet';
+
+map.on('pm:edit', (e) => {
+  if (e.shape === 'Polygon') {
+    (e.layer as Polygon).getLatLngs();
+  }
+});
+
+// or, equivalently
+map.on('pm:edit', (e) => {
+  if (e.layer instanceof Polygon) {
+    e.layer.getLatLngs();
+  }
+});
+```
+
+See [#1014](https://github.com/geoman-io/leaflet-geoman/issues/1014) for the original discussion.
+
 ## Demo
 
 Check out the full power of Leaflet-Geoman Pro on [geoman.io/demo](https://www.geoman.io/demo)
