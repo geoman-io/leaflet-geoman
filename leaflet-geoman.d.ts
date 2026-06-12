@@ -833,6 +833,135 @@ declare module 'leaflet' {
     off(type: 'pm:error', fn?: PM.ErrorEventHandler): this;
   }
 
+  /**
+   * Extend Leaflet's event-handler map so that the `eventHandlers` prop in
+   * react-leaflet (and any other consumer that hands a record literal to
+   * `on(eventMap)`) can type-check Geoman's `pm:*` events.
+   *
+   * The `on(type: 'pm:...', fn: ...): this` overloads above type the
+   * imperative API. They do not flow into the keyed `LeafletEventHandlerFnMap`
+   * record because that interface in @types/leaflet has a fixed key set
+   * (no string index signature). Augmenting it with the same handlers makes
+   * `<Polyline eventHandlers={{ 'pm:edit': handler }} />` (and friends)
+   * type-check end to end.
+   *
+   * `pm:vertexadded` carries two payload shapes depending on draw vs. edit
+   * mode -- it is typed as the union here, matching the two `on` overloads.
+   */
+  interface LeafletEventHandlerFnMap {
+    'pm:remove'?: PM.RemoveEventHandler | undefined;
+    'pm:cut'?: PM.CutEventHandler | undefined;
+    'pm:split'?: PM.SplitEventHandler | undefined;
+    'pm:rotateenable'?: PM.RotateEnableEventHandler | undefined;
+    'pm:rotatedisable'?: PM.RotateDisableEventHandler | undefined;
+    'pm:rotatestart'?: PM.RotateStartEventHandler | undefined;
+    'pm:rotate'?: PM.RotateEventHandler | undefined;
+    'pm:rotateend'?: PM.RotateEndEventHandler | undefined;
+    'pm:scaleenable'?: PM.ScaleEnableEventHandler | undefined;
+    'pm:scaledisable'?: PM.ScaleDisableEventHandler | undefined;
+    'pm:scalestart'?: PM.ScaleStartEventHandler | undefined;
+    'pm:scale'?: PM.ScaleEventHandler | undefined;
+    'pm:scaleend'?: PM.ScaleEndEventHandler | undefined;
+    'pm:snapdrag'?: PM.SnapEventHandler | undefined;
+    'pm:snap'?: PM.SnapEventHandler | undefined;
+    'pm:unsnap'?: PM.SnapEventHandler | undefined;
+    'pm:centerplaced'?: PM.CenterPlacedEventHandler | undefined;
+    'pm:edit'?: PM.EditEventHandler | undefined;
+    'pm:create'?: PM.CreateEventHandler | undefined;
+    'pm:vertexadded'?:
+      | PM.VertexAddedEventHandler
+      | PM.VertexAddedEventHandler2
+      | undefined;
+    'pm:vertexremoved'?: PM.VertexRemovedEventHandler | undefined;
+    'pm:vertexclick'?: PM.VertexClickEventHandler | undefined;
+    'pm:markerdragstart'?: PM.MarkerDragStartEventHandler | undefined;
+    'pm:markerdrag'?: PM.MarkerDragEventHandler | undefined;
+    'pm:markerdragend'?: PM.MarkerDragEndEventHandler | undefined;
+    'pm:layerreset'?: PM.LayerResetEventHandler | undefined;
+    'pm:intersect'?: PM.IntersectEventHandler | undefined;
+    'pm:change'?: PM.ChangeEventHandler | undefined;
+    'pm:textchange'?: PM.TextChangeEventHandler | undefined;
+    'pm:textfocus'?: PM.TextFocusEventHandler | undefined;
+    'pm:textblur'?: PM.TextBlurEventHandler | undefined;
+    'pm:containmentviolation'?: PM.ContainmentViolationEventHandler | undefined;
+    'pm:intersectionviolation'?:
+      | PM.IntersectionViolationEventHandler
+      | undefined;
+    'pm:cancel'?: PM.CancelEventHandler | undefined;
+    'pm:undoremove'?: PM.UndoRemoveEventHandler | undefined;
+    'pm:update'?: PM.UpdateEventHandler | undefined;
+    'pm:enable'?: PM.EnableEventHandler | undefined;
+    'pm:disable'?: PM.DisableEventHandler | undefined;
+    'pm:dragstart'?: PM.DragStartEventHandler | undefined;
+    'pm:drag'?: PM.DragEventHandler | undefined;
+    'pm:dragend'?: PM.DragEndEventHandler | undefined;
+    'pm:dragenable'?: PM.DragEnableEventHandler | undefined;
+    'pm:dragdisable'?: PM.DragDisableEventHandler | undefined;
+    'pm:drawstart'?: PM.DrawStartEventHandler | undefined;
+    'pm:drawend'?: PM.DrawEndEventHandler | undefined;
+    'pm:union'?: PM.UnionEventHandler | undefined;
+    'pm:difference'?: PM.DifferenceEventHandler | undefined;
+    'pm:copylayer'?: PM.CopyLayerEventHandler | undefined;
+    'pm:selectionadd'?: PM.SelectionEventHandler | undefined;
+    'pm:selectionremove'?: PM.SelectionEventHandler | undefined;
+    'pm:lasso-select'?: PM.LassoSelectEventHandler | undefined;
+    'pm:langchange'?: PM.LangChangeEventHandler | undefined;
+    'pm:buttonclick'?: PM.ButtonClickEventHandler | undefined;
+    'pm:actionclick'?: PM.ActionClickEventHandler | undefined;
+    'pm:keyevent'?: PM.KeyboardKeyEventHandler | undefined;
+    'pm:globaloptionschanged'?: PM.GlobalOptionsChangedEventHandler | undefined;
+    'pm:autotracestart'?: PM.AutoTraceEventHandler | undefined;
+    'pm:autotracelinechange'?: PM.AutoTraceLineChangeEventHandler | undefined;
+    'pm:autotraceend'?: PM.AutoTraceEventHandler | undefined;
+    'pm:globalsplitmodetoggled'?:
+      | PM.GlobalSplitModeToggledEventHandler
+      | undefined;
+    'pm:globaleditmodetoggled'?:
+      | PM.GlobalEditModeToggledEventHandler
+      | undefined;
+    'pm:globaldrawmodetoggled'?:
+      | PM.GlobalDrawModeToggledEventHandler
+      | undefined;
+    'pm:globalremovalmodetoggled'?:
+      | PM.GlobalRemovalModeToggledEventHandler
+      | undefined;
+    'pm:globalcutmodetoggled'?:
+      | PM.GlobalCutModeToggledEventHandler
+      | undefined;
+    'pm:globaldragmodetoggled'?:
+      | PM.GlobalDragModeToggledEventHandler
+      | undefined;
+    'pm:globalrotatemodetoggled'?:
+      | PM.GlobalRotateModeToggledEventHandler
+      | undefined;
+    'pm:globalscalemodetoggled'?:
+      | PM.GlobalScaleModeToggledEventHandler
+      | undefined;
+    'pm:globalunionmodetoggled'?:
+      | PM.GlobalUnionModeToggledEventHandler
+      | undefined;
+    'pm:globaldifferencemodetoggled'?:
+      | PM.GlobalDifferenceModeToggledEventHandler
+      | undefined;
+    'pm:globalcopylayermodetoggled'?:
+      | PM.GlobalCopyLayerModeToggledEventHandler
+      | undefined;
+    'pm:globallassomodetoggled'?:
+      | PM.GlobalLassoModeToggledEventHandler
+      | undefined;
+    'pm:globallinesimplificationmodetoggled'?:
+      | PM.GlobalLineSimplificationModeToggledEventHandler
+      | undefined;
+    'pm:globalbringtofrontmodetoggled'?:
+      | PM.GlobalBringToFrontModeToggledEventHandler
+      | undefined;
+    'pm:globalbringtobackmodetoggled'?:
+      | PM.GlobalSendToBackModeToggledEventHandler
+      | undefined;
+    'pm:globalcancel'?: PM.GlobalCancelEventHandler | undefined;
+    'pm:error'?: PM.ErrorEventHandler | undefined;
+  }
+
   namespace PM {
     export const version: string;
 
