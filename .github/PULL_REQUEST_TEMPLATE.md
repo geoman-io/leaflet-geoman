@@ -19,10 +19,10 @@
 ## Checklist
 
 - [ ] I have read the [CONTRIBUTING](../CONTRIBUTING.md) guidelines
-- [ ] My code follows the code style of this project (run `npm run lint`)
+- [ ] My code follows the code style of this project (run `pnpm run lint`)
 - [ ] I have tested my changes locally
 - [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing tests pass locally with my changes (`npm run test:all`)
+- [ ] New and existing tests pass locally with my changes (`pnpm run test:all`)
 
 ## Screenshots (if applicable)
 

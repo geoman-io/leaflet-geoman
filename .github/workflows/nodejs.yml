@@ -18,17 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run unit tests
-        run: npm run test:unit
+        run: pnpm run test:unit
 
   typecheck:
     name: Type Check
@@ -37,17 +39,19 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - name: Use Node.js 24.x
         uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Type check
-        run: npm run typecheck
+        run: pnpm run typecheck
 
   e2e-tests:
     name: E2E Tests
@@ -56,29 +60,32 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v4
+
       - name: Use Node.js 24.x
         uses: actions/setup-node@v6
         with:
           node-version: 24.x
-          cache: npm
+          cache: pnpm
 
       - uses: actions/cache@v5
         name: Setup Cypress cache
         with:
-          path: |
-            ~/.npm
-            /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          path: /home/runner/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-cypress-
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Cypress binary
+        run: pnpm exec cypress install
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Run E2E tests
-        run: npm test
+        run: pnpm test
         env:
           CI: true
