@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.0] - 2026-06-23
+
+### Added
+
+- Extend `LeafletEventHandlerFnMap` with `pm:*` events in TypeScript definitions (#1666)
+
+### Changed
+
+- Ship a real non-minified `leaflet-geoman.js` build (#1664)
+- Migrate package manager to pnpm with a 7-day dependency cooldown (#1657)
+- Remove Node 18 support and update to Node 24 (#1647)
+- Remove obsolete copyright and proprietary information (#1648)
+- Update dependencies (#1649)
+
+## [2.19.3] - 2026-04-10
+
+### Fixed
+
+- Bump dependencies and remove vulnerabilities (#1643)
+- Add missing source and custom properties to event handlers in TypeScript definitions (#1646)
+(#1646)
+
 ## [2.19.2] - 2026-02-02
 
 ### Added
@@ -122,7 +144,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial tracked release
 
-[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.2...HEAD
+[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.3...HEAD
+[2.19.3]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.2...v2.19.3
 [2.19.2]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.1...v2.19.2
 [2.19.1]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.0...v2.19.1
 [2.19.0]: https://github.com/geoman-io/leaflet-geoman/compare/v2.18.3...v2.19.0

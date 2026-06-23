@@ -52,49 +52,4 @@ beforeEach(() => {
       map.pm.addControls();
     },
   });
-
-  // because of this issue: https://github.com/Leaflet/prosthetic-hand/issues/16
-  // this._onStop not detected by default as instance of Function. -> Replaced with typeof this._onStop === "function"
-  cy.window().then(({ Hand }) => {
-    Hand.prototype.fingerIsIdle = function fingerIsIdle() {
-      if (this._fingers.every((f) => f.isIdle())) {
-        if (!this._fingersAreIdle) {
-          // 🖑event prostheticHandStop: CustomEvent
-          // Fired when all movements are complete.
-          document.dispatchEvent(
-            new CustomEvent('prostheticHandStop', { target: this })
-          );
-          if (this._onStop && typeof this._onStop === 'function') {
-            try {
-              this._onStop(this);
-            } catch (e) {
-              /* eslint-disable-next-line no-console */
-              console.error(e);
-              throw e;
-            }
-          }
-        }
-        this._fingersAreIdle = true;
-      }
-    };
-
-    Hand.prototype.fingerIsBusy = function fingerIsBusy() {
-      if (this._fingersAreIdle) {
-        // 🖑section
-        // Use `document.addEventListener('prostheticHandStop', fn)` to
-        // do stuff with it.
-        // 🖑event prostheticHandStart: CustomEvent
-        // Fired when all movements are complete.
-        document.dispatchEvent(
-          new CustomEvent('prostheticHandStart', { target: this })
-        );
-        if (this._onStart && typeof this._onStart === 'function') {
-          this._onStart(this);
-        }
-        this._fingersAreIdle = false;
-        this._scheduleNextDispatch();
-      }
-      return this;
-    };
-  });
 });
