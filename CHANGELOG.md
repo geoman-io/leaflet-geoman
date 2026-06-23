@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.0] - 2026-06-23
+
+### Added
+
+- Extend `LeafletEventHandlerFnMap` with `pm:*` events in TypeScript definitions (#1666)
+
+### Changed
+
+- Ship a real non-minified `leaflet-geoman.js` build (#1664)
+- Migrate package manager to pnpm with a 7-day dependency cooldown (#1657)
+- Remove Node 18 support and update to Node 24 (#1647)
+- Remove obsolete copyright and proprietary information (#1648)
+- Update dependencies (#1649)
+
 ## [2.19.3] - 2026-04-10
 
 ### Fixed
