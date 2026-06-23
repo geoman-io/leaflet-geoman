@@ -23,15 +23,13 @@ const buildOptions = {
     '.css': 'css',
     '.svg': 'dataurl'
   },
-  minify: true,
   outfile: './dist/leaflet-geoman.js',
   sourcemap: true,
 }
 
-const ctx = await esbuild.context({ ...buildOptions, plugins });
-
 if (process.env.DEV) {
-  // Watch in dev mode
+  // Watch in dev mode (non-minified for easier debugging)
+  const ctx = await esbuild.context({ ...buildOptions, minify: false, plugins });
   await ctx.watch();
   console.log('watching...');
   const { host, port } = await ctx.serve({
@@ -44,11 +42,15 @@ if (process.env.DEV) {
   // Clean /dist folder
   fs.rmSync("./dist", { recursive: true, force: true });
 
-  // Build
-  await ctx.rebuild();
+  // Build the non-minified bundle (leaflet-geoman.js + leaflet-geoman.css)
+  await esbuild.build({ ...buildOptions, minify: false, plugins });
 
-  // Dispose context
-  ctx.dispose();
+  // Build the minified bundle (leaflet-geoman.min.js)
+  await esbuild.build({ ...buildOptions, minify: true, outfile: './dist/leaflet-geoman.min.js', plugins });
+
+  // The minified build also emits a duplicate CSS file we don't ship
+  fs.rmSync('./dist/leaflet-geoman.min.css', { force: true });
+  fs.rmSync('./dist/leaflet-geoman.min.css.map', { force: true });
 
   // Replace incorrect closing tag in <\/style>
   const data = fs.readFileSync('./dist/leaflet-geoman.css', 'utf8');
@@ -57,5 +59,4 @@ if (process.env.DEV) {
 
   // Copy types
   fs.copyFileSync('leaflet-geoman.d.ts', './dist/leaflet-geoman.d.ts');
-  fs.copyFileSync('./dist/leaflet-geoman.js', './dist/leaflet-geoman.min.js');
 }

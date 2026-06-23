@@ -21,6 +21,7 @@
     "dist/leaflet-geoman.css",
     "dist/leaflet-geoman.d.ts",
     "dist/leaflet-geoman.js.map",
+    "dist/leaflet-geoman.min.js.map",
     "dist/leaflet-geoman.css.map"
   ],
   "main": "dist/leaflet-geoman.js",
