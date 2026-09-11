@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.1] - 2026-09-11
+
+### Changed
+
+- Update runtime and development dependencies and pnpm within their current major versions.
+- Retain the seven-day dependency release cooldown, including newly resolved transitive dependencies.
+
 ## [2.20.0] - 2026-06-23
 
 ### Added

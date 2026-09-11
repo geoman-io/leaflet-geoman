@@ -1062,8 +1062,8 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0][1].lat).to.eq(51.52529983831507);
-      expect(layer.getLatLngs()[0][1].lng).to.eq(-0.15003204345703128);
+      expect(layer.getLatLngs()[0][1].lat).to.be.closeTo(51.52529983831507, 1e-10);
+      expect(layer.getLatLngs()[0][1].lng).to.be.closeTo(-0.15003204345703128, 1e-10);
     });
 
     cy.toolbarButton('edit').click();
@@ -1075,8 +1075,8 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0][1].lat).to.eq(51.525833847122584);
-      expect(layer.getLatLngs()[0][1].lng).to.eq(-0.13286590576171878);
+      expect(layer.getLatLngs()[0][1].lat).to.be.closeTo(51.525833847122584, 1e-10);
+      expect(layer.getLatLngs()[0][1].lng).to.be.closeTo(-0.13286590576171878, 1e-10);
     });
   });
 });

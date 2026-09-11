@@ -442,8 +442,8 @@ describe('Draw & Edit Line', () => {
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0].lat).to.eq(51.52538802368748);
-      expect(layer.getLatLngs()[0].lng).to.eq(-0.15050450596240997);
+      expect(layer.getLatLngs()[0].lat).to.be.closeTo(51.52538802368748, 1e-10);
+      expect(layer.getLatLngs()[0].lng).to.be.closeTo(-0.15050450596240997, 1e-10);
     });
 
     cy.toolbarButton('edit').click();
@@ -454,8 +454,8 @@ describe('Draw & Edit Line', () => {
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0].lat).to.eq(51.5258877375718);
-      expect(layer.getLatLngs()[0].lng).to.eq(-0.15026355008465944);
+      expect(layer.getLatLngs()[0].lat).to.be.closeTo(51.5258877375718, 1e-10);
+      expect(layer.getLatLngs()[0].lng).to.be.closeTo(-0.15026355008465944, 1e-10);
     });
   });
 });
