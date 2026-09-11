@@ -1,6 +1,6 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
-  "version": "2.20.0",
+  "version": "2.20.1",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -37,27 +37,27 @@
     "./dist/leaflet-geoman.css": "./dist/leaflet-geoman.css"
   },
   "dependencies": {
-    "@turf/boolean-contains": "^7.3.5",
-    "@turf/kinks": "^7.3.5",
-    "@turf/line-intersect": "^7.3.5",
-    "@turf/line-split": "^7.3.5",
+    "@turf/boolean-contains": "^7.4.0",
+    "@turf/kinks": "^7.4.0",
+    "@turf/line-intersect": "^7.4.0",
+    "@turf/line-split": "^7.4.0",
     "lodash": "4.18.1",
     "polyclip-ts": "^0.16.8"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.21",
-    "@vitest/coverage-v8": "^4.1.5",
+    "@types/leaflet": "^1.9.22",
+    "@vitest/coverage-v8": "^4.1.11",
     "cross-env": "^10.1.0",
-    "cypress": "^15.14.2",
-    "esbuild": "^0.28.0",
+    "cypress": "^15.21.1",
+    "esbuild": "^0.28.2",
     "husky": "^9.1.7",
     "leaflet": "1.9.4",
-    "lint-staged": "^17.0.2",
-    "oxfmt": "^0.55.0",
-    "oxlint": "^1.70.0",
+    "lint-staged": "^17.4.1",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
     "prosthetic-hand": "2.2.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.11"
   },
   "peerDependencies": {
     "leaflet": "^1.2.0"
@@ -65,7 +65,7 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
     "start": "pnpm run dev",
     "dev": "cross-env DEV=true node bundle.mjs",

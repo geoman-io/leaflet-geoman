@@ -544,9 +544,9 @@ describe('Draw Circle', () => {
 
     cy.window().then(({ map }) => {
       const layer = map.pm.getGeomanLayers()[1];
-      expect(layer.getLatLng().lat).to.eq(51.51034504891232);
-      expect(layer.getLatLng().lng).to.eq(-0.12428283691406251);
-      expect(layer.getRadius()).to.eq(1240.3294565841613);
+      expect(layer.getLatLng().lat).to.be.closeTo(51.51034504891232, 1e-10);
+      expect(layer.getLatLng().lng).to.be.closeTo(-0.12428283691406251, 1e-10);
+      expect(layer.getRadius()).to.be.closeTo(1240.3294565841613, 1e-10);
     });
   });
 });
