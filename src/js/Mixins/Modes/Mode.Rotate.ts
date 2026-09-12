@@ -39,7 +39,6 @@ export interface IGlobalRotateMode {
   globalRotateModeEnabled(): boolean;
   toggleGlobalRotateMode(): void;
   _isRelevantForRotate(layer: PMLayer): boolean | undefined;
-  _isRelevantForRemoval(layer: PMLayer): boolean | undefined;
   handleLayerAdditionInGlobalRotateMode(): void;
   _layerAddedRotate(e: LayerAddEvent): void;
   _fireGlobalRotateModeToggled(): void;
@@ -118,7 +117,7 @@ const GlobalRotateMode = {
     if (this.globalRotateModeEnabled()) {
       for (const id in layers) {
         const layer = layers[id];
-        if (this._isRelevantForRemoval(layer)) {
+        if (this._isRelevantForRotate(layer)) {
           layer.pm!.enableRotate();
         }
       }
