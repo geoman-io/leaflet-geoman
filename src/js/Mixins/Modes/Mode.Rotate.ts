@@ -1,13 +1,59 @@
+/**
+ * Extended layer with PM properties
+ */
+interface PMLayer extends L.Layer {
+  _pmTempLayer?: boolean;
+  pm?: {
+    enableRotate: () => void;
+    disableRotate: () => void;
+    options: {
+      allowRotation?: boolean;
+    };
+  };
+  options: L.LayerOptions & {
+    pmIgnore?: boolean;
+  };
+}
+
+/**
+ * Layer event
+ */
+interface LayerAddEvent {
+  layer: PMLayer;
+}
+
+/**
+ * Global Rotate Mode mixin interface
+ */
+export interface IGlobalRotateMode {
+  map: L.Map;
+  _globalRotateModeEnabled: boolean;
+  _addedLayersRotate: Record<number, PMLayer>;
+  throttledReInitRotate?: (e: LayerAddEvent) => void;
+  Toolbar: {
+    toggleButton: (name: string, enabled: boolean) => void;
+  };
+
+  enableGlobalRotateMode(): void;
+  disableGlobalRotateMode(): void;
+  globalRotateModeEnabled(): boolean;
+  toggleGlobalRotateMode(): void;
+  _isRelevantForRotate(layer: PMLayer): boolean | undefined;
+  _isRelevantForRemoval(layer: PMLayer): boolean | undefined;
+  handleLayerAdditionInGlobalRotateMode(): void;
+  _layerAddedRotate(e: LayerAddEvent): void;
+  _fireGlobalRotateModeToggled(): void;
+}
 const GlobalRotateMode = {
   _globalRotateModeEnabled: false,
-  enableGlobalRotateMode() {
+  enableGlobalRotateMode(this: IGlobalRotateMode) {
     this._globalRotateModeEnabled = true;
     const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l) => l instanceof L.Polyline
+      (l: PMLayer) => l instanceof L.Polyline
     );
-    layers.forEach((layer) => {
+    layers.forEach((layer: PMLayer) => {
       if (this._isRelevantForRotate(layer)) {
-        layer.pm.enableRotate();
+        layer.pm!.enableRotate();
       }
     });
 
@@ -28,13 +74,13 @@ const GlobalRotateMode = {
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
     this._fireGlobalRotateModeToggled();
   },
-  disableGlobalRotateMode() {
+  disableGlobalRotateMode(this: IGlobalRotateMode) {
     this._globalRotateModeEnabled = false;
     const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l) => l instanceof L.Polyline
+      (l: PMLayer) => l instanceof L.Polyline
     );
-    layers.forEach((layer) => {
-      layer.pm.disableRotate();
+    layers.forEach((layer: PMLayer) => {
+      layer.pm!.disableRotate();
     });
 
     // remove map handler
@@ -45,17 +91,17 @@ const GlobalRotateMode = {
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
     this._fireGlobalRotateModeToggled();
   },
-  globalRotateModeEnabled() {
+  globalRotateModeEnabled(this: IGlobalRotateMode) {
     return !!this._globalRotateModeEnabled;
   },
-  toggleGlobalRotateMode() {
+  toggleGlobalRotateMode(this: IGlobalRotateMode) {
     if (this.globalRotateModeEnabled()) {
       this.disableGlobalRotateMode();
     } else {
       this.enableGlobalRotateMode();
     }
   },
-  _isRelevantForRotate(layer) {
+  _isRelevantForRotate(layer: PMLayer) {
     return (
       layer.pm &&
       layer instanceof L.Polyline &&
@@ -63,22 +109,22 @@ const GlobalRotateMode = {
       ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
         (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
-      layer.pm.options.allowRotation
+      layer.pm!.options.allowRotation
     );
   },
-  handleLayerAdditionInGlobalRotateMode() {
+  handleLayerAdditionInGlobalRotateMode(this: IGlobalRotateMode) {
     const layers = this._addedLayersRotate;
     this._addedLayersRotate = {};
     if (this.globalRotateModeEnabled()) {
       for (const id in layers) {
         const layer = layers[id];
         if (this._isRelevantForRemoval(layer)) {
-          layer.pm.enableRotate();
+          layer.pm!.enableRotate();
         }
       }
     }
   },
-  _layerAddedRotate({ layer }) {
+  _layerAddedRotate(this: IGlobalRotateMode, { layer }: LayerAddEvent) {
     this._addedLayersRotate[L.stamp(layer)] = layer;
   },
 };

@@ -1,9 +1,117 @@
+/**
+ * Key event data structure
+ */
+interface KeyEventData {
+  event:
+    | KeyboardEvent
+    | (FocusEvent &
+        Partial<
+          Pick<
+            KeyboardEvent,
+            'key' | 'altKey' | 'shiftKey' | 'ctrlKey' | 'metaKey'
+          >
+        >);
+  eventType: string;
+  focusOn: string;
+}
+
+/**
+ * Last events storage
+ */
+interface LastEventsStore {
+  keydown?: KeyEventData;
+  keyup?: KeyEventData;
+  current?: KeyEventData;
+  [key: string]: KeyEventData | undefined;
+}
+
+/**
+ * PM Map interface for keyboard operations
+ */
+interface PMMap {
+  getGlobalOptions: () => {
+    exitModeOnEscape?: boolean;
+    finishOnEnter?: boolean;
+  };
+  globalDrawModeEnabled: () => boolean;
+  globalEditModeEnabled: () => boolean;
+  globalDragModeEnabled: () => boolean;
+  globalRemovalModeEnabled: () => boolean;
+  globalRotateModeEnabled: () => boolean;
+  globalCutModeEnabled: () => boolean;
+  disableDraw: () => void;
+  disableGlobalEditMode: () => void;
+  disableGlobalDragMode: () => void;
+  disableGlobalRemovalMode: () => void;
+  disableGlobalRotateMode: () => void;
+  disableGlobalCutMode: () => void;
+  _fireKeyeventEvent: (
+    event: KeyboardEvent,
+    eventType: string,
+    focusOn: string
+  ) => void;
+  Draw: {
+    getActiveShape: () => string | null;
+    [key: string]: unknown;
+  };
+}
+
+/**
+ * Draw instance interface
+ */
+interface DrawInstance {
+  _finishShape?: () => void;
+  _startMarker?: L.Marker;
+  _centerMarker?: L.Marker;
+  _layerGroup?: L.LayerGroup;
+  _layer?: L.Polyline | L.Polygon;
+}
+
+/**
+ * Extended Map type with PM
+ * Using type intersection to avoid extending L.Map interface directly
+ */
+type PMEnabledMap = L.Map & {
+  pm: PMMap;
+};
+
+/**
+ * Keyboard mixin context
+ */
+export interface KeyboardMixinContext {
+  map: PMEnabledMap;
+  _lastEvents: LastEventsStore;
+}
+
+/**
+ * Keyboard mixin interface
+ */
+export interface IKeyboardMixin {
+  _lastEvents: LastEventsStore;
+  _initKeyListener(map: L.Map): void;
+  _handleEscapeKey(e: KeyboardEvent): boolean;
+  _handleEnterKey(e: KeyboardEvent): boolean;
+  _canFinishShape(
+    drawInstance: DrawInstance,
+    activeShape: string
+  ): boolean | undefined;
+  _unbindKeyListenerEvents(): void;
+  _onKeyListener(e: KeyboardEvent): void;
+  _onBlur(e: FocusEvent & { altKey?: boolean }): void;
+  getLastKeyEvent(type?: string): KeyEventData | undefined;
+  isShiftKeyPressed(): boolean | undefined;
+  isAltKeyPressed(): boolean | undefined;
+  isCtrlKeyPressed(): boolean | undefined;
+  isMetaKeyPressed(): boolean | undefined;
+  getPressedKey(): string | undefined;
+}
 // use function to create a new mixin object for keeping isolation
 // to make it work for multiple map instances
-const createKeyboardMixins = () => ({
+const createKeyboardMixins = (): IKeyboardMixin &
+  ThisType<KeyboardMixinContext & IKeyboardMixin> => ({
   _lastEvents: { keydown: undefined, keyup: undefined, current: undefined },
   _initKeyListener(map) {
-    this.map = map;
+    this.map = map as PMEnabledMap;
     L.DomEvent.on(document, 'keydown keyup', this._onKeyListener, this);
     L.DomEvent.on(window, 'blur', this._onBlur, this);
     // clean up global listeners when current map instance is destroyed
@@ -83,7 +191,7 @@ const createKeyboardMixins = () => ({
     }
 
     // Get the active draw instance
-    const drawInstance = pm.Draw[activeShape];
+    const drawInstance = pm.Draw[activeShape] as DrawInstance | undefined;
     if (!drawInstance || !drawInstance._finishShape) {
       return false;
     }
@@ -154,11 +262,11 @@ const createKeyboardMixins = () => ({
 
     // .contains only supported since IE9, if you want to use Geoman with IE8 or lower you need to implement a polyfill for .contains
     // with focusOn the user can add a check if the key was pressed while the user interacts with the map
-    if (this.map.getContainer().contains(e.target)) {
+    if (this.map.getContainer().contains(e.target as Node)) {
       focusOn = 'map';
     }
 
-    const data = { event: e, eventType: e.type, focusOn };
+    const data: KeyEventData = { event: e, eventType: e.type, focusOn };
     this._lastEvents[e.type] = data;
     this._lastEvents.current = data;
 
@@ -178,7 +286,11 @@ const createKeyboardMixins = () => ({
   },
   _onBlur(e) {
     e.altKey = false;
-    const data = { event: e, eventType: e.type, focusOn: 'document' };
+    const data: KeyEventData = {
+      event: e,
+      eventType: e.type,
+      focusOn: 'document',
+    };
     this._lastEvents[e.type] = data;
     this._lastEvents.current = data;
   },

@@ -13,6 +13,23 @@ declare module 'leaflet' {
   interface Path {
     _renderer: Renderer;
   }
+  interface Layer {
+    removeFrom(map: Map | LayerGroup): this;
+  }
+  namespace DomEvent {
+    function on<E extends Event>(
+      target: HTMLElement | Document | Window,
+      types: string,
+      handler: (event: E) => void,
+      context?: unknown
+    ): typeof DomEvent;
+    function off<E extends Event>(
+      target: HTMLElement | Document | Window,
+      types: string,
+      handler: (event: E) => void,
+      context?: unknown
+    ): typeof DomEvent;
+  }
   interface Point {
     _add(point: Point): this;
     _divideBy(value: number): this;
