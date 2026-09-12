@@ -297,7 +297,10 @@ export function prioritiseSort(
   };
 }
 
-export function copyLatLngs(layer: L.Polyline, latlngs = layer.getLatLngs()) {
+export function copyLatLngs(
+  layer: L.Polyline<GeoJSON.Geometry>,
+  latlngs = layer.getLatLngs()
+) {
   if (layer instanceof L.Polygon) {
     return L.polygon(latlngs).getLatLngs();
   }
@@ -313,15 +316,15 @@ export function fixLatOffset(latlng: L.LatLng, map: L.Map): L.LatLng {
   return latlng;
 }
 
-export function getRenderer(layer: L.Map | L.Path): L.Renderer {
+export function getRenderer(layer: L.Map | L.Layer): L.Renderer {
   return (
-    layer.options.renderer ||
+    (layer as L.Path).options.renderer ||
     ((layer as L.Path & { _map: L.Map })._map &&
       ((layer as L.Path & { _map: L.Map })._map._getPaneRenderer(
         (layer as L.Path).options.pane
       ) ||
         (layer as L.Path & { _map: L.Map })._map.options.renderer ||
         (layer as L.Path & { _map: L.Map })._map._renderer)) ||
-    layer._renderer
+    (layer as L.Path)._renderer
   );
 }

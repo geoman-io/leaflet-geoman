@@ -13,7 +13,25 @@ declare module 'leaflet' {
   interface Path {
     _renderer: Renderer;
   }
+  interface Marker {
+    _latlng: LatLng;
+  }
+  interface Map {
+    mouseEventToContainerPoint(event: MouseEvent | Touch | TouchEvent): Point;
+  }
+  namespace Util {
+    function isArray(value: unknown): value is unknown[];
+    function throttle<A extends unknown[], R>(
+      fn: (...args: A) => R,
+      time: number,
+      context: unknown
+    ): (...args: A) => R;
+  }
+  interface ImageOverlay {
+    setBounds(bounds: LatLngBoundsExpression | LatLngExpression[]): this;
+  }
   interface Layer {
+    _pmTempLayer?: boolean;
     removeFrom(map: Map | LayerGroup): this;
   }
   namespace DomEvent {
@@ -36,6 +54,9 @@ declare module 'leaflet' {
   }
   namespace PM {
     let optIn: boolean;
+    interface PMLayer {
+      _hiddenPolyCircle?: L.Polygon;
+    }
     namespace Utils {
       function _fireEvent(
         ...args: Parameters<IUtils['_fireEvent']>

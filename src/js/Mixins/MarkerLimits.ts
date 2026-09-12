@@ -1,4 +1,42 @@
-const MarkerLimits = {
+/**
+ * Extended marker with _latlng property
+ */
+interface MarkerWithLatLng extends L.Marker {
+  _latlng: L.LatLng;
+}
+
+/**
+ * Marker Limits mixin context
+ */
+export interface MarkerLimitsMixinContext {
+  markerCache: MarkerWithLatLng[];
+  _layer: L.Layer;
+  _map: L.Map;
+  _markerGroup: L.LayerGroup;
+  options: {
+    limitMarkersToCount: number;
+  };
+  _initMarkers: () => void;
+}
+
+/**
+ * Marker Limits mixin interface
+ */
+export interface IMarkerLimitsMixin {
+  throttledApplyLimitFilters?: (e: { latlng?: L.LatLng }) => void;
+  _preventRenderMarkers: boolean;
+
+  filterMarkerGroup(): void;
+  _removeMarkerLimitEvents(): void;
+  createCache(): void;
+  _removeFromCache(marker: L.Marker): void;
+  renderLimits(markers: L.Marker[]): void;
+  applyLimitFilters(e: { latlng?: L.LatLng }): void;
+  _filterClosestMarkers(latlng: L.LatLngExpression): MarkerWithLatLng[];
+  _preventRenderingMarkers(value: boolean): void;
+}
+const MarkerLimits: IMarkerLimitsMixin &
+  ThisType<MarkerLimitsMixinContext & IMarkerLimitsMixin> = {
   filterMarkerGroup() {
     // define cache of markers
     this.markerCache = [];
@@ -38,7 +76,10 @@ const MarkerLimits = {
     this._layer.off('pm:vertexremoved', this._initMarkers, this);
   },
   createCache() {
-    const allMarkers = [...this._markerGroup.getLayers(), ...this.markerCache];
+    const allMarkers = [
+      ...(this._markerGroup.getLayers() as L.Marker[]),
+      ...this.markerCache,
+    ];
     this.markerCache = allMarkers.filter((v, i, s) => s.indexOf(v) === i);
   },
   _removeFromCache(marker) {
