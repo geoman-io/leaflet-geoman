@@ -1,6 +1,8 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import"],
+  "plugins": [
+    "import"
+  ],
   "globals": {
     "L": "readonly",
     "window": "readonly",
@@ -13,11 +15,27 @@
     "beforeEach": "readonly",
     "afterEach": "readonly"
   },
-  "ignorePatterns": ["cypress/libs/**", "dist/**", "node_modules/**"],
+  "ignorePatterns": [
+    "cypress/libs/**",
+    "dist/**",
+    "node_modules/**",
+    "demo/**/*.js",
+    "test-page.js"
+  ],
   "rules": {
     "no-unused-vars": "off",
     "no-param-reassign": "off",
     "guard-for-in": "off",
     "import/prefer-default-export": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "cypress/**/*.ts"
+      ],
+      "rules": {
+        "no-unused-expressions": "off"
+      }
+    }
+  ]
 }

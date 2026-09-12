@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["cypress", "node"],
+    "moduleDetection": "force"
+  },
+  "include": [
+    "**/*.ts",
+    "../cypress.config.ts",
+    "../src/types/**/*.ts",
+    "../leaflet-geoman.d.ts",
+    "../test-page.ts"
+  ]
+}

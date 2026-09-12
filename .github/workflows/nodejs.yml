@@ -33,7 +33,7 @@ jobs:
         run: pnpm run test:unit
 
   typecheck:
-    name: Type Check
+    name: Type Check and Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -52,6 +52,9 @@ jobs:
 
       - name: Type check
         run: pnpm run typecheck
+
+      - name: Lint and formatting
+        run: pnpm run lint:check
 
   e2e-tests:
     name: E2E Tests
