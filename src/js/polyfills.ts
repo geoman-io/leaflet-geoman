@@ -1,7 +1,10 @@
 // Array.findIndex Polyfill
 Array.prototype.findIndex =
   Array.prototype.findIndex ||
-  function (callback) {
+  function <T>(
+    this: T[],
+    callback: (value: T, index: number, array: T[]) => boolean
+  ) {
     if (this === null) {
       throw new TypeError(
         'Array.prototype.findIndex called on null or undefined'
@@ -9,7 +12,7 @@ Array.prototype.findIndex =
     } else if (typeof callback !== 'function') {
       throw new TypeError('callback must be a function');
     }
-    var list = Object(this);
+    var list = Object(this) as T[];
     // Makes sures is always has an positive integer as length.
     var length = list.length >>> 0;
     var thisArg = arguments[1];
@@ -25,13 +28,16 @@ Array.prototype.findIndex =
 // Requested here: https://github.com/geoman-io/leaflet-geoman/issues/173
 Array.prototype.find =
   Array.prototype.find ||
-  function (callback) {
+  function <T>(
+    this: T[],
+    callback: (value: T, index: number, array: T[]) => boolean
+  ) {
     if (this === null) {
       throw new TypeError('Array.prototype.find called on null or undefined');
     } else if (typeof callback !== 'function') {
       throw new TypeError('callback must be a function');
     }
-    var list = Object(this);
+    var list = Object(this) as T[];
     // Makes sures is always has an positive integer as length.
     var length = list.length >>> 0;
     var thisArg = arguments[1];
@@ -46,7 +52,7 @@ Array.prototype.find =
 // Polyfill for Object.assign()
 // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
 if (typeof Object.assign != 'function') {
-  Object.assign = function (target) {
+  Object.assign = function (target: object) {
     'use strict';
     if (target == null) {
       throw new TypeError('Cannot convert undefined or null to object');
@@ -58,7 +64,7 @@ if (typeof Object.assign != 'function') {
       if (source != null) {
         for (var key in source) {
           if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
+            (target as Record<string, unknown>)[key] = source[key];
           }
         }
       }
@@ -69,7 +75,13 @@ if (typeof Object.assign != 'function') {
 
 // Polyfill for Element.remove()
 // https://developer.mozilla.org/de/docs/Web/API/ChildNode/remove#Polyfill
-(function (arr) {
+(function (
+  arr: (
+    | typeof Element.prototype
+    | typeof CharacterData.prototype
+    | typeof DocumentType.prototype
+  )[]
+) {
   arr.forEach(function (item) {
     if (item.hasOwnProperty('remove')) {
       return;
@@ -78,8 +90,8 @@ if (typeof Object.assign != 'function') {
       configurable: true,
       enumerable: true,
       writable: true,
-      value: function remove() {
-        this.parentNode.removeChild(this);
+      value: function remove(this: ChildNode) {
+        this.parentNode!.removeChild(this);
       },
     });
   });
@@ -89,13 +101,13 @@ if (typeof Object.assign != 'function') {
 // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array/includes#Polyfill
 if (!Array.prototype.includes) {
   Object.defineProperty(Array.prototype, 'includes', {
-    value: function (searchElement, fromIndex) {
+    value: function <T>(this: T[], searchElement: T, fromIndex?: number) {
       if (this == null) {
         throw new TypeError('"this" is null or not defined');
       }
 
       // 1. Let O be ? ToObject(this value).
-      var o = Object(this);
+      var o = Object(this) as T[];
 
       // 2. Let len be ? ToLength(? Get(O, "length")).
       var len = o.length >>> 0;
@@ -107,7 +119,7 @@ if (!Array.prototype.includes) {
 
       // 4. Let n be ? ToInteger(fromIndex).
       //    (If fromIndex is undefined, this step produces the value 0.)
-      var n = fromIndex | 0;
+      var n = fromIndex! | 0;
 
       // 5. If n ≥ 0, then
       //  a. Let k be n.
@@ -116,7 +128,7 @@ if (!Array.prototype.includes) {
       //  b. If k < 0, let k be 0.
       var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
 
-      function sameValueZero(x, y) {
+      function sameValueZero(x: unknown, y: unknown): boolean {
         return (
           x === y ||
           (typeof x === 'number' &&

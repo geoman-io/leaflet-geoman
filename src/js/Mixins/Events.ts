@@ -1,6 +1,269 @@
+/**
+ * Rotation layer type with PM extension
+ */
+type RotationLayer = L.Layer & {
+  pm: { getAngle: () => number };
+  getLatLngs: () => L.LatLng[] | L.LatLng[][];
+};
+
+/**
+ * Context interface - properties that classes using this mixin must have
+ */
+export interface EventMixinContext {
+  _map: L.Map;
+  _layer: L.Layer;
+  _shape: string;
+  _enabled?: boolean;
+  _rotatePoly?: L.Layer;
+  _rotationLayer?: RotationLayer;
+  _startAngle?: number;
+  map?: L.Map;
+  getShape: () => string;
+  globalRotateModeEnabled?: () => boolean;
+}
+
+/**
+ * Event payload types
+ */
+type EventPayload = Record<string, unknown>;
+
+/**
+ * Event Mixin Interface - all methods available on the mixin
+ */
+export interface IEventMixin {
+  // Draw Events
+  _fireDrawStart(source?: string, customPayload?: EventPayload): void;
+  _fireDrawEnd(source?: string, customPayload?: EventPayload): void;
+  _fireCreate(
+    layer: L.Layer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireCenterPlaced(source?: string, customPayload?: EventPayload): void;
+  _fireCut(
+    fireLayer: L.Layer | L.Map,
+    layer: L.Layer,
+    originalLayer: L.Layer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+
+  // Edit Events
+  _fireEdit(
+    fireLayer?: L.Layer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireEnable(source?: string, customPayload?: EventPayload): void;
+  _fireDisable(source?: string, customPayload?: EventPayload): void;
+  _fireUpdate(source?: string, customPayload?: EventPayload): void;
+  _fireMarkerDragStart(
+    e: L.LeafletEvent,
+    indexPath?: number[],
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireMarkerDrag(
+    e: L.LeafletEvent,
+    indexPath?: number[],
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireMarkerDragEnd(
+    e: L.LeafletEvent,
+    indexPath?: number[],
+    intersectionReset?: boolean,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireDragStart(source?: string, customPayload?: EventPayload): void;
+  _fireDrag(
+    e: L.LeafletEvent,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireDragEnd(source?: string, customPayload?: EventPayload): void;
+  _fireDragEnable(source?: string, customPayload?: EventPayload): void;
+  _fireDragDisable(source?: string, customPayload?: EventPayload): void;
+  _fireRemove(
+    fireLayer: L.Layer | L.Map,
+    refLayer?: L.Layer | L.Map,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireVertexAdded(
+    marker: L.Marker,
+    indexPath: number[],
+    latlng: L.LatLng,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireVertexRemoved(
+    marker: L.Marker,
+    indexPath: number[],
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireVertexClick(
+    e: L.LeafletEvent,
+    indexPath: number[],
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireIntersect(
+    intersection: GeoJSON.FeatureCollection,
+    fireLayer?: L.Layer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireLayerReset(
+    e: L.LeafletEvent,
+    indexPath: number[],
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireChange(
+    latlngs: L.LatLng | L.LatLng[] | L.LatLng[][],
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireTextChange(
+    text: string,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireTextFocus(source?: string, customPayload?: EventPayload): void;
+  _fireTextBlur(source?: string, customPayload?: EventPayload): void;
+
+  // Snapping Events
+  _fireSnapDrag(
+    fireLayer: L.Layer,
+    eventInfo: EventPayload,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireSnap(
+    fireLayer: L.Layer,
+    eventInfo: EventPayload,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireUnsnap(
+    fireLayer: L.Layer,
+    eventInfo: EventPayload,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+
+  // Rotation Events
+  _fireRotationEnable(
+    fireLayer: L.Layer,
+    helpLayer: L.Layer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireRotationDisable(
+    fireLayer: L.Layer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireRotationStart(
+    fireLayer: L.Layer,
+    originLatLngs: L.LatLng[],
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireRotation(
+    fireLayer: L.Layer,
+    angleDiff: number,
+    oldLatLngs: L.LatLng[],
+    rotationLayer?: RotationLayer,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireRotationEnd(
+    fireLayer: L.Layer,
+    startAngle: number,
+    originLatLngs: L.LatLng[],
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+
+  // Global Events
+  _fireActionClick(
+    action: { text: string },
+    btnName: string,
+    button: unknown,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireButtonClick(
+    btnName: string,
+    button: unknown,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireLangChange(
+    oldLang: string,
+    activeLang: string,
+    fallback: string,
+    translations: unknown,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireGlobalDragModeToggled(
+    enabled: boolean,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireGlobalEditModeToggled(
+    enabled: boolean,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireGlobalRemovalModeToggled(
+    enabled: boolean,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireGlobalCutModeToggled(
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireGlobalDrawModeToggled(
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireGlobalRotateModeToggled(
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireRemoveLayerGroup(
+    fireLayer: L.Layer | L.Map,
+    refLayer?: L.Layer | L.Map,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+  _fireKeyeventEvent(
+    event: KeyboardEvent,
+    eventType: string,
+    focusOn: string,
+    source?: string,
+    customPayload?: EventPayload
+  ): void;
+
+  // Private fire function
+  __fire(
+    fireLayer: L.Layer | L.Map,
+    type: string,
+    payload: EventPayload,
+    source: string,
+    customPayload?: EventPayload
+  ): void;
+}
 import merge from 'lodash/merge';
 
-const EventMixin = {
+const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
   // Draw Events
   // Fired when enableDraw() is called -> draw start
   _fireDrawStart(source = 'Draw', customPayload = {}) {
@@ -54,7 +317,7 @@ const EventMixin = {
         shape: this._shape,
         workingLayer,
         layer,
-        latlng: this._layer.getLatLng(),
+        latlng: (this._layer as L.Marker | L.CircleMarker).getLatLng(),
       },
       source,
       customPayload
@@ -84,7 +347,12 @@ const EventMixin = {
 
   // Edit Events
   // Fired when layer is edited / changed
-  _fireEdit(fireLayer = this._layer, source = 'Edit', customPayload = {}) {
+  _fireEdit(
+    this: EventMixinContext & IEventMixin,
+    fireLayer = this._layer,
+    source = 'Edit',
+    customPayload = {}
+  ) {
     this.__fire(
       fireLayer,
       'pm:edit',
@@ -315,6 +583,7 @@ const EventMixin = {
   },
   // Fired when a Line / Polygon has self intersection
   _fireIntersect(
+    this: EventMixinContext & IEventMixin,
     intersection,
     fireLayer = this._layer,
     source = 'Edit',
@@ -423,7 +692,7 @@ const EventMixin = {
   // Fired when rotation is enabled
   _fireRotationEnable(
     fireLayer,
-    helpLayer,
+    helpLayer: L.Layer,
     source = 'Rotation',
     customPayload = {}
   ) {
@@ -474,10 +743,11 @@ const EventMixin = {
   },
   // Fired while rotation
   _fireRotation(
+    this: EventMixinContext & IEventMixin,
     fireLayer,
     angleDiff,
     oldLatLngs,
-    rotationLayer = this._rotationLayer,
+    rotationLayer = this._rotationLayer!,
     source = 'Rotation',
     customPayload = {}
   ) {
@@ -512,9 +782,9 @@ const EventMixin = {
         layer: this._rotationLayer,
         helpLayer: this._layer,
         startAngle,
-        angle: this._rotationLayer.pm.getAngle(),
+        angle: this._rotationLayer!.pm.getAngle(),
         originLatLngs,
-        newLatLngs: this._rotationLayer.getLatLngs(),
+        newLatLngs: this._rotationLayer!.getLatLngs(),
       },
       source,
       customPayload
@@ -565,7 +835,7 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
+      this.map!,
       'pm:langchange',
       {
         oldLang,
@@ -580,7 +850,7 @@ const EventMixin = {
   // Fired when Drag Mode is toggled.
   _fireGlobalDragModeToggled(enabled, source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
+      this.map!,
       'pm:globaldragmodetoggled',
       {
         enabled,
@@ -593,7 +863,7 @@ const EventMixin = {
   // Fired when Edit Mode is toggled.
   _fireGlobalEditModeToggled(enabled, source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
+      this.map!,
       'pm:globaleditmodetoggled',
       {
         enabled,
@@ -610,7 +880,7 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
+      this.map!,
       'pm:globalremovalmodetoggled',
       {
         enabled,
@@ -650,10 +920,10 @@ const EventMixin = {
   // Fired when Rotation Mode is toggled.
   _fireGlobalRotateModeToggled(source = 'Global', customPayload = {}) {
     this.__fire(
-      this.map,
+      this.map!,
       'pm:globalrotatemodetoggled',
       {
-        enabled: this.globalRotateModeEnabled(),
+        enabled: this.globalRotateModeEnabled!(),
         map: this.map,
       },
       source,
@@ -684,7 +954,7 @@ const EventMixin = {
     customPayload = {}
   ) {
     this.__fire(
-      this.map,
+      this.map!,
       'pm:keyevent',
       {
         event,

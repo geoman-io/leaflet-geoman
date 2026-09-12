@@ -1,7 +1,127 @@
+/**
+ * Extended layer with PM properties - using type intersection to avoid property conflicts
+ */
+type ParentEvented = (L.Layer | L.Map) & {
+  _eventParents?: Record<string, L.LayerGroup>;
+  _pmLastGroupFetch?: {
+    time: number;
+    groups: L.LayerGroup[];
+    groupIds: string[];
+  };
+};
+type LatLngOrArray = L.LatLng | LatLngOrArray[];
+type MarkerOrArray = L.Marker | MarkerOrArray[];
+
+type PMLayer = L.Layer & {
+  pm?: unknown;
+  _pmTempLayer?: boolean;
+  _tempPopupCopy?: L.Popup;
+  _eventParents?: Record<string, L.LayerGroup>;
+  _pmLastGroupFetch?: {
+    time: number;
+    groups: L.LayerGroup[];
+    groupIds: string[];
+  };
+  _leaflet_id?: number;
+  options: L.LayerOptions & {
+    pmIgnore?: boolean;
+  };
+  getPopup?: () => L.Popup | undefined;
+  unbindPopup?: () => void;
+  bindPopup?: (popup: L.Popup) => void;
+  fire: (type: string, data: unknown, propagate: boolean) => void;
+};
+
+/**
+ * Extended circle for polygon conversion
+ */
+interface ExtendedCircle extends L.Circle {
+  getLatLng: () => L.LatLng;
+  getRadius: () => number;
+  options: L.CircleMarkerOptions;
+}
+
+/**
+ * Result of finding a deep coord index
+ */
+interface DeepCoordIndexResult {
+  indexPath?: number[];
+  index?: number;
+  parentPath?: number[];
+}
+
+/**
+ * Result of getting index from segment
+ */
+interface SegmentIndexResult {
+  indexA: DeepCoordIndexResult;
+  indexB: DeepCoordIndexResult;
+  newIndex: number;
+  indexPath?: number[];
+  parentPath?: number[];
+}
+
+/**
+ * Extended marker with leaflet_id
+ */
+interface ExtendedMarker extends L.Marker {
+  _leaflet_id?: number;
+}
+
+/**
+ * Utils interface
+ */
+export interface IUtils {
+  calcMiddleLatLng(map: L.Map, latlng1: L.LatLng, latlng2: L.LatLng): L.LatLng;
+  findLayers(map: L.Map): PMLayer[];
+  circleToPolygon(
+    circle: ExtendedCircle,
+    sides?: number,
+    withBearing?: boolean
+  ): L.Polygon;
+  disablePopup(layer: PMLayer): void;
+  enablePopup(layer: PMLayer): void;
+  _fireEvent(
+    layer: ParentEvented,
+    type: string,
+    data: unknown,
+    propagate?: boolean
+  ): void;
+  getAllParentGroups(layer: ParentEvented): {
+    groupIds: string[];
+    groups: L.LayerGroup[];
+  };
+  createGeodesicPolygon: typeof createGeodesicPolygon;
+  getTranslation: typeof getTranslation;
+  findDeepCoordIndex(
+    arr: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
+    latlng: L.LatLng,
+    exact?: boolean
+  ): DeepCoordIndexResult;
+  findDeepMarkerIndex(
+    arr: L.Marker[] | L.Marker[][] | L.Marker[][][],
+    marker: ExtendedMarker
+  ): DeepCoordIndexResult;
+  _getIndexFromSegment(
+    coords: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
+    segment: [L.LatLng, L.LatLng] | null
+  ): SegmentIndexResult | null;
+  _getRotatedRectangle(
+    A: L.LatLng,
+    B: L.LatLng,
+    rotation: number,
+    map: L.Map
+  ): L.LatLng[];
+  pxRadiusToMeterRadius(
+    radiusInPx: number,
+    map: L.Map,
+    center: L.LatLng
+  ): number;
+}
 import { createGeodesicPolygon, getTranslation } from './helpers';
 import { _toLatLng, _toPoint } from './helpers/ModeHelper';
 
-const Utils = {
+const Utils: IUtils = {
   calcMiddleLatLng(map, latlng1, latlng2) {
     // calculate the middle coordinates between two markers
 
@@ -11,7 +131,7 @@ const Utils = {
     return map.unproject(p1._add(p2)._divideBy(2));
   },
   findLayers(map) {
-    let layers = [];
+    let layers: PMLayer[] = [];
     map.eachLayer((layer) => {
       if (
         layer instanceof L.Polyline ||
@@ -43,9 +163,9 @@ const Utils = {
     const origin = circle.getLatLng();
     const radius = circle.getRadius();
     const polys = createGeodesicPolygon(origin, radius, sides, 0, withBearing); // these are the points that make up the circle
-    const polygon = [];
+    const polygon: L.LatLngTuple[] = [];
     for (let i = 0; i < polys.length; i += 1) {
-      const geometry = [polys[i].lat, polys[i].lng];
+      const geometry: L.LatLngTuple = [polys[i].lat, polys[i].lng];
       polygon.push(geometry);
     }
     return L.polygon(polygon, circle.options);
@@ -72,11 +192,11 @@ const Utils = {
     });
   },
   getAllParentGroups(layer) {
-    const groupIds = [];
-    const groups = [];
+    const groupIds: string[] = [];
+    const groups: L.LayerGroup[] = [];
 
     // get every group layer once
-    const loopThroughParents = (_layer) => {
+    const loopThroughParents = (_layer: ParentEvented) => {
       for (const _id in _layer._eventParents) {
         if (groupIds.indexOf(_id) === -1) {
           groupIds.push(_id);
@@ -114,17 +234,24 @@ const Utils = {
   findDeepCoordIndex(arr, latlng, exact = true) {
     // find latlng in arr and return its location as path
     // thanks for the function, Felix Heck
-    let result;
+    let result: number[] | undefined;
 
-    const run = (path) => (v, i) => {
+    const run = (path: number[]) => (v: LatLngOrArray, i: number) => {
       const iRes = path.concat(i);
 
       if (exact) {
-        if (v.lat && v.lat === latlng.lat && v.lng === latlng.lng) {
+        if (
+          (v as L.LatLng).lat &&
+          (v as L.LatLng).lat === latlng.lat &&
+          (v as L.LatLng).lng === latlng.lng
+        ) {
           result = iRes;
           return true;
         }
-      } else if (v.lat && L.latLng(v).equals(latlng)) {
+      } else if (
+        (v as L.LatLng).lat &&
+        L.latLng(v as L.LatLng).equals(latlng)
+      ) {
         result = iRes;
         return true;
       }
@@ -133,7 +260,7 @@ const Utils = {
     };
     arr.some(run([]));
 
-    let returnVal = {};
+    let returnVal: DeepCoordIndexResult = {};
 
     if (result) {
       returnVal = {
@@ -147,12 +274,12 @@ const Utils = {
   },
   findDeepMarkerIndex(arr, marker) {
     // thanks for the function, Felix Heck
-    let result;
+    let result: number[] | undefined;
 
-    const run = (path) => (v, i) => {
+    const run = (path: number[]) => (v: MarkerOrArray, i: number) => {
       const iRes = path.concat(i);
 
-      if (v._leaflet_id === marker._leaflet_id) {
+      if ((v as ExtendedMarker)._leaflet_id === marker._leaflet_id) {
         result = iRes;
         return true;
       }
@@ -161,7 +288,7 @@ const Utils = {
     };
     arr.some(run([]));
 
-    let returnVal = {};
+    let returnVal: DeepCoordIndexResult = {};
 
     if (result) {
       returnVal = {
@@ -177,7 +304,7 @@ const Utils = {
     if (segment && segment.length === 2) {
       const indexA = this.findDeepCoordIndex(coords, segment[0]);
       const indexB = this.findDeepCoordIndex(coords, segment[1]);
-      let newIndex = Math.max(indexA.index, indexB.index);
+      let newIndex = Math.max(indexA.index!, indexB.index!);
       if ((indexA.index === 0 || indexB.index === 0) && newIndex !== 1) {
         newIndex += 1;
       }
