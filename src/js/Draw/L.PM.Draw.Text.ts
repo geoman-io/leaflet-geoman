@@ -1,13 +1,118 @@
+import type { DrawOptions } from './L.PM.Draw';
+
+/**
+ * Extended map with PM
+ */
+type ExtendedMap = L.Map & {
+  pm: {
+    Toolbar: {
+      toggleButton: (name: string, state: boolean) => void;
+    };
+    _getContainingLayer: () => L.LayerGroup | L.Map;
+    globalOptions: {
+      panes?: {
+        layerPane?: string;
+        vertexPane?: string;
+        markerPane?: string;
+      };
+    };
+    getGeomanLayers: () => L.Layer[];
+  };
+};
+
+/**
+ * Extended layer with PM temp flag
+ */
+type PMTempLayer = L.Layer & {
+  _pmTempLayer?: boolean;
+};
+
+/**
+ * Extended marker with snapped flag and icon
+ */
+type ExtendedMarker = L.Marker & {
+  _pmTempLayer?: boolean;
+  _snapped?: boolean;
+  _icon?: HTMLElement;
+  pm?: {
+    textArea: HTMLTextAreaElement;
+    _createTextMarker: (focus: boolean) => void;
+    setText: (text: string) => void;
+  };
+};
+
+/**
+ * Text draw options
+ */
+interface TextDrawOptions extends DrawOptions {
+  cursorMarker?: boolean;
+  tooltips?: boolean;
+  snappable?: boolean;
+  requireSnapToFinish?: boolean;
+  continueDrawing?: boolean;
+  textOptions?: {
+    text?: string | null;
+    focusAfterDraw?: boolean | null;
+    removeIfEmpty?: boolean | null;
+    className?: string | null;
+  };
+}
+
+/**
+ * Marker options with text marker flag
+ */
+interface TextMarkerOptions extends L.MarkerOptions {
+  textMarker?: boolean;
+  _textMarkerOverPM?: boolean;
+}
+
+/**
+ * Draw Text interface
+ */
+export interface IDrawText {
+  options: TextDrawOptions;
+  _map: ExtendedMap;
+  _shape: string;
+  _enabled: boolean;
+  toolbarButtonName: string;
+  _layer: ExtendedMarker;
+  _hintMarker: ExtendedMarker;
+  textArea?: HTMLTextAreaElement;
+
+  enable(options?: Partial<TextDrawOptions>): void;
+  disable(): void;
+  enabled(): boolean;
+  toggle(options?: Partial<TextDrawOptions>): void;
+  _syncHintMarker(e: L.LeafletMouseEvent): void;
+  _createMarker(e: L.LeafletMouseEvent): void;
+  _showHintMarkerAfterMoving(e: L.LeafletMouseEvent): void;
+  _createTextArea(): HTMLTextAreaElement;
+  _createTextIcon(textArea: HTMLTextAreaElement): L.DivIcon;
+
+  // From mixins
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
+  _fireDrawStart(): void;
+  _fireDrawEnd(): void;
+  _fireCreate(layer: L.Layer): void;
+  _setGlobalDrawMode(): void;
+  _cleanupSnapping(): void;
+  _handleSnapping(e: L.LeafletEvent): void;
+  _finishLayer(layer: L.Layer): void;
+  _isFirstLayer(): boolean;
+}
 import Draw from './L.PM.Draw';
 import { getTranslation } from '../helpers';
 
-Draw.Text = Draw.extend({
-  initialize(map) {
-    this._map = map;
+Draw.Text = Draw.extend<IDrawText, [L.Map]>({
+  initialize(this: IDrawText, map: L.Map) {
+    this._map = map as typeof this._map;
     this._shape = 'Text';
     this.toolbarButtonName = 'drawText';
   },
-  enable(options) {
+  enable(this: IDrawText, options?: Partial<TextDrawOptions>) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
@@ -33,7 +138,7 @@ Draw.Text = Draw.extend({
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+      L.DomUtil.addClass(this._hintMarker._icon!, 'visible');
     }
 
     // add tooltip to hintmarker
@@ -61,7 +166,7 @@ Draw.Text = Draw.extend({
     this._fireDrawStart();
     this._setGlobalDrawMode();
   },
-  disable() {
+  disable(this: IDrawText) {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
       return;
@@ -95,17 +200,17 @@ Draw.Text = Draw.extend({
     this._fireDrawEnd();
     this._setGlobalDrawMode();
   },
-  enabled() {
+  enabled(this: IDrawText) {
     return this._enabled;
   },
-  toggle(options) {
+  toggle(this: IDrawText, options?: Partial<TextDrawOptions>) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
   },
-  _syncHintMarker(e) {
+  _syncHintMarker(this: IDrawText, e: L.LeafletMouseEvent) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
 
@@ -116,7 +221,7 @@ Draw.Text = Draw.extend({
       this._handleSnapping(fakeDragEvent);
     }
   },
-  _createMarker(e) {
+  _createMarker(this: IDrawText, e: L.LeafletMouseEvent) {
     if (!e.latlng) {
       return;
     }
@@ -188,19 +293,19 @@ Draw.Text = Draw.extend({
     }
   },
 
-  _showHintMarkerAfterMoving(e) {
+  _showHintMarkerAfterMoving(this: IDrawText, e: L.LeafletMouseEvent) {
     this.enable();
     this._hintMarker.setLatLng(e.latlng);
   },
 
-  _createTextArea() {
+  _createTextArea(this: IDrawText) {
     const textArea = document.createElement('textarea');
     textArea.readOnly = true;
     textArea.classList.add('pm-textarea', 'pm-disabled');
     return textArea;
   },
 
-  _createTextIcon(textArea) {
+  _createTextIcon(this: IDrawText, textArea: HTMLTextAreaElement) {
     return L.divIcon({
       className: 'pm-text-marker',
       html: textArea,

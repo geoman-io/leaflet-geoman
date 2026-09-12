@@ -1,9 +1,16 @@
+import type { DrawClass } from '../js/Draw/L.PM.Draw';
 import type { EditClass } from '../js/Edit/L.PM.Edit';
 import type { IUtils } from '../js/L.PM.Utils';
 import type { MatrixConstructor } from '../js/helpers/Matrix';
 
 // Internal Leaflet fields used by the plugin. These are not shipped to consumers.
 declare module 'leaflet' {
+  interface Polyline {
+    _defaultShape(): L.LatLng[];
+  }
+  interface MarkerOptions {
+    _textMarkerOverPM?: boolean;
+  }
   interface Marker {
     _origLatLng?: LatLng;
     _index?: number;
@@ -66,19 +73,21 @@ declare module 'leaflet' {
     interface PMMap {
       removeLayer(event: { target: L.Layer }): void;
     }
-    const Draw: {
-      Text: {
-        prototype: {
-          _createTextArea(): HTMLTextAreaElement;
-          _createTextIcon(textArea: HTMLTextAreaElement): L.DivIcon;
-        };
-      };
-    };
+    const Draw: DrawClass;
 
     interface PMLayer {
+      options: PM.EditModeOptions;
+      _fireEdit(): void;
+      _updateHiddenPolyCircle(): void;
+      _setAngle(angle: number): void;
+      _initTextMarker(): void;
+      textArea: HTMLTextAreaElement;
+      _createTextMarker(focus: boolean): void;
       _hiddenPolyCircle?: L.Polygon;
     }
     namespace Utils {
+      function disablePopup(layer: L.Layer): void;
+      function enablePopup(layer: L.Layer): void;
       function _fireEvent(
         ...args: Parameters<IUtils['_fireEvent']>
       ): ReturnType<IUtils['_fireEvent']>;

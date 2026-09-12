@@ -1,16 +1,166 @@
+/**
+ * Extended map with PM
+ */
+type ExtendedMap = L.Map & {
+  pm: {
+    Toolbar: {
+      toggleButton: (name: string, state: boolean) => void;
+    };
+    _getContainingLayer: () => L.LayerGroup | L.Map;
+    globalOptions: {
+      panes?: {
+        layerPane?: string;
+        vertexPane?: string;
+        markerPane?: string;
+      };
+    };
+    getGeomanLayers: () => L.Layer[];
+  };
+  doubleClickZoom: {
+    _enabled: boolean;
+    disable: () => void;
+    enable: () => void;
+  };
+};
+
+/**
+ * Extended layer with PM temp flag
+ */
+type PMTempLayer = L.Layer & {
+  _pmTempLayer?: boolean;
+};
+
+/**
+ * Extended marker with snapped flag and icon
+ */
+type ExtendedMarker = L.Marker & {
+  _pmTempLayer?: boolean;
+  _snapped?: boolean;
+  _snapInfo?: unknown;
+  _icon?: HTMLElement;
+};
+
+/**
+ * Extended polyline layer
+ */
+type ExtendedPolyline = L.Polyline & {
+  getLatLngs(): L.LatLng[];
+  _pmTempLayer?: boolean;
+  _latlngInfo?: Array<{ latlng: L.LatLng; snapInfo?: unknown }>;
+  _defaultShape: () => L.LatLng[];
+};
+
+/**
+ * Extended feature group
+ */
+type ExtendedFeatureGroup = L.FeatureGroup & {
+  _pmTempLayer?: boolean;
+};
+
+/**
+ * Self intersection result from turf/kinks
+ */
+interface SelfIntersectionResult {
+  features: unknown[];
+}
+
+/**
+ * Line draw options
+ */
+interface LineDrawOptions {
+  templineStyle: L.PolylineOptions;
+  hintlineStyle: L.PolylineOptions;
+  pathOptions?: L.PathOptions;
+  tooltips?: boolean;
+  cursorMarker?: boolean;
+  snappable?: boolean;
+  allowSelfIntersection?: boolean;
+  requireSnapToFinish?: boolean;
+  continueDrawing?: boolean;
+  finishOn?: string | null;
+  [key: string]: unknown;
+}
+
+/**
+ * Draw Line interface
+ */
+export interface IDrawLine {
+  options: LineDrawOptions;
+  _map: ExtendedMap;
+  _shape: string;
+  _enabled: boolean;
+  toolbarButtonName: string;
+  _layerGroup: ExtendedFeatureGroup;
+  _layer: ExtendedPolyline;
+  _hintline: L.Polyline & { _pmTempLayer?: boolean };
+  _hintMarker: ExtendedMarker;
+  _markers: (L.Marker & { _pmTempLayer?: boolean })[];
+  _otherSnapLayers: L.Layer[];
+  _doesSelfIntersect: boolean;
+  isRed: boolean;
+  tempMapDoubleClickZoomState?: boolean;
+
+  enable(options?: Partial<LineDrawOptions>): void;
+  disable(): void;
+  enabled(): boolean;
+  toggle(options?: Partial<LineDrawOptions>): void;
+  _syncHintLine(): void;
+  _syncHintMarker(e: L.LeafletMouseEvent): void;
+  hasSelfIntersection(): boolean;
+  _handleSelfIntersection(addVertex: boolean, latlng?: L.LatLng): void;
+  _createVertex(e: L.LeafletMouseEvent): void;
+  _setHintLineAfterNewVertex(hintMarkerLatLng: L.LatLng): void;
+  _removeLastVertex(): void;
+  _finishShape(e?: L.LeafletMouseEvent): void;
+  _createMarker(latlng: L.LatLng): L.Marker;
+  _setTooltipText(): void;
+  _change(latlngs: L.LatLng[]): void;
+  setStyle(): void;
+
+  // From mixins
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
+  _fireDrawStart(): void;
+  _fireDrawEnd(): void;
+  _fireCreate(layer: L.Layer): void;
+  _fireChange(latlngs: L.LatLng[], source: string): void;
+  _fireVertexAdded(
+    marker: L.Marker,
+    indexPath: number[] | undefined,
+    latlng: L.LatLng,
+    source: string
+  ): void;
+  _fireVertexRemoved(
+    marker: L.Marker,
+    indexPath: number[],
+    source: string
+  ): void;
+  _fireIntersect(
+    intersection: SelfIntersectionResult,
+    map: ExtendedMap,
+    source: string
+  ): void;
+  _setGlobalDrawMode(): void;
+  _cleanupSnapping(): void;
+  _handleSnapping(e: L.LeafletEvent, selfSnapOnly?: boolean): void;
+  _finishLayer(layer: L.Layer): void;
+  _isFirstLayer(): boolean;
+}
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
 
 import { getTranslation } from '../helpers';
 
-Draw.Line = Draw.extend({
-  initialize(map) {
-    this._map = map;
+Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
+  initialize(this: IDrawLine, map: L.Map) {
+    this._map = map as typeof this._map;
     this._shape = 'Line';
     this.toolbarButtonName = 'drawPolyline';
     this._doesSelfIntersect = false;
   },
-  enable(options) {
+  enable(this: IDrawLine, options?: Partial<LineDrawOptions>) {
     L.Util.setOptions(this, options);
 
     // enable draw mode
@@ -27,7 +177,7 @@ Draw.Line = Draw.extend({
     this._layer = L.polyline([], {
       ...this.options.templineStyle,
       pmIgnore: false,
-    });
+    }) as ExtendedPolyline;
     this._setPane(this._layer, 'layerPane');
     this._layer._pmTempLayer = true;
     this._layerGroup.addLayer(this._layer);
@@ -50,7 +200,7 @@ Draw.Line = Draw.extend({
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon, 'visible');
+      L.DomUtil.addClass(this._hintMarker._icon!, 'visible');
     }
 
     // add tooltip to hintmarker
@@ -75,7 +225,11 @@ Draw.Line = Draw.extend({
     // finish on layer event
     // #http://leafletjs.com/reference.html#interactive-layer-click
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
-      this._map.on(this.options.finishOn, this._finishShape, this);
+      this._map.on(
+        this.options.finishOn,
+        this._finishShape as L.LeafletEventHandlerFn,
+        this
+      );
     }
 
     // prevent zoom on double click if finishOn is === dblclick
@@ -107,7 +261,7 @@ Draw.Line = Draw.extend({
     this._fireDrawStart();
     this._setGlobalDrawMode();
   },
-  disable() {
+  disable(this: IDrawLine) {
     // disable draw mode
 
     // cancel, if drawing mode isn't even enabled
@@ -124,7 +278,11 @@ Draw.Line = Draw.extend({
     this._map.off('click', this._createVertex, this);
     this._map.off('mousemove', this._syncHintMarker, this);
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
-      this._map.off(this.options.finishOn, this._finishShape, this);
+      this._map.off(
+        this.options.finishOn,
+        this._finishShape as L.LeafletEventHandlerFn,
+        this
+      );
     }
 
     if (this.tempMapDoubleClickZoomState) {
@@ -146,18 +304,18 @@ Draw.Line = Draw.extend({
     this._fireDrawEnd();
     this._setGlobalDrawMode();
   },
-  enabled() {
+  enabled(this: IDrawLine) {
     return this._enabled;
   },
-  toggle(options) {
+  toggle(this: IDrawLine, options?: Partial<LineDrawOptions>) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
   },
-  _syncHintLine() {
-    const polyPoints = this._layer.getLatLngs();
+  _syncHintLine(this: IDrawLine) {
+    const polyPoints = this._layer.getLatLngs() as L.LatLng[];
 
     if (polyPoints.length > 0) {
       const lastPolygonPoint = polyPoints[polyPoints.length - 1];
@@ -169,7 +327,7 @@ Draw.Line = Draw.extend({
       ]);
     }
   },
-  _syncHintMarker(e) {
+  _syncHintMarker(this: IDrawLine, e: L.LeafletMouseEvent) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
 
@@ -194,12 +352,16 @@ Draw.Line = Draw.extend({
     latlngs.push(this._hintMarker.getLatLng());
     this._change(latlngs);
   },
-  hasSelfIntersection() {
+  hasSelfIntersection(this: IDrawLine) {
     // check for self intersection of the layer and return true/false
     const selfIntersection = kinks(this._layer.toGeoJSON(15));
     return selfIntersection.features.length > 0;
   },
-  _handleSelfIntersection(addVertex, latlng) {
+  _handleSelfIntersection(
+    this: IDrawLine,
+    addVertex: boolean,
+    latlng?: L.LatLng
+  ) {
     // ok we need to check the self intersection here
     // problem: during draw, the marker on the cursor is not yet part
     // of the layer. So we need to clone the layer, add the
@@ -207,7 +369,7 @@ Draw.Line = Draw.extend({
     // intersection on the clone. Phew... - let's do it 💪
 
     // clone layer (polyline is enough, even when it's a polygon)
-    const clone = L.polyline(this._layer.getLatLngs());
+    const clone = L.polyline(this._layer.getLatLngs() as L.LatLng[]);
 
     if (addVertex) {
       // get vertex from param or from hintmarker
@@ -238,7 +400,7 @@ Draw.Line = Draw.extend({
       this._hintline.setStyle(this.options.hintlineStyle);
     }
   },
-  _createVertex(e) {
+  _createVertex(this: IDrawLine, e: L.LeafletMouseEvent) {
     // don't create a vertex if we have a selfIntersection and it is not allowed
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(true, e.latlng);
@@ -259,7 +421,7 @@ Draw.Line = Draw.extend({
 
     // check if the first and this vertex have the same latlng
     // or the last vertex and the hintMarker have the same latlng (dbl-click)
-    const latlngs = this._layer.getLatLngs();
+    const latlngs = this._layer.getLatLngs() as L.LatLng[];
 
     const lastLatLng = latlngs[latlngs.length - 1];
     if (
@@ -288,17 +450,17 @@ Draw.Line = Draw.extend({
     this._setHintLineAfterNewVertex(latlng);
 
     this._fireVertexAdded(newMarker, undefined, latlng, 'Draw');
-    this._change(this._layer.getLatLngs());
+    this._change(this._layer.getLatLngs() as L.LatLng[]);
     // check if we should finish on snap
     if (this.options.finishOn === 'snap' && this._hintMarker._snapped) {
       this._finishShape(e);
     }
   },
-  _setHintLineAfterNewVertex(hintMarkerLatLng) {
+  _setHintLineAfterNewVertex(this: IDrawLine, hintMarkerLatLng: L.LatLng) {
     // make the new drawn line (with another style) visible
     this._hintline.setLatLngs([hintMarkerLatLng, hintMarkerLatLng]);
   },
-  _removeLastVertex() {
+  _removeLastVertex(this: IDrawLine) {
     const markers = this._markers;
 
     // if all markers are gone, cancel drawing
@@ -308,7 +470,7 @@ Draw.Line = Draw.extend({
     }
 
     // remove last coords
-    let coords = this._layer.getLatLngs();
+    let coords = this._layer.getLatLngs() as L.LatLng[];
 
     const removedMarker = markers[markers.length - 1];
 
@@ -334,16 +496,16 @@ Draw.Line = Draw.extend({
 
     // update layer with new coords
     this._layer.setLatLngs(coords);
-    this._layer._latlngInfo.pop();
+    this._layer._latlngInfo!.pop();
 
     // sync the hintline again
     this._syncHintLine();
     this._setTooltipText();
 
-    this._fireVertexRemoved(removedMarker, indexPath, 'Draw');
-    this._change(this._layer.getLatLngs());
+    this._fireVertexRemoved(removedMarker, indexPath!, 'Draw');
+    this._change(this._layer.getLatLngs() as L.LatLng[]);
   },
-  _finishShape() {
+  _finishShape(this: IDrawLine) {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(false);
@@ -363,7 +525,7 @@ Draw.Line = Draw.extend({
     }
 
     // get coordinates
-    const coords = this._layer.getLatLngs();
+    const coords = this._layer.getLatLngs() as L.LatLng[];
 
     // if there is only one coords, don't finish the shape!
     if (coords.length <= 1) {
@@ -392,7 +554,7 @@ Draw.Line = Draw.extend({
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
   },
-  _createMarker(latlng) {
+  _createMarker(this: IDrawLine, latlng: L.LatLng) {
     // create the new marker
     const marker = new L.Marker(latlng, {
       draggable: false,
@@ -410,8 +572,8 @@ Draw.Line = Draw.extend({
 
     return marker;
   },
-  _setTooltipText() {
-    const { length } = this._layer.getLatLngs().flat();
+  _setTooltipText(this: IDrawLine) {
+    const { length } = (this._layer.getLatLngs() as L.LatLng[]).flat();
     let text = '';
 
     // handle tooltip text
@@ -422,10 +584,10 @@ Draw.Line = Draw.extend({
     }
     this._hintMarker.setTooltipContent(text);
   },
-  _change(latlngs) {
+  _change(this: IDrawLine, latlngs: L.LatLng[]) {
     this._fireChange(latlngs, 'Draw');
   },
-  setStyle() {
+  setStyle(this: IDrawLine) {
     this._layer?.setStyle(this.options.templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
   },
