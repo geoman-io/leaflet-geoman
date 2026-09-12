@@ -1,3 +1,4 @@
+import type { GlobalOptions } from '../../../types/options';
 /**
  * Extended layer with PM properties
  */
@@ -20,13 +21,6 @@ interface PMLayer extends L.Layer {
  */
 interface LayerAddEvent {
   layer: PMLayer;
-}
-
-/**
- * Global options type
- */
-interface GlobalOptions {
-  [key: string]: unknown;
 }
 
 /**

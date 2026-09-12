@@ -2,7 +2,11 @@ describe('JavaScript compatibility', () => {
   it('keeps Leaflet class extension, mixins, init hooks and option inheritance', () => {
     cy.window().then(({ L }) => {
       const Parent = L.PM.Edit.Marker;
-      const Child = Parent.extend<{ probe(): string }>({
+      const Child = Parent.extend<
+        { probe(): string },
+        [L.Marker],
+        [{ probe(): string }]
+      >({
         includes: [{ probe: () => 'mixed in' }],
       });
       Child.mergeOptions({ snappable: false });

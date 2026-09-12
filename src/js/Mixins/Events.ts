@@ -112,7 +112,7 @@ export interface IEventMixin {
   ): void;
   _fireIntersect(
     intersection: GeoJSON.FeatureCollection,
-    fireLayer?: L.Layer,
+    fireLayer?: L.Layer | L.Map,
     source?: string,
     customPayload?: EventPayload
   ): void;
@@ -123,7 +123,7 @@ export interface IEventMixin {
     customPayload?: EventPayload
   ): void;
   _fireChange(
-    latlngs: L.LatLng | L.LatLng[] | L.LatLng[][],
+    latlngs: L.LatLng | L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
     source?: string,
     customPayload?: EventPayload
   ): void;

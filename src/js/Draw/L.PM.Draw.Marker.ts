@@ -1,3 +1,5 @@
+import type { DrawOptions } from '../../types/options';
+import type { IDraw } from './L.PM.Draw';
 /**
  * Extended hint marker with snapping properties
  */
@@ -72,10 +74,10 @@ export interface IDrawMarker {
   options: DrawMarkerOptions;
 
   initialize(map: L.Map): void;
-  enable(options?: DrawMarkerOptions): void;
+  enable(options?: DrawOptions): void;
   disable(): void;
   enabled(): boolean;
-  toggle(options?: DrawMarkerOptions): void;
+  toggle(options?: DrawOptions): void;
   isRelevantMarker(layer: L.Layer): boolean;
   _syncHintMarker(e: L.LeafletMouseEvent): void;
   _createMarker(e: L.LeafletMouseEvent): void;
@@ -83,7 +85,7 @@ export interface IDrawMarker {
   _createTouchHint(): void;
   _removeTouchHint(): void;
   // From base Draw class
-  _setPane: (layer: L.Layer, type: string) => void;
+  _setPane: IDraw['_setPane'];
   _finishLayer: (layer: L.Layer) => void;
   _fireDrawStart: () => void;
   _fireDrawEnd: () => void;
@@ -105,7 +107,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     // with _layerIsDragging we check if a marker is currently dragged and disable marker creation
     this._layerIsDragging = false;
   },
-  enable(this: IDrawMarker, options?: DrawMarkerOptions) {
+  enable(this: IDrawMarker, options?: DrawOptions) {
     // TODO: Think about if these options could be passed globally for all
     // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
@@ -227,7 +229,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
   enabled(this: IDrawMarker) {
     return this._enabled;
   },
-  toggle(this: IDrawMarker, options?: DrawMarkerOptions) {
+  toggle(this: IDrawMarker, options?: DrawOptions) {
     if (this.enabled()) {
       this.disable();
     } else {

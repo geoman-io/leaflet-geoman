@@ -1,3 +1,5 @@
+import type { IDrawLine } from './L.PM.Draw.Line';
+import type { ISnapMixin } from '../Mixins/Snapping';
 /**
  * Extended map with PM
  */
@@ -142,14 +144,11 @@ export interface IDrawCut {
   ): void;
   _handleSelfIntersection(addVertex: boolean, latlng?: L.LatLng): void;
   _cleanupSnapping(): void;
-  _calcClosestLayer(
-    latlng: L.LatLng,
-    layers: L.Layer[]
-  ): ClosestLayerResult | null;
+  _calcClosestLayer: ISnapMixin['_calcClosestLayer'];
   _addDrawnLayerProp(layer: L.Layer): void;
   _isFirstLayer(): boolean;
   disable(): void;
-  enable(): void;
+  enable: IDrawLine['enable'];
 }
 import lineIntersect from '@turf/line-intersect';
 import lineSplit from '@turf/line-split';
@@ -312,7 +311,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
             if (
               closest &&
               closest.segment &&
-              closest.distance < this.options.snapDistance!
+              closest.distance! < this.options.snapDistance!
             ) {
               const { segment } = closest;
               if (segment && segment.length === 2) {

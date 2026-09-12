@@ -7,6 +7,7 @@
   },
   "include": [
     "bundle.mts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "test/**/*.test.ts"
   ]
 }

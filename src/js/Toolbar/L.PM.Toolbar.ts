@@ -1,3 +1,4 @@
+import type { PM } from 'leaflet';
 import type { IPMButton } from './L.Controls';
 import type { LeafletClassFactory } from '../../types/leaflet-class';
 
@@ -33,7 +34,7 @@ interface ToolbarButtonOptions {
   toggleStatus: boolean;
   disableOtherButtons: boolean;
   disableByOtherButtons?: boolean;
-  position: string;
+  position: L.ControlPosition;
   tool?: string;
   actions: (string | ButtonAction)[];
   disabled?: boolean;
@@ -77,13 +78,13 @@ interface ToolbarOptions {
   optionsControls: boolean;
   customControls: boolean;
   oneBlock: boolean;
-  position: string;
+  position: L.ControlPosition;
   positions: {
-    [block: string]: string;
-    draw: string;
-    edit: string;
-    options: string;
-    custom: string;
+    [block: string]: L.ControlPosition | '' | undefined;
+    draw?: L.ControlPosition | '';
+    edit?: L.ControlPosition | '';
+    options?: L.ControlPosition | '';
+    custom?: L.ControlPosition | '';
   };
   // Backwards compatibility
   editPolygon?: boolean;
@@ -91,6 +92,10 @@ interface ToolbarOptions {
   // Dynamic button options
   [key: string]: boolean | string | object | undefined;
 }
+
+type ToolbarOptionsInput =
+  | Partial<ToolbarOptions>
+  | (PM.ToolbarOptions & { editPolygon?: boolean; deleteLayer?: boolean });
 
 /**
  * Extended map with PM
@@ -149,11 +154,11 @@ export interface IToolbar {
   init(map: L.Map): void;
   _createContainer(name: string): HTMLElement;
   getButtons(): Record<string, IPMButton>;
-  addControls(options?: Partial<ToolbarOptions>): void;
+  addControls(options?: ToolbarOptionsInput): void;
   applyIconStyle(): void;
   removeControls(): void;
   deleteControl(name: string): void;
-  toggleControls(options?: Partial<ToolbarOptions>): void;
+  toggleControls(options?: ToolbarOptionsInput): void;
   _addButton(name: string, button: IPMButton): IPMButton;
   triggerClickOnToggledButtons(exceptThisButton?: IPMButton): void;
   toggleButton(
@@ -163,8 +168,8 @@ export interface IToolbar {
   ): boolean | undefined;
   _defineButtons(): void;
   _showHideButtons(): void;
-  _getBtnPosition(block: string): string;
-  setBlockPosition(block: string, position: string): void;
+  _getBtnPosition(block: string): L.ControlPosition;
+  setBlockPosition(block: string, position: L.ControlPosition | ''): void;
   getBlockPositions(): ToolbarOptions['positions'];
   copyDrawControl(
     copyInstance: string,
@@ -287,7 +292,7 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
     return this.buttons;
   },
 
-  addControls(this: IToolbar, options: Partial<ToolbarOptions> = this.options) {
+  addControls(this: IToolbar, options: ToolbarOptionsInput = this.options) {
     // adds all buttons to the map specified inside options
 
     // make button renaming backwards compatible
@@ -352,10 +357,7 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
       delete this.buttons[btnName];
     }
   },
-  toggleControls(
-    this: IToolbar,
-    options: Partial<ToolbarOptions> = this.options
-  ) {
+  toggleControls(this: IToolbar, options: ToolbarOptionsInput = this.options) {
     if (this.isVisible) {
       this.removeControls();
     } else {
@@ -721,7 +723,11 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
       ? this.options.positions[block]
       : this.options.position;
   },
-  setBlockPosition(this: IToolbar, block: string, position: string) {
+  setBlockPosition(
+    this: IToolbar,
+    block: string,
+    position: L.ControlPosition | ''
+  ) {
     this.options.positions[block] = position;
     this._showHideButtons();
     this.changeControlOrder();

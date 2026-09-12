@@ -225,7 +225,8 @@ Edit.Line = Edit.extend<
       | GeoJSON.Polygon
       | GeoJSON.MultiPolygon
     >,
-  ]
+  ],
+  [typeof MarkerLimits]
 >({
   includes: [MarkerLimits],
   _shape: 'Line',

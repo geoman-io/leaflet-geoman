@@ -1,3 +1,8 @@
+import type { DrawBase } from './Draw/L.PM.Draw';
+import type { IToolbar } from './Toolbar/L.PM.Toolbar';
+import type { PM } from 'leaflet';
+import type { DrawOptions, EditOptions, GlobalOptions } from '../types/options';
+export type { GlobalOptions } from '../types/options';
 import type { LeafletClassFactory } from '../types/leaflet-class';
 import type { IKeyboardMixin } from './Mixins/Keyboard';
 
@@ -9,48 +14,18 @@ type ExtendedFeatureGroup = L.FeatureGroup & {
 };
 
 /**
- * PM Draw interface
- */
-interface PMDraw {
-  enable: (shape: string, options?: object) => void;
-  disable: (shape?: string) => void;
-  getActiveShape: () => string | undefined;
-  shapes: string[];
-  Cut: {
-    enabled: () => boolean;
-    enable: (options?: object) => void;
-    disable: () => void;
-    toggle: (options?: object) => void;
-  };
-  Circle: DrawShape;
-  CircleMarker: DrawShape;
-  [key: string]: unknown;
-}
-
-/**
  * Draw shape interface
  */
 interface DrawShape {
   enabled: () => boolean;
-  enable: (options?: object) => void;
+  enable: (options?: DrawOptions) => void;
   disable: () => void;
-  setOptions: (options: object) => void;
-  setPathOptions: (options: object, merge?: boolean) => void;
+  setOptions: (options: DrawOptions) => void;
+  setPathOptions: (options: L.PathOptions, merge?: boolean) => void;
   options: {
     resizeableCircleMarker?: boolean;
     resizeableCircle?: boolean;
   };
-}
-
-/**
- * PM Toolbar interface
- */
-interface PMToolbar {
-  addControls: (options?: object) => void;
-  removeControls: () => void;
-  toggleControls: () => void;
-  reinit: () => void;
-  isVisible: boolean;
 }
 
 /**
@@ -59,7 +34,7 @@ interface PMToolbar {
 interface PMLayer extends L.Layer {
   pm: {
     enabled: () => boolean;
-    setOptions: (options: object) => void;
+    setOptions: (options: EditOptions) => void;
     applyOptions: () => void;
   };
   _drawnByGeoman?: boolean;
@@ -71,27 +46,6 @@ interface PMLayer extends L.Layer {
 interface ExtendedRenderer extends L.Renderer {
   _onMouseMove: (e: MouseEvent) => void;
   _onClick: (e: MouseEvent) => void;
-}
-
-/**
- * Global options interface
- */
-export interface GlobalOptions {
-  snappable?: boolean;
-  layerGroup?: L.LayerGroup;
-  snappingOrder?: string[];
-  panes?: {
-    vertexPane?: string;
-    layerPane?: string;
-    markerPane?: string;
-  };
-  draggable?: boolean;
-  editable?: boolean;
-  resizeableCircleMarker?: boolean;
-  resizeableCircle?: boolean;
-  exitModeOnEscape?: boolean;
-  finishOnEnter?: boolean;
-  [key: string]: unknown;
 }
 
 /**
@@ -112,28 +66,31 @@ type TranslationsRecord = Record<string, Record<string, unknown>>;
  */
 export interface IMapPM {
   map: L.Map & { pm: IMapPM };
-  Draw: PMDraw;
-  Toolbar: PMToolbar;
+  Draw: DrawBase;
+  Toolbar: IToolbar;
   Keyboard: IKeyboardMixin;
   globalOptions: GlobalOptions;
   _touchEventCounter: number;
 
   initialize(map: L.Map): void;
   setLang(lang?: string, override?: object, fallback?: string): void;
-  addControls(options?: object): void;
+  addControls(options?: PM.ToolbarOptions): void;
   removeControls(): void;
   toggleControls(): void;
   controlsVisible(): boolean;
-  enableDraw(shape?: string, options?: object): void;
+  enableDraw(shape?: string, options?: DrawOptions): void;
   disableDraw(shape?: string): void;
-  setPathOptions(options: object, optionsModifier?: PathOptionsModifier): void;
+  setPathOptions(
+    options: L.PathOptions,
+    optionsModifier?: PathOptionsModifier
+  ): void;
   getGlobalOptions(): GlobalOptions;
   setGlobalOptions(options: Partial<GlobalOptions>): void;
   applyGlobalOptions(): void;
   globalDrawModeEnabled(): boolean;
   globalCutModeEnabled(): boolean;
-  enableGlobalCutMode(options?: object): void;
-  toggleGlobalCutMode(options?: object): void;
+  enableGlobalCutMode(options?: DrawOptions): void;
+  toggleGlobalCutMode(options?: DrawOptions): void;
   disableGlobalCutMode(): void;
   getGeomanLayers(asGroup?: boolean): L.Layer[] | L.FeatureGroup;
   getGeomanDrawLayers(asGroup?: boolean): L.Layer[] | L.FeatureGroup;
@@ -170,328 +127,336 @@ import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
 import { resolveLanguageCode } from './helpers/language';
 
-const Map = (L.Class as unknown as LeafletClassFactory).extend<IMapPM, [L.Map]>(
-  {
-    includes: [
-      GlobalEditMode,
-      GlobalDragMode,
-      GlobalRemovalMode,
-      GlobalRotateMode,
-      EventMixin,
-    ],
-    initialize(this: IMapPM, map: L.Map) {
-      this.map = map as typeof this.map;
-      this.Draw = new L.PM.Draw(map) as unknown as PMDraw;
-      this.Toolbar = new L.PM.Toolbar(map);
-      this.Keyboard = createKeyboardMixins();
+const Map = (L.Class as unknown as LeafletClassFactory).extend<
+  IMapPM,
+  [L.Map],
+  [
+    typeof GlobalEditMode,
+    typeof GlobalDragMode,
+    typeof GlobalRemovalMode,
+    typeof GlobalRotateMode,
+    typeof EventMixin,
+  ]
+>({
+  includes: [
+    GlobalEditMode,
+    GlobalDragMode,
+    GlobalRemovalMode,
+    GlobalRotateMode,
+    EventMixin,
+  ],
+  initialize(this: IMapPM, map: L.Map) {
+    this.map = map as typeof this.map;
+    this.Draw = new L.PM.Draw(map);
+    this.Toolbar = new L.PM.Toolbar(map);
+    this.Keyboard = createKeyboardMixins();
 
-      this.globalOptions = {
-        snappable: true,
-        layerGroup: undefined,
-        snappingOrder: [
-          'Marker',
-          'CircleMarker',
-          'Circle',
-          'Line',
-          'Polygon',
-          'Rectangle',
-        ],
-        panes: {
-          vertexPane: 'markerPane',
-          layerPane: 'overlayPane',
-          markerPane: 'markerPane',
-        },
-        draggable: true,
-        exitModeOnEscape: false,
-        finishOnEnter: false,
-      };
+    this.globalOptions = {
+      snappable: true,
+      layerGroup: undefined,
+      snappingOrder: [
+        'Marker',
+        'CircleMarker',
+        'Circle',
+        'Line',
+        'Polygon',
+        'Rectangle',
+      ],
+      panes: {
+        vertexPane: 'markerPane',
+        layerPane: 'overlayPane',
+        markerPane: 'markerPane',
+      },
+      draggable: true,
+      exitModeOnEscape: false,
+      finishOnEnter: false,
+    };
 
-      this.Keyboard._initKeyListener(map);
-    },
+    this.Keyboard._initKeyListener(map);
+  },
 
-    setLang(this: IMapPM, lang = 'en', override?: object, fallback = 'en') {
-      // Resolve the language code to a translation key
-      lang = resolveLanguageCode(lang, translations);
+  setLang(this: IMapPM, lang = 'en', override?: object, fallback = 'en') {
+    // Resolve the language code to a translation key
+    lang = resolveLanguageCode(lang, translations);
 
-      const oldLang = L.PM.activeLang;
-      if (override) {
-        translations[lang] = merge(translations[fallback], override);
-      }
+    const oldLang = L.PM.activeLang;
+    if (override) {
+      translations[lang] = merge(translations[fallback], override);
+    }
 
-      L.PM.activeLang = lang;
-      this.map.pm.Toolbar.reinit();
-      this._fireLangChange(oldLang, lang, fallback, translations[lang]);
-    },
-    addControls(this: IMapPM, options?: object) {
-      this.Toolbar.addControls(options);
-    },
-    removeControls(this: IMapPM) {
-      this.Toolbar.removeControls();
-    },
-    toggleControls(this: IMapPM) {
-      this.Toolbar.toggleControls();
-    },
-    controlsVisible(this: IMapPM) {
-      return this.Toolbar.isVisible;
-    },
+    L.PM.activeLang = lang;
+    this.map.pm.Toolbar.reinit();
+    this._fireLangChange(oldLang, lang, fallback, translations[lang]);
+  },
+  addControls(this: IMapPM, options?: PM.ToolbarOptions) {
+    this.Toolbar.addControls(options);
+  },
+  removeControls(this: IMapPM) {
+    this.Toolbar.removeControls();
+  },
+  toggleControls(this: IMapPM) {
+    this.Toolbar.toggleControls();
+  },
+  controlsVisible(this: IMapPM) {
+    return this.Toolbar.isVisible;
+  },
 
-    enableDraw(this: IMapPM, shape = 'Polygon', options?: object) {
-      // backwards compatible, remove after 3.0
-      if (shape === 'Poly') {
-        shape = 'Polygon';
-      }
+  enableDraw(this: IMapPM, shape = 'Polygon', options?: DrawOptions) {
+    // backwards compatible, remove after 3.0
+    if (shape === 'Poly') {
+      shape = 'Polygon';
+    }
 
-      this.Draw.enable(shape, options);
-    },
-    disableDraw(this: IMapPM, shape = 'Polygon') {
-      // backwards compatible, remove after 3.0
-      if (shape === 'Poly') {
-        shape = 'Polygon';
-      }
+    this.Draw.enable(shape, options);
+  },
+  disableDraw(this: IMapPM, shape = 'Polygon') {
+    // backwards compatible, remove after 3.0
+    if (shape === 'Poly') {
+      shape = 'Polygon';
+    }
 
-      this.Draw.disable(shape);
-    },
-    // optionsModifier for special options like ignoreShapes or merge
-    setPathOptions(
-      this: IMapPM,
-      options: object,
-      optionsModifier: PathOptionsModifier = {}
-    ) {
-      const ignore = optionsModifier.ignoreShapes || [];
-      const mergeOptions = optionsModifier.merge || false;
+    this.Draw.disable(shape);
+  },
+  // optionsModifier for special options like ignoreShapes or merge
+  setPathOptions(
+    this: IMapPM,
+    options: L.PathOptions,
+    optionsModifier: PathOptionsModifier = {}
+  ) {
+    const ignore = optionsModifier.ignoreShapes || [];
+    const mergeOptions = optionsModifier.merge || false;
 
-      this.map.pm.Draw.shapes.forEach((shape) => {
-        if (ignore.indexOf(shape) === -1) {
-          (this.map.pm.Draw[shape] as unknown as DrawShape).setPathOptions(
-            options,
-            mergeOptions
-          );
-        }
-      });
-    },
-
-    getGlobalOptions(this: IMapPM) {
-      return this.globalOptions;
-    },
-    setGlobalOptions(this: IMapPM, o: Partial<GlobalOptions>) {
-      // merge passed and existing options
-      const options = merge(this.globalOptions, o);
-
-      // TODO: remove with next major release
-      if (options.editable) {
-        options.resizeableCircleMarker = options.editable;
-        delete options.editable;
-      }
-
-      // check if switched the editable mode for CircleMarker while drawing
-      let reenableCircleMarker = false;
-      if (
-        this.map.pm.Draw.CircleMarker.enabled() &&
-        !!this.map.pm.Draw.CircleMarker.options.resizeableCircleMarker !==
-          !!options.resizeableCircleMarker
-      ) {
-        this.map.pm.Draw.CircleMarker.disable();
-        reenableCircleMarker = true;
-      }
-      // check if switched the editable mode for Circle while drawing
-      let reenableCircle = false;
-      if (
-        this.map.pm.Draw.Circle.enabled() &&
-        !!this.map.pm.Draw.Circle.options.resizeableCircle !==
-          !!options.resizeableCircle
-      ) {
-        this.map.pm.Draw.Circle.disable();
-        reenableCircle = true;
-      }
-
-      // enable options for Drawing Shapes
-      this.map.pm.Draw.shapes.forEach((shape) => {
-        (this.map.pm.Draw[shape] as unknown as DrawShape).setOptions(options);
-      });
-
-      if (reenableCircleMarker) {
-        this.map.pm.Draw.CircleMarker.enable();
-      }
-
-      if (reenableCircle) {
-        this.map.pm.Draw.Circle.enable();
-      }
-
-      // enable options for Editing
-      const layers = L.PM.Utils.findLayers(this.map);
-      (layers as PMLayer[]).forEach((layer) => {
-        layer.pm.setOptions(options);
-      });
-
-      this.map.fire('pm:globaloptionschanged');
-
-      // store options
-      this.globalOptions = options;
-
-      // apply the options (actually trigger the functionality)
-      this.applyGlobalOptions();
-    },
-    applyGlobalOptions(this: IMapPM) {
-      const layers = L.PM.Utils.findLayers(this.map);
-      (layers as PMLayer[]).forEach((layer) => {
-        if (layer.pm.enabled()) {
-          layer.pm.applyOptions();
-        }
-      });
-    },
-    globalDrawModeEnabled(this: IMapPM) {
-      return !!this.Draw.getActiveShape();
-    },
-    globalCutModeEnabled(this: IMapPM) {
-      return !!this.Draw.Cut.enabled();
-    },
-    enableGlobalCutMode(this: IMapPM, options?: object) {
-      return this.Draw.Cut.enable(options);
-    },
-    toggleGlobalCutMode(this: IMapPM, options?: object) {
-      return this.Draw.Cut.toggle(options);
-    },
-    disableGlobalCutMode(this: IMapPM) {
-      return this.Draw.Cut.disable();
-    },
-    getGeomanLayers(this: IMapPM, asGroup = false) {
-      const layers = L.PM.Utils.findLayers(this.map);
-      if (!asGroup) {
-        return layers;
-      }
-      const group = L.featureGroup();
-      group._pmTempLayer = true;
-      layers.forEach((layer) => {
-        group.addLayer(layer);
-      });
-      return group;
-    },
-    getGeomanDrawLayers(this: IMapPM, asGroup = false) {
-      const layers = L.PM.Utils.findLayers(this.map).filter(
-        (l) => l._drawnByGeoman === true
-      );
-      if (!asGroup) {
-        return layers;
-      }
-      const group = L.featureGroup();
-      group._pmTempLayer = true;
-      layers.forEach((layer) => {
-        group.addLayer(layer);
-      });
-      return group;
-    },
-    // returns the map instance by default or a layergroup is set through global options
-    _getContainingLayer(this: IMapPM) {
-      return this.globalOptions.layerGroup &&
-        this.globalOptions.layerGroup instanceof L.LayerGroup
-        ? this.globalOptions.layerGroup
-        : this.map;
-    },
-    _isCRSSimple(this: IMapPM) {
-      return this.map.options.crs === L.CRS.Simple;
-    },
-    // in Canvas mode we need to convert touch- and pointerevents (IE) to mouseevents, because Leaflet don't support them.
-    _touchEventCounter: 0,
-    _addTouchEvents(this: IMapPM, elm: HTMLElement) {
-      if (this._touchEventCounter === 0) {
-        L.DomEvent.on(elm, 'touchmove', this._canvasTouchMove, this);
-        L.DomEvent.on(
-          elm,
-          'touchstart touchend touchcancel',
-          this._canvasTouchClick,
-          this
+    this.map.pm.Draw.shapes.forEach((shape) => {
+      if (ignore.indexOf(shape) === -1) {
+        (this.map.pm.Draw[shape] as unknown as DrawShape).setPathOptions(
+          options,
+          mergeOptions
         );
       }
-      this._touchEventCounter += 1;
-    },
-    _removeTouchEvents(this: IMapPM, elm: HTMLElement) {
-      if (this._touchEventCounter === 1) {
-        L.DomEvent.off(elm, 'touchmove', this._canvasTouchMove, this);
-        L.DomEvent.off(
-          elm,
-          'touchstart touchend touchcancel',
-          this._canvasTouchClick,
-          this
-        );
-      }
-      this._touchEventCounter =
-        this._touchEventCounter <= 1 ? 0 : this._touchEventCounter - 1;
-    },
-    _canvasTouchMove(
-      this: IMapPM,
-      e: TouchEvent & Partial<Pick<MouseEvent, 'button' | 'relatedTarget'>>
+    });
+  },
+
+  getGlobalOptions(this: IMapPM) {
+    return this.globalOptions;
+  },
+  setGlobalOptions(this: IMapPM, o: Partial<GlobalOptions>) {
+    // merge passed and existing options
+    const options = merge(this.globalOptions, o);
+
+    // TODO: remove with next major release
+    if (options.editable) {
+      options.resizeableCircleMarker = options.editable;
+      delete options.editable;
+    }
+
+    // check if switched the editable mode for CircleMarker while drawing
+    let reenableCircleMarker = false;
+    if (
+      this.map.pm.Draw.CircleMarker.enabled() &&
+      !!this.map.pm.Draw.CircleMarker.options.resizeableCircleMarker !==
+        !!options.resizeableCircleMarker
     ) {
-      (getRenderer(this.map) as ExtendedRenderer)._onMouseMove(
-        this._createMouseEvent('mousemove', e)
-      );
-    },
-    _canvasTouchClick(
-      this: IMapPM,
-      e: TouchEvent & Partial<Pick<MouseEvent, 'button' | 'relatedTarget'>>
+      this.map.pm.Draw.CircleMarker.disable();
+      reenableCircleMarker = true;
+    }
+    // check if switched the editable mode for Circle while drawing
+    let reenableCircle = false;
+    if (
+      this.map.pm.Draw.Circle.enabled() &&
+      !!this.map.pm.Draw.Circle.options.resizeableCircle !==
+        !!options.resizeableCircle
     ) {
-      let type = '';
-      if (e.type === 'touchstart' || e.type === 'pointerdown') {
-        type = 'mousedown';
-      } else if (e.type === 'touchend' || e.type === 'pointerup') {
-        type = 'mouseup';
-      } else if (e.type === 'touchcancel' || e.type === 'pointercancel') {
-        type = 'mouseup';
+      this.map.pm.Draw.Circle.disable();
+      reenableCircle = true;
+    }
+
+    // enable options for Drawing Shapes
+    this.map.pm.Draw.shapes.forEach((shape) => {
+      (this.map.pm.Draw[shape] as unknown as DrawShape).setOptions(options);
+    });
+
+    if (reenableCircleMarker) {
+      this.map.pm.Draw.CircleMarker.enable();
+    }
+
+    if (reenableCircle) {
+      this.map.pm.Draw.Circle.enable();
+    }
+
+    // enable options for Editing
+    const layers = L.PM.Utils.findLayers(this.map);
+    (layers as PMLayer[]).forEach((layer) => {
+      layer.pm.setOptions(options);
+    });
+
+    this.map.fire('pm:globaloptionschanged');
+
+    // store options
+    this.globalOptions = options;
+
+    // apply the options (actually trigger the functionality)
+    this.applyGlobalOptions();
+  },
+  applyGlobalOptions(this: IMapPM) {
+    const layers = L.PM.Utils.findLayers(this.map);
+    (layers as PMLayer[]).forEach((layer) => {
+      if (layer.pm.enabled()) {
+        layer.pm.applyOptions();
       }
-      if (!type) {
-        return;
-      }
-      (getRenderer(this.map) as ExtendedRenderer)._onClick(
-        this._createMouseEvent(type, e)
+    });
+  },
+  globalDrawModeEnabled(this: IMapPM) {
+    return !!this.Draw.getActiveShape();
+  },
+  globalCutModeEnabled(this: IMapPM) {
+    return !!this.Draw.Cut.enabled();
+  },
+  enableGlobalCutMode(this: IMapPM, options?: DrawOptions) {
+    return this.Draw.Cut.enable(options);
+  },
+  toggleGlobalCutMode(this: IMapPM, options?: DrawOptions) {
+    return this.Draw.Cut.toggle(options);
+  },
+  disableGlobalCutMode(this: IMapPM) {
+    return this.Draw.Cut.disable();
+  },
+  getGeomanLayers(this: IMapPM, asGroup = false) {
+    const layers = L.PM.Utils.findLayers(this.map);
+    if (!asGroup) {
+      return layers;
+    }
+    const group = L.featureGroup();
+    group._pmTempLayer = true;
+    layers.forEach((layer) => {
+      group.addLayer(layer);
+    });
+    return group;
+  },
+  getGeomanDrawLayers(this: IMapPM, asGroup = false) {
+    const layers = L.PM.Utils.findLayers(this.map).filter(
+      (l) => l._drawnByGeoman === true
+    );
+    if (!asGroup) {
+      return layers;
+    }
+    const group = L.featureGroup();
+    group._pmTempLayer = true;
+    layers.forEach((layer) => {
+      group.addLayer(layer);
+    });
+    return group;
+  },
+  // returns the map instance by default or a layergroup is set through global options
+  _getContainingLayer(this: IMapPM) {
+    return this.globalOptions.layerGroup &&
+      this.globalOptions.layerGroup instanceof L.LayerGroup
+      ? this.globalOptions.layerGroup
+      : this.map;
+  },
+  _isCRSSimple(this: IMapPM) {
+    return this.map.options.crs === L.CRS.Simple;
+  },
+  // in Canvas mode we need to convert touch- and pointerevents (IE) to mouseevents, because Leaflet don't support them.
+  _touchEventCounter: 0,
+  _addTouchEvents(this: IMapPM, elm: HTMLElement) {
+    if (this._touchEventCounter === 0) {
+      L.DomEvent.on(elm, 'touchmove', this._canvasTouchMove, this);
+      L.DomEvent.on(
+        elm,
+        'touchstart touchend touchcancel',
+        this._canvasTouchClick,
+        this
       );
-    },
-    _createMouseEvent(
-      this: IMapPM,
-      type: string,
-      e: TouchEvent & Partial<Pick<MouseEvent, 'button' | 'relatedTarget'>>
-    ): MouseEvent {
-      let mouseEvent: MouseEvent;
-      const touchEvt = (e.touches[0] || e.changedTouches[0]) as Touch &
-        Partial<Pick<UIEvent, 'detail'>>;
-      try {
-        mouseEvent = new MouseEvent(type, {
-          bubbles: e.bubbles,
-          cancelable: e.cancelable,
-          view: e.view,
-          detail: touchEvt.detail,
-          screenX: touchEvt.screenX,
-          screenY: touchEvt.screenY,
-          clientX: touchEvt.clientX,
-          clientY: touchEvt.clientY,
-          ctrlKey: e.ctrlKey,
-          altKey: e.altKey,
-          shiftKey: e.shiftKey,
-          metaKey: e.metaKey,
-          button: e.button,
-          relatedTarget: e.relatedTarget,
-        });
-      } catch (ex) {
-        mouseEvent = document.createEvent('MouseEvents');
-        mouseEvent.initMouseEvent(
-          type,
-          e.bubbles,
-          e.cancelable,
-          e.view!,
-          touchEvt.detail!,
-          touchEvt.screenX,
-          touchEvt.screenY,
-          touchEvt.clientX,
-          touchEvt.clientY,
-          e.ctrlKey,
-          e.altKey,
-          e.shiftKey,
-          e.metaKey,
-          e.button!,
-          e.relatedTarget!
-        );
-      }
-      return mouseEvent;
-    },
-  }
-);
+    }
+    this._touchEventCounter += 1;
+  },
+  _removeTouchEvents(this: IMapPM, elm: HTMLElement) {
+    if (this._touchEventCounter === 1) {
+      L.DomEvent.off(elm, 'touchmove', this._canvasTouchMove, this);
+      L.DomEvent.off(
+        elm,
+        'touchstart touchend touchcancel',
+        this._canvasTouchClick,
+        this
+      );
+    }
+    this._touchEventCounter =
+      this._touchEventCounter <= 1 ? 0 : this._touchEventCounter - 1;
+  },
+  _canvasTouchMove(
+    this: IMapPM,
+    e: TouchEvent & Partial<Pick<MouseEvent, 'button' | 'relatedTarget'>>
+  ) {
+    (getRenderer(this.map) as ExtendedRenderer)._onMouseMove(
+      this._createMouseEvent('mousemove', e)
+    );
+  },
+  _canvasTouchClick(
+    this: IMapPM,
+    e: TouchEvent & Partial<Pick<MouseEvent, 'button' | 'relatedTarget'>>
+  ) {
+    let type = '';
+    if (e.type === 'touchstart' || e.type === 'pointerdown') {
+      type = 'mousedown';
+    } else if (e.type === 'touchend' || e.type === 'pointerup') {
+      type = 'mouseup';
+    } else if (e.type === 'touchcancel' || e.type === 'pointercancel') {
+      type = 'mouseup';
+    }
+    if (!type) {
+      return;
+    }
+    (getRenderer(this.map) as ExtendedRenderer)._onClick(
+      this._createMouseEvent(type, e)
+    );
+  },
+  _createMouseEvent(
+    this: IMapPM,
+    type: string,
+    e: TouchEvent & Partial<Pick<MouseEvent, 'button' | 'relatedTarget'>>
+  ): MouseEvent {
+    let mouseEvent: MouseEvent;
+    const touchEvt = (e.touches[0] || e.changedTouches[0]) as Touch &
+      Partial<Pick<UIEvent, 'detail'>>;
+    try {
+      mouseEvent = new MouseEvent(type, {
+        bubbles: e.bubbles,
+        cancelable: e.cancelable,
+        view: e.view,
+        detail: touchEvt.detail,
+        screenX: touchEvt.screenX,
+        screenY: touchEvt.screenY,
+        clientX: touchEvt.clientX,
+        clientY: touchEvt.clientY,
+        ctrlKey: e.ctrlKey,
+        altKey: e.altKey,
+        shiftKey: e.shiftKey,
+        metaKey: e.metaKey,
+        button: e.button,
+        relatedTarget: e.relatedTarget,
+      });
+    } catch (ex) {
+      mouseEvent = document.createEvent('MouseEvents');
+      mouseEvent.initMouseEvent(
+        type,
+        e.bubbles,
+        e.cancelable,
+        e.view!,
+        touchEvt.detail!,
+        touchEvt.screenX,
+        touchEvt.screenY,
+        touchEvt.clientX,
+        touchEvt.clientY,
+        e.ctrlKey,
+        e.altKey,
+        e.shiftKey,
+        e.metaKey,
+        e.button!,
+        e.relatedTarget!
+      );
+    }
+    return mouseEvent;
+  },
+});
 
 export default Map;

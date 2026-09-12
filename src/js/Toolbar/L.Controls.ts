@@ -99,10 +99,9 @@ export interface IPMButton {
   _applyStyleClasses(): void;
   _onBtnClick(): void;
   _clicked(e?: Event): void;
-  _update(): void;
-  remove(): this;
-  addTo(map: L.Map): this;
-  setPosition(position: string): this;
+  remove: L.Control['remove'];
+  addTo: L.Control['addTo'];
+  setPosition: L.Control['setPosition'];
   _updateDisabled(): void;
   _updateActiveAction(button: ButtonOptions): void;
 
@@ -117,10 +116,9 @@ export interface IPMButton {
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
-const PMButton = (L.Control as unknown as LeafletClassFactory).extend<
-  IPMButton,
-  [Partial<ButtonOptions>]
->({
+const PMButton = (
+  L.Control as unknown as LeafletClassFactory<L.Control>
+).extend<IPMButton, [Partial<ButtonOptions>], [typeof EventMixin]>({
   includes: [EventMixin],
   options: {
     position: 'topleft',

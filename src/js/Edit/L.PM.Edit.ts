@@ -1,8 +1,9 @@
-import type { Inherit } from '../../types/leaflet-class';
+import type { Inherit, MixinMembers } from '../../types/leaflet-class';
 import type {
   LeafletClass,
   LeafletClassFactory,
 } from '../../types/leaflet-class';
+import type MarkerLimits from '../Mixins/MarkerLimits';
 import type { IEditMarker } from './L.PM.Edit.Marker';
 import type { IEditCircleMarker } from './L.PM.Edit.CircleMarker';
 import type { IEditCircle } from './L.PM.Edit.Circle';
@@ -13,55 +14,12 @@ import type { IEditPolygon } from './L.PM.Edit.Polygon';
 import type { IEditRectangle } from './L.PM.Edit.Rectangle';
 import type { IEditText } from './L.PM.Edit.Text';
 
-/**
- * Vertex validation arguments
- */
-interface VertexValidationArgs {
-  layer: L.Layer;
-  marker: ExtendedMarker;
-  event: L.LeafletEvent;
-}
-
-/**
- * Vertex validation function type
- */
-type VertexValidationFn = (args: VertexValidationArgs) => boolean;
-
-/**
- * Edit options interface
- */
-export interface EditOptions {
-  minRadiusCircle?: number | null;
-  maxRadiusCircle?: number | null;
-  minRadiusCircleMarker?: number | null;
-  maxRadiusCircleMarker?: number | null;
-
-  snappable?: boolean;
-  snapDistance?: number;
-  allowSelfIntersection?: boolean;
-  allowSelfIntersectionEdit?: boolean;
-  preventMarkerRemoval?: boolean;
-  removeLayerBelowMinVertexCount?: boolean;
-  limitMarkersToCount?: number;
-  hideMiddleMarkers?: boolean;
-  snapSegment?: boolean;
-  syncLayersOnDrag?: boolean | L.Layer[];
-  draggable?: boolean;
-  allowEditing?: boolean;
-  allowRemoval?: boolean;
-  allowCutting?: boolean;
-  allowRotation?: boolean;
-  addVertexOn?: string;
-  removeVertexOn?: string;
-  removeVertexValidation?: VertexValidationFn;
-  addVertexValidation?: VertexValidationFn;
-  moveVertexValidation?: VertexValidationFn;
-  resizeableCircleMarker?: boolean;
-  resizeableCircle?: boolean;
-  snapMiddle?: boolean;
-  snapVertex?: boolean;
-  [key: string]: unknown;
-}
+import type {
+  EditOptions,
+  VertexValidationArgs,
+  VertexValidationFn,
+} from '../../types/options';
+export type { EditOptions } from '../../types/options';
 
 /**
  * Extended marker with validation chain
@@ -131,7 +89,8 @@ import EventMixin from '../Mixins/Events';
 
 const Edit = (L.Class as unknown as LeafletClassFactory).extend<
   IEdit,
-  [L.Layer]
+  [L.Layer],
+  [typeof DragMixin, typeof SnapMixin, typeof RotateMixin, typeof EventMixin]
 >({
   includes: [DragMixin, SnapMixin, RotateMixin, EventMixin],
   options: {
@@ -250,7 +209,14 @@ const Edit = (L.Class as unknown as LeafletClassFactory).extend<
   },
 }) as EditClass;
 
-export interface EditClass extends LeafletClass<IEdit, [L.Layer]> {
+export type EditBase = Inherit<
+  MixinMembers<
+    [typeof DragMixin, typeof SnapMixin, typeof RotateMixin, typeof EventMixin]
+  >,
+  IEdit
+>;
+
+export interface EditClass extends LeafletClass<EditBase, [L.Layer]> {
   Marker: LeafletClass<EditInstances['Marker'], [L.Marker]>;
   CircleMarker: LeafletClass<EditInstances['CircleMarker'], [L.CircleMarker]>;
   Circle: LeafletClass<EditInstances['Circle'], [L.Circle]>;
@@ -275,13 +241,16 @@ export interface EditClass extends LeafletClass<IEdit, [L.Layer]> {
 export default Edit;
 
 export interface EditInstances {
-  Marker: Inherit<IEdit, IEditMarker>;
-  CircleMarker: Inherit<IEdit, IEditCircleMarker>;
+  Marker: Inherit<EditBase, IEditMarker>;
+  CircleMarker: Inherit<EditBase, IEditCircleMarker>;
   Circle: Inherit<EditInstances['CircleMarker'], IEditCircle>;
-  ImageOverlay: Inherit<IEdit, IEditImageOverlay>;
+  ImageOverlay: Inherit<EditBase, IEditImageOverlay>;
   LayerGroup: Inherit<{}, IEditLayerGroup>;
-  Line: Inherit<IEdit, IEditLine>;
+  Line: Inherit<
+    Inherit<EditBase, MixinMembers<[typeof MarkerLimits]>>,
+    IEditLine
+  >;
   Polygon: Inherit<EditInstances['Line'], IEditPolygon>;
   Rectangle: Inherit<EditInstances['Polygon'], IEditRectangle>;
-  Text: Inherit<IEdit, IEditText>;
+  Text: Inherit<EditBase, IEditText>;
 }

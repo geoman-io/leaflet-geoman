@@ -1,3 +1,4 @@
+import type { DrawOptions } from '../../types/options';
 /**
  * Extended map with PM
  */
@@ -60,9 +61,7 @@ type ExtendedFeatureGroup = L.FeatureGroup & {
 /**
  * Self intersection result from turf/kinks
  */
-interface SelfIntersectionResult {
-  features: unknown[];
-}
+type SelfIntersectionResult = ReturnType<typeof kinks>;
 
 /**
  * Line draw options
@@ -100,10 +99,10 @@ export interface IDrawLine {
   isRed: boolean;
   tempMapDoubleClickZoomState?: boolean;
 
-  enable(options?: Partial<LineDrawOptions>): void;
+  enable(options?: DrawOptions): void;
   disable(): void;
   enabled(): boolean;
-  toggle(options?: Partial<LineDrawOptions>): void;
+  toggle(options?: DrawOptions): void;
   _syncHintLine(): void;
   _syncHintMarker(e: L.LeafletMouseEvent): void;
   hasSelfIntersection(): boolean;
@@ -160,7 +159,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     this.toolbarButtonName = 'drawPolyline';
     this._doesSelfIntersect = false;
   },
-  enable(this: IDrawLine, options?: Partial<LineDrawOptions>) {
+  enable(this: IDrawLine, options?: DrawOptions) {
     L.Util.setOptions(this, options);
 
     // enable draw mode
@@ -307,7 +306,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
   enabled(this: IDrawLine) {
     return this._enabled;
   },
-  toggle(this: IDrawLine, options?: Partial<LineDrawOptions>) {
+  toggle(this: IDrawLine, options?: DrawOptions) {
     if (this.enabled()) {
       this.disable();
     } else {

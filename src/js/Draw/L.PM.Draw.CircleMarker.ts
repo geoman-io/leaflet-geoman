@@ -1,3 +1,4 @@
+import type { IDraw } from './L.PM.Draw';
 /**
  * Extended map with PM
  */
@@ -145,10 +146,7 @@ export interface IDrawCircleMarker {
   _distanceCalculation(A: L.LatLng, B: L.LatLng): number;
 
   // From mixins
-  _setPane(
-    layer: PMTempLayer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ): void;
+  _setPane: IDraw['_setPane'];
   _fireDrawStart(): void;
   _fireDrawEnd(): void;
   _fireCreate(layer: L.Layer): void;
