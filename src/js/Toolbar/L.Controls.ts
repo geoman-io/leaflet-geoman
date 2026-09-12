@@ -174,7 +174,7 @@ const PMButton = (L.Control as unknown as LeafletClassFactory).extend<
   },
   destroy(this: IPMButton) {
     this._button = {} as ButtonOptions;
-    this._update();
+    this.buttonsDomNode?.remove();
   },
   toggle(this: IPMButton, e?: boolean | Event) {
     if (typeof e === 'boolean') {
