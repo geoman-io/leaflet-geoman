@@ -72,8 +72,8 @@
   "packageManager": "pnpm@10.34.5",
   "scripts": {
     "start": "pnpm run dev",
-    "dev": "cross-env DEV=true node bundle.mjs",
-    "build": "node bundle.mjs",
+    "dev": "cross-env DEV=true tsx bundle.mts",
+    "build": "tsx bundle.mts",
     "test": "cypress run --browser chrome",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
@@ -83,7 +83,7 @@
     "prepare": "pnpm run build && husky",
     "lint": "oxlint src demo --fix && oxfmt --write src demo",
     "lint:check": "oxlint src demo && oxfmt --check src demo",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.tools.json"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,7 @@
 import * as esbuild from 'esbuild';
-import fs from 'fs';
+import fs from 'node:fs';
 
-const plugins = [{
+const plugins: esbuild.Plugin[] = [{
   name: 'my-plugin',
   setup(build) {
     let count = 0;
@@ -15,7 +15,7 @@ const plugins = [{
   },
 }];
 
-const buildOptions = {
+const buildOptions: esbuild.BuildOptions = {
   bundle: true,
   entryPoints: ['./src/js/L.PM.ts'],
   loader: {
@@ -32,12 +32,12 @@ if (process.env.DEV) {
   const ctx = await esbuild.context({ ...buildOptions, minify: false, plugins });
   await ctx.watch();
   console.log('watching...');
-  const { host, port } = await ctx.serve({
+  const { hosts, port } = await ctx.serve({
     port: 5500,
     servedir: '.',
     fallback: "./index.html"
   });
-  console.log(`Serving app at http://${host || 'localhost'}:${port}/demo`);
+  console.log(`Serving app at http://${hosts[0] || 'localhost'}:${port}/demo`);
 } else {
   // Clean /dist folder
   fs.rmSync("./dist", { recursive: true, force: true });

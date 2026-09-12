@@ -63,20 +63,7 @@ export interface SnapMixinContext {
       globalOptions: { snappingOrder?: string[] };
     };
   };
-  _layer: L.Layer & {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    on: (
-      event: string,
-      handler: (...args: any[]) => void,
-      context: unknown
-    ) => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    off: (
-      event: string,
-      handler: (...args: any[]) => void,
-      context: unknown
-    ) => void;
-  };
+  _layer: L.Layer;
   _markers: (L.Marker | L.Marker[])[];
   _shape: string;
   options: {
@@ -136,7 +123,7 @@ export interface ISnapMixin {
     amount?: number
   ): ClosestLayerResult | ClosestLayerResult[];
   _checkPrioritiySnapping(closestLayer: ClosestLayerResult): L.LatLngLiteral;
-  _unsnap(eventInfo?: SnapEventInfo): void;
+  _unsnap(eventInfo?: unknown): void;
   _getClosestPointOnSegment(
     map: L.Map,
     latlng: L.LatLng,

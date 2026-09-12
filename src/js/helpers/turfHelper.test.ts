@@ -15,7 +15,7 @@ import {
 describe('turfHelper', () => {
   describe('feature', () => {
     it('wraps geometry in a Feature', () => {
-      const geom = { type: 'Point', coordinates: [0, 0] };
+      const geom: GeoJSON.Point = { type: 'Point', coordinates: [0, 0] };
       const result = feature(geom);
       expect(result).toEqual({
         type: 'Feature',
@@ -24,7 +24,7 @@ describe('turfHelper', () => {
     });
 
     it('handles complex geometry', () => {
-      const geom = {
+      const geom: GeoJSON.Polygon = {
         type: 'Polygon',
         coordinates: [
           [
@@ -43,13 +43,13 @@ describe('turfHelper', () => {
 
   describe('getGeometry', () => {
     it('extracts geometry from Feature', () => {
-      const geom = { type: 'Point', coordinates: [0, 0] };
-      const feat = { type: 'Feature', geometry: geom };
+      const geom: GeoJSON.Point = { type: 'Point', coordinates: [0, 0] };
+      const feat = { type: 'Feature' as const, geometry: geom };
       expect(getGeometry(feat)).toBe(geom);
     });
 
     it('returns geometry directly if not a Feature', () => {
-      const geom = { type: 'Point', coordinates: [0, 0] };
+      const geom: GeoJSON.Point = { type: 'Point', coordinates: [0, 0] };
       expect(getGeometry(geom)).toBe(geom);
     });
   });
