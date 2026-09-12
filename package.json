@@ -96,7 +96,7 @@
   },
   "homepage": "https://geoman.io",
   "lint-staged": {
-    "*.js": "oxlint --fix",
-    "*.{js,css}": "oxfmt --write"
+    "*.{js,ts,mjs,mts,cts}": "oxlint --fix",
+    "*.{js,ts,mjs,mts,cts,css}": "oxfmt --write"
   }
 }

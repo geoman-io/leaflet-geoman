@@ -11,7 +11,10 @@
  * @param {Object} availableTranslations - Object with available translation keys
  * @returns {string} - The resolved language key
  */
-export function resolveLanguageCode(lang, availableTranslations) {
+export function resolveLanguageCode(
+  lang: string,
+  availableTranslations: Record<string, unknown>
+): string {
   // Normalize the language code to lowercase and trim any whitespace
   lang = lang.trim().toLowerCase();
 
@@ -52,7 +55,9 @@ export function resolveLanguageCode(lang, availableTranslations) {
  * @param {string} lang - The language code to parse
  * @returns {{ primary: string, region: string | null } | null} - Parsed components or null if invalid
  */
-export function parseLanguageCode(lang) {
+export function parseLanguageCode(
+  lang: unknown
+): { primary: string; region: string | null } | null {
   if (!lang || typeof lang !== 'string') {
     return null;
   }
@@ -79,7 +84,7 @@ export function parseLanguageCode(lang) {
  * @param {string} lang - The language code to validate
  * @returns {boolean} - True if valid format
  */
-export function isValidLanguageCode(lang) {
+export function isValidLanguageCode(lang: unknown): boolean {
   if (!lang || typeof lang !== 'string') {
     return false;
   }
