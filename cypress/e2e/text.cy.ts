@@ -39,19 +39,19 @@ describe('Text Layer', () => {
         text: 'Text Layer',
       }).addTo(map);
 
-      expect(map.pm.getGeomanLayers().length).to.eq(0);
+      expect((map.pm.getGeomanLayers() as L.Marker[]).length).to.eq(0);
 
       textLayer.options.pmIgnore = false;
       L.PM.reInitLayer(textLayer);
 
-      expect(map.pm.getGeomanLayers().length).to.eq(1);
+      expect((map.pm.getGeomanLayers() as L.Marker[]).length).to.eq(1);
     });
 
     cy.toolbarButton('edit').click();
     cy.get(mapSelector).click(570, 250);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
+      const layer = (map.pm.getGeomanLayers() as L.Marker[])[0];
       expect(layer.pm.hasFocus()).to.be.eq(true);
     });
   });
@@ -69,10 +69,10 @@ describe('Text Layer', () => {
 
       cy.get(mapSelector).should('not.have.class', 'geoman-draw-cursor');
 
-      let textArea;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
+        expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+        const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
         textArea = textLayer.pm.getElement();
         cy.get(textArea).type('Hello World');
       });
@@ -97,10 +97,10 @@ describe('Text Layer', () => {
 
       cy.get(mapSelector).click(90, 250);
 
-      let textArea;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
+        expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+        const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
         textArea = textLayer.pm.getElement();
         expect(textArea.value).to.eq('');
       });
@@ -110,7 +110,7 @@ describe('Text Layer', () => {
       cy.wait(500);
 
       cy.window().then(({ map }) => {
-        expect(0).to.eq(map.pm.getGeomanDrawLayers().length);
+        expect(0).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
       });
     });
 
@@ -122,10 +122,10 @@ describe('Text Layer', () => {
 
       cy.get(mapSelector).click(90, 250);
 
-      let textArea;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
+        expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+        const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
         textArea = textLayer.pm.getElement();
         expect(textArea.value).to.eq('');
       });
@@ -135,7 +135,7 @@ describe('Text Layer', () => {
       cy.wait(500);
 
       cy.window().then(({ map }) => {
-        expect(0).to.eq(map.pm.getGeomanDrawLayers().length);
+        expect(0).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
       });
     });
 
@@ -151,10 +151,10 @@ describe('Text Layer', () => {
 
       cy.get(mapSelector).click(90, 250);
 
-      let textArea;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
+        expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+        const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
         textArea = textLayer.pm.getElement();
         cy.get(textArea).type('Hello World');
       });
@@ -168,19 +168,19 @@ describe('Text Layer', () => {
       cy.window().then(({ map }) => {
         expect(textArea.readOnly).to.eq(true);
         expect(textArea.classList.contains('pm-disabled')).to.eq(true);
-        expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[1];
+        expect(2).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+        const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[1];
         textArea = textLayer.pm.getElement();
         cy.get(textArea).type('Geoman!');
 
-        const textMap = map.pm.Draw.Text._hintMarker._map;
+        const textMap = map.pm.Draw.Text._hintMarker['_map'];
         expect(textMap).to.eq(null);
       });
 
       cy.get(mapSelector).trigger('mousemove', 200, 150, { which: 1 });
 
       cy.window().then(({ map }) => {
-        const textMap = map.pm.Draw.Text._hintMarker._map;
+        const textMap = map.pm.Draw.Text._hintMarker['_map'];
         expect(textMap).to.eq(map);
         const latlng = map.pm.Draw.Text._hintMarker.getLatLng();
         const pxLatLng = map.containerPointToLatLng([200, 150]);
@@ -207,10 +207,10 @@ describe('Text Layer', () => {
 
       cy.get(mapSelector).click(90, 250);
 
-      let textArea;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
+        expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+        const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
         textArea = textLayer.pm.getElement();
         cy.get(textArea).type('Hello World');
       });
@@ -235,10 +235,10 @@ describe('Text Layer', () => {
 
       cy.get(mapSelector).click(90, 250);
 
-      let textArea;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
+        expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+        const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
         textArea = textLayer.pm.getElement();
         expect(textArea.style.width).to.eq('16px');
         cy.get(textArea).type('Hello World');
@@ -260,10 +260,10 @@ describe('Text Layer', () => {
 
       cy.get(mapSelector).click(90, 250);
 
-      let textArea;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map }) => {
-        expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-        const textLayer = map.pm.getGeomanDrawLayers()[0];
+        expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+        const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
         textArea = textLayer.pm.getElement();
         expect(textArea.style.width).to.eq('16px');
         cy.get(textArea).type('Hello World');
@@ -304,10 +304,10 @@ describe('Text Layer', () => {
 
         cy.get(mapSelector).click(90, 250);
 
-        let textArea;
+        let textArea: HTMLTextAreaElement;
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-          const textLayer = map.pm.getGeomanDrawLayers()[0];
+          expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+          const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
           textArea = textLayer.pm.getElement();
           cy.get(textArea).type('Hello World');
         });
@@ -332,10 +332,10 @@ describe('Text Layer', () => {
 
         cy.get(mapSelector).click(90, 250);
 
-        let textArea;
+        let textArea: HTMLTextAreaElement;
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-          const textLayer = map.pm.getGeomanDrawLayers()[0];
+          expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+          const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
           textArea = textLayer.pm.getElement();
           expect(textArea.readOnly).to.eq(true);
           expect(textArea.classList.contains('pm-disabled')).to.eq(true);
@@ -356,10 +356,10 @@ describe('Text Layer', () => {
 
         cy.get(mapSelector).click(90, 250);
 
-        let textArea;
+        let textArea: HTMLTextAreaElement;
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-          const textLayer = map.pm.getGeomanDrawLayers()[0];
+          expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+          const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
           textArea = textLayer.pm.getElement();
           expect(textArea.value).to.eq('');
         });
@@ -367,7 +367,7 @@ describe('Text Layer', () => {
         cy.get(mapSelector).click(190, 250);
 
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+          expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
         });
       });
       it('adds css class with `className`', () => {
@@ -383,10 +383,10 @@ describe('Text Layer', () => {
 
         cy.get(mapSelector).click(90, 250);
 
-        let textArea;
+        let textArea: HTMLTextAreaElement;
         cy.window().then(({ map }) => {
-          expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
-          const textLayer = map.pm.getGeomanDrawLayers()[0];
+          expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
+          const textLayer = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
           textArea = textLayer.pm.getElement();
           expect(textArea.classList.contains('test1')).to.eq(true);
           expect(textArea.classList.contains('test2')).to.eq(true);
@@ -397,8 +397,8 @@ describe('Text Layer', () => {
 
   describe('Editing', () => {
     it('foucs()', () => {
-      let textLayer;
-      let textArea;
+      let textLayer: L.Marker;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map, L }) => {
         textLayer = L.marker(map.getCenter(), {
           textMarker: true,
@@ -428,8 +428,8 @@ describe('Text Layer', () => {
       });
     });
     it('blur()', () => {
-      let textLayer;
-      let textArea;
+      let textLayer: L.Marker;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map, L }) => {
         textLayer = L.marker(map.getCenter(), {
           textMarker: true,
@@ -452,8 +452,8 @@ describe('Text Layer', () => {
       });
     });
     it('hasFocus', () => {
-      let textLayer;
-      let textArea;
+      let textLayer: L.Marker;
+      let textArea: HTMLTextAreaElement;
       cy.window().then(({ map, L }) => {
         textLayer = L.marker(map.getCenter(), {
           textMarker: true,
@@ -551,7 +551,7 @@ describe('Text Layer', () => {
   });
   describe('Events', () => {
     it("fire event 'pm:textchange'", () => {
-      let textLayer;
+      let textLayer: L.Marker;
       let event = '';
       cy.window().then(({ map, L }) => {
         textLayer = L.marker(map.getCenter(), {
@@ -575,7 +575,7 @@ describe('Text Layer', () => {
     });
 
     it("fire event 'pm:edit'", () => {
-      let textLayer;
+      let textLayer: L.Marker;
       let event = '';
       cy.window().then(({ map, L }) => {
         textLayer = L.marker(map.getCenter(), {
@@ -600,7 +600,7 @@ describe('Text Layer', () => {
     });
 
     it("fire event 'pm:update'", () => {
-      let textLayer;
+      let textLayer: L.Marker;
       let event = '';
       cy.window().then(({ map, L }) => {
         textLayer = L.marker(map.getCenter(), {
@@ -625,7 +625,7 @@ describe('Text Layer', () => {
     });
 
     it("fire event 'pm:textfocus'", () => {
-      let textLayer;
+      let textLayer: L.Marker;
       let event = '';
       cy.window().then(({ map, L }) => {
         textLayer = L.marker(map.getCenter(), {
@@ -646,7 +646,7 @@ describe('Text Layer', () => {
     });
 
     it("fire event 'pm:textblur'", () => {
-      let textLayer;
+      let textLayer: L.Marker;
       let event = '';
       cy.window().then(({ map, L }) => {
         textLayer = L.marker(map.getCenter(), {
@@ -668,7 +668,7 @@ describe('Text Layer', () => {
     });
 
     it("fire event 'pm:textblur' only once", () => {
-      let textLayer;
+      let textLayer: L.Marker;
       let event = '';
       let count = 0;
       cy.window().then(({ map, L }) => {

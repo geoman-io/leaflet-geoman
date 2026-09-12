@@ -213,21 +213,29 @@ describe('Draw & Edit Poly', () => {
   it('removes layer when cut completely', () => {
     cy.window().then(({ map }) => {
       Cypress.$(map).on('pm:create', ({ originalEvent }) => {
-        const { layer } = originalEvent;
-        layer.options.cypress = true;
+        const { layer } = originalEvent as unknown as {
+          layer: L.Polygon & L.LayerGroup & { _map: L.Map };
+        };
+        (layer.options as L.LayerOptions & { cypress: boolean }).cypress = true;
       });
 
       Cypress.$(map).on('pm:cut', ({ originalEvent }) => {
-        const { layer } = originalEvent;
+        const { layer } = originalEvent as unknown as {
+          layer: L.Polygon & L.LayerGroup & { _map: L.Map };
+        };
 
         expect(Object.keys(layer.getLayers())).to.have.lengthOf(0);
       });
 
       Cypress.$(map).on('pm:remove', ({ originalEvent }) => {
-        const { layer } = originalEvent;
+        const { layer } = originalEvent as unknown as {
+          layer: L.Polygon & L.LayerGroup & { _map: L.Map };
+        };
 
         expect(layer._map).to.be.null;
-        expect(layer.options.cypress).to.equal(true);
+        expect(
+          (layer.options as L.LayerOptions & { cypress?: boolean }).cypress
+        ).to.equal(true);
       });
     });
 
@@ -256,8 +264,8 @@ describe('Draw & Edit Poly', () => {
       });
 
       map.on('pm:create', (event) => {
-        const poly = event.layer;
-        poly.pm.enable({
+        const poly = (event as unknown as { layer: L.Polygon }).layer;
+        (poly as L.Polygon).pm.enable({
           allowSelfIntersection: false,
         });
       });
@@ -410,13 +418,20 @@ describe('Draw & Edit Poly', () => {
         return l;
       })
         .as('poly')
-        .then((poly) => poly._latlngs[0][0])
+        .then(
+          (poly) =>
+            (poly as unknown as { _latlngs: L.LatLng[][] })._latlngs[0][0]
+        )
         .as('firstLatLng');
     });
 
     cy.get('@poly').then((poly) => {
       Cypress.$(poly).on('pm:vertexadded', ({ originalEvent: event }) => {
-        const { layer, indexPath, latlng } = event;
+        const { layer, indexPath, latlng } = event as unknown as {
+          layer: { _latlngs: L.LatLng[][] };
+          indexPath: number[];
+          latlng: L.LatLng;
+        };
         const newLatLng = Cypress._.get(layer._latlngs, indexPath);
         expect(latlng.lat).to.equal(newLatLng.lat);
         expect(latlng.lng).to.equal(newLatLng.lng);
@@ -438,7 +453,7 @@ describe('Draw & Edit Poly', () => {
     cy.window().then(({ map }) => {
       // test pm:create event
       Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
-        const poly = event.layer;
+        const poly = (event as unknown as { layer: L.Polygon }).layer;
         poly.pm.enable();
 
         const markers = poly.pm._markers[0];
@@ -446,7 +461,9 @@ describe('Draw & Edit Poly', () => {
       });
 
       Cypress.$(map).on('pm:remove', ({ originalEvent: event }) => {
-        const layer = event.target;
+        const layer = (
+          event as unknown as { target: L.Layer & { map?: L.Map } }
+        ).target;
 
         expect(layer.map).to.be.undefined;
       });
@@ -538,7 +555,7 @@ describe('Draw & Edit Poly', () => {
   it('fire pm:cut AFTER the actual cut is visible on the map', () => {
     cy.window().then(({ map, L }) => {
       Cypress.$(map).on('pm:cut', () => {
-        const layers = [];
+        const layers: L.Polygon[] = [];
 
         map.eachLayer((layer) => {
           if (layer instanceof L.Polygon) {
@@ -673,7 +690,7 @@ describe('Draw & Edit Poly', () => {
       cy.fixture('PolygonIntersects')
         .then((json) => {
           const layer = L.geoJSON(json).getLayers()[0].addTo(map);
-          const bounds = layer.getBounds();
+          const bounds = (layer as L.Polygon).getBounds();
           map.fitBounds(bounds);
           return layer;
         })
@@ -850,8 +867,8 @@ describe('Draw & Edit Poly', () => {
 
     cy.window().then(({ map }) => {
       const drawPane = map._panes.draw;
-      const polygon = map.pm.getGeomanDrawLayers()[0];
-      expect(drawPane.className).to.eq(polygon.getPane().className);
+      const polygon = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
+      expect(drawPane.className).to.eq(polygon.getPane()!.className);
     });
   });
 
@@ -872,7 +889,7 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(190, 60);
 
     cy.window().then(({ map }) => {
-      const lastLatLng = map.pm.Draw.Polygon._layer.getLatLngs()[1];
+      const lastLatLng = map.pm.Draw.Polygon._layer.getLatLngs()[1] as L.LatLng;
       const point = map.latLngToContainerPoint(lastLatLng);
       expect(point.y).to.eq(60);
     });
@@ -896,14 +913,14 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq((map.pm.getGeomanDrawLayers() as L.Polygon[]).length);
     });
 
     cy.toolbarButton('delete').click();
     cy.get(mapSelector).click(160, 50);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Polygon[]).length);
     });
   });
 
@@ -928,14 +945,14 @@ describe('Draw & Edit Poly', () => {
 
     cy.window().then(({ map }) => {
       map.pm.Draw.Polygon._finishShape();
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Polygon[]).length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
       map.pm.Draw.Polygon._finishShape();
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq((map.pm.getGeomanDrawLayers() as L.Polygon[]).length);
     });
   });
 
@@ -961,7 +978,7 @@ describe('Draw & Edit Poly', () => {
 
     // Verify polygon was created
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Polygon[]).length);
     });
 
     // Verify it has correct vertices
@@ -984,7 +1001,7 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).rightclick(160, 50);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Polygon[]).length);
     });
   });
 
@@ -1003,7 +1020,7 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(160, 50);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Polygon[]).length);
     });
   });
 
@@ -1022,7 +1039,7 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(160, 50);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       expect(layer.pm._safeToCacheDragState).to.eq(undefined);
     });
   });
@@ -1034,9 +1051,9 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(250, 50);
     cy.get(mapSelector).click(150, 250);
 
-    let layer;
+    let layer: L.Polygon;
     cy.window().then(({ map }) => {
-      [layer] = map.pm.getGeomanDrawLayers();
+      [layer] = map.pm.getGeomanDrawLayers() as L.Polygon[];
       map.pm.setGlobalOptions({ allowCutting: false });
     });
 
@@ -1047,7 +1064,7 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(180, 230);
 
     cy.window().then(({ map }) => {
-      const layer2 = map.pm.getGeomanDrawLayers()[0];
+      const layer2 = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       expect(layer).to.eq(layer2);
     });
   });
@@ -1077,10 +1094,10 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(250, 250);
     cy.get(mapSelector).click(390, 60);
 
-    let layer;
+    let layer: L.Polygon;
     cy.window().then(({ map }) => {
-      const cutlayer = map.pm.getGeomanDrawLayers()[0];
-      [, layer] = map.pm.getGeomanDrawLayers();
+      const cutlayer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
+      [, layer] = map.pm.getGeomanDrawLayers() as L.Polygon[];
       map.pm.enableDraw('Cut', { layersToCut: [cutlayer] });
     });
 
@@ -1137,7 +1154,7 @@ describe('Draw & Edit Poly', () => {
 
   it('addVertexValidation / removeVertexValidation', () => {
     cy.window().then(({ map }) => {
-      const check = ({ layer }) => layer._valid;
+      const check = ({ layer }: { layer: L.Layer }) => layer._valid!;
       map.pm.setGlobalOptions({
         addVertexValidation: check,
         removeVertexValidation: check,
@@ -1161,7 +1178,7 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(3);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       layer._valid = true;
     });
 
@@ -1309,21 +1326,21 @@ describe('Draw & Edit Poly', () => {
       ]);
       map.pm.Draw.Polygon._createVertex({
         latlng: [20.53837097209846, 72.22334801861803],
-      });
+      } as unknown as L.LeafletMouseEvent);
 
       map.pm.Draw.Polygon._hintMarker.setLatLng([
         20.21581109239457, 72.13073730468751,
       ]);
       map.pm.Draw.Polygon._createVertex({
         latlng: [20.21581109239457, 72.13073730468751],
-      });
+      } as unknown as L.LeafletMouseEvent);
 
       map.pm.Draw.Polygon._hintMarker.setLatLng([
         20.205501205844214, 72.77893066406251,
       ]);
       map.pm.Draw.Polygon._createVertex({
         latlng: [20.205501205844214, 72.77893066406251],
-      });
+      } as unknown as L.LeafletMouseEvent);
     });
 
     cy.get(mapSelector).trigger('mousemove', 413, 180);
@@ -1444,9 +1461,13 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(150, 60);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0][0].lat).to.eq(51.5255134425896);
-      expect(layer.getLatLngs()[0][0].lng).to.eq(-0.15071868896484378);
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[1];
+      expect((layer.getLatLngs() as L.LatLng[][])[0][0].lat).to.eq(
+        51.5255134425896
+      );
+      expect((layer.getLatLngs() as L.LatLng[][])[0][0].lng).to.eq(
+        -0.15071868896484378
+      );
     });
 
     cy.toolbarButton('edit').click();
@@ -1456,14 +1477,18 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).trigger('mouseup', 150, 55, { which: 1 });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0][0].lat).to.eq(51.52594064813257);
-      expect(layer.getLatLngs()[0][0].lng).to.eq(-0.15037536621093753);
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[1];
+      expect((layer.getLatLngs() as L.LatLng[][])[0][0].lat).to.eq(
+        51.52594064813257
+      );
+      expect((layer.getLatLngs() as L.LatLng[][])[0][0].lng).to.eq(
+        -0.15037536621093753
+      );
     });
   });
 
   it('keeps alt coordinate after editing a vertex', () => {
-    let polygon;
+    let polygon: L.Polygon;
 
     cy.window().then(({ map, L }) => {
       polygon = L.polygon([
@@ -1482,7 +1507,7 @@ describe('Draw & Edit Poly', () => {
         polygon
           .getLatLngs()
           .flat()
-          .map((a) => a.alt)
+          .map((a) => (a as L.LatLng).alt)
           .join(',')
       ).to.equal('111,222,333,444');
     });
@@ -1498,7 +1523,7 @@ describe('Draw & Edit Poly', () => {
         polygon
           .getLatLngs()
           .flat()
-          .map((a) => a.alt)
+          .map((a) => (a as L.LatLng).alt)
           .join(',')
       ).to.equal('111,222,333,444');
     });

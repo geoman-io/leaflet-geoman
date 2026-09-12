@@ -28,7 +28,9 @@ describe('Opens Testing Environment', () => {
 
     cy.window().then(({ map }) => {
       const point = map.latLngToContainerPoint([18.74469, 72.1258]);
-      cy.get(mapSelector).click(point);
+      cy.get(mapSelector).click(
+        point as unknown as Partial<Cypress.ClickOptions>
+      );
     });
 
     cy.window().then(() => {
@@ -38,7 +40,7 @@ describe('Opens Testing Environment', () => {
 
   it('Drags ImageOverlay', () => {
     let eventcalled = false;
-    let io;
+    let io: L.ImageOverlay;
     cy.window().then(({ map, L }) => {
       map.setView([18.74469, 72.1258], 10);
       const icon =

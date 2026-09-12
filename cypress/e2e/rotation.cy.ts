@@ -10,7 +10,7 @@ describe('Rotation', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       expect(layer.pm.getAngle()).to.equal(0);
 
       layer.pm.rotateLayer(30);
@@ -36,7 +36,7 @@ describe('Rotation', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       expect(layer.pm.rotateEnabled()).to.equal(false);
 
       layer.pm.enableRotate();
@@ -46,7 +46,7 @@ describe('Rotation', () => {
     cy.hasVertexMarkers(4);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
 
       layer.pm.disableRotate();
       expect(layer.pm.rotateEnabled()).to.equal(false);
@@ -63,7 +63,7 @@ describe('Rotation', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
 
       map.pm.enableGlobalRotateMode();
       expect(layer.pm.rotateEnabled()).to.equal(true);
@@ -73,7 +73,7 @@ describe('Rotation', () => {
     cy.hasVertexMarkers(4);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
 
       map.pm.disableGlobalRotateMode();
       expect(layer.pm.rotateEnabled()).to.equal(false);
@@ -112,13 +112,15 @@ describe('Rotation', () => {
     cy.hasVertexMarkers(4);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       layer.pm.rotateLayer(30);
       expect(layer.pm.getAngle()).to.equal(30);
 
       // Marker is on the correct position
       expect(
-        layer.getLatLngs()[0][0].equals(layer.pm._rotatePoly.getLatLngs()[0][0])
+        (layer.getLatLngs() as L.LatLng[][])[0][0].equals(
+          (layer.pm._rotatePoly.getLatLngs() as L.LatLng[][])[0][0]
+        )
       ).to.equal(true);
     });
   });
@@ -136,12 +138,12 @@ describe('Rotation', () => {
     cy.get(mapSelector).click(200, 200).click(600, 350);
 
     cy.window().then(({ map, L }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       expect(layer.pm.getAngle()).to.equal(40);
       expect(
-        layer
-          .getLatLngs()[0][1]
-          .equals(L.latLng([51.48267237710426, -0.08847595304329439]))
+        (layer.getLatLngs() as L.LatLng[][])[0][1].equals(
+          L.latLng([51.48267237710426, -0.08847595304329439])
+        )
       ).to.equal(true);
     });
   });
@@ -155,9 +157,9 @@ describe('Rotation', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       layer.pm.enableRotate();
-      const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
+      const marker1 = (layer.pm._rotatePoly.pm._markers as L.Marker[][])[0][0];
       marker1.fire('dragstart', { target: marker1 });
       marker1.setLatLng(map.containerPointToLatLng([200, 210]));
       marker1.fire('drag', { target: marker1 });
@@ -182,9 +184,11 @@ describe('Rotation', () => {
       .click(400, 150);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       layer.pm.enableRotate();
-      const marker1 = layer.pm._rotatePoly.pm._markers[0][0][0];
+      const marker1 = (
+        layer.pm._rotatePoly.pm._markers as unknown as L.Marker[][][]
+      )[0][0][0];
       marker1.fire('dragstart', { target: marker1 });
       marker1.setLatLng(map.containerPointToLatLng([200, 210]));
       marker1.fire('drag', { target: marker1 });
@@ -201,18 +205,18 @@ describe('Rotation', () => {
     cy.get(mapSelector).click(200, 200).click(600, 350);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       layer.pm.enableRotate();
       const rotatePoly = layer.pm._rotatePoly;
       layer.remove();
-      expect(!!rotatePoly._map).to.eq(false);
+      expect(!!rotatePoly['_map']).to.eq(false);
     });
   });
 
   it('rotate a new added layer', () => {
     cy.window().then(({ map, L }) => {
       expect(() => {
-        const coords = [
+        const coords: L.LatLngBoundsLiteral = [
           [1, 2],
           [3, 4],
         ];
@@ -224,7 +228,7 @@ describe('Rotation', () => {
 
   it('gets and sets rotation center', () => {
     cy.window().then(({ map, L }) => {
-      const coords = [
+      const coords: L.LatLngBoundsLiteral = [
         [0, 0],
         [4, 4],
       ];
@@ -258,7 +262,7 @@ describe('Rotation', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       const origin = map.containerPointToLatLng([200, 200]);
       layer.pm.setRotationCenter(origin);
 
@@ -271,7 +275,7 @@ describe('Rotation', () => {
         { x: 50, y: 400 },
       ];
 
-      const px = layer.getLatLngs()[0].map((latlng) => {
+      const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
         return { x: point.x, y: point.y };
       });
@@ -289,7 +293,7 @@ describe('Rotation', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       const origin = map.containerPointToLatLng([200, 200]);
       layer.pm.setRotationCenter(origin);
     });
@@ -297,8 +301,8 @@ describe('Rotation', () => {
     cy.toolbarButton('rotate').click();
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
+      const marker1 = (layer.pm._rotatePoly.pm._markers as L.Marker[][])[0][0];
       marker1.fire('dragstart', { target: marker1 });
       marker1.setLatLng(map.containerPointToLatLng([300, 310]));
       marker1.fire('drag', { target: marker1 });
@@ -325,8 +329,8 @@ describe('Rotation', () => {
         },
       ];
 
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      const px = layer.getLatLngs()[0].map((latlng) => {
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
+      const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
         return { x: point.x, y: point.y };
       });
@@ -345,14 +349,14 @@ describe('Rotation', () => {
     cy.toolbarButton('rotate').click();
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       const origin = map.containerPointToLatLng([200, 200]);
       layer.pm.setRotationCenter(origin);
     });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
+      const marker1 = (layer.pm._rotatePoly.pm._markers as L.Marker[][])[0][0];
       marker1.fire('dragstart', { target: marker1 });
       marker1.setLatLng(map.containerPointToLatLng([300, 310]));
       marker1.fire('drag', { target: marker1 });
@@ -379,8 +383,8 @@ describe('Rotation', () => {
         },
       ];
 
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      const px = layer.getLatLngs()[0].map((latlng) => {
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
+      const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
         return { x: point.x, y: point.y };
       });
@@ -390,20 +394,20 @@ describe('Rotation', () => {
 
   it("doesn't return the rotation help-layer over getGeomanLayers()", () => {
     cy.window().then(({ map, L }) => {
-      const coords = [
+      const coords: L.LatLngBoundsLiteral = [
         [1, 2],
         [3, 4],
       ];
       const rect = L.rectangle(coords).addTo(map);
       rect.pm.enableRotate();
 
-      expect(map.pm.getGeomanLayers().length).to.eq(1);
+      expect((map.pm.getGeomanLayers() as L.Polygon[]).length).to.eq(1);
     });
   });
 
   it('fixes enabling rotation multiple times', () => {
     cy.window().then(({ map, L }) => {
-      const coords = [
+      const coords: L.LatLngBoundsLiteral = [
         [1, 2],
         [3, 4],
       ];
@@ -412,18 +416,18 @@ describe('Rotation', () => {
       rect.pm.enableRotate();
 
       cy.hasVertexMarkers(4);
-      expect(map.pm.getGeomanLayers().length).to.eq(1);
+      expect((map.pm.getGeomanLayers() as L.Polygon[]).length).to.eq(1);
     });
   });
 
   it('prevents enabling rotation on temp layer', () => {
     cy.window().then(({ map, L }) => {
-      const coords = [
+      const coords: L.LatLngBoundsLiteral = [
         [1, 2],
         [3, 4],
       ];
       L.rectangle(coords).addTo(map);
-      const coords2 = [
+      const coords2: L.LatLngBoundsLiteral = [
         [2, 3],
         [3, 4],
       ];
@@ -433,7 +437,7 @@ describe('Rotation', () => {
       map.pm.enableGlobalRotateMode();
 
       cy.hasVertexMarkers(8);
-      expect(map.pm.getGeomanLayers().length).to.eq(2);
+      expect((map.pm.getGeomanLayers() as L.Polygon[]).length).to.eq(2);
     });
   });
 
@@ -446,16 +450,18 @@ describe('Rotation', () => {
         [0, 0],
         [0, 0],
       ]);
-      rectangle.setLatLngs(L.geoJSON(coords).getLayers()[0].getLatLngs());
+      rectangle.setLatLngs(
+        (L.geoJSON(coords).getLayers()[0] as L.Polygon).getLatLngs()
+      );
       rectangle.addTo(map);
     });
 
     cy.toolbarButton('rotate').click();
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
+      const layer = (map.pm.getGeomanLayers() as L.Polygon[])[0];
       layer.pm.enableRotate();
-      const marker1 = layer.pm._rotatePoly.pm._markers[0][0];
+      const marker1 = (layer.pm._rotatePoly.pm._markers as L.Marker[][])[0][0];
       marker1.fire('dragstart', { target: marker1 });
       marker1.setLatLng(map.containerPointToLatLng([200, 120]));
       marker1.fire('drag', { target: marker1 });
@@ -484,7 +490,7 @@ describe('Rotation', () => {
         },
       ];
 
-      const px = layer.getLatLngs()[0].map((latlng) => {
+      const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
         return { x: point.x, y: point.y };
       });

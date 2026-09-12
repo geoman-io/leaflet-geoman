@@ -119,7 +119,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).rightclick(300, 250);
 
     cy.window().then(({ map }) => {
-      const rect = map.pm.getGeomanDrawLayers()[0];
+      const rect = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[0];
       expect(rect.options.color).to.not.equal('#f00000ff');
     });
   });
@@ -141,7 +141,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).rightclick(300, 250);
 
     cy.window().then(({ map }) => {
-      const rect = map.pm.getGeomanDrawLayers()[0];
+      const rect = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[0];
       const geojson = rect.toGeoJSON();
       const coords = geojson.geometry.coordinates;
       expect(coords.length).to.equal(1);
@@ -169,7 +169,7 @@ describe('Draw Rectangle', () => {
   });
 
   it('disable popup on layer while drawing', () => {
-    let rect = null;
+    let rect: L.Rectangle | null = null;
     cy.window().then(({ map, L }) => {
       map.on('pm:create', (e) => {
         e.layer.bindPopup('Popup test');
@@ -188,16 +188,16 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      const len = map.pm.getGeomanDrawLayers().length;
+      const len = (map.pm.getGeomanDrawLayers() as L.Rectangle[]).length;
       expect(len).to.equal(2);
 
-      const text = rect.getPopup().getContent();
+      const text = rect!.getPopup()!.getContent();
       expect(text).to.equal('Popup test');
     });
   });
 
   it('disable popup on pmIgnore-layer while drawing', () => {
-    let rect = null;
+    let rect: L.Rectangle | null = null;
     cy.window().then(({ map, L }) => {
       map.on('pm:create', (e) => {
         e.layer.bindPopup('Popup test');
@@ -217,10 +217,10 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      const len = map.pm.getGeomanDrawLayers().length;
+      const len = (map.pm.getGeomanDrawLayers() as L.Rectangle[]).length;
       expect(len).to.equal(1);
 
-      const text = rect.getPopup().getContent();
+      const text = rect!.getPopup()!.getContent();
       expect(text).to.equal('Popup test');
     });
   });
@@ -259,11 +259,11 @@ describe('Draw Rectangle', () => {
     // click or mousemove is needed to init snapList
     cy.get(mapSelector).click(200, 100);
 
-    let layer;
+    let layer: L.Rectangle;
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
+      expect(map.pm.Draw.Rectangle._snapList!.length).to.equal(1);
       map.pm.disableDraw();
-      [layer] = map.pm.getGeomanDrawLayers();
+      [layer] = map.pm.getGeomanDrawLayers() as L.Rectangle[];
     });
 
     // test 2: snapIgnore: true, pmIgnore: undefined, optIn: false --> not snappable
@@ -275,7 +275,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
+      expect(map.pm.Draw.Rectangle._snapList!.length).to.equal(0);
       map.pm.disableDraw();
     });
 
@@ -289,7 +289,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
+      expect(map.pm.Draw.Rectangle._snapList!.length).to.equal(1);
       map.pm.disableDraw();
     });
 
@@ -303,7 +303,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
+      expect(map.pm.Draw.Rectangle._snapList!.length).to.equal(0);
       map.pm.disableDraw();
     });
 
@@ -318,7 +318,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
+      expect(map.pm.Draw.Rectangle._snapList!.length).to.equal(1);
       map.pm.disableDraw();
     });
 
@@ -332,7 +332,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(0);
+      expect(map.pm.Draw.Rectangle._snapList!.length).to.equal(0);
       map.pm.disableDraw();
     });
 
@@ -345,7 +345,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 100);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.Draw.Rectangle._snapList.length).to.equal(1);
+      expect(map.pm.Draw.Rectangle._snapList!.length).to.equal(1);
       map.pm.disableDraw();
     });
   });
@@ -369,13 +369,13 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Rectangle[]).length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq((map.pm.getGeomanDrawLayers() as L.Rectangle[]).length);
     });
   });
 
@@ -391,14 +391,14 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Rectangle[]).length);
     });
 
     cy.toolbarButton('rectangle').click();
     cy.get(mapSelector).click(450, 250).click(390, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Rectangle[]).length);
     });
   });
 
@@ -407,7 +407,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[0];
       expect(layer.pm._map).to.not.eq(undefined);
     });
   });
@@ -427,7 +427,7 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      const layers = map.pm.getGeomanDrawLayers();
+      const layers = map.pm.getGeomanDrawLayers() as L.Rectangle[];
       const center1 = layers[0].getCenter();
       const center2 = layers[1].getCenter();
 
@@ -463,7 +463,7 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      const layers = map.pm.getGeomanDrawLayers();
+      const layers = map.pm.getGeomanDrawLayers() as L.Rectangle[];
       let center1 = layers[0].getCenter();
       let center2 = layers[1].getCenter();
 
@@ -526,7 +526,9 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      map.pm.getGeomanDrawLayers()[0].pm.options.allowEditing = false;
+      (
+        map.pm.getGeomanDrawLayers() as L.Rectangle[]
+      )[0].pm.options.allowEditing = false;
     });
 
     cy.toolbarButton('rectangle')
@@ -554,7 +556,9 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 200).click(400, 350);
 
     cy.window().then(({ map }) => {
-      map.pm.getGeomanDrawLayers()[0].pm.options.allowRotation = false;
+      (
+        map.pm.getGeomanDrawLayers() as L.Rectangle[]
+      )[0].pm.options.allowRotation = false;
     });
 
     cy.toolbarButton('rectangle')
@@ -589,7 +593,7 @@ describe('Draw Rectangle', () => {
       const markers = [
         drawRect._hintMarker,
         drawRect._startMarker,
-        ...drawRect._styleMarkers,
+        ...drawRect._styleMarkers!,
       ];
       const latlngs = markers.map((m) => m.getLatLng());
 
@@ -598,7 +602,7 @@ describe('Draw Rectangle', () => {
       latlngs.forEach((latlng) => {
         if (
           latlng.lat.toFixed(9) ===
-          map.options.crs.projection.MAX_LATITUDE.toFixed(9)
+          map.options.crs!.projection!.MAX_LATITUDE!.toFixed(9)
         ) {
           maxLatUsed += 1;
         }
@@ -609,7 +613,7 @@ describe('Draw Rectangle', () => {
   });
 
   it('Canvas drags syncLayers', () => {
-    let mapCanvas;
+    let mapCanvas: L.Map;
 
     cy.window().then(({ L, map }) => {
       map.remove();
@@ -641,7 +645,7 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(() => {
-      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      const layers = mapCanvas.pm.getGeomanDrawLayers() as L.Rectangle[];
       let center1 = layers[0].getCenter();
       let center2 = layers[1].getCenter();
 
@@ -696,7 +700,7 @@ describe('Draw Rectangle', () => {
   });
 
   it('preferCanvas - drag a simple layer', () => {
-    let mapCanvas;
+    let mapCanvas: L.Map;
 
     cy.window().then(({ L, map }) => {
       map.remove();
@@ -725,7 +729,7 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(() => {
-      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      const layers = mapCanvas.pm.getGeomanDrawLayers() as L.Rectangle[];
       const center1 = layers[0].getCenter();
 
       const layer = layers[0];
@@ -752,7 +756,7 @@ describe('Draw Rectangle', () => {
   });
 
   it('Canvas renderer - drag a simple layer', () => {
-    let mapCanvas;
+    let mapCanvas: L.Map;
 
     cy.window().then(({ L, map }) => {
       map.remove();
@@ -781,7 +785,7 @@ describe('Draw Rectangle', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(() => {
-      const layers = mapCanvas.pm.getGeomanDrawLayers();
+      const layers = mapCanvas.pm.getGeomanDrawLayers() as L.Rectangle[];
       const center1 = layers[0].getCenter();
 
       const layer = layers[0];
@@ -808,9 +812,9 @@ describe('Draw Rectangle', () => {
   });
 
   it('Canvas & SVG renderer - drag two layers', () => {
-    let mapCanvas;
-    let rect1;
-    let rect2;
+    let mapCanvas: L.Map;
+    let rect1: L.Rectangle;
+    let rect2: L.Rectangle;
 
     cy.window().then(({ L, map }) => {
       map.remove();
@@ -833,7 +837,7 @@ describe('Draw Rectangle', () => {
       mapCanvas.pm.addControls();
 
       mapCanvas.on('pm:create', (e) => {
-        rect1 = e.layer;
+        rect1 = e.layer as L.Rectangle;
         rect2 = L.rectangle(rect1.getBounds(), { renderer: L.svg() }).addTo(
           mapCanvas
         );
@@ -959,15 +963,17 @@ describe('Draw Rectangle', () => {
         [0, 0],
         [0, 0],
       ]);
-      rectangle.setLatLngs(L.geoJSON(coords).getLayers()[0].getLatLngs());
+      rectangle.setLatLngs(
+        (L.geoJSON(coords).getLayers()[0] as L.Polygon).getLatLngs()
+      );
       rectangle.addTo(map);
     });
 
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
-      const marker1 = layer.pm._markers[0][0];
+      const layer = (map.pm.getGeomanLayers() as L.Rectangle[])[0];
+      const marker1 = (layer.pm._markers as L.Marker[][])[0][0];
       marker1.fire('dragstart', { target: marker1 });
       marker1.setLatLng(map.containerPointToLatLng([200, 120]));
       marker1.fire('drag', { target: marker1 });
@@ -992,7 +998,7 @@ describe('Draw Rectangle', () => {
         },
       ];
 
-      const px = layer.getLatLngs()[0].map((latlng) => {
+      const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
         return { x: point.x, y: point.y };
       });
@@ -1012,7 +1018,7 @@ describe('Draw Rectangle', () => {
 
     cy.window().then(({ map }) => {
       let count = 0;
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[0];
       layer.on('pm:vertexclick', () => {
         count += 1;
         if (count >= 2) {
@@ -1037,7 +1043,7 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(200, 200);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanDrawLayers().length).to.eql(0);
+      expect((map.pm.getGeomanDrawLayers() as L.Rectangle[]).length).to.eql(0);
     });
   });
 
@@ -1061,9 +1067,15 @@ describe('Draw Rectangle', () => {
     cy.get(mapSelector).click(150, 60).click(250, 90);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0][1].lat).to.be.closeTo(51.52529983831507, 1e-10);
-      expect(layer.getLatLngs()[0][1].lng).to.be.closeTo(-0.15003204345703128, 1e-10);
+      const layer = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[1];
+      expect((layer.getLatLngs() as L.LatLng[][])[0][1].lat).to.be.closeTo(
+        51.52529983831507,
+        1e-10
+      );
+      expect((layer.getLatLngs() as L.LatLng[][])[0][1].lng).to.be.closeTo(
+        -0.15003204345703128,
+        1e-10
+      );
     });
 
     cy.toolbarButton('edit').click();
@@ -1074,9 +1086,15 @@ describe('Draw Rectangle', () => {
       .trigger('mouseup', 150, 55, { which: 1 });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0][1].lat).to.be.closeTo(51.525833847122584, 1e-10);
-      expect(layer.getLatLngs()[0][1].lng).to.be.closeTo(-0.13286590576171878, 1e-10);
+      const layer = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[1];
+      expect((layer.getLatLngs() as L.LatLng[][])[0][1].lat).to.be.closeTo(
+        51.525833847122584,
+        1e-10
+      );
+      expect((layer.getLatLngs() as L.LatLng[][])[0][1].lng).to.be.closeTo(
+        -0.13286590576171878,
+        1e-10
+      );
     });
   });
 });

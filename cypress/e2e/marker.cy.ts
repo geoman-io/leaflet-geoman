@@ -42,9 +42,9 @@ describe('Draw Marker', () => {
             }
           });
 
-          l.addLayer(m);
+          l!.addLayer(m);
           map.pm.disableDraw();
-          l.removeLayer(m);
+          l!.removeLayer(m);
 
           return m;
         })
@@ -158,7 +158,7 @@ describe('Draw Marker', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
+      const marker = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
       expect(marker.getLatLng().alt).to.eq(undefined);
       marker.getLatLng().alt = 10;
       expect(marker.getLatLng().alt).to.eq(10);
@@ -168,7 +168,7 @@ describe('Draw Marker', () => {
       const handMarker = new Hand({
         timing: 'frame',
         onStop: () => {
-          const marker = map.pm.getGeomanDrawLayers()[0];
+          const marker = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
           expect(marker.getLatLng().alt).to.eq(10);
           done();
         },
@@ -191,7 +191,7 @@ describe('Draw Marker', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
+      const marker = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
       const enabled = marker.pm.enabled();
       expect(enabled).to.equal(true);
     });
@@ -220,7 +220,7 @@ describe('Draw Marker', () => {
     cy.get(mapSelector).click(191, 216);
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
+      const marker = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
       const enabled = marker.pm.enabled();
       expect(enabled).to.equal(false);
     });
@@ -238,7 +238,7 @@ describe('Draw Marker', () => {
     cy.get(mapSelector).click(191, 216);
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
+      const marker = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
       const enabled = marker.pm.enabled();
       expect(enabled).to.equal(true);
     });
@@ -266,13 +266,13 @@ describe('Draw Marker', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq((map.pm.getGeomanDrawLayers() as L.Marker[]).length);
     });
   });
   it('fires pm:update after edit', () => {
@@ -281,7 +281,7 @@ describe('Draw Marker', () => {
 
     let updateFired = false;
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
+      const marker = (map.pm.getGeomanDrawLayers() as L.Marker[])[0];
       marker.on('pm:update', () => {
         updateFired = true;
       });
@@ -313,7 +313,9 @@ describe('Draw Marker', () => {
       });
 
       const layer = map.pm.Draw.Marker._hintMarker;
-      expect(layer._icon.src.endsWith('someIcon.png')).to.eql(true);
+      expect(
+        (layer!._icon as HTMLImageElement).src.endsWith('someIcon.png')
+      ).to.eql(true);
     });
   });
 
@@ -323,7 +325,7 @@ describe('Draw Marker', () => {
     cy.get(mapSelector).click(150, 250);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanDrawLayers().length).to.eq(1);
+      expect((map.pm.getGeomanDrawLayers() as L.Marker[]).length).to.eq(1);
     });
 
     cy.get(mapSelector).trigger('mousedown', 150, 230, { which: 1 });
@@ -334,14 +336,14 @@ describe('Draw Marker', () => {
     cy.get(mapSelector).trigger('mousemove', 190, 340, { which: 1 });
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanDrawLayers().length).to.eq(1);
+      expect((map.pm.getGeomanDrawLayers() as L.Marker[]).length).to.eq(1);
     });
 
     // Create a new marker after dragging with clicking on the icon of a marker
     cy.get(mapSelector).click(170, 290);
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanDrawLayers().length).to.eq(2);
+      expect((map.pm.getGeomanDrawLayers() as L.Marker[]).length).to.eq(2);
     });
   });
 });

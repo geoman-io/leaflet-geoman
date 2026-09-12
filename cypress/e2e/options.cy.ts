@@ -105,16 +105,16 @@ describe('Options', () => {
       map.pm.setPathOptions({
         color: 'red',
       });
-      expect(map.pm.Draw.Line.options.pathOptions.color).to.equal('red');
-      expect(map.pm.Draw.Line.options.pathOptions.borderColor).to.equal(
+      expect(map.pm.Draw.Line.options.pathOptions!.color).to.equal('red');
+      expect(map.pm.Draw.Line.options.pathOptions!.borderColor).to.equal(
         undefined
       );
 
       map.pm.setPathOptions({
         borderColor: 'green',
       });
-      expect(map.pm.Draw.Line.options.pathOptions.color).to.equal(undefined);
-      expect(map.pm.Draw.Line.options.pathOptions.borderColor).to.equal(
+      expect(map.pm.Draw.Line.options.pathOptions!.color).to.equal(undefined);
+      expect(map.pm.Draw.Line.options.pathOptions!.borderColor).to.equal(
         'green'
       );
 
@@ -124,8 +124,8 @@ describe('Options', () => {
         },
         { merge: true }
       );
-      expect(map.pm.Draw.Line.options.pathOptions.color).to.equal('red');
-      expect(map.pm.Draw.Line.options.pathOptions.borderColor).to.equal(
+      expect(map.pm.Draw.Line.options.pathOptions!.color).to.equal('red');
+      expect(map.pm.Draw.Line.options.pathOptions!.borderColor).to.equal(
         'green'
       );
     });

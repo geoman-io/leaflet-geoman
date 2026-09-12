@@ -55,8 +55,8 @@ describe('Edit LayerGroup', () => {
   });
 
   it('adds the created layers to a layergroup', () => {
-    let fg;
-    let fg2;
+    let fg: L.FeatureGroup;
+    let fg2: L.FeatureGroup;
 
     // Add layer to group
     cy.window().then(({ L, map }) => {
@@ -135,7 +135,7 @@ describe('Edit LayerGroup', () => {
   });
 
   it('pass the fired event of the layer to group', () => {
-    let fg;
+    let fg: L.FeatureGroup;
     let firedEvent = '';
 
     cy.window().then(({ map, L }) => {
@@ -306,7 +306,7 @@ describe('Edit LayerGroup', () => {
   });
 
   it('re-init GeoJSON OptIn', () => {
-    let layerGroup;
+    let layerGroup: L.FeatureGroup;
     cy.window().then(({ map, L }) => {
       cy.fixture('LineString')
         .as('poly')
@@ -318,7 +318,7 @@ describe('Edit LayerGroup', () => {
     });
 
     cy.window().then(({ map, L }) => {
-      expect(map.pm.getGeomanLayers().length).to.eq(0);
+      expect((map.pm.getGeomanLayers() as L.Polyline[]).length).to.eq(0);
 
       // enable all child layers of the group
       layerGroup.setStyle({ pmIgnore: false });
@@ -327,7 +327,7 @@ describe('Edit LayerGroup', () => {
       L.PM.reInitLayer(layerGroup);
 
       expect(layerGroup.pm).to.not.eq(undefined);
-      expect(map.pm.getGeomanLayers().length).to.eq(6);
+      expect((map.pm.getGeomanLayers() as L.Polyline[]).length).to.eq(6);
     });
   });
 
@@ -340,7 +340,7 @@ describe('Edit LayerGroup', () => {
 
     cy.window().then(({ map, L }) => {
       const fg = L.featureGroup().addTo(map);
-      const layers = map.pm.getGeomanDrawLayers();
+      const layers = map.pm.getGeomanDrawLayers() as L.Polyline[];
       layers.forEach((layer) => {
         fg.addLayer(layer);
       });

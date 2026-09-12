@@ -214,7 +214,7 @@ describe('Testing the Toolbar', () => {
         cy.get(container[0])
           .should('have.attr', 'title')
           .and('include', 'Count layers');
-        container[0].children[0].click(); // button
+        (container[0].children[0] as HTMLElement).click(); // button
         expect(testresult).to.equal('clickButton clicked');
         cy.get(container).should('not.have.class', 'active');
       });
@@ -233,10 +233,12 @@ describe('Testing the Toolbar', () => {
 
     cy.window().then(({ map }) => {
       let testresult = '';
-      let testlayer;
+      let testlayer: L.Polyline;
 
       // Copy of Polygon Button
-      const actions = [
+      const actions: Parameters<
+        L.Map['pm']['Toolbar']['changeActionsOfControl']
+      >[1] = [
         'cancel',
         { text: 'Custom text, no click' },
         {
@@ -539,7 +541,7 @@ describe('Testing the Toolbar', () => {
       });
 
       cy.toolbarButtonContainer('alertBox', map).then((container) => {
-        container[0].children[0].click(); // button
+        (container[0].children[0] as HTMLElement).click(); // button
       });
     });
 
@@ -557,7 +559,7 @@ describe('Testing the Toolbar', () => {
       });
 
       cy.toolbarButtonContainer('alertBox', map).then((container) => {
-        container[0].children[0].click(); // button
+        (container[0].children[0] as HTMLElement).click(); // button
       });
     });
 

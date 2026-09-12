@@ -48,13 +48,13 @@ describe('Draw & Edit Line', () => {
   it('respects custom style', () => {
     cy.window().then(({ map }) => {
       map.on('pm:create', (e) => {
-        e.layer.pm.enable({
+        (e.layer as L.Polyline).pm.enable({
           allowSelfIntersection: false,
           snappable: false,
           snapDistance: 20,
         });
 
-        e.layer.setStyle({ color: 'black' });
+        (e.layer as L.Polyline).setStyle({ color: 'black' });
       });
 
       map.pm.enableDraw('Polygon', {
@@ -243,7 +243,7 @@ describe('Draw & Edit Line', () => {
     cy.hasMiddleMarkers(7);
 
     cy.window().then(({ map }) => {
-      const layers = map.pm.getGeomanDrawLayers();
+      const layers = map.pm.getGeomanDrawLayers() as L.Polyline[];
       expect(layers.length).to.eq(1);
       expect(layers[0].getLatLngs().length).to.eq(5);
     });
@@ -270,14 +270,14 @@ describe('Draw & Edit Line', () => {
 
     cy.window().then(({ map }) => {
       map.pm.Draw.Line._finishShape();
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Polyline[]).length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
       map.pm.Draw.Line._finishShape();
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq((map.pm.getGeomanDrawLayers() as L.Polyline[]).length);
     });
   });
 
@@ -305,7 +305,7 @@ describe('Draw & Edit Line', () => {
 
     cy.hasLayers(7);
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polyline[])[0];
       layer.remove();
     });
     cy.hasLayers(2);
@@ -441,9 +441,15 @@ describe('Draw & Edit Line', () => {
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0].lat).to.be.closeTo(51.52538802368748, 1e-10);
-      expect(layer.getLatLngs()[0].lng).to.be.closeTo(-0.15050450596240997, 1e-10);
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polyline[])[1];
+      expect((layer.getLatLngs() as L.LatLng[])[0].lat).to.be.closeTo(
+        51.52538802368748,
+        1e-10
+      );
+      expect((layer.getLatLngs() as L.LatLng[])[0].lng).to.be.closeTo(
+        -0.15050450596240997,
+        1e-10
+      );
     });
 
     cy.toolbarButton('edit').click();
@@ -453,9 +459,15 @@ describe('Draw & Edit Line', () => {
     cy.get(mapSelector).trigger('mouseup', 150, 55, { which: 1 });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[1];
-      expect(layer.getLatLngs()[0].lat).to.be.closeTo(51.5258877375718, 1e-10);
-      expect(layer.getLatLngs()[0].lng).to.be.closeTo(-0.15026355008465944, 1e-10);
+      const layer = (map.pm.getGeomanDrawLayers() as L.Polyline[])[1];
+      expect((layer.getLatLngs() as L.LatLng[])[0].lat).to.be.closeTo(
+        51.5258877375718,
+        1e-10
+      );
+      expect((layer.getLatLngs() as L.LatLng[])[0].lng).to.be.closeTo(
+        -0.15026355008465944,
+        1e-10
+      );
     });
   });
 });

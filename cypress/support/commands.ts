@@ -41,12 +41,12 @@ Cypress.Commands.add('hasDrawnLayers', (count) => {
 });
 
 Cypress.Commands.add('testLayerAdditionPerformance', () => {
-  let t0;
+  let t0: number;
 
   cy.window().then(({ map, L }) => {
     t0 = performance.now();
 
-    function getRandomLatLng() {
+    function getRandomLatLng(_map?: L.Map) {
       const bounds = map.getBounds();
       const southWest = bounds.getSouthWest();
       const northEast = bounds.getNorthEast();
@@ -206,7 +206,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     }
 
     if (shape === 'FeatureCollectionWithCircles') {
-      cy.fixture(shape, ignore)
+      cy.fixture(shape, ignore as unknown as Cypress.Timeoutable)
         .then((json) => {
           const layer = L.geoJson(json, {
             pmIgnore: ignore,

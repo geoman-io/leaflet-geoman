@@ -143,7 +143,7 @@ describe('Draw Circle', () => {
         .click(250, 200)
         .click(400, 190)
         .then(() => {
-          const layers = map.pm.getGeomanDrawLayers();
+          const layers = map.pm.getGeomanDrawLayers() as L.Circle[];
           layers.forEach((layer) => {
             if (layer instanceof L.Circle) {
               expect(layer.getRadius()).to.equal(1500);
@@ -168,7 +168,7 @@ describe('Draw Circle', () => {
         .click(250, 200)
         .click(300, 190)
         .then(() => {
-          const layers = map.pm.getGeomanDrawLayers();
+          const layers = map.pm.getGeomanDrawLayers() as L.Circle[];
           layers.forEach((layer) => {
             if (layer instanceof L.Circle) {
               expect(layer.getRadius()).to.equal(1500);
@@ -196,18 +196,18 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq((map.pm.getGeomanDrawLayers() as L.Circle[]).length);
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq((map.pm.getGeomanDrawLayers() as L.Circle[]).length);
     });
   });
 
   it('Editing circle on CRS Simple Map', () => {
-    let mapSimple;
+    let mapSimple: L.Map;
     cy.window().then(({ map, L }) => {
       map.remove();
       mapSimple = L.map('map', {
@@ -224,12 +224,14 @@ describe('Draw Circle', () => {
     cy.toolbarButton('edit').click();
 
     cy.window().then(() => {
-      expect(1).to.eq(mapSimple.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(
+        (mapSimple.pm.getGeomanDrawLayers() as L.Circle[]).length
+      );
 
-      const circle = mapSimple.pm.getGeomanDrawLayers()[0];
+      const circle = (mapSimple.pm.getGeomanDrawLayers() as L.Circle[])[0];
 
       // move marker
-      const marker = circle.pm._markers[1];
+      const marker = circle.pm._markers[1] as L.Marker;
       marker.setLatLng([marker.getLatLng().lng, marker.getLatLng().lat + 10]);
       circle.pm._resizeCircle();
 
@@ -238,7 +240,7 @@ describe('Draw Circle', () => {
   });
 
   it('Snapping to circle border on CRS Simple Map', () => {
-    let mapSimple;
+    let mapSimple: L.Map;
     cy.window().then(({ map, L }) => {
       map.remove();
       mapSimple = L.map('map', {
@@ -256,7 +258,9 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(350, 450).click(465, 250);
 
     cy.window().then(() => {
-      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      const radius = (
+        mapSimple.pm.getGeomanDrawLayers() as L.Circle[]
+      )[1].getRadius();
       expect(radius).to.greaterThan(223);
       expect(radius).to.below(226);
     });
@@ -265,7 +269,7 @@ describe('Draw Circle', () => {
     cy.toolbarButton('circle').click();
     cy.window().then(({ map }) => {
       // if map property is null, then it is not visible
-      expect(!!map.pm.Draw.Circle._layer._map).to.eq(false);
+      expect(!!map.pm.Draw.Circle._layer['_map']).to.eq(false);
     });
   });
   it('removes circle if enabled', () => {
@@ -280,7 +284,7 @@ describe('Draw Circle', () => {
 
     cy.hasLayers(7);
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Circle[])[0];
       layer.remove();
     });
     cy.hasLayers(2);
@@ -303,8 +307,8 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(355, 250).click(475, 250);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      const layer2 = map.pm.getGeomanDrawLayers()[1];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Circle[])[0];
+      const layer2 = (map.pm.getGeomanDrawLayers() as L.Circle[])[1];
       expect(layer.getLatLng().equals(layer2.getLatLng())).to.eq(true);
     });
   });
@@ -341,7 +345,7 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(300, 300);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Circle[])[0];
 
       let disableFired = false;
       layer.on('pm:disable', () => {
@@ -395,7 +399,7 @@ describe('Draw Circle', () => {
     cy.get(mapSelector).click(300, 300);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Circle[])[0];
 
       expect(layer.pm.layerDragEnabled()).to.eql(false);
       layer.pm.enable();
@@ -463,7 +467,7 @@ describe('Draw Circle', () => {
 
     cy.window().then(({ map }) => {
       let count = 0;
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.Circle[])[0];
       layer.on('pm:vertexclick', () => {
         count += 1;
         if (count >= 2) {
@@ -492,7 +496,7 @@ describe('Draw Circle', () => {
     });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
+      const layer = (map.pm.getGeomanLayers() as L.Circle[])[0];
       expect(layer.getLatLng().lat).to.eq(51.51034504891232);
       expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
       expect(layer.getRadius()).to.eq(1187.9783670191234);
@@ -507,7 +511,7 @@ describe('Draw Circle', () => {
       .trigger('mouseup', 300, 250, { which: 1 });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
+      const layer = (map.pm.getGeomanLayers() as L.Circle[])[0];
       expect(layer.getLatLng().lat).to.eq(51.51034504891232);
       expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
       expect(layer.getRadius()).to.eq(1328.278061564339);
@@ -520,7 +524,7 @@ describe('Draw Circle', () => {
       .trigger('mouseup', 200, 250, { which: 1 });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[0];
+      const layer = (map.pm.getGeomanLayers() as L.Circle[])[0];
       expect(layer.getLatLng().lat).to.eq(51.50500286265417);
       expect(layer.getLatLng().lng).to.eq(-0.14144897460937503);
       expect(layer.getRadius()).to.eq(1328.278061564339);
@@ -543,7 +547,7 @@ describe('Draw Circle', () => {
       .trigger('mouseup', 390, 230, { which: 1 });
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanLayers()[1];
+      const layer = (map.pm.getGeomanLayers() as L.Circle[])[1];
       expect(layer.getLatLng().lat).to.be.closeTo(51.51034504891232, 1e-10);
       expect(layer.getLatLng().lng).to.be.closeTo(-0.12428283691406251, 1e-10);
       expect(layer.getRadius()).to.be.closeTo(1240.3294565841613, 1e-10);

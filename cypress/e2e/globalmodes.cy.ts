@@ -26,11 +26,11 @@ describe('Modes', () => {
 
   it('dragging without changing the marker with limits markers works', () => {
     let layer;
-    let markerHtml;
+    let markerHtml: HTMLElement;
 
     cy.window().then(({ map, L }) => {
       const geojson = {
-        type: 'Feature',
+        type: 'Feature' as const,
         properties: {},
         geometry: {
           type: 'Polygon',
@@ -50,7 +50,7 @@ describe('Modes', () => {
       };
       // eslint-disable-next-line prefer-destructuring
       layer = L.geoJSON(geojson).addTo(map).getLayers()[0];
-      map.fitBounds(layer.getBounds());
+      map.fitBounds((layer as L.Polygon).getBounds());
 
       map.pm.setGlobalOptions({
         limitMarkersToCount: 1,
@@ -151,7 +151,7 @@ describe('Modes', () => {
       map.addLayer(testLayer);
 
       Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
-        const poly = event.layer;
+        const poly = (event as unknown as { layer: L.Polygon }).layer;
 
         const coords = poly.getLatLngs();
 
@@ -401,7 +401,9 @@ describe('Modes', () => {
     cy.toolbarButton('drag').click();
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
+      expect(
+        (map.pm.getGeomanLayers() as L.Polyline[])[0].pm.layerDragEnabled()
+      ).to.equal(true);
     });
 
     cy.window().then(({ map, L }) => {
@@ -409,8 +411,12 @@ describe('Modes', () => {
     });
 
     cy.window().then(({ map }) => {
-      expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(true);
-      expect(map.pm.getGeomanLayers()[1].pm.layerDragEnabled()).to.equal(true);
+      expect(
+        (map.pm.getGeomanLayers() as L.Polyline[])[0].pm.layerDragEnabled()
+      ).to.equal(true);
+      expect(
+        (map.pm.getGeomanLayers() as L.Polyline[])[1].pm.layerDragEnabled()
+      ).to.equal(true);
     });
   });
 
@@ -426,7 +432,9 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.rotateEnabled()).to.equal(true);
+        expect(
+          (map.pm.getGeomanLayers() as L.Polyline[])[0].pm.rotateEnabled()
+        ).to.equal(true);
         done();
       }, 100);
     });
@@ -444,7 +452,9 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.enabled()).to.equal(true);
+        expect(
+          (map.pm.getGeomanLayers() as L.Polyline[])[0].pm.enabled()
+        ).to.equal(true);
         done();
       }, 100);
     });
@@ -462,9 +472,9 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        expect(map.pm.getGeomanLayers()[0].pm.layerDragEnabled()).to.equal(
-          true
-        );
+        expect(
+          (map.pm.getGeomanLayers() as L.Polyline[])[0].pm.layerDragEnabled()
+        ).to.equal(true);
         done();
       }, 100);
     });
@@ -482,7 +492,7 @@ describe('Modes', () => {
 
     cy.window().then(({ map }) => {
       setTimeout(() => {
-        const layer = map.pm.getGeomanLayers()[0];
+        const layer = (map.pm.getGeomanLayers() as L.Polyline[])[0];
         expect(layer.listens('click', map.pm.removeLayer, map.pm)).to.equal(
           true
         );

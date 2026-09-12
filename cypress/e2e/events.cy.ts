@@ -303,7 +303,7 @@ describe('Events', () => {
 
     cy.window()
       .then(({ map }) => {
-        function logEvent(e) {
+        function logEvent(e: { type: string }) {
           calledevent = e.type;
         }
 
@@ -369,7 +369,7 @@ describe('Events', () => {
 
     cy.window()
       .then(({ map }) => {
-        function logEvent(e) {
+        function logEvent(e: { type: string }) {
           calledevent = e.type;
         }
 
@@ -389,11 +389,14 @@ describe('Events', () => {
 
   it('Events while editing: pm:edit,pm:update,pm:enable,pm:disable,pm:vertexadded,pm:vertexremoved', () => {
     let calledevent = '';
-    let calledeventArr = [];
+    let calledeventArr: Record<string, string> = [] as unknown as Record<
+      string,
+      string
+    >;
 
     cy.window()
       .then(({ map }) => {
-        function logEvent(e) {
+        function logEvent(e: { type: string }) {
           calledevent = e.type;
           calledeventArr[e.type] = e.type;
         }
@@ -418,7 +421,7 @@ describe('Events', () => {
         layer.on('pm:centerplaced', logEvent);
          */
 
-          layer.pm.enable({
+          (layer as L.Polyline).pm.enable({
             allowSelfIntersection: false,
           });
         });
@@ -465,7 +468,7 @@ describe('Events', () => {
         cy.wait(100);
         expect(calledeventArr['pm:update']).to.equal('pm:update');
         calledevent = '';
-        calledeventArr = [];
+        calledeventArr = [] as unknown as Record<string, string>;
       });
 
     cy.window()
@@ -571,7 +574,7 @@ describe('Events', () => {
   });
 
   it('snappingOrder', () => {
-    let event = '';
+    let event: string | { layerInteractedWith: L.Layer } = '';
     cy.window().then(({ map }) => {
       map.on('pm:drawstart', (e) => {
         e.workingLayer.on('pm:snap', (x) => {
@@ -593,7 +596,8 @@ describe('Events', () => {
       cy.get(mapSelector).trigger('mousemove', 200, 250, { which: 1 });
     });
     cy.window().then(() => {
-      const shape = event.layerInteractedWith.pm._shape;
+      const shape = (event as { layerInteractedWith: L.Marker })
+        .layerInteractedWith.pm._shape;
       expect(shape).to.eq('Marker');
     });
 
@@ -607,7 +611,8 @@ describe('Events', () => {
         .trigger('mousemove', 200, 250, { which: 1 });
     });
     cy.window().then(() => {
-      const shape = event.layerInteractedWith.pm._shape;
+      const shape = (event as { layerInteractedWith: L.Marker })
+        .layerInteractedWith.pm._shape;
       expect(shape).to.eq('CircleMarker');
     });
   });

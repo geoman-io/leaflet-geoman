@@ -353,7 +353,8 @@ describe('Exit Mode on Escape Key', () => {
   describe('pm:keyevent', () => {
     it('should fire pm:keyevent on Escape key press', () => {
       let keydownEventFired = false;
-      let keydownEventData = null;
+      let keydownEventData: { event: KeyboardEvent; eventType: string } | null =
+        null;
 
       cy.window().then(({ map }) => {
         map.on('pm:keyevent', (e) => {
@@ -368,8 +369,8 @@ describe('Exit Mode on Escape Key', () => {
 
       cy.window().then(() => {
         expect(keydownEventFired).to.equal(true);
-        expect(keydownEventData.event.key).to.equal('Escape');
-        expect(keydownEventData.eventType).to.equal('keydown');
+        expect(keydownEventData!.event.key).to.equal('Escape');
+        expect(keydownEventData!.eventType).to.equal('keydown');
       });
     });
   });

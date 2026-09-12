@@ -222,7 +222,7 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector).click(191, 216);
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
+      const marker = (map.pm.getGeomanDrawLayers() as L.CircleMarker[])[0];
       const enabled = marker.pm.enabled();
       expect(enabled).to.equal(false);
     });
@@ -240,7 +240,7 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector).click(191, 216);
 
     cy.window().then(({ map }) => {
-      const marker = map.pm.getGeomanDrawLayers()[0];
+      const marker = (map.pm.getGeomanDrawLayers() as L.CircleMarker[])[0];
       const enabled = marker.pm.enabled();
       expect(enabled).to.equal(true);
     });
@@ -267,7 +267,7 @@ describe('Draw Circle Marker', () => {
         .click(250, 200)
         .click(410, 190)
         .then(() => {
-          const layers = map.pm.getGeomanDrawLayers();
+          const layers = map.pm.getGeomanDrawLayers() as L.CircleMarker[];
           layers.forEach((layer) => {
             if (layer instanceof L.CircleMarker) {
               expect(layer.getRadius()).to.equal(150);
@@ -293,7 +293,7 @@ describe('Draw Circle Marker', () => {
         .click(250, 200)
         .click(300, 200)
         .then(() => {
-          const layers = map.pm.getGeomanDrawLayers();
+          const layers = map.pm.getGeomanDrawLayers() as L.CircleMarker[];
           layers.forEach((layer) => {
             if (layer instanceof L.CircleMarker) {
               expect(layer.getRadius()).to.equal(150);
@@ -321,13 +321,17 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(
+        (map.pm.getGeomanDrawLayers() as L.CircleMarker[]).length
+      );
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq(
+        (map.pm.getGeomanDrawLayers() as L.CircleMarker[]).length
+      );
     });
   });
   it('requireSnapToFinish resizeableCircleMarker', () => {
@@ -350,18 +354,22 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector).click(350, 250).click(190, 60);
 
     cy.window().then(({ map }) => {
-      expect(1).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(1).to.eq(
+        (map.pm.getGeomanDrawLayers() as L.CircleMarker[]).length
+      );
     });
 
     cy.get(mapSelector).click(250, 50);
 
     cy.window().then(({ map }) => {
-      expect(2).to.eq(map.pm.getGeomanDrawLayers().length);
+      expect(2).to.eq(
+        (map.pm.getGeomanDrawLayers() as L.CircleMarker[]).length
+      );
     });
   });
 
   it('Snapping to CircleMarker border on CRS Simple Map', () => {
-    let mapSimple;
+    let mapSimple: L.Map;
     cy.window().then(({ map, L }) => {
       map.remove();
       mapSimple = L.map('map', {
@@ -377,13 +385,15 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector).click(350, 300);
 
     cy.window().then(() => {
-      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      const radius = (
+        mapSimple.pm.getGeomanDrawLayers() as L.CircleMarker[]
+      )[1].getRadius();
       expect(radius).to.eq(40);
     });
   });
 
   it('Snapping to CircleMarker (resizeableCircleMarker) border on CRS Simple Map', () => {
-    let mapSimple;
+    let mapSimple: L.Map;
     cy.window().then(({ map, L }) => {
       map.remove();
       mapSimple = L.map('map', {
@@ -400,7 +410,9 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector).click(350, 450).click(465, 250);
 
     cy.window().then(() => {
-      const radius = mapSimple.pm.getGeomanDrawLayers()[1].getRadius();
+      const radius = (
+        mapSimple.pm.getGeomanDrawLayers() as L.CircleMarker[]
+      )[1].getRadius();
       expect(radius).to.greaterThan(223);
       expect(radius).to.below(226);
     });
@@ -412,7 +424,7 @@ describe('Draw Circle Marker', () => {
     cy.toolbarButton('circle-marker').click();
     cy.window().then(({ map }) => {
       // if map property is null, then it is not visible
-      expect(!!map.pm.Draw.CircleMarker._layer._map).to.eq(false);
+      expect(!!map.pm.Draw.CircleMarker._layer['_map']).to.eq(false);
     });
   });
 
@@ -439,7 +451,7 @@ describe('Draw Circle Marker', () => {
 
     cy.hasLayers(7);
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.CircleMarker[])[0];
       layer.remove();
     });
     cy.hasLayers(2);
@@ -467,8 +479,8 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector).click(325, 250).click(475, 250);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
-      const layer2 = map.pm.getGeomanDrawLayers()[1];
+      const layer = (map.pm.getGeomanDrawLayers() as L.CircleMarker[])[0];
+      const layer2 = (map.pm.getGeomanDrawLayers() as L.CircleMarker[])[1];
       expect(layer.getLatLng().equals(layer2.getLatLng())).to.eq(true);
     });
   });
@@ -532,7 +544,7 @@ describe('Draw Circle Marker', () => {
     cy.get(mapSelector).click(300, 300);
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.CircleMarker[])[0];
 
       let disableFired = false;
       layer.on('pm:disable', () => {
@@ -558,7 +570,7 @@ describe('Draw Circle Marker', () => {
     cy.toolbarButton('circle-marker').click();
 
     cy.window().then(({ map }) => {
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.CircleMarker[])[0];
 
       expect(layer.pm.layerDragEnabled()).to.eql(false);
       layer.pm.enable();
@@ -605,7 +617,7 @@ describe('Draw Circle Marker', () => {
 
     cy.window().then(({ map }) => {
       let count = 0;
-      const layer = map.pm.getGeomanDrawLayers()[0];
+      const layer = (map.pm.getGeomanDrawLayers() as L.CircleMarker[])[0];
       layer.on('pm:vertexclick', () => {
         count += 1;
         if (count >= 2) {

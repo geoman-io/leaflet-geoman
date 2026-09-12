@@ -1,19 +1,22 @@
 import * as esbuild from 'esbuild';
 import fs from 'node:fs';
 
-const plugins: esbuild.Plugin[] = [{
-  name: 'my-plugin',
-  setup(build) {
-    let count = 0;
-    build.onEnd(({ errors, warnings }) => {
-      count++;
-      const message = errors.length === 0 && warnings.length === 0
-        ? 'Build completed.'
-        : `Build completed with ${errors.length} error(s) and ${warnings.length} warning(s).`;
-      console.log(`[BUILD #${count.toString().padStart(3, '0')}]:`, message);
-    });
+const plugins: esbuild.Plugin[] = [
+  {
+    name: 'my-plugin',
+    setup(build) {
+      let count = 0;
+      build.onEnd(({ errors, warnings }) => {
+        count++;
+        const message =
+          errors.length === 0 && warnings.length === 0
+            ? 'Build completed.'
+            : `Build completed with ${errors.length} error(s) and ${warnings.length} warning(s).`;
+        console.log(`[BUILD #${count.toString().padStart(3, '0')}]:`, message);
+      });
+    },
   },
-}];
+];
 
 const buildOptions: esbuild.BuildOptions = {
   bundle: true,
@@ -21,32 +24,41 @@ const buildOptions: esbuild.BuildOptions = {
   loader: {
     '.js': 'jsx',
     '.css': 'css',
-    '.svg': 'dataurl'
+    '.svg': 'dataurl',
   },
   outfile: './dist/leaflet-geoman.js',
   sourcemap: true,
-}
+};
 
 if (process.env.DEV) {
   // Watch in dev mode (non-minified for easier debugging)
-  const ctx = await esbuild.context({ ...buildOptions, minify: false, plugins });
+  const ctx = await esbuild.context({
+    ...buildOptions,
+    minify: false,
+    plugins,
+  });
   await ctx.watch();
   console.log('watching...');
   const { hosts, port } = await ctx.serve({
     port: 5500,
     servedir: '.',
-    fallback: "./index.html"
+    fallback: './index.html',
   });
   console.log(`Serving app at http://${hosts[0] || 'localhost'}:${port}/demo`);
 } else {
   // Clean /dist folder
-  fs.rmSync("./dist", { recursive: true, force: true });
+  fs.rmSync('./dist', { recursive: true, force: true });
 
   // Build the non-minified bundle (leaflet-geoman.js + leaflet-geoman.css)
   await esbuild.build({ ...buildOptions, minify: false, plugins });
 
   // Build the minified bundle (leaflet-geoman.min.js)
-  await esbuild.build({ ...buildOptions, minify: true, outfile: './dist/leaflet-geoman.min.js', plugins });
+  await esbuild.build({
+    ...buildOptions,
+    minify: true,
+    outfile: './dist/leaflet-geoman.min.js',
+    plugins,
+  });
 
   // The minified build also emits a duplicate CSS file we don't ship
   fs.rmSync('./dist/leaflet-geoman.min.css', { force: true });
