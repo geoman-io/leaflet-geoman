@@ -1,8 +1,15 @@
+import type { EditClass } from '../js/Edit/L.PM.Edit';
 import type { IUtils } from '../js/L.PM.Utils';
 import type { MatrixConstructor } from '../js/helpers/Matrix';
 
 // Internal Leaflet fields used by the plugin. These are not shipped to consumers.
 declare module 'leaflet' {
+  interface Marker {
+    _origLatLng?: LatLng;
+    _index?: number;
+    update(): this;
+  }
+
   interface CRS {
     projection?: Projection & { MAX_LATITUDE?: number };
   }
@@ -31,6 +38,7 @@ declare module 'leaflet' {
     setBounds(bounds: LatLngBoundsExpression | LatLngExpression[]): this;
   }
   interface Layer {
+    _leaflet_id?: number;
     _pmTempLayer?: boolean;
     removeFrom(map: Map | LayerGroup): this;
   }
@@ -54,6 +62,19 @@ declare module 'leaflet' {
   }
   namespace PM {
     let optIn: boolean;
+    const Edit: EditClass;
+    interface PMMap {
+      removeLayer(event: { target: L.Layer }): void;
+    }
+    const Draw: {
+      Text: {
+        prototype: {
+          _createTextArea(): HTMLTextAreaElement;
+          _createTextIcon(textArea: HTMLTextAreaElement): L.DivIcon;
+        };
+      };
+    };
+
     interface PMLayer {
       _hiddenPolyCircle?: L.Polygon;
     }

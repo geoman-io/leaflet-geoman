@@ -1,25 +1,91 @@
+import type { EditOptions } from './L.PM.Edit';
+
+/**
+ * Extended map with PM
+ */
+type ExtendedMap = L.Map & {
+  pm: {
+    globalOptions: {
+      panes?: {
+        layerPane?: string;
+        vertexPane?: string;
+        markerPane?: string;
+      };
+    };
+  };
+};
+
+/**
+ * Extended image overlay layer
+ */
+type ExtendedImageOverlay = L.ImageOverlay & {
+  _map: ExtendedMap;
+};
+
+/**
+ * Image overlay edit options
+ */
+interface ImageOverlayEditOptions extends EditOptions {
+  draggable?: boolean;
+}
+
+/**
+ * Edit ImageOverlay interface
+ */
+export interface IEditImageOverlay {
+  _shape: string;
+  _layer: ExtendedImageOverlay;
+  _map: ExtendedMap;
+  _enabled: boolean;
+  _layerEdited?: boolean;
+  _dragging?: boolean;
+  _otherSnapLayers?: L.LatLng[];
+  options: ImageOverlayEditOptions;
+
+  toggleEdit(options?: Partial<ImageOverlayEditOptions>): void;
+  enabled(): boolean;
+  enable(options?: Partial<ImageOverlayEditOptions>): void;
+  disable(): void;
+  _findCorners(): L.LatLng[];
+
+  // From parent / mixins
+  enableLayerDrag(): void;
+  disableLayerDrag(): void;
+  _fireEnable(): void;
+  _fireDisable(): void;
+  _fireUpdate(): void;
+}
 import Edit from './L.PM.Edit';
 
-Edit.ImageOverlay = Edit.extend({
+Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
   _shape: 'ImageOverlay',
-  initialize(layer) {
-    this._layer = layer;
+  initialize(this: IEditImageOverlay, layer: L.ImageOverlay) {
+    this._layer = layer as typeof this._layer;
     this._enabled = false;
   },
-  toggleEdit(options) {
+  toggleEdit(
+    this: IEditImageOverlay,
+    options?: Partial<ImageOverlayEditOptions>
+  ) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
   },
-  enabled() {
+  enabled(this: IEditImageOverlay) {
     return this._enabled;
   },
   // TODO: remove default option in next major Release
-  enable(options = { draggable: true, snappable: true }) {
+  enable(
+    this: IEditImageOverlay,
+    options: Partial<ImageOverlayEditOptions> = {
+      draggable: true,
+      snappable: true,
+    }
+  ) {
     L.Util.setOptions(this, options);
-    this._map = this._layer._map;
+    this._map = this._layer._map as typeof this._map;
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {
       return;
@@ -50,7 +116,7 @@ Edit.ImageOverlay = Edit.extend({
 
     this._fireEnable();
   },
-  disable() {
+  disable(this: IEditImageOverlay) {
     // prevent disabling if layer is being dragged
     if (this._dragging) {
       return;
@@ -58,7 +124,7 @@ Edit.ImageOverlay = Edit.extend({
 
     // Add map if it is not already set. This happens when disable() is called before enable()
     if (!this._map) {
-      this._map = this._layer._map;
+      this._map = this._layer._map as typeof this._map;
     }
     // disable dragging, as this could have been active even without being enabled
     this.disableLayerDrag();
@@ -77,7 +143,7 @@ Edit.ImageOverlay = Edit.extend({
 
     this._enabled = false;
   },
-  _findCorners() {
+  _findCorners(this: IEditImageOverlay) {
     const corners = this._layer.getBounds();
 
     const northwest = corners.getNorthWest();

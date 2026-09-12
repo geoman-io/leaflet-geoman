@@ -1,12 +1,111 @@
+/**
+ * Extended map with PM and dragging
+ */
+type ExtendedMap = L.Map & {
+  dragging: {
+    _enabled: boolean;
+    disable: () => void;
+    enable: () => void;
+  };
+  pm: {
+    globalOptions: {
+      panes?: {
+        layerPane?: string;
+        vertexPane?: string;
+        markerPane?: string;
+      };
+    };
+    getGeomanLayers: () => L.Layer[];
+  };
+};
+
+/**
+ * Extended marker layer for text
+ */
+type ExtendedTextMarker = L.Marker & {
+  _map: L.Map;
+  options: L.MarkerOptions & {
+    text?: string;
+  };
+  getElement: () => HTMLElement;
+};
+
+/**
+ * Text edit options
+ */
+interface TextEditOptions {
+  allowEditing?: boolean;
+  snappable?: boolean;
+  snapDistance?: number;
+  snapSegment?: boolean;
+  removeIfEmpty?: boolean;
+  className?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Edit Text interface
+ */
+export interface IEditText {
+  _shape: string;
+  _layer: ExtendedTextMarker;
+  _map: ExtendedMap;
+  _enabled: boolean;
+  _layerEdited?: boolean;
+  _hasFocus?: boolean;
+  _focusText?: string;
+  _safeToCacheDragState?: boolean;
+  _originalMapDragState?: boolean;
+  _disableOnBlurActive?: boolean;
+  _documentClickThis?: (e: MouseEvent) => void;
+  textArea: HTMLTextAreaElement;
+  options: TextEditOptions;
+
+  enable(options?: Partial<TextEditOptions>): void;
+  disable(): void;
+  enabled(): boolean;
+  toggleEdit(options?: Partial<TextEditOptions>): void;
+  applyOptions(): void;
+  _initSnappableMarkers(): void;
+  _disableSnapping(): void;
+  _autoResize(): void;
+  _disableOnBlur(): void;
+  _documentClick(e: MouseEvent): void;
+  _focusChange(e?: FocusEvent | { type?: string }): void;
+  _applyFocus(): void;
+  _removeFocus(): void;
+  focus(): void;
+  blur(): void;
+  hasFocus(): boolean | undefined;
+  getElement(): HTMLTextAreaElement;
+  setText(text: string): void;
+  getText(): string;
+  _initTextMarker(): void;
+  _createTextMarker(enable?: boolean | L.LeafletEvent): void;
+  _preventTextSelection(e: Event): void;
+  remove(): void;
+
+  // From mixins
+  _fireEnable(): void;
+  _fireDisable(): void;
+  _fireUpdate(): void;
+  _fireEdit(): void;
+  _fireTextChange(text: string): void;
+  _fireTextFocus(): void;
+  _fireTextBlur(): void;
+  _handleSnapping(e: L.LeafletEvent): void;
+  _cleanupSnapping(): void;
+  _unsnap(e: L.LeafletEvent): void;
+}
 import Edit from './L.PM.Edit';
 
-Edit.Text = Edit.extend({
+Edit.Text = Edit.extend<IEditText, [L.Marker]>({
   _shape: 'Text',
-  initialize(layer) {
-    this._layer = layer;
+  initialize(this: IEditText, layer: L.Marker) {
+    this._layer = layer as typeof this._layer;
     this._enabled = false;
   },
-  enable(options) {
+  enable(this: IEditText, options?: Partial<TextEditOptions>) {
     L.Util.setOptions(this, options);
 
     if (!this.textArea) {
@@ -19,7 +118,7 @@ Edit.Text = Edit.extend({
       return;
     }
 
-    this._map = this._layer._map;
+    this._map = this._layer._map as typeof this._map;
 
     if (this.enabled()) {
       this.disable();
@@ -45,7 +144,7 @@ Edit.Text = Edit.extend({
 
     this._fireEnable();
   },
-  disable() {
+  disable(this: IEditText) {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
       return;
@@ -56,7 +155,7 @@ Edit.Text = Edit.extend({
     L.DomEvent.off(this.textArea, 'input', this._autoResize, this);
     L.DomEvent.off(this.textArea, 'focus', this._focusChange, this);
     L.DomEvent.off(this.textArea, 'blur', this._focusChange, this);
-    document.removeEventListener('click', this._documentClickThis, {
+    document.removeEventListener('click', this._documentClickThis!, {
       capture: true,
     });
 
@@ -71,7 +170,7 @@ Edit.Text = Edit.extend({
     this.textArea.selectionStart = 0;
     this.textArea.selectionEnd = 0;
     L.DomEvent.on(this.textArea, 'mousedown', this._preventTextSelection);
-    focusedElement.focus();
+    (focusedElement as HTMLElement).focus();
 
     this._disableOnBlurActive = false;
 
@@ -83,17 +182,17 @@ Edit.Text = Edit.extend({
 
     this._enabled = false;
   },
-  enabled() {
+  enabled(this: IEditText) {
     return this._enabled;
   },
-  toggleEdit(options) {
+  toggleEdit(this: IEditText, options?: Partial<TextEditOptions>) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
   },
-  applyOptions() {
+  applyOptions(this: IEditText) {
     if (this.options.snappable) {
       this._initSnappableMarkers();
     } else {
@@ -101,7 +200,7 @@ Edit.Text = Edit.extend({
     }
   },
   // overwrite initSnappableMarkers from Snapping.js Mixin
-  _initSnappableMarkers() {
+  _initSnappableMarkers(this: IEditText) {
     const marker = this._layer;
 
     this.options.snapDistance = this.options.snapDistance || 30;
@@ -117,13 +216,13 @@ Edit.Text = Edit.extend({
     marker.off('pm:dragstart', this._unsnap, this);
     marker.on('pm:dragstart', this._unsnap, this);
   },
-  _disableSnapping() {
+  _disableSnapping(this: IEditText) {
     const marker = this._layer;
     marker.off('pm:drag', this._handleSnapping, this);
     marker.off('pm:dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
   },
-  _autoResize() {
+  _autoResize(this: IEditText) {
     this.textArea.style.height = '1px';
     this.textArea.style.width = '1px';
     const height =
@@ -136,20 +235,20 @@ Edit.Text = Edit.extend({
     this._fireTextChange(this.getText());
   },
 
-  _disableOnBlur() {
+  _disableOnBlur(this: IEditText) {
     this._disableOnBlurActive = true;
     // we need this timeout because else the place click event is triggered here too.
     setTimeout(() => {
       if (this.enabled()) {
         this._documentClickThis =
           this._documentClickThis || this._documentClick.bind(this);
-        document.addEventListener('click', this._documentClickThis, {
+        document.addEventListener('click', this._documentClickThis!, {
           capture: true,
         });
       }
     }, 100);
   },
-  _documentClick(e) {
+  _documentClick(this: IEditText, e: MouseEvent) {
     if (e.target !== this.textArea) {
       this.disable();
       if (!this.getText() && this.options.removeIfEmpty) {
@@ -158,7 +257,7 @@ Edit.Text = Edit.extend({
     }
   },
 
-  _focusChange(e = {}) {
+  _focusChange(this: IEditText, e: FocusEvent | Record<string, unknown> = {}) {
     const focusAlreadySet = this._hasFocus;
     this._hasFocus = e.type === 'focus';
     if (!focusAlreadySet !== !this._hasFocus) {
@@ -176,7 +275,7 @@ Edit.Text = Edit.extend({
       }
     }
   },
-  _applyFocus() {
+  _applyFocus(this: IEditText) {
     this.textArea.classList.add('pm-hasfocus');
 
     if (this._map.dragging) {
@@ -189,7 +288,7 @@ Edit.Text = Edit.extend({
       this._map.dragging.disable();
     }
   },
-  _removeFocus() {
+  _removeFocus(this: IEditText) {
     if (this._map.dragging) {
       if (this._originalMapDragState) {
         this._map.dragging.enable();
@@ -200,14 +299,14 @@ Edit.Text = Edit.extend({
     this.textArea.classList.remove('pm-hasfocus');
   },
 
-  focus() {
+  focus(this: IEditText) {
     if (!this.enabled()) {
       throw new TypeError('Layer is not enabled');
     }
     this.textArea.focus();
   },
 
-  blur() {
+  blur(this: IEditText) {
     if (!this.enabled()) {
       throw new TypeError('Layer is not enabled');
     }
@@ -217,26 +316,26 @@ Edit.Text = Edit.extend({
     }
   },
 
-  hasFocus() {
+  hasFocus(this: IEditText) {
     return this._hasFocus;
   },
 
-  getElement() {
+  getElement(this: IEditText) {
     return this.textArea;
   },
 
-  setText(text) {
+  setText(this: IEditText, text: string) {
     if (text) {
       this.textArea.value = text;
     }
     this._autoResize();
   },
 
-  getText() {
+  getText(this: IEditText) {
     return this.textArea.value;
   },
 
-  _initTextMarker() {
+  _initTextMarker(this: IEditText) {
     this.textArea = L.PM.Draw.Text.prototype._createTextArea.call(this);
     if (this.options.className) {
       const cssClasses = this.options.className.split(' ');
@@ -251,14 +350,17 @@ Edit.Text = Edit.extend({
     this._layer.once('add', this._createTextMarker, this);
   },
 
-  _createTextMarker(enable = false) {
+  _createTextMarker(this: IEditText, enable: boolean | L.LeafletEvent = false) {
     this._layer.off('add', this._createTextMarker, this);
 
-    this._layer.getElement().tabIndex = -1;
+    this._layer.getElement()!.tabIndex = -1;
 
     this.textArea.wrap = 'off';
     this.textArea.style.overflow = 'hidden';
-    this.textArea.style.height = L.DomUtil.getStyle(this.textArea, 'font-size');
+    this.textArea.style.height = L.DomUtil.getStyle(
+      this.textArea,
+      'font-size'
+    )!;
     this.textArea.style.width = '1px';
 
     if (this._layer.options.text) {
@@ -276,7 +378,7 @@ Edit.Text = Edit.extend({
   },
 
   // Chrome ignores `user-select: none`, so we need to disable text selection manually
-  _preventTextSelection(e) {
+  _preventTextSelection(e: Event) {
     e.preventDefault();
   },
 });

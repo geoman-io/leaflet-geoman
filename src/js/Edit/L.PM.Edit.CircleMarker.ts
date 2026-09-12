@@ -1,10 +1,190 @@
+import type { EditOptions } from './L.PM.Edit';
+
+/**
+ * Extended map with PM
+ */
+type ExtendedMap = L.Map & {
+  pm: {
+    globalOptions: {
+      panes?: {
+        layerPane?: string;
+        vertexPane?: string;
+        markerPane?: string;
+      };
+    };
+    Draw: {
+      CircleMarker: {
+        _layerIsDragging?: boolean;
+      };
+    };
+    _isCRSSimple: () => boolean;
+  };
+};
+
+/**
+ * Extended circle marker layer
+ */
+type ExtendedCircleMarker = L.CircleMarker & {
+  _map: ExtendedMap;
+  _radius: number;
+};
+
+/**
+ * Extended marker for editing
+ */
+type ExtendedMarker = L.Marker & {
+  _pmTempLayer?: boolean;
+  _origLatLng?: L.LatLng;
+  _icon?: HTMLElement;
+  _snapped?: boolean;
+  _orgLatLng?: L.LatLng;
+  _latlng: L.LatLng;
+  _cancelDragEventChain?: L.LatLng | null;
+  _dragging?: boolean;
+  update(): void;
+  dragging?: {
+    disable: () => void;
+    enable: () => void;
+  };
+};
+
+/**
+ * Extended feature group
+ */
+type ExtendedFeatureGroup = L.FeatureGroup & {
+  _pmTempLayer?: boolean;
+};
+
+/**
+ * Extended polyline for hintline
+ */
+type ExtendedPolyline = L.Polyline & {
+  _pmTempLayer?: boolean;
+};
+
+/**
+ * Extended polygon for hidden circle
+ */
+type ExtendedPolygon = L.Polygon & {
+  _parentCopy?: ExtendedCircleMarker;
+};
+
+/**
+ * PM layer with temp flag
+ */
+type PMTempLayer = L.Layer & {
+  _pmTempLayer?: boolean;
+  options: L.LayerOptions & {
+    pane?: string;
+  };
+};
+
+/**
+ * Circle marker edit options
+ */
+interface CircleMarkerEditOptions extends EditOptions {
+  draggable?: boolean;
+  hintlineStyle?: L.PolylineOptions;
+  editable?: boolean;
+  resizeableCircleMarker?: boolean;
+  minRadiusCircleMarker?: number | null;
+  maxRadiusCircleMarker?: number | null;
+}
+
+/**
+ * Edit CircleMarker interface
+ */
+export interface IEditCircleMarker {
+  _shape: string;
+  _layer: ExtendedCircleMarker;
+  _map: ExtendedMap;
+  _enabled: boolean;
+  _layerEdited?: boolean;
+  _helperLayers: ExtendedFeatureGroup;
+  _markers: ExtendedMarker[];
+  _centerMarker: ExtendedMarker;
+  _outerMarker: ExtendedMarker;
+  _hintline: ExtendedPolyline;
+  _hiddenPolyCircle?: ExtendedPolygon;
+  _minRadiusOption: 'minRadiusCircle' | 'minRadiusCircleMarker';
+  _maxRadiusOption: 'maxRadiusCircle' | 'maxRadiusCircleMarker';
+  _editableOption: 'resizeableCircle' | 'resizeableCircleMarker';
+  options: CircleMarkerEditOptions;
+
+  enable(options?: Partial<CircleMarkerEditOptions>): void;
+  disable(): void;
+  enabled(): boolean;
+  toggleEdit(options?: Partial<CircleMarkerEditOptions>): void;
+  applyOptions(): void;
+  _extendingEnable(): void;
+  _extendingDisable(): void;
+  _extendingApplyOptions(): void;
+  _initMarkers(): void;
+  _getLatLngOnCircle(center: L.LatLng, radius: number): L.LatLng;
+  _createHintLine(markerA: ExtendedMarker, markerB: ExtendedMarker): void;
+  _createCenterMarker(latlng: L.LatLng): ExtendedMarker;
+  _createOuterMarker(latlng: L.LatLng): ExtendedMarker;
+  _createMarker(latlng: L.LatLng): ExtendedMarker;
+  _moveCircle(e: L.LeafletEvent & { target: ExtendedMarker }): void;
+  _syncMarkers(): void;
+  _resizeCircle(): void;
+  _syncCircleRadius(): void;
+  _syncHintLine(): void;
+  _removeMarker(): void;
+  _onDragStart(): void;
+  _onMarkerDragStart(e: L.LeafletEvent & { target: ExtendedMarker }): void;
+  _onMarkerDrag(e: L.LeafletEvent & { target: ExtendedMarker }): void;
+  _onMarkerDragEnd(e: L.LeafletEvent & { target: ExtendedMarker }): void;
+  _extedingMarkerDragEnd(): void;
+  _initSnappableMarkersDrag(): void;
+  _disableSnappingDrag(): void;
+  _updateHiddenPolyCircle(): void;
+  _getNewDestinationOfOuterMarker(): L.LatLng;
+  _handleOuterMarkerSnapping(): void;
+  _distanceCalculation(A: L.LatLng, B: L.LatLng): number;
+  _getMinDistanceInMeter(latlng: L.LatLng): number;
+  _getMaxDistanceInMeter(latlng: L.LatLng): number;
+  _onVertexClick(e: L.LeafletEvent & { target: ExtendedMarker }): void;
+
+  // From parent / mixins
+  _setPane(
+    layer: PMTempLayer,
+    type: 'layerPane' | 'vertexPane' | 'markerPane'
+  ): void;
+  _fireEnable(): void;
+  _fireDisable(): void;
+  _fireUpdate(): void;
+  _fireEdit(): void;
+  _fireChange(latlng: L.LatLng, source: string): void;
+  _fireCenterPlaced(source: string): void;
+  _fireRemove(layerOrMap: L.Layer | L.Map, layer?: L.Layer): void;
+  _fireMarkerDragStart(e: L.LeafletEvent): void;
+  _fireMarkerDrag(e: L.LeafletEvent): void;
+  _fireMarkerDragEnd(e: L.LeafletEvent): void;
+  _fireVertexClick(e: L.LeafletEvent, indexPath: number[] | undefined): void;
+  _initSnappableMarkers(): void;
+  _disableSnapping(): void;
+  _handleSnapping(e: L.LeafletEvent): void;
+  _cleanupSnapping(): void;
+  _unsnap(e: L.LeafletEvent): void;
+  _vertexValidation(
+    type: 'move' | 'add' | 'remove',
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ): boolean;
+  _vertexValidationDrag(marker: ExtendedMarker): boolean;
+  _vertexValidationDragEnd(marker: ExtendedMarker): boolean;
+  dragging(): boolean;
+  layerDragEnabled(): boolean;
+  disableLayerDrag(): void;
+  enableLayerDrag(): void;
+}
 import Edit from './L.PM.Edit';
 import { destinationOnLine } from '../helpers';
 
-Edit.CircleMarker = Edit.extend({
+Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
   _shape: 'CircleMarker',
-  initialize(layer) {
-    this._layer = layer;
+  initialize(this: IEditCircleMarker, layer: L.CircleMarker) {
+    this._layer = layer as typeof this._layer;
     this._enabled = false;
 
     this._minRadiusOption = 'minRadiusCircleMarker';
@@ -15,7 +195,13 @@ Edit.CircleMarker = Edit.extend({
     this._updateHiddenPolyCircle();
   },
   // TODO: remove default option in next major Release
-  enable(options = { draggable: true, snappable: true }) {
+  enable(
+    this: IEditCircleMarker,
+    options: Partial<CircleMarkerEditOptions> = {
+      draggable: true,
+      snappable: true,
+    }
+  ) {
     L.Util.setOptions(this, options);
     // TODO: remove with next major release
     if (this.options.editable) {
@@ -30,7 +216,7 @@ Edit.CircleMarker = Edit.extend({
       return;
     }
 
-    this._map = this._layer._map;
+    this._map = this._layer._map as typeof this._map;
 
     if (this.enabled()) {
       // if it was already enabled, disable first
@@ -52,13 +238,13 @@ Edit.CircleMarker = Edit.extend({
 
     this._fireEnable();
   },
-  _extendingEnable() {
+  _extendingEnable(this: IEditCircleMarker) {
     // if CircleMarker is dragged while draw mode
     this._layer.on('pm:dragstart', this._onDragStart, this);
     this._layer.on('pm:drag', this._onMarkerDrag, this);
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
   },
-  disable() {
+  disable(this: IEditCircleMarker) {
     // prevent disabling if layer is being dragged
     if (this.dragging()) {
       return;
@@ -66,7 +252,7 @@ Edit.CircleMarker = Edit.extend({
 
     // Add map if it is not already set. This happens when disable() is called before enable()
     if (!this._map) {
-      this._map = this._layer._map;
+      this._map = this._layer._map as typeof this._map;
     }
 
     if (!this._map) {
@@ -105,20 +291,23 @@ Edit.CircleMarker = Edit.extend({
 
     this._enabled = false;
   },
-  _extendingDisable() {
+  _extendingDisable(this: IEditCircleMarker) {
     this._layer.off('contextmenu', this._removeMarker, this);
   },
-  enabled() {
+  enabled(this: IEditCircleMarker) {
     return this._enabled;
   },
-  toggleEdit(options) {
+  toggleEdit(
+    this: IEditCircleMarker,
+    options?: Partial<CircleMarkerEditOptions>
+  ) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
   },
-  applyOptions() {
+  applyOptions(this: IEditCircleMarker) {
     if (this.options[this._editableOption]) {
       this._initMarkers();
       this._map.on('move', this._syncMarkers, this);
@@ -150,13 +339,13 @@ Edit.CircleMarker = Edit.extend({
 
     this._extendingApplyOptions();
   },
-  _extendingApplyOptions() {
+  _extendingApplyOptions(this: IEditCircleMarker) {
     // enable removal for the marker
     if (!this.options.preventMarkerRemoval) {
       this._layer.on('contextmenu', this._removeMarker, this);
     }
   },
-  _initMarkers() {
+  _initMarkers(this: IEditCircleMarker) {
     const map = this._map;
 
     // cleanup old ones first
@@ -181,12 +370,20 @@ Edit.CircleMarker = Edit.extend({
     this._markers = [this._centerMarker, this._outerMarker];
     this._createHintLine(this._centerMarker, this._outerMarker);
   },
-  _getLatLngOnCircle(center, radius) {
+  _getLatLngOnCircle(
+    this: IEditCircleMarker,
+    center: L.LatLng,
+    radius: number
+  ) {
     const pointA = this._map.project(center);
     const pointB = L.point(pointA.x + radius, pointA.y);
     return this._map.unproject(pointB);
   },
-  _createHintLine(markerA, markerB) {
+  _createHintLine(
+    this: IEditCircleMarker,
+    markerA: ExtendedMarker,
+    markerB: ExtendedMarker
+  ) {
     const A = markerA.getLatLng();
     const B = markerB.getLatLng();
     this._hintline = L.polyline([A, B], this.options.hintlineStyle);
@@ -194,22 +391,28 @@ Edit.CircleMarker = Edit.extend({
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
   },
-  _createCenterMarker(latlng) {
+  _createCenterMarker(
+    this: IEditCircleMarker,
+    latlng: L.LatLng
+  ): ExtendedMarker {
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
-      L.DomUtil.addClass(marker._icon, 'leaflet-pm-draggable');
+      L.DomUtil.addClass(marker._icon!, 'leaflet-pm-draggable');
       marker.on('move', this._moveCircle, this);
     } else {
-      marker.dragging.disable();
+      marker.dragging!.disable();
     }
     return marker;
   },
-  _createOuterMarker(latlng) {
+  _createOuterMarker(
+    this: IEditCircleMarker,
+    latlng: L.LatLng
+  ): ExtendedMarker {
     const marker = this._createMarker(latlng);
     marker.on('drag', this._resizeCircle, this);
     return marker;
   },
-  _createMarker(latlng) {
+  _createMarker(this: IEditCircleMarker, latlng: L.LatLng): ExtendedMarker {
     const marker = new L.Marker(latlng, {
       draggable: true,
       icon: L.divIcon({ className: 'marker-icon' }),
@@ -229,7 +432,10 @@ Edit.CircleMarker = Edit.extend({
     return marker;
   },
 
-  _moveCircle(e) {
+  _moveCircle(
+    this: IEditCircleMarker,
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ) {
     const draggedMarker = e.target;
     if (draggedMarker._cancelDragEventChain) {
       return;
@@ -251,7 +457,7 @@ Edit.CircleMarker = Edit.extend({
     this._fireCenterPlaced('Edit');
     this._fireChange(this._layer.getLatLng(), 'Edit');
   },
-  _syncMarkers() {
+  _syncMarkers(this: IEditCircleMarker) {
     const center = this._layer.getLatLng();
     const radius = this._layer._radius;
     const outer = this._getLatLngOnCircle(center, radius);
@@ -260,27 +466,27 @@ Edit.CircleMarker = Edit.extend({
     this._syncHintLine();
     this._updateHiddenPolyCircle();
   },
-  _resizeCircle() {
+  _resizeCircle(this: IEditCircleMarker) {
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
     this._syncHintLine();
     this._syncCircleRadius();
   },
-  _syncCircleRadius() {
+  _syncCircleRadius(this: IEditCircleMarker) {
     const A = this._centerMarker.getLatLng();
     const B = this._outerMarker.getLatLng();
 
     const distance = this._distanceCalculation(A, B);
 
     if (
-      this.options[this._minRadiusOption] &&
-      distance < this.options[this._minRadiusOption]
+      this.options[this._minRadiusOption]! &&
+      distance < this.options[this._minRadiusOption]!
     ) {
-      this._layer.setRadius(this.options[this._minRadiusOption]);
+      this._layer.setRadius(this.options[this._minRadiusOption]!);
     } else if (
-      this.options[this._maxRadiusOption] &&
-      distance > this.options[this._maxRadiusOption]
+      this.options[this._maxRadiusOption]! &&
+      distance > this.options[this._maxRadiusOption]!
     ) {
-      this._layer.setRadius(this.options[this._maxRadiusOption]);
+      this._layer.setRadius(this.options[this._maxRadiusOption]!);
     } else {
       this._layer.setRadius(distance);
     }
@@ -288,13 +494,13 @@ Edit.CircleMarker = Edit.extend({
     this._updateHiddenPolyCircle();
     this._fireChange(this._layer.getLatLng(), 'Edit');
   },
-  _syncHintLine() {
+  _syncHintLine(this: IEditCircleMarker) {
     const A = this._centerMarker.getLatLng();
     const B = this._outerMarker.getLatLng();
     // set coords for hintline from marker to last vertex of drawin polyline
     this._hintline.setLatLngs([A, B]);
   },
-  _removeMarker() {
+  _removeMarker(this: IEditCircleMarker) {
     if (this.options[this._editableOption]) {
       this.disable();
     }
@@ -302,17 +508,23 @@ Edit.CircleMarker = Edit.extend({
     this._fireRemove(this._layer);
     this._fireRemove(this._map, this._layer);
   },
-  _onDragStart() {
+  _onDragStart(this: IEditCircleMarker) {
     this._map.pm.Draw.CircleMarker._layerIsDragging = true;
   },
-  _onMarkerDragStart(e) {
+  _onMarkerDragStart(
+    this: IEditCircleMarker,
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ) {
     if (!this._vertexValidation('move', e)) {
       return;
     }
 
     this._fireMarkerDragStart(e);
   },
-  _onMarkerDrag(e) {
+  _onMarkerDrag(
+    this: IEditCircleMarker,
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ) {
     // dragged marker
     const draggedMarker = e.target;
     if (
@@ -324,7 +536,10 @@ Edit.CircleMarker = Edit.extend({
 
     this._fireMarkerDrag(e);
   },
-  _onMarkerDragEnd(e) {
+  _onMarkerDragEnd(
+    this: IEditCircleMarker,
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ) {
     this._extedingMarkerDragEnd();
 
     // dragged marker
@@ -338,11 +553,11 @@ Edit.CircleMarker = Edit.extend({
     }
     this._fireMarkerDragEnd(e);
   },
-  _extedingMarkerDragEnd() {
+  _extedingMarkerDragEnd(this: IEditCircleMarker) {
     this._map.pm.Draw.CircleMarker._layerIsDragging = false;
   },
   // _initSnappableMarkers when option editable is not true
-  _initSnappableMarkersDrag() {
+  _initSnappableMarkersDrag(this: IEditCircleMarker) {
     const marker = this._layer;
 
     this.options.snapDistance = this.options.snapDistance || 30;
@@ -359,14 +574,14 @@ Edit.CircleMarker = Edit.extend({
     marker.on('pm:dragstart', this._unsnap, this);
   },
   // _disableSnapping when option editable is not true
-  _disableSnappingDrag() {
+  _disableSnappingDrag(this: IEditCircleMarker) {
     const marker = this._layer;
 
     marker.off('pm:drag', this._handleSnapping, this);
     marker.off('pm:dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
   },
-  _updateHiddenPolyCircle() {
+  _updateHiddenPolyCircle(this: IEditCircleMarker) {
     const map = this._layer._map || this._map;
     if (map) {
       const radius = L.PM.Utils.pxRadiusToMeterRadius(
@@ -395,15 +610,15 @@ Edit.CircleMarker = Edit.extend({
       }
     }
   },
-  _getNewDestinationOfOuterMarker() {
+  _getNewDestinationOfOuterMarker(this: IEditCircleMarker) {
     const latlng = this._centerMarker.getLatLng();
     let secondLatLng = this._outerMarker.getLatLng();
 
     const distance = this._distanceCalculation(latlng, secondLatLng);
 
     if (
-      this.options[this._minRadiusOption] &&
-      distance < this.options[this._minRadiusOption]
+      this.options[this._minRadiusOption]! &&
+      distance < this.options[this._minRadiusOption]!
     ) {
       secondLatLng = destinationOnLine(
         this._map,
@@ -412,8 +627,8 @@ Edit.CircleMarker = Edit.extend({
         this._getMinDistanceInMeter(latlng)
       );
     } else if (
-      this.options[this._maxRadiusOption] &&
-      distance > this.options[this._maxRadiusOption]
+      this.options[this._maxRadiusOption]! &&
+      distance > this.options[this._maxRadiusOption]!
     ) {
       secondLatLng = destinationOnLine(
         this._map,
@@ -424,44 +639,47 @@ Edit.CircleMarker = Edit.extend({
     }
     return secondLatLng;
   },
-  _handleOuterMarkerSnapping() {
+  _handleOuterMarkerSnapping(this: IEditCircleMarker) {
     if (this._outerMarker._snapped) {
       const latlng = this._centerMarker.getLatLng();
       const secondLatLng = this._outerMarker.getLatLng();
       const distance = this._distanceCalculation(latlng, secondLatLng);
       if (
-        this.options[this._minRadiusOption] &&
-        distance < this.options[this._minRadiusOption]
+        this.options[this._minRadiusOption]! &&
+        distance < this.options[this._minRadiusOption]!
       ) {
-        this._outerMarker.setLatLng(this._outerMarker._orgLatLng);
+        this._outerMarker.setLatLng(this._outerMarker._orgLatLng!);
       } else if (
-        this.options[this._maxRadiusOption] &&
-        distance > this.options[this._maxRadiusOption]
+        this.options[this._maxRadiusOption]! &&
+        distance > this.options[this._maxRadiusOption]!
       ) {
-        this._outerMarker.setLatLng(this._outerMarker._orgLatLng);
+        this._outerMarker.setLatLng(this._outerMarker._orgLatLng!);
       }
     }
     // calculate the new latlng of marker if radius is out of min/max
     this._outerMarker.setLatLng(this._getNewDestinationOfOuterMarker());
   },
-  _distanceCalculation(A, B) {
+  _distanceCalculation(this: IEditCircleMarker, A: L.LatLng, B: L.LatLng) {
     return this._map.project(A).distanceTo(this._map.project(B));
   },
-  _getMinDistanceInMeter(latlng) {
+  _getMinDistanceInMeter(this: IEditCircleMarker, latlng: L.LatLng) {
     return L.PM.Utils.pxRadiusToMeterRadius(
-      this.options[this._minRadiusOption],
+      this.options[this._minRadiusOption]!,
       this._map,
       latlng
     );
   },
-  _getMaxDistanceInMeter(latlng) {
+  _getMaxDistanceInMeter(this: IEditCircleMarker, latlng: L.LatLng) {
     return L.PM.Utils.pxRadiusToMeterRadius(
-      this.options[this._maxRadiusOption],
+      this.options[this._maxRadiusOption]!,
       this._map,
       latlng
     );
   },
-  _onVertexClick(e) {
+  _onVertexClick(
+    this: IEditCircleMarker,
+    e: L.LeafletEvent & { target: ExtendedMarker }
+  ) {
     const vertex = e.target;
     if (vertex._dragging) {
       return;

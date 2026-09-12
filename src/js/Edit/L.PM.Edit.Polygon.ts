@@ -1,9 +1,42 @@
+/**
+ * Extended marker with middle marker references
+ */
+type ExtendedMarker = L.Marker & {
+  _pmTempLayer?: boolean;
+  _icon?: HTMLElement;
+  leftM?: ExtendedMarker;
+  rightM?: ExtendedMarker;
+  _middleMarkerPrev?: ExtendedMarker;
+  _middleMarkerNext?: ExtendedMarker;
+  _dragging?: boolean;
+};
+
+/**
+ * Extended polyline layer with PM properties
+ */
+type ExtendedPolyline = L.Polyline & {
+  _map: L.Map;
+};
+
+/**
+ * Edit Polygon interface
+ */
+export interface IEditPolygon {
+  _shape: string;
+  _layer: ExtendedPolyline;
+
+  _checkMarkerAllowedToDrag(marker: ExtendedMarker): boolean;
+  _getNeighborMarkers(marker: ExtendedMarker): {
+    prevMarker: ExtendedMarker;
+    nextMarker: ExtendedMarker;
+  };
+}
 import lineIntersect from '@turf/line-intersect';
 import Edit from './L.PM.Edit';
 
-Edit.Polygon = Edit.Line.extend({
+Edit.Polygon = Edit.Line.extend<IEditPolygon, [L.Polygon]>({
   _shape: 'Polygon',
-  _checkMarkerAllowedToDrag(marker) {
+  _checkMarkerAllowedToDrag(this: IEditPolygon, marker: ExtendedMarker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
     const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);

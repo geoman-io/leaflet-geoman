@@ -40,20 +40,21 @@ export function hasValues(list: readonly unknown[]): boolean {
   return false;
 }
 
-export function removeEmptyCoordRings<T>(arr: T[]): T[] {
-  return arr.reduce((result, item) => {
+export function removeEmptyCoordRings<T extends unknown[]>(arr: T): T;
+export function removeEmptyCoordRings(arr: unknown[]): unknown[] {
+  return arr.reduce<unknown[]>((result, item) => {
     if ((item as { length?: number }).length !== 0) {
       const newItem = Array.isArray(item) ? removeEmptyCoordRings(item) : item;
       if (Array.isArray(newItem)) {
         if (newItem.length !== 0) {
-          result.push(newItem as T);
+          result.push(newItem);
         }
       } else {
-        result.push(newItem as T);
+        result.push(newItem);
       }
     }
     return result;
-  }, [] as T[]);
+  }, [] as unknown[]);
 }
 
 // Code from https://stackoverflow.com/a/24153998/8283938

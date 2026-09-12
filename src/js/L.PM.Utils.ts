@@ -99,7 +99,7 @@ export interface IUtils {
     exact?: boolean
   ): DeepCoordIndexResult;
   findDeepMarkerIndex(
-    arr: L.Marker[] | L.Marker[][] | L.Marker[][][],
+    arr: MarkerOrArray[],
     marker: ExtendedMarker
   ): DeepCoordIndexResult;
   _getIndexFromSegment(
