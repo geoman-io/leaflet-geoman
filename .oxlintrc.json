@@ -19,7 +19,8 @@
     "cypress/libs/**",
     "dist/**",
     "node_modules/**",
-    "demo/**/*.js"
+    "demo/**/*.js",
+    "test-page.js"
   ],
   "rules": {
     "no-unused-vars": "off",

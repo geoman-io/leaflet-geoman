@@ -1,12 +1,5 @@
+import type { DrawInstances } from '../../src/js/Draw/L.PM.Draw';
 import type { IToolbar } from '../../src/js/Toolbar/L.PM.Toolbar';
-import type { IDrawText } from '../../src/js/Draw/L.PM.Draw.Text';
-import type { IDrawCut } from '../../src/js/Draw/L.PM.Draw.Cut';
-import type { IDrawPolygon } from '../../src/js/Draw/L.PM.Draw.Polygon';
-import type { IDrawLine } from '../../src/js/Draw/L.PM.Draw.Line';
-import type { IDrawMarker } from '../../src/js/Draw/L.PM.Draw.Marker';
-import type { IDrawRectangle } from '../../src/js/Draw/L.PM.Draw.Rectangle';
-import type { IDrawCircleMarker } from '../../src/js/Draw/L.PM.Draw.CircleMarker';
-import type { IDrawCircle } from '../../src/js/Draw/L.PM.Draw.Circle';
 import type * as Leaflet from 'leaflet';
 
 declare global {
@@ -80,17 +73,17 @@ declare module 'leaflet' {
   }
   namespace PM {
     interface Draw {
-      PolygonCopy: DrawShape;
-      Circle: DrawShape &
-        IDrawCircle &
-        IDrawCircleMarker & { _snapList?: Layer[] };
-      CircleMarker: DrawShape & IDrawCircleMarker & { _snapList?: Layer[] };
-      Rectangle: DrawShape & IDrawRectangle & { _snapList?: Layer[] };
-      Marker: DrawShape & IDrawMarker & { _snapList?: Layer[] };
-      Line: DrawShape & IDrawLine & { _snapList?: Layer[] };
-      Polygon: DrawShape & IDrawPolygon & IDrawLine & { _snapList?: Layer[] };
-      Cut: DrawShape & IDrawCut & IDrawLine & { _snapList?: Layer[] };
-      Text: DrawShape & IDrawText & { _snapList?: Layer[] };
+      PolygonCopy: DrawShape & DrawInstances['Polygon'];
+      Circle: DrawShape & DrawInstances['Circle'] & { _snapList?: Layer[] };
+      CircleMarker: DrawShape &
+        DrawInstances['CircleMarker'] & { _snapList?: Layer[] };
+      Rectangle: DrawShape &
+        DrawInstances['Rectangle'] & { _snapList?: Layer[] };
+      Marker: DrawShape & DrawInstances['Marker'] & { _snapList?: Layer[] };
+      Line: DrawShape & DrawInstances['Line'] & { _snapList?: Layer[] };
+      Polygon: DrawShape & DrawInstances['Polygon'] & { _snapList?: Layer[] };
+      Cut: DrawShape & DrawInstances['Cut'] & { _snapList?: Layer[] };
+      Text: DrawShape & DrawInstances['Text'] & { _snapList?: Layer[] };
     }
     interface PMMap {
       setLang(lang: string, override?: object, fallback?: string): void;

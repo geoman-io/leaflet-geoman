@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["leaflet"],
+    "verbatimModuleSyntax": true
+  },
+  "include": ["*.mts", "*.cts"]
+}

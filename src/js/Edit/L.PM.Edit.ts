@@ -1,3 +1,4 @@
+import type { Inherit } from '../../types/leaflet-class';
 import type {
   LeafletClass,
   LeafletClassFactory,
@@ -250,13 +251,13 @@ const Edit = (L.Class as unknown as LeafletClassFactory).extend<
 }) as EditClass;
 
 export interface EditClass extends LeafletClass<IEdit, [L.Layer]> {
-  Marker: LeafletClass<IEditMarker, [L.Marker]>;
-  CircleMarker: LeafletClass<IEditCircleMarker, [L.CircleMarker]>;
-  Circle: LeafletClass<IEditCircle, [L.Circle]>;
-  ImageOverlay: LeafletClass<IEditImageOverlay, [L.ImageOverlay]>;
-  LayerGroup: LeafletClass<IEditLayerGroup, [L.LayerGroup]>;
+  Marker: LeafletClass<EditInstances['Marker'], [L.Marker]>;
+  CircleMarker: LeafletClass<EditInstances['CircleMarker'], [L.CircleMarker]>;
+  Circle: LeafletClass<EditInstances['Circle'], [L.Circle]>;
+  ImageOverlay: LeafletClass<EditInstances['ImageOverlay'], [L.ImageOverlay]>;
+  LayerGroup: LeafletClass<EditInstances['LayerGroup'], [L.LayerGroup]>;
   Line: LeafletClass<
-    IEditLine,
+    EditInstances['Line'],
     [
       L.Polyline<
         | GeoJSON.LineString
@@ -266,9 +267,21 @@ export interface EditClass extends LeafletClass<IEdit, [L.Layer]> {
       >,
     ]
   >;
-  Polygon: LeafletClass<IEditPolygon, [L.Polygon]>;
-  Rectangle: LeafletClass<IEditRectangle, [L.Rectangle]>;
-  Text: LeafletClass<IEditText, [L.Marker]>;
+  Polygon: LeafletClass<EditInstances['Polygon'], [L.Polygon]>;
+  Rectangle: LeafletClass<EditInstances['Rectangle'], [L.Rectangle]>;
+  Text: LeafletClass<EditInstances['Text'], [L.Marker]>;
 }
 
 export default Edit;
+
+export interface EditInstances {
+  Marker: Inherit<IEdit, IEditMarker>;
+  CircleMarker: Inherit<IEdit, IEditCircleMarker>;
+  Circle: Inherit<EditInstances['CircleMarker'], IEditCircle>;
+  ImageOverlay: Inherit<IEdit, IEditImageOverlay>;
+  LayerGroup: Inherit<{}, IEditLayerGroup>;
+  Line: Inherit<IEdit, IEditLine>;
+  Polygon: Inherit<EditInstances['Line'], IEditPolygon>;
+  Rectangle: Inherit<EditInstances['Polygon'], IEditRectangle>;
+  Text: Inherit<IEdit, IEditText>;
+}

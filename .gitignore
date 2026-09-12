@@ -15,3 +15,6 @@ npm-debug.log
 # Generated classic-script demo entry points
 /demo/**/*.js
 /demo/**/*.js.map
+
+/test-page.js
+/test-page.js.map

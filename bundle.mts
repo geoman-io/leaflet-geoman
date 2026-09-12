@@ -34,16 +34,21 @@ const buildOptions: esbuild.BuildOptions = {
 // are checked as isolated modules, but these browser scripts retain their
 // original global/classic execution model.
 const demoOptions: esbuild.BuildOptions = {
-  entryPoints: fs
-    .readdirSync('demo', { recursive: true })
-    .filter((file): file is string => typeof file === 'string')
-    .filter(
-      (file) =>
-        file.endsWith('.ts') && !file.endsWith('.d.ts') && file !== 'globals.ts'
-    )
-    .map((file) => `demo/${file}`),
-  outdir: 'demo',
-  outbase: 'demo',
+  entryPoints: [
+    'demo/customcontrols.ts',
+    'demo/demo-canvas.ts',
+    'demo/demo.ts',
+    'demo/devpanel/DevPanel.ts',
+    'demo/devpanel/modules/EventLogger.ts',
+    'demo/devpanel/modules/GeoJSONTools.ts',
+    'demo/devpanel/modules/LayerInspector.ts',
+    'demo/devpanel/modules/StateInspector.ts',
+    'demo/events.ts',
+    'demo/index.ts',
+    'test-page.ts',
+  ],
+  outdir: '.',
+  outbase: '.',
   sourcemap: true,
   tsconfigRaw: {
     compilerOptions: { target: 'ESNext' },

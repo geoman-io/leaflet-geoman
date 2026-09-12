@@ -1,3 +1,4 @@
+import type { Inherit } from '../../types/leaflet-class';
 import type {
   LeafletClass,
   LeafletClassFactory,
@@ -62,8 +63,10 @@ export interface DrawInstance {
   options: DrawOptions;
   enable: (options?: object) => void;
   disable: () => void;
-  setOptions: (options: object) => void;
-  addButton: () => void;
+  setOptions: (options: DrawOptions) => void;
+  enabled(): boolean;
+  toggle(options?: object): void;
+  setPathOptions(options: L.PathOptions, merge?: boolean): void;
 }
 
 /**
@@ -71,7 +74,7 @@ export interface DrawInstance {
  */
 interface PMLayer extends L.Layer {
   pm?: {
-    setOptions: (options: object) => void;
+    setOptions: (options: DrawOptions) => void;
     _shape?: string;
     _map?: L.Map;
   };
@@ -115,15 +118,14 @@ export interface IDraw {
   _enabled?: boolean;
   _layer?: L.Layer & { _map?: L.Map };
   shapes: string[];
-  Marker: DrawInstance;
-  CircleMarker: DrawInstance;
-  Line: DrawInstance;
-  Polygon: DrawInstance;
-  Rectangle: DrawInstance;
-  Circle: DrawInstance;
-  Cut: DrawInstance;
-  Text: DrawInstance;
-  [key: string]: unknown;
+  Marker: DrawInstances['Marker'];
+  CircleMarker: DrawInstances['CircleMarker'];
+  Line: DrawInstances['Line'];
+  Polygon: DrawInstances['Polygon'];
+  Rectangle: DrawInstances['Rectangle'];
+  Circle: DrawInstances['Circle'];
+  Cut: DrawInstances['Cut'];
+  Text: DrawInstances['Text'];
 
   setOptions(options: DrawOptions): void;
   setStyle(options?: DrawOptions): void;
@@ -227,10 +229,9 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<IDraw, [L.Map]>(
 
       // initiate drawing class for our shapes
       this.shapes.forEach((shape) => {
-        this[shape] = new (L.PM.Draw[shape] as LeafletClass<
-          DrawInstance,
-          [L.Map]
-        >)(this._map);
+        (this as unknown as ShapeRegistry)[shape] = new (L.PM.Draw[
+          shape
+        ] as LeafletClass<DrawInstance, [L.Map]>)(this._map);
       });
 
       // TODO: Remove this with the next major release
@@ -265,27 +266,31 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<IDraw, [L.Map]>(
       this.disable();
 
       // enable draw for a shape
-      (this[shape] as DrawInstance).enable(options);
+      (this as unknown as ShapeRegistry)[shape].enable(options);
     },
     disable(this: IDraw) {
       // there can only be one drawing mode active at a time on a map
       // so it doesn't matter which one should be disabled.
       // just disable all of them
       this.shapes.forEach((shape) => {
-        (this[shape] as DrawInstance).disable();
+        (this as unknown as ShapeRegistry)[shape].disable();
       });
     },
     addControls(this: IDraw) {
       // add control buttons for our shapes
       this.shapes.forEach((shape) => {
-        (this[shape] as DrawInstance).addButton();
+        (
+          (this as unknown as ShapeRegistry)[shape] as DrawInstance & {
+            addButton(): void;
+          }
+        ).addButton();
       });
     },
     getActiveShape(this: IDraw) {
       // returns the active shape
       let enabledShape: string | undefined;
       this.shapes.forEach((shape) => {
-        if ((this[shape] as DrawInstance)._enabled) {
+        if ((this as unknown as ShapeRegistry)[shape]._enabled) {
           enabledShape = shape;
         }
       });
@@ -328,33 +333,32 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<IDraw, [L.Map]>(
 
     createNewDrawInstance(this: IDraw, name: string, jsClass: string) {
       const instance = this._getShapeFromBtnName(jsClass);
-      if (this[name]) {
+      if ((this as unknown as ShapeRegistry)[name]) {
         throw new TypeError('Draw Type already exists');
       }
       if (!L.PM.Draw[instance]) {
         throw new TypeError(`There is no class L.PM.Draw.${instance}`);
       }
 
-      this[name] = new (L.PM.Draw[instance] as LeafletClass<
-        DrawInstance,
-        [L.Map]
-      >)(this._map);
-      (this[name] as DrawInstance).toolbarButtonName = name;
-      (this[name] as DrawInstance)._shape = name;
+      (this as unknown as ShapeRegistry)[name] = new (L.PM.Draw[
+        instance
+      ] as LeafletClass<DrawInstance, [L.Map]>)(this._map);
+      (this as unknown as ShapeRegistry)[name].toolbarButtonName = name;
+      (this as unknown as ShapeRegistry)[name]._shape = name;
       this.shapes.push(name);
 
       // needed when extended / copied from a custom instance
-      if (this[jsClass]) {
-        (this[name] as DrawInstance).setOptions(
-          (this[jsClass] as DrawInstance).options
+      if ((this as unknown as ShapeRegistry)[jsClass]) {
+        (this as unknown as ShapeRegistry)[name].setOptions(
+          (this as unknown as ShapeRegistry)[jsClass].options
         );
       }
       // Re-init the options, so it is not referenced with the default Draw class
-      (this[name] as DrawInstance).setOptions(
-        (this[name] as DrawInstance).options
+      (this as unknown as ShapeRegistry)[name].setOptions(
+        (this as unknown as ShapeRegistry)[name].options
       );
 
-      return this[name] as DrawInstance;
+      return (this as unknown as ShapeRegistry)[name] as DrawInstance;
     },
     _getShapeFromBtnName(this: IDraw, name: string) {
       const shapeMapping: ShapeMapping = {
@@ -375,7 +379,9 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<IDraw, [L.Map]>(
       if (shapeMapping[name]) {
         return shapeMapping[name];
       }
-      return this[name] ? (this[name] as DrawInstance)._shape! : name;
+      return (this as unknown as ShapeRegistry)[name]
+        ? (this as unknown as ShapeRegistry)[name]._shape!
+        : name;
     },
     _finishLayer(this: IDraw, layer: PMLayer) {
       if (layer.pm) {
@@ -423,13 +429,26 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<IDraw, [L.Map]>(
 export default Draw;
 
 export interface DrawClass extends LeafletClass<IDraw, [L.Map]> {
-  Marker: LeafletClass<IDrawMarker, [L.Map]>;
-  CircleMarker: LeafletClass<IDrawCircleMarker, [L.Map]>;
-  Line: LeafletClass<IDrawLine, [L.Map]>;
-  Polygon: LeafletClass<IDrawPolygon, [L.Map]>;
-  Rectangle: LeafletClass<IDrawRectangle, [L.Map]>;
-  Circle: LeafletClass<IDrawCircle, [L.Map]>;
-  Cut: LeafletClass<IDrawCut, [L.Map]>;
-  Text: LeafletClass<IDrawText, [L.Map]>;
+  Marker: LeafletClass<DrawInstances['Marker'], [L.Map]>;
+  CircleMarker: LeafletClass<DrawInstances['CircleMarker'], [L.Map]>;
+  Line: LeafletClass<DrawInstances['Line'], [L.Map]>;
+  Polygon: LeafletClass<DrawInstances['Polygon'], [L.Map]>;
+  Rectangle: LeafletClass<DrawInstances['Rectangle'], [L.Map]>;
+  Circle: LeafletClass<DrawInstances['Circle'], [L.Map]>;
+  Cut: LeafletClass<DrawInstances['Cut'], [L.Map]>;
+  Text: LeafletClass<DrawInstances['Text'], [L.Map]>;
   [name: string]: unknown;
 }
+
+export interface DrawInstances {
+  Marker: Inherit<DrawInstance, IDrawMarker>;
+  CircleMarker: Inherit<DrawInstance, IDrawCircleMarker>;
+  Circle: Inherit<DrawInstances['CircleMarker'], IDrawCircle>;
+  Line: Inherit<DrawInstance, IDrawLine>;
+  Polygon: Inherit<DrawInstances['Line'], IDrawPolygon>;
+  Rectangle: Inherit<DrawInstance, IDrawRectangle>;
+  Cut: Inherit<DrawInstances['Polygon'], IDrawCut>;
+  Text: Inherit<DrawInstance, IDrawText>;
+}
+
+type ShapeRegistry = Record<string, DrawInstance>;
