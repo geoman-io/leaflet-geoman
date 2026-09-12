@@ -83,7 +83,7 @@
     "prepare": "pnpm run build && husky",
     "lint": "oxlint src demo cypress bundle.mts vitest.config.ts cypress.config.ts --fix && oxfmt --write src demo cypress bundle.mts vitest.config.ts cypress.config.ts",
     "lint:check": "oxlint src demo cypress bundle.mts vitest.config.ts cypress.config.ts && oxfmt --check src demo cypress bundle.mts vitest.config.ts cypress.config.ts",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.tools.json && tsc --noEmit -p cypress/tsconfig.json"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.tools.json && tsc --noEmit -p cypress/tsconfig.json && tsc --noEmit -p demo/tsconfig.json"
   },
   "repository": {
     "type": "git",

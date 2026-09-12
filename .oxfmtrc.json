@@ -5,5 +5,8 @@
   "useTabs": false,
   "semi": true,
   "singleQuote": true,
-  "trailingComma": "es5"
+  "trailingComma": "es5",
+  "ignorePatterns": [
+    "demo/**/*.js"
+  ]
 }

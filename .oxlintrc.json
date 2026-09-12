@@ -18,7 +18,8 @@
   "ignorePatterns": [
     "cypress/libs/**",
     "dist/**",
-    "node_modules/**"
+    "node_modules/**",
+    "demo/**/*.js"
   ],
   "rules": {
     "no-unused-vars": "off",

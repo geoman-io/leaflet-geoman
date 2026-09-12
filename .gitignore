@@ -11,3 +11,7 @@ npm-debug.log
 .eslintcache
 .env
 *.tgz
+
+# Generated classic-script demo entry points
+/demo/**/*.js
+/demo/**/*.js.map

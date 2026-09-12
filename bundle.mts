@@ -30,6 +30,26 @@ const buildOptions: esbuild.BuildOptions = {
   sourcemap: true,
 };
 
+// Keep demo script URLs and classic-script globals unchanged. Their sources
+// are checked as isolated modules, but these browser scripts retain their
+// original global/classic execution model.
+const demoOptions: esbuild.BuildOptions = {
+  entryPoints: fs
+    .readdirSync('demo', { recursive: true })
+    .filter((file): file is string => typeof file === 'string')
+    .filter(
+      (file) =>
+        file.endsWith('.ts') && !file.endsWith('.d.ts') && file !== 'globals.ts'
+    )
+    .map((file) => `demo/${file}`),
+  outdir: 'demo',
+  outbase: 'demo',
+  sourcemap: true,
+  tsconfigRaw: {
+    compilerOptions: { target: 'ESNext' },
+  },
+};
+
 if (process.env.DEV) {
   // Watch in dev mode (non-minified for easier debugging)
   const ctx = await esbuild.context({
@@ -37,6 +57,8 @@ if (process.env.DEV) {
     minify: false,
     plugins,
   });
+  const demoCtx = await esbuild.context(demoOptions);
+  await demoCtx.watch();
   await ctx.watch();
   console.log('watching...');
   const { hosts, port } = await ctx.serve({
@@ -68,6 +90,8 @@ if (process.env.DEV) {
   const data = fs.readFileSync('./dist/leaflet-geoman.css', 'utf8');
   const result = data.replace(/<\\\/style>/g, '</style>');
   fs.writeFileSync('./dist/leaflet-geoman.css', result, 'utf8');
+
+  await esbuild.build(demoOptions);
 
   // Copy types
   fs.copyFileSync('leaflet-geoman.d.ts', './dist/leaflet-geoman.d.ts');
