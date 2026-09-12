@@ -1,3 +1,6 @@
+import type ToolbarClass from '../js/Toolbar/L.PM.Toolbar';
+import type MapPM from '../js/L.PM.Map';
+import type PMButtonClass from '../js/Toolbar/L.Controls';
 import type { DrawClass } from '../js/Draw/L.PM.Draw';
 import type { EditClass } from '../js/Edit/L.PM.Edit';
 import type { IUtils } from '../js/L.PM.Utils';
@@ -5,6 +8,9 @@ import type { MatrixConstructor } from '../js/helpers/Matrix';
 
 // Internal Leaflet fields used by the plugin. These are not shipped to consumers.
 declare module 'leaflet' {
+  namespace Control {
+    let PMButton: typeof PMButtonClass;
+  }
   interface Polyline {
     _defaultShape(): L.LatLng[];
   }
@@ -45,11 +51,13 @@ declare module 'leaflet' {
     setBounds(bounds: LatLngBoundsExpression | LatLngExpression[]): this;
   }
   interface Layer {
+    _drawnByGeoman?: boolean;
     _leaflet_id?: number;
     _pmTempLayer?: boolean;
     removeFrom(map: Map | LayerGroup): this;
   }
   namespace DomEvent {
+    function fakeStop(event: Event): void;
     function on<E extends Event>(
       target: HTMLElement | Document | Window,
       types: string,
@@ -69,6 +77,9 @@ declare module 'leaflet' {
   }
   namespace PM {
     let optIn: boolean;
+    const Toolbar: typeof ToolbarClass;
+    const Map: typeof MapPM;
+    function initialize(options?: object): void;
     const Edit: EditClass;
     interface PMMap {
       removeLayer(event: { target: L.Layer }): void;

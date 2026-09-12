@@ -1,19 +1,138 @@
+import type { LeafletClassFactory } from '../../types/leaflet-class';
+
+/**
+ * Button action definition
+ */
+export interface ButtonAction {
+  name?: string;
+  text: string;
+  title?: string;
+  onClick?: (this: IPMButton, e: Event) => void;
+  isActive?: () => boolean;
+  _node?: HTMLElement;
+}
+
+/**
+ * Prepared action with node element
+ */
+interface PreparedAction extends ButtonAction {
+  _node?: HTMLElement;
+}
+
+/**
+ * Button options
+ */
+export interface ButtonOptions {
+  position: string;
+  disableByOtherButtons: boolean;
+  tool?: string;
+  toggleStatus?: boolean;
+  cssToggle?: boolean;
+  disabled?: boolean;
+  doToggle?: boolean;
+  disableOtherButtons?: boolean;
+  title?: string;
+  iconUrl?: string;
+  className?: string;
+  text?: string;
+  jsClass?: string;
+  actions: (string | ButtonAction)[];
+  _preparedActions?: (PreparedAction | undefined)[];
+  onClick: (
+    e: Event | undefined,
+    context: { button: IPMButton; event: Event | undefined }
+  ) => void;
+  afterClick: (
+    e: Event | undefined,
+    context: { button: IPMButton; event: Event | undefined }
+  ) => void;
+}
+
+/**
+ * Extended map with PM Toolbar
+ */
+type ExtendedMap = L.Map & {
+  pm: {
+    Toolbar: {
+      options: { oneBlock: boolean };
+      editContainer: HTMLElement;
+      optionsContainer: HTMLElement;
+      customContainer: HTMLElement;
+      drawContainer: HTMLElement;
+      buttons: Record<string, IPMButton>;
+      _createContainer: (position: string) => HTMLElement;
+      triggerClickOnToggledButtons: (excludeButton: IPMButton) => void;
+    };
+    Draw: Record<
+      string,
+      {
+        _removeLastVertex: () => void;
+        _finishShape: (e?: Event) => void;
+      }
+    >;
+  };
+};
+
+/**
+ * PMButton interface
+ */
+export interface IPMButton {
+  options: { position: string; disableByOtherButtons: boolean };
+  _button: ButtonOptions;
+  _map: ExtendedMap;
+  _container: HTMLElement;
+  buttonsDomNode: HTMLElement;
+
+  onAdd(map: L.Map): HTMLElement;
+  onRemove(): HTMLElement;
+  _renderButton(): void;
+  getText(): string | undefined;
+  getIconUrl(): string | undefined;
+  destroy(): void;
+  toggle(e?: boolean | Event): boolean;
+  toggled(): boolean | undefined;
+  onCreate(): void;
+  disable(): void;
+  enable(): void;
+  _triggerClick(e?: Event): void;
+  _makeButton(button: ButtonOptions): HTMLElement;
+  _applyStyleClasses(): void;
+  _onBtnClick(): void;
+  _clicked(e?: Event): void;
+  _update(): void;
+  remove(): this;
+  addTo(map: L.Map): this;
+  setPosition(position: string): this;
+  _updateDisabled(): void;
+  _updateActiveAction(button: ButtonOptions): void;
+
+  // From EventMixin
+  _fireButtonClick: (btnName: string, button: ButtonOptions) => void;
+  _fireActionClick: (
+    action: ButtonAction,
+    btnName: string,
+    button: ButtonOptions
+  ) => void;
+}
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
-const PMButton = L.Control.extend({
+const PMButton = (L.Control as unknown as LeafletClassFactory).extend<
+  IPMButton,
+  [Partial<ButtonOptions>]
+>({
   includes: [EventMixin],
   options: {
     position: 'topleft',
     disableByOtherButtons: true,
   },
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
-  initialize(options) {
+  initialize(this: IPMButton, options: Partial<ButtonOptions>) {
     // replaced setOptions with this because classNames returned undefined 🤔
-    this._button = L.Util.extend({}, this.options, options);
+    this._button = L.Util.extend({}, this.options, options) as ButtonOptions;
   },
-  onAdd(map) {
-    this._map = map;
+  onAdd(this: IPMButton, map: L.Map) {
+    this._map = map as typeof this._map;
     if (!this._map.pm.Toolbar.options.oneBlock) {
       if (this._button.tool === 'edit') {
         this._container = this._map.pm.Toolbar.editContainer;
@@ -33,7 +152,7 @@ const PMButton = L.Control.extend({
 
     return this._container;
   },
-  _renderButton() {
+  _renderButton(this: IPMButton) {
     const oldDomNode = this.buttonsDomNode;
     this.buttonsDomNode = this._makeButton(this._button);
     if (oldDomNode) {
@@ -42,22 +161,22 @@ const PMButton = L.Control.extend({
       this._container.appendChild(this.buttonsDomNode);
     }
   },
-  onRemove() {
+  onRemove(this: IPMButton) {
     this.buttonsDomNode.remove();
 
     return this._container;
   },
-  getText() {
+  getText(this: IPMButton) {
     return this._button.text;
   },
-  getIconUrl() {
+  getIconUrl(this: IPMButton) {
     return this._button.iconUrl;
   },
-  destroy() {
-    this._button = {};
+  destroy(this: IPMButton) {
+    this._button = {} as ButtonOptions;
     this._update();
   },
-  toggle(e) {
+  toggle(this: IPMButton, e?: boolean | Event) {
     if (typeof e === 'boolean') {
       this._button.toggleStatus = e;
     } else {
@@ -68,23 +187,23 @@ const PMButton = L.Control.extend({
 
     return this._button.toggleStatus;
   },
-  toggled() {
+  toggled(this: IPMButton) {
     return this._button.toggleStatus;
   },
-  onCreate() {
+  onCreate(this: IPMButton) {
     this.toggle(false);
   },
-  disable() {
+  disable(this: IPMButton) {
     this.toggle(false); // is needed to prevent active button disabled
     this._button.disabled = true;
     this._updateDisabled();
   },
-  enable() {
+  enable(this: IPMButton) {
     this._button.disabled = false;
     this._updateDisabled();
     this._updateActiveAction(this._button);
   },
-  _triggerClick(e) {
+  _triggerClick(this: IPMButton, e?: Event) {
     if (e) {
       // is needed to prevent scrolling when clicking on a-element with href="a"
       e.preventDefault();
@@ -97,7 +216,7 @@ const PMButton = L.Control.extend({
     this._clicked(e);
     this._button.afterClick(e, { button: this, event: e });
   },
-  _makeButton(button) {
+  _makeButton(this: IPMButton, button: ButtonOptions) {
     const pos = this.options.position.indexOf('right') > -1 ? 'pos-right' : '';
 
     // button container
@@ -130,7 +249,7 @@ const PMButton = L.Control.extend({
 
     const activeActions = button.actions;
 
-    const actions = {
+    const actions: Record<string, ButtonAction> = {
       cancel: {
         text: getTranslation('actions.cancel'),
         title: getTranslation('actions.cancel'),
@@ -149,25 +268,25 @@ const PMButton = L.Control.extend({
         text: getTranslation('actions.removeLastVertex'),
         title: getTranslation('actions.removeLastVertex'),
         onClick() {
-          this._map.pm.Draw[button.jsClass]._removeLastVertex();
+          this._map.pm.Draw[button.jsClass!]._removeLastVertex();
         },
       },
       finish: {
         text: getTranslation('actions.finish'),
         title: getTranslation('actions.finish'),
         onClick(e) {
-          this._map.pm.Draw[button.jsClass]._finishShape(e);
+          this._map.pm.Draw[button.jsClass!]._finishShape(e);
         },
       },
     };
 
     button._preparedActions = activeActions.map((_action) => {
       const name = typeof _action === 'string' ? _action : _action.name;
-      let action;
-      if (actions[name]) {
-        action = actions[name];
-      } else if (_action.text) {
-        action = _action;
+      let action: ButtonAction | undefined;
+      if (actions[name!]) {
+        action = actions[name!];
+      } else if ((_action as Partial<ButtonAction>).text) {
+        action = _action as ButtonAction;
       } else {
         return action;
       }
@@ -193,7 +312,7 @@ const PMButton = L.Control.extend({
 
       if (!button.disabled) {
         if (action.onClick) {
-          const actionClick = (e) => {
+          const actionClick = (e: Event) => {
             // is needed to prevent scrolling when clicking on a-element with href="a"
             e.preventDefault();
             let btnName = '';
@@ -249,7 +368,7 @@ const PMButton = L.Control.extend({
     return buttonContainer;
   },
 
-  _applyStyleClasses() {
+  _applyStyleClasses(this: IPMButton) {
     if (!this._container) {
       return;
     }
@@ -263,7 +382,7 @@ const PMButton = L.Control.extend({
     }
   },
 
-  _onBtnClick() {
+  _onBtnClick(this: IPMButton) {
     if (this._button.disabled) {
       return;
     }
@@ -281,19 +400,19 @@ const PMButton = L.Control.extend({
     this._fireButtonClick(btnName, this._button);
   },
 
-  _clicked() {
+  _clicked(this: IPMButton) {
     if (this._button.doToggle) {
       this.toggle();
     }
   },
 
-  _updateDisabled() {
+  _updateDisabled(this: IPMButton) {
     if (!this._container) {
       return;
     }
 
     const className = 'pm-disabled';
-    const button = this.buttonsDomNode.children[0];
+    const button = this.buttonsDomNode.children[0] as HTMLElement;
 
     if (this._button.disabled) {
       L.DomUtil.addClass(button, className);
@@ -303,7 +422,7 @@ const PMButton = L.Control.extend({
       button.setAttribute('aria-disabled', 'false');
     }
   },
-  _updateActiveAction(button) {
+  _updateActiveAction(this: IPMButton, button: ButtonOptions) {
     button._preparedActions?.forEach((action) => {
       if (action?._node) {
         if (action.isActive && action.isActive.call(this)) {

@@ -17,7 +17,7 @@ const plugins = [{
 
 const buildOptions = {
   bundle: true,
-  entryPoints: ['./src/js/L.PM.js'],
+  entryPoints: ['./src/js/L.PM.ts'],
   loader: {
     '.js': 'jsx',
     '.css': 'css',
