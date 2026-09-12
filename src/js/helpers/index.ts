@@ -1,10 +1,12 @@
 import get from 'lodash/get';
 import translations from '../../assets/translations';
 
-export function getTranslation(path) {
+export function getTranslation(path: string): string {
   const lang = L.PM.activeLang;
   // if translation is not found, fallback to english
-  return get(translations[lang], path) || get(translations.en, path) || path;
+  return (get(translations[lang], path) ||
+    get(translations.en, path) ||
+    path) as string;
 }
 
 export function hasFinePointer() {
@@ -22,7 +24,7 @@ export function hasFinePointer() {
   return true;
 }
 
-export function hasValues(list) {
+export function hasValues(list: readonly unknown[]): boolean {
   for (let i = 0; i < list.length; i += 1) {
     const item = list[i];
 
@@ -38,27 +40,31 @@ export function hasValues(list) {
   return false;
 }
 
-export function removeEmptyCoordRings(arr) {
+export function removeEmptyCoordRings<T>(arr: T[]): T[] {
   return arr.reduce((result, item) => {
-    if (item.length !== 0) {
+    if ((item as { length?: number }).length !== 0) {
       const newItem = Array.isArray(item) ? removeEmptyCoordRings(item) : item;
       if (Array.isArray(newItem)) {
         if (newItem.length !== 0) {
-          result.push(newItem);
+          result.push(newItem as T);
         }
       } else {
-        result.push(newItem);
+        result.push(newItem as T);
       }
     }
     return result;
-  }, []);
+  }, [] as T[]);
 }
 
 // Code from https://stackoverflow.com/a/24153998/8283938
-function destinationVincenty(lonlat, brng, dist) {
+function destinationVincenty(
+  lonlat: L.LatLng,
+  brng: number,
+  dist: number
+): L.LatLng {
   // rewritten to work with leaflet
   const VincentyConstants = {
-    a: L.CRS.Earth.R,
+    a: (L.CRS.Earth as L.CRS & { R: number }).R,
     b: 6356752.3142,
     f: 1 / 298.257223563,
   };
@@ -84,9 +90,9 @@ function destinationVincenty(lonlat, brng, dist) {
   let sigma = s / (b * A);
   let sigmaP = 2 * Math.PI;
 
-  let cos2SigmaM;
-  let sinSigma;
-  let cosSigma;
+  let cos2SigmaM!: number;
+  let sinSigma!: number;
+  let cosSigma!: number;
   while (Math.abs(sigma - sigmaP) > 1e-12) {
     cos2SigmaM = Math.cos(2 * sigma1 + sigma);
     sinSigma = Math.sin(sigma);
@@ -131,10 +137,10 @@ function destinationVincenty(lonlat, brng, dist) {
 }
 
 export function createGeodesicPolygon(
-  origin,
-  radius,
-  sides,
-  rotation,
+  origin: L.LatLng,
+  radius: number,
+  sides: number,
+  rotation: number,
   withBearing = true
 ) {
   let trueAngle;
@@ -159,11 +165,15 @@ export function createGeodesicPolygon(
 }
 
 /* Copied from L.GeometryUtil */
-function destination(latlng, heading, distance) {
+function destination(
+  latlng: L.LatLng,
+  heading: number,
+  distance: number
+): L.LatLng {
   heading = (heading + 360) % 360;
   const rad = Math.PI / 180;
   const radInv = 180 / Math.PI;
-  const { R } = L.CRS.Earth; // approximation of Earth's radius
+  const { R } = L.CRS.Earth as L.CRS & { R: number }; // approximation of Earth's radius
   const lon1 = latlng.lng * rad;
   const lat1 = latlng.lat * rad;
   const rheading = heading * rad;
@@ -189,7 +199,11 @@ function destination(latlng, heading, distance) {
   return L.latLng([lat2 * radInv, lon2]);
 }
 /* Copied from L.GeometryUtil */
-export function calcAngle(map, latlngA, latlngB) {
+export function calcAngle(
+  map: L.Map,
+  latlngA: L.LatLngExpression,
+  latlngB: L.LatLngExpression
+): number {
   const pointA = map.latLngToContainerPoint(latlngA);
   const pointB = map.latLngToContainerPoint(latlngB);
   let angleDeg =
@@ -198,31 +212,40 @@ export function calcAngle(map, latlngA, latlngB) {
   return angleDeg;
 }
 
-export function destinationOnLine(map, latlngA, latlngB, distance) {
+export function destinationOnLine(
+  map: L.Map,
+  latlngA: L.LatLng,
+  latlngB: L.LatLng,
+  distance: number
+): L.LatLng {
   const angleDeg = calcAngle(map, latlngA, latlngB);
   return destination(latlngA, angleDeg, distance);
 }
 
 // this function is used with the .sort(prioritiseSort(key, sortingOrder)) function of arrays
-export function prioritiseSort(key, _sortingOrder, order = 'asc') {
+export function prioritiseSort(
+  key: string,
+  _sortingOrder?: Record<string, number> | null,
+  order: 'asc' | 'desc' = 'asc'
+): (a: unknown, b: unknown) => number {
   /* the sorting order has all possible keys (lowercase) with the index and then it is sorted by the key on the object */
 
   if (!_sortingOrder || Object.keys(_sortingOrder).length === 0) {
-    return (a, b) => a - b; // default sort method
+    return (a, b) => (a as number) - (b as number); // default sort method
   }
 
   // change the keys to lowercase
   const keys = Object.keys(_sortingOrder);
   let objKey;
   let n = keys.length - 1;
-  const sortingOrder = {};
+  const sortingOrder: Record<string, number> = {};
   while (n >= 0) {
     objKey = keys[n];
     sortingOrder[objKey.toLowerCase()] = _sortingOrder[objKey];
     n -= 1;
   }
 
-  function getShape(layer) {
+  function getShape(layer: L.Layer) {
     if (layer instanceof L.Marker) {
       return 'Marker';
     }
@@ -248,13 +271,17 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
     let keyA;
     let keyB;
     if (key === 'instanceofShape') {
-      keyA = getShape(a.layer).toLowerCase();
-      keyB = getShape(b.layer).toLowerCase();
+      keyA = getShape((a as { layer: L.Layer }).layer)!.toLowerCase();
+      keyB = getShape((b as { layer: L.Layer }).layer)!.toLowerCase();
       if (!keyA || !keyB) return 0;
     } else {
-      if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) return 0;
-      keyA = a[key].toLowerCase();
-      keyB = b[key].toLowerCase();
+      if (
+        !(a as object).hasOwnProperty(key) ||
+        !(b as object).hasOwnProperty(key)
+      )
+        return 0;
+      keyA = (a as Record<string, string>)[key].toLowerCase();
+      keyB = (b as Record<string, string>)[key].toLowerCase();
     }
 
     const first =
@@ -270,15 +297,15 @@ export function prioritiseSort(key, _sortingOrder, order = 'asc') {
   };
 }
 
-export function copyLatLngs(layer, latlngs = layer.getLatLngs()) {
+export function copyLatLngs(layer: L.Polyline, latlngs = layer.getLatLngs()) {
   if (layer instanceof L.Polygon) {
     return L.polygon(latlngs).getLatLngs();
   }
-  return L.polyline(latlngs).getLatLngs();
+  return L.polyline(latlngs as L.LatLng[] | L.LatLng[][]).getLatLngs();
 }
 
 // Replaces the lat value with the MAX_LATITUDE of CRS if it is lower / higher
-export function fixLatOffset(latlng, map) {
+export function fixLatOffset(latlng: L.LatLng, map: L.Map): L.LatLng {
   if (map.options.crs?.projection?.MAX_LATITUDE) {
     const max = map.options.crs?.projection?.MAX_LATITUDE;
     latlng.lat = Math.max(Math.min(max, latlng.lat), -max);
@@ -286,13 +313,15 @@ export function fixLatOffset(latlng, map) {
   return latlng;
 }
 
-export function getRenderer(layer) {
+export function getRenderer(layer: L.Map | L.Path): L.Renderer {
   return (
     layer.options.renderer ||
-    (layer._map &&
-      (layer._map._getPaneRenderer(layer.options.pane) ||
-        layer._map.options.renderer ||
-        layer._map._renderer)) ||
+    ((layer as L.Path & { _map: L.Map })._map &&
+      ((layer as L.Path & { _map: L.Map })._map._getPaneRenderer(
+        (layer as L.Path).options.pane
+      ) ||
+        (layer as L.Path & { _map: L.Map })._map.options.renderer ||
+        (layer as L.Path & { _map: L.Map })._map._renderer)) ||
     layer._renderer
   );
 }

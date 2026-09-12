@@ -31,6 +31,10 @@ import ky from './ky.json';
 
 const pt = pt_pt;
 
+export interface TranslationTree {
+  [key: string]: string | TranslationTree;
+}
+
 export default {
   en,
   de,
@@ -63,4 +67,4 @@ export default {
   fi,
   ko,
   ky,
-};
+} as Record<string, TranslationTree>;

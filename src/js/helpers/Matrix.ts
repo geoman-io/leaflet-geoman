@@ -14,12 +14,57 @@
  * @param {Number} e
  * @param {Number} f
  */
-const Matrix = function Matrix(a, b, c, d, e, f) {
+export interface Matrix {
+  _matrix: [number, number, number, number, number, number];
+  transform(point: L.Point): L.Point;
+  _transform(point: L.Point): L.Point;
+  untransform(point: L.Point): L.Point;
+  clone(): Matrix;
+  translate(): L.Point;
+  translate(translate: number | L.Point): Matrix;
+  scale(): L.Point;
+  scale(scale: number | L.Point, origin?: L.Point): Matrix;
+  rotate(angle: number, origin?: L.Point): Matrix;
+  flip(): Matrix;
+  _add(a: Matrix): Matrix;
+  _add(
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number
+  ): Matrix;
+}
+
+export interface MatrixConstructor {
+  new (
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number
+  ): Matrix;
+  init(): Matrix;
+  prototype: Matrix;
+}
+
+// Preserve the public function constructor and enumerable prototype methods.
+const Matrix = function Matrix(
+  this: Matrix,
+  a: number,
+  b: number,
+  c: number,
+  d: number,
+  e: number,
+  f: number
+) {
   /**
    * @type {Array.<Number>}
    */
   this._matrix = [a, b, c, d, e, f];
-};
+} as unknown as MatrixConstructor;
 
 Matrix.init = () => new L.PM.Matrix(1, 0, 0, 1, 0, 0);
 
@@ -28,7 +73,7 @@ Matrix.prototype = {
    * @param  {L.Point} point
    * @return {L.Point}
    */
-  transform(point) {
+  transform(this: Matrix, point: L.Point): L.Point {
     return this._transform(point.clone());
   },
 
@@ -41,7 +86,7 @@ Matrix.prototype = {
    * @param  {L.Point} point
    * @return {L.Point}
    */
-  _transform(point) {
+  _transform(this: Matrix, point: L.Point): L.Point {
     const matrix = this._matrix;
     const { x, y } = point;
     point.x = matrix[0] * x + matrix[1] * y + matrix[4];
@@ -53,7 +98,7 @@ Matrix.prototype = {
    * @param  {L.Point} point
    * @return {L.Point}
    */
-  untransform(point) {
+  untransform(this: Matrix, point: L.Point): L.Point {
     const matrix = this._matrix;
     return new L.Point(
       (point.x / matrix[0] - matrix[4]) / matrix[0],
@@ -64,7 +109,7 @@ Matrix.prototype = {
   /**
    * @return {L.PM.Matrix}
    */
-  clone() {
+  clone(this: Matrix): Matrix {
     const matrix = this._matrix;
     return new L.PM.Matrix(
       matrix[0],
@@ -80,7 +125,7 @@ Matrix.prototype = {
    * @param {L.Point|Number} translate
    * @return {L.PM.Matrix|L.Point}
    */
-  translate(translate) {
+  translate(this: Matrix, translate?: number | L.Point): L.Point | Matrix {
     if (translate === undefined) {
       return new L.Point(this._matrix[4], this._matrix[5]);
     }
@@ -103,7 +148,11 @@ Matrix.prototype = {
    * @param {L.Point|Number} origin
    * @return {L.PM.Matrix|L.Point}
    */
-  scale(scale, origin) {
+  scale(
+    this: Matrix,
+    scale?: number | L.Point,
+    origin?: L.Point
+  ): L.Point | Matrix {
     if (scale === undefined) {
       return new L.Point(this._matrix[0], this._matrix[3]);
     }
@@ -136,7 +185,7 @@ Matrix.prototype = {
    * @param {L.Point=} origin
    * @return {L.PM.Matrix}
    */
-  rotate(angle, origin) {
+  rotate(this: Matrix, angle: number, origin?: L.Point): Matrix {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
 
@@ -156,7 +205,7 @@ Matrix.prototype = {
    * Invert rotation
    * @return {L.PM.Matrix}
    */
-  flip() {
+  flip(this: Matrix): Matrix {
     this._matrix[1] *= -1;
     this._matrix[2] *= -1;
     return this;
@@ -170,8 +219,16 @@ Matrix.prototype = {
    * @param {Number} e
    * @param {Number} f
    */
-  _add(a, b, c, d, e, f) {
-    const result = [[], [], []];
+  _add(
+    this: Matrix,
+    a: number | Matrix,
+    b?: number,
+    c?: number,
+    d?: number,
+    e?: number,
+    f?: number
+  ): Matrix {
+    const result: number[][] = [[], [], []];
     let src = this._matrix;
     const m = [
       [src[0], src[2], src[4]],
@@ -179,8 +236,8 @@ Matrix.prototype = {
       [0, 0, 1],
     ];
     let other = [
-      [a, c, e],
-      [b, d, f],
+      [a as number, c!, e!],
+      [b!, d!, f!],
       [0, 0, 1],
     ];
     let val;
@@ -214,6 +271,6 @@ Matrix.prototype = {
     ];
     return this;
   },
-};
+} as Matrix;
 
 export default Matrix;

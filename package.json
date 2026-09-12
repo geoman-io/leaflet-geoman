@@ -45,7 +45,10 @@
     "polyclip-ts": "^0.16.8"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.16",
     "@types/leaflet": "^1.9.22",
+    "@types/lodash": "^4.17.25",
+    "@types/node": "^20.19.43",
     "@vitest/coverage-v8": "^4.1.11",
     "cross-env": "^10.1.0",
     "cypress": "^15.21.1",
@@ -56,6 +59,7 @@
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
     "prosthetic-hand": "2.2.2",
+    "tsx": "^4.23.13",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"
   },
