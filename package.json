@@ -45,7 +45,10 @@
     "polyclip-ts": "^0.16.8"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.16",
     "@types/leaflet": "^1.9.22",
+    "@types/lodash": "^4.17.25",
+    "@types/node": "^20.19.43",
     "@vitest/coverage-v8": "^4.1.11",
     "cross-env": "^10.1.0",
     "cypress": "^15.21.1",
@@ -56,6 +59,7 @@
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
     "prosthetic-hand": "2.2.2",
+    "tsx": "^4.23.13",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"
   },
@@ -68,8 +72,8 @@
   "packageManager": "pnpm@10.34.5",
   "scripts": {
     "start": "pnpm run dev",
-    "dev": "cross-env DEV=true node bundle.mjs",
-    "build": "node bundle.mjs",
+    "dev": "cross-env DEV=true tsx bundle.mts",
+    "build": "tsx bundle.mts",
     "test": "cypress run --browser chrome",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
@@ -77,9 +81,9 @@
     "test:all": "pnpm run test:unit && pnpm run test",
     "cypress": "cypress open",
     "prepare": "pnpm run build && husky",
-    "lint": "oxlint src demo --fix && oxfmt --write src demo",
-    "lint:check": "oxlint src demo && oxfmt --check src demo",
-    "typecheck": "tsc --noEmit"
+    "lint": "oxlint src demo cypress test test-page.ts bundle.mts vitest.config.ts cypress.config.ts --fix && oxfmt --write src demo cypress test test-page.ts bundle.mts vitest.config.ts cypress.config.ts",
+    "lint:check": "oxlint src demo cypress test test-page.ts bundle.mts vitest.config.ts cypress.config.ts && oxfmt --check src demo cypress test test-page.ts bundle.mts vitest.config.ts cypress.config.ts",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.tools.json && tsc --noEmit -p cypress/tsconfig.json && tsc --noEmit -p demo/tsconfig.json && tsc --noEmit -p test/types/tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -96,7 +100,7 @@
   },
   "homepage": "https://geoman.io",
   "lint-staged": {
-    "*.js": "oxlint --fix",
-    "*.{js,css}": "oxfmt --write"
+    "*.{js,ts,mjs,mts,cts}": "oxlint --fix",
+    "*.{js,ts,mjs,mts,cts,css}": "oxfmt --write"
   }
 }
