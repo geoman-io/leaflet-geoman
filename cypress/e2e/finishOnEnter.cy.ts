@@ -316,3 +316,41 @@ describe('Finish Drawing on Enter Key - Default Option', () => {
     });
   });
 });
+
+describe('Programmatically finish drawing', () => {
+  const mapSelector = '#map';
+
+  it('returns false when no draw mode is active', () => {
+    cy.window().then(({ map }) => {
+      expect(map.pm.finishDraw()).to.equal(false);
+    });
+  });
+
+  it('does not finish an invalid polygon', () => {
+    cy.window().then(({ map }) => {
+      map.pm.enableDraw('Polygon', { snappable: false });
+    });
+    cy.get(mapSelector).click(150, 150);
+    cy.get(mapSelector).click(150, 350);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.finishDraw()).to.equal(false);
+      expect(map.pm.globalDrawModeEnabled()).to.equal(true);
+      expect(map.pm.getGeomanDrawLayers()).to.have.length(0);
+    });
+  });
+
+  it('finishes a valid polygon and reports success', () => {
+    cy.window().then(({ map }) => {
+      map.pm.enableDraw('Polygon', { snappable: false });
+    });
+    cy.get(mapSelector).click(150, 150);
+    cy.get(mapSelector).click(150, 350);
+    cy.get(mapSelector).click(350, 350);
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.finishDraw()).to.equal(true);
+      expect(map.pm.getGeomanDrawLayers()).to.have.length(1);
+    });
+  });
+});

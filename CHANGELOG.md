@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `map.pm.finishDraw()` to finish a valid active drawing programmatically (#1100).
+
 ### Changed
 
 - Replace `.nvmrc` with `mise.toml`, pin Node.js 24.21.0, and upgrade pnpm to 12.5.1.
