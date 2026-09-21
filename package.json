@@ -51,13 +51,13 @@
     "@types/node": "^20.19.43",
     "@vitest/coverage-v8": "^4.1.11",
     "cross-env": "^10.1.0",
-    "cypress": "^15.21.1",
+    "cypress": "^16.0.0",
     "esbuild": "^0.28.2",
     "husky": "^9.1.7",
     "leaflet": "1.9.4",
-    "lint-staged": "^17.4.1",
-    "oxfmt": "^0.66.0",
-    "oxlint": "^1.81.0",
+    "lint-staged": "^17.5.1",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
     "prosthetic-hand": "2.2.2",
     "tsx": "^4.23.13",
     "typescript": "^6.0.3",
@@ -69,7 +69,7 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@10.34.5",
+  "packageManager": "pnpm@12.5.1",
   "scripts": {
     "start": "pnpm run dev",
     "dev": "cross-env DEV=true tsx bundle.mts",

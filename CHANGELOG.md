@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Replace `.nvmrc` with `mise.toml`, pin Node.js 24.21.0, and upgrade pnpm to 12.5.1.
+- Upgrade Cypress to 16.0.0, lint-staged to 17.5.1, oxlint to 1.82.0, and oxfmt to 0.67.0.
+
 ## [2.20.2] - 2026-09-21
 
 ### Fixed
