@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Replace `.nvmrc` with `mise.toml`, pin Node.js 24.21.0, and upgrade pnpm to 12.5.1.
+- Upgrade Cypress to 16.0.0, lint-staged to 17.5.1, oxlint to 1.82.0, and oxfmt to 0.67.0.
+
+## [2.20.2] - 2026-09-21
+
+### Fixed
+
+- Allow text layers to be cleared with `setText('')`.
+- Normalize compiler-contract fixture paths on Windows.
+
+## [2.20.1] - 2026-09-11
+
+### Changed
+
+- Update runtime and development dependencies and pnpm within their current major versions.
+- Retain the seven-day dependency release cooldown, including newly resolved transitive dependencies.
+
 ## [2.20.0] - 2026-06-23
 
 ### Added
@@ -144,7 +163,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial tracked release
 
-[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.3...HEAD
+[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.2...HEAD
+[2.20.2]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.1...v2.20.2
+[2.20.1]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.0...v2.20.1
+[2.20.0]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.3...v2.20.0
 [2.19.3]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.2...v2.19.3
 [2.19.2]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.1...v2.19.2
 [2.19.1]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.0...v2.19.1
