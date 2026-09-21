@@ -496,6 +496,8 @@ describe('Text Layer', () => {
         expect(textArea.value).to.eq('Text Layer');
         textLayer.pm.setText('Other text');
         expect(textArea.value).to.eq('Other text');
+        textLayer.pm.setText('');
+        expect(textArea.value).to.eq('');
       });
     });
     it('getText', () => {

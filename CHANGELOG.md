@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Allow text layers to be cleared with `setText('')`.
+- Normalize compiler-contract fixture paths on Windows.
+
 ## [2.20.1] - 2026-09-11
 
 ### Changed

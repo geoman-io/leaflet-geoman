@@ -325,7 +325,7 @@ Edit.Text = Edit.extend<IEditText, [L.Marker]>({
   },
 
   setText(this: IEditText, text: string) {
-    if (text) {
+    if (text !== undefined) {
       this.textArea.value = text;
     }
     this._autoResize();

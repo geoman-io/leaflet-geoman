@@ -2,6 +2,8 @@ import path from 'node:path';
 import ts from 'typescript';
 import { beforeAll, describe, expect, it } from 'vitest';
 
+const normalizePath = (filename: string) => filename.replace(/\\/g, '/');
+
 const validCases = {
   inheritedMethods: `
     const Child = L.PM.Edit.Marker.extend<{ probe(): boolean }>({
@@ -133,10 +135,16 @@ describe('internal Leaflet type contracts', () => {
 
     const sources = new Map<string, string>();
     for (const [name, source] of Object.entries(validCases)) {
-      sources.set(path.join(root, 'src/types', `.contract-${name}.ts`), source);
+      sources.set(
+        normalizePath(path.join(root, 'src/types', `.contract-${name}.ts`)),
+        source
+      );
     }
     for (const [name, { source }] of Object.entries(invalidCases)) {
-      sources.set(path.join(root, 'src/types', `.contract-${name}.ts`), source);
+      sources.set(
+        normalizePath(path.join(root, 'src/types', `.contract-${name}.ts`)),
+        source
+      );
     }
 
     const host = ts.createCompilerHost(parsed.options);
@@ -147,7 +155,7 @@ describe('internal Leaflet type contracts', () => {
       onError,
       shouldCreateNewSourceFile
     ) => {
-      const source = sources.get(filename);
+      const source = sources.get(normalizePath(filename));
       return source === undefined
         ? originalGetSourceFile(
             filename,
@@ -170,13 +178,16 @@ describe('internal Leaflet type contracts', () => {
     const unexpected: string[] = [];
     for (const diagnostic of ts.getPreEmitDiagnostics(program)) {
       const filename = diagnostic.file?.fileName;
-      if (!filename || !sources.has(filename)) {
+      const normalizedFilename = filename && normalizePath(filename);
+      if (!normalizedFilename || !sources.has(normalizedFilename)) {
         unexpected.push(
           ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
         );
         continue;
       }
-      const name = path.basename(filename, '.ts').slice('.contract-'.length);
+      const name = path
+        .basename(normalizedFilename, '.ts')
+        .slice('.contract-'.length);
       const list = diagnostics.get(name) ?? [];
       list.push(diagnostic);
       diagnostics.set(name, list);
