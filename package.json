@@ -56,7 +56,7 @@
     "husky": "^9.1.7",
     "leaflet": "1.9.4",
     "lint-staged": "^17.5.1",
-    "oxfmt": "^0.67.0",
+    "oxfmt": "^0.71.0",
     "oxlint": "^1.82.0",
     "prosthetic-hand": "2.2.2",
     "tsx": "^4.23.13",
