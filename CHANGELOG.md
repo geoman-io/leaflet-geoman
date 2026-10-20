@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.3] - 2026-10-20
+
 ### Added
 
 - Add `map.pm.finishDraw()` to finish a valid active drawing programmatically (#1100).
@@ -15,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Replace `.nvmrc` with `mise.toml`, pin Node.js 24.21.0, and upgrade pnpm to 12.5.1.
 - Upgrade Cypress to 16.0.0, lint-staged to 17.5.1, oxlint to 1.82.0, and oxfmt to 0.67.0.
+- Update development dependencies: Cypress 16.1.1, lint-staged 17.6.0, oxlint 1.87.0, oxfmt 0.72.0, tsx 4.23.15, and @types/lodash 4.17.26.
 
 ## [2.20.2] - 2026-09-21
 
@@ -167,7 +170,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial tracked release
 
-[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.2...HEAD
+[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.3...HEAD
+[2.20.3]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.2...v2.20.3
 [2.20.2]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.1...v2.20.2
 [2.20.1]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.0...v2.20.1
 [2.20.0]: https://github.com/geoman-io/leaflet-geoman/compare/v2.19.3...v2.20.0
