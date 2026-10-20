@@ -9,6 +9,7 @@ map.pm.enableDraw('Polygon', {
   continueDrawing: true,
 });
 map.pm.disableDraw();
+const drawFinished: boolean = map.pm.finishDraw();
 const marker = L.marker([51.5, -0.09]).addTo(map);
 marker.pm.enable({ draggable: true });
 marker.pm.disable();
@@ -35,3 +36,4 @@ const group: L.FeatureGroup = map.pm.getGeomanLayers(true);
 const layers: L.Layer[] = map.pm.getGeomanLayers();
 void group;
 void layers;
+void drawFinished;

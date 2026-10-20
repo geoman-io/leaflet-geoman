@@ -43,41 +43,43 @@ Please see the existing [Feature Requests here](https://github.com/geoman-io/lea
 
 ### Developing
 
-Clone the repository and then install all npm packages:
+This project uses [mise](https://mise.jdx.dev/) to pin Node.js and pnpm. Clone
+the repository, install the declared tools, and then install all packages:
 
 ```
-npm install
+mise install
+pnpm install
 ```
 
 Compile and run `dev` watch version:
 
 ```
-npm run start
+pnpm start
 ```
 
 Compile and run `build` version:
 
 ```
-npm run prepare
+pnpm run prepare
 ```
 
 Run tests:
 
 ```
-npm run test        # E2E tests (Cypress)
-npm run test:unit   # Unit tests (Vitest)
+pnpm test            # E2E tests (Cypress)
+pnpm run test:unit   # Unit tests (Vitest)
 ```
 
 Open cypress window:
 
 ```
-npm run cypress
+pnpm run cypress
 ```
 
-Open eslint check:
+Lint and format (oxlint + oxfmt):
 
 ```
-npm run lint
+pnpm run lint
 ```
 
 Take a look into [CONTRIBUTING](./CONTRIBUTING.md)

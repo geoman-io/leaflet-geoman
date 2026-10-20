@@ -80,6 +80,7 @@ export interface IMapPM {
   controlsVisible(): boolean;
   enableDraw(shape?: string, options?: DrawOptions): void;
   disableDraw(shape?: string): void;
+  finishDraw(): boolean;
   setPathOptions(
     options: L.PathOptions,
     optionsModifier?: PathOptionsModifier
@@ -216,6 +217,31 @@ const Map = (L.Class as unknown as LeafletClassFactory).extend<
     }
 
     this.Draw.disable(shape);
+  },
+  finishDraw(this: IMapPM) {
+    const activeShape = this.Draw.getActiveShape();
+    if (!activeShape) {
+      return false;
+    }
+
+    type FinishableDrawInstance = Parameters<
+      IKeyboardMixin['_canFinishShape']
+    >[0] & {
+      _finishShape?: () => void;
+    };
+    const drawInstance = (
+      this.Draw as unknown as Record<string, FinishableDrawInstance | undefined>
+    )[activeShape];
+
+    if (
+      !drawInstance?._finishShape ||
+      !this.Keyboard._canFinishShape(drawInstance, activeShape)
+    ) {
+      return false;
+    }
+
+    drawInstance._finishShape();
+    return true;
   },
   // optionsModifier for special options like ignoreShapes or merge
   setPathOptions(

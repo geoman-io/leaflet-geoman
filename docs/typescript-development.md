@@ -4,9 +4,12 @@ All authored JavaScript has been migrated to strict TypeScript, including the pl
 
 ## Checking and running the project
 
-Use the Node and pnpm versions declared in `package.json`. Installation runs the build through the existing `prepare` lifecycle hook.
+Use `mise install` to install the Node and pnpm versions pinned in `mise.toml`.
+The matching pnpm version is also declared in `package.json`. Installation
+runs the build through the existing `prepare` lifecycle hook.
 
 ```sh
+mise install
 pnpm install --frozen-lockfile
 pnpm run typecheck
 pnpm run lint:check

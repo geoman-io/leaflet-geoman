@@ -1387,6 +1387,9 @@ declare module 'leaflet' {
       /** Disable all drawing */
       disableDraw(shape?: SUPPORTED_SHAPES): void;
 
+      /** Finish the active drawing when it has enough geometry to create a valid layer. Returns true when a layer was finished. */
+      finishDraw(): boolean;
+
       /** Enable Custom Shape Draw Mode with a passed shape from the storage or as GeoJSON. ⭐ */
       enableCustomShapeDraw(
         shape: string | object,

@@ -40,6 +40,7 @@ interface PMMap {
   globalRotateModeEnabled: () => boolean;
   globalCutModeEnabled: () => boolean;
   disableDraw: () => void;
+  finishDraw: () => boolean;
   disableGlobalEditMode: () => void;
   disableGlobalDragMode: () => void;
   disableGlobalRemovalMode: () => void;
@@ -190,25 +191,12 @@ const createKeyboardMixins = (): IKeyboardMixin &
       return false;
     }
 
-    // Get the active draw instance
-    const drawInstance = pm.Draw[activeShape] as DrawInstance | undefined;
-    if (!drawInstance || !drawInstance._finishShape) {
-      return false;
-    }
-
-    // Check if the shape can be finished (has enough vertices)
-    // For shapes that support _finishShape, try to finish
-    // The _finishShape method itself checks if there are enough vertices
-    const canFinish = this._canFinishShape(drawInstance, activeShape);
-    if (!canFinish) {
+    if (!pm.finishDraw()) {
       return false;
     }
 
     // Prevent default behavior
     e.preventDefault();
-
-    // Finish the shape
-    drawInstance._finishShape();
 
     return true;
   },
