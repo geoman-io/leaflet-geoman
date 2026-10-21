@@ -174,7 +174,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     if (this.options.markerEditable) {
       this._map.eachLayer((layer) => {
         if (this.isRelevantMarker(layer)) {
-          (layer as L.Marker).pm.enable();
+          (layer as L.Marker).pm.enable({});
         }
       });
     }
@@ -294,7 +294,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
 
     if (marker.pm && this.options.markerEditable) {
       // enable editing for the marker
-      marker.pm.enable();
+      marker.pm.enable({});
     } else if (marker.dragging) {
       marker.dragging.disable();
     }
