@@ -1,6 +1,6 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
-  "version": "2.20.3",
+  "version": "2.20.4",
   "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
   "keywords": [
     "leaflet",
@@ -49,19 +49,19 @@
     "@types/leaflet": "^1.9.22",
     "@types/lodash": "^4.17.26",
     "@types/node": "^20.19.43",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "^5.0.4",
     "cross-env": "^10.1.0",
     "cypress": "^16.1.1",
     "esbuild": "^0.28.2",
     "husky": "^9.1.7",
     "leaflet": "1.9.4",
     "lint-staged": "^17.6.0",
-    "oxfmt": "^0.72.0",
-    "oxlint": "^1.87.0",
+    "oxfmt": "^0.73.0",
+    "oxlint": "^1.88.0",
     "prosthetic-hand": "2.2.2",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.4"
   },
   "peerDependencies": {
     "leaflet": "^1.2.0"
