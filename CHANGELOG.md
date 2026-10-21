@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.4] - 2026-10-21
+
+### Changed
+
+- Update development dependencies: oxfmt 0.73.0, oxlint 1.88.0, Vitest 5.0.4, and @vitest/coverage-v8 5.0.4.
+
 ## [2.20.3] - 2026-10-20
 
 ### Added
