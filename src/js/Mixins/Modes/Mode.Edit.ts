@@ -115,11 +115,7 @@ const GlobalEditMode = {
   globalEditModeEnabled(this: IGlobalEditMode) {
     return this._globalEditModeEnabled;
   },
-  // TODO: this should maybe removed, it will overwrite explicit options on the layers
-  toggleGlobalEditMode(
-    this: IGlobalEditMode,
-    options: GlobalOptions = this.globalOptions
-  ) {
+  toggleGlobalEditMode(this: IGlobalEditMode, options: GlobalOptions = {}) {
     if (this.globalEditModeEnabled()) {
       // disable
       this.disableGlobalEditMode();
@@ -138,7 +134,9 @@ const GlobalEditMode = {
         // enable edit for that layer if it's relevant
 
         if (this._isRelevantForEdit(layer)) {
-          layer.pm!.enable({ ...this.globalOptions });
+          layer.pm!.enable(
+            layer instanceof L.Marker ? {} : { ...this.globalOptions }
+          );
         }
       }
     }
