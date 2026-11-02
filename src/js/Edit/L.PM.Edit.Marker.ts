@@ -86,12 +86,12 @@ Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
   },
-  // TODO: remove default option in next major Release
-  enable(
-    this: IEditMarker,
-    options: Partial<MarkerEditOptions> = { draggable: true }
-  ) {
-    L.Util.setOptions(this, options);
+  enable(this: IEditMarker, options?: Partial<MarkerEditOptions>) {
+    // Omit, don't default: `{ draggable: true }` used to clobber a layer that
+    // had already opted out of dragging (#1113).
+    if (options) {
+      L.Util.setOptions(this, options);
+    }
 
     // layer is not allowed to edit
     if (!this.options.allowEditing || !this._layer._map) {

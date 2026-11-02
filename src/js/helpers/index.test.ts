@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { hasValues, removeEmptyCoordRings } from './index';
+import {
+  hasValues,
+  isDegenerateLatLngRing,
+  removeEmptyCoordRings,
+} from './index';
 
 describe('hasValues', () => {
   describe('flat arrays', () => {
@@ -116,5 +120,47 @@ describe('removeEmptyCoordRings', () => {
         ],
       ]);
     });
+  });
+});
+
+describe('isDegenerateLatLngRing', () => {
+  it('refuses fewer than three distinct positions and an exactly collinear ring', () => {
+    expect(
+      isDegenerateLatLngRing([
+        { lat: 0, lng: 0 },
+        { lat: 0, lng: 1 },
+      ])
+    ).toBe(true);
+    expect(
+      isDegenerateLatLngRing([
+        { lat: 0, lng: 0 },
+        { lat: 0, lng: 1 },
+        { lat: 0, lng: 0 },
+      ])
+    ).toBe(true);
+    expect(
+      isDegenerateLatLngRing([
+        { lat: 1, lng: 0 },
+        { lat: 1, lng: 2 },
+        { lat: 1, lng: 4 },
+      ])
+    ).toBe(true);
+    expect(
+      isDegenerateLatLngRing([
+        { lat: 0, lng: 0 },
+        { lat: 0, lng: 1 },
+        { lat: Number.NaN, lng: 1 },
+      ])
+    ).toBe(true);
+  });
+
+  it('keeps a thin triangle', () => {
+    expect(
+      isDegenerateLatLngRing([
+        { lat: 0, lng: 0 },
+        { lat: 0, lng: 1 },
+        { lat: 0.000001, lng: 0.5 },
+      ])
+    ).toBe(false);
   });
 });

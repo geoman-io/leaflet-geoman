@@ -106,7 +106,9 @@ Edit.Text = Edit.extend<IEditText, [L.Marker]>({
     this._enabled = false;
   },
   enable(this: IEditText, options?: Partial<TextEditOptions>) {
-    L.Util.setOptions(this, options);
+    if (options) {
+      L.Util.setOptions(this, options);
+    }
 
     if (!this.textArea) {
       return;
