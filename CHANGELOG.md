@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Global edit mode no longer overwrites a layer's own `draggable: false` with the global default when the edit button is pressed or a layer is added during edit (#1113).
+- Releasing a layer drag outside the map, or over an element that stops the event, ends the drag and restores map panning.
+- Finishing a polygon or cut with fewer than three distinct positions, a non-finite vertex, or an exactly collinear ring leaves the drawing open.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed

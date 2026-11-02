@@ -194,15 +194,12 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
   },
-  // TODO: remove default option in next major Release
-  enable(
-    this: IEditCircleMarker,
-    options: Partial<CircleMarkerEditOptions> = {
-      draggable: true,
-      snappable: true,
+  enable(this: IEditCircleMarker, options?: Partial<CircleMarkerEditOptions>) {
+    // Omit, don't default: a forced `draggable: true` clobbers a layer that
+    // had already opted out of dragging (#1113).
+    if (options) {
+      L.Util.setOptions(this, options);
     }
-  ) {
-    L.Util.setOptions(this, options);
     // TODO: remove with next major release
     if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;

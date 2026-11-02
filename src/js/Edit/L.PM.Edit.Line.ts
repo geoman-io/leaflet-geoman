@@ -243,7 +243,9 @@ Edit.Line = Edit.extend<
     this._enabled = false;
   },
   enable(this: IEditLine, options?: Partial<LineEditOptions>) {
-    L.Util.setOptions(this, options);
+    if (options) {
+      L.Util.setOptions(this, options);
+    }
 
     this._map = this._layer._map as typeof this._map;
 

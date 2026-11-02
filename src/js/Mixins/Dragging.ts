@@ -111,6 +111,8 @@ export interface DragMixinContext {
   _tempDragCoord: L.LatLng | null | undefined;
   _originalMapDragState: boolean;
   _safeToCacheDragState: boolean;
+  _outsidePointerRelease?: (event: Event) => void;
+  _endingPointerRelease?: boolean;
   _parentLayerGroup?: ParentLayerGroupRecord;
   options: {
     draggable?: boolean;
@@ -157,6 +159,8 @@ export interface IDragMixin {
   _simulateMouseUpEvent(
     e: TouchEvent | (MouseEvent & { touches?: TouchList })
   ): boolean;
+  _bindOutsidePointerRelease(): void;
+  _unbindOutsidePointerRelease(): void;
   _dragMixinOnMouseDown(e: SimulatedEvent): void;
   _dragMixinOnMouseMove(e: SimulatedEvent): void;
   _dragMixinOnMouseUp(e: SimulatedEvent): boolean;
@@ -219,8 +223,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
 
     this._originalMapDragState = this._layer._map.dragging._enabled;
 
-    // can we reliably save the map's draggable state?
-    // (if the mouse up event happens outside the container, then the map can become undraggable)
+    // A pointer release outside the map container does not reach the container
+    // listener below. The window listener in _bindOutsidePointerRelease ends
+    // the drag so the map does not stay undraggable.
     this._safeToCacheDragState = true;
 
     const container = this._getDOMElem();
@@ -264,6 +269,7 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     if (this._originalMapDragState && this._dragging) {
       this._map.dragging.enable();
     }
+    this._unbindOutsidePointerRelease();
 
     // no longer save the drag state
     this._safeToCacheDragState = false;
@@ -336,25 +342,74 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     this._dragMixinOnMouseMove(evt);
     return false;
   },
-  _simulateMouseUpEvent(e) {
-    const first = e.touches ? e.touches[0] : e;
-    const evt: SimulatedEvent = {
-      originalEvent: first,
-      target: this._layer,
-    };
-    if (e.type.indexOf('touch') === -1) {
-      // we expect in the function to get the clicked latlng / point
-      evt.containerPoint = this._map.mouseEventToContainerPoint(e);
-      evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
+  _bindOutsidePointerRelease() {
+    if (this._outsidePointerRelease || typeof document === 'undefined') {
+      return;
     }
-    this._dragMixinOnMouseUp(evt);
-    return false;
+    const listener = (event: Event) => {
+      this._simulateMouseUpEvent(event as MouseEvent & { touches?: TouchList });
+    };
+    this._outsidePointerRelease = listener;
+    document.addEventListener('mouseup', listener, true);
+    document.addEventListener('touchend', listener, true);
+    document.addEventListener('pointerup', listener, true);
+    document.addEventListener('pointercancel', listener, true);
+    window.addEventListener('blur', listener);
+  },
+  _unbindOutsidePointerRelease() {
+    const listener = this._outsidePointerRelease;
+    if (!listener || typeof document === 'undefined') {
+      this._outsidePointerRelease = undefined;
+      return;
+    }
+    document.removeEventListener('mouseup', listener, true);
+    document.removeEventListener('touchend', listener, true);
+    document.removeEventListener('pointerup', listener, true);
+    document.removeEventListener('pointercancel', listener, true);
+    window.removeEventListener('blur', listener);
+    this._outsidePointerRelease = undefined;
+  },
+  _simulateMouseUpEvent(e) {
+    // Capture-phase window listeners and the map container can both see one
+    // release. End the drag once.
+    if (this._endingPointerRelease) {
+      return false;
+    }
+    this._endingPointerRelease = true;
+    this._unbindOutsidePointerRelease();
+    try {
+      const first = e.touches ? e.touches[0] : e;
+      const evt: SimulatedEvent = {
+        originalEvent: first,
+        target: this._layer,
+      };
+      const type = typeof e.type === 'string' ? e.type : '';
+      const clientX = 'clientX' in e ? e.clientX : undefined;
+      if (
+        type.indexOf('touch') === -1 &&
+        type !== 'blur' &&
+        typeof clientX === 'number' &&
+        this._map
+      ) {
+        // we expect in the function to get the clicked latlng / point
+        evt.containerPoint = this._map.mouseEventToContainerPoint(e);
+        evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
+      } else if (this._tempDragCoord) {
+        evt.latlng = this._tempDragCoord;
+      }
+      this._dragMixinOnMouseUp(evt);
+      return false;
+    } finally {
+      this._endingPointerRelease = false;
+    }
   },
   _dragMixinOnMouseDown(e) {
     // cancel if mouse button is NOT the left button
     if (e.originalEvent.button! > 0) {
       return;
     }
+    // End the drag even when the pointer is released outside the map.
+    this._bindOutsidePointerRelease();
     this._overwriteEventIfItComesFromMarker(e);
 
     const fromLayerSync = e._fromLayerSync;
@@ -474,6 +529,7 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     );
 
     // clear up mouseup event
+    this._unbindOutsidePointerRelease();
     L.DomEvent.off(
       this._map.getContainer(),
       'touchend mouseup',

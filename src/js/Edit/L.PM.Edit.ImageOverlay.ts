@@ -76,15 +76,10 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
   enabled(this: IEditImageOverlay) {
     return this._enabled;
   },
-  // TODO: remove default option in next major Release
-  enable(
-    this: IEditImageOverlay,
-    options: Partial<ImageOverlayEditOptions> = {
-      draggable: true,
-      snappable: true,
+  enable(this: IEditImageOverlay, options?: Partial<ImageOverlayEditOptions>) {
+    if (options) {
+      L.Util.setOptions(this, options);
     }
-  ) {
-    L.Util.setOptions(this, options);
     this._map = this._layer._map as typeof this._map;
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {

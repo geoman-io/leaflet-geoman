@@ -115,11 +115,9 @@ const GlobalEditMode = {
   globalEditModeEnabled(this: IGlobalEditMode) {
     return this._globalEditModeEnabled;
   },
-  // TODO: this should maybe removed, it will overwrite explicit options on the layers
-  toggleGlobalEditMode(
-    this: IGlobalEditMode,
-    options: GlobalOptions = this.globalOptions
-  ) {
+  // Do not default to globalOptions: that merge overwrites per-layer settings
+  // such as `draggable: false` every time the edit button is pressed (#1113).
+  toggleGlobalEditMode(this: IGlobalEditMode, options?: GlobalOptions) {
     if (this.globalEditModeEnabled()) {
       // disable
       this.disableGlobalEditMode();
@@ -135,10 +133,11 @@ const GlobalEditMode = {
       for (const id in layers) {
         const layer = layers[id];
         // when global edit mode is enabled and a layer is added to the map,
-        // enable edit for that layer if it's relevant
+        // enable edit for that layer if it's relevant. Keep the layer's own
+        // options; global defaults were already applied when the layer was created.
 
         if (this._isRelevantForEdit(layer)) {
-          layer.pm!.enable({ ...this.globalOptions });
+          layer.pm!.enable();
         }
       }
     }
