@@ -158,6 +158,7 @@ import lineIntersect from '@turf/line-intersect';
 import lineSplit from '@turf/line-split';
 import get from 'lodash/get';
 import Draw from './L.PM.Draw';
+import { isDegenerateLatLngRing } from '../helpers';
 import {
   contains,
   difference,
@@ -199,8 +200,8 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
     // get coordinates
     const coords = this._layer.getLatLngs() as L.LatLng[];
 
-    // only finish the shape if there are 3 or more vertices
-    if (coords.length <= 2) {
+    // only finish the shape if there are 3 or more non-collinear vertices
+    if (coords.length <= 2 || isDegenerateLatLngRing(coords)) {
       return;
     }
 

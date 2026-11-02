@@ -24,6 +24,44 @@ export function hasFinePointer() {
   return true;
 }
 
+/**
+ * A ring cannot be a polygon when it has fewer than three distinct positions,
+ * or every position is exactly collinear. A float cross-product of zero is the
+ * same test as three clicks on one straight line; a thin triangle is not zero.
+ */
+export function isDegenerateLatLngRing(
+  latlngs: ReadonlyArray<{ lat: number; lng: number }>
+): boolean {
+  if (
+    latlngs.some(
+      (latlng) => !Number.isFinite(latlng.lat) || !Number.isFinite(latlng.lng)
+    )
+  ) {
+    return true;
+  }
+  let origin: { lat: number; lng: number } | null = null;
+  let other: { lat: number; lng: number } | null = null;
+  for (const latlng of latlngs) {
+    if (!origin) {
+      origin = latlng;
+      continue;
+    }
+    if (latlng.lat !== origin.lat || latlng.lng !== origin.lng) {
+      other = latlng;
+      break;
+    }
+  }
+  if (!origin || !other) {
+    return true;
+  }
+  return latlngs.every((latlng) => {
+    const cross =
+      (other.lng - origin.lng) * (latlng.lat - origin.lat) -
+      (other.lat - origin.lat) * (latlng.lng - origin.lng);
+    return cross === 0;
+  });
+}
+
 export function hasValues(list: readonly unknown[]): boolean {
   for (let i = 0; i < list.length; i += 1) {
     const item = list[i];
