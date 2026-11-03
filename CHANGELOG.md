@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Editing a layer no longer throws when `removeVertexOn` or `addVertexOn` is not a string. Leaflet `on` called `.replace` on that value, and global edit has no catch.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed
