@@ -418,6 +418,13 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       const features = flattenPolyline(l);
 
       features.forEach((feature) => {
+        const part = (feature as GeoJSON.Feature<GeoJSON.LineString>).geometry
+          ?.coordinates;
+        // An empty multi-line part is `[]`. `@turf/line-split` then throws
+        // `line must be LineString`, and cut finish has no catch.
+        if (!part || part.length < 2) {
+          return;
+        }
         // get splitted line to look which line part is coverd by the cut polygon
         const lineDiff = lineSplit(
           feature as GeoJSON.Feature<GeoJSON.LineString>,

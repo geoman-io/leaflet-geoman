@@ -866,6 +866,11 @@ Edit.Line = Edit.extend<
     const parent: L.LatLng[] = (
       indexPath.length > 1 ? get(coords, parentPath) : coords
     ) as L.LatLng[];
+    // `setLatLngs` can shorten the ring while edit markers are still up.
+    // Dragging a leftover vertex then reads `alt` on a missing coordinate.
+    if (!parent?.[index]) {
+      return;
+    }
     // Can be removed after https://github.com/Leaflet/Leaflet/issues/9689 is fixed
     latlng.alt = parent[index].alt;
     parent.splice(index, 1, latlng);

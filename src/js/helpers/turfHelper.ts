@@ -116,7 +116,7 @@ export function intersect(poly1: PolygonInput, poly2: PolygonInput) {
   const geom1 = getGeometry(withoutDegenerateRings(poly1));
   const geom2 = getGeometry(withoutDegenerateRings(poly2));
 
-  let intersection: polygonClipping.MultiPoly;
+  let intersection: ReturnType<typeof polygonClipping.intersection>;
   try {
     intersection = polygonClipping.intersection(
       geom1.coordinates as polygonClipping.Geom,
@@ -134,7 +134,7 @@ export function difference(polygon1: PolygonInput, polygon2: PolygonInput) {
   const geom1 = getGeometry(withoutDegenerateRings(polygon1));
   const geom2 = getGeometry(withoutDegenerateRings(polygon2));
 
-  let differenced: polygonClipping.MultiPoly;
+  let differenced: ReturnType<typeof polygonClipping.difference>;
   try {
     differenced = polygonClipping.difference(
       geom1.coordinates as polygonClipping.Geom,
@@ -179,18 +179,18 @@ export function flattenPolyline(
     polyline = polyline.toGeoJSON(15);
   }
 
-  const coords = getCoords(polyline);
-  const depth = getDepthOfCoords(coords);
-  const features: GeometryFeature<LineString>[] = [];
-  if (depth > 1) {
-    (coords as Position[][]).forEach((coord) => {
-      features.push(turfLineString(coord));
-    });
-  } else {
-    features.push(polyline as GeometryFeature<LineString>);
+  const geometry = getGeometry(polyline);
+  // Depth looks at the first part. An empty part is `[]`, so a MultiLineString
+  // is mistaken for a LineString and `@turf/line-split` throws.
+  if (geometry.type === 'MultiLineString') {
+    return geometry.coordinates
+      .filter((coord) => coord.length >= 2)
+      .map((coord) => turfLineString(coord));
   }
-
-  return features;
+  if (geometry.type === 'LineString' && geometry.coordinates.length < 2) {
+    return [];
+  }
+  return [polyline as GeometryFeature<LineString>];
 }
 
 export function groupToMultiLineString(group: L.LayerGroup) {
