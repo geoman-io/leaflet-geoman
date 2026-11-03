@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Finishing a rectangle no longer throws when `rectangleAngle` is `Infinity`. The angle was used as-is, and the projected corners were `NaN`.
 - `createCustomControl` no longer throws when `block` or `className` is not a string. A number or an array is truthy, and the toolbar called `.toLowerCase()` or `.indexOf()` on it.
 - Editing a rectangle no longer throws when its ring is empty or shorter than three corners. `calcAngle` read `lat` on a missing corner, and global edit has no catch, so later layers were never enabled.
+- Editing a layer no longer throws when `removeVertexOn` or `addVertexOn` is not a string. Leaflet `on` called `.replace` on that value, and global edit has no catch.
 
 ## [2.20.4] - 2026-10-21
 
