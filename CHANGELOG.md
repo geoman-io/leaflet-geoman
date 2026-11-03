@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `map.pm.setLang(null)` and other non-string language codes no longer throw. They fall back to English.
 - Placing a text marker no longer throws when `textOptions.className` is not a string. A number or an array is truthy, and the click handler called `.split` on it.
 - `addControls` no longer throws when `position` is not a Leaflet corner. A number, `null`, or an unknown string was passed to `setPosition`, and adding the button called `.indexOf` or `appendChild` on a missing corner.
+- Global rotate no longer throws when a polyline has no coordinates, or a multi-line starts with an empty part. Leaflet `getCenter` throws `latlngs not passed`, and the mode enables every layer with no catch.
 
 ## [2.20.4] - 2026-10-21
 
