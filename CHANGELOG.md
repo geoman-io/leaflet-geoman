@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global rotate no longer throws when a polyline has no coordinates, or a multi-line starts with an empty part. Leaflet `getCenter` throws `latlngs not passed`, and the mode enables every layer with no catch.
 - Global rotate no longer throws when a rectangle has only one corner. That ring still has valid bounds, and `calcAngle` read `lat` on the missing second corner. The mode enables every layer with no catch.
 - Cutting a multi-line no longer throws when a part has fewer than two positions. `@turf/line-split` throws `line must be LineString` on that part, and cut finish has no catch.
+- Editing a circle no longer throws when its radius is `Infinity`. `circleToPolygon` built the snap ring with Vincenty, which returned `NaN`, and global edit has no catch.
 
 ## [2.20.4] - 2026-10-21
 
