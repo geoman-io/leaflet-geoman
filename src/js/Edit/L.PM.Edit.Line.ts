@@ -420,8 +420,13 @@ Edit.Line = Edit.extend<
       marker.on('move', this._onMarkerDrag, this);
       marker.on('dragend', this._onMarkerDragEnd, this);
 
-      if (!this.options.preventMarkerRemoval) {
-        marker.on(this.options.removeVertexOn!, this._removeMarker, this);
+      if (
+        !this.options.preventMarkerRemoval &&
+        typeof this.options.removeVertexOn === 'string'
+      ) {
+        // A number is truthy. Leaflet `on` then calls `.replace` and throws,
+        // and global edit has no catch.
+        marker.on(this.options.removeVertexOn, this._removeMarker, this);
       }
     }
 
@@ -459,7 +464,13 @@ Edit.Line = Edit.extend<
     leftM._middleMarkerNext = middleMarker;
     rightM._middleMarkerPrev = middleMarker;
 
-    middleMarker.on(this.options.addVertexOn!, this._onMiddleMarkerClick, this);
+    if (typeof this.options.addVertexOn === 'string') {
+      middleMarker.on(
+        this.options.addVertexOn,
+        this._onMiddleMarkerClick,
+        this
+      );
+    }
     middleMarker.on('movestart', this._onMiddleMarkerMoveStart, this);
 
     return middleMarker;
@@ -530,7 +541,9 @@ Edit.Line = Edit.extend<
   ) {
     // first, make this middlemarker a regular marker
     newM.off('movestart', this._onMiddleMarkerMoveStart, this);
-    newM.off(this.options.addVertexOn!, this._onMiddleMarkerClick, this);
+    if (typeof this.options.addVertexOn === 'string') {
+      newM.off(this.options.addVertexOn, this._onMiddleMarkerClick, this);
+    }
     // now, create the polygon coordinate point for that marker
     // and push into marker array
     // and associate polygon coordinate with marker coordinate
