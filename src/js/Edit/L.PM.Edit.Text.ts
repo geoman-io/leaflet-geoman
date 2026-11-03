@@ -99,6 +99,14 @@ export interface IEditText {
 }
 import Edit from './L.PM.Edit';
 
+const cssClassNames = (className: unknown): string[] => {
+  const values = Array.isArray(className) ? className : [className];
+  return values
+    .filter((name): name is string => typeof name === 'string')
+    .flatMap((name) => name.split(' '))
+    .filter(Boolean);
+};
+
 Edit.Text = Edit.extend<IEditText, [L.Marker]>({
   _shape: 'Text',
   initialize(this: IEditText, layer: L.Marker) {
@@ -337,8 +345,8 @@ Edit.Text = Edit.extend<IEditText, [L.Marker]>({
 
   _initTextMarker(this: IEditText) {
     this.textArea = L.PM.Draw.Text.prototype._createTextArea.call(this);
-    if (this.options.className) {
-      const cssClasses = this.options.className.split(' ');
+    const cssClasses = cssClassNames(this.options.className);
+    if (cssClasses.length) {
       this.textArea.classList.add(...cssClasses);
     }
     const textAreaIcon = L.PM.Draw.Text.prototype._createTextIcon.call(
