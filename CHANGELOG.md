@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dragging a vertex no longer throws when `setLatLngs` has shortened the ring while edit markers are still up. The drag read `alt` on a coordinate that was no longer there.
 - `setPathOptions` no longer throws when `ignoreShapes` is not an array. A number or object was passed to `.indexOf`.
 - Finishing a rectangle no longer throws when `rectangleAngle` is `Infinity`. The angle was used as-is, and the projected corners were `NaN`.
+- `createCustomControl` no longer throws when `block` or `className` is not a string. A number or an array is truthy, and the toolbar called `.toLowerCase()` or `.indexOf()` on it.
 - Editing a rectangle no longer throws when its ring is empty or shorter than three corners. `calcAngle` read `lat` on a missing corner, and global edit has no catch, so later layers were never enabled.
 
 ## [2.20.4] - 2026-10-21
