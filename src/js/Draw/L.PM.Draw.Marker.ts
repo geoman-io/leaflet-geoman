@@ -99,6 +99,21 @@ export interface IDrawMarker {
 import Draw from './L.PM.Draw';
 import { getTranslation, hasFinePointer } from '../helpers';
 
+/** Leaflet calls `icon.createIcon` when the marker is added. A number has no such method. */
+const markerDrawOptions = (
+  style?: L.MarkerOptions | null
+): L.MarkerOptions => {
+  if (!style || typeof style !== 'object') {
+    return {};
+  }
+  const options = { ...style };
+  const icon = options.icon as { createIcon?: unknown } | null | undefined;
+  if (icon && typeof icon.createIcon !== 'function') {
+    delete options.icon;
+  }
+  return options;
+};
+
 Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
   initialize(this: IDrawMarker, map: L.Map) {
     this._map = map as typeof this._map;
@@ -135,7 +150,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
       // Note: Snapping is effectively disabled on touch devices since there's no
       // continuous cursor position to snap. The marker exists only for API compatibility.
       this._hintMarker = L.marker(this._map.getCenter(), {
-        ...this.options.markerStyle,
+        ...markerDrawOptions(this.options.markerStyle),
         opacity: 0,
         interactive: false,
       });
@@ -145,7 +160,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
       // Desktop: Use existing hint marker behavior
       this._hintMarker = L.marker(
         this._map.getCenter(),
-        this.options.markerStyle
+        markerDrawOptions(this.options.markerStyle)
       );
       this._setPane(this._hintMarker, 'markerPane');
       this._hintMarker!._pmTempLayer = true;
@@ -281,7 +296,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     const latlng = this._hintMarker!.getLatLng();
 
     // create marker
-    const marker = new L.Marker(latlng, this.options.markerStyle);
+    const marker = new L.Marker(latlng, markerDrawOptions(this.options.markerStyle));
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 
@@ -309,8 +324,9 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     }
   },
   setStyle(this: IDrawMarker) {
-    if (this.options.markerStyle?.icon) {
-      this._hintMarker?.setIcon(this.options.markerStyle.icon);
+    const icon = markerDrawOptions(this.options.markerStyle).icon;
+    if (icon) {
+      this._hintMarker?.setIcon(icon);
     }
   },
   _createTouchHint(this: IDrawMarker) {

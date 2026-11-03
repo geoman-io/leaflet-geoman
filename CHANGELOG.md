@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Drawing a marker no longer throws when `markerStyle.icon` is not a Leaflet icon. Leaflet called `createIcon` on that value while the hint marker was added.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed
