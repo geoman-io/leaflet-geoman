@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Editing a circle no longer throws when its radius is `Infinity`. `circleToPolygon` built the snap ring with Vincenty, which returned `NaN`, and global edit has no catch.
 - `rotateLayer` no longer throws when the angle is `NaN` or `Infinity`. The transform projected that angle to `NaN`, and Leaflet threw `Invalid LatLng object`.
 - `rotateLayer` and `getRotationCenter` no longer throw when the layer is not on the map. The rotation center was built with `addTo(layer._map)`, and a removed layer has `_map === null`.
+- Dragging a vertex no longer throws when `setLatLngs` has shortened the ring while edit markers are still up. The drag read `alt` on a coordinate that was no longer there.
 
 ## [2.20.4] - 2026-10-21
 
