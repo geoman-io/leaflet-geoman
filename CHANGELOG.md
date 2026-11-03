@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Editing a rectangle no longer throws when its ring is empty or shorter than three corners. `calcAngle` read `lat` on a missing corner, and global edit has no catch, so later layers were never enabled.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed
