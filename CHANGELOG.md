@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `createCustomControl` no longer throws when `block` or `className` is not a string. A number or an array is truthy, and the toolbar called `.toLowerCase()` or `.indexOf()` on it.
 - Editing a rectangle no longer throws when its ring is empty or shorter than three corners. `calcAngle` read `lat` on a missing corner, and global edit has no catch, so later layers were never enabled.
 - Editing a layer no longer throws when `removeVertexOn` or `addVertexOn` is not a string. Leaflet `on` called `.replace` on that value, and global edit has no catch.
+- Drawing a marker no longer throws when `markerStyle.icon` is not a Leaflet icon. Leaflet called `createIcon` on that value while the hint marker was added.
 - Cutting a polygon no longer throws when a hole ring is empty. polyclip rejects that ring, and cut finish has no catch.
 
 ## [2.20.4] - 2026-10-21
