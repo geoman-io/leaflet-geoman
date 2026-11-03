@@ -162,6 +162,11 @@ const Utils: IUtils = {
   circleToPolygon(circle, sides = 60, withBearing = true) {
     const origin = circle.getLatLng();
     const radius = circle.getRadius();
+    // Infinity reaches destinationVincenty and comes back as NaN. Leaflet then
+    // throws, and global edit has no catch.
+    if (!Number.isFinite(radius) || !Number.isFinite(sides) || sides <= 0) {
+      return L.polygon([origin, origin, origin], circle.options);
+    }
     const polys = createGeodesicPolygon(origin, radius, sides, 0, withBearing); // these are the points that make up the circle
     const polygon: L.LatLngTuple[] = [];
     for (let i = 0; i < polys.length; i += 1) {
@@ -240,8 +245,9 @@ const Utils: IUtils = {
       const iRes = path.concat(i);
 
       if (exact) {
+        // `lat &&` treats the equator as missing: latitude 0 is a real vertex.
         if (
-          (v as L.LatLng).lat &&
+          ((v as L.LatLng).lat || (v as L.LatLng).lat === 0) &&
           (v as L.LatLng).lat === latlng.lat &&
           (v as L.LatLng).lng === latlng.lng
         ) {
@@ -249,7 +255,7 @@ const Utils: IUtils = {
           return true;
         }
       } else if (
-        (v as L.LatLng).lat &&
+        ((v as L.LatLng).lat || (v as L.LatLng).lat === 0) &&
         L.latLng(v as L.LatLng).equals(latlng)
       ) {
         result = iRes;

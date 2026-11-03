@@ -18,6 +18,15 @@ const mockTranslations = {
 };
 
 describe('resolveLanguageCode', () => {
+  it('does not throw when the language is not a string', () => {
+    expect(
+      resolveLanguageCode(null as unknown as string, mockTranslations)
+    ).toBe('en');
+    expect(
+      resolveLanguageCode(undefined as unknown as string, mockTranslations)
+    ).toBe('en');
+  });
+
   describe('exact matches', () => {
     it('returns exact match for 2-letter code', () => {
       expect(resolveLanguageCode('en', mockTranslations)).toBe('en');
