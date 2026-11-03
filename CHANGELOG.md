@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Finding a vertex for cutting and snapping no longer skips latitude 0. A truthy check treated the equator as a missing coordinate.
+- `map.pm.setLang(null)` and other non-string language codes no longer throw. They fall back to English.
+- Placing a text marker no longer throws when `textOptions.className` is not a string. A number or an array is truthy, and the click handler called `.split` on it.
+- `addControls` no longer throws when `position` is not a Leaflet corner. A number, `null`, or an unknown string was passed to `setPosition`, and adding the button called `.indexOf` or `appendChild` on a missing corner.
+- Global rotate no longer throws when a polyline has no coordinates, or a multi-line starts with an empty part. Leaflet `getCenter` throws `latlngs not passed`, and the mode enables every layer with no catch.
+- Global rotate no longer throws when a rectangle has only one corner. That ring still has valid bounds, and `calcAngle` read `lat` on the missing second corner. The mode enables every layer with no catch.
 - Cutting a multi-line no longer throws when a part has fewer than two positions. `@turf/line-split` throws `line must be LineString` on that part, and cut finish has no catch.
 
 ## [2.20.4] - 2026-10-21
