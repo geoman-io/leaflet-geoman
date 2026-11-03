@@ -124,18 +124,18 @@ export function flattenPolyline(
     polyline = polyline.toGeoJSON(15);
   }
 
-  const coords = getCoords(polyline);
-  const depth = getDepthOfCoords(coords);
-  const features: GeometryFeature<LineString>[] = [];
-  if (depth > 1) {
-    (coords as Position[][]).forEach((coord) => {
-      features.push(turfLineString(coord));
-    });
-  } else {
-    features.push(polyline as GeometryFeature<LineString>);
+  const geometry = getGeometry(polyline);
+  // Depth looks at the first part. An empty part is `[]`, so a MultiLineString
+  // is mistaken for a LineString and `@turf/line-split` throws.
+  if (geometry.type === 'MultiLineString') {
+    return geometry.coordinates
+      .filter((coord) => coord.length >= 2)
+      .map((coord) => turfLineString(coord));
   }
-
-  return features;
+  if (geometry.type === 'LineString' && geometry.coordinates.length < 2) {
+    return [];
+  }
+  return [polyline as GeometryFeature<LineString>];
 }
 
 export function groupToMultiLineString(group: L.LayerGroup) {

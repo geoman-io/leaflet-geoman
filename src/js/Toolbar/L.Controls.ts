@@ -215,7 +215,10 @@ const PMButton = (
     this._button.afterClick(e, { button: this, event: e });
   },
   _makeButton(this: IPMButton, button: ButtonOptions) {
-    const pos = this.options.position.indexOf('right') > -1 ? 'pos-right' : '';
+    const pos =
+      controlPosition(this.options.position).indexOf('right') > -1
+        ? 'pos-right'
+        : '';
 
     // button container
     const buttonContainer = L.DomUtil.create(
@@ -432,5 +435,23 @@ const PMButton = (
     });
   },
 });
+
+const CONTROL_POSITIONS = [
+  'topleft',
+  'topright',
+  'bottomleft',
+  'bottomright',
+] as const;
+type ControlPositionName = (typeof CONTROL_POSITIONS)[number];
+
+/** Leaflet looks the corner up by this string. Anything else throws in `indexOf` or `appendChild`. */
+export const controlPosition = (
+  value: unknown,
+  fallback: ControlPositionName = 'topleft'
+): ControlPositionName =>
+  typeof value === 'string' &&
+  (CONTROL_POSITIONS as readonly string[]).includes(value)
+    ? (value as ControlPositionName)
+    : fallback;
 
 export default PMButton;
