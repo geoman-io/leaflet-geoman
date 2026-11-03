@@ -320,13 +320,13 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
       }
 
       if (this._layer instanceof L.Rectangle && this._angle === undefined) {
-        this.setInitAngle(
-          calcAngle(
-            this._layer._map,
-            (this._layer.getLatLngs()[0] as L.LatLng[])[0],
-            (this._layer.getLatLngs()[0] as L.LatLng[])[1]
-          ) || 0
-        );
+        const ring = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
+        // A one-point rectangle still has valid bounds. `calcAngle` then reads
+        // `lat` on the missing second corner, and global rotate has no catch.
+        if (!ring?.[0] || !ring[1]) {
+          return;
+        }
+        this.setInitAngle(calcAngle(this._layer._map, ring[0], ring[1]) || 0);
       }
 
       // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
