@@ -140,15 +140,15 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
     // convenience alias, for better readability
     [this._cornerMarkers] = this._markers;
 
-    // Update the marker latlngs if the rectangle is rotated
-    (this._layer.getLatLngs()[0] as L.LatLng[]).forEach(
-      (latlng: L.LatLng, index: number) => {
-        const marker = this._cornerMarkers.find((m) => m._index === index);
-        if (marker) {
-          marker.setLatLng(latlng);
-        }
+    // Update the marker latlngs if the rectangle is rotated.
+    // An empty ring is `[]` or missing. `forEach` on that throws, and global edit has no catch.
+    const ring = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
+    ring?.forEach((latlng: L.LatLng, index: number) => {
+      const marker = this._cornerMarkers.find((m) => m._index === index);
+      if (marker) {
+        marker.setLatLng(latlng);
       }
-    );
+    });
   },
   applyOptions(this: IEditRectangle) {
     if (this.options.snappable) {
@@ -359,17 +359,18 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
   _findCorners(this: IEditRectangle) {
-    if (this._angle === undefined) {
-      this.setInitAngle(
-        calcAngle(
-          this._map,
-          (this._layer.getLatLngs()[0] as L.LatLng[])[0],
-          (this._layer.getLatLngs()[0] as L.LatLng[])[1]
-        ) || 0
-      );
+    const latlngs = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
+    // A rectangle can be left with an empty or short ring. `calcAngle` and
+    // `_getRotatedRectangle` then read `lat` on a missing corner, and global
+    // edit has no catch.
+    if (!latlngs?.[0] || !latlngs[1] || !latlngs[2]) {
+      return [];
     }
 
-    const latlngs = this._layer.getLatLngs()[0] as L.LatLng[];
+    if (this._angle === undefined) {
+      this.setInitAngle(calcAngle(this._map, latlngs[0], latlngs[1]) || 0);
+    }
+
     return L.PM.Utils._getRotatedRectangle(
       latlngs[0],
       latlngs[2],

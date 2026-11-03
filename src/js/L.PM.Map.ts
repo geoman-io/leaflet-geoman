@@ -249,7 +249,10 @@ const Map = (L.Class as unknown as LeafletClassFactory).extend<
     options: L.PathOptions,
     optionsModifier: PathOptionsModifier = {}
   ) {
-    const ignore = optionsModifier.ignoreShapes || [];
+    // A number or object is truthy. `.indexOf` then throws, and no shape is styled.
+    const ignore = Array.isArray(optionsModifier.ignoreShapes)
+      ? optionsModifier.ignoreShapes
+      : [];
     const mergeOptions = optionsModifier.merge || false;
 
     this.map.pm.Draw.shapes.forEach((shape) => {

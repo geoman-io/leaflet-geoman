@@ -130,6 +130,10 @@ export interface IDrawCut {
     layer: L.Polygon,
     l: L.Polyline | L.Polygon
   ): GeoJSON.GeoJsonObject | null;
+  _cutLayerUnsafe(
+    layer: L.Polygon,
+    l: L.Polyline | L.Polygon
+  ): GeoJSON.GeoJsonObject | null;
   _change(): void;
 
   // From parent class / mixins
@@ -152,10 +156,10 @@ export interface IDrawCut {
 }
 import lineIntersect from '@turf/line-intersect';
 import lineSplit from '@turf/line-split';
-import booleanContains from '@turf/boolean-contains';
 import get from 'lodash/get';
 import Draw from './L.PM.Draw';
 import {
+  contains,
   difference,
   flattenPolyline,
   groupToMultiLineString,
@@ -393,6 +397,17 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
     layer: L.Polygon,
     l: L.Polyline | L.Polygon
   ): GeoJSON.GeoJsonObject | null {
+    try {
+      return this._cutLayerUnsafe(layer, l);
+    } catch {
+      return null;
+    }
+  },
+  _cutLayerUnsafe(
+    this: IDrawCut,
+    layer: L.Polygon,
+    l: L.Polyline | L.Polygon
+  ): GeoJSON.GeoJsonObject | null {
     const fg = L.geoJSON();
     let diff: GeoJSON.GeoJsonObject | null;
     // cut
@@ -403,6 +418,13 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       const features = flattenPolyline(l);
 
       features.forEach((feature) => {
+        const part = (feature as GeoJSON.Feature<GeoJSON.LineString>).geometry
+          ?.coordinates;
+        // An empty multi-line part is `[]`. `@turf/line-split` then throws
+        // `line must be LineString`, and cut finish has no catch.
+        if (!part || part.length < 2) {
+          return;
+        }
         // get splitted line to look which line part is coverd by the cut polygon
         const lineDiff = lineSplit(
           feature as GeoJSON.Feature<GeoJSON.LineString>,
@@ -419,10 +441,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
         group.getLayers().forEach((lay) => {
           // add only parts to the map, they are not covered by the cut polygon
           if (
-            !booleanContains(
-              layer.toGeoJSON(15),
-              (lay as L.Polyline).toGeoJSON(15)
-            )
+            !contains(layer.toGeoJSON(15), (lay as L.Polyline).toGeoJSON(15))
           ) {
             lay.addTo(fg);
           }
