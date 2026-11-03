@@ -100,9 +100,7 @@ import Draw from './L.PM.Draw';
 import { getTranslation, hasFinePointer } from '../helpers';
 
 /** Leaflet calls `icon.createIcon` when the marker is added. A number has no such method. */
-const markerDrawOptions = (
-  style?: L.MarkerOptions | null
-): L.MarkerOptions => {
+const markerDrawOptions = (style?: L.MarkerOptions | null): L.MarkerOptions => {
   if (!style || typeof style !== 'object') {
     return {};
   }
@@ -296,7 +294,10 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     const latlng = this._hintMarker!.getLatLng();
 
     // create marker
-    const marker = new L.Marker(latlng, markerDrawOptions(this.options.markerStyle));
+    const marker = new L.Marker(
+      latlng,
+      markerDrawOptions(this.options.markerStyle)
+    );
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 
