@@ -15,6 +15,10 @@ export function resolveLanguageCode(
   lang: string,
   availableTranslations: Record<string, unknown>
 ): string {
+  // setLang(null) and other non-strings used to throw on trim.
+  if (typeof lang !== 'string') {
+    return 'en';
+  }
   // Normalize the language code to lowercase and trim any whitespace
   lang = lang.trim().toLowerCase();
 
