@@ -245,8 +245,9 @@ const Utils: IUtils = {
       const iRes = path.concat(i);
 
       if (exact) {
+        // `lat &&` treats the equator as missing: latitude 0 is a real vertex.
         if (
-          (v as L.LatLng).lat &&
+          ((v as L.LatLng).lat || (v as L.LatLng).lat === 0) &&
           (v as L.LatLng).lat === latlng.lat &&
           (v as L.LatLng).lng === latlng.lng
         ) {
@@ -254,7 +255,7 @@ const Utils: IUtils = {
           return true;
         }
       } else if (
-        (v as L.LatLng).lat &&
+        ((v as L.LatLng).lat || (v as L.LatLng).lat === 0) &&
         L.latLng(v as L.LatLng).equals(latlng)
       ) {
         result = iRes;
