@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `rotateLayer` no longer throws when the angle is `NaN` or `Infinity`. The transform projected that angle to `NaN`, and Leaflet threw `Invalid LatLng object`.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed
