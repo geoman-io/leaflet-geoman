@@ -441,10 +441,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
         group.getLayers().forEach((lay) => {
           // add only parts to the map, they are not covered by the cut polygon
           if (
-            !contains(
-              layer.toGeoJSON(15),
-              (lay as L.Polyline).toGeoJSON(15)
-            )
+            !contains(layer.toGeoJSON(15), (lay as L.Polyline).toGeoJSON(15))
           ) {
             lay.addTo(fg);
           }
