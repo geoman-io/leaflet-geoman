@@ -194,14 +194,16 @@ export interface IToolbar {
 type ToolbarWithContainers = IToolbar & {
   [key: string]: HTMLElement | unknown;
 };
-import PMButton from './L.Controls';
+import PMButton, { controlPosition } from './L.Controls';
 
 import { getTranslation } from '../helpers';
 
 const optionText = (value: unknown): string => {
   if (typeof value === 'string') return value;
   if (Array.isArray(value)) {
-    return value.filter((item): item is string => typeof item === 'string').join(' ');
+    return value
+      .filter((item): item is string => typeof item === 'string')
+      .join(' ');
   }
   return '';
 };
@@ -727,9 +729,12 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
     }
   },
   _getBtnPosition(this: IToolbar, block: string) {
-    return this.options.positions && this.options.positions[block]
-      ? this.options.positions[block]
-      : this.options.position;
+    const configured =
+      this.options.positions && this.options.positions[block]
+        ? this.options.positions[block]
+        : this.options.position;
+    // A number or unknown corner is truthy. Leaflet then throws in `indexOf` / `appendChild`.
+    return controlPosition(configured);
   },
   setBlockPosition(
     this: IToolbar,

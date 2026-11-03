@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Finding a vertex for cutting and snapping no longer skips latitude 0. A truthy check treated the equator as a missing coordinate.
+- `map.pm.setLang(null)` and other non-string language codes no longer throw. They fall back to English.
+- Placing a text marker no longer throws when `textOptions.className` is not a string. A number or an array is truthy, and the click handler called `.split` on it.
+- `addControls` no longer throws when `position` is not a Leaflet corner. A number, `null`, or an unknown string was passed to `setPosition`, and adding the button called `.indexOf` or `appendChild` on a missing corner.
+- Global rotate no longer throws when a polyline has no coordinates, or a multi-line starts with an empty part. Leaflet `getCenter` throws `latlngs not passed`, and the mode enables every layer with no catch.
+- Global rotate no longer throws when a rectangle has only one corner. That ring still has valid bounds, and `calcAngle` read `lat` on the missing second corner. The mode enables every layer with no catch.
+- Cutting a multi-line no longer throws when a part has fewer than two positions. `@turf/line-split` throws `line must be LineString` on that part, and cut finish has no catch.
+- Editing a circle no longer throws when its radius is `Infinity`. `circleToPolygon` built the snap ring with Vincenty, which returned `NaN`, and global edit has no catch.
+- `rotateLayer` no longer throws when the angle is `NaN` or `Infinity`. The transform projected that angle to `NaN`, and Leaflet threw `Invalid LatLng object`.
+- `rotateLayer` and `getRotationCenter` no longer throw when the layer is not on the map. The rotation center was built with `addTo(layer._map)`, and a removed layer has `_map === null`.
+- Dragging a vertex no longer throws when `setLatLngs` has shortened the ring while edit markers are still up. The drag read `alt` on a coordinate that was no longer there.
+- `setPathOptions` no longer throws when `ignoreShapes` is not an array. A number or object was passed to `.indexOf`.
+- Finishing a rectangle no longer throws when `rectangleAngle` is `Infinity`. The angle was used as-is, and the projected corners were `NaN`.
 - `createCustomControl` no longer throws when `block` or `className` is not a string. A number or an array is truthy, and the toolbar called `.toLowerCase()` or `.indexOf()` on it.
 
 ## [2.20.4] - 2026-10-21
