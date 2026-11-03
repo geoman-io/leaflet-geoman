@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Finding a vertex for cutting and snapping no longer skips latitude 0. A truthy check treated the equator as a missing coordinate.
 - `map.pm.setLang(null)` and other non-string language codes no longer throw. They fall back to English.
+- Placing a text marker no longer throws when `textOptions.className` is not a string. A number or an array is truthy, and the click handler called `.split` on it.
 
 ## [2.20.4] - 2026-10-21
 
