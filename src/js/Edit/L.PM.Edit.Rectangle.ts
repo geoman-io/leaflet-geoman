@@ -368,9 +368,7 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
     }
 
     if (this._angle === undefined) {
-      this.setInitAngle(
-        calcAngle(this._map, latlngs[0], latlngs[1]) || 0
-      );
+      this.setInitAngle(calcAngle(this._map, latlngs[0], latlngs[1]) || 0);
     }
 
     return L.PM.Utils._getRotatedRectangle(
