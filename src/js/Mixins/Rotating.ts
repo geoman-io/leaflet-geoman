@@ -288,14 +288,24 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
         return L.latLng(0, 0);
       }
 
-      const polygon = L.polygon(this._layer.getLatLngs(), {
-        stroke: false,
-        fill: false,
-        pmIgnore: true,
-      }).addTo(map);
-      const center = polygon.getCenter();
-      polygon.removeFrom(map);
-      return center;
+      try {
+        const polygon = L.polygon(this._layer.getLatLngs(), {
+          stroke: false,
+          fill: false,
+          pmIgnore: true,
+        }).addTo(map);
+        const center = polygon.getCenter();
+        polygon.removeFrom(map);
+        return center;
+      } catch {
+        // A multi-line can keep an empty first part. `getCenter` then throws
+        // `latlngs not passed` even though later parts have coordinates.
+        const bounds = this._layer.getBounds?.();
+        if (bounds?.isValid()) {
+          return bounds.getCenter();
+        }
+        return map.getCenter();
+      }
     },
 
     /*
@@ -309,18 +319,24 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
         return;
       }
 
+      // An empty ring has no center. Leaflet throws in `getCenter`, and global
+      // rotate has no catch, so one empty layer blocks every other layer.
+      if (!this._layer.getBounds?.().isValid?.()) {
+        return;
+      }
+
       if (this.rotateEnabled()) {
         this.disableRotate();
       }
 
       if (this._layer instanceof L.Rectangle && this._angle === undefined) {
-        this.setInitAngle(
-          calcAngle(
-            this._layer._map,
-            (this._layer.getLatLngs()[0] as L.LatLng[])[0],
-            (this._layer.getLatLngs()[0] as L.LatLng[])[1]
-          ) || 0
-        );
+        const ring = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
+        // A one-point rectangle still has valid bounds. `calcAngle` then reads
+        // `lat` on the missing second corner, and global rotate has no catch.
+        if (!ring?.[0] || !ring[1]) {
+          return;
+        }
+        this.setInitAngle(calcAngle(this._layer._map, ring[0], ring[1]) || 0);
       }
 
       // We create an hidden polygon. We set pmIgnore to false, so that the `pm` property will be always create, also if OptIn == true
@@ -389,7 +405,9 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
     // angle is clockwise (0-360)
     rotateLayer(degrees) {
       // Projection needs the map. A removed layer has `_map === null`.
-      if (!this._layer._map) {
+      // NaN and Infinity become a NaN projected point. Leaflet then throws
+      // `Invalid LatLng object`.
+      if (!this._layer._map || !Number.isFinite(degrees)) {
         return;
       }
       const oldAngle = this.getAngle();
