@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.5] - 2026-11-03
+
 ### Fixed
 
 - Finding a vertex for cutting and snapping no longer skips latitude 0. A truthy check treated the equator as a missing coordinate.
@@ -197,7 +199,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial tracked release
 
-[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.3...HEAD
+[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.5...HEAD
+[2.20.5]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.4...v2.20.5
+[2.20.4]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.3...v2.20.4
 [2.20.3]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.2...v2.20.3
 [2.20.2]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.1...v2.20.2
 [2.20.1]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.0...v2.20.1
