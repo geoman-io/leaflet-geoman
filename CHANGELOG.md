@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Finishing a rectangle no longer throws when `rectangleAngle` is `Infinity`. The angle was used as-is, and the projected corners were `NaN`.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed
