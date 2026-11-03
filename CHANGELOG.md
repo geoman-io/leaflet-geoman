@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Cutting a polygon that has an empty hole no longer throws inside polyclip. Leaflet keeps the empty ring, and `cut()` passed it straight to `difference`.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed
