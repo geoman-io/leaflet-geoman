@@ -327,6 +327,11 @@ const Utils: IUtils = {
   // Returns the corners of the rectangle with a given rotation
   // degrees: Between marker A and the marker counterclockwise before. Same for marker B
   _getRotatedRectangle(A, B, rotation, map) {
+    // `Infinity` is truthy, so `rectangleAngle || 0` does not replace it.
+    // cos/sin of that angle are NaN, and Leaflet then throws `Invalid LatLng`.
+    if (!Number.isFinite(rotation)) {
+      rotation = 0;
+    }
     const startPoint = _toPoint(map, A);
     const endPoint = _toPoint(map, B);
     const theta = (rotation * Math.PI) / 180;
