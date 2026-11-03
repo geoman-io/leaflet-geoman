@@ -394,6 +394,11 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
     },
     // angle is clockwise (0-360)
     rotateLayer(degrees) {
+      // NaN and Infinity become a NaN projected point. Leaflet then throws
+      // `Invalid LatLng object`.
+      if (!Number.isFinite(degrees)) {
+        return;
+      }
       const oldAngle = this.getAngle();
       const oldLatLngs = this._layer.getLatLngs();
       const rads = degrees * (Math.PI / 180);
