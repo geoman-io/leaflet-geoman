@@ -277,13 +277,24 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
         return this._rotationCenter;
       }
 
+      const map = this._layer._map;
+      // `rotateLayer` and `getRotationCenter` are public. A layer that was never
+      // added, or was removed, has no map. `addTo` then throws reading `addLayer`.
+      if (!map) {
+        const bounds = this._layer.getBounds?.();
+        if (bounds?.isValid()) {
+          return bounds.getCenter();
+        }
+        return L.latLng(0, 0);
+      }
+
       const polygon = L.polygon(this._layer.getLatLngs(), {
         stroke: false,
         fill: false,
         pmIgnore: true,
-      }).addTo(this._layer._map);
+      }).addTo(map);
       const center = polygon.getCenter();
-      polygon.removeFrom(this._layer._map);
+      polygon.removeFrom(map);
       return center;
     },
 
@@ -377,6 +388,10 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
     },
     // angle is clockwise (0-360)
     rotateLayer(degrees) {
+      // Projection needs the map. A removed layer has `_map === null`.
+      if (!this._layer._map) {
+        return;
+      }
       const oldAngle = this.getAngle();
       const oldLatLngs = this._layer.getLatLngs();
       const rads = degrees * (Math.PI / 180);

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `rotateLayer` and `getRotationCenter` no longer throw when the layer is not on the map. The rotation center was built with `addTo(layer._map)`, and a removed layer has `_map === null`.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed
