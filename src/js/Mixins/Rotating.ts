@@ -278,6 +278,16 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
       }
 
       const map = this._layer._map;
+      // `rotateLayer` and `getRotationCenter` are public. A layer that was never
+      // added, or was removed, has no map. `addTo` then throws reading `addLayer`.
+      if (!map) {
+        const bounds = this._layer.getBounds?.();
+        if (bounds?.isValid()) {
+          return bounds.getCenter();
+        }
+        return L.latLng(0, 0);
+      }
+
       try {
         const polygon = L.polygon(this._layer.getLatLngs(), {
           stroke: false,
@@ -394,9 +404,10 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
     },
     // angle is clockwise (0-360)
     rotateLayer(degrees) {
+      // Projection needs the map. A removed layer has `_map === null`.
       // NaN and Infinity become a NaN projected point. Leaflet then throws
       // `Invalid LatLng object`.
-      if (!Number.isFinite(degrees)) {
+      if (!this._layer._map || !Number.isFinite(degrees)) {
         return;
       }
       const oldAngle = this.getAngle();

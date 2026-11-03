@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cutting a multi-line no longer throws when a part has fewer than two positions. `@turf/line-split` throws `line must be LineString` on that part, and cut finish has no catch.
 - Editing a circle no longer throws when its radius is `Infinity`. `circleToPolygon` built the snap ring with Vincenty, which returned `NaN`, and global edit has no catch.
 - `rotateLayer` no longer throws when the angle is `NaN` or `Infinity`. The transform projected that angle to `NaN`, and Leaflet threw `Invalid LatLng object`.
+- `rotateLayer` and `getRotationCenter` no longer throw when the layer is not on the map. The rotation center was built with `addTo(layer._map)`, and a removed layer has `_map === null`.
 
 ## [2.20.4] - 2026-10-21
 
