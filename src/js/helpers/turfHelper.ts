@@ -20,6 +20,7 @@ type PolygonInput =
   | MultiPolygon
   | GeometryFeature<Polygon | MultiPolygon>;
 
+import booleanContains from '@turf/boolean-contains';
 import * as polygonClipping from 'polyclip-ts';
 
 export function feature<G extends Geometry>(geom: G): GeometryFeature<G> {
@@ -82,30 +83,84 @@ export function turfFeatureCollection<G extends Geometry>(
   return { type: 'FeatureCollection', features };
 }
 
-export function intersect(poly1: PolygonInput, poly2: PolygonInput) {
-  const geom1 = getGeometry(poly1);
-  const geom2 = getGeometry(poly2);
+const ringIsUsable = (ring: unknown): ring is Position[] =>
+  Array.isArray(ring) && ring.length >= 4;
 
-  const intersection = polygonClipping.intersection(
-    geom1.coordinates as polygonClipping.Geom,
-    geom2.coordinates as polygonClipping.Geom
-  );
+/**
+ * Leaflet keeps an empty hole (`[]`) on a polygon. `@turf/boolean-contains`
+ * and polyclip then throw, which aborts cut and a containment drag.
+ */
+export function withoutDegenerateRings<T extends PolygonInput>(input: T): T {
+  const geometry = getGeometry(input);
+  let next: Polygon | MultiPolygon = geometry;
+  if (geometry.type === 'Polygon') {
+    const coordinates = geometry.coordinates.filter(ringIsUsable);
+    if (coordinates.length === 0) return input;
+    next = { type: 'Polygon', coordinates };
+  } else if (geometry.type === 'MultiPolygon') {
+    const coordinates = geometry.coordinates
+      .map((part) => part.filter(ringIsUsable))
+      .filter((part) => part.length > 0);
+    if (coordinates.length === 0) return input;
+    next = { type: 'MultiPolygon', coordinates };
+  } else {
+    return input;
+  }
+  if ((input as { type?: string }).type === 'Feature') {
+    return { ...(input as object), geometry: next } as T;
+  }
+  return next as T;
+}
+
+export function intersect(poly1: PolygonInput, poly2: PolygonInput) {
+  const geom1 = getGeometry(withoutDegenerateRings(poly1));
+  const geom2 = getGeometry(withoutDegenerateRings(poly2));
+
+  let intersection: ReturnType<typeof polygonClipping.intersection>;
+  try {
+    intersection = polygonClipping.intersection(
+      geom1.coordinates as polygonClipping.Geom,
+      geom2.coordinates as polygonClipping.Geom
+    );
+  } catch {
+    return null;
+  }
   if (intersection.length === 0) return null;
   if (intersection.length === 1) return turfPolygon(intersection[0]);
   return turfMultiPolygon(intersection);
 }
 
 export function difference(polygon1: PolygonInput, polygon2: PolygonInput) {
-  const geom1 = getGeometry(polygon1);
-  const geom2 = getGeometry(polygon2);
+  const geom1 = getGeometry(withoutDegenerateRings(polygon1));
+  const geom2 = getGeometry(withoutDegenerateRings(polygon2));
 
-  const differenced = polygonClipping.difference(
-    geom1.coordinates as polygonClipping.Geom,
-    geom2.coordinates as polygonClipping.Geom
-  );
+  let differenced: ReturnType<typeof polygonClipping.difference>;
+  try {
+    differenced = polygonClipping.difference(
+      geom1.coordinates as polygonClipping.Geom,
+      geom2.coordinates as polygonClipping.Geom
+    );
+  } catch {
+    return null;
+  }
   if (differenced.length === 0) return null;
   if (differenced.length === 1) return turfPolygon(differenced[0]);
   return turfMultiPolygon(differenced);
+}
+
+/** Containment that does not throw when a ring is empty. */
+export function contains(
+  outer: PolygonInput,
+  inner: Feature | PolygonInput
+): boolean {
+  try {
+    return booleanContains(
+      withoutDegenerateRings(outer) as Feature,
+      withoutDegenerateRings(inner as PolygonInput) as Feature
+    );
+  } catch {
+    return false;
+  }
 }
 
 // LineString coords returns 1

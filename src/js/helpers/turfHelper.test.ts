@@ -10,6 +10,8 @@ import {
   turfMultiPolygon,
   turfFeatureCollection,
   getDepthOfCoords,
+  difference,
+  contains,
 } from './turfHelper';
 
 describe('turfHelper', () => {
@@ -254,5 +256,46 @@ describe('turfHelper', () => {
       expect(getDepthOfCoords(0)).toBe(-1);
       expect(getDepthOfCoords(null)).toBe(-1);
     });
+  });
+
+  it('does not throw when a polygon hole ring is empty', () => {
+    const withHole = {
+      type: 'Feature' as const,
+      properties: {},
+      geometry: {
+        type: 'Polygon' as const,
+        coordinates: [
+          [
+            [0, 0],
+            [8, 0],
+            [8, 8],
+            [0, 8],
+            [0, 0],
+          ],
+          [],
+        ],
+      },
+    };
+    const cutter = {
+      type: 'Polygon' as const,
+      coordinates: [
+        [
+          [-1, -1],
+          [3, -1],
+          [3, 3],
+          [-1, 3],
+          [-1, -1],
+        ],
+      ],
+    };
+    expect(() => difference(withHole, cutter)).not.toThrow();
+    expect(difference(withHole, cutter)).not.toBeNull();
+    expect(
+      contains(withHole, {
+        type: 'Feature',
+        properties: {},
+        geometry: { type: 'Point', coordinates: [2, 2] },
+      })
+    ).toBe(true);
   });
 });
