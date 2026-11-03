@@ -106,6 +106,14 @@ export interface IDrawText {
 import Draw from './L.PM.Draw';
 import { getTranslation } from '../helpers';
 
+const cssClassNames = (className: unknown): string[] => {
+  const values = Array.isArray(className) ? className : [className];
+  return values
+    .filter((name): name is string => typeof name === 'string')
+    .flatMap((name) => name.split(' '))
+    .filter(Boolean);
+};
+
 Draw.Text = Draw.extend<IDrawText, [L.Map]>({
   initialize(this: IDrawText, map: L.Map) {
     this._map = map as typeof this._map;
@@ -246,8 +254,8 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
 
     this.textArea = this._createTextArea();
 
-    if (this.options.textOptions?.className) {
-      const cssClasses = this.options.textOptions.className.split(' ');
+    const cssClasses = cssClassNames(this.options.textOptions?.className);
+    if (cssClasses.length) {
       this.textArea.classList.add(...cssClasses);
     }
 
