@@ -277,14 +277,25 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
         return this._rotationCenter;
       }
 
-      const polygon = L.polygon(this._layer.getLatLngs(), {
-        stroke: false,
-        fill: false,
-        pmIgnore: true,
-      }).addTo(this._layer._map);
-      const center = polygon.getCenter();
-      polygon.removeFrom(this._layer._map);
-      return center;
+      const map = this._layer._map;
+      try {
+        const polygon = L.polygon(this._layer.getLatLngs(), {
+          stroke: false,
+          fill: false,
+          pmIgnore: true,
+        }).addTo(map);
+        const center = polygon.getCenter();
+        polygon.removeFrom(map);
+        return center;
+      } catch {
+        // A multi-line can keep an empty first part. `getCenter` then throws
+        // `latlngs not passed` even though later parts have coordinates.
+        const bounds = this._layer.getBounds?.();
+        if (bounds?.isValid()) {
+          return bounds.getCenter();
+        }
+        return map.getCenter();
+      }
     },
 
     /*
@@ -295,6 +306,12 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
     enableRotate() {
       if (!this.options.allowRotation) {
         this.disableRotate();
+        return;
+      }
+
+      // An empty ring has no center. Leaflet throws in `getCenter`, and global
+      // rotate has no catch, so one empty layer blocks every other layer.
+      if (!this._layer.getBounds?.().isValid?.()) {
         return;
       }
 
