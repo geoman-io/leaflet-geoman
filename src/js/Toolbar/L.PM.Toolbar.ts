@@ -198,6 +198,14 @@ import PMButton from './L.Controls';
 
 import { getTranslation } from '../helpers';
 
+const optionText = (value: unknown): string => {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) {
+    return value.filter((item): item is string => typeof item === 'string').join(' ');
+  }
+  return '';
+};
+
 L.Control.PMButton = PMButton;
 
 const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
@@ -784,13 +792,14 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
       options.toggle = true;
     }
 
-    if (options.block) {
-      options.block = options.block.toLowerCase();
-    }
+    // A number or array is truthy. `.toLowerCase()` / `.indexOf()` then throw
+    // and the custom control is never created.
+    options.block = optionText(options.block).toLowerCase();
     if (!options.block || options.block === 'draw') {
       options.block = '';
     }
 
+    options.className = optionText(options.className);
     if (!options.className) {
       options.className = 'control-icon';
     } else if (options.className.indexOf('control-icon') === -1) {

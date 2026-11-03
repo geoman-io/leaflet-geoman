@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `createCustomControl` no longer throws when `block` or `className` is not a string. A number or an array is truthy, and the toolbar called `.toLowerCase()` or `.indexOf()` on it.
+
 ## [2.20.4] - 2026-10-21
 
 ### Changed
