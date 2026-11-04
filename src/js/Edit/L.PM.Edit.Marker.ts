@@ -50,6 +50,7 @@ export interface IEditMarker {
   _layerEdited?: boolean;
   options: MarkerEditOptions;
 
+  setOptions(options: Partial<MarkerEditOptions>): void;
   enable(options?: Partial<MarkerEditOptions>): void;
   disable(): void;
   enabled(): boolean;
@@ -86,12 +87,12 @@ Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
   },
-  // TODO: remove default option in next major Release
-  enable(
-    this: IEditMarker,
-    options: Partial<MarkerEditOptions> = { draggable: true }
-  ) {
-    L.Util.setOptions(this, options);
+  enable(this: IEditMarker, options?: Partial<MarkerEditOptions>) {
+    // No argument keeps the layer's current options. The old `{ draggable: true }`
+    // default put a locked marker back into drag mode (#1113).
+    if (options) {
+      this.setOptions(options);
+    }
 
     // layer is not allowed to edit
     if (!this.options.allowEditing || !this._layer._map) {

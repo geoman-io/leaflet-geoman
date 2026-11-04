@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- A marker, circle marker, or image overlay locked with `pm.setOptions({ draggable: false })` stays locked after drawing another shape, toggling edit mode, or entering drag mode. Toolbar edit and layers added during edit still receive global options the layer has not set itself ([#1113](https://github.com/geoman-io/leaflet-geoman/issues/1113)).
+
 ## [2.20.5] - 2026-11-03
 
 ### Fixed
@@ -82,7 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump dependencies and remove vulnerabilities (#1643)
 - Add missing source and custom properties to event handlers in TypeScript definitions (#1646)
-(#1646)
+  (#1646)
 
 ## [2.19.2] - 2026-02-02
 

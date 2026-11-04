@@ -10,6 +10,7 @@ interface PMLayer extends L.Layer {
     options: {
       allowEditing?: boolean;
     };
+    _applyInheritedOptions: (options?: object) => void;
   };
   options: L.LayerOptions & {
     pmIgnore?: boolean;
@@ -50,9 +51,7 @@ export interface IGlobalEditMode {
 const GlobalEditMode = {
   _globalEditModeEnabled: false,
   enableGlobalEditMode(this: IGlobalEditMode, o?: GlobalOptions) {
-    const options = {
-      ...o,
-    };
+    const callerOptions = o && Object.keys(o).length ? o : undefined;
     // set status
     this._globalEditModeEnabled = true;
 
@@ -62,10 +61,11 @@ const GlobalEditMode = {
     // find all layers handled by leaflet-geoman
     const layers = L.PM.Utils.findLayers(this.map);
 
-    // enable all layers
+    // Global options fill keys the layer has not set. Caller options still win.
     layers.forEach((layer: PMLayer) => {
       if (this._isRelevantForEdit(layer)) {
-        layer.pm!.enable(options);
+        layer.pm!._applyInheritedOptions(this.globalOptions);
+        layer.pm!.enable(callerOptions);
       }
     });
 
@@ -115,11 +115,9 @@ const GlobalEditMode = {
   globalEditModeEnabled(this: IGlobalEditMode) {
     return this._globalEditModeEnabled;
   },
-  // TODO: this should maybe removed, it will overwrite explicit options on the layers
-  toggleGlobalEditMode(
-    this: IGlobalEditMode,
-    options: GlobalOptions = this.globalOptions
-  ) {
+  // An empty default matches enableGlobalEditMode. The old globalOptions default
+  // reapplied draggable: true to every layer, including ones locked with setOptions.
+  toggleGlobalEditMode(this: IGlobalEditMode, options: GlobalOptions = {}) {
     if (this.globalEditModeEnabled()) {
       // disable
       this.disableGlobalEditMode();
@@ -138,7 +136,10 @@ const GlobalEditMode = {
         // enable edit for that layer if it's relevant
 
         if (this._isRelevantForEdit(layer)) {
-          layer.pm!.enable({ ...this.globalOptions });
+          // Fill from the current globals. Do not pass them to enable(), which
+          // would record them as an explicit lock (#1113).
+          layer.pm!._applyInheritedOptions(this.globalOptions);
+          layer.pm!.enable();
         }
       }
     }
