@@ -111,6 +111,41 @@ describe('Draw Marker', () => {
     });
   });
 
+  it('applies global options on toolbar edit when the layer has not set them', () => {
+    cy.window().then(({ map, L }) => {
+      map.pm.setGlobalOptions({ draggable: false, snappable: false });
+      const marker = L.marker([51.505, -0.09]).addTo(map);
+      map.pm.toggleGlobalEditMode();
+      expect(marker.pm.options.draggable).to.eq(false);
+      expect(marker.pm.options.snappable).to.eq(false);
+      expect(marker.pm.layerDragEnabled()).to.eq(false);
+      map.pm.disableGlobalEditMode();
+      map.pm.toggleGlobalEditMode({ draggable: true });
+      expect(marker.pm.options.draggable).to.eq(true);
+      expect(marker.pm.layerDragEnabled()).to.eq(true);
+    });
+  });
+
+  it('does not keep an automatic enable after the marker leaves the map', () => {
+    let marker: L.Marker;
+    cy.window().then(({ map, L }) => {
+      map.pm.enableGlobalEditMode();
+      marker = L.marker([51.505, -0.09]).addTo(map);
+    });
+    cy.window().should(() => {
+      expect(marker.pm.enabled()).to.eq(true);
+    });
+    cy.window().then(({ map }) => {
+      map.removeLayer(marker);
+      map.pm.setGlobalOptions({ draggable: false });
+      marker.addTo(map);
+    });
+    cy.window().should(() => {
+      expect(marker.pm.options.draggable).to.eq(false);
+      expect(marker.dragging!.enabled()).to.eq(false);
+    });
+  });
+
   it('removes markers without error', () => {
     cy.window().then(({ map, L }) => {
       const markerLayer = L.geoJson().addTo(map);

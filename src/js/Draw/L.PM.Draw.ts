@@ -38,6 +38,7 @@ export interface DrawInstance {
 interface PMLayer extends L.Layer {
   pm?: {
     setOptions: (options: DrawOptions) => void;
+    _applyOptions?: (options: DrawOptions) => void;
     _shape?: string;
     _map?: L.Map;
   };
@@ -351,8 +352,12 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<
   },
   _finishLayer(this: IDraw, layer: PMLayer) {
     if (layer.pm) {
-      // add the pm options from drawing to the new layer (edit)
-      layer.pm.setOptions(this.options);
+      // Copy draw options onto the new layer without treating them as a lock.
+      if (layer.pm._applyOptions) {
+        layer.pm._applyOptions(this.options);
+      } else {
+        layer.pm.setOptions(this.options);
+      }
       // set the shape (can be a custom shape)
       layer.pm._shape = this._shape;
       // apply the map to the new created layer in the pm object

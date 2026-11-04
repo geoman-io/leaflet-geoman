@@ -580,6 +580,23 @@ describe('Draw Circle Marker', () => {
     });
   });
 
+  it('does not resurrect the editable alias after resize was turned off', () => {
+    let marker: L.CircleMarker;
+    cy.window().then(({ map, L }) => {
+      map.pm.enableGlobalEditMode();
+      marker = L.circleMarker([51.505, -0.09], { radius: 10 });
+      marker.pm.enable({ editable: true });
+      marker.pm.disable();
+      marker.pm.enable({ resizeableCircleMarker: false });
+      marker.pm.disable();
+      marker.addTo(map);
+    });
+    cy.window().should(() => {
+      expect(marker.pm.options.resizeableCircleMarker).to.eq(false);
+      expect(marker.pm.options.editable).to.eq(undefined);
+    });
+  });
+
   it('does not unlock a circle marker when enable is called with no options', () => {
     let locked: L.CircleMarker;
     cy.window().then(({ map, L }) => {
