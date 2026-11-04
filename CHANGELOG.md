@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.6] - 2026-11-04
+
 ### Fixed
 
 - A marker, circle marker, or image overlay locked with `pm.setOptions({ draggable: false })` stays locked after drawing another shape, toggling edit mode, or entering drag mode. Toolbar edit and layers added during edit still receive global options the layer has not set itself ([#1113](https://github.com/geoman-io/leaflet-geoman/issues/1113)).
