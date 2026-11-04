@@ -862,6 +862,9 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
     return buttonsInBlock;
   },
   changeControlOrder(this: IToolbar, order: string[] = []) {
+    if (!Array.isArray(order)) {
+      order = [];
+    }
     const shapeMapping = this._shapeMapping();
 
     const _order: string[] = [];

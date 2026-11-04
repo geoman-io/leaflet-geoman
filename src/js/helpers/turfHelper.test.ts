@@ -288,6 +288,19 @@ describe('turfHelper', () => {
         ],
       ],
     };
+    const nanRing = {
+      type: 'Polygon' as const,
+      coordinates: [
+        [
+          [0, 0],
+          [Number.NaN, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+      ],
+    };
+    expect(() => difference(cutter, nanRing)).not.toThrow();
     expect(() => difference(withHole, cutter)).not.toThrow();
     expect(difference(withHole, cutter)).not.toBeNull();
     expect(

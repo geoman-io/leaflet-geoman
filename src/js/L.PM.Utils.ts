@@ -164,8 +164,18 @@ const Utils: IUtils = {
     const radius = circle.getRadius();
     // Infinity reaches destinationVincenty and comes back as NaN. Leaflet then
     // throws, and global edit has no catch.
-    if (!Number.isFinite(radius) || !Number.isFinite(sides) || sides <= 0) {
-      return L.polygon([origin, origin, origin], circle.options);
+    if (
+      !Number.isFinite(origin?.lat) ||
+      !Number.isFinite(origin?.lng) ||
+      !Number.isFinite(radius) ||
+      !Number.isFinite(sides) ||
+      sides <= 0
+    ) {
+      const fallback =
+        Number.isFinite(origin?.lat) && Number.isFinite(origin?.lng)
+          ? origin
+          : L.latLng(0, 0);
+      return L.polygon([fallback, fallback, fallback], circle.options);
     }
     const polys = createGeodesicPolygon(origin, radius, sides, 0, withBearing); // these are the points that make up the circle
     const polygon: L.LatLngTuple[] = [];
