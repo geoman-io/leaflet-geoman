@@ -21,6 +21,96 @@ describe('Draw Marker', () => {
     });
   });
 
+  it('keeps a locked marker locked across draw, edit, and drag', () => {
+    let locked: L.Marker;
+    let control: L.Marker;
+    let lockedLatLng: L.LatLng;
+    let controlLatLng: L.LatLng;
+
+    cy.window().then(({ map, L }) => {
+      locked = L.marker(map.containerPointToLatLng([150, 250])).addTo(map);
+      locked.pm.setOptions({ draggable: false });
+      control = L.marker(map.containerPointToLatLng([350, 250])).addTo(map);
+      lockedLatLng = locked.getLatLng();
+      controlLatLng = control.getLatLng();
+      map.dragging.disable();
+      map.pm.enableDraw('Marker', { markerEditable: true, snappable: false });
+    });
+
+    cy.get(mapSelector).click(500, 300);
+
+    cy.window().then(({ map }) => {
+      const created = (map.pm.getGeomanDrawLayers() as L.Marker[]).at(-1)!;
+      expect(locked.pm.options.draggable).to.eq(false);
+      expect(locked.pm.layerDragEnabled()).to.eq(false);
+      expect(locked.dragging!.enabled()).to.eq(false);
+      expect(created.pm.options.draggable).to.eq(true);
+      map.pm.disableDraw();
+    });
+
+    cy.toolbarButton('edit').click();
+    cy.toolbarButton('edit').click();
+    cy.toolbarButton('drag').click();
+
+    cy.get(mapSelector).then(($map) => {
+      const rect = $map[0].getBoundingClientRect();
+      cy.window().then(
+        ({ Hand }) =>
+          new Cypress.Promise<void>((resolve) => {
+            const hand = new Hand({ timing: 'frame', onStop: resolve });
+            hand
+              .growFinger('mouse')
+              .moveTo(rect.left + 150, rect.top + 240, 100)
+              .down()
+              .moveTo(rect.left + 200, rect.top + 290, 200)
+              .up()
+              .moveTo(rect.left + 350, rect.top + 240, 100)
+              .down()
+              .moveTo(rect.left + 400, rect.top + 290, 200)
+              .up();
+          })
+      );
+    });
+
+    cy.window().then(({ map }) => {
+      expect(locked.getLatLng()).to.eql(lockedLatLng);
+      expect(control.getLatLng()).not.to.eql(controlLatLng);
+      expect(locked.pm.layerDragEnabled()).to.eq(false);
+      expect(control.pm.layerDragEnabled()).to.eq(true);
+      map.pm.disableGlobalDragMode();
+    });
+  });
+
+  it('keeps a pre-add lock and still applies other global edit options', () => {
+    let marker: L.Marker;
+    cy.window().then(({ map, L }) => {
+      map.pm.setGlobalOptions({ preventMarkerRemoval: true });
+      map.pm.enableGlobalEditMode();
+      marker = L.marker([51.505, -0.09]);
+      marker.pm.setOptions({ draggable: false });
+      marker.addTo(map);
+    });
+
+    cy.window().should(() => {
+      expect(marker.pm.enabled()).to.eq(true);
+      expect(marker.pm.options.draggable).to.eq(false);
+      expect(marker.pm.options.preventMarkerRemoval).to.eq(true);
+      expect(marker.dragging!.enabled()).to.eq(false);
+    });
+
+    cy.window().then(({ map }) => {
+      map.pm.disableGlobalEditMode();
+      map.pm.toggleGlobalEditMode({ draggable: true });
+      expect(marker.pm.options.draggable).to.eq(true);
+      expect(marker.pm.layerDragEnabled()).to.eq(true);
+      map.pm.disableGlobalEditMode();
+      map.pm.setGlobalOptions({ draggable: false });
+      map.pm.toggleGlobalEditMode();
+      expect(marker.pm.options.draggable).to.eq(false);
+      expect(marker.pm.layerDragEnabled()).to.eq(false);
+    });
+  });
+
   it('removes markers without error', () => {
     cy.window().then(({ map, L }) => {
       const markerLayer = L.geoJson().addTo(map);

@@ -111,6 +111,7 @@ export interface IEditCircleMarker {
   _editableOption: 'resizeableCircle' | 'resizeableCircleMarker';
   options: CircleMarkerEditOptions;
 
+  setOptions(options: Partial<CircleMarkerEditOptions>): void;
   enable(options?: Partial<CircleMarkerEditOptions>): void;
   disable(): void;
   enabled(): boolean;
@@ -194,15 +195,11 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
   },
-  // TODO: remove default option in next major Release
-  enable(
-    this: IEditCircleMarker,
-    options: Partial<CircleMarkerEditOptions> = {
-      draggable: true,
-      snappable: true,
+  enable(this: IEditCircleMarker, options?: Partial<CircleMarkerEditOptions>) {
+    // No argument keeps the layer's current options (#1113).
+    if (options) {
+      this.setOptions(options);
     }
-  ) {
-    L.Util.setOptions(this, options);
     // TODO: remove with next major release
     if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;

@@ -67,6 +67,12 @@ export interface IEdit {
 
   setOptions(options: EditOptions): void;
   getOptions(): EditOptions;
+  /**
+   * Global mode options, with options set on this layer winning.
+   * A missing argument must not invent `{ draggable: true }`.
+   */
+  _optionsForGlobalEnable(options?: EditOptions): EditOptions;
+  _ownOptions?: EditOptions;
   applyOptions(): void;
   isPolygon(): boolean;
   getShape(): string | undefined;
@@ -120,7 +126,20 @@ const Edit = (L.Class as unknown as LeafletClassFactory).extend<
     snapVertex: true,
   },
   setOptions(this: IEdit, options: EditOptions) {
+    // Remember keys set on this layer so a later global enable cannot put them back.
+    if (options) {
+      this._ownOptions = {
+        ...(this._ownOptions || {}),
+        ...options,
+      };
+    }
     L.Util.setOptions(this, options);
+  },
+  _optionsForGlobalEnable(this: IEdit, options?: EditOptions) {
+    return {
+      ...(options || {}),
+      ...(this._ownOptions || {}),
+    };
   },
   getOptions(this: IEdit) {
     return this.options;

@@ -10,6 +10,7 @@ interface PMLayer extends L.Layer {
     options: {
       allowEditing?: boolean;
     };
+    _optionsForGlobalEnable: (options?: object) => object;
   };
   options: L.LayerOptions & {
     pmIgnore?: boolean;
@@ -115,11 +116,9 @@ const GlobalEditMode = {
   globalEditModeEnabled(this: IGlobalEditMode) {
     return this._globalEditModeEnabled;
   },
-  // TODO: this should maybe removed, it will overwrite explicit options on the layers
-  toggleGlobalEditMode(
-    this: IGlobalEditMode,
-    options: GlobalOptions = this.globalOptions
-  ) {
+  // An empty default matches enableGlobalEditMode. The old globalOptions default
+  // reapplied draggable: true to every layer, including ones locked with setOptions.
+  toggleGlobalEditMode(this: IGlobalEditMode, options: GlobalOptions = {}) {
     if (this.globalEditModeEnabled()) {
       // disable
       this.disableGlobalEditMode();
@@ -138,7 +137,11 @@ const GlobalEditMode = {
         // enable edit for that layer if it's relevant
 
         if (this._isRelevantForEdit(layer)) {
-          layer.pm!.enable({ ...this.globalOptions });
+          // Global options fill in unset keys. Options already set on the layer win,
+          // so a marker locked before addTo stays locked (#1113).
+          layer.pm!.enable(
+            layer.pm!._optionsForGlobalEnable({ ...this.globalOptions })
+          );
         }
       }
     }

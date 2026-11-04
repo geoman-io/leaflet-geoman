@@ -91,8 +91,7 @@ Edit.Circle = Edit.CircleMarker.extend<IEditCircle, [L.Circle]>({
     this._updateHiddenPolyCircle();
   },
   enable(this: IEditCircle, options?: Partial<CircleEditOptions>) {
-    // TODO: this can be removed after the default options of CircleMarker.enable are removed
-    L.PM.Edit.CircleMarker.prototype.enable.call(this, options || {});
+    L.PM.Edit.CircleMarker.prototype.enable.call(this, options);
   },
   _extendingEnable() {},
   _extendingDisable(this: IEditCircle) {

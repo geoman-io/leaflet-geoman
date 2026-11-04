@@ -42,6 +42,7 @@ export interface IEditImageOverlay {
   _otherSnapLayers?: L.LatLng[];
   options: ImageOverlayEditOptions;
 
+  setOptions(options: Partial<ImageOverlayEditOptions>): void;
   toggleEdit(options?: Partial<ImageOverlayEditOptions>): void;
   enabled(): boolean;
   enable(options?: Partial<ImageOverlayEditOptions>): void;
@@ -76,15 +77,11 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
   enabled(this: IEditImageOverlay) {
     return this._enabled;
   },
-  // TODO: remove default option in next major Release
-  enable(
-    this: IEditImageOverlay,
-    options: Partial<ImageOverlayEditOptions> = {
-      draggable: true,
-      snappable: true,
+  enable(this: IEditImageOverlay, options?: Partial<ImageOverlayEditOptions>) {
+    // No argument keeps the layer's current options (#1113).
+    if (options) {
+      this.setOptions(options);
     }
-  ) {
-    L.Util.setOptions(this, options);
     this._map = this._layer._map as typeof this._map;
     // cancel when map isn't available, this happens when the polygon is removed before this fires
     if (!this._map) {

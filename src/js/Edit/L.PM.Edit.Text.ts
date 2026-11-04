@@ -61,6 +61,7 @@ export interface IEditText {
   textArea: HTMLTextAreaElement;
   options: TextEditOptions;
 
+  setOptions(options: Partial<TextEditOptions>): void;
   enable(options?: Partial<TextEditOptions>): void;
   disable(): void;
   enabled(): boolean;
@@ -114,7 +115,9 @@ Edit.Text = Edit.extend<IEditText, [L.Marker]>({
     this._enabled = false;
   },
   enable(this: IEditText, options?: Partial<TextEditOptions>) {
-    L.Util.setOptions(this, options);
+    if (options) {
+      this.setOptions(options);
+    }
 
     if (!this.textArea) {
       return;
