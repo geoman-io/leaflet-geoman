@@ -114,6 +114,7 @@ export interface IEditLine {
   isRed?: boolean;
   options: LineEditOptions;
 
+  setOptions(options: Partial<LineEditOptions>): void;
   enable(options?: Partial<LineEditOptions>): void;
   disable(): void;
   enabled(): boolean;
@@ -243,7 +244,9 @@ Edit.Line = Edit.extend<
     this._enabled = false;
   },
   enable(this: IEditLine, options?: Partial<LineEditOptions>) {
-    L.Util.setOptions(this, options);
+    if (options) {
+      this.setOptions(options);
+    }
 
     this._map = this._layer._map as typeof this._map;
 

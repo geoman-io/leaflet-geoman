@@ -67,6 +67,14 @@ export interface IEdit {
 
   setOptions(options: EditOptions): void;
   getOptions(): EditOptions;
+  /** Apply options without recording them as an explicit layer choice. */
+  _applyOptions(options?: EditOptions): void;
+  /**
+   * Fill keys this layer has not set itself. Inherited values are not recorded,
+   * so a later global change can still reach a layer that left the map.
+   */
+  _applyInheritedOptions(options?: EditOptions): void;
+  _ownOptions?: EditOptions;
   applyOptions(): void;
   isPolygon(): boolean;
   getShape(): string | undefined;
@@ -120,7 +128,31 @@ const Edit = (L.Class as unknown as LeafletClassFactory).extend<
     snapVertex: true,
   },
   setOptions(this: IEdit, options: EditOptions) {
+    // Only an explicit setOptions/enable(options) is a lock. Global enable and
+    // draw finish must not store those values as the layer's own choice.
+    if (options && Object.keys(options).length) {
+      this._ownOptions = {
+        ...(this._ownOptions || {}),
+        ...options,
+      };
+    }
+    this._applyOptions(options);
+  },
+  _applyOptions(this: IEdit, options?: EditOptions) {
     L.Util.setOptions(this, options);
+  },
+  _applyInheritedOptions(this: IEdit, options?: EditOptions) {
+    if (!options) return;
+    const own = this._ownOptions || {};
+    const inherited: EditOptions = {};
+    for (const key of Object.keys(options)) {
+      if (!Object.prototype.hasOwnProperty.call(own, key)) {
+        inherited[key] = options[key];
+      }
+    }
+    if (Object.keys(inherited).length) {
+      this._applyOptions(inherited);
+    }
   },
   getOptions(this: IEdit) {
     return this.options;

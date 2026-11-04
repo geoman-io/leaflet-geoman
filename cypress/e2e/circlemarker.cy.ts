@@ -580,6 +580,63 @@ describe('Draw Circle Marker', () => {
     });
   });
 
+  it('does not resurrect the editable alias after resize was turned off', () => {
+    let marker: L.CircleMarker;
+    cy.window().then(({ map, L }) => {
+      map.pm.enableGlobalEditMode();
+      marker = L.circleMarker([51.505, -0.09], { radius: 10 });
+      const pm = marker.pm as typeof marker.pm & {
+        enable(options?: {
+          editable?: boolean;
+          resizeableCircleMarker?: boolean;
+        }): void;
+        options: { editable?: boolean; resizeableCircleMarker?: boolean };
+      };
+      pm.enable({ editable: true });
+      pm.disable();
+      pm.enable({ resizeableCircleMarker: false });
+      pm.disable();
+      marker.addTo(map);
+    });
+    cy.window().should(() => {
+      const options = marker.pm.options as typeof marker.pm.options & {
+        editable?: boolean;
+        resizeableCircleMarker?: boolean;
+      };
+      expect(options.resizeableCircleMarker).to.eq(false);
+      expect(options.editable).to.eq(undefined);
+    });
+  });
+
+  it('does not unlock a circle marker when enable is called with no options', () => {
+    let locked: L.CircleMarker;
+    cy.window().then(({ map, L }) => {
+      locked = L.circleMarker(map.containerPointToLatLng([200, 200]), {
+        radius: 20,
+      }).addTo(map);
+      locked.pm.setOptions({ draggable: false, snappable: false });
+      map.pm.enableDraw('CircleMarker', {
+        markerEditable: true,
+        snappable: false,
+      });
+    });
+
+    cy.get(mapSelector).click(400, 300);
+
+    cy.window().then(({ map }) => {
+      expect(locked.pm.options.draggable).to.eq(false);
+      expect(locked.pm.options.snappable).to.eq(false);
+      expect(locked.pm.layerDragEnabled()).to.eq(false);
+      locked.pm.enable();
+      expect(locked.pm.options.draggable).to.eq(false);
+      expect(locked.pm.layerDragEnabled()).to.eq(false);
+      map.pm.disableDraw();
+      map.pm.toggleGlobalEditMode();
+      expect(locked.pm.options.draggable).to.eq(false);
+      expect(locked.pm.options.snappable).to.eq(false);
+    });
+  });
+
   it('draw a CircleMarker like a Circle with deprecated option `editable`', () => {
     cy.window().then(({ map }) => {
       map.pm.setGlobalOptions({ editable: true, continueDrawing: false });

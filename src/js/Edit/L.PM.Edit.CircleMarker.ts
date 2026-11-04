@@ -110,7 +110,9 @@ export interface IEditCircleMarker {
   _maxRadiusOption: 'maxRadiusCircle' | 'maxRadiusCircleMarker';
   _editableOption: 'resizeableCircle' | 'resizeableCircleMarker';
   options: CircleMarkerEditOptions;
+  _ownOptions?: CircleMarkerEditOptions;
 
+  setOptions(options: Partial<CircleMarkerEditOptions>): void;
   enable(options?: Partial<CircleMarkerEditOptions>): void;
   disable(): void;
   enabled(): boolean;
@@ -194,19 +196,24 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
     // create polygon around the circle border
     this._updateHiddenPolyCircle();
   },
-  // TODO: remove default option in next major Release
-  enable(
-    this: IEditCircleMarker,
-    options: Partial<CircleMarkerEditOptions> = {
-      draggable: true,
-      snappable: true,
+  enable(this: IEditCircleMarker, options?: Partial<CircleMarkerEditOptions>) {
+    // No argument keeps the layer's current options (#1113).
+    if (options) {
+      this.setOptions(options);
     }
-  ) {
-    L.Util.setOptions(this, options);
     // TODO: remove with next major release
     if (this.options.editable) {
       this.options.resizeableCircleMarker = this.options.editable;
       delete this.options.editable;
+    }
+    const own = this._ownOptions;
+    if (own && Object.prototype.hasOwnProperty.call(own, 'editable')) {
+      if (
+        !Object.prototype.hasOwnProperty.call(own, 'resizeableCircleMarker')
+      ) {
+        own.resizeableCircleMarker = own.editable;
+      }
+      delete own.editable;
     }
 
     // layer is not allowed to edit
