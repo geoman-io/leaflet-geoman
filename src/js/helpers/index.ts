@@ -171,6 +171,15 @@ function destination(
   heading: number,
   distance: number
 ): L.LatLng {
+  if (
+    !latlng ||
+    !Number.isFinite(latlng.lat) ||
+    !Number.isFinite(latlng.lng) ||
+    !Number.isFinite(heading) ||
+    !Number.isFinite(distance)
+  ) {
+    return latlng;
+  }
   heading = (heading + 360) % 360;
   const rad = Math.PI / 180;
   const radInv = 180 / Math.PI;
@@ -197,7 +206,11 @@ function destination(
   const optB = lon2 < -180 ? lon2 + 360 : lon2;
 
   lon2 = lon2 > 180 ? optA : optB;
-  return L.latLng([lat2 * radInv, lon2]);
+  const resultLat = lat2 * radInv;
+  if (!Number.isFinite(resultLat) || !Number.isFinite(lon2)) {
+    return latlng;
+  }
+  return L.latLng([resultLat, lon2]);
 }
 /* Copied from L.GeometryUtil */
 export function calcAngle(
