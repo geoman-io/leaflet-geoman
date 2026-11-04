@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- A circle whose center is `NaN` or `Infinity` no longer throws while building its snap ring. A non-finite min radius returns the start point instead of an invalid `LatLng`.
+- Cut and containment ignore a ring that contains `NaN` or `Infinity`, instead of throwing or deleting the polygon.
+- `changeControlOrder(null)` no longer throws.
+
 ## [2.20.6] - 2026-11-04
 
 ### Fixed

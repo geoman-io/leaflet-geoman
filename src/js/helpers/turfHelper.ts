@@ -83,8 +83,14 @@ export function turfFeatureCollection<G extends Geometry>(
   return { type: 'FeatureCollection', features };
 }
 
+const positionIsFinite = (position: unknown): boolean =>
+  Array.isArray(position) &&
+  position.length >= 2 &&
+  Number.isFinite(position[0]) &&
+  Number.isFinite(position[1]);
+
 const ringIsUsable = (ring: unknown): ring is Position[] =>
-  Array.isArray(ring) && ring.length >= 4;
+  Array.isArray(ring) && ring.length >= 4 && ring.every(positionIsFinite);
 
 /**
  * Leaflet keeps an empty hole (`[]`) on a polygon. `@turf/boolean-contains`
