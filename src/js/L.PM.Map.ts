@@ -35,6 +35,7 @@ interface PMLayer extends L.Layer {
   pm: {
     enabled: () => boolean;
     setOptions: (options: EditOptions) => void;
+    _applyOptions: (options: EditOptions) => void;
     applyOptions: () => void;
   };
   _drawnByGeoman?: boolean;
@@ -315,7 +316,9 @@ const Map = (L.Class as unknown as LeafletClassFactory).extend<
     // enable options for Editing
     const layers = L.PM.Utils.findLayers(this.map);
     (layers as PMLayer[]).forEach((layer) => {
-      layer.pm.setOptions(options);
+      // Apply to layers on the map now. Do not record this as the layer's own
+      // choice, or a later global change is ignored when the layer is re-added.
+      layer.pm._applyOptions(options);
     });
 
     this.map.fire('pm:globaloptionschanged');

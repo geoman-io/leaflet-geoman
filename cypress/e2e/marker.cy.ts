@@ -146,6 +146,22 @@ describe('Draw Marker', () => {
     });
   });
 
+  it('does not keep setGlobalOptions as a lock after the marker leaves the map', () => {
+    let marker: L.Marker;
+    cy.window().then(({ map, L }) => {
+      marker = L.marker([51.505, -0.09]).addTo(map);
+      map.pm.setGlobalOptions({ snappable: false });
+      map.pm.enableGlobalEditMode();
+      map.removeLayer(marker);
+      map.pm.setGlobalOptions({ draggable: false });
+      marker.addTo(map);
+    });
+    cy.window().should(() => {
+      expect(marker.pm.options.draggable).to.eq(false);
+      expect(marker.dragging!.enabled()).to.eq(false);
+    });
+  });
+
   it('removes markers without error', () => {
     cy.window().then(({ map, L }) => {
       const markerLayer = L.geoJson().addTo(map);

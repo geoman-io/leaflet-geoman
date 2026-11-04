@@ -585,15 +585,26 @@ describe('Draw Circle Marker', () => {
     cy.window().then(({ map, L }) => {
       map.pm.enableGlobalEditMode();
       marker = L.circleMarker([51.505, -0.09], { radius: 10 });
-      marker.pm.enable({ editable: true });
-      marker.pm.disable();
-      marker.pm.enable({ resizeableCircleMarker: false });
-      marker.pm.disable();
+      const pm = marker.pm as typeof marker.pm & {
+        enable(options?: {
+          editable?: boolean;
+          resizeableCircleMarker?: boolean;
+        }): void;
+        options: { editable?: boolean; resizeableCircleMarker?: boolean };
+      };
+      pm.enable({ editable: true });
+      pm.disable();
+      pm.enable({ resizeableCircleMarker: false });
+      pm.disable();
       marker.addTo(map);
     });
     cy.window().should(() => {
-      expect(marker.pm.options.resizeableCircleMarker).to.eq(false);
-      expect(marker.pm.options.editable).to.eq(undefined);
+      const options = marker.pm.options as typeof marker.pm.options & {
+        editable?: boolean;
+        resizeableCircleMarker?: boolean;
+      };
+      expect(options.resizeableCircleMarker).to.eq(false);
+      expect(options.editable).to.eq(undefined);
     });
   });
 
