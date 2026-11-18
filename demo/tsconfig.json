@@ -2,7 +2,13 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "moduleDetection": "force",
-    "types": ["node"]
+    "types": ["node"],
+    "allowUmdGlobalAccess": true
   },
-  "include": ["**/*.ts", "../leaflet-geoman.d.ts", "../src/types/**/*.ts"]
+  "include": [
+    "**/*.ts",
+    "../leaflet-geoman.d.ts",
+    "../src/types/**/*.ts",
+    "../types/leaflet-global.d.ts"
+  ]
 }

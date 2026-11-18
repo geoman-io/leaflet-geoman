@@ -1,10 +1,12 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 import type { LatLngTree } from '../helpers/ModeHelper';
 import type { Matrix } from '../helpers/Matrix';
 
 /**
  * Extended layer with PM properties for rotation - using type intersection to avoid protected property issues
  */
-type RotatableLayer = L.Polyline<GeoJSON.Geometry> & {
+type RotatableLayer = L.Polyline & {
   _map: L.Map;
   _pmTempLayer?: boolean;
   pm: RotationLayerPM;
@@ -183,7 +185,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
           angleDiffRadiant,
           this._initialRotateLatLng!,
           this._rotationOriginLatLng!,
-          L.PM.Matrix.init(),
+          PM.Matrix.init(),
           this._map
         )
       );
@@ -197,7 +199,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
         if (_i > -1) {
           path.push(_i);
         }
-        if (L.Util.isArray(latlng[0])) {
+        if (Array.isArray(latlng[0])) {
           latlng.forEach((x, i) =>
             forEachLatLng(x as L.LatLng[] | L.LatLng[][], path.slice(), i)
           );
@@ -219,7 +221,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
           angleDiffRadiant,
           this._rotationLayer.pm._rotateOrgLatLng!,
           this._rotationOriginLatLng!,
-          L.PM.Matrix.init(),
+          PM.Matrix.init(),
           this._map
         )
       );
@@ -285,11 +287,11 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
         if (bounds?.isValid()) {
           return bounds.getCenter();
         }
-        return L.latLng(0, 0);
+        return new L.LatLng(0, 0);
       }
 
       try {
-        const polygon = L.polygon(this._layer.getLatLngs(), {
+        const polygon = new L.Polygon(this._layer.getLatLngs(), {
           stroke: false,
           fill: false,
           pmIgnore: true,
@@ -348,10 +350,11 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
       };
 
       // we create a temp polygon for rotation
-      this._rotatePoly = L.polygon(
+      this._rotatePoly = new L.Polygon(
         this._layer.getLatLngs(),
         options
-      ) as RotatableLayer;
+        // a Polygon is a Polyline whose GeoJSON type is Polygon
+      ) as unknown as RotatableLayer;
       this._rotatePoly!._pmTempLayer = true;
       this._rotatePoly!.addTo(this._layer._map);
       this._rotatePoly!.pm._setAngle(this.getAngle());
@@ -418,12 +421,14 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
           rads,
           this._layer.getLatLngs(),
           this._getRotationCenter(),
-          L.PM.Matrix.init(),
+          PM.Matrix.init(),
           this._layer._map
         )
       );
       // store the new latlngs
-      this._rotateOrgLatLng = L.polygon(this._layer.getLatLngs()).getLatLngs();
+      this._rotateOrgLatLng = new L.Polygon(
+        this._layer.getLatLngs()
+      ).getLatLngs();
       this._setAngle(this.getAngle() + degrees);
       if (
         this.rotateEnabled() &&
@@ -435,7 +440,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
             rads,
             this._rotatePoly!.getLatLngs(),
             this._getRotationCenter(),
-            L.PM.Matrix.init(),
+            PM.Matrix.init(),
             this._rotatePoly!._map
           )
         );

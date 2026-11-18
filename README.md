@@ -35,6 +35,39 @@ Visit [geoman.io/docs](https://www.geoman.io/docs) to get started.
 
 Check out the full power of Leaflet-Geoman Pro on [geoman.io/demo](https://www.geoman.io/demo)
 
+### Leaflet 2
+
+This version of Leaflet-Geoman requires Leaflet 2 (currently `2.0.0-beta.4`).
+Leaflet-Geoman 2.x keeps supporting Leaflet 1.
+
+As an ES module, with a bundler or an import map:
+
+```js
+import * as L from 'leaflet';
+import '@geoman-io/leaflet-geoman-free'; // adds `pm` to maps and layers
+import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
+
+const map = new L.Map('map').setView([51.505, -0.09], 13);
+map.pm.addControls();
+```
+
+The module also exports `PM` (for example `PM.setOptIn(true)`) and the
+`PMButton` control.
+
+As a script, after Leaflet's `leaflet-global.js`, which adds `L.PM` and `L.Control.PMButton` to the global `L`:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/leaflet@2.0.0-beta.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
+<script src="https://unpkg.com/leaflet@2.0.0-beta.4/dist/leaflet-global.js"></script>
+<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman-global.js"></script>
+```
+
+The TypeScript declarations build on the types that ship with Leaflet 2.
+Geoman's events are pointer events like Leaflet 2's, so options such as
+`finishOn`, `addVertexOn` and `removeVertexOn` take `pointerdown`,
+`pointerover` and `pointerout` instead of `mousedown`, `mouseover` and `mouseout`.
+
 ### Feature Requests
 
 I'm adopting the Issue Management of lodash which means, feature requests get the "Feature Request" Label and then get closed.  

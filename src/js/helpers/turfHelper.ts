@@ -1,3 +1,4 @@
+import * as L from 'leaflet';
 import type {
   Feature,
   Geometry,
@@ -211,7 +212,7 @@ export function convertToLatLng(
   coords: Position | GeometryFeature<Point>
 ): L.LatLng {
   const lnglat = getCoords(coords);
-  return L.latLng(lnglat[1], lnglat[0]);
+  return new L.LatLng(lnglat[1], lnglat[0]);
 }
 
 export function convertArrayToLatLngs(arr: {

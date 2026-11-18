@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import type { ISnapMixin, SnappableMarker } from '../Mixins/Snapping';
+import { PM } from '../PM';
 import type { DrawOptions } from './L.PM.Draw';
 
 /**
@@ -33,7 +36,6 @@ type PMTempLayer = L.Layer & {
 type ExtendedMarker = L.Marker & {
   _pmTempLayer?: boolean;
   _snapped?: boolean;
-  _icon?: HTMLElement;
 };
 
 /**
@@ -86,12 +88,12 @@ export interface IDrawRectangle {
   disable(): void;
   enabled(): boolean;
   toggle(options?: Partial<RectangleDrawOptions>): void;
-  _placeStartingMarkers(e: L.LeafletMouseEvent): void;
+  _placeStartingMarkers(e: L.LeafletPointerEvent): void;
   _setRectangleOrigin(): void;
-  _syncHintMarker(e: L.LeafletMouseEvent): void;
+  _syncHintMarker(e: L.LeafletPointerEvent): void;
   _syncRectangleSize(): void;
   _findCorners(): L.LatLng[];
-  _finishShape(e?: L.LeafletMouseEvent): void;
+  _finishShape(e?: L.LeafletPointerEvent): void;
   setStyle(): void;
 
   // From mixins
@@ -105,7 +107,7 @@ export interface IDrawRectangle {
   _fireChange(latlngs: L.LatLng[] | L.LatLng[][], source: string): void;
   _setGlobalDrawMode(): void;
   _cleanupSnapping(): void;
-  _handleSnapping(e: L.LeafletEvent): void;
+  _handleSnapping: ISnapMixin['_handleSnapping'];
   _finishLayer(layer: L.Layer): void;
   _isFirstLayer(): boolean;
 }
@@ -120,7 +122,7 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
   },
   enable(this: IDrawRectangle, options?: Partial<RectangleDrawOptions>) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+    // instances of PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
 
     // enable draw mode
@@ -132,7 +134,7 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     this._layerGroup.addTo(this._map);
 
     // the rectangle we want to draw
-    this._layer = L.rectangle(
+    this._layer = new L.Rectangle(
       [
         [0, 0],
         [0, 0],
@@ -144,9 +146,10 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
 
     // this is the marker at the origin of the rectangle
     // this needs to be present, for tracking purposes, but we'll make it invisible if a user doesn't want to see it!
-    this._startMarker = L.marker(this._map.getCenter(), {
-      icon: L.divIcon({ className: 'marker-icon rect-start-marker' }),
+    this._startMarker = new L.Marker(this._map.getCenter(), {
+      icon: new L.DivIcon({ className: 'marker-icon rect-start-marker' }),
       draggable: false,
+      keyboard: false,
       zIndexOffset: -100,
       opacity: this.options.cursorMarker ? 1 : 0,
     });
@@ -155,9 +158,10 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     this._layerGroup.addLayer(this._startMarker);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(this._map.getCenter(), {
+    this._hintMarker = new L.Marker(this._map.getCenter(), {
       zIndexOffset: 150,
-      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+      keyboard: false,
+      icon: new L.DivIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -165,7 +169,7 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon!, 'visible');
+      this._hintMarker._icon!.classList.add('visible');
     }
 
     // add tooltip to hintmarker
@@ -173,7 +177,7 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
       this._hintMarker
         .bindTooltip(getTranslation('tooltips.firstVertex'), {
           permanent: true,
-          offset: L.point(0, 10),
+          offset: new L.Point(0, 10),
           direction: 'bottom',
 
           opacity: 0.8,
@@ -185,8 +189,8 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
       // Add two more matching style markers, if cursor marker is rendered
       this._styleMarkers = [];
       for (let i = 0; i < 2; i += 1) {
-        const styleMarker = L.marker(this._map.getCenter(), {
-          icon: L.divIcon({
+        const styleMarker = new L.Marker(this._map.getCenter(), {
+          icon: new L.DivIcon({
             className: 'marker-icon rect-style-marker',
           }),
           draggable: false,
@@ -207,7 +211,7 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     this._map.on('click', this._placeStartingMarkers, this);
 
     // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
@@ -236,7 +240,7 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     // unbind listeners
     this._map.off('click', this._finishShape, this);
     this._map.off('click', this._placeStartingMarkers, this);
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
 
     // remove helping layers
     this._map.removeLayer(this._layerGroup);
@@ -262,7 +266,7 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
       this.enable(options);
     }
   },
-  _placeStartingMarkers(this: IDrawRectangle, e: L.LeafletMouseEvent) {
+  _placeStartingMarkers(this: IDrawRectangle, e: L.LeafletPointerEvent) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
@@ -273,13 +277,13 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     const latlng = this._hintMarker.getLatLng();
 
     // show and place start marker
-    L.DomUtil.addClass(this._startMarker._icon!, 'visible');
+    this._startMarker._icon!.classList.add('visible');
     this._startMarker.setLatLng(latlng);
 
     // if we have the other two visibilty markers, show and place them now
     if (this.options.cursorMarker && this._styleMarkers) {
       this._styleMarkers.forEach((styleMarker) => {
-        L.DomUtil.addClass(styleMarker._icon!, 'visible');
+        styleMarker._icon!.classList.add('visible');
         styleMarker.setLatLng(latlng);
       });
     }
@@ -304,15 +308,15 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
       this._hintMarker.on('move', this._syncRectangleSize, this);
     }
   },
-  _syncHintMarker(this: IDrawRectangle, e: L.LeafletMouseEvent) {
+  _syncHintMarker(this: IDrawRectangle, e: L.LeafletPointerEvent) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
 
     // if snapping is enabled, do it
     if (this.options.snappable) {
-      const fakeDragEvent = e;
-      fakeDragEvent.target = this._hintMarker;
-      this._handleSnapping(fakeDragEvent);
+      this._handleSnapping(
+        Object.assign(e, { target: this._hintMarker as SnappableMarker })
+      );
     }
 
     const latlngs =
@@ -326,7 +330,7 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     const B = fixLatOffset(this._hintMarker.getLatLng(), this._map);
 
     // Create a (maybe rotated) box using corners A & B (A = Starting Position, B = Current Mouse Position)
-    const corners = L.PM.Utils._getRotatedRectangle(
+    const corners = PM.Utils._getRotatedRectangle(
       A,
       B,
       this.options.rectangleAngle || 0,
@@ -358,14 +362,14 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
   },
   _findCorners(this: IDrawRectangle) {
     const latlngs = this._layer.getLatLngs()[0] as L.LatLng[];
-    return L.PM.Utils._getRotatedRectangle(
+    return PM.Utils._getRotatedRectangle(
       latlngs[0],
       latlngs[2],
       this.options.rectangleAngle || 0,
       this._map
     );
   },
-  _finishShape(this: IDrawRectangle, e?: L.LeafletMouseEvent) {
+  _finishShape(this: IDrawRectangle, e?: L.LeafletPointerEvent) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (e?.latlng && !this._hintMarker._snapped) {
@@ -392,14 +396,14 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     }
 
     // create the final rectangle layer, based on opposite corners A & B
-    const rectangleLayer = L.rectangle(
+    const rectangleLayer = new L.Rectangle(
       [A, B] as unknown as L.LatLngBoundsExpression,
       this.options.pathOptions
     );
 
     // rectangle can only initialized with bounds (not working with rotation) so we update the latlngs
     if (this.options.rectangleAngle) {
-      const corners = L.PM.Utils._getRotatedRectangle(
+      const corners = PM.Utils._getRotatedRectangle(
         A,
         B,
         this.options.rectangleAngle || 0,

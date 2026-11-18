@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 /**
  * Rotation layer type with PM extension
  */
@@ -969,7 +971,7 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
   // private (very private) fire function
   __fire(fireLayer, type, payload, source, customPayload = {}) {
     payload = merge(payload, customPayload, { source });
-    L.PM.Utils._fireEvent(fireLayer, type, payload);
+    PM.Utils._fireEvent(fireLayer, type, payload);
   },
 };
 

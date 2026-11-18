@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 import type { EditOptions } from './L.PM.Edit';
 
 /**
@@ -49,9 +51,6 @@ type ExtendedFeatureGroup = L.FeatureGroup & {
  */
 type PMTempLayer = L.Layer & {
   _pmTempLayer?: boolean;
-  options: L.LayerOptions & {
-    pane?: string;
-  };
 };
 
 /**
@@ -167,7 +166,7 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
   ): ExtendedMarker {
     const marker = new L.Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new L.DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -194,7 +193,7 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
       }
     });
   },
-  // Empty callback for 'contextmenu' binding set in L.PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
+  // Empty callback for 'contextmenu' binding set in PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
   // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
   _removeMarker(): null {
     // The method, it does nothing!!!
@@ -221,10 +220,10 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
     // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
     draggedMarker._snapped = false;
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     this._fireMarkerDragStart(e, indexPath);
   },
@@ -247,10 +246,10 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
 
     this._adjustRectangleForMarkerMove(draggedMarker);
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
     this._fireMarkerDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
   },
@@ -270,10 +269,10 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
       delete m._oppositeCornerLatLng;
     });
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
     this._fireMarkerDragEnd(e, indexPath);
 
     // fire edit event
@@ -289,10 +288,10 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
     movedMarker: ExtendedMarker
   ) {
     // update moved marker coordinates
-    L.extend(movedMarker._origLatLng, movedMarker._latlng);
+    Object.assign(movedMarker._origLatLng!, movedMarker._latlng);
 
     // update rectangle boundaries, based on moved marker's new LatLng and cached opposite corner's LatLng
-    const corners = L.PM.Utils._getRotatedRectangle(
+    const corners = PM.Utils._getRotatedRectangle(
       movedMarker.getLatLng(),
       movedMarker._oppositeCornerLatLng!,
       this.getAngle(),
@@ -371,7 +370,7 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
       this.setInitAngle(calcAngle(this._map, latlngs[0], latlngs[1]) || 0);
     }
 
-    return L.PM.Utils._getRotatedRectangle(
+    return PM.Utils._getRotatedRectangle(
       latlngs[0],
       latlngs[2],
       this.getAngle(),

@@ -134,7 +134,7 @@ describe('Draw Circle', () => {
       .should('have.class', 'active');
 
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
+      new L.Marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
         minRadiusCircle: 500,
         maxRadiusCircle: 1500,
@@ -159,7 +159,7 @@ describe('Draw Circle', () => {
       .should('have.class', 'active');
 
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
+      new L.Marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
         minRadiusCircle: 1500,
         maxRadiusCircle: 3000,
@@ -210,8 +210,8 @@ describe('Draw Circle', () => {
     let mapSimple: L.Map;
     cy.window().then(({ map, L }) => {
       map.remove();
-      mapSimple = L.map('map', {
-        crs: L.CRS.Simple,
+      mapSimple = new L.Map('map', {
+        crs: L.SimpleCRS,
         minZoom: -2,
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([0, 0], 0);
@@ -243,8 +243,8 @@ describe('Draw Circle', () => {
     let mapSimple: L.Map;
     cy.window().then(({ map, L }) => {
       map.remove();
-      mapSimple = L.map('map', {
-        crs: L.CRS.Simple,
+      mapSimple = new L.Map('map', {
+        crs: L.SimpleCRS,
         minZoom: -2,
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([0, 0], 0);
@@ -320,7 +320,7 @@ describe('Draw Circle', () => {
       .should('have.class', 'active');
 
     cy.get(mapSelector).click(200, 200);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -443,7 +443,7 @@ describe('Draw Circle', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -506,9 +506,9 @@ describe('Draw Circle', () => {
 
     // change radius
     cy.get(mapSelector)
-      .trigger('mousedown', 300, 200, { which: 1 })
-      .trigger('mousemove', 300, 250, { which: 1 })
-      .trigger('mouseup', 300, 250, { which: 1 });
+      .trigger('pointerdown', 300, 200, { which: 1 })
+      .trigger('pointermove', 300, 250, { which: 1 })
+      .trigger('pointerup', 300, 250, { which: 1 });
 
     cy.window().then(({ map }) => {
       const layer = (map.pm.getGeomanLayers() as L.Circle[])[0];
@@ -519,9 +519,9 @@ describe('Draw Circle', () => {
 
     // change center
     cy.get(mapSelector)
-      .trigger('mousedown', 200, 200, { which: 1 })
-      .trigger('mousemove', 200, 250, { which: 1 })
-      .trigger('mouseup', 200, 250, { which: 1 });
+      .trigger('pointerdown', 200, 200, { which: 1 })
+      .trigger('pointermove', 200, 250, { which: 1 })
+      .trigger('pointerup', 200, 250, { which: 1 });
 
     cy.window().then(({ map }) => {
       const layer = (map.pm.getGeomanLayers() as L.Circle[])[0];
@@ -542,9 +542,9 @@ describe('Draw Circle', () => {
 
     // move marker
     cy.get(mapSelector)
-      .trigger('mousedown', 400, 200, { which: 1 })
-      .trigger('mousemove', 390, 230, { which: 1 })
-      .trigger('mouseup', 390, 230, { which: 1 });
+      .trigger('pointerdown', 400, 200, { which: 1 })
+      .trigger('pointermove', 390, 230, { which: 1 })
+      .trigger('pointerup', 390, 230, { which: 1 });
 
     cy.window().then(({ map }) => {
       const layer = (map.pm.getGeomanLayers() as L.Circle[])[1];

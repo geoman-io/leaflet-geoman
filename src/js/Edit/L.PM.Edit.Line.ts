@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import type { IRotateMixin } from '../Mixins/Rotating';
+import { PM } from '../PM';
 import type { EditOptions } from './L.PM.Edit';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
@@ -29,7 +32,6 @@ type ExtendedMap = L.Map & {
  */
 type ExtendedMarker = L.Marker & {
   _pmTempLayer?: boolean;
-  _icon?: HTMLElement;
   leftM?: ExtendedMarker;
   rightM?: ExtendedMarker;
   _middleMarkerPrev?: ExtendedMarker;
@@ -43,12 +45,7 @@ type ExtendedMarker = L.Marker & {
 /**
  * Extended polyline layer with PM properties
  */
-type ExtendedPolyline = L.Polyline<
-  | GeoJSON.LineString
-  | GeoJSON.MultiLineString
-  | GeoJSON.Polygon
-  | GeoJSON.MultiPolygon
-> & {
+type ExtendedPolyline = L.Polyline & {
   _map: ExtendedMap;
   _path?: HTMLElement;
   _renderer?: {
@@ -70,9 +67,6 @@ type ExtendedFeatureGroup = L.FeatureGroup & {
  */
 type PMTempLayer = L.Layer & {
   _pmTempLayer?: boolean;
-  options: L.LayerOptions & {
-    pane?: string;
-  };
 };
 
 /**
@@ -193,13 +187,15 @@ export interface IEditLine {
     e: L.LeafletEvent & { target: ExtendedMarker }
   ): boolean;
   _vertexValidationDrag(marker: ExtendedMarker): boolean;
-  _vertexValidationDragEnd(marker: ExtendedMarker): boolean;
+  _vertexValidationDragEnd(marker: {
+    _cancelDragEventChain?: L.LatLng | null;
+  }): boolean;
   filterMarkerGroup(): void;
   _preventRenderingMarkers(prevent: boolean): void;
   _removeFromCache(marker: ExtendedMarker): void;
-  _onRotateStart(e: L.LeafletEvent): void;
-  _onRotate(e: L.LeafletEvent): void;
-  _onRotateEnd(e: L.LeafletEvent): void;
+  _onRotateStart: IRotateMixin['_onRotateStart'];
+  _onRotate: IRotateMixin['_onRotate'];
+  _onRotateEnd: IRotateMixin['_onRotateEnd'];
 }
 import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
@@ -217,29 +213,10 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 // So I can get 'b' with: arr[0][0][1].
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
-Edit.Line = Edit.extend<
-  IEditLine,
-  [
-    L.Polyline<
-      | GeoJSON.LineString
-      | GeoJSON.MultiLineString
-      | GeoJSON.Polygon
-      | GeoJSON.MultiPolygon
-    >,
-  ],
-  [typeof MarkerLimits]
->({
+Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
   includes: [MarkerLimits],
   _shape: 'Line',
-  initialize(
-    this: IEditLine,
-    layer: L.Polyline<
-      | GeoJSON.LineString
-      | GeoJSON.MultiLineString
-      | GeoJSON.Polygon
-      | GeoJSON.MultiPolygon
-    >
-  ) {
+  initialize(this: IEditLine, layer: L.Polyline) {
     this._layer = layer as typeof this._layer;
     this._enabled = false;
   },
@@ -328,7 +305,7 @@ Edit.Line = Edit.extend<
     const el = this._layer._path
       ? this._layer._path
       : this._layer._renderer._container;
-    L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    el.classList.remove('leaflet-pm-draggable');
 
     if (this._layerEdited) {
       this._fireUpdate();
@@ -407,7 +384,7 @@ Edit.Line = Edit.extend<
   _createMarker(this: IEditLine, latlng: L.LatLng): ExtendedMarker {
     const marker = new L.Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new L.DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -449,14 +426,14 @@ Edit.Line = Edit.extend<
       return false;
     }
 
-    const latlng = L.PM.Utils.calcMiddleLatLng(
+    const latlng = PM.Utils.calcMiddleLatLng(
       this._map,
       leftM.getLatLng(),
       rightM.getLatLng()
     );
 
     const middleMarker = this._createMarker(latlng);
-    const middleIcon = L.divIcon({
+    const middleIcon = new L.DivIcon({
       className: 'marker-icon marker-icon-middle',
     });
     middleMarker.setIcon(middleIcon);
@@ -490,9 +467,9 @@ Edit.Line = Edit.extend<
     // TODO: move the next two lines inside _addMarker() as soon as
     // https://github.com/Leaflet/Leaflet/issues/4484
     // is fixed
-    const icon = L.divIcon({ className: 'marker-icon' });
+    const icon = new L.DivIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
-    this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
+    this._addMarker(middleMarker, middleMarker.leftM!, middleMarker.rightM!);
   },
   _onMiddleMarkerMoveStart(
     this: IEditLine,
@@ -509,7 +486,7 @@ Edit.Line = Edit.extend<
     // TODO: This is a workaround. Remove the moveend listener and
     // callback as soon as this is fixed:
     // https://github.com/Leaflet/Leaflet/issues/4484
-    this._addMarker(middleMarker, middleMarker.leftM, middleMarker.rightM);
+    this._addMarker(middleMarker, middleMarker.leftM!, middleMarker.rightM!);
   },
   _onMiddleMarkerMovePrevent(
     this: IEditLine,
@@ -528,7 +505,7 @@ Edit.Line = Edit.extend<
     if (!this._vertexValidationDragEnd(middleMarker)) {
       return;
     }
-    const icon = L.divIcon({ className: 'marker-icon' });
+    const icon = new L.DivIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
     // timeout is needed else this._onVertexClick fires the event because it is called after deleting the flag
     setTimeout(() => {
@@ -558,10 +535,10 @@ Edit.Line = Edit.extend<
     delete newM.rightM;
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       leftM
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     // define the coordsRing that is edited
     const coordsRing: L.LatLng[] = (
@@ -596,8 +573,8 @@ Edit.Line = Edit.extend<
     this._fireVertexAdded(
       newM,
       (
-        L.PM.Utils.findDeepMarkerIndex(this._markers, newM) as Required<
-          ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>
+        PM.Utils.findDeepMarkerIndex(this._markers, newM) as Required<
+          ReturnType<typeof PM.Utils.findDeepMarkerIndex>
         >
       ).indexPath,
       latlng
@@ -698,9 +675,9 @@ Edit.Line = Edit.extend<
         this._updateDisabledMarkerStyle(marker, disabled);
       } else if (marker._icon) {
         if (disabled && !this._checkMarkerAllowedToDrag(marker)) {
-          L.DomUtil.addClass(marker._icon, 'vertexmarker-disabled');
+          marker._icon.classList.add('vertexmarker-disabled');
         } else {
-          L.DomUtil.removeClass(marker._icon, 'vertexmarker-disabled');
+          marker._icon.classList.remove('vertexmarker-disabled');
         }
       }
     });
@@ -729,10 +706,10 @@ Edit.Line = Edit.extend<
     let coords = this._layer.getLatLngs();
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     // only continue if this is NOT a middle marker (those can't be deleted)
     if (!indexPath) {
@@ -873,10 +850,10 @@ Edit.Line = Edit.extend<
     const latlng = marker.getLatLng();
 
     // get indexPath of Marker
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     // update coord
     const parent: L.LatLng[] = (
@@ -896,10 +873,10 @@ Edit.Line = Edit.extend<
   },
 
   _getNeighborMarkers(this: IEditLine, marker: ExtendedMarker) {
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     // the markers neighbors
     const markerArr: ExtendedMarker[] = (
@@ -919,8 +896,14 @@ Edit.Line = Edit.extend<
   _checkMarkerAllowedToDrag(this: IEditLine, marker: ExtendedMarker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
-    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
-    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+    const prevLine = new L.Polyline([
+      prevMarker.getLatLng(),
+      marker.getLatLng(),
+    ]);
+    const nextLine = new L.Polyline([
+      marker.getLatLng(),
+      nextMarker.getLatLng(),
+    ]);
 
     const prevLineIntersection = lineIntersect(
       this._layer.toGeoJSON(15),
@@ -931,7 +914,7 @@ Edit.Line = Edit.extend<
     const prevLineIntersectionLen = prevLineIntersection.features.filter(
       (f) => {
         const coords = f.geometry.coordinates;
-        const latlng = L.latLng(coords[1], coords[0]);
+        const latlng = new L.LatLng(coords[1], coords[0]);
         return (
           !latlng.equals(prevMarker.getLatLng()) &&
           !latlng.equals(marker.getLatLng())
@@ -948,7 +931,7 @@ Edit.Line = Edit.extend<
     const nextLineIntersectionLen = nextLineIntersection.features.filter(
       (f) => {
         const coords = f.geometry.coordinates;
-        const latlng = L.latLng(coords[1], coords[0]);
+        const latlng = new L.LatLng(coords[1], coords[0]);
         return (
           !latlng.equals(nextMarker.getLatLng()) &&
           !latlng.equals(marker.getLatLng())
@@ -977,10 +960,10 @@ Edit.Line = Edit.extend<
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     this._fireMarkerDragStart(e, indexPath);
 
@@ -1014,10 +997,10 @@ Edit.Line = Edit.extend<
       return;
     }
 
-    const { indexPath, index, parentPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath, index, parentPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     // only continue if this is NOT a middle marker
     if (!indexPath) {
@@ -1058,7 +1041,7 @@ Edit.Line = Edit.extend<
     const nextMarkerLatLng = markerArr[nextMarkerIndex].getLatLng();
 
     if (marker._middleMarkerNext) {
-      const middleMarkerNextLatLng = L.PM.Utils.calcMiddleLatLng(
+      const middleMarkerNextLatLng = PM.Utils.calcMiddleLatLng(
         this._map,
         markerLatLng,
         nextMarkerLatLng
@@ -1067,7 +1050,7 @@ Edit.Line = Edit.extend<
     }
 
     if (marker._middleMarkerPrev) {
-      const middleMarkerPrevLatLng = L.PM.Utils.calcMiddleLatLng(
+      const middleMarkerPrevLatLng = PM.Utils.calcMiddleLatLng(
         this._map,
         markerLatLng,
         prevMarkerLatLng
@@ -1093,10 +1076,10 @@ Edit.Line = Edit.extend<
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     // if self intersection is not allowed but this edit caused a self intersection,
     // reset and cancel; do not fire events
@@ -1153,10 +1136,10 @@ Edit.Line = Edit.extend<
       return;
     }
 
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
+    const { indexPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       vertex
-    ) as Required<ReturnType<typeof L.PM.Utils.findDeepMarkerIndex>>;
+    ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     this._fireVertexClick(e, indexPath);
   },

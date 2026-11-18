@@ -1,4 +1,5 @@
-import type { PM } from 'leaflet';
+import type * as L from 'leaflet';
+import type { PM } from '../../leaflet-geoman';
 /**
  * Shared implementation options. Public declarations stay unchanged; known keys
  * retain their types while extension keys and historical null defaults remain valid.
@@ -77,8 +78,6 @@ interface LegacyEditOptions {
   allowRemoval?: boolean;
   allowCutting?: boolean;
   allowRotation?: boolean;
-  addVertexOn?: string;
-  removeVertexOn?: string;
   removeVertexValidation?: VertexValidationFn;
   addVertexValidation?: VertexValidationFn;
   moveVertexValidation?: VertexValidationFn;

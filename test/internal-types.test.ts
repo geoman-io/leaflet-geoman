@@ -6,36 +6,36 @@ const normalizePath = (filename: string) => filename.replace(/\\/g, '/');
 
 const validCases = {
   inheritedMethods: `
-    const Child = L.PM.Edit.Marker.extend<{ probe(): boolean }>({
+    const Child = PM.Edit.Marker.extend<{ probe(): boolean }>({
       probe() { return this.enabled(); },
     });
-    const editor = new Child(L.marker([0, 0]));
+    const editor = new Child(new L.Marker([0, 0]));
     const enabled: boolean = editor.probe();
     editor.enableLayerDrag();
   `,
   implementedMethod: `
-    const Child = L.PM.Edit.Marker.extend<{ probe(): string }>({
+    const Child = PM.Edit.Marker.extend<{ probe(): string }>({
       probe() { return 'implemented'; },
     });
-    const result: string = new Child(L.marker([0, 0])).probe();
+    const result: string = new Child(new L.Marker([0, 0])).probe();
   `,
   checkedMixin: `
     const mixin = { probe() { return 'mixed in'; } };
-    const Child = L.PM.Edit.Marker.extend<
+    const Child = PM.Edit.Marker.extend<
       { probe(): string }, [L.Marker], [typeof mixin]
     >({ includes: [mixin] });
-    const result: string = new Child(L.marker([0, 0])).probe();
+    const result: string = new Child(new L.Marker([0, 0])).probe();
   `,
   mixinOrder: `
     const first = { probe() { return 1; } };
     const second = { probe() { return 'last wins'; } };
-    const Child = L.PM.Edit.Marker.extend<
+    const Child = PM.Edit.Marker.extend<
       {}, [L.Marker], [typeof first, typeof second]
     >({ includes: [first, second] });
-    const result: string = new Child(L.marker([0, 0])).probe();
+    const result: string = new Child(new L.Marker([0, 0])).probe();
   `,
   mapAndEditorMixins: `
-    const controller = new L.PM.Map(L.map('map'));
+    const controller = new PM.Map(new L.Map('map'));
     controller.enableGlobalEditMode({ snapDistance: 20 });
     controller.enableGlobalDragMode();
     controller.enableGlobalRemovalMode();
@@ -43,21 +43,21 @@ const validCases = {
     controller.Draw.Marker.enable({ snappable: false });
     controller.Draw.Polygon.setOptions({ snapDistance: 20 });
     controller.Toolbar.setButtonDisabled('drawMarker', true);
-    const editor = new L.PM.Edit.Rectangle(L.rectangle([[0, 0], [1, 1]]));
+    const editor = new PM.Edit.Rectangle(new L.Rectangle([[0, 0], [1, 1]]));
     editor.rotateLayer(15);
     const dragging: boolean = editor.layerDragEnabled();
-    const drawing = new L.PM.Draw.Polygon(L.map('draw-map'));
+    const drawing = new PM.Draw.Polygon(new L.Map('draw-map'));
     drawing.setOptions({ snappable: true });
     drawing.getOptions();
   `,
   sharedAndExtensionOptions: `
-    const controller = new L.PM.Map(L.map('map'));
+    const controller = new PM.Map(new L.Map('map'));
     controller.enableDraw('CustomPolygon', {
       snappable: false, snapDistance: 30, customExtension: { value: true },
       minRadiusCircle: null, textOptions: { text: null },
     });
     controller.setGlobalOptions({
-      snapDistance: 15, allowRotation: false, layerGroup: L.map('group-map'),
+      snapDistance: 15, allowRotation: false, layerGroup: new L.Map('group-map'),
       customExtension: 'supported', minRadiusCircle: null,
     });
     controller.addControls({ positions: { draw: 'topright' } });
@@ -68,52 +68,52 @@ const validCases = {
 const invalidCases = {
   missingMethod: {
     code: 2345,
-    source: `L.PM.Edit.Marker.extend<{ missing(): string }>({});`,
+    source: `PM.Edit.Marker.extend<{ missing(): string }>({});`,
   },
   incorrectImplementation: {
     code: 2322,
-    source: `L.PM.Edit.Marker.extend<{ probe(): string }>({
+    source: `PM.Edit.Marker.extend<{ probe(): string }>({
       probe() { return 42; },
     });`,
   },
   incompatibleInheritedMethod: {
     code: 2345,
-    source: `L.PM.Edit.Marker.extend<{ enabled(): string }>({});`,
+    source: `PM.Edit.Marker.extend<{ enabled(): string }>({});`,
   },
   incompatibleMixin: {
     code: 2345,
     source: `const mixin = { probe() { return 42; } };
-      L.PM.Edit.Marker.extend<
+      PM.Edit.Marker.extend<
         { probe(): string }, [L.Marker], [typeof mixin]
       >({ includes: [mixin] });`,
   },
   missingMixin: {
     code: 2345,
-    source: `L.PM.Edit.Marker.extend<
+    source: `PM.Edit.Marker.extend<
       { probe(): string }, [L.Marker], [{ probe(): string }]
     >({});`,
   },
   invalidDrawOption: {
     code: 2322,
-    source: `new L.PM.Map(L.map('map')).enableDraw('Polygon', {
+    source: `new PM.Map(new L.Map('map')).enableDraw('Polygon', {
       snappable: 'no',
     });`,
   },
   invalidGlobalOption: {
     code: 2322,
-    source: `new L.PM.Map(L.map('map')).setGlobalOptions({
+    source: `new PM.Map(new L.Map('map')).setGlobalOptions({
       snapDistance: 'far',
     });`,
   },
   invalidGlobalEditOption: {
     code: 2322,
-    source: `new L.PM.Map(L.map('map')).enableGlobalEditMode({
+    source: `new PM.Map(new L.Map('map')).enableGlobalEditMode({
       snapDistance: 'far',
     });`,
   },
   invalidBaseDrawOption: {
     code: 2322,
-    source: `new L.PM.Draw(L.map('map')).enable('Polygon', {
+    source: `new PM.Draw(new L.Map('map')).enable('Polygon', {
       snappable: 'no',
     });`,
   },
@@ -165,7 +165,7 @@ describe('internal Leaflet type contracts', () => {
           )
         : ts.createSourceFile(
             filename,
-            `export {};\n${source}`,
+            `import * as L from 'leaflet';\nimport { PM } from '../js/PM';\n${source}`,
             languageVersion,
             true
           );

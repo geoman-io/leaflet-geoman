@@ -1,8 +1,9 @@
+import * as L from 'leaflet';
+import { PM } from './PM';
 /**
  * Extended layer with PM properties - using type intersection to avoid property conflicts
  */
 type ParentEvented = (L.Layer | L.Map) & {
-  _eventParents?: Record<string, L.LayerGroup>;
   _pmLastGroupFetch?: {
     time: number;
     groups: L.LayerGroup[];
@@ -16,20 +17,15 @@ type PMLayer = L.Layer & {
   pm?: unknown;
   _pmTempLayer?: boolean;
   _tempPopupCopy?: L.Popup;
-  _eventParents?: Record<string, L.LayerGroup>;
   _pmLastGroupFetch?: {
     time: number;
     groups: L.LayerGroup[];
     groupIds: string[];
   };
   _leaflet_id?: number;
-  options: L.LayerOptions & {
-    pmIgnore?: boolean;
-  };
-  getPopup?: () => L.Popup | undefined;
+  getPopup?: () => L.Popup | null | undefined;
   unbindPopup?: () => void;
   bindPopup?: (popup: L.Popup) => void;
-  fire: (type: string, data: unknown, propagate: boolean) => void;
 };
 
 /**
@@ -38,7 +34,6 @@ type PMLayer = L.Layer & {
 interface ExtendedCircle extends L.Circle {
   getLatLng: () => L.LatLng;
   getRadius: () => number;
-  options: L.CircleMarkerOptions;
 }
 
 /**
@@ -153,8 +148,8 @@ const Utils: IUtils = {
     // filter out everything that ignore leaflet-geoman
     layers = layers.filter(
       (layer) =>
-        (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+        (!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
     );
 
     return layers;
@@ -174,8 +169,8 @@ const Utils: IUtils = {
       const fallback =
         Number.isFinite(origin?.lat) && Number.isFinite(origin?.lng)
           ? origin
-          : L.latLng(0, 0);
-      return L.polygon([fallback, fallback, fallback], circle.options);
+          : new L.LatLng(0, 0);
+      return new L.Polygon([fallback, fallback, fallback], circle.options);
     }
     const polys = createGeodesicPolygon(origin, radius, sides, 0, withBearing); // these are the points that make up the circle
     const polygon: L.LatLngTuple[] = [];
@@ -183,11 +178,11 @@ const Utils: IUtils = {
       const geometry: L.LatLngTuple = [polys[i].lat, polys[i].lng];
       polygon.push(geometry);
     }
-    return L.polygon(polygon, circle.options);
+    return new L.Polygon(polygon, circle.options);
   },
   disablePopup(layer) {
     if (layer.getPopup()) {
-      layer._tempPopupCopy = layer.getPopup();
+      layer._tempPopupCopy = layer.getPopup() ?? undefined;
       layer.unbindPopup();
     }
   },
@@ -198,12 +193,12 @@ const Utils: IUtils = {
     }
   },
   _fireEvent(layer, type, data, propagate = false) {
-    layer.fire(type, data, propagate);
+    layer.fire(type, data as object, propagate);
 
     // fire event to all parent layers
     const { groups } = this.getAllParentGroups(layer);
     groups.forEach((group) => {
-      group.fire(type, data, propagate);
+      group.fire(type, data as object, propagate);
     });
   },
   getAllParentGroups(layer) {
@@ -215,7 +210,9 @@ const Utils: IUtils = {
       for (const _id in _layer._eventParents) {
         if (groupIds.indexOf(_id) === -1) {
           groupIds.push(_id);
-          const group = _layer._eventParents[_id];
+          const group = _layer._eventParents![
+            _id as unknown as number
+          ] as L.LayerGroup;
           groups.push(group);
           loopThroughParents(group);
         }
@@ -266,7 +263,7 @@ const Utils: IUtils = {
         }
       } else if (
         ((v as L.LatLng).lat || (v as L.LatLng).lat === 0) &&
-        L.latLng(v as L.LatLng).equals(latlng)
+        new L.LatLng(v as L.LatLng).equals(latlng)
       ) {
         result = iRes;
         return true;
@@ -365,7 +362,7 @@ const Utils: IUtils = {
   },
   pxRadiusToMeterRadius(radiusInPx, map, center) {
     const pointA = map.project(center);
-    const pointB = L.point(pointA.x + radiusInPx, pointA.y);
+    const pointB = new L.Point(pointA.x + radiusInPx, pointA.y);
     return map.distance(map.unproject(pointB), center);
   },
 };

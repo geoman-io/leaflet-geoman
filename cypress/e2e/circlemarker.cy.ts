@@ -59,7 +59,7 @@ describe('Draw Circle Marker', () => {
       map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isFalse(
-            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            layer._path.classList.contains('leaflet-pm-draggable'),
             'not draggable'
           );
         }
@@ -72,7 +72,7 @@ describe('Draw Circle Marker', () => {
       map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isTrue(
-            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            layer._path.classList.contains('leaflet-pm-draggable'),
             'draggable'
           );
         }
@@ -85,7 +85,7 @@ describe('Draw Circle Marker', () => {
       map.eachLayer((layer) => {
         if (layer instanceof L.CircleMarker) {
           assert.isFalse(
-            L.DomUtil.hasClass(layer._path, 'leaflet-pm-draggable'),
+            layer._path.classList.contains('leaflet-pm-draggable'),
             'not draggable'
           );
         }
@@ -177,7 +177,7 @@ describe('Draw Circle Marker', () => {
 
   it('snapping to CircleMarker with pmIgnore:true', () => {
     cy.window().then(({ map, L }) => {
-      L.circleMarker(map.getCenter(), { pmIgnore: true }).addTo(map);
+      new L.CircleMarker(map.getCenter(), { pmIgnore: true }).addTo(map);
     });
 
     cy.toolbarButton('rectangle')
@@ -257,7 +257,7 @@ describe('Draw Circle Marker', () => {
       .should('have.class', 'active');
 
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
+      new L.Marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
         minRadiusCircleMarker: 50,
         maxRadiusCircleMarker: 150,
@@ -283,7 +283,7 @@ describe('Draw Circle Marker', () => {
       .should('have.class', 'active');
 
     cy.window().then(({ map, L }) => {
-      L.marker(map.getCenter()).addTo(map);
+      new L.Marker(map.getCenter()).addTo(map);
       map.pm.setGlobalOptions({
         minRadiusCircleMarker: 150,
         maxRadiusCircleMarker: 300,
@@ -372,8 +372,8 @@ describe('Draw Circle Marker', () => {
     let mapSimple: L.Map;
     cy.window().then(({ map, L }) => {
       map.remove();
-      mapSimple = L.map('map', {
-        crs: L.CRS.Simple,
+      mapSimple = new L.Map('map', {
+        crs: L.SimpleCRS,
         minZoom: -2,
       }).setView([0, 0], 0);
       mapSimple.pm.addControls();
@@ -396,8 +396,8 @@ describe('Draw Circle Marker', () => {
     let mapSimple: L.Map;
     cy.window().then(({ map, L }) => {
       map.remove();
-      mapSimple = L.map('map', {
-        crs: L.CRS.Simple,
+      mapSimple = new L.Map('map', {
+        crs: L.SimpleCRS,
         minZoom: -2,
       }).setView([0, 0], 0);
       mapSimple.pm.addControls();
@@ -491,7 +491,7 @@ describe('Draw Circle Marker', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -515,7 +515,7 @@ describe('Draw Circle Marker', () => {
       .should('have.class', 'active');
 
     cy.get(mapSelector).click(200, 200);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -584,7 +584,7 @@ describe('Draw Circle Marker', () => {
     let marker: L.CircleMarker;
     cy.window().then(({ map, L }) => {
       map.pm.enableGlobalEditMode();
-      marker = L.circleMarker([51.505, -0.09], { radius: 10 });
+      marker = new L.CircleMarker([51.505, -0.09], { radius: 10 });
       const pm = marker.pm as typeof marker.pm & {
         enable(options?: {
           editable?: boolean;
@@ -611,7 +611,7 @@ describe('Draw Circle Marker', () => {
   it('does not unlock a circle marker when enable is called with no options', () => {
     let locked: L.CircleMarker;
     cy.window().then(({ map, L }) => {
-      locked = L.circleMarker(map.containerPointToLatLng([200, 200]), {
+      locked = new L.CircleMarker(map.containerPointToLatLng([200, 200]), {
         radius: 20,
       }).addTo(map);
       locked.pm.setOptions({ draggable: false, snappable: false });

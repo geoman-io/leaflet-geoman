@@ -60,8 +60,8 @@ describe('Edit LayerGroup', () => {
 
     // Add layer to group
     cy.window().then(({ L, map }) => {
-      fg = L.featureGroup().addTo(map);
-      fg2 = L.featureGroup().addTo(map);
+      fg = new L.FeatureGroup().addTo(map);
+      fg2 = new L.FeatureGroup().addTo(map);
 
       map.pm.setGlobalOptions({ layerGroup: fg });
 
@@ -139,7 +139,7 @@ describe('Edit LayerGroup', () => {
     let firedEvent = '';
 
     cy.window().then(({ map, L }) => {
-      fg = L.featureGroup();
+      fg = new L.FeatureGroup();
       fg.on('pm:cut', (e) => {
         firedEvent = e.type;
       });
@@ -186,11 +186,11 @@ describe('Edit LayerGroup', () => {
   it('event is fired only once if group has multiple sub-groups with the same layer', () => {
     let firedEventCount = 0;
     cy.window().then(({ map, L }) => {
-      const group = L.featureGroup().addTo(map);
-      const layers = L.featureGroup().addTo(group);
-      const markers = L.featureGroup().addTo(group);
-      const markersChild = L.featureGroup().addTo(markers);
-      L.marker(map.getCenter())
+      const group = new L.FeatureGroup().addTo(map);
+      const layers = new L.FeatureGroup().addTo(group);
+      const markers = new L.FeatureGroup().addTo(group);
+      const markersChild = new L.FeatureGroup().addTo(markers);
+      new L.Marker(map.getCenter())
         .addTo(layers)
         .addTo(markers)
         .addTo(markersChild);
@@ -212,11 +212,11 @@ describe('Edit LayerGroup', () => {
   it('event is fired on every parent group of a layer (once)', () => {
     let firedEventCount = 0;
     cy.window().then(({ map, L }) => {
-      const group = L.featureGroup().addTo(map);
-      const layers = L.featureGroup().addTo(group);
-      const markers = L.featureGroup().addTo(group);
-      const markersChild = L.featureGroup().addTo(markers);
-      L.marker(map.getCenter())
+      const group = new L.FeatureGroup().addTo(map);
+      const layers = new L.FeatureGroup().addTo(group);
+      const markers = new L.FeatureGroup().addTo(group);
+      const markersChild = new L.FeatureGroup().addTo(markers);
+      new L.Marker(map.getCenter())
         .addTo(layers)
         .addTo(markers)
         .addTo(markersChild);
@@ -266,7 +266,7 @@ describe('Edit LayerGroup', () => {
   it('new added layers will be changed to edit mode if editmode is enabled', () => {
     cy.window().then(({ map, L }) => {
       map.setView([4.009783550466563, 104.00000000000006], 8);
-      const fg = L.featureGroup().addTo(map);
+      const fg = new L.FeatureGroup().addTo(map);
 
       map.on('pm:create layeradd', (e) => {
         e.layer.addTo(fg);
@@ -287,7 +287,7 @@ describe('Edit LayerGroup', () => {
   it('new drawn markers not enable other layers in the same layergroup', () => {
     cy.window().then(({ map, L }) => {
       map.setView([4.009783550466563, 104.00000000000006], 8);
-      const fg = L.featureGroup().addTo(map);
+      const fg = new L.FeatureGroup().addTo(map);
 
       map.on('pm:create layeradd', (e) => {
         e.layer.addTo(fg);
@@ -311,7 +311,7 @@ describe('Edit LayerGroup', () => {
       cy.fixture('LineString')
         .as('poly')
         .then((json) => {
-          layerGroup = L.geoJson(json, { pmIgnore: true }).addTo(map);
+          layerGroup = new L.GeoJSON(json, { pmIgnore: true }).addTo(map);
           const bounds = layerGroup.getBounds();
           map.fitBounds(bounds);
         });
@@ -339,7 +339,7 @@ describe('Edit LayerGroup', () => {
     cy.get(mapSelector).click(350, 200).click(400, 400);
 
     cy.window().then(({ map, L }) => {
-      const fg = L.featureGroup().addTo(map);
+      const fg = new L.FeatureGroup().addTo(map);
       const layers = map.pm.getGeomanDrawLayers() as L.Polyline[];
       layers.forEach((layer) => {
         fg.addLayer(layer);
@@ -347,6 +347,54 @@ describe('Edit LayerGroup', () => {
       fg.pm.setOptions({ syncLayersOnDrag: true });
 
       expect(layers[1].pm.options.syncLayersOnDrag).to.eq(true);
+    });
+  });
+
+  it('stops syncing drag with a group the layer was removed from', () => {
+    cy.window().then(({ map, L }) => {
+      const fg = new L.FeatureGroup().addTo(map);
+      map.pm.setGlobalOptions({ layerGroup: fg, syncLayersOnDrag: true });
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(191, 216).click(608, 323);
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(230, 230).click(350, 350);
+
+    cy.window().then(({ map }) => {
+      const layers = map.pm.getGeomanDrawLayers() as L.Rectangle[];
+      const fg = map.pm.getGlobalOptions().layerGroup as L.FeatureGroup;
+      fg.removeLayer(layers[0]);
+      layers[0].addTo(map);
+    });
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map }) => {
+      const layers = map.pm.getGeomanDrawLayers() as L.Rectangle[];
+      const center1 = layers[0].getCenter();
+      const center2 = layers[1].getCenter();
+
+      const layer = layers[0];
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([290, 290]),
+      });
+      layer.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([500, 320]),
+      });
+      layer.pm._dragMixinOnMouseUp({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([320, 320]),
+      });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(false);
+      expect(center2.equals(layers[1].getCenter())).to.eq(true);
     });
   });
 });

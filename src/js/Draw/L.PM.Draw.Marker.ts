@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import type { ISnapMixin, SnappableMarker } from '../Mixins/Snapping';
+import { PM } from '../PM';
 import type { DrawOptions } from '../../types/options';
 import type { IDraw } from './L.PM.Draw';
 /**
@@ -54,7 +57,7 @@ interface DrawMarkerOptions {
 /**
  * Mouse/Touch event with latlng
  */
-interface MapMouseEvent extends L.LeafletMouseEvent {
+interface MapMouseEvent extends L.LeafletPointerEvent {
   target: HintMarker;
 }
 
@@ -78,9 +81,9 @@ export interface IDrawMarker {
   disable(): void;
   enabled(): boolean;
   toggle(options?: DrawOptions): void;
-  isRelevantMarker(layer: L.Layer): boolean;
-  _syncHintMarker(e: L.LeafletMouseEvent): void;
-  _createMarker(e: L.LeafletMouseEvent): void;
+  isRelevantMarker(layer: object): layer is L.Marker;
+  _syncHintMarker(e: L.LeafletPointerEvent): void;
+  _createMarker(e: L.LeafletPointerEvent): void;
   setStyle(): void;
   _createTouchHint(): void;
   _removeTouchHint(): void;
@@ -93,7 +96,7 @@ export interface IDrawMarker {
   _fireChange: (latlng: L.LatLng, source: string) => void;
   _setGlobalDrawMode: () => void;
   _cleanupSnapping: () => void;
-  _handleSnapping: (e: L.LeafletMouseEvent) => void;
+  _handleSnapping: ISnapMixin['_handleSnapping'];
   _isFirstLayer: () => boolean;
 }
 import Draw from './L.PM.Draw';
@@ -122,7 +125,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
   },
   enable(this: IDrawMarker, options?: DrawOptions) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+    // instances of PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
 
     // change enabled state
@@ -147,7 +150,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
       // Create a minimal hidden hint marker to satisfy the snappable mixin interface.
       // Note: Snapping is effectively disabled on touch devices since there's no
       // continuous cursor position to snap. The marker exists only for API compatibility.
-      this._hintMarker = L.marker(this._map.getCenter(), {
+      this._hintMarker = new L.Marker(this._map.getCenter(), {
         ...markerDrawOptions(this.options.markerStyle),
         opacity: 0,
         interactive: false,
@@ -155,11 +158,13 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
       this._setPane(this._hintMarker, 'markerPane');
       this._hintMarker!._pmTempLayer = true;
     } else {
-      // Desktop: Use existing hint marker behavior
-      this._hintMarker = L.marker(
-        this._map.getCenter(),
-        markerDrawOptions(this.options.markerStyle)
-      );
+      // Desktop: Use existing hint marker behavior. It stays out of the tab
+      // order: Leaflet 2 raises a focused marker above the others, so a
+      // clicked hint marker would cover the drawn markers under the cursor.
+      this._hintMarker = new L.Marker(this._map.getCenter(), {
+        ...markerDrawOptions(this.options.markerStyle),
+        keyboard: false,
+      });
       this._setPane(this._hintMarker, 'markerPane');
       this._hintMarker!._pmTempLayer = true;
       this._hintMarker!.addTo(this._map);
@@ -169,7 +174,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
         this._hintMarker
           .bindTooltip(getTranslation('tooltips.placeMarker'), {
             permanent: true,
-            offset: L.point(0, 10),
+            offset: new L.Point(0, 10),
             direction: 'bottom',
             opacity: 0.8,
           })
@@ -177,7 +182,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
       }
 
       // sync hint marker with mouse cursor
-      this._map.on('mousemove', this._syncHintMarker, this);
+      this._map.on('pointermove', this._syncHintMarker, this);
     }
 
     // this is just to keep the snappable mixin happy
@@ -187,7 +192,7 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     if (this.options.markerEditable) {
       this._map.eachLayer((layer) => {
         if (this.isRelevantMarker(layer)) {
-          (layer as L.Marker).pm.enable();
+          layer.pm.enable();
         }
       });
     }
@@ -217,13 +222,13 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
       this._hintMarker = null;
     } else {
       this._hintMarker!.remove();
-      this._map.off('mousemove', this._syncHintMarker, this);
+      this._map.off('pointermove', this._syncHintMarker, this);
     }
 
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {
       if (this.isRelevantMarker(layer)) {
-        (layer as L.Marker).pm.disable();
+        layer.pm.disable();
       }
     });
 
@@ -249,28 +254,28 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
       this.enable(options);
     }
   },
-  isRelevantMarker(this: IDrawMarker, layer: L.Layer) {
+  isRelevantMarker(this: IDrawMarker, layer: object): layer is L.Marker {
     return (
       layer instanceof L.Marker &&
-      layer.pm &&
+      !!layer.pm &&
       !layer._pmTempLayer &&
       !layer.pm._initTextMarker
     );
   },
-  _syncHintMarker(this: IDrawMarker, e: L.LeafletMouseEvent) {
+  _syncHintMarker(this: IDrawMarker, e: L.LeafletPointerEvent) {
     // move the cursor marker
     this._hintMarker!.setLatLng(e.latlng);
 
     // if snapping is enabled, do it
     if (this.options.snappable) {
-      const fakeDragEvent = e;
-      fakeDragEvent.target = this._hintMarker;
-      this._handleSnapping(fakeDragEvent);
+      this._handleSnapping(
+        Object.assign(e, { target: this._hintMarker as SnappableMarker })
+      );
     }
 
     this._fireChange(this._hintMarker!.getLatLng(), 'Draw');
   },
-  _createMarker(this: IDrawMarker, e: L.LeafletMouseEvent) {
+  _createMarker(this: IDrawMarker, e: L.LeafletPointerEvent) {
     if (!e.latlng || this._layerIsDragging) {
       return;
     }

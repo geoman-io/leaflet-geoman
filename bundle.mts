@@ -18,9 +18,12 @@ const plugins: esbuild.Plugin[] = [
   },
 ];
 
+// The ES module: imports Leaflet from 'leaflet', for bundlers and import maps
 const buildOptions: esbuild.BuildOptions = {
   bundle: true,
-  entryPoints: ['./src/js/L.PM.ts'],
+  entryPoints: ['./src/js/index.ts'],
+  format: 'esm',
+  external: ['leaflet'],
   loader: {
     '.js': 'jsx',
     '.css': 'css',
@@ -28,6 +31,30 @@ const buildOptions: esbuild.BuildOptions = {
   },
   outfile: './dist/leaflet-geoman.js',
   sourcemap: true,
+};
+
+// Resolves 'leaflet' to the global `L` of Leaflet's leaflet-global.js
+const leafletGlobal: esbuild.Plugin = {
+  name: 'leaflet-global',
+  setup(build) {
+    build.onResolve({ filter: /^leaflet$/ }, () => ({
+      path: 'leaflet',
+      namespace: 'leaflet-global',
+    }));
+    build.onLoad({ filter: /.*/, namespace: 'leaflet-global' }, () => ({
+      contents: 'module.exports = globalThis.L;',
+      loader: 'js',
+    }));
+  },
+};
+
+// The script build: adds Leaflet-Geoman to the global `L`
+const globalOptions: esbuild.BuildOptions = {
+  ...buildOptions,
+  entryPoints: ['./src/js/global.ts'],
+  format: 'iife',
+  external: [],
+  outfile: './dist/leaflet-geoman-global.js',
 };
 
 // Keep demo script URLs and classic-script globals unchanged. Their sources
@@ -62,6 +89,11 @@ if (process.env.DEV) {
     minify: false,
     plugins,
   });
+  const globalCtx = await esbuild.context({
+    ...globalOptions,
+    plugins: [leafletGlobal],
+  });
+  await globalCtx.watch();
   const demoCtx = await esbuild.context(demoOptions);
   await demoCtx.watch();
   await ctx.watch();
@@ -87,9 +119,24 @@ if (process.env.DEV) {
     plugins,
   });
 
-  // The minified build also emits a duplicate CSS file we don't ship
-  fs.rmSync('./dist/leaflet-geoman.min.css', { force: true });
-  fs.rmSync('./dist/leaflet-geoman.min.css.map', { force: true });
+  // Build the script build and its minified version
+  await esbuild.build({ ...globalOptions, plugins: [leafletGlobal] });
+  await esbuild.build({
+    ...globalOptions,
+    minify: true,
+    outfile: './dist/leaflet-geoman-global.min.js',
+    plugins: [leafletGlobal],
+  });
+
+  // The other builds also emit the CSS; ship only leaflet-geoman.css
+  for (const name of [
+    'leaflet-geoman.min',
+    'leaflet-geoman-global',
+    'leaflet-geoman-global.min',
+  ]) {
+    fs.rmSync(`./dist/${name}.css`, { force: true });
+    fs.rmSync(`./dist/${name}.css.map`, { force: true });
+  }
 
   // Replace incorrect closing tag in <\/style>
   const data = fs.readFileSync('./dist/leaflet-geoman.css', 'utf8');

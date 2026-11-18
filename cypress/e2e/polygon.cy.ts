@@ -212,14 +212,14 @@ describe('Draw & Edit Poly', () => {
 
   it('removes layer when cut completely', () => {
     cy.window().then(({ map }) => {
-      Cypress.$(map).on('pm:create', ({ originalEvent }) => {
+      map.on('pm:create', (originalEvent) => {
         const { layer } = originalEvent as unknown as {
           layer: L.Polygon & L.LayerGroup & { _map: L.Map };
         };
-        (layer.options as L.LayerOptions & { cypress: boolean }).cypress = true;
+        (layer.options as unknown as { cypress: boolean }).cypress = true;
       });
 
-      Cypress.$(map).on('pm:cut', ({ originalEvent }) => {
+      map.on('pm:cut', (originalEvent) => {
         const { layer } = originalEvent as unknown as {
           layer: L.Polygon & L.LayerGroup & { _map: L.Map };
         };
@@ -227,7 +227,7 @@ describe('Draw & Edit Poly', () => {
         expect(Object.keys(layer.getLayers())).to.have.lengthOf(0);
       });
 
-      Cypress.$(map).on('pm:remove', ({ originalEvent }) => {
+      map.on('pm:remove', (originalEvent) => {
         const { layer } = originalEvent as unknown as {
           layer: L.Polygon & L.LayerGroup & { _map: L.Map };
         };
@@ -452,7 +452,7 @@ describe('Draw & Edit Poly', () => {
   it('events to be called', () => {
     cy.window().then(({ map }) => {
       // test pm:create event
-      Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
+      map.on('pm:create', (event) => {
         const poly = (event as unknown as { layer: L.Polygon }).layer;
         poly.pm.enable();
 
@@ -460,7 +460,7 @@ describe('Draw & Edit Poly', () => {
         expect(markers).to.have.length(4);
       });
 
-      Cypress.$(map).on('pm:remove', ({ originalEvent: event }) => {
+      map.on('pm:remove', (event) => {
         const layer = (
           event as unknown as { target: L.Layer & { map?: L.Map } }
         ).target;
@@ -554,7 +554,7 @@ describe('Draw & Edit Poly', () => {
 
   it('fire pm:cut AFTER the actual cut is visible on the map', () => {
     cy.window().then(({ map, L }) => {
-      Cypress.$(map).on('pm:cut', () => {
+      map.on('pm:cut', () => {
         const layers: L.Polygon[] = [];
 
         map.eachLayer((layer) => {
@@ -689,7 +689,7 @@ describe('Draw & Edit Poly', () => {
     cy.window().then(({ map, L, Hand }) => {
       cy.fixture('PolygonIntersects')
         .then((json) => {
-          const layer = L.geoJSON(json).getLayers()[0].addTo(map);
+          const layer = new L.GeoJSON(json).getLayers()[0].addTo(map);
           const bounds = (layer as L.Polygon).getBounds();
           map.fitBounds(bounds);
           return layer;
@@ -718,7 +718,9 @@ describe('Draw & Edit Poly', () => {
             expect(poly.pm.hasSelfIntersection()).to.equal(true);
 
             const toucherSelfIntersectionFalse =
-              handSelfIntersectionFalse.growFinger('mouse');
+              handSelfIntersectionFalse.growFinger('pointer', {
+                pointerType: 'mouse',
+              });
             toucherSelfIntersectionFalse
               .wait(100)
               .moveTo(504, 337, 100)
@@ -745,8 +747,10 @@ describe('Draw & Edit Poly', () => {
           allowSelfIntersectionEdit: true,
         });
 
-        const toucherSelfIntersectionTrue =
-          handSelfIntersectionTrue.growFinger('mouse');
+        const toucherSelfIntersectionTrue = handSelfIntersectionTrue.growFinger(
+          'pointer',
+          { pointerType: 'mouse' }
+        );
         toucherSelfIntersectionTrue
           .wait(100)
           .moveTo(294, 114, 100)
@@ -778,7 +782,7 @@ describe('Draw & Edit Poly', () => {
 
   it('no snapping to polygon with no coords', () => {
     cy.window().then(({ map, L }) => {
-      L.polygon([]).addTo(map);
+      new L.Polygon([]).addTo(map);
     });
 
     // activate line drawing
@@ -971,7 +975,7 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(250, 50);
 
     // Move close to the first point - should trigger self-snap
-    cy.get(mapSelector).trigger('mousemove', 152, 248);
+    cy.get(mapSelector).trigger('pointermove', 152, 248);
 
     // Click near the first point to complete the polygon
     cy.get(mapSelector).click(152, 248);
@@ -1288,7 +1292,7 @@ describe('Draw & Edit Poly', () => {
 
     cy.get(mapSelector).click(220, 220);
     cy.get(mapSelector).click(100, 230);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -1306,7 +1310,7 @@ describe('Draw & Edit Poly', () => {
   it('snap to start marker instead of to the layer below', () => {
     cy.window().then(({ map, L }) => {
       // it was not possible to create this test with creating the polygon by clicking
-      const polygon = L.polygon([
+      const polygon = new L.Polygon([
         [
           [20.53507732696281, 71.98242187500001],
           [19.87005983797396, 71.97143554687501],
@@ -1326,24 +1330,24 @@ describe('Draw & Edit Poly', () => {
       ]);
       map.pm.Draw.Polygon._createVertex({
         latlng: [20.53837097209846, 72.22334801861803],
-      } as unknown as L.LeafletMouseEvent);
+      } as unknown as L.LeafletPointerEvent);
 
       map.pm.Draw.Polygon._hintMarker.setLatLng([
         20.21581109239457, 72.13073730468751,
       ]);
       map.pm.Draw.Polygon._createVertex({
         latlng: [20.21581109239457, 72.13073730468751],
-      } as unknown as L.LeafletMouseEvent);
+      } as unknown as L.LeafletPointerEvent);
 
       map.pm.Draw.Polygon._hintMarker.setLatLng([
         20.205501205844214, 72.77893066406251,
       ]);
       map.pm.Draw.Polygon._createVertex({
         latlng: [20.205501205844214, 72.77893066406251],
-      } as unknown as L.LeafletMouseEvent);
+      } as unknown as L.LeafletPointerEvent);
     });
 
-    cy.get(mapSelector).trigger('mousemove', 413, 180);
+    cy.get(mapSelector).trigger('pointermove', 413, 180);
 
     cy.window().then(({ map }) => {
       const hintMarker = map.pm.Draw.Polygon._hintMarker;
@@ -1472,9 +1476,9 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('edit').click();
 
-    cy.get(mapSelector).trigger('mousedown', 150, 60, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 150, 55, { which: 1 });
-    cy.get(mapSelector).trigger('mouseup', 150, 55, { which: 1 });
+    cy.get(mapSelector).trigger('pointerdown', 150, 60, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 150, 55, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 150, 55, { which: 1 });
 
     cy.window().then(({ map }) => {
       const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[1];
@@ -1491,7 +1495,7 @@ describe('Draw & Edit Poly', () => {
     let polygon: L.Polygon;
 
     cy.window().then(({ map, L }) => {
-      polygon = L.polygon([
+      polygon = new L.Polygon([
         [
           [20.53507732696281, 71.98242187500001, 111],
           [19.87005983797396, 71.97143554687501, 222],
@@ -1514,9 +1518,9 @@ describe('Draw & Edit Poly', () => {
 
     cy.toolbarButton('edit').click();
 
-    cy.get(mapSelector).trigger('mousedown', 225, 105, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 225, 150, { which: 1 });
-    cy.get(mapSelector).trigger('mouseup', 225, 150, { which: 1 });
+    cy.get(mapSelector).trigger('pointerdown', 225, 105, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 225, 150, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 225, 150, { which: 1 });
 
     cy.window().then(() => {
       expect(

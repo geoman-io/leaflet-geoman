@@ -47,7 +47,7 @@ export interface LogEvent {
   data: Record<string, unknown>;
 }
 
-declare module 'leaflet' {
+declare module '../leaflet-geoman' {
   namespace PM {
     interface Draw {
       PolygonCopy: DrawShape;
@@ -58,7 +58,7 @@ declare module 'leaflet' {
     }
     interface PMMap {
       globalOptions: import('../src/js/L.PM.Map').GlobalOptions;
-      _getContainingLayer(): LayerGroup | Map;
+      _getContainingLayer(): L.LayerGroup | L.Map;
     }
   }
 }

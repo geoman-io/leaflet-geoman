@@ -319,7 +319,7 @@ describe('Draw & Edit Line', () => {
 
     cy.get(mapSelector).click(200, 200);
     cy.get(mapSelector).click(100, 230);
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map }) => {
       const style = {
@@ -370,7 +370,7 @@ describe('Draw & Edit Line', () => {
 
   it("snapping doesn't throw an error when Polyline has only one coordinate", () => {
     cy.window().then(({ map, L }) => {
-      L.polyline([map.getCenter()]).addTo(map);
+      new L.Polyline([map.getCenter()]).addTo(map);
     });
 
     // activate line drawing
@@ -454,9 +454,9 @@ describe('Draw & Edit Line', () => {
 
     cy.toolbarButton('edit').click();
 
-    cy.get(mapSelector).trigger('mousedown', 150, 60, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 150, 55, { which: 1 });
-    cy.get(mapSelector).trigger('mouseup', 150, 55, { which: 1 });
+    cy.get(mapSelector).trigger('pointerdown', 150, 60, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 150, 55, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 150, 55, { which: 1 });
 
     cy.window().then(({ map }) => {
       const layer = (map.pm.getGeomanDrawLayers() as L.Polyline[])[1];

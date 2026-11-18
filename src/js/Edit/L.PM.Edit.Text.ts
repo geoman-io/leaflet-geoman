@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import type { ISnapMixin } from '../Mixins/Snapping';
+import { PM } from '../PM';
 /**
  * Extended map with PM and dragging
  */
@@ -94,7 +97,7 @@ export interface IEditText {
   _fireTextChange(text: string): void;
   _fireTextFocus(): void;
   _fireTextBlur(): void;
-  _handleSnapping(e: L.LeafletEvent): void;
+  _handleSnapping: ISnapMixin['_handleSnapping'];
   _cleanupSnapping(): void;
   _unsnap(e: L.LeafletEvent): void;
 }
@@ -149,7 +152,7 @@ Edit.Text = Edit.extend<IEditText, [L.Marker]>({
     L.DomEvent.on(this.textArea, 'blur', this._focusChange, this);
     this._layer.on('dblclick', L.DomEvent.stop);
 
-    L.DomEvent.off(this.textArea, 'mousedown', this._preventTextSelection);
+    L.DomEvent.off(this.textArea, 'pointerdown', this._preventTextSelection);
 
     this._enabled = true;
 
@@ -180,7 +183,7 @@ Edit.Text = Edit.extend<IEditText, [L.Marker]>({
     this.textArea.focus();
     this.textArea.selectionStart = 0;
     this.textArea.selectionEnd = 0;
-    L.DomEvent.on(this.textArea, 'mousedown', this._preventTextSelection);
+    L.DomEvent.on(this.textArea, 'pointerdown', this._preventTextSelection);
     (focusedElement as HTMLElement).focus();
 
     this._disableOnBlurActive = false;
@@ -347,12 +350,12 @@ Edit.Text = Edit.extend<IEditText, [L.Marker]>({
   },
 
   _initTextMarker(this: IEditText) {
-    this.textArea = L.PM.Draw.Text.prototype._createTextArea.call(this);
+    this.textArea = PM.Draw.Text.prototype._createTextArea.call(this);
     const cssClasses = cssClassNames(this.options.className);
     if (cssClasses.length) {
       this.textArea.classList.add(...cssClasses);
     }
-    const textAreaIcon = L.PM.Draw.Text.prototype._createTextIcon.call(
+    const textAreaIcon = PM.Draw.Text.prototype._createTextIcon.call(
       this,
       this.textArea
     );
@@ -368,10 +371,8 @@ Edit.Text = Edit.extend<IEditText, [L.Marker]>({
 
     this.textArea.wrap = 'off';
     this.textArea.style.overflow = 'hidden';
-    this.textArea.style.height = L.DomUtil.getStyle(
-      this.textArea,
-      'font-size'
-    )!;
+    this.textArea.style.height =
+      this.textArea.style.fontSize || getComputedStyle(this.textArea).fontSize;
     this.textArea.style.width = '1px';
 
     if (this._layer.options.text) {

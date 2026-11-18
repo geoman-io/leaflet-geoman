@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
+import PMClass from '../helpers/PMClass';
 import type { Inherit, MixinMembers } from '../../types/leaflet-class';
 import type {
   LeafletClass,
@@ -44,9 +47,6 @@ interface PMLayer extends L.Layer {
   };
   _pmTempLayer?: boolean;
   _drawnByGeoman?: boolean;
-  options: L.LayerOptions & {
-    pane?: string;
-  };
 }
 
 /**
@@ -120,7 +120,7 @@ import merge from 'lodash/merge';
 import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
 
-const Draw = (L.Class as unknown as LeafletClassFactory).extend<
+const Draw = PMClass.extend<
   IDraw,
   [L.Map],
   [typeof SnapMixin, typeof EventMixin]
@@ -142,7 +142,7 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<
     finishOn: null,
     markerStyle: {
       draggable: true,
-      icon: (L.icon as (options?: L.IconOptions) => L.Icon)(),
+      icon: new L.Icon({} as L.IconOptions),
     },
     hideMiddleMarkers: false,
     minRadiusCircle: null,
@@ -173,11 +173,11 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<
     return this.options;
   },
   initialize(this: IDraw, map: L.Map) {
-    // Overwriting the default tooltipAnchor of the default Marker Icon, because the tooltip functionality was updated but not the anchor in the Icon
-    // Issue https://github.com/Leaflet/Leaflet/issues/7302 - Leaflet v1.7.1
-    const defaultIcon = new L.Icon.Default();
-    defaultIcon.options.tooltipAnchor = [0, 0];
-    this.options.markerStyle.icon = defaultIcon;
+    // Leaflet's DefaultIcon puts tooltips at [16, -28], above the icon and off
+    // the cursor; Geoman's draw hints sit under the marker instead.
+    this.options.markerStyle.icon = new L.DefaultIcon({
+      tooltipAnchor: [0, 0],
+    });
 
     // save the map
     this._map = map as typeof this._map;
@@ -196,7 +196,7 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<
 
     // initiate drawing class for our shapes
     this.shapes.forEach((shape) => {
-      (this as unknown as ShapeRegistry)[shape] = new (L.PM.Draw[
+      (this as unknown as ShapeRegistry)[shape] = new (PM.Draw[
         shape
       ] as LeafletClass<DrawInstance, [L.Map]>)(this._map);
     });
@@ -289,11 +289,11 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<
 
     if (this._enabled) {
       layers.forEach((layer) => {
-        L.PM.Utils.disablePopup(layer);
+        PM.Utils.disablePopup(layer);
       });
     } else {
       layers.forEach((layer) => {
-        L.PM.Utils.enablePopup(layer);
+        PM.Utils.enablePopup(layer);
       });
     }
   },
@@ -303,11 +303,11 @@ const Draw = (L.Class as unknown as LeafletClassFactory).extend<
     if ((this as unknown as ShapeRegistry)[name]) {
       throw new TypeError('Draw Type already exists');
     }
-    if (!L.PM.Draw[instance]) {
-      throw new TypeError(`There is no class L.PM.Draw.${instance}`);
+    if (!PM.Draw[instance]) {
+      throw new TypeError(`There is no class PM.Draw.${instance}`);
     }
 
-    (this as unknown as ShapeRegistry)[name] = new (L.PM.Draw[
+    (this as unknown as ShapeRegistry)[name] = new (PM.Draw[
       instance
     ] as LeafletClass<DrawInstance, [L.Map]>)(this._map);
     (this as unknown as ShapeRegistry)[name].toolbarButtonName = name;

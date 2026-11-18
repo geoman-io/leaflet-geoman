@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../../PM';
 /**
  * Extended map with PM
  */
@@ -21,9 +23,6 @@ interface PMLayer extends L.Layer {
     options: {
       allowRemoval?: boolean;
     };
-  };
-  options: L.LayerOptions & {
-    pmIgnore?: boolean;
   };
 }
 
@@ -70,7 +69,8 @@ const GlobalRemovalMode = {
   enableGlobalRemovalMode(this: IGlobalRemovalMode) {
     this._globalRemovalModeEnabled = true;
     // handle existing layers
-    this.map.eachLayer((layer: PMLayer) => {
+    this.map.eachLayer((l) => {
+      const layer = l as PMLayer;
       if (this._isRelevantForRemoval(layer)) {
         if (layer.pm!.enabled()) {
           layer.pm!.disable();
@@ -99,8 +99,8 @@ const GlobalRemovalMode = {
   },
   disableGlobalRemovalMode(this: IGlobalRemovalMode) {
     this._globalRemovalModeEnabled = false;
-    this.map.eachLayer((layer: PMLayer) => {
-      layer.off('click', this.removeLayer, this);
+    this.map.eachLayer((layer) => {
+      (layer as PMLayer).off('click', this.removeLayer, this);
     });
 
     // remove map handler
@@ -150,8 +150,8 @@ const GlobalRemovalMode = {
     return (
       layer.pm &&
       !(layer instanceof L.LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      ((!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
       layer.pm!.options.allowRemoval
     );
@@ -172,7 +172,7 @@ const GlobalRemovalMode = {
     }
   },
   _layerAddedRemoval(this: IGlobalRemovalMode, { layer }: LayerAddEvent) {
-    this._addedLayersRemoval[L.stamp(layer)] = layer;
+    this._addedLayersRemoval[L.Util.stamp(layer)] = layer;
   },
 };
 

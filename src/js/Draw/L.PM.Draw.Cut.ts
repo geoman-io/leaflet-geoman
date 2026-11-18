@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 import type { IDrawLine } from './L.PM.Draw.Line';
 import type { ISnapMixin } from '../Mixins/Snapping';
 /**
@@ -33,9 +35,6 @@ type PMLayer = L.Layer & {
     options: { allowCutting?: boolean };
     _fireEdit: () => void;
     _shape?: string;
-  };
-  options: L.LayerOptions & {
-    pmIgnore?: boolean;
   };
 };
 
@@ -204,7 +203,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       return;
     }
 
-    const polygonLayer = L.polygon(coords, this.options.pathOptions);
+    const polygonLayer = new L.Polygon(coords, this.options.pathOptions);
     // readout information about the latlngs like snapping points
     (polygonLayer as ExtendedPolygon)._latlngInfos = this._layer._latlngInfo;
     this.cut(polygonLayer);
@@ -252,8 +251,8 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       // filter out everything that ignore leaflet-geoman
       .filter(
         (l) =>
-          (!L.PM.optIn && !l.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-          (L.PM.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+          (!PM.optIn && !l.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+          (PM.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
       )
       // only polyline instances
       .filter((l) => l instanceof L.Polyline)
@@ -266,7 +265,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
         // TODO: after cutting nothing else can be cutted anymore until a new list is passed, because the layers don't exists anymore. Should we remove the cutted layers from the list?
         if (
           this.options.layersToCut &&
-          L.Util.isArray(this.options.layersToCut) &&
+          Array.isArray(this.options.layersToCut) &&
           this.options.layersToCut.length > 0
         ) {
           return this.options.layersToCut.indexOf(l) > -1;
@@ -303,7 +302,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       if (l instanceof L.Polygon) {
         // Also for L.Rectangle
         // easiest way to clone the complete latlngs without reference
-        newLayer = L.polygon(l.getLatLngs());
+        newLayer = new L.Polygon(l.getLatLngs());
         const coords = newLayer.getLatLngs();
 
         // snapping points added to the layer, so borders are cutted correct
@@ -320,7 +319,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
               const { segment } = closest;
               if (segment && segment.length === 2) {
                 const { indexPath, parentPath, newIndex } =
-                  L.PM.Utils._getIndexFromSegment(coords, segment)!;
+                  PM.Utils._getIndexFromSegment(coords, segment)!;
                 // define the coordsRing that is edited
                 const coordsRing: L.LatLng[] = (
                   indexPath!.length > 1 ? get(coords, parentPath!) : coords
@@ -339,7 +338,11 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       const diff = this._cutLayer(layer, newLayer);
 
       // the resulting layer after the cut
-      let resultLayer: L.GeoJSON | CutResultLayer = L.geoJSON(diff, l.options);
+      // turf helpers return features without `properties`; Leaflet accepts them
+      let resultLayer: L.GeoJSON | CutResultLayer = new L.GeoJSON(
+        diff as GeoJSON.GeoJSON | null,
+        l.options
+      );
       if (resultLayer.getLayers!().length === 1) {
         [resultLayer] = resultLayer.getLayers!() as CutResultLayer[]; // prevent that a unnecessary layergroup is created
       }
@@ -377,7 +380,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
 
       if (
         this.options.layersToCut &&
-        L.Util.isArray(this.options.layersToCut) &&
+        Array.isArray(this.options.layersToCut) &&
         this.options.layersToCut.length > 0
       ) {
         const idx = this.options.layersToCut.indexOf(l);
@@ -408,7 +411,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
     layer: L.Polygon,
     l: L.Polyline | L.Polygon
   ): GeoJSON.GeoJsonObject | null {
-    const fg = L.geoJSON();
+    const fg = new L.GeoJSON();
     let diff: GeoJSON.GeoJsonObject | null;
     // cut
     if (l instanceof L.Polygon) {
@@ -433,9 +436,9 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
 
         let group: L.GeoJSON;
         if (lineDiff && lineDiff.features.length > 0) {
-          group = L.geoJSON(lineDiff);
+          group = new L.GeoJSON(lineDiff);
         } else {
-          group = L.geoJSON(feature);
+          group = new L.GeoJSON(feature as GeoJSON.Feature);
         }
 
         group.getLayers().forEach((lay) => {

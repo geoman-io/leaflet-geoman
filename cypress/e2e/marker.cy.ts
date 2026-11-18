@@ -28,9 +28,9 @@ describe('Draw Marker', () => {
     let controlLatLng: L.LatLng;
 
     cy.window().then(({ map, L }) => {
-      locked = L.marker(map.containerPointToLatLng([150, 250])).addTo(map);
+      locked = new L.Marker(map.containerPointToLatLng([150, 250])).addTo(map);
       locked.pm.setOptions({ draggable: false });
-      control = L.marker(map.containerPointToLatLng([350, 250])).addTo(map);
+      control = new L.Marker(map.containerPointToLatLng([350, 250])).addTo(map);
       lockedLatLng = locked.getLatLng();
       controlLatLng = control.getLatLng();
       map.dragging.disable();
@@ -59,7 +59,7 @@ describe('Draw Marker', () => {
           new Cypress.Promise<void>((resolve) => {
             const hand = new Hand({ timing: 'frame', onStop: resolve });
             hand
-              .growFinger('mouse')
+              .growFinger('pointer', { pointerType: 'mouse' })
               .moveTo(rect.left + 150, rect.top + 240, 100)
               .down()
               .moveTo(rect.left + 200, rect.top + 290, 200)
@@ -86,7 +86,7 @@ describe('Draw Marker', () => {
     cy.window().then(({ map, L }) => {
       map.pm.setGlobalOptions({ preventMarkerRemoval: true });
       map.pm.enableGlobalEditMode();
-      marker = L.marker([51.505, -0.09]);
+      marker = new L.Marker([51.505, -0.09]);
       marker.pm.setOptions({ draggable: false });
       marker.addTo(map);
     });
@@ -114,7 +114,7 @@ describe('Draw Marker', () => {
   it('applies global options on toolbar edit when the layer has not set them', () => {
     cy.window().then(({ map, L }) => {
       map.pm.setGlobalOptions({ draggable: false, snappable: false });
-      const marker = L.marker([51.505, -0.09]).addTo(map);
+      const marker = new L.Marker([51.505, -0.09]).addTo(map);
       map.pm.toggleGlobalEditMode();
       expect(marker.pm.options.draggable).to.eq(false);
       expect(marker.pm.options.snappable).to.eq(false);
@@ -130,7 +130,7 @@ describe('Draw Marker', () => {
     let marker: L.Marker;
     cy.window().then(({ map, L }) => {
       map.pm.enableGlobalEditMode();
-      marker = L.marker([51.505, -0.09]).addTo(map);
+      marker = new L.Marker([51.505, -0.09]).addTo(map);
     });
     cy.window().should(() => {
       expect(marker.pm.enabled()).to.eq(true);
@@ -149,7 +149,7 @@ describe('Draw Marker', () => {
   it('does not keep setGlobalOptions as a lock after the marker leaves the map', () => {
     let marker: L.Marker;
     cy.window().then(({ map, L }) => {
-      marker = L.marker([51.505, -0.09]).addTo(map);
+      marker = new L.Marker([51.505, -0.09]).addTo(map);
       map.pm.setGlobalOptions({ snappable: false });
       map.pm.enableGlobalEditMode();
       map.removeLayer(marker);
@@ -164,7 +164,7 @@ describe('Draw Marker', () => {
 
   it('removes markers without error', () => {
     cy.window().then(({ map, L }) => {
-      const markerLayer = L.geoJson().addTo(map);
+      const markerLayer = new L.GeoJSON().addTo(map);
 
       map.pm.enableDraw('Marker', {
         snappable: false,
@@ -176,7 +176,7 @@ describe('Draw Marker', () => {
           let l;
           let m;
           map.eachLayer((layer) => {
-            if (layer._leaflet_id === markerLayer._leaflet_id) {
+            if (L.Util.stamp(layer) === L.Util.stamp(markerLayer)) {
               l = layer;
             } else if (layer instanceof L.Marker) {
               m = layer;
@@ -221,7 +221,7 @@ describe('Draw Marker', () => {
     // Adds a interactive Marker to the map and enable / disable the edit mode to check if a error is thrown because it is not draggable
     cy.window()
       .then(({ map, L }) =>
-        L.marker([51.505, -0.09], { interactive: false }).addTo(map)
+        new L.Marker([51.505, -0.09], { interactive: false }).addTo(map)
       )
       .as('marker');
 
@@ -273,7 +273,9 @@ describe('Draw Marker', () => {
           handFinish = true;
         },
       });
-      const toucherMarker = handMarker.growFinger('mouse');
+      const toucherMarker = handMarker.growFinger('pointer', {
+        pointerType: 'mouse',
+      });
       toucherMarker
         .wait(100)
         .moveTo(150, 240, 100)
@@ -314,7 +316,9 @@ describe('Draw Marker', () => {
           done();
         },
       });
-      const toucherMarker = handMarker.growFinger('mouse');
+      const toucherMarker = handMarker.growFinger('pointer', {
+        pointerType: 'mouse',
+      });
       toucherMarker
         .wait(100)
         .moveTo(150, 240, 100)
@@ -442,12 +446,12 @@ describe('Draw Marker', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.get(mapSelector).trigger('mousemove', 300, 300);
+    cy.get(mapSelector).trigger('pointermove', 300, 300);
 
     cy.window().then(({ map, L }) => {
       map.pm.setGlobalOptions({
         markerStyle: {
-          icon: L.icon({
+          icon: new L.Icon({
             iconUrl: 'someIcon.png',
           }),
         },
@@ -469,12 +473,12 @@ describe('Draw Marker', () => {
       expect((map.pm.getGeomanDrawLayers() as L.Marker[]).length).to.eq(1);
     });
 
-    cy.get(mapSelector).trigger('mousedown', 150, 230, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 170, 290, { which: 1 });
+    cy.get(mapSelector).trigger('pointerdown', 150, 230, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 170, 290, { which: 1 });
     // Do not create a new marker while dragging
     cy.get(mapSelector).click(170, 290);
-    cy.get(mapSelector).trigger('mouseup', 170, 290, { which: 1 });
-    cy.get(mapSelector).trigger('mousemove', 190, 340, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 170, 290, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 190, 340, { which: 1 });
 
     cy.window().then(({ map }) => {
       expect((map.pm.getGeomanDrawLayers() as L.Marker[]).length).to.eq(1);

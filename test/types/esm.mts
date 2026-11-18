@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
-import '@geoman-io/leaflet-geoman-free';
+import { PM, PMButton } from '@geoman-io/leaflet-geoman-free';
 
-const map = L.map('map');
+const map = new L.Map('map');
 map.pm.addControls({ position: 'topleft', drawMarker: true });
 map.pm.setGlobalOptions({ snappable: true, snapDistance: 20, draggable: true });
 map.pm.enableDraw('Polygon', {
@@ -10,10 +10,10 @@ map.pm.enableDraw('Polygon', {
 });
 map.pm.disableDraw();
 const drawFinished: boolean = map.pm.finishDraw();
-const marker = L.marker([51.5, -0.09]).addTo(map);
+const marker = new L.Marker([51.5, -0.09]).addTo(map);
 marker.pm.enable({ draggable: true });
 marker.pm.disable();
-const polygon = L.polygon([
+const polygon = new L.Polygon([
   [0, 0],
   [0, 1],
   [1, 1],
@@ -37,3 +37,19 @@ const layers: L.Layer[] = map.pm.getGeomanLayers();
 void group;
 void layers;
 void drawFinished;
+
+// the namespace is the module's PM export
+PM.setOptIn(false);
+const version: string = PM.version;
+void version;
+map.on('pm:drawstart', (event) => {
+  const shape: string = event.shape;
+  void shape;
+});
+polygon.on('pm:edit', (event) => event.layer);
+
+// the toolbar button control keeps its own API, not just L.Control's
+const button = new PMButton({ name: 'probe', position: 'topleft' });
+const toggled: boolean = button.toggle(true);
+button.disable();
+void toggled;

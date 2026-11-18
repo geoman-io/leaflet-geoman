@@ -283,7 +283,7 @@ describe('Testing the Toolbar', () => {
           map.on('pm:create', (e) => {
             expect(e.shape).to.equal('PolygonCopy');
             e.layer.on('click', (l) => {
-              testlayer = l.target;
+              testlayer = l.target as L.Polyline;
             });
           });
         });
@@ -468,8 +468,7 @@ describe('Testing the Toolbar', () => {
       map.remove();
 
       // create the map
-      map = L.map('map', {
-        preferCanvas: false,
+      map = new L.Map('map', {
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       }).setView([51.505, -0.09], 13);
 

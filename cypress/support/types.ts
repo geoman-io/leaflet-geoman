@@ -16,7 +16,7 @@ declare global {
     L: typeof Leaflet;
     _leaflet_events: Record<string, unknown>;
     Hand: new (options: { timing: string; onStop(): void }) => {
-      growFinger(type: string): Finger;
+      growFinger(type: string, options?: { pointerType?: string }): Finger;
     };
     map: Leaflet.Map;
     ONE_BLOCK_CONTROL_COUNT: number;
@@ -49,41 +49,31 @@ declare global {
 }
 
 declare module 'leaflet' {
-  interface Map {
-    _layers: Record<string, Layer>;
-    _panes: Record<string, HTMLElement>;
-  }
-  interface Marker {
-    _icon: HTMLElement;
-  }
-  interface Path {
-    _path: SVGPathElement;
-  }
-  namespace DomUtil {
-    function hasClass(element: Element, name: string): boolean;
-  }
-  interface ImageOverlay {
-    _image: HTMLImageElement;
-  }
   interface PathOptions {
     borderColor?: string;
   }
   interface Layer {
     _valid?: boolean;
   }
+}
+
+declare module '../../leaflet-geoman' {
   namespace PM {
     interface Draw {
       PolygonCopy: DrawShape & DrawInstances['Polygon'];
-      Circle: DrawShape & DrawInstances['Circle'] & { _snapList?: Layer[] };
+      Circle: DrawShape &
+        DrawInstances['Circle'] & { _snapList?: Leaflet.Layer[] };
       CircleMarker: DrawShape &
-        DrawInstances['CircleMarker'] & { _snapList?: Layer[] };
+        DrawInstances['CircleMarker'] & { _snapList?: Leaflet.Layer[] };
       Rectangle: DrawShape &
-        DrawInstances['Rectangle'] & { _snapList?: Layer[] };
-      Marker: DrawShape & DrawInstances['Marker'] & { _snapList?: Layer[] };
-      Line: DrawShape & DrawInstances['Line'] & { _snapList?: Layer[] };
-      Polygon: DrawShape & DrawInstances['Polygon'] & { _snapList?: Layer[] };
-      Cut: DrawShape & DrawInstances['Cut'] & { _snapList?: Layer[] };
-      Text: DrawShape & DrawInstances['Text'] & { _snapList?: Layer[] };
+        DrawInstances['Rectangle'] & { _snapList?: Leaflet.Layer[] };
+      Marker: DrawShape &
+        DrawInstances['Marker'] & { _snapList?: Leaflet.Layer[] };
+      Line: DrawShape & DrawInstances['Line'] & { _snapList?: Leaflet.Layer[] };
+      Polygon: DrawShape &
+        DrawInstances['Polygon'] & { _snapList?: Leaflet.Layer[] };
+      Cut: DrawShape & DrawInstances['Cut'] & { _snapList?: Leaflet.Layer[] };
+      Text: DrawShape & DrawInstances['Text'] & { _snapList?: Leaflet.Layer[] };
     }
     interface PMMap {
       setLang(lang: string, override?: object, fallback?: string): void;
@@ -92,10 +82,10 @@ declare module 'leaflet' {
       buttons: IToolbar['buttons'];
     }
     interface PMLayerGroup {
-      _layers: Layer[];
+      _layers: Leaflet.Layer[];
     }
     interface PMLayer {
-      _rotatePoly: Polygon;
+      _rotatePoly: Leaflet.Polygon;
       _safeToCacheDragState?: boolean;
       _layerEdited: boolean;
       _resizeCircle(): void;
@@ -103,10 +93,10 @@ declare module 'leaflet' {
       _dragMixinOnMouseDown(event: SyntheticDragEvent): void;
       _dragMixinOnMouseMove(event: SyntheticDragEvent): void;
       _dragMixinOnMouseUp(event: SyntheticDragEvent): void;
-      _map: Map;
-      _markers: Marker[][] | Marker[];
+      _map: Leaflet.Map;
+      _markers: Leaflet.Marker[][] | Leaflet.Marker[];
       _simulateMouseDownEvent(event: {
-        target: Layer;
+        target: Leaflet.Layer;
         originalEvent: { clientX: number; clientY: number; button?: number };
       }): void;
       getElement(): HTMLTextAreaElement;

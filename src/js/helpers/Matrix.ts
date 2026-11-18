@@ -1,3 +1,4 @@
+import * as L from 'leaflet';
 /**
  * Copyright (c) https://github.com/w8r/Leaflet.Path.Transform
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -5,7 +6,7 @@
  */
 
 /**
- * @class  L.PM.Matrix
+ * @class  PM.Matrix
  *
  * @param {Number} a
  * @param {Number} b
@@ -66,7 +67,7 @@ const Matrix = function Matrix(
   this._matrix = [a, b, c, d, e, f];
 } as unknown as MatrixConstructor;
 
-Matrix.init = () => new L.PM.Matrix(1, 0, 0, 1, 0, 0);
+Matrix.init = () => new Matrix(1, 0, 0, 1, 0, 0);
 
 Matrix.prototype = {
   /**
@@ -107,11 +108,11 @@ Matrix.prototype = {
   },
 
   /**
-   * @return {L.PM.Matrix}
+   * @return {PM.Matrix}
    */
   clone(this: Matrix): Matrix {
     const matrix = this._matrix;
-    return new L.PM.Matrix(
+    return new Matrix(
       matrix[0],
       matrix[1],
       matrix[2],
@@ -123,7 +124,7 @@ Matrix.prototype = {
 
   /**
    * @param {L.Point|Number} translate
-   * @return {L.PM.Matrix|L.Point}
+   * @return {PM.Matrix|L.Point}
    */
   translate(this: Matrix, translate?: number | L.Point): L.Point | Matrix {
     if (translate === undefined) {
@@ -146,7 +147,7 @@ Matrix.prototype = {
   /**
    * @param {L.Point|Number} scale
    * @param {L.Point|Number} origin
-   * @return {L.PM.Matrix|L.Point}
+   * @return {PM.Matrix|L.Point}
    */
   scale(
     this: Matrix,
@@ -159,7 +160,7 @@ Matrix.prototype = {
 
     let scaleX;
     let scaleY;
-    origin = origin || L.point(0, 0);
+    origin = origin || new L.Point(0, 0);
     if (typeof scale === 'number') {
       scaleX = scale;
       scaleY = scale;
@@ -183,7 +184,7 @@ Matrix.prototype = {
    * m10  m11  y - m10 * x - m11 * y
    * @param {Number}   angle
    * @param {L.Point=} origin
-   * @return {L.PM.Matrix}
+   * @return {PM.Matrix}
    */
   rotate(this: Matrix, angle: number, origin?: L.Point): Matrix {
     const cos = Math.cos(angle);
@@ -203,7 +204,7 @@ Matrix.prototype = {
 
   /**
    * Invert rotation
-   * @return {L.PM.Matrix}
+   * @return {PM.Matrix}
    */
   flip(this: Matrix): Matrix {
     this._matrix[1] *= -1;
@@ -212,7 +213,7 @@ Matrix.prototype = {
   },
 
   /**
-   * @param {Number|L.PM.Matrix} a
+   * @param {Number|PM.Matrix} a
    * @param {Number} b
    * @param {Number} c
    * @param {Number} d
@@ -242,7 +243,7 @@ Matrix.prototype = {
     ];
     let val;
 
-    if (a && a instanceof L.PM.Matrix) {
+    if (a && a instanceof Matrix) {
       src = a._matrix;
       other = [
         [src[0], src[2], src[4]],
