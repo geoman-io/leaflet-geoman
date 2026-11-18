@@ -152,7 +152,7 @@ export interface IDrawLine {
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
 
-import { getTranslation } from '../helpers';
+import { getTranslation, toPointerEventName } from '../helpers';
 
 Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
   initialize(this: IDrawLine, map: L.Map) {
@@ -227,7 +227,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     // #http://leafletjs.com/reference.html#interactive-layer-click
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.on(
-        this.options.finishOn,
+        toPointerEventName(this.options.finishOn),
         this._finishShape as L.LeafletEventHandlerFn,
         this
       );
@@ -280,7 +280,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     this._map.off('pointermove', this._syncHintMarker, this);
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.off(
-        this.options.finishOn,
+        toPointerEventName(this.options.finishOn),
         this._finishShape as L.LeafletEventHandlerFn,
         this
       );
