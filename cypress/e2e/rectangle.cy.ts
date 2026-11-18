@@ -985,8 +985,8 @@ describe('Draw Rectangle', () => {
           y: 120,
         },
         {
-          x: 617,
-          y: 243,
+          x: 618,
+          y: 241,
         },
         {
           x: 629,
@@ -994,7 +994,7 @@ describe('Draw Rectangle', () => {
         },
         {
           x: 211,
-          y: 81,
+          y: 83,
         },
       ];
 

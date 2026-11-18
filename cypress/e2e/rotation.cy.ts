@@ -471,23 +471,12 @@ describe('Rotation', () => {
       layer.pm.rotateLayerToAngle(0);
       expect(Math.ceil(layer.pm.getAngle())).to.eq(0);
 
+      // rotated back to 0°, the rectangle is axis-aligned again
       const expected = [
-        {
-          x: 319,
-          y: 267,
-        },
-        {
-          x: 319,
-          y: 161,
-        },
-        {
-          x: 620,
-          y: 159,
-        },
-        {
-          x: 620,
-          y: 265,
-        },
+        { x: 319, y: 266 },
+        { x: 319, y: 160 },
+        { x: 620, y: 160 },
+        { x: 620, y: 266 },
       ];
 
       const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {

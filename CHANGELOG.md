@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.7] - 2026-11-18
+
 ### Fixed
 
+- The rotation angle (`getAngle`, `pm:rotate*` events) of an imported rotated rectangle is no longer off by a fraction of a degree. It was computed from container points rounded to whole pixels ([#1716](https://github.com/geoman-io/leaflet-geoman/pull/1716)).
+- A layer removed from a FeatureGroup no longer drags along with that group's layers when `syncLayersOnDrag` is `true`. The layer kept its reference to the group ([#1717](https://github.com/geoman-io/leaflet-geoman/pull/1717)).
 - A circle whose center is `NaN` or `Infinity` no longer throws while building its snap ring. A non-finite min radius returns the start point instead of an invalid `LatLng`.
 - Cut and containment ignore a ring that contains `NaN` or `Infinity`, instead of throwing or deleting the polygon.
 - `changeControlOrder(null)` no longer throws.
@@ -211,7 +215,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial tracked release
 
-[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.5...HEAD
+[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.7...HEAD
+[2.20.7]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.6...v2.20.7
+[2.20.6]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.5...v2.20.6
 [2.20.5]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.4...v2.20.5
 [2.20.4]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.3...v2.20.4
 [2.20.3]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.2...v2.20.3
