@@ -1156,6 +1156,35 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(3);
   });
 
+  it('maps legacy mouse event names to pointer events with a warning', () => {
+    cy.window().then((win) => {
+      cy.stub(win.console, 'warn').as('warn');
+      win.map.pm.setGlobalOptions({
+        // a Leaflet-Geoman 2.x value; Leaflet 2 has no mousedown event
+        addVertexOn: 'mousedown' as 'pointerdown',
+      });
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector).click(150, 250);
+    cy.get(mapSelector).click(160, 50);
+    cy.get(mapSelector).click(250, 50);
+    cy.get(mapSelector).click(150, 250);
+
+    cy.toolbarButton('edit').click();
+
+    cy.get(mapSelector).trigger('pointerdown', 205, 50);
+    cy.get(mapSelector).trigger('pointerup', 205, 50);
+    cy.hasVertexMarkers(4);
+
+    // once per event name, although every middle marker binds it
+    cy.get('@warn').should('have.been.calledOnce');
+    cy.get('@warn').should(
+      'have.been.calledWithMatch',
+      /'mousedown'.*'pointerdown'/
+    );
+  });
+
   it('addVertexValidation / removeVertexValidation', () => {
     cy.window().then(({ map }) => {
       const check = ({ layer }: { layer: L.Layer }) => layer._valid!;

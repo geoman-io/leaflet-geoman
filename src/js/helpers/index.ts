@@ -339,3 +339,28 @@ export function getRenderer(layer: L.Map | L.Layer): L.Renderer {
   // added; markers have none
   return (layer as L.Path).options.renderer || (layer as L.Path)._renderer;
 }
+
+const warnedMouseEvents = new Set<string>();
+
+/**
+ * Leaflet 2 fires pointer events instead of mouse events, so an option such
+ * as `finishOn: 'mousedown'` from Leaflet-Geoman 2.x would never fire. Map
+ * those names to their pointer events and warn once per name.
+ */
+export function toPointerEventName<T extends string | null | undefined>(
+  type: T
+): T {
+  if (typeof type !== 'string') {
+    return type;
+  }
+  return type.replace(/\bmouse(down|up|move|over|out)\b/g, (name, suffix) => {
+    const pointerName = `pointer${suffix}`;
+    if (!warnedMouseEvents.has(name)) {
+      warnedMouseEvents.add(name);
+      console.warn(
+        `Leaflet-Geoman: Leaflet 2 has no '${name}' event, using '${pointerName}' instead.`
+      );
+    }
+    return pointerName;
+  }) as T;
+}

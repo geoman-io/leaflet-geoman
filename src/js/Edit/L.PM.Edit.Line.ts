@@ -201,7 +201,12 @@ import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
-import { copyLatLngs, hasValues, removeEmptyCoordRings } from '../helpers';
+import {
+  copyLatLngs,
+  hasValues,
+  removeEmptyCoordRings,
+  toPointerEventName,
+} from '../helpers';
 
 import MarkerLimits from '../Mixins/MarkerLimits';
 
@@ -406,7 +411,11 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
       ) {
         // A number is truthy. Leaflet `on` then calls `.replace` and throws,
         // and global edit has no catch.
-        marker.on(this.options.removeVertexOn, this._removeMarker, this);
+        marker.on(
+          toPointerEventName(this.options.removeVertexOn),
+          this._removeMarker,
+          this
+        );
       }
     }
 
@@ -446,7 +455,7 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
 
     if (typeof this.options.addVertexOn === 'string') {
       middleMarker.on(
-        this.options.addVertexOn,
+        toPointerEventName(this.options.addVertexOn),
         this._onMiddleMarkerClick,
         this
       );
@@ -522,7 +531,11 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     // first, make this middlemarker a regular marker
     newM.off('movestart', this._onMiddleMarkerMoveStart, this);
     if (typeof this.options.addVertexOn === 'string') {
-      newM.off(this.options.addVertexOn, this._onMiddleMarkerClick, this);
+      newM.off(
+        toPointerEventName(this.options.addVertexOn),
+        this._onMiddleMarkerClick,
+        this
+      );
     }
     // now, create the polygon coordinate point for that marker
     // and push into marker array
