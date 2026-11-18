@@ -55,6 +55,25 @@ describe('Draw & Edit Poly', () => {
     cy.hasVertexMarkers(0);
   });
 
+  it('keeps drawing open when the ring is collinear', () => {
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector).click(120, 150);
+    cy.get(mapSelector).click(200, 150);
+    cy.get(mapSelector).click(300, 150);
+    // Click the first vertex to finish
+    cy.get(mapSelector).click(120, 150);
+
+    cy.hasDrawnLayers(0);
+    cy.window().then(({ map }) => {
+      expect(map.pm.Draw.Polygon.enabled()).to.eq(true);
+    });
+
+    // A fourth, off-line vertex makes it a valid polygon.
+    cy.get(mapSelector).click(200, 250);
+    cy.get(mapSelector).click(120, 150);
+    cy.hasDrawnLayers(1);
+  });
+
   it('OptIn drawing without error', () => {
     cy.window().then(({ L }) => {
       L.PM.setOptIn(true);
