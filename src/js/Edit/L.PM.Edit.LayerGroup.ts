@@ -27,7 +27,6 @@ type PMLayer = L.Layer & {
     setOptions: (options?: object, layerIds?: number[]) => void;
     dragging: () => boolean;
     _parentLayerGroup?: Record<number, L.LayerGroup>;
-    _layerGroup?: Record<number, L.LayerGroup>;
     getLayers?: (
       deep?: boolean,
       filterGeoman?: boolean,
@@ -140,7 +139,7 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     featureGroup.on(
       'layerremove',
       (e) => {
-        this._removeLayerFromGroup(e.target as PMLayer);
+        this._removeLayerFromGroup(e.layer as PMLayer);
       },
       this
     );
@@ -239,9 +238,9 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     layer.pm!._parentLayerGroup[id] = this._layerGroup;
   },
   _removeLayerFromGroup(this: IEditLayerGroup, layer: PMLayer) {
-    if (layer.pm && layer.pm!._layerGroup) {
+    if (layer.pm && layer.pm._parentLayerGroup) {
       const id = L.Util.stamp(this._layerGroup);
-      delete layer.pm!._layerGroup[id];
+      delete layer.pm._parentLayerGroup[id];
     }
   },
   dragging(this: IEditLayerGroup) {
