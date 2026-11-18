@@ -349,4 +349,52 @@ describe('Edit LayerGroup', () => {
       expect(layers[1].pm.options.syncLayersOnDrag).to.eq(true);
     });
   });
+
+  it('stops syncing drag with a group the layer was removed from', () => {
+    cy.window().then(({ map, L }) => {
+      const fg = L.featureGroup().addTo(map);
+      map.pm.setGlobalOptions({ layerGroup: fg, syncLayersOnDrag: true });
+    });
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(191, 216).click(608, 323);
+
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(230, 230).click(350, 350);
+
+    cy.window().then(({ map }) => {
+      const layers = map.pm.getGeomanDrawLayers() as L.Rectangle[];
+      const fg = map.pm.getGlobalOptions().layerGroup as L.FeatureGroup;
+      fg.removeLayer(layers[0]);
+      layers[0].addTo(map);
+    });
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then(({ map }) => {
+      const layers = map.pm.getGeomanDrawLayers() as L.Rectangle[];
+      const center1 = layers[0].getCenter();
+      const center2 = layers[1].getCenter();
+
+      const layer = layers[0];
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([290, 290]),
+      });
+      layer.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([500, 320]),
+      });
+      layer.pm._dragMixinOnMouseUp({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([320, 320]),
+      });
+
+      expect(center1.equals(layers[0].getCenter())).to.eq(false);
+      expect(center2.equals(layers[1].getCenter())).to.eq(true);
+    });
+  });
 });
