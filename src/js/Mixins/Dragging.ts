@@ -145,6 +145,8 @@ export interface IDragMixin {
   _simulateMouseDownEvent(e: PointerEvent): boolean;
   _simulateMouseMoveEvent(e: PointerEvent): boolean;
   _simulateMouseUpEvent(e: PointerEvent): boolean;
+  _isDragPointer(e: PointerEvent): boolean;
+  _dragPointerId?: number;
   _dragMixinOnMouseDown(e: SimulatedEvent): void;
   _dragMixinOnMouseMove(e: SimulatedEvent): void;
   _dragMixinOnMouseUp(e: SimulatedEvent): boolean;
@@ -295,6 +297,11 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
   },
   // Wrap DOM pointer events from the layer's element and the map container
   // in Leaflet-style events with the pointer's latlng.
+  _isDragPointer(e) {
+    return (
+      this._dragPointerId === undefined || e.pointerId === this._dragPointerId
+    );
+  },
   _simulateMouseDownEvent(e) {
     const evt: SimulatedEvent = {
       originalEvent: e,
@@ -308,6 +315,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     return false;
   },
   _simulateMouseMoveEvent(e) {
+    if (!this._isDragPointer(e)) {
+      return false;
+    }
     const evt: SimulatedEvent = {
       originalEvent: e,
       target: this._layer,
@@ -320,6 +330,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     return false;
   },
   _simulateMouseUpEvent(e) {
+    if (!this._isDragPointer(e)) {
+      return false;
+    }
     const evt: SimulatedEvent = {
       originalEvent: e,
       target: this._layer,
@@ -380,9 +393,13 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     // save for delta calculation
     this._tempDragCoord = e.latlng;
 
+    // follow only the pointer that started the drag (a second finger on
+    // touch screens must not move the layer)
+    this._dragPointerId = e.originalEvent.pointerId;
+
     L.DomEvent.on(
       this._map.getContainer(),
-      'pointerup',
+      'pointerup pointercancel',
       this._simulateMouseUpEvent,
       this
     );
@@ -459,10 +476,11 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     // clear up mouseup event
     L.DomEvent.off(
       this._map.getContainer(),
-      'pointerup',
+      'pointerup pointercancel',
       this._simulateMouseUpEvent,
       this
     );
+    this._dragPointerId = undefined;
 
     // if no drag happened, don't do anything
     if (!this._dragging) {

@@ -40,12 +40,12 @@ beforeEach(() => {
         },
         true
       );
-      for (const type of ['pointermove', 'pointerup']) {
+      for (const type of ['pointermove', 'pointerup', 'pointercancel']) {
         doc.addEventListener(
           type,
           (e) => {
             const target = captured;
-            if (type === 'pointerup' && !retargeted.has(e)) {
+            if (type !== 'pointermove' && !retargeted.has(e)) {
               captured = null;
             }
             if (

@@ -1098,4 +1098,33 @@ describe('Draw Rectangle', () => {
       );
     });
   });
+
+  it('drags with the pointer that started the drag and ends on pointercancel', () => {
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(200, 200).click(400, 350);
+    cy.toolbarButton('drag').click();
+
+    let start: L.LatLng;
+    cy.window().then(({ map }) => {
+      const layer = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[0];
+      start = layer.getCenter();
+      cy.wrap(layer._path).trigger('pointerdown', { pointerId: 1, button: 0 });
+    });
+    // a second finger must not move the layer
+    cy.get(mapSelector).trigger('pointermove', 450, 400, { pointerId: 2 });
+    cy.window().then(({ map }) => {
+      const layer = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[0];
+      expect(layer.getCenter().equals(start)).to.eq(true);
+    });
+
+    cy.get(mapSelector).trigger('pointermove', 350, 300, { pointerId: 1 });
+    cy.get(mapSelector).trigger('pointercancel', 350, 300, { pointerId: 1 });
+    // the drag state is cleared in a timeout after the drag ends
+    cy.window().should(({ map }) => {
+      const layer = (map.pm.getGeomanDrawLayers() as L.Rectangle[])[0];
+      expect(layer.getCenter().equals(start)).to.eq(false);
+      expect(layer.pm.dragging()).to.eq(false);
+      expect(map.dragging.enabled()).to.eq(true);
+    });
+  });
 });

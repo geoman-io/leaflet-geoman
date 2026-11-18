@@ -241,7 +241,7 @@ Cypress.Commands.overwrite('trigger', ((
   eventName: string,
   ...args: unknown[]
 ) => {
-  if (!/^pointer(down|up|move|over|out)$/.test(eventName)) {
+  if (!/^pointer(down|up|move|over|out|cancel)$/.test(eventName)) {
     return originalFn(subject, eventName, ...args);
   }
   const pointer = {

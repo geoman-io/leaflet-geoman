@@ -78,33 +78,19 @@ describe('JavaScript compatibility', () => {
     });
   });
 
-  it('preserves an existing PM namespace when the bundle is loaded again', () => {
+  it('keeps L.PM in charge of new layers when the bundle is loaded again', () => {
     cy.readFile('dist/leaflet-geoman-global.min.js').then((bundle: string) => {
       cy.window().then((win) => {
-        const pm = win.L.PM;
-        const markerClass = pm.Edit.Marker;
         win.eval(bundle);
-        expect(win.L.PM).to.equal(pm);
-        expect(win.L.PM.Edit.Marker).to.equal(markerClass);
+        win.L.PM.setOptIn(true);
+        expect(new win.L.Marker([0, 0]).pm).to.equal(undefined);
+        win.L.PM.setOptIn(false);
+        expect(new win.L.Marker([0, 0]).pm.getShape()).to.equal('Marker');
       });
     });
   });
 
   it('serves the TypeScript demo through its original classic-script URLs', () => {
-    cy.readFile('node_modules/leaflet/dist/leaflet.js').then((body: string) => {
-      cy.intercept('https://unpkg.com/leaflet@latest/dist/leaflet.js', {
-        body,
-        headers: { 'content-type': 'application/javascript' },
-      });
-    });
-    cy.readFile('node_modules/leaflet/dist/leaflet.css').then(
-      (body: string) => {
-        cy.intercept('https://unpkg.com/leaflet@latest/dist/leaflet.css', {
-          body,
-          headers: { 'content-type': 'text/css' },
-        });
-      }
-    );
     cy.visit('/demo/index.html');
     cy.get('.devpanel-module').should('have.length', 4);
     cy.window().its('DevPanel').should('be.a', 'function');

@@ -1,5 +1,5 @@
 import * as L from 'leaflet';
-import { PM } from '@geoman-io/leaflet-geoman-free';
+import { PM, PMButton } from '@geoman-io/leaflet-geoman-free';
 
 const map = new L.Map('map');
 map.pm.addControls({ position: 'topleft', drawMarker: true });
@@ -47,3 +47,9 @@ map.on('pm:drawstart', (event) => {
   void shape;
 });
 polygon.on('pm:edit', (event) => event.layer);
+
+// the toolbar button control keeps its own API, not just L.Control's
+const button = new PMButton({ name: 'probe', position: 'topleft' });
+const toggled: boolean = button.toggle(true);
+button.disable();
+void toggled;

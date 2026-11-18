@@ -5,6 +5,7 @@ import { PM, PMButton } from './index';
 const { L } = globalThis as unknown as {
   L: { PM?: typeof PM; Control: { PMButton?: typeof PMButton } };
 };
-// As in Leaflet-Geoman 2.x, a copy loaded earlier keeps its namespace
-L.PM ??= PM;
+// If the script is loaded twice, the copy loaded last owns the init hooks
+// that create `layer.pm`, so `L.PM` must be that copy for setOptIn() & co.
+L.PM = PM;
 L.Control.PMButton = PMButton;

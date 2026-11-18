@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 
-// redeclare module, maintains compatibility with @types/leaflet
+// Augments the types that ship with Leaflet 2
 declare module 'leaflet' {
   /**
    * Extends built in leaflet Layer Options.
@@ -2263,4 +2263,17 @@ export declare namespace PM {
 }
 
 /** The Leaflet-Geoman toolbar button control (`L.Control.PMButton` in the script build). */
-export declare const PMButton: typeof L.Control;
+export declare class PMButton extends L.Control {
+  constructor(
+    options: Partial<PM.CustomControlOptions> & { position?: L.ControlPosition }
+  );
+  onCreate(): void;
+  /** Toggles the button; pass a boolean to set the state. Returns the new state. */
+  toggle(e?: boolean | Event): boolean;
+  toggled(): boolean | undefined;
+  getText(): string | undefined;
+  getIconUrl(): string | undefined;
+  enable(): void;
+  disable(): void;
+  destroy(): void;
+}

@@ -173,7 +173,11 @@ const Draw = PMClass.extend<
     return this.options;
   },
   initialize(this: IDraw, map: L.Map) {
-    this.options.markerStyle.icon = new L.DefaultIcon();
+    // Leaflet's DefaultIcon puts tooltips at [16, -28], above the icon and off
+    // the cursor; Geoman's draw hints sit under the marker instead.
+    this.options.markerStyle.icon = new L.DefaultIcon({
+      tooltipAnchor: [0, 0],
+    });
 
     // save the map
     this._map = map as typeof this._map;
