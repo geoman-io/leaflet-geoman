@@ -171,7 +171,7 @@ describe('Finish Drawing on Enter Key', () => {
       cy.get(mapSelector).click(200, 200);
 
       // Move mouse to define the rectangle (this updates the hint marker position)
-      cy.get(mapSelector).trigger('mousemove', 350, 350);
+      cy.get(mapSelector).trigger('pointermove', 350, 350);
 
       // Verify draw mode is enabled and start marker exists
       cy.window().then(({ map }) => {
@@ -220,7 +220,7 @@ describe('Finish Drawing on Enter Key', () => {
       cy.get(mapSelector).click(250, 250);
 
       // Move mouse to define the radius (this updates the hint marker position)
-      cy.get(mapSelector).trigger('mousemove', 350, 250);
+      cy.get(mapSelector).trigger('pointermove', 350, 250);
 
       // Verify draw mode is enabled and center marker exists
       cy.window().then(({ map }) => {

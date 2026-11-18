@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import type { ISnapMixin, SnappableMarker } from '../Mixins/Snapping';
+import { PM } from '../PM';
 import type { DrawOptions } from '../../types/options';
 /**
  * Extended map with PM
@@ -38,7 +41,6 @@ type ExtendedMarker = L.Marker & {
   _pmTempLayer?: boolean;
   _snapped?: boolean;
   _snapInfo?: unknown;
-  _icon?: HTMLElement;
 };
 
 /**
@@ -69,7 +71,7 @@ type SelfIntersectionResult = ReturnType<typeof kinks>;
 interface LineDrawOptions {
   templineStyle: L.PolylineOptions;
   hintlineStyle: L.PolylineOptions;
-  pathOptions?: L.PathOptions;
+  pathOptions?: L.PathOptions | null;
   tooltips?: boolean;
   cursorMarker?: boolean;
   snappable?: boolean;
@@ -104,13 +106,13 @@ export interface IDrawLine {
   enabled(): boolean;
   toggle(options?: DrawOptions): void;
   _syncHintLine(): void;
-  _syncHintMarker(e: L.LeafletMouseEvent): void;
+  _syncHintMarker(e: L.LeafletPointerEvent): void;
   hasSelfIntersection(): boolean;
   _handleSelfIntersection(addVertex: boolean, latlng?: L.LatLng): void;
-  _createVertex(e: L.LeafletMouseEvent): void;
+  _createVertex(e: L.LeafletPointerEvent): void;
   _setHintLineAfterNewVertex(hintMarkerLatLng: L.LatLng): void;
   _removeLastVertex(): void;
-  _finishShape(e?: L.LeafletMouseEvent): void;
+  _finishShape(e?: L.LeafletPointerEvent): void;
   _createMarker(latlng: L.LatLng): L.Marker;
   _setTooltipText(): void;
   _change(latlngs: L.LatLng[]): void;
@@ -143,7 +145,7 @@ export interface IDrawLine {
   ): void;
   _setGlobalDrawMode(): void;
   _cleanupSnapping(): void;
-  _handleSnapping(e: L.LeafletEvent, selfSnapOnly?: boolean): void;
+  _handleSnapping: ISnapMixin['_handleSnapping'];
   _finishLayer(layer: L.Layer): void;
   _isFirstLayer(): boolean;
 }
@@ -173,7 +175,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     this._layerGroup.addTo(this._map);
 
     // this is the polyLine that'll make up the polygon
-    this._layer = L.polyline([], {
+    this._layer = new L.Polyline([], {
       ...this.options.templineStyle,
       pmIgnore: false,
     }) as ExtendedPolyline;
@@ -182,16 +184,16 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     this._layerGroup.addLayer(this._layer);
 
     // this is the hintline from the mouse cursor to the last marker
-    this._hintline = L.polyline([], this.options.hintlineStyle);
+    this._hintline = new L.Polyline([], this.options.hintlineStyle);
     this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._layerGroup.addLayer(this._hintline);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(this._map.getCenter(), {
+    this._hintMarker = new L.Marker(this._map.getCenter(), {
       interactive: false, // always vertex marker below will be triggered from the click event -> _finishShape #911
       zIndexOffset: 100,
-      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new L.DivIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -199,7 +201,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon!, 'visible');
+      this._hintMarker._icon!.classList.add('visible');
     }
 
     // add tooltip to hintmarker
@@ -207,7 +209,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
       this._hintMarker
         .bindTooltip(getTranslation('tooltips.firstVertex'), {
           permanent: true,
-          offset: L.point(0, 10),
+          offset: new L.Point(0, 10),
           direction: 'bottom',
 
           opacity: 0.8,
@@ -241,7 +243,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     }
 
     // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     // sync the hintline with hint marker
     this._hintMarker.on('move', this._syncHintLine, this);
@@ -275,7 +277,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
 
     // unbind listeners
     this._map.off('click', this._createVertex, this);
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
     if (this.options.finishOn && this.options.finishOn !== 'snap') {
       this._map.off(
         this.options.finishOn,
@@ -326,21 +328,22 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
       ]);
     }
   },
-  _syncHintMarker(this: IDrawLine, e: L.LeafletMouseEvent) {
+  _syncHintMarker(this: IDrawLine, e: L.LeafletPointerEvent) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
 
     // if snapping is enabled, do it
     if (this.options.snappable) {
-      const fakeDragEvent = e;
-      fakeDragEvent.target = this._hintMarker;
-      this._handleSnapping(fakeDragEvent);
+      this._handleSnapping(
+        Object.assign(e, { target: this._hintMarker as SnappableMarker })
+      );
     } else if (this._otherSnapLayers && this._otherSnapLayers.length > 0) {
       // Even when global snapping is disabled, allow self-snapping to the
       // first point of the current polygon to enable shape completion
-      const fakeDragEvent = e;
-      fakeDragEvent.target = this._hintMarker;
-      this._handleSnapping(fakeDragEvent, true);
+      this._handleSnapping(
+        Object.assign(e, { target: this._hintMarker as SnappableMarker }),
+        true
+      );
     }
 
     // if self-intersection is forbidden, handle it
@@ -368,7 +371,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     // intersection on the clone. Phew... - let's do it 💪
 
     // clone layer (polyline is enough, even when it's a polygon)
-    const clone = L.polyline(this._layer.getLatLngs() as L.LatLng[]);
+    const clone = new L.Polyline(this._layer.getLatLngs() as L.LatLng[]);
 
     if (addVertex) {
       // get vertex from param or from hintmarker
@@ -399,7 +402,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
       this._hintline.setStyle(this.options.hintlineStyle);
     }
   },
-  _createVertex(this: IDrawLine, e: L.LeafletMouseEvent) {
+  _createVertex(this: IDrawLine, e: L.LeafletPointerEvent) {
     // don't create a vertex if we have a selfIntersection and it is not allowed
     if (!this.options.allowSelfIntersection) {
       this._handleSelfIntersection(true, e.latlng);
@@ -474,10 +477,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     const removedMarker = markers[markers.length - 1];
 
     // the index path to the marker inside the multidimensional marker array
-    const { indexPath } = L.PM.Utils.findDeepMarkerIndex(
-      markers,
-      removedMarker
-    );
+    const { indexPath } = PM.Utils.findDeepMarkerIndex(markers, removedMarker);
 
     // remove last marker from array
     markers.pop();
@@ -532,7 +532,10 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     }
 
     // create the leaflet shape and add it to the map
-    const polylineLayer = L.polyline(coords, this.options.pathOptions);
+    const polylineLayer = new L.Polyline(
+      coords,
+      this.options.pathOptions ?? undefined
+    );
     this._setPane(polylineLayer, 'layerPane');
     this._finishLayer(polylineLayer);
     polylineLayer.addTo(this._map.pm._getContainingLayer());
@@ -557,7 +560,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     // create the new marker
     const marker = new L.Marker(latlng, {
       draggable: false,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new L.DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
     marker._pmTempLayer = true;

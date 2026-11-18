@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import type { ISnapMixin } from '../Mixins/Snapping';
+import { PM } from '../PM';
 /**
  * Extended map with PM
  */
@@ -56,7 +59,7 @@ export interface IEditMarker {
   enabled(): boolean;
   toggleEdit(options?: Partial<MarkerEditOptions>): void;
   applyOptions(): void;
-  _removeMarker(e: L.LeafletMouseEvent): void;
+  _removeMarker(e: L.LeafletPointerEvent & { target: L.Marker }): void;
   _onDragStart(): void;
   _onMarkerDragEnd(): void;
   _onDragEnd(): void;
@@ -71,7 +74,7 @@ export interface IEditMarker {
   _fireRemove(target: L.Layer | ExtendedMap, layer?: L.Layer): void;
   enableLayerDrag(): void;
   disableLayerDrag(): void;
-  _handleSnapping(e: L.LeafletEvent): void;
+  _handleSnapping: ISnapMixin['_handleSnapping'];
   _cleanupSnapping(): void;
   _unsnap(e: L.LeafletEvent): void;
 }
@@ -165,10 +168,13 @@ Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
       this._layer.on('contextmenu', this._removeMarker, this);
     }
   },
-  _removeMarker(this: IEditMarker, e: L.LeafletMouseEvent) {
+  _removeMarker(
+    this: IEditMarker,
+    e: L.LeafletPointerEvent & { target: L.Marker }
+  ) {
     const marker = e.target;
     marker.remove();
-    // TODO: find out why this is fired manually, shouldn't it be catched by L.PM.Map 'layerremove'?
+    // TODO: find out why this is fired manually, shouldn't it be catched by PM.Map 'layerremove'?
     this._fireRemove(marker);
     this._fireRemove(this._map, marker);
   },

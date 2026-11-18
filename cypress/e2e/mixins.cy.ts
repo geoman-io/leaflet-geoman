@@ -2,24 +2,29 @@ describe('KeyboardMixin', () => {
   it('Should unbind event listeners that bound by the KeyboardMixin after the map is destroyed', () => {
     cy.window().then((window) => {
       const { map, document } = window;
+      const keyboard = map.pm.Keyboard;
+
+      document.dispatchEvent(
+        new window.KeyboardEvent('keydown', { key: 'a', bubbles: true })
+      );
+      expect(keyboard.getPressedKey(), 'listener is bound').to.eq('a');
 
       map.remove();
 
-      const isWindowBlurEventUnbound = !Object.entries(
-        window._leaflet_events
-      ).some(([name, handler]) => name.startsWith('blur') && handler);
+      document.dispatchEvent(
+        new window.KeyboardEvent('keydown', { key: 'b', bubbles: true })
+      );
       expect(
-        isWindowBlurEventUnbound,
-        'window blur event listener is not unbound'
-      ).to.eq(true);
-
-      const isKeyUpDownEventUnbound = !Object.entries(
-        document._leaflet_events
-      ).some(([name, handler]) => name.startsWith('key') && handler);
-      expect(
-        isKeyUpDownEventUnbound,
+        keyboard.getPressedKey(),
         'document keyboard event listener is not unbound'
-      ).to.eq(true);
+      ).to.eq('a');
+
+      window.dispatchEvent(new window.FocusEvent('blur'));
+      // a handled blur would replace the last key event
+      expect(
+        keyboard.getPressedKey(),
+        'window blur event listener is not unbound'
+      ).to.eq('a');
     });
   });
 });

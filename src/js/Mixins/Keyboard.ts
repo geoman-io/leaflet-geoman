@@ -1,3 +1,4 @@
+import * as L from 'leaflet';
 /**
  * Key event data structure
  */

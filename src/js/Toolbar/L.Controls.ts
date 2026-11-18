@@ -1,5 +1,4 @@
-import type { LeafletClassFactory } from '../../types/leaflet-class';
-
+import * as L from 'leaflet';
 /**
  * Button action definition
  */
@@ -77,7 +76,7 @@ type ExtendedMap = L.Map & {
  * PMButton interface
  */
 export interface IPMButton {
-  options: { position: string; disableByOtherButtons: boolean };
+  options: L.Control['options'] & { disableByOtherButtons: boolean };
   _button: ButtonOptions;
   _map: ExtendedMap;
   _container: HTMLElement;
@@ -116,19 +115,32 @@ export interface IPMButton {
 import { getTranslation } from '../helpers';
 import EventMixin from '../Mixins/Events';
 
-const PMButton = (
-  L.Control as unknown as LeafletClassFactory<L.Control>
-).extend<IPMButton, [Partial<ButtonOptions>], [typeof EventMixin]>({
-  includes: [EventMixin],
-  options: {
-    position: 'topleft',
+class PMButton extends L.Control {
+  static defaultOptions = {
+    position: 'topleft' as const,
     disableByOtherButtons: true,
-  },
+  };
+
+  declare options: IPMButton['options'];
+  declare _button: ButtonOptions;
+  declare _map: ExtendedMap;
+  declare _container: HTMLElement;
+  declare buttonsDomNode: HTMLElement;
+  // from EventMixin
+  declare _fireButtonClick: IPMButton['_fireButtonClick'];
+  declare _fireActionClick: IPMButton['_fireActionClick'];
+
   // TODO: clean up variable names like _button should be _options and that domNodeVariable stuff
-  initialize(this: IPMButton, options: Partial<ButtonOptions>) {
-    // replaced setOptions with this because classNames returned undefined 🤔
-    this._button = L.Util.extend({}, this.options, options) as ButtonOptions;
-  },
+  constructor(options: Partial<ButtonOptions>) {
+    super();
+    // for...in also copies the defaults this.options inherits
+    const button: Record<string, unknown> = {};
+    for (const key in this.options) {
+      button[key] = this.options[key as keyof typeof this.options];
+    }
+    this._button = Object.assign(button, options) as ButtonOptions;
+  }
+
   onAdd(this: IPMButton, map: L.Map) {
     this._map = map as typeof this._map;
     if (!this._map.pm.Toolbar.options.oneBlock) {
@@ -149,7 +161,8 @@ const PMButton = (
     this._renderButton();
 
     return this._container;
-  },
+  }
+
   _renderButton(this: IPMButton) {
     const oldDomNode = this.buttonsDomNode;
     this.buttonsDomNode = this._makeButton(this._button);
@@ -158,22 +171,27 @@ const PMButton = (
     } else {
       this._container.appendChild(this.buttonsDomNode);
     }
-  },
+  }
+
   onRemove(this: IPMButton) {
     this.buttonsDomNode.remove();
 
     return this._container;
-  },
+  }
+
   getText(this: IPMButton) {
     return this._button.text;
-  },
+  }
+
   getIconUrl(this: IPMButton) {
     return this._button.iconUrl;
-  },
+  }
+
   destroy(this: IPMButton) {
     this._button = {} as ButtonOptions;
     this.buttonsDomNode?.remove();
-  },
+  }
+
   toggle(this: IPMButton, e?: boolean | Event) {
     if (typeof e === 'boolean') {
       this._button.toggleStatus = e;
@@ -184,23 +202,28 @@ const PMButton = (
     this._updateActiveAction(this._button);
 
     return this._button.toggleStatus;
-  },
+  }
+
   toggled(this: IPMButton) {
     return this._button.toggleStatus;
-  },
+  }
+
   onCreate(this: IPMButton) {
     this.toggle(false);
-  },
+  }
+
   disable(this: IPMButton) {
     this.toggle(false); // is needed to prevent active button disabled
     this._button.disabled = true;
     this._updateDisabled();
-  },
+  }
+
   enable(this: IPMButton) {
     this._button.disabled = false;
     this._updateDisabled();
     this._updateActiveAction(this._button);
-  },
+  }
+
   _triggerClick(this: IPMButton, e?: Event) {
     if (e) {
       // is needed to prevent scrolling when clicking on a-element with href="a"
@@ -213,7 +236,8 @@ const PMButton = (
     this._button.onClick(e, { button: this, event: e });
     this._clicked(e);
     this._button.afterClick(e, { button: this, event: e });
-  },
+  }
+
   _makeButton(this: IPMButton, button: ButtonOptions) {
     const pos =
       controlPosition(this.options.position).indexOf('right') > -1
@@ -327,9 +351,9 @@ const PMButton = (
             this._fireActionClick(action, btnName, button);
           };
 
-          L.DomEvent.addListener(actionNode, 'click', actionClick, this);
-          L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
-          L.DomEvent.addListener(actionNode, 'click', () =>
+          L.DomEvent.on(actionNode, 'click', actionClick, this);
+          L.DomEvent.on(actionNode, 'click', action.onClick, this);
+          L.DomEvent.on(actionNode, 'click', () =>
             this._updateActiveAction(button)
           );
         }
@@ -339,7 +363,7 @@ const PMButton = (
     this._updateActiveAction(button);
 
     if (button.toggleStatus) {
-      L.DomUtil.addClass(buttonContainer, 'active');
+      buttonContainer.classList.add('active');
     }
 
     const image = L.DomUtil.create('div', 'control-icon', newButton);
@@ -348,7 +372,7 @@ const PMButton = (
       image.setAttribute('src', button.iconUrl);
     }
     if (button.className) {
-      L.DomUtil.addClass(image, button.className);
+      image.classList.add(...L.Util.splitWords(button.className));
     }
 
     L.DomEvent.disableClickPropagation(newButton);
@@ -357,17 +381,17 @@ const PMButton = (
     if (!button.disabled) {
       // before the actual click, trigger a click on currently toggled buttons to
       // untoggle them and their functionality
-      L.DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
-      L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
+      L.DomEvent.on(newButton, 'click', this._onBtnClick, this);
+      L.DomEvent.on(newButton, 'click', this._triggerClick, this);
     }
 
     if (button.disabled) {
-      L.DomUtil.addClass(newButton, 'pm-disabled');
+      newButton.classList.add('pm-disabled');
       newButton.setAttribute('aria-disabled', 'true');
     }
 
     return buttonContainer;
-  },
+  }
 
   _applyStyleClasses(this: IPMButton) {
     if (!this._container) {
@@ -375,13 +399,13 @@ const PMButton = (
     }
 
     if (!this._button.toggleStatus || this._button.cssToggle === false) {
-      L.DomUtil.removeClass(this.buttonsDomNode, 'active');
-      L.DomUtil.removeClass(this._container, 'activeChild');
+      this.buttonsDomNode.classList.remove('active');
+      this._container.classList.remove('activeChild');
     } else {
-      L.DomUtil.addClass(this.buttonsDomNode, 'active');
-      L.DomUtil.addClass(this._container, 'activeChild');
+      this.buttonsDomNode.classList.add('active');
+      this._container.classList.add('activeChild');
     }
-  },
+  }
 
   _onBtnClick(this: IPMButton) {
     if (this._button.disabled) {
@@ -399,13 +423,13 @@ const PMButton = (
       }
     }
     this._fireButtonClick(btnName, this._button);
-  },
+  }
 
   _clicked(this: IPMButton) {
     if (this._button.doToggle) {
       this.toggle();
     }
-  },
+  }
 
   _updateDisabled(this: IPMButton) {
     if (!this._container) {
@@ -416,25 +440,28 @@ const PMButton = (
     const button = this.buttonsDomNode.children[0] as HTMLElement;
 
     if (this._button.disabled) {
-      L.DomUtil.addClass(button, className);
+      button.classList.add(className);
       button.setAttribute('aria-disabled', 'true');
     } else {
-      L.DomUtil.removeClass(button, className);
+      button.classList.remove(className);
       button.setAttribute('aria-disabled', 'false');
     }
-  },
+  }
+
   _updateActiveAction(this: IPMButton, button: ButtonOptions) {
     button._preparedActions?.forEach((action) => {
       if (action?._node) {
         if (action.isActive && action.isActive.call(this)) {
-          L.DomUtil.addClass(action._node, 'active-action');
+          action._node.classList.add('active-action');
         } else {
-          L.DomUtil.removeClass(action._node, 'active-action');
+          action._node.classList.remove('active-action');
         }
       }
     });
-  },
-});
+  }
+}
+
+PMButton.include(EventMixin);
 
 const CONTROL_POSITIONS = [
   'topleft',

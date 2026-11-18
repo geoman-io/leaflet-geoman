@@ -6,8 +6,7 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "types": ["leaflet"],
     "verbatimModuleSyntax": true
   },
-  "include": ["*.mts", "*.cts"]
+  "include": ["*.mts"]
 }

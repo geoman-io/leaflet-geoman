@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../../PM';
 import type { GlobalOptions } from '../../../types/options';
 /**
  * Extended layer with PM properties
@@ -11,9 +13,6 @@ interface PMLayer extends L.Layer {
       allowEditing?: boolean;
     };
     _applyInheritedOptions: (options?: object) => void;
-  };
-  options: L.LayerOptions & {
-    pmIgnore?: boolean;
   };
 }
 
@@ -59,7 +58,7 @@ const GlobalEditMode = {
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
 
     // find all layers handled by leaflet-geoman
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = PM.Utils.findLayers(this.map) as PMLayer[];
 
     // Global options fill keys the layer has not set. Caller options still win.
     layers.forEach((layer: PMLayer) => {
@@ -91,7 +90,7 @@ const GlobalEditMode = {
     this._globalEditModeEnabled = false;
 
     // find all layers handles by leaflet-geoman
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = PM.Utils.findLayers(this.map) as PMLayer[];
 
     // disable all layers
     layers.forEach((layer: PMLayer) => {
@@ -145,14 +144,14 @@ const GlobalEditMode = {
     }
   },
   _layerAddedEdit(this: IGlobalEditMode, { layer }: LayerAddEvent) {
-    this._addedLayersEdit[L.stamp(layer)] = layer;
+    this._addedLayersEdit[L.Util.stamp(layer)] = layer;
   },
   _isRelevantForEdit(layer: PMLayer) {
     return (
       layer.pm &&
       !(layer instanceof L.LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      ((!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
       layer.pm!.options.allowEditing
     );

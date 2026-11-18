@@ -1,3 +1,4 @@
+import * as L from 'leaflet';
 import type { Matrix } from './Matrix';
 
 export type LatLngTree = L.LatLng | LatLngTree[];
@@ -25,7 +26,7 @@ export function _convertLatLngs(
   if (zoom === Infinity) {
     zoom = map.getZoom();
   }
-  if (L.Util.isArray(latlng)) {
+  if (Array.isArray(latlng)) {
     const latlngs: LatLngTree[] = [];
     (latlng as LatLngTree[]).forEach((x) => {
       latlngs.push(_convertLatLngs(x, matrix, map));

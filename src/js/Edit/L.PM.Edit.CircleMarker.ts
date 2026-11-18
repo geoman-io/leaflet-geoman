@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import type { ISnapMixin } from '../Mixins/Snapping';
+import { PM } from '../PM';
 import type { EditOptions } from './L.PM.Edit';
 
 /**
@@ -27,6 +30,7 @@ type ExtendedMap = L.Map & {
 type ExtendedCircleMarker = L.CircleMarker & {
   _map: ExtendedMap;
   _radius: number;
+  _cancelDragEventChain?: L.LatLng | null;
 };
 
 /**
@@ -35,7 +39,6 @@ type ExtendedCircleMarker = L.CircleMarker & {
 type ExtendedMarker = L.Marker & {
   _pmTempLayer?: boolean;
   _origLatLng?: L.LatLng;
-  _icon?: HTMLElement;
   _snapped?: boolean;
   _orgLatLng?: L.LatLng;
   _latlng: L.LatLng;
@@ -74,9 +77,6 @@ type ExtendedPolygon = L.Polygon & {
  */
 type PMTempLayer = L.Layer & {
   _pmTempLayer?: boolean;
-  options: L.LayerOptions & {
-    pane?: string;
-  };
 };
 
 /**
@@ -135,8 +135,12 @@ export interface IEditCircleMarker {
   _removeMarker(): void;
   _onDragStart(): void;
   _onMarkerDragStart(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMarkerDrag(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMarkerDragEnd(e: L.LeafletEvent & { target: ExtendedMarker }): void;
+  _onMarkerDrag(
+    e: L.LeafletEvent & { target: ExtendedMarker | ExtendedCircleMarker }
+  ): void;
+  _onMarkerDragEnd(
+    e: L.LeafletEvent & { target: ExtendedMarker | ExtendedCircleMarker }
+  ): void;
   _extedingMarkerDragEnd(): void;
   _initSnappableMarkersDrag(): void;
   _disableSnappingDrag(): void;
@@ -166,7 +170,7 @@ export interface IEditCircleMarker {
   _fireVertexClick(e: L.LeafletEvent, indexPath: number[] | undefined): void;
   _initSnappableMarkers(): void;
   _disableSnapping(): void;
-  _handleSnapping(e: L.LeafletEvent): void;
+  _handleSnapping: ISnapMixin['_handleSnapping'];
   _cleanupSnapping(): void;
   _unsnap(e: L.LeafletEvent): void;
   _vertexValidation(
@@ -174,7 +178,9 @@ export interface IEditCircleMarker {
     e: L.LeafletEvent & { target: ExtendedMarker }
   ): boolean;
   _vertexValidationDrag(marker: ExtendedMarker): boolean;
-  _vertexValidationDragEnd(marker: ExtendedMarker): boolean;
+  _vertexValidationDragEnd(marker: {
+    _cancelDragEventChain?: L.LatLng | null;
+  }): boolean;
   dragging(): boolean;
   layerDragEnabled(): boolean;
   disableLayerDrag(): void;
@@ -368,7 +374,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
 
     // create marker for each coordinate
     const center = this._layer.getLatLng();
-    const radius = this._layer._radius;
+    const radius = this._layer._pxRadius;
 
     const outer = this._getLatLngOnCircle(center, radius);
 
@@ -383,7 +389,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
     radius: number
   ) {
     const pointA = this._map.project(center);
-    const pointB = L.point(pointA.x + radius, pointA.y);
+    const pointB = new L.Point(pointA.x + radius, pointA.y);
     return this._map.unproject(pointB);
   },
   _createHintLine(
@@ -393,7 +399,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
   ) {
     const A = markerA.getLatLng();
     const B = markerB.getLatLng();
-    this._hintline = L.polyline([A, B], this.options.hintlineStyle);
+    this._hintline = new L.Polyline([A, B], this.options.hintlineStyle);
     this._setPane(this._hintline, 'layerPane');
     this._hintline._pmTempLayer = true;
     this._helperLayers.addLayer(this._hintline);
@@ -404,7 +410,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
   ): ExtendedMarker {
     const marker = this._createMarker(latlng);
     if (this.options.draggable) {
-      L.DomUtil.addClass(marker._icon!, 'leaflet-pm-draggable');
+      marker._icon!.classList.add('leaflet-pm-draggable');
       marker.on('move', this._moveCircle, this);
     } else {
       marker.dragging!.disable();
@@ -422,7 +428,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
   _createMarker(this: IEditCircleMarker, latlng: L.LatLng): ExtendedMarker {
     const marker = new L.Marker(latlng, {
       draggable: true,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new L.DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -451,7 +457,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
     const center = this._centerMarker.getLatLng();
     this._layer.setLatLng(center);
 
-    const radius = this._layer._radius;
+    const radius = this._layer._pxRadius;
 
     const outer = this._getLatLngOnCircle(center, radius);
     // don't call .setLatLng() because it fires the `move` event and then the radius is changed because of _syncCircleRadius #892
@@ -466,7 +472,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
   },
   _syncMarkers(this: IEditCircleMarker) {
     const center = this._layer.getLatLng();
-    const radius = this._layer._radius;
+    const radius = this._layer._pxRadius;
     const outer = this._getLatLngOnCircle(center, radius);
     this._outerMarker.setLatLng(outer);
     this._centerMarker.setLatLng(center);
@@ -530,7 +536,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
   },
   _onMarkerDrag(
     this: IEditCircleMarker,
-    e: L.LeafletEvent & { target: ExtendedMarker }
+    e: L.LeafletEvent & { target: ExtendedMarker | ExtendedCircleMarker }
   ) {
     // dragged marker
     const draggedMarker = e.target;
@@ -545,7 +551,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
   },
   _onMarkerDragEnd(
     this: IEditCircleMarker,
-    e: L.LeafletEvent & { target: ExtendedMarker }
+    e: L.LeafletEvent & { target: ExtendedMarker | ExtendedCircleMarker }
   ) {
     this._extedingMarkerDragEnd();
 
@@ -591,21 +597,21 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
   _updateHiddenPolyCircle(this: IEditCircleMarker) {
     const map = this._layer._map || this._map;
     if (map) {
-      const radius = L.PM.Utils.pxRadiusToMeterRadius(
+      const radius = PM.Utils.pxRadiusToMeterRadius(
         this._layer.getRadius(),
         map,
         this._layer.getLatLng()
       );
-      const _layer = L.circle(this._layer.getLatLng(), this._layer.options);
+      const _layer = new L.Circle(this._layer.getLatLng(), this._layer.options);
       _layer.setRadius(radius);
 
       const crsSimple = map && map.pm._isCRSSimple();
       if (this._hiddenPolyCircle) {
         this._hiddenPolyCircle.setLatLngs(
-          L.PM.Utils.circleToPolygon(_layer, 200, !crsSimple).getLatLngs()
+          PM.Utils.circleToPolygon(_layer, 200, !crsSimple).getLatLngs()
         );
       } else {
-        this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(
+        this._hiddenPolyCircle = PM.Utils.circleToPolygon(
           _layer,
           200,
           !crsSimple
@@ -670,14 +676,14 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
     return this._map.project(A).distanceTo(this._map.project(B));
   },
   _getMinDistanceInMeter(this: IEditCircleMarker, latlng: L.LatLng) {
-    return L.PM.Utils.pxRadiusToMeterRadius(
+    return PM.Utils.pxRadiusToMeterRadius(
       this.options[this._minRadiusOption]!,
       this._map,
       latlng
     );
   },
   _getMaxDistanceInMeter(this: IEditCircleMarker, latlng: L.LatLng) {
-    return L.PM.Utils.pxRadiusToMeterRadius(
+    return PM.Utils.pxRadiusToMeterRadius(
       this.options[this._maxRadiusOption]!,
       this._map,
       latlng

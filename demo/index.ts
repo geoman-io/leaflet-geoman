@@ -1,7 +1,7 @@
 // Initialize map
-const map = L.map('map').setView([51.505, -0.09], 13);
+const map = new L.Map('map').setView([51.505, -0.09], 13);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+new L.TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -44,45 +44,45 @@ function addToGeoman<T extends L.Layer>(layer: T) {
 }
 
 function createPolygon(
-  latlngs: Parameters<typeof L.polygon>[0],
+  latlngs: ConstructorParameters<typeof L.Polygon>[0],
   options: L.CircleMarkerOptions = {}
 ) {
-  return addToGeoman(L.polygon(latlngs, options));
+  return addToGeoman(new L.Polygon(latlngs, options));
 }
 
 function createRectangle(
-  bounds: Parameters<typeof L.rectangle>[0],
+  bounds: ConstructorParameters<typeof L.Rectangle>[0],
   options: L.CircleMarkerOptions = {}
 ) {
-  return addToGeoman(L.rectangle(bounds, options));
+  return addToGeoman(new L.Rectangle(bounds, options));
 }
 
 function createPolyline(
-  latlngs: Parameters<typeof L.polyline>[0],
+  latlngs: ConstructorParameters<typeof L.Polyline>[0],
   options: L.CircleMarkerOptions = {}
 ) {
-  return addToGeoman(L.polyline(latlngs, options));
+  return addToGeoman(new L.Polyline(latlngs, options));
 }
 
 function createCircle(
-  latlng: Parameters<typeof L.circle>[0],
+  latlng: ConstructorParameters<typeof L.Circle>[0],
   options: L.CircleMarkerOptions = {}
 ) {
-  return addToGeoman(L.circle(latlng, options));
+  return addToGeoman(new L.Circle(latlng, options));
 }
 
 function createCircleMarker(
-  latlng: Parameters<typeof L.circleMarker>[0],
+  latlng: ConstructorParameters<typeof L.CircleMarker>[0],
   options: L.CircleMarkerOptions = {}
 ) {
-  return addToGeoman(L.circleMarker(latlng, options));
+  return addToGeoman(new L.CircleMarker(latlng, options));
 }
 
 function createMarker(
-  latlng: Parameters<typeof L.marker>[0],
+  latlng: ConstructorParameters<typeof L.Marker>[0],
   options: L.MarkerOptions = {}
 ) {
-  return addToGeoman(L.marker(latlng, options));
+  return addToGeoman(new L.Marker(latlng, options));
 }
 
 const testCases: Record<string, () => void> = {
@@ -182,10 +182,10 @@ const testCases: Record<string, () => void> = {
     clearAllLayers();
 
     // Create a feature group
-    const group = L.featureGroup().addTo(map);
+    const group = new L.FeatureGroup().addTo(map);
 
     // Add shapes to the group
-    const p1 = L.polygon(
+    const p1 = new L.Polygon(
       [
         [51.51, -0.1],
         [51.51, -0.08],
@@ -196,7 +196,7 @@ const testCases: Record<string, () => void> = {
     ).addTo(group);
     p1._drawnByGeoman = true;
 
-    const p2 = L.polygon(
+    const p2 = new L.Polygon(
       [
         [51.5, -0.1],
         [51.5, -0.08],
@@ -207,7 +207,7 @@ const testCases: Record<string, () => void> = {
     ).addTo(group);
     p2._drawnByGeoman = true;
 
-    const line = L.polyline(
+    const line = new L.Polyline(
       [
         [51.505, -0.1],
         [51.515, -0.09],
@@ -218,13 +218,13 @@ const testCases: Record<string, () => void> = {
     line._drawnByGeoman = true;
 
     // Nested group
-    const nestedGroup = L.featureGroup().addTo(map);
-    const c1 = L.circle([51.508, -0.06], {
+    const nestedGroup = new L.FeatureGroup().addTo(map);
+    const c1 = new L.Circle([51.508, -0.06], {
       radius: 150,
       color: '#ff9800',
     }).addTo(nestedGroup);
     c1._drawnByGeoman = true;
-    const m1 = L.marker([51.508, -0.06]).addTo(nestedGroup);
+    const m1 = new L.Marker([51.508, -0.06]).addTo(nestedGroup);
     m1._drawnByGeoman = true;
 
     map.fitBounds(group.getBounds().extend(nestedGroup.getBounds()));

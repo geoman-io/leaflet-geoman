@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 /**
  * Extended map with PM
  */

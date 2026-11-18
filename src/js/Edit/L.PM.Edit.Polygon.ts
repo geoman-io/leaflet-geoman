@@ -1,9 +1,10 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 /**
  * Extended marker with middle marker references
  */
 type ExtendedMarker = L.Marker & {
   _pmTempLayer?: boolean;
-  _icon?: HTMLElement;
   leftM?: ExtendedMarker;
   rightM?: ExtendedMarker;
   _middleMarkerPrev?: ExtendedMarker;
@@ -39,8 +40,14 @@ Edit.Polygon = Edit.Line.extend<IEditPolygon, [L.Polygon]>({
   _checkMarkerAllowedToDrag(this: IEditPolygon, marker: ExtendedMarker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
-    const prevLine = L.polyline([prevMarker.getLatLng(), marker.getLatLng()]);
-    const nextLine = L.polyline([marker.getLatLng(), nextMarker.getLatLng()]);
+    const prevLine = new L.Polyline([
+      prevMarker.getLatLng(),
+      marker.getLatLng(),
+    ]);
+    const nextLine = new L.Polyline([
+      marker.getLatLng(),
+      nextMarker.getLatLng(),
+    ]);
 
     const prevLineIntersection = lineIntersect(
       this._layer.toGeoJSON(15),
@@ -51,7 +58,7 @@ Edit.Polygon = Edit.Line.extend<IEditPolygon, [L.Polygon]>({
     const prevLineIntersectionLen = prevLineIntersection.features.filter(
       (f) => {
         const coords = f.geometry.coordinates;
-        const latlng = L.latLng(coords[1], coords[0]);
+        const latlng = new L.LatLng(coords[1], coords[0]);
         return (
           !latlng.equals(prevMarker.getLatLng()) &&
           !latlng.equals(marker.getLatLng())
@@ -68,7 +75,7 @@ Edit.Polygon = Edit.Line.extend<IEditPolygon, [L.Polygon]>({
     const nextLineIntersectionLen = nextLineIntersection.features.filter(
       (f) => {
         const coords = f.geometry.coordinates;
-        const latlng = L.latLng(coords[1], coords[0]);
+        const latlng = new L.LatLng(coords[1], coords[0]);
         return (
           !latlng.equals(nextMarker.getLatLng()) &&
           !latlng.equals(marker.getLatLng())

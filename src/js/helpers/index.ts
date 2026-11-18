@@ -1,8 +1,10 @@
+import * as L from 'leaflet';
 import get from 'lodash/get';
+import { PM } from '../PM';
 import translations from '../../assets/translations';
 
 export function getTranslation(path: string): string {
-  const lang = L.PM.activeLang;
+  const lang = PM.activeLang;
   // if translation is not found, fallback to english
   return (get(translations[lang], path) ||
     get(translations.en, path) ||
@@ -65,7 +67,7 @@ function destinationVincenty(
 ): L.LatLng {
   // rewritten to work with leaflet
   const VincentyConstants = {
-    a: (L.CRS.Earth as L.CRS & { R: number }).R,
+    a: (L.EarthCRS as L.CRS & { R: number }).R,
     b: 6356752.3142,
     f: 1 / 298.257223563,
   };
@@ -134,7 +136,7 @@ function destinationVincenty(
   const lamFunc = lon1 + (lam * 180) / pi; // converts lam radius to degrees
   const lat2a = (lat2 * 180) / pi; // converts lat2a radius to degrees
 
-  return L.latLng(lamFunc, lat2a);
+  return new L.LatLng(lamFunc, lat2a);
 }
 
 export function createGeodesicPolygon(
@@ -153,11 +155,11 @@ export function createGeodesicPolygon(
     if (withBearing) {
       trueAngle = (i * 360) / sides + rotation;
       newLonlat = destinationVincenty(origin, trueAngle, radius);
-      geomPoint = L.latLng(newLonlat.lng, newLonlat.lat);
+      geomPoint = new L.LatLng(newLonlat.lng, newLonlat.lat);
     } else {
       const pLat = origin.lat + Math.cos((2 * i * Math.PI) / sides) * radius;
       const pLng = origin.lng + Math.sin((2 * i * Math.PI) / sides) * radius;
-      geomPoint = L.latLng(pLat, pLng);
+      geomPoint = new L.LatLng(pLat, pLng);
     }
     points.push(geomPoint);
   }
@@ -183,7 +185,7 @@ function destination(
   heading = (heading + 360) % 360;
   const rad = Math.PI / 180;
   const radInv = 180 / Math.PI;
-  const { R } = L.CRS.Earth as L.CRS & { R: number }; // approximation of Earth's radius
+  const { R } = L.EarthCRS as L.CRS & { R: number }; // approximation of Earth's radius
   const lon1 = latlng.lng * rad;
   const lat1 = latlng.lat * rad;
   const rheading = heading * rad;
@@ -210,7 +212,7 @@ function destination(
   if (!Number.isFinite(resultLat) || !Number.isFinite(lon2)) {
     return latlng;
   }
-  return L.latLng([resultLat, lon2]);
+  return new L.LatLng(resultLat, lon2);
 }
 /* Copied from L.GeometryUtil */
 export function calcAngle(
@@ -218,8 +220,8 @@ export function calcAngle(
   latlngA: L.LatLngExpression,
   latlngB: L.LatLngExpression
 ): number {
-  // project() keeps fractional pixels; latLngToContainerPoint rounds them,
-  // which skews the angle of short or small edges
+  // project() keeps fractional pixels; Leaflet 1's latLngToContainerPoint
+  // rounds them, which skews the angle of short or small edges
   const pointA = map.project(latlngA);
   const pointB = map.project(latlngB);
   let angleDeg =
@@ -313,34 +315,27 @@ export function prioritiseSort(
   };
 }
 
-export function copyLatLngs(
-  layer: L.Polyline<GeoJSON.Geometry>,
-  latlngs = layer.getLatLngs()
-) {
+export function copyLatLngs(layer: L.Polyline, latlngs = layer.getLatLngs()) {
   if (layer instanceof L.Polygon) {
-    return L.polygon(latlngs).getLatLngs();
+    return new L.Polygon(latlngs).getLatLngs();
   }
-  return L.polyline(latlngs as L.LatLng[] | L.LatLng[][]).getLatLngs();
+  return new L.Polyline(latlngs as L.LatLng[] | L.LatLng[][]).getLatLngs();
 }
 
 // Replaces the lat value with the MAX_LATITUDE of CRS if it is lower / higher
 export function fixLatOffset(latlng: L.LatLng, map: L.Map): L.LatLng {
-  if (map.options.crs?.projection?.MAX_LATITUDE) {
-    const max = map.options.crs?.projection?.MAX_LATITUDE;
+  const projection = map.options.crs?.projection as
+    | { MAX_LATITUDE?: number }
+    | undefined;
+  if (projection?.MAX_LATITUDE) {
+    const max = projection.MAX_LATITUDE;
     latlng.lat = Math.max(Math.min(max, latlng.lat), -max);
   }
   return latlng;
 }
 
 export function getRenderer(layer: L.Map | L.Layer): L.Renderer {
-  return (
-    (layer as L.Path).options.renderer ||
-    ((layer as L.Path & { _map: L.Map })._map &&
-      ((layer as L.Path & { _map: L.Map })._map._getPaneRenderer(
-        (layer as L.Path).options.pane
-      ) ||
-        (layer as L.Path & { _map: L.Map })._map.options.renderer ||
-        (layer as L.Path & { _map: L.Map })._map._renderer)) ||
-    (layer as L.Path)._renderer
-  );
+  // the renderer the layer was given, or the one Leaflet set when it was
+  // added; markers have none
+  return (layer as L.Path).options.renderer || (layer as L.Path)._renderer;
 }

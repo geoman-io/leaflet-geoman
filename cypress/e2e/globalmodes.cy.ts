@@ -29,8 +29,8 @@ describe('Modes', () => {
     let markerHtml: HTMLElement;
 
     cy.window().then(({ map, L }) => {
-      const geojson = {
-        type: 'Feature' as const,
+      const geojson: GeoJSON.Feature = {
+        type: 'Feature',
         properties: {},
         geometry: {
           type: 'Polygon',
@@ -49,7 +49,7 @@ describe('Modes', () => {
         },
       };
       // eslint-disable-next-line prefer-destructuring
-      layer = L.geoJSON(geojson).addTo(map).getLayers()[0];
+      layer = new L.GeoJSON(geojson).addTo(map).getLayers()[0];
       map.fitBounds((layer as L.Polygon).getBounds());
 
       map.pm.setGlobalOptions({
@@ -65,11 +65,11 @@ describe('Modes', () => {
     cy.toolbarButton('edit').click();
 
     // make the marker visible
-    cy.get(mapSelector).trigger('mousemove', 500, 120, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 500, 120, { which: 1 });
 
     cy.get(mapSelector)
-      .trigger('mousedown', 495, 125, { which: 1 })
-      .trigger('mousemove', 500, 307, { which: 1 });
+      .trigger('pointerdown', 495, 125, { which: 1 })
+      .trigger('pointermove', 500, 307, { which: 1 });
 
     // let the animation to show the new marker finish
     cy.wait(100);
@@ -79,10 +79,10 @@ describe('Modes', () => {
     });
 
     // end dragging
-    cy.get(mapSelector).trigger('mouseup', 500, 307, { which: 1 });
+    cy.get(mapSelector).trigger('pointerup', 500, 307, { which: 1 });
 
     // make other marker visible
-    cy.get(mapSelector).trigger('mousemove', 310, 330, { which: 1 });
+    cy.get(mapSelector).trigger('pointermove', 310, 330, { which: 1 });
 
     cy.get('.leaflet-marker-icon').should((p) => {
       expect(p[0]).to.not.equal(markerHtml);
@@ -150,12 +150,14 @@ describe('Modes', () => {
       const testLayer = new L.FeatureGroup();
       map.addLayer(testLayer);
 
-      Cypress.$(map).on('pm:create', ({ originalEvent: event }) => {
+      map.on('pm:create', (event) => {
         const poly = (event as unknown as { layer: L.Polygon }).layer;
 
         const coords = poly.getLatLngs();
 
-        const newPoly = L.polygon(coords, { pmIgnore: true }).addTo(testLayer);
+        const newPoly = new L.Polygon(coords, { pmIgnore: true }).addTo(
+          testLayer
+        );
         poly.remove();
 
         return newPoly;
@@ -251,7 +253,7 @@ describe('Modes', () => {
     cy.hasVertexMarkers(4);
 
     cy.window().then(({ map, L }) => {
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.hasVertexMarkers(8);
@@ -287,8 +289,8 @@ describe('Modes', () => {
     cy.hasLayers(2);
 
     cy.window().then(({ map, L }) => {
-      L.marker([51.505, -0.09]).addTo(map);
-      L.marker([51.505, -0.08]).addTo(map);
+      new L.Marker([51.505, -0.09]).addTo(map);
+      new L.Marker([51.505, -0.08]).addTo(map);
     });
 
     cy.window().then(({ map, L }) => {
@@ -361,8 +363,8 @@ describe('Modes', () => {
       const json2 = JSON.parse(
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-74.035277,40.703719],[-74.035277,40.712633],[-74.017596,40.712633],[-74.017596,40.703719],[-74.035277,40.703719]]]}}'
       );
-      const p2 = L.geoJson(json).addTo(map);
-      L.geoJson(json2).addTo(map);
+      const p2 = new L.GeoJSON(json).addTo(map);
+      new L.GeoJSON(json2).addTo(map);
 
       map.fitBounds(p2.getBounds());
       map.setZoom(13);
@@ -407,7 +409,7 @@ describe('Modes', () => {
     });
 
     cy.window().then(({ map, L }) => {
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
@@ -427,7 +429,7 @@ describe('Modes', () => {
       const jsonString =
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
       const poly = JSON.parse(jsonString);
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
@@ -447,7 +449,7 @@ describe('Modes', () => {
       const jsonString =
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
       const poly = JSON.parse(jsonString);
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
@@ -467,7 +469,7 @@ describe('Modes', () => {
       const jsonString =
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
       const poly = JSON.parse(jsonString);
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {
@@ -487,7 +489,7 @@ describe('Modes', () => {
       const jsonString =
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.155182,51.515687],[-0.155182,51.521028],[-0.124283,51.521028],[-0.124283,51.510345],[-0.155182,51.515687]]]}}';
       const poly = JSON.parse(jsonString);
-      L.geoJSON(poly).addTo(map);
+      new L.GeoJSON(poly).addTo(map);
     });
 
     cy.window().then(({ map }) => {

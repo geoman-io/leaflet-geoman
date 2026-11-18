@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import type { ISnapMixin, SnappableMarker } from '../Mixins/Snapping';
+import { PM } from '../PM';
 import type { DrawOptions } from './L.PM.Draw';
 
 /**
@@ -33,7 +36,6 @@ type PMTempLayer = L.Layer & {
 type ExtendedMarker = L.Marker & {
   _pmTempLayer?: boolean;
   _snapped?: boolean;
-  _icon?: HTMLElement;
   pm?: {
     textArea: HTMLTextAreaElement;
     _createTextMarker: (focus: boolean) => void;
@@ -66,6 +68,8 @@ interface TextMarkerOptions extends L.MarkerOptions {
   _textMarkerOverPM?: boolean;
 }
 
+type TextMarkerPMOptions = { removeIfEmpty?: boolean };
+
 /**
  * Draw Text interface
  */
@@ -83,9 +87,9 @@ export interface IDrawText {
   disable(): void;
   enabled(): boolean;
   toggle(options?: Partial<TextDrawOptions>): void;
-  _syncHintMarker(e: L.LeafletMouseEvent): void;
-  _createMarker(e: L.LeafletMouseEvent): void;
-  _showHintMarkerAfterMoving(e: L.LeafletMouseEvent): void;
+  _syncHintMarker(e: L.LeafletPointerEvent): void;
+  _createMarker(e: L.LeafletPointerEvent): void;
+  _showHintMarkerAfterMoving(e: L.LeafletPointerEvent): void;
   _createTextArea(): HTMLTextAreaElement;
   _createTextIcon(textArea: HTMLTextAreaElement): L.DivIcon;
 
@@ -99,7 +103,7 @@ export interface IDrawText {
   _fireCreate(layer: L.Layer): void;
   _setGlobalDrawMode(): void;
   _cleanupSnapping(): void;
-  _handleSnapping(e: L.LeafletEvent): void;
+  _handleSnapping: ISnapMixin['_handleSnapping'];
   _finishLayer(layer: L.Layer): void;
   _isFirstLayer(): boolean;
 }
@@ -122,7 +126,7 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
   },
   enable(this: IDrawText, options?: Partial<TextDrawOptions>) {
     // TODO: Think about if these options could be passed globally for all
-    // instances of L.PM.Draw. So a dev could set drawing style one time as some kind of config
+    // instances of PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
 
     // change enabled state
@@ -135,10 +139,10 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the mouse cursor
-    this._hintMarker = L.marker(this._map.getCenter(), {
+    this._hintMarker = new L.Marker(this._map.getCenter(), {
       interactive: false,
       zIndexOffset: 100,
-      icon: L.divIcon({ className: 'marker-icon cursor-marker' }),
+      icon: new L.DivIcon({ className: 'marker-icon cursor-marker' }),
     });
     this._setPane(this._hintMarker, 'vertexPane');
     this._hintMarker._pmTempLayer = true;
@@ -146,7 +150,7 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
 
     // show the hintmarker if the option is set
     if (this.options.cursorMarker) {
-      L.DomUtil.addClass(this._hintMarker._icon!, 'visible');
+      this._hintMarker._icon!.classList.add('visible');
     }
 
     // add tooltip to hintmarker
@@ -154,7 +158,7 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
       this._hintMarker
         .bindTooltip(getTranslation('tooltips.placeText'), {
           permanent: true,
-          offset: L.point(0, 10),
+          offset: new L.Point(0, 10),
           direction: 'bottom',
 
           opacity: 0.8,
@@ -166,7 +170,7 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
     this._layer = this._hintMarker;
 
     // sync hint marker with mouse cursor
-    this._map.on('mousemove', this._syncHintMarker, this);
+    this._map.on('pointermove', this._syncHintMarker, this);
 
     this._map.getContainer().classList.add('geoman-draw-cursor');
 
@@ -192,9 +196,9 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
     this._map.getContainer().classList.remove('geoman-draw-cursor');
 
     // remove event listener to sync hint marker
-    this._map.off('mousemove', this._syncHintMarker, this);
+    this._map.off('pointermove', this._syncHintMarker, this);
 
-    this._map.off('mousemove', this._showHintMarkerAfterMoving, this);
+    this._map.off('pointermove', this._showHintMarkerAfterMoving, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got disabled without the button
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, false);
@@ -218,18 +222,18 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
       this.enable(options);
     }
   },
-  _syncHintMarker(this: IDrawText, e: L.LeafletMouseEvent) {
+  _syncHintMarker(this: IDrawText, e: L.LeafletPointerEvent) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
 
     // if snapping is enabled, do it
     if (this.options.snappable) {
-      const fakeDragEvent = e;
-      fakeDragEvent.target = this._hintMarker;
-      this._handleSnapping(fakeDragEvent);
+      this._handleSnapping(
+        Object.assign(e, { target: this._hintMarker as SnappableMarker })
+      );
     }
   },
-  _createMarker(this: IDrawText, e: L.LeafletMouseEvent) {
+  _createMarker(this: IDrawText, e: L.LeafletPointerEvent) {
     if (!e.latlng) {
       return;
     }
@@ -277,7 +281,7 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
     marker.addTo(this._map.pm._getContainingLayer());
     if (marker.pm) {
       marker.pm.textArea = this.textArea;
-      L.setOptions(marker.pm, {
+      L.Util.setOptions(marker.pm as { options?: TextMarkerPMOptions }, {
         removeIfEmpty: this.options.textOptions?.removeIfEmpty ?? true,
       });
 
@@ -297,11 +301,11 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
     this.disable();
     if (this.options.continueDrawing) {
       // the user is still typing some text, so we re-enable the layer after moving the mouse
-      this._map.once('mousemove', this._showHintMarkerAfterMoving, this);
+      this._map.once('pointermove', this._showHintMarkerAfterMoving, this);
     }
   },
 
-  _showHintMarkerAfterMoving(this: IDrawText, e: L.LeafletMouseEvent) {
+  _showHintMarkerAfterMoving(this: IDrawText, e: L.LeafletPointerEvent) {
     this.enable();
     this._hintMarker.setLatLng(e.latlng);
   },
@@ -314,7 +318,7 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
   },
 
   _createTextIcon(this: IDrawText, textArea: HTMLTextAreaElement) {
-    return L.divIcon({
+    return new L.DivIcon({
       className: 'pm-text-marker',
       html: textArea,
     });

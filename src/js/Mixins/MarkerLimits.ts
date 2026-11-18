@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+
 /**
  * Extended marker with _latlng property
  */
@@ -66,11 +68,11 @@ const MarkerLimits: IMarkerLimitsMixin &
       // The reason is that syncing this cache with a removed marker was impossible to do
       this._layer.on('pm:vertexremoved', this._initMarkers, this);
 
-      this._map.on('mousemove', this.throttledApplyLimitFilters, this);
+      this._map.on('pointermove', this.throttledApplyLimitFilters, this);
     }
   },
   _removeMarkerLimitEvents() {
-    this._map.off('mousemove', this.throttledApplyLimitFilters, this);
+    this._map.off('pointermove', this.throttledApplyLimitFilters, this);
     this._layer.off('pm:edit', this.createCache, this);
     this._layer.off('pm:disable', this._removeMarkerLimitEvents, this);
     this._layer.off('pm:vertexremoved', this._initMarkers, this);

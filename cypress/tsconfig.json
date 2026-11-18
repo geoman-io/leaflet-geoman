@@ -9,6 +9,7 @@
     "../cypress.config.ts",
     "../src/types/**/*.ts",
     "../leaflet-geoman.d.ts",
-    "../test-page.ts"
+    "../test-page.ts",
+    "../types/leaflet-global.d.ts"
   ]
 }

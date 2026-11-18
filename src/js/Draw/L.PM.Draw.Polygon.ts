@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 /**
  * Extended map with PM
  */
@@ -117,7 +119,7 @@ Draw.Polygon = Draw.Line.extend<IDrawPolygon, [L.Map]>({
     this.toolbarButtonName = 'drawPolygon';
   },
   enable(this: IDrawPolygon, options?: Partial<PolygonDrawOptions>) {
-    L.PM.Draw.Line.prototype.enable.call(this, options);
+    PM.Draw.Line.prototype.enable.call(this, options);
     // Overwrite the shape "Line" of this._layer
     this._layer.pm._shape = 'Polygon';
   },
@@ -125,7 +127,7 @@ Draw.Polygon = Draw.Line.extend<IDrawPolygon, [L.Map]>({
     // create the new marker
     const marker = new L.Marker(latlng, {
       draggable: false,
-      icon: L.divIcon({ className: 'marker-icon' }),
+      icon: new L.DivIcon({ className: 'marker-icon' }),
     });
     this._setPane(marker, 'vertexPane');
 
@@ -198,7 +200,7 @@ Draw.Polygon = Draw.Line.extend<IDrawPolygon, [L.Map]>({
       return;
     }
 
-    const polygonLayer = L.polygon(coords, this.options.pathOptions);
+    const polygonLayer = new L.Polygon(coords, this.options.pathOptions);
     this._setPane(polygonLayer, 'layerPane');
     this._finishLayer(polygonLayer);
     polygonLayer.addTo(this._map.pm._getContainingLayer());

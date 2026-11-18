@@ -4,13 +4,13 @@ describe('Layers added during global rotation', () => {
     let locked: L.Rectangle;
     cy.window().then(({ L, map }) => {
       map.pm.enableGlobalRotateMode();
-      rotatable = L.rectangle([
+      rotatable = new L.Rectangle([
         [51.5, -0.1],
         [51.51, -0.09],
       ]);
       rotatable.pm.setOptions({ allowRotation: true, allowRemoval: false });
       rotatable.addTo(map);
-      locked = L.rectangle([
+      locked = new L.Rectangle([
         [51.51, -0.08],
         [51.52, -0.07],
       ]);

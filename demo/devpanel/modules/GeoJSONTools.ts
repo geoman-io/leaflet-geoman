@@ -273,15 +273,15 @@ class GeoJSONTools {
         geojson.type === 'FeatureCollection' ? geojson.features : [geojson];
 
       features.forEach((feature) => {
-        const layer = L.geoJSON(feature, {
+        const layer = new L.GeoJSON(feature, {
           pointToLayer: (geoJsonPoint, latlng) => {
             // Check for circle/circleMarker
             if (geoJsonPoint.properties && geoJsonPoint.properties.radius) {
-              return L.circle(latlng, {
+              return new L.Circle(latlng, {
                 radius: geoJsonPoint.properties.radius,
               });
             }
-            return L.marker(latlng);
+            return new L.Marker(latlng);
           },
           onEachFeature: (feature, layer) => {
             // Add PM if not already present

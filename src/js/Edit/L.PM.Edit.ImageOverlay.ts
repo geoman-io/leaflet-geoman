@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 import type { EditOptions } from './L.PM.Edit';
 
 /**

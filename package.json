@@ -1,7 +1,7 @@
 {
   "name": "@geoman-io/leaflet-geoman-free",
   "version": "2.20.6",
-  "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 1.0",
+  "description": "A Leaflet Plugin For Editing Geometry Layers in Leaflet 2",
   "keywords": [
     "leaflet",
     "geoman",
@@ -18,23 +18,28 @@
   "files": [
     "dist/leaflet-geoman.js",
     "dist/leaflet-geoman.min.js",
+    "dist/leaflet-geoman-global.js",
+    "dist/leaflet-geoman-global.min.js",
     "dist/leaflet-geoman.css",
     "dist/leaflet-geoman.d.ts",
     "dist/leaflet-geoman.js.map",
     "dist/leaflet-geoman.min.js.map",
+    "dist/leaflet-geoman-global.js.map",
+    "dist/leaflet-geoman-global.min.js.map",
     "dist/leaflet-geoman.css.map"
   ],
+  "type": "module",
   "main": "dist/leaflet-geoman.js",
   "module": "dist/leaflet-geoman.js",
   "types": "dist/leaflet-geoman.d.ts",
   "exports": {
     ".": {
       "types": "./dist/leaflet-geoman.d.ts",
-      "import": "./dist/leaflet-geoman.js",
-      "require": "./dist/leaflet-geoman.js",
       "default": "./dist/leaflet-geoman.js"
     },
-    "./dist/leaflet-geoman.css": "./dist/leaflet-geoman.css"
+    "./dist/leaflet-geoman.css": "./dist/leaflet-geoman.css",
+    "./dist/leaflet-geoman-global.js": "./dist/leaflet-geoman-global.js",
+    "./dist/leaflet-geoman-global.min.js": "./dist/leaflet-geoman-global.min.js"
   },
   "dependencies": {
     "@turf/boolean-contains": "^7.4.0",
@@ -46,7 +51,6 @@
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.16",
-    "@types/leaflet": "^1.9.22",
     "@types/lodash": "^4.17.26",
     "@types/node": "^20.19.43",
     "@vitest/coverage-v8": "^5.0.4",
@@ -54,7 +58,7 @@
     "cypress": "^16.1.1",
     "esbuild": "^0.28.2",
     "husky": "^9.1.7",
-    "leaflet": "1.9.4",
+    "leaflet": "2.0.0-beta.4",
     "lint-staged": "^17.6.0",
     "oxfmt": "^0.73.0",
     "oxlint": "^1.88.0",
@@ -64,7 +68,7 @@
     "vitest": "^5.0.4"
   },
   "peerDependencies": {
-    "leaflet": "^1.2.0"
+    "leaflet": "^2.0.0-beta.4"
   },
   "engines": {
     "node": ">=20.0.0"

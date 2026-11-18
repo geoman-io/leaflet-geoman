@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../../PM';
 /**
  * Extended layer with PM properties
  */
@@ -9,9 +11,6 @@ interface PMLayer extends L.Layer {
     options: {
       allowRotation?: boolean;
     };
-  };
-  options: L.LayerOptions & {
-    pmIgnore?: boolean;
   };
 }
 
@@ -47,9 +46,9 @@ const GlobalRotateMode = {
   _globalRotateModeEnabled: false,
   enableGlobalRotateMode(this: IGlobalRotateMode) {
     this._globalRotateModeEnabled = true;
-    const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l: PMLayer) => l instanceof L.Polyline
-    );
+    const layers = PM.Utils.findLayers(this.map).filter(
+      (l) => l instanceof L.Polyline
+    ) as PMLayer[];
     layers.forEach((layer: PMLayer) => {
       if (this._isRelevantForRotate(layer)) {
         layer.pm!.enableRotate();
@@ -75,9 +74,9 @@ const GlobalRotateMode = {
   },
   disableGlobalRotateMode(this: IGlobalRotateMode) {
     this._globalRotateModeEnabled = false;
-    const layers = L.PM.Utils.findLayers(this.map).filter(
-      (l: PMLayer) => l instanceof L.Polyline
-    );
+    const layers = PM.Utils.findLayers(this.map).filter(
+      (l) => l instanceof L.Polyline
+    ) as PMLayer[];
     layers.forEach((layer: PMLayer) => {
       layer.pm!.disableRotate();
     });
@@ -105,8 +104,8 @@ const GlobalRotateMode = {
       layer.pm &&
       layer instanceof L.Polyline &&
       !(layer instanceof L.LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      ((!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
       layer.pm!.options.allowRotation
     );
@@ -124,7 +123,7 @@ const GlobalRotateMode = {
     }
   },
   _layerAddedRotate(this: IGlobalRotateMode, { layer }: LayerAddEvent) {
-    this._addedLayersRotate[L.stamp(layer)] = layer;
+    this._addedLayersRotate[L.Util.stamp(layer)] = layer;
   },
 };
 export default GlobalRotateMode;

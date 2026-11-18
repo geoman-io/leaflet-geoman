@@ -1,3 +1,6 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
+import PMClass from '../helpers/PMClass';
 import type { Inherit, MixinMembers } from '../../types/leaflet-class';
 import type {
   LeafletClass,
@@ -35,9 +38,6 @@ interface ExtendedMarker extends L.Marker {
  */
 type PMLayer = L.Layer & {
   _map?: ExtendedMap;
-  options: L.LayerOptions & {
-    pane?: string;
-  };
 };
 
 /**
@@ -88,14 +88,16 @@ export interface IEdit {
     e: L.LeafletEvent & { target: ExtendedMarker }
   ): boolean;
   _vertexValidationDrag(marker: ExtendedMarker): boolean;
-  _vertexValidationDragEnd(marker: ExtendedMarker): boolean;
+  _vertexValidationDragEnd(marker: {
+    _cancelDragEventChain?: L.LatLng | null;
+  }): boolean;
 }
 import SnapMixin from '../Mixins/Snapping';
 import DragMixin from '../Mixins/Dragging';
 import RotateMixin from '../Mixins/Rotating';
 import EventMixin from '../Mixins/Events';
 
-const Edit = (L.Class as unknown as LeafletClassFactory).extend<
+const Edit = PMClass.extend<
   IEdit,
   [L.Layer],
   [typeof DragMixin, typeof SnapMixin, typeof RotateMixin, typeof EventMixin]
@@ -232,7 +234,10 @@ const Edit = (L.Class as unknown as LeafletClassFactory).extend<
     }
     return true;
   },
-  _vertexValidationDragEnd(this: IEdit, marker: ExtendedMarker) {
+  _vertexValidationDragEnd(
+    this: IEdit,
+    marker: { _cancelDragEventChain?: L.LatLng | null }
+  ) {
     if (marker._cancelDragEventChain) {
       marker._cancelDragEventChain = null;
       return false;
@@ -254,17 +259,7 @@ export interface EditClass extends LeafletClass<EditBase, [L.Layer]> {
   Circle: LeafletClass<EditInstances['Circle'], [L.Circle]>;
   ImageOverlay: LeafletClass<EditInstances['ImageOverlay'], [L.ImageOverlay]>;
   LayerGroup: LeafletClass<EditInstances['LayerGroup'], [L.LayerGroup]>;
-  Line: LeafletClass<
-    EditInstances['Line'],
-    [
-      L.Polyline<
-        | GeoJSON.LineString
-        | GeoJSON.MultiLineString
-        | GeoJSON.Polygon
-        | GeoJSON.MultiPolygon
-      >,
-    ]
-  >;
+  Line: LeafletClass<EditInstances['Line'], [L.Polyline]>;
   Polygon: LeafletClass<EditInstances['Polygon'], [L.Polygon]>;
   Rectangle: LeafletClass<EditInstances['Rectangle'], [L.Rectangle]>;
   Text: LeafletClass<EditInstances['Text'], [L.Marker]>;

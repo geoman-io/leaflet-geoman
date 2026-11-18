@@ -142,7 +142,7 @@ describe('Rotation', () => {
       expect(layer.pm.getAngle()).to.equal(40);
       expect(
         (layer.getLatLngs() as L.LatLng[][])[0][1].equals(
-          L.latLng([51.48267237710426, -0.08847595304329439])
+          new L.LatLng(51.48267237710426, -0.08847595304329439)
         )
       ).to.equal(true);
     });
@@ -220,7 +220,7 @@ describe('Rotation', () => {
           [1, 2],
           [3, 4],
         ];
-        const rect = L.rectangle(coords).addTo(map);
+        const rect = new L.Rectangle(coords).addTo(map);
         rect.pm.rotateLayer(50);
       }).to.not.throw();
     });
@@ -233,7 +233,7 @@ describe('Rotation', () => {
         [4, 4],
       ];
 
-      const rect = L.rectangle(coords).addTo(map);
+      const rect = new L.Rectangle(coords).addTo(map);
 
       // If no rotation center is set, use the shape's center.
       const defaultCenter = rect.pm.getRotationCenter();
@@ -241,7 +241,7 @@ describe('Rotation', () => {
       expect(defaultCenter.lng).to.closeTo(2, 0.1);
 
       // Introduce a new origin of rotation
-      rect.pm.setRotationCenter(L.latLng([4, 4]));
+      rect.pm.setRotationCenter(new L.LatLng(4, 4));
       const newCenter = rect.pm.getRotationCenter();
       expect(newCenter.lat).to.closeTo(4, 0.1);
       expect(newCenter.lng).to.closeTo(4, 0.1);
@@ -277,7 +277,8 @@ describe('Rotation', () => {
 
       const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
-        return { x: point.x, y: point.y };
+        // Leaflet 2 returns fractional pixels; Leaflet 1 rounds them
+        return { x: Math.round(point.x), y: Math.round(point.y) };
       });
 
       expect(px).to.eql(expected);
@@ -332,7 +333,8 @@ describe('Rotation', () => {
       const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
-        return { x: point.x, y: point.y };
+        // Leaflet 2 returns fractional pixels; Leaflet 1 rounds them
+        return { x: Math.round(point.x), y: Math.round(point.y) };
       });
       expect(px).to.eql(expected);
     });
@@ -386,7 +388,8 @@ describe('Rotation', () => {
       const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
       const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
-        return { x: point.x, y: point.y };
+        // Leaflet 2 returns fractional pixels; Leaflet 1 rounds them
+        return { x: Math.round(point.x), y: Math.round(point.y) };
       });
       expect(px).to.eql(expected);
     });
@@ -398,7 +401,7 @@ describe('Rotation', () => {
         [1, 2],
         [3, 4],
       ];
-      const rect = L.rectangle(coords).addTo(map);
+      const rect = new L.Rectangle(coords).addTo(map);
       rect.pm.enableRotate();
 
       expect((map.pm.getGeomanLayers() as L.Polygon[]).length).to.eq(1);
@@ -411,7 +414,7 @@ describe('Rotation', () => {
         [1, 2],
         [3, 4],
       ];
-      const rect = L.rectangle(coords).addTo(map);
+      const rect = new L.Rectangle(coords).addTo(map);
       rect.pm.enableRotate();
       rect.pm.enableRotate();
 
@@ -426,12 +429,12 @@ describe('Rotation', () => {
         [1, 2],
         [3, 4],
       ];
-      L.rectangle(coords).addTo(map);
+      new L.Rectangle(coords).addTo(map);
       const coords2: L.LatLngBoundsLiteral = [
         [2, 3],
         [3, 4],
       ];
-      L.rectangle(coords2).addTo(map);
+      new L.Rectangle(coords2).addTo(map);
 
       map.pm.enableGlobalRotateMode();
       map.pm.enableGlobalRotateMode();
@@ -446,12 +449,12 @@ describe('Rotation', () => {
       const coords = JSON.parse(
         '{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.122532,51.507986],[-0.117474,51.518864],[-0.06784,51.509926],[-0.072898,51.499046],[-0.122532,51.507986]]]}}'
       );
-      const rectangle = L.rectangle([
+      const rectangle = new L.Rectangle([
         [0, 0],
         [0, 0],
       ]);
       rectangle.setLatLngs(
-        (L.geoJSON(coords).getLayers()[0] as L.Polygon).getLatLngs()
+        (new L.GeoJSON(coords).getLayers()[0] as L.Polygon).getLatLngs()
       );
       rectangle.addTo(map);
     });
@@ -481,7 +484,8 @@ describe('Rotation', () => {
 
       const px = (layer.getLatLngs() as L.LatLng[][])[0].map((latlng) => {
         const point = map.latLngToContainerPoint(latlng);
-        return { x: point.x, y: point.y };
+        // Leaflet 2 returns fractional pixels; Leaflet 1 rounds them
+        return { x: Math.round(point.x), y: Math.round(point.y) };
       });
 
       expect(px).to.eql(expected);

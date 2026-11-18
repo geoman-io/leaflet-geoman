@@ -25,7 +25,50 @@ beforeEach(() => {
     onLoad: (contentWindow) => {
       const { L } = contentWindow;
 
-      const tiles = L.tileLayer(
+      // Leaflet 2 captures the pointer on pointerdown, so moves and the
+      // release go to the pressed element, but it can't capture synthetic
+      // events. Send them to the pressed element as capture would.
+      const doc = contentWindow.document;
+      let captured: EventTarget | null = null;
+      const retargeted = new WeakSet<Event>();
+      doc.addEventListener(
+        'pointerdown',
+        (e) => {
+          if (!e.isTrusted) {
+            captured = e.target;
+          }
+        },
+        true
+      );
+      for (const type of ['pointermove', 'pointerup']) {
+        doc.addEventListener(
+          type,
+          (e) => {
+            const target = captured;
+            if (type === 'pointerup' && !retargeted.has(e)) {
+              captured = null;
+            }
+            if (
+              e.isTrusted ||
+              !target ||
+              e.target === target ||
+              retargeted.has(e)
+            ) {
+              return;
+            }
+            e.stopImmediatePropagation();
+            const copy = new contentWindow.PointerEvent(
+              type,
+              e as PointerEvent
+            );
+            retargeted.add(copy);
+            target.dispatchEvent(copy);
+          },
+          true
+        );
+      }
+
+      const tiles = new L.TileLayer(
         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         {
           attribution:
@@ -35,8 +78,7 @@ beforeEach(() => {
       );
 
       // create the map
-      const map = L.map('map', {
-        preferCanvas: false,
+      const map = new L.Map('map', {
         doubleClickZoom: false, // Leaflet 1.8 DoubleTap fix
       })
         .setView([51.505, -0.09], 13)

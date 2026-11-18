@@ -1,4 +1,6 @@
-import type { LeafletClassFactory } from '../../types/leaflet-class';
+import * as L from 'leaflet';
+import { PM } from '../PM';
+import PMClass from '../helpers/PMClass';
 import type { EditOptions } from './L.PM.Edit';
 
 /**
@@ -33,9 +35,6 @@ type PMLayer = L.Layer & {
       layerIds?: number[]
     ) => PMLayer[];
   };
-  options: L.LayerOptions & {
-    pmIgnore?: boolean;
-  };
 };
 
 /**
@@ -61,11 +60,6 @@ type ExtendedLayerGroup = L.LayerGroup & {
 /**
  * Layer event with layer
  */
-interface LayerEvent {
-  layer: PMLayer;
-  target: PMLayer;
-}
-
 /**
  * Edit LayerGroup interface
  */
@@ -95,13 +89,10 @@ export interface IEditLayerGroup {
 }
 import Edit from './L.PM.Edit';
 
-// LayerGroup doesn't inherit from L.PM.Edit because it's just calling L.PM.Edit.Polygon
-// (which inherits from L.PM.Edit) for each layer,
+// LayerGroup doesn't inherit from PM.Edit because it's just calling PM.Edit.Polygon
+// (which inherits from PM.Edit) for each layer,
 // so it's not really a parent class
-Edit.LayerGroup = (L.Class as unknown as LeafletClassFactory).extend<
-  IEditLayerGroup,
-  [L.LayerGroup]
->({
+Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
   initialize(this: IEditLayerGroup, layerGroup: L.LayerGroup) {
     this._layerGroup = layerGroup as typeof this._layerGroup;
     this._layers = this.getLayers();
@@ -114,8 +105,11 @@ Edit.LayerGroup = (L.Class as unknown as LeafletClassFactory).extend<
     // This only works for FeatureGroups, not LayerGroups
     // https://github.com/Leaflet/Leaflet/issues/4861
 
-    const addThrottle = (e: LayerEvent) => {
-      if (e.layer._pmTempLayer) {
+    // layeradd/layerremove are FeatureGroup events
+    const featureGroup = this._layerGroup as unknown as L.FeatureGroup;
+
+    const addThrottle = (e: L.LayerEvent) => {
+      if ((e.layer as PMLayer)._pmTempLayer) {
         return;
       }
       this._layers = this.getLayers();
@@ -140,30 +134,26 @@ Edit.LayerGroup = (L.Class as unknown as LeafletClassFactory).extend<
         }
       }
     };
-    this._layerGroup.on(
-      'layeradd',
-      L.Util.throttle(addThrottle, 100, this),
-      this
-    );
+    featureGroup.on('layeradd', L.Util.throttle(addThrottle, 100, this), this);
 
     // Remove the layergroup from the layer
-    this._layerGroup.on(
+    featureGroup.on(
       'layerremove',
-      (e: LayerEvent) => {
-        this._removeLayerFromGroup(e.target);
+      (e) => {
+        this._removeLayerFromGroup(e.target as PMLayer);
       },
       this
     );
 
-    const removeThrottle = (e: LayerEvent) => {
-      if (e.target._pmTempLayer) {
+    const removeThrottle = (e: L.LayerEvent) => {
+      if ((e.target as PMLayer)._pmTempLayer) {
         return;
       }
       this._layers = this.getLayers();
     };
     // if a layer is removed from the group, calc the layers list again.
     // we run this as throttle because the findLayers() is a larger function
-    this._layerGroup.on(
+    featureGroup.on(
       'layerremove',
       L.Util.throttle(removeThrottle, 100, this),
       this
@@ -310,8 +300,8 @@ Edit.LayerGroup = (L.Class as unknown as LeafletClassFactory).extend<
       // filter out everything that ignore leaflet-geoman
       layers = layers.filter(
         (layer) =>
-          (!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-          (L.PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
+          (!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+          (PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
       );
     }
     return layers;

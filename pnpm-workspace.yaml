@@ -6,3 +6,8 @@ minimumReleaseAge: 10080
 allowBuilds:
   cypress: true
   esbuild: true
+
+# Leaflet 2 betas are pinned exactly and tested here, so they can be used as
+# soon as they are published.
+minimumReleaseAgeExclude:
+  - leaflet

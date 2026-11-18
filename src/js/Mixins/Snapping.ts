@@ -1,11 +1,13 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 /**
- * Extended marker with snapping properties
+ * The dragged marker (or CircleMarker) that snaps
  */
-interface SnappableMarker extends L.Marker {
+export type SnappableMarker = (L.Marker | L.CircleMarker) & {
   _snapped?: boolean;
   _snapInfo?: SnapEventInfo;
   _orgLatLng?: L.LatLng;
-}
+};
 
 /**
  * Extended layer with PM properties
@@ -13,15 +15,11 @@ interface SnappableMarker extends L.Marker {
 interface PMLayer extends L.Layer {
   _leaflet_id?: number;
   _latlng?: L.LatLng;
-  _latlngs?: L.LatLng[] | L.LatLng[][];
+  _latlngs?: L.LatLng[] | L.LatLng[][] | L.LatLng[][][];
   _pmTempLayer?: boolean;
   _parentCopy?: L.Layer;
   pm?: {
     _hiddenPolyCircle?: L.Layer;
-  };
-  options: L.LayerOptions & {
-    snapIgnore?: boolean;
-    pmIgnore?: boolean;
   };
   getLatLng?: () => L.LatLng;
   getLatLngs?: () => L.LatLng[] | L.LatLng[][] | L.LatLng[][][];
@@ -179,7 +177,7 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
   _cleanupSnapping(e) {
     if (e) {
       // reset snap flag of the dragged helper-marker
-      const marker = e.target;
+      const marker = e.target as SnappableMarker;
       marker._snapped = false;
     }
     // delete it, we need to refresh this with each start of a drag because
@@ -356,8 +354,8 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
         // if snapIgnore === false the layer will be always snappable
         if (
           layer.options.snapIgnore === undefined &&
-          ((!L.PM.optIn && layer.options.pmIgnore === true) || // if optIn is not set and pmIgnore is true, the layer will be ignored
-            (L.PM.optIn && layer.options.pmIgnore !== false)) // if optIn is true and pmIgnore is not false, the layer will be ignored
+          ((!PM.optIn && layer.options.pmIgnore === true) || // if optIn is not set and pmIgnore is true, the layer will be ignored
+            (PM.optIn && layer.options.pmIgnore !== false)) // if optIn is true and pmIgnore is not false, the layer will be ignored
         ) {
           return;
         }
@@ -370,12 +368,12 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
         ) {
           layers.push(layer.pm._hiddenPolyCircle);
         } else if (layer instanceof L.ImageOverlay) {
-          layer = L.rectangle(layer.getBounds());
+          layer = new L.Rectangle(layer.getBounds());
         }
-        layers.push(layer);
+        layers.push(layer as PMLayer);
 
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        const debugLine = new L.Polyline([], { color: 'red', pmIgnore: true });
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
         if (layer instanceof L.Circle || layer instanceof L.CircleMarker) {
@@ -402,7 +400,7 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
     if (this._otherSnapLayers) {
       this._otherSnapLayers.forEach(() => {
         // this is for debugging
-        const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+        const debugLine = new L.Polyline([], { color: 'red', pmIgnore: true });
         debugLine._pmTempLayer = true;
         debugIndicatorLines.push(debugLine);
       });
@@ -450,7 +448,10 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
 
       if (this.debugIndicatorLines) {
         if (!this.debugIndicatorLines[index]) {
-          const debugLine = L.polyline([], { color: 'red', pmIgnore: true });
+          const debugLine = new L.Polyline([], {
+            color: 'red',
+            pmIgnore: true,
+          });
           debugLine._pmTempLayer = true;
           this.debugIndicatorLines[index] = debugLine;
         }
@@ -491,7 +492,7 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
     // return the closest layer and it's data
     // if there is no closest layer, return an empty object
     const result = this._getClosestLayerByPriority(closestLayers, amount);
-    if (L.Util.isArray(result)) {
+    if (Array.isArray(result)) {
       return result;
     }
     return [result];
@@ -672,7 +673,7 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
 
       // snap to middle (M) of segment if option is enabled
       if (this.options.snapMiddle) {
-        const M = L.PM.Utils.calcMiddleLatLng(map, A, B);
+        const M = PM.Utils.calcMiddleLatLng(map, A, B);
         const distanceMC = this._getDistance(map, M, C);
 
         if (distanceMC < distanceAC && distanceMC < distanceBC) {

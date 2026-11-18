@@ -3,19 +3,15 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Leaflet Geometry Management</title>
-    <link rel="stylesheet" href="./node_modules/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
+    <script src="node_modules/leaflet/dist/leaflet-global.js"></script>
     <link rel="stylesheet" href="dist/leaflet-geoman.css" />
-    <script src="./node_modules/leaflet/dist/leaflet-src.js"></script>
     <!--
             <script src="../../leaflet-measure-path/leaflet-measure-path.js"></script>
         -->
     <!--
             <script src="https://unpkg.com/leaflet.markercluster@1.0.0"></script>
         -->
-
-    <script src="cypress/libs/proj4-2.8.0.min.js"></script>
-    <script src="cypress/libs/proj4leaflet-1.0.2.min.js"></script>
-
     <script type="module" src="test-page.js"></script>
     <style>
       html,
@@ -44,9 +40,9 @@
       <div id="map"></div>
     </div>
     <!--
-            <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"></script>
+            <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman-global.js"></script>
 
         -->
-    <script src="dist/leaflet-geoman.js"></script>
+    <script src="dist/leaflet-geoman-global.js"></script>
   </body>
 </html>

@@ -188,9 +188,6 @@ importers:
       '@types/geojson':
         specifier: ^7946.0.16
         version: 7946.0.16
-      '@types/leaflet':
-        specifier: ^1.9.22
-        version: 1.9.22
       '@types/lodash':
         specifier: ^4.17.26
         version: 4.17.26
@@ -213,8 +210,8 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       leaflet:
-        specifier: 1.9.4
-        version: 1.9.4
+        specifier: 2.0.0-beta.4
+        version: 2.0.0-beta.4
       lint-staged:
         specifier: ^17.6.0
         version: 17.6.0
@@ -839,9 +836,6 @@ packages:
   '@types/geojson@7946.0.16':
     resolution: {integrity: sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==}
 
-  '@types/leaflet@1.9.22':
-    resolution: {integrity: sha512-h3lhECYEKDasG7LFHu+GiHqAvsgLuQvlJvVZzJDGONo3sEL+wUOqSFLnwkZlK0qVxnxbuGFW8iBlJNYs5wgndA==}
-
   '@types/lodash@4.17.26':
     resolution: {integrity: sha512-48NWfiY6oNcKOh47Z4h+sIvwcQR91h6KPhaYKgeMIrkT2jV82Gy90SErj60vW8jQbeMSOSbhIv3bZ7JoqPPVhA==}
 
@@ -1299,8 +1293,8 @@ packages:
     resolution: {integrity: sha512-gqXddjPqQ6G40VdnI6T6yObEC+pDNvyP95wdQhkWkg7crHH3km5qP1FsOXEkzEQwnz6gz5qGTn1c2Y52wP3OyQ==}
     engines: {'0': node >=0.6.0}
 
-  leaflet@1.9.4:
-    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
+  leaflet@2.0.0-beta.4:
+    resolution: {integrity: sha512-l+3bBeiDgUYGCc4ZWbmjIxfog+dgtd7cdUIINgc1MQtRuWIzxmNM+GF6TL0tA1+/oTEe+4md/neywDfNeIQLlw==}
 
   lightningcss-android-arm64@1.33.0:
     resolution: {integrity: sha512-gEpRTalKdosp4Bb8qWtc2iOgE5SeIHlpS1up9bFq2wAyYhl1UdTObYiHe98zEM9SQvSoqQZ1IQD0JNpg3Ml5pg==}
@@ -2305,10 +2299,6 @@ snapshots:
 
   '@types/geojson@7946.0.16': {}
 
-  '@types/leaflet@1.9.22':
-    dependencies:
-      '@types/geojson': 7946.0.16
-
   '@types/lodash@4.17.26': {}
 
   '@types/node@20.19.43':
@@ -2786,7 +2776,9 @@ snapshots:
       json-schema: 0.4.0
       verror: 1.10.0
 
-  leaflet@1.9.4: {}
+  leaflet@2.0.0-beta.4:
+    dependencies:
+      '@types/geojson': 7946.0.16
 
   lightningcss-android-arm64@1.33.0:
     optional: true

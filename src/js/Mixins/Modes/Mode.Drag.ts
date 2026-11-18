@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../../PM';
 /**
  * Extended layer with PM properties
  */
@@ -9,9 +11,6 @@ interface PMLayer extends L.Layer {
     options: {
       draggable?: boolean;
     };
-  };
-  options: L.LayerOptions & {
-    pmIgnore?: boolean;
   };
 }
 
@@ -46,7 +45,7 @@ export interface IGlobalDragMode {
 const GlobalDragMode = {
   _globalDragModeEnabled: false,
   enableGlobalDragMode(this: IGlobalDragMode) {
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = PM.Utils.findLayers(this.map) as PMLayer[];
 
     this._globalDragModeEnabled = true;
     this._addedLayersDrag = {};
@@ -75,7 +74,7 @@ const GlobalDragMode = {
     this._fireGlobalDragModeToggled(true);
   },
   disableGlobalDragMode(this: IGlobalDragMode) {
-    const layers = L.PM.Utils.findLayers(this.map);
+    const layers = PM.Utils.findLayers(this.map) as PMLayer[];
 
     this._globalDragModeEnabled = false;
 
@@ -116,14 +115,14 @@ const GlobalDragMode = {
     }
   },
   _layerAddedDrag(this: IGlobalDragMode, { layer }: LayerAddEvent) {
-    this._addedLayersDrag[L.stamp(layer)] = layer;
+    this._addedLayersDrag[L.Util.stamp(layer)] = layer;
   },
   _isRelevantForDrag(layer: PMLayer) {
     return (
       layer.pm &&
       !(layer instanceof L.LayerGroup) &&
-      ((!L.PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (L.PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
+      ((!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
+        (PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
       !layer._pmTempLayer &&
       layer.pm!.options.draggable
     );

@@ -1,6 +1,8 @@
-import type { PM } from 'leaflet';
+import * as L from 'leaflet';
+import PMClass from '../helpers/PMClass';
+import { PM } from '../PM';
+import type { PM as PMTypes } from '../../../leaflet-geoman';
 import type { IPMButton } from './L.Controls';
-import type { LeafletClassFactory } from '../../types/leaflet-class';
 
 /**
  * Button action definition
@@ -95,7 +97,7 @@ interface ToolbarOptions {
 
 type ToolbarOptionsInput =
   | Partial<ToolbarOptions>
-  | (PM.ToolbarOptions & { editPolygon?: boolean; deleteLayer?: boolean });
+  | (PMTypes.ToolbarOptions & { editPolygon?: boolean; deleteLayer?: boolean });
 
 /**
  * Extended map with PM
@@ -208,12 +210,7 @@ const optionText = (value: unknown): string => {
   return '';
 };
 
-L.Control.PMButton = PMButton;
-
-const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
-  IToolbar,
-  [L.Map]
->({
+const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
   options: {
     drawMarker: true,
     drawRectangle: true,
@@ -314,7 +311,7 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
     }
 
     // first set the options
-    L.Util.setOptions(this, options);
+    L.Util.setOptions(this as { options?: object }, options);
 
     this.applyIconStyle();
 
@@ -344,7 +341,7 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
     for (const name in buttons) {
       const button = buttons[name];
 
-      L.Util.setOptions(button, {
+      L.Util.setOptions(button as { options?: object }, {
         className: iconClasses.geomanIcons[name],
       });
     }
@@ -430,7 +427,7 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
     return this.buttons[toggleBtnName].toggle(status);
   },
   _defineButtons(this: IToolbar) {
-    // some buttons are still in their respective classes, like L.PM.Draw.Polygon
+    // some buttons are still in their respective classes, like PM.Draw.Polygon
     const drawMarkerButton: ToolbarButtonOptions = {
       className: 'control-icon leaflet-pm-icon-marker',
       title: getTranslation('buttonTitles.drawMarkerButton'),
@@ -656,21 +653,18 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
       actions: ['cancel'],
     };
 
-    this._addButton('drawMarker', new L.Control.PMButton(drawMarkerButton));
-    this._addButton('drawPolyline', new L.Control.PMButton(drawLineButton));
-    this._addButton('drawRectangle', new L.Control.PMButton(drawRectButton));
-    this._addButton('drawPolygon', new L.Control.PMButton(drawPolyButton));
-    this._addButton('drawCircle', new L.Control.PMButton(drawCircleButton));
-    this._addButton(
-      'drawCircleMarker',
-      new L.Control.PMButton(drawCircleMarkerButton)
-    );
-    this._addButton('drawText', new L.Control.PMButton(drawTextButton));
-    this._addButton('editMode', new L.Control.PMButton(editButton));
-    this._addButton('dragMode', new L.Control.PMButton(dragButton));
-    this._addButton('cutPolygon', new L.Control.PMButton(cutButton));
-    this._addButton('removalMode', new L.Control.PMButton(deleteButton));
-    this._addButton('rotateMode', new L.Control.PMButton(rotateButton));
+    this._addButton('drawMarker', new PMButton(drawMarkerButton));
+    this._addButton('drawPolyline', new PMButton(drawLineButton));
+    this._addButton('drawRectangle', new PMButton(drawRectButton));
+    this._addButton('drawPolygon', new PMButton(drawPolyButton));
+    this._addButton('drawCircle', new PMButton(drawCircleButton));
+    this._addButton('drawCircleMarker', new PMButton(drawCircleMarkerButton));
+    this._addButton('drawText', new PMButton(drawTextButton));
+    this._addButton('editMode', new PMButton(editButton));
+    this._addButton('dragMode', new PMButton(dragButton));
+    this._addButton('cutPolygon', new PMButton(cutButton));
+    this._addButton('removalMode', new PMButton(deleteButton));
+    this._addButton('rotateMode', new PMButton(rotateButton));
   },
 
   _showHideButtons(this: IToolbar) {
@@ -832,10 +826,7 @@ const Toolbar = (L.Class as unknown as LeafletClassFactory).extend<
       this.options[options.name] = true;
     }
 
-    const control = this._addButton(
-      options.name,
-      new L.Control.PMButton(_options)
-    );
+    const control = this._addButton(options.name, new PMButton(_options));
     this.changeControlOrder();
     return control;
   },

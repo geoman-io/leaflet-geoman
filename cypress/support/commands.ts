@@ -33,8 +33,8 @@ Cypress.Commands.add('hasLayers', (count) => {
 
 Cypress.Commands.add('hasDrawnLayers', (count) => {
   cy.window().then(({ map }) => {
-    const layerCount = Object.keys(map._layers).filter(
-      (l) => map._layers[l]._drawnByGeoman
+    const layerCount = Object.values(map._layers).filter(
+      (l) => (l as L.Layer)._drawnByGeoman
     ).length;
     cy.wrap(layerCount).should('eq', count);
   });
@@ -63,15 +63,15 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
     const locations = [];
 
     for (let i = 0; i < 3500; i += 1) {
-      locations.push(L.circleMarker(getRandomLatLng(map)));
+      locations.push(new L.CircleMarker(getRandomLatLng(map), {}));
     }
 
     for (let i = 0; i < 2500; i += 1) {
-      terminals.push(L.circleMarker(getRandomLatLng(map)));
+      terminals.push(new L.CircleMarker(getRandomLatLng(map), {}));
     }
 
-    const t = L.layerGroup(terminals).addTo(map);
-    const l = L.layerGroup(locations).addTo(map);
+    const t = new L.LayerGroup(terminals).addTo(map);
+    const l = new L.LayerGroup(locations).addTo(map);
 
     const base = {};
 
@@ -80,7 +80,7 @@ Cypress.Commands.add('testLayerAdditionPerformance', () => {
       Terminals: l,
     };
 
-    L.control.layers(base, overlays).addTo(map);
+    new L.LayersControl(base, overlays).addTo(map);
   });
 
   cy.window().then(() => {
@@ -124,7 +124,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -133,7 +133,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -142,7 +142,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
           return layer;
@@ -153,7 +153,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -163,7 +163,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.geoJson(json, { pmIgnore: ignore }).addTo(map);
+          const layer = new L.GeoJSON(json, { pmIgnore: ignore }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -173,9 +173,9 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .as('poly')
         .then((json) => {
-          const layer = L.polygon(json.data.points, { pmIgnore: ignore }).addTo(
-            map
-          );
+          const layer = new L.Polygon(json.data.points, {
+            pmIgnore: ignore,
+          }).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -186,7 +186,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
         .as('poly')
         .then((json) => {
           //
-          const layer = L.geoJSON(json).addTo(map);
+          const layer = new L.GeoJSON(json).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
         });
@@ -196,7 +196,7 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
       cy.fixture(shape)
         .then((json) => {
           //
-          const layer = L.geoJSON(json).addTo(map);
+          const layer = new L.GeoJSON(json).addTo(map);
           const bounds = layer.getBounds();
           map.fitBounds(bounds);
 
@@ -208,15 +208,14 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     if (shape === 'FeatureCollectionWithCircles') {
       cy.fixture(shape, ignore as unknown as Cypress.Timeoutable)
         .then((json) => {
-          const layer = L.geoJson(json, {
+          const layer = new L.GeoJSON(json, {
             pmIgnore: ignore,
             pointToLayer: (feature, latlng) => {
               if (feature.properties.customGeometry) {
-                return new L.Circle(
-                  latlng,
-                  feature.properties.customGeometry.radius,
-                  { pmIgnore: ignore }
-                );
+                return new L.Circle(latlng, {
+                  radius: feature.properties.customGeometry.radius,
+                  pmIgnore: ignore,
+                });
               }
               return new L.Marker(latlng, { pmIgnore: ignore });
             },
@@ -233,3 +232,29 @@ Cypress.Commands.add('drawShape', (shape, ignore) => {
     }
   });
 });
+
+// Leaflet 2 listens to pointer events. Cypress triggers them as plain
+// Events unless told otherwise, so make them mouse PointerEvents.
+Cypress.Commands.overwrite('trigger', ((
+  originalFn: (...a: unknown[]) => unknown,
+  subject: unknown,
+  eventName: string,
+  ...args: unknown[]
+) => {
+  if (!/^pointer(down|up|move|over|out)$/.test(eventName)) {
+    return originalFn(subject, eventName, ...args);
+  }
+  const pointer = {
+    eventConstructor: 'PointerEvent',
+    pointerId: 1,
+    pointerType: 'mouse',
+    isPrimary: true,
+  };
+  const last = args.at(-1);
+  if (last && typeof last === 'object') {
+    args[args.length - 1] = { ...pointer, ...last };
+  } else {
+    args.push(pointer);
+  }
+  return originalFn(subject, eventName, ...args);
+}) as never);

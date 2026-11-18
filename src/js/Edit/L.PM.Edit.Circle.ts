@@ -1,3 +1,5 @@
+import * as L from 'leaflet';
+import { PM } from '../PM';
 import type { EditOptions } from './L.PM.Edit';
 
 /**
@@ -91,7 +93,7 @@ Edit.Circle = Edit.CircleMarker.extend<IEditCircle, [L.Circle]>({
     this._updateHiddenPolyCircle();
   },
   enable(this: IEditCircle, options?: Partial<CircleEditOptions>) {
-    L.PM.Edit.CircleMarker.prototype.enable.call(this, options);
+    PM.Edit.CircleMarker.prototype.enable.call(this, options);
   },
   _extendingEnable() {},
   _extendingDisable(this: IEditCircle) {
@@ -101,7 +103,7 @@ Edit.Circle = Edit.CircleMarker.extend<IEditCircle, [L.Circle]>({
     const el = this._layer._path
       ? this._layer._path
       : this._layer._renderer._container;
-    L.DomUtil.removeClass(el, 'leaflet-pm-draggable');
+    el.classList.remove('leaflet-pm-draggable');
   },
   _extendingApplyOptions() {},
   _syncMarkers() {},
@@ -112,10 +114,10 @@ Edit.Circle = Edit.CircleMarker.extend<IEditCircle, [L.Circle]>({
     const crsSimple = this._map && this._map.pm._isCRSSimple();
     if (this._hiddenPolyCircle) {
       this._hiddenPolyCircle.setLatLngs(
-        L.PM.Utils.circleToPolygon(this._layer, 200, !crsSimple).getLatLngs()
+        PM.Utils.circleToPolygon(this._layer, 200, !crsSimple).getLatLngs()
       );
     } else {
-      this._hiddenPolyCircle = L.PM.Utils.circleToPolygon(
+      this._hiddenPolyCircle = PM.Utils.circleToPolygon(
         this._layer,
         200,
         !crsSimple
