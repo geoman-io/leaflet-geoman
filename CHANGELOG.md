@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Releasing a layer drag outside the map, or switching windows mid-drag, ends the drag and restores map panning. Ported from 2.20.8 ([#1695](https://github.com/geoman-io/leaflet-geoman/pull/1695)).
+- A layer that belongs to several groups with `syncLayersOnDrag: true` drags the layers of all of its groups, not only the last group's. A layer shared by two of those groups moves once. Ported from 2.20.8.
+- Finishing a polygon or cut with fewer than three distinct positions, a non-finite vertex, or an exactly collinear ring leaves the drawing open. Ported from 2.20.8.
 - A circle whose center is `NaN` or `Infinity` no longer throws while building its snap ring. A non-finite min radius returns the start point instead of an invalid `LatLng`.
 - Cut and containment ignore a ring that contains `NaN` or `Infinity`, instead of throwing or deleting the polygon.
 - `changeControlOrder(null)` no longer throws.

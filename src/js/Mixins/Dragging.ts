@@ -105,6 +105,7 @@ export interface DragMixinContext {
   _tempDragCoord: L.LatLng | null | undefined;
   _originalMapDragState: boolean;
   _safeToCacheDragState: boolean;
+  _outsidePointerRelease?: (event: Event) => void;
   _parentLayerGroup?: ParentLayerGroupRecord;
   options: {
     draggable?: boolean;
@@ -144,7 +145,9 @@ export interface IDragMixin {
   layerDragEnabled(): boolean;
   _simulateMouseDownEvent(e: PointerEvent): boolean;
   _simulateMouseMoveEvent(e: PointerEvent): boolean;
-  _simulateMouseUpEvent(e: PointerEvent): boolean;
+  _simulateMouseUpEvent(e: PointerEvent | FocusEvent): boolean;
+  _bindOutsidePointerRelease(): void;
+  _unbindOutsidePointerRelease(): void;
   _isDragPointer(e: PointerEvent): boolean;
   _dragPointerId?: number;
   _dragMixinOnMouseDown(e: SimulatedEvent): void;
@@ -209,8 +212,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
 
     this._originalMapDragState = this._layer._map.dragging._enabled;
 
-    // can we reliably save the map's draggable state?
-    // (if the mouse up event happens outside the container, then the map can become undraggable)
+    // A pointer release outside the map container does not reach the container
+    // listener. The document listener in _bindOutsidePointerRelease ends the
+    // drag so the map does not stay undraggable.
     this._safeToCacheDragState = true;
 
     const container = this._getDOMElem();
@@ -252,6 +256,7 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     if (this._originalMapDragState && this._dragging) {
       this._map.dragging.enable();
     }
+    this._unbindOutsidePointerRelease();
 
     // no longer save the drag state
     this._safeToCacheDragState = false;
@@ -329,17 +334,47 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     this._dragMixinOnMouseMove(evt);
     return false;
   },
+  _bindOutsidePointerRelease() {
+    if (this._outsidePointerRelease || typeof document === 'undefined') {
+      return;
+    }
+    const listener = (event: Event) => {
+      this._simulateMouseUpEvent(event as PointerEvent | FocusEvent);
+    };
+    this._outsidePointerRelease = listener;
+    document.addEventListener('pointerup', listener, true);
+    window.addEventListener('blur', listener);
+  },
+  _unbindOutsidePointerRelease() {
+    const listener = this._outsidePointerRelease;
+    this._outsidePointerRelease = undefined;
+    if (!listener || typeof document === 'undefined') {
+      return;
+    }
+    document.removeEventListener('pointerup', listener, true);
+    window.removeEventListener('blur', listener);
+  },
   _simulateMouseUpEvent(e) {
-    if (!this._isDragPointer(e)) {
+    const isPointer = e.type !== 'blur';
+    if (isPointer && !this._isDragPointer(e as PointerEvent)) {
       return false;
     }
+    // The first release unbinds the document listener; _dragMixinOnMouseUp
+    // unbinds the container one. One release ends the drag once.
+    this._unbindOutsidePointerRelease();
     const evt: SimulatedEvent = {
-      originalEvent: e,
+      originalEvent: e as PointerEvent,
       target: this._layer,
     };
-    // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.pointerEventToContainerPoint(e);
-    evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
+    if (isPointer) {
+      // we expect in the function to get the clicked latlng / point
+      evt.containerPoint = this._map.pointerEventToContainerPoint(
+        e as PointerEvent
+      );
+      evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
+    } else if (this._tempDragCoord) {
+      evt.latlng = this._tempDragCoord;
+    }
     this._dragMixinOnMouseUp(evt);
     return false;
   },
@@ -348,6 +383,9 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     if (e.originalEvent.button! > 0) {
       return;
     }
+    // End the drag even when the pointer is released outside the map. Bind
+    // before syncing, so this layer's listener runs before synced layers'.
+    this._bindOutsidePointerRelease();
     this._overwriteEventIfItComesFromMarker(e);
 
     const fromLayerSync = e._fromLayerSync;
@@ -474,6 +512,7 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
     );
 
     // clear up mouseup event
+    this._unbindOutsidePointerRelease();
     L.DomEvent.off(
       this._map.getContainer(),
       'pointerup pointercancel',
@@ -658,18 +697,20 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       } else if (this.options.syncLayersOnDrag === true) {
         // LayerGroup
         if (this._parentLayerGroup) {
+          // A layer can belong to several groups. Drag the layers of all of them.
           for (const key in this._parentLayerGroup) {
             const lg = this._parentLayerGroup[key];
             if (lg.pm) {
-              layersToSync = lg.pm.getLayers!(true);
+              layersToSync = layersToSync.concat(lg.pm.getLayers!(true));
             }
           }
         }
       }
 
       if (Array.isArray(layersToSync) && layersToSync.length > 0) {
-        // filter out layers that don't have leaflet-geoman and not allowed to drag
-        layersToSync = layersToSync
+        // filter out layers that don't have leaflet-geoman and not allowed to drag.
+        // A layer shared by two groups must move once, not once per group.
+        layersToSync = Array.from(new Set(layersToSync))
           .filter((layer) => !!layer.pm)
           .filter((layer) => !!layer.pm!.options.draggable);
         layersToSync.forEach((layer) => {

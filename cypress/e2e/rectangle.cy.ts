@@ -453,6 +453,106 @@ describe('Draw Rectangle', () => {
     });
   });
 
+  it('ends a drag released outside the map and restores map panning', () => {
+    let dragEnded = 0;
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(191, 216).click(608, 323);
+
+    cy.toolbarButton('drag').click();
+
+    const startDrag = (win: Cypress.AUTWindow) => {
+      const { map } = win;
+      const layer = map.pm.getGeomanDrawLayers()[0] as L.Rectangle;
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([300, 250]),
+      });
+      layer.pm._dragMixinOnMouseMove({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([350, 280]),
+      });
+      expect(layer.pm.dragging()).to.eq(true);
+      expect(map.dragging.enabled()).to.eq(false);
+      return layer;
+    };
+    const releaseOutside = (win: Cypress.AUTWindow) => {
+      const outside = win.document.createElement('div');
+      win.document.body.appendChild(outside);
+      outside.dispatchEvent(
+        new win.PointerEvent('pointerup', {
+          bubbles: true,
+          clientX: 5,
+          clientY: 5,
+        })
+      );
+      outside.remove();
+    };
+
+    cy.window().then((win) => {
+      const layer = startDrag(win);
+      layer.on('pm:dragend', () => {
+        dragEnded += 1;
+      });
+      releaseOutside(win);
+      // Map panning comes back on release; the drag state clears on a timeout.
+      expect(win.map.dragging.enabled()).to.eq(true);
+    });
+
+    cy.wait(50);
+
+    cy.window().then((win) => {
+      const layer = win.map.pm.getGeomanDrawLayers()[0] as L.Rectangle;
+      expect(layer.pm.dragging()).to.eq(false);
+      expect(dragEnded).to.eq(1);
+      // The listeners are gone: a later release does not end the drag again.
+      releaseOutside(win);
+    });
+
+    cy.wait(50);
+
+    // Switching to another window mid-drag also ends it.
+    cy.window().then((win) => {
+      expect(dragEnded).to.eq(1);
+      startDrag(win);
+      win.dispatchEvent(new win.FocusEvent('blur'));
+      expect(win.map.dragging.enabled()).to.eq(true);
+    });
+
+    cy.wait(50);
+
+    cy.then(() => {
+      expect(dragEnded).to.eq(2);
+    });
+  });
+
+  it('ignores a release after the map was removed mid-drag', () => {
+    cy.toolbarButton('rectangle').click();
+    cy.get(mapSelector).click(191, 216).click(608, 323);
+
+    cy.toolbarButton('drag').click();
+
+    cy.window().then((win) => {
+      const { map } = win;
+      const layer = map.pm.getGeomanDrawLayers()[0] as L.Rectangle;
+      layer.pm._dragMixinOnMouseDown({
+        originalEvent: { button: 0 },
+        target: layer,
+        latlng: map.containerPointToLatLng([300, 250]),
+      });
+      map.remove();
+      // Would throw reading the removed map pane.
+      win.document.body.dispatchEvent(
+        new win.PointerEvent('pointerup', {
+          bubbles: true,
+          clientX: 5,
+          clientY: 5,
+        })
+      );
+    });
+  });
+
   it('drags syncLayers', () => {
     cy.toolbarButton('rectangle').click();
     cy.get(mapSelector).click(191, 216).click(608, 323);

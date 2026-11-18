@@ -397,4 +397,70 @@ describe('Edit LayerGroup', () => {
       expect(center2.equals(layers[1].getCenter())).to.eq(true);
     });
   });
+
+  it('syncs drag with every group of a layer, moving shared layers once', () => {
+    let sharedDragEnds = 0;
+    cy.window().then(({ map, L }) => {
+      const rect = (x: number, y: number) =>
+        new L.Rectangle(
+          new L.LatLngBounds(
+            map.containerPointToLatLng([x, y]),
+            map.containerPointToLatLng([x + 40, y + 40])
+          )
+        );
+      // `dragged` is in both groups, and so is `shared`.
+      const dragged = rect(100, 100);
+      const onlyFirst = rect(200, 100);
+      const onlySecond = rect(300, 100);
+      const shared = rect(400, 100);
+      const outside = rect(500, 100).addTo(map);
+      const first = new L.FeatureGroup([dragged, onlyFirst, shared]).addTo(map);
+      const second = new L.FeatureGroup([dragged, onlySecond, shared]).addTo(
+        map
+      );
+      first.pm.setOptions({ syncLayersOnDrag: true });
+      second.pm.setOptions({ syncLayersOnDrag: true });
+
+      map.pm.enableGlobalDragMode();
+      shared.on('pm:dragend', () => {
+        sharedDragEnds += 1;
+      });
+
+      const before = [dragged, onlyFirst, onlySecond, shared, outside].map(
+        (layer) => map.latLngToContainerPoint(layer.getCenter())
+      );
+
+      const event = (point: [number, number]) => ({
+        originalEvent: { button: 0 },
+        target: dragged,
+        latlng: map.containerPointToLatLng(point),
+      });
+      dragged.pm._dragMixinOnMouseDown(event([120, 120]));
+      dragged.pm._dragMixinOnMouseMove(event([170, 150]));
+      dragged.pm._dragMixinOnMouseUp(event([170, 150]));
+
+      const shift = [dragged, onlyFirst, onlySecond, shared, outside].map(
+        (layer, i) =>
+          map
+            .latLngToContainerPoint(layer.getCenter())
+            .subtract(before[i])
+            .round()
+      );
+      expect(shift[0].x).to.eq(50);
+      expect(shift[0].y).to.eq(30);
+      // Each layer of either group moves by the same offset, once.
+      [shift[1], shift[2], shift[3]].forEach((s) => {
+        expect(s.x).to.eq(50);
+        expect(s.y).to.eq(30);
+      });
+      expect(shift[4].x).to.eq(0);
+      expect(shift[4].y).to.eq(0);
+    });
+
+    // pm:dragend fires on a timeout after the release.
+    cy.wait(50);
+    cy.then(() => {
+      expect(sharedDragEnds).to.eq(1);
+    });
+  });
 });
