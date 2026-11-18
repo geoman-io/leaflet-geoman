@@ -145,7 +145,7 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     );
 
     const removeThrottle = (e: L.LayerEvent) => {
-      if ((e.target as PMLayer)._pmTempLayer) {
+      if ((e.layer as PMLayer)._pmTempLayer) {
         return;
       }
       this._layers = this.getLayers();
