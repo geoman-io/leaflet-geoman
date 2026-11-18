@@ -155,7 +155,7 @@ Edit.LayerGroup = (L.Class as unknown as LeafletClassFactory).extend<
     );
 
     const removeThrottle = (e: LayerEvent) => {
-      if (e.target._pmTempLayer) {
+      if (e.layer._pmTempLayer) {
         return;
       }
       this._layers = this.getLayers();
