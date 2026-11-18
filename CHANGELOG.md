@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.8] - 2026-11-18
+
+### Fixed
+
+- Releasing a layer drag outside the map, or over an element that stops the event, ends the drag and restores map panning ([#1695](https://github.com/geoman-io/leaflet-geoman/pull/1695)).
+- A layer that belongs to several groups with `syncLayersOnDrag: true` drags the layers of all of its groups, not only the last group's. A layer shared by two of those groups moves once.
+- Finishing a polygon or cut with fewer than three distinct positions, a non-finite vertex, or an exactly collinear ring leaves the drawing open ([#1695](https://github.com/geoman-io/leaflet-geoman/pull/1695)).
+
 ## [2.20.7] - 2026-11-18
 
 ### Fixed
@@ -215,7 +223,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial tracked release
 
-[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.7...HEAD
+[Unreleased]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.8...HEAD
+[2.20.8]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.7...v2.20.8
 [2.20.7]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.6...v2.20.7
 [2.20.6]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.5...v2.20.6
 [2.20.5]: https://github.com/geoman-io/leaflet-geoman/compare/v2.20.4...v2.20.5
