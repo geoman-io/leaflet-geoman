@@ -41,6 +41,7 @@ export interface IEditImageOverlay {
   _enabled: boolean;
   _layerEdited?: boolean;
   _dragging?: boolean;
+  _disableAfterDrag?: boolean;
   _otherSnapLayers?: L.LatLng[];
   options: ImageOverlayEditOptions;
 
@@ -120,8 +121,9 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
     this._fireEnable();
   },
   disable(this: IEditImageOverlay) {
-    // prevent disabling if layer is being dragged
+    // prevent disabling if layer is being dragged; disable when the drag ends
     if (this._dragging) {
+      this._disableAfterDrag = true;
       return;
     }
 

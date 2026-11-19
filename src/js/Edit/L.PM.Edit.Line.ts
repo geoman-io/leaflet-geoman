@@ -102,6 +102,7 @@ export interface IEditLine {
   _markers: MarkerArray;
   _layerEdited?: boolean;
   _dragging?: boolean;
+  _disableAfterDrag?: boolean;
   _coordsBeforeEdit?: L.LatLng[] | L.LatLng[][] | L.LatLng[][][] | null;
   _markerAllowedToDrag?: boolean | null;
   cachedColor?: string;
@@ -292,8 +293,9 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
       return;
     }
 
-    // prevent disabling if polygon is being dragged
+    // prevent disabling if polygon is being dragged; disable when the drag ends
     if (this._dragging) {
+      this._disableAfterDrag = true;
       return;
     }
     this._enabled = false;

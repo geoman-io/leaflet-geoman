@@ -326,6 +326,77 @@ describe('Combining modes', () => {
       });
     });
 
+    it('leaves active modes on when combineModes turns off', () => {
+      // false only affects modes turned on later; nothing is turned off
+      // and no active mode is picked over another
+      cy.window().then(({ map }) => {
+        map.pm.enableGlobalEditMode();
+        map.pm.enableGlobalDragMode();
+        map.pm.setGlobalOptions({ combineModes: false });
+        expect(map.pm.unstable_activeModes()).to.have.members(['edit', 'drag']);
+      });
+      buttonOf('edit').should('have.class', 'active');
+      buttonOf('drag').should('have.class', 'active');
+      cy.window().then(({ map }) => {
+        // the next mode turned on is exclusive again
+        map.pm.enableGlobalRotateMode();
+        expect(map.pm.unstable_activeModes()).to.eql(['rotate']);
+      });
+      buttonOf('edit').should('not.have.class', 'active');
+      buttonOf('drag').should('not.have.class', 'active');
+    });
+
+    it('turns everything off cleanly on Escape during a body drag', () => {
+      const counts = (events: Record<string, unknown[] | undefined>) =>
+        Object.fromEntries(
+          Object.entries(events).map(([type, list]) => [
+            type,
+            list?.length ?? 0,
+          ])
+        );
+      type WithEvents = { _events: Record<string, unknown[] | undefined> };
+      cy.window().then(({ map }) => {
+        map.pm.setGlobalOptions({ exitModeOnEscape: true });
+        cy.wrap(counts((map as unknown as WithEvents)._events)).as('before');
+        cy.wrap(map.getCenter()).as('view');
+        map.pm.enableGlobalEditMode();
+        map.pm.enableGlobalDragMode();
+        map.pm.enableGlobalRotateMode();
+      });
+      cy.get(mapSelector).trigger('pointerdown', 300, 300, { which: 1 });
+      cy.get(mapSelector).trigger('pointermove', 320, 300, { which: 1 });
+      cy.document().trigger('keydown', { key: 'Escape', code: 'Escape' });
+      cy.get(mapSelector).trigger('pointermove', 340, 300, { which: 1 });
+      cy.get(mapSelector).trigger('pointerup', 340, 300, { which: 1 });
+      cy.wait(50);
+
+      cy.window().then(({ map }) => {
+        cy.get<L.Polygon>('@polygon').then((polygon) => {
+          expect(map.pm.unstable_activeModes()).to.eql([]);
+          // edit turns off when the drag ends instead of staying on
+          expect(polygon.pm.enabled()).to.eq(false);
+          expect(polygon.pm.layerDragEnabled()).to.eq(false);
+          expect(polygon.pm.rotateEnabled()).to.eq(false);
+          expect(map.dragging.enabled()).to.eq(true);
+          // the drag itself finished, and moved the layer, not the map
+          expect(vertices(map, polygon)[0]).to.eql({ x: 240, y: 200 });
+          cy.get<L.LatLng>('@view').then((view) => {
+            expect(map.getCenter().equals(view)).to.eq(true);
+          });
+          cy.get<Record<string, number>>('@before').then((before) => {
+            const after = counts((map as unknown as WithEvents)._events);
+            for (const type of new Set([
+              ...Object.keys(before),
+              ...Object.keys(after),
+            ])) {
+              expect(after[type] ?? 0, type).to.eq(before[type] ?? 0);
+            }
+          });
+        });
+      });
+      cy.get('.marker-icon').should('not.exist');
+    });
+
     it('keeps a marker draggable while edit or drag mode is still on', () => {
       cy.window().then(({ map, L }) => {
         const marker = new L.Marker(

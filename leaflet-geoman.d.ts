@@ -614,7 +614,7 @@ export declare namespace PM {
     /** Enable finishing drawing shapes (Line, Polygon, Cut) by pressing the Enter key when enough vertices are placed. Default: false */
     finishOnEnter?: boolean;
 
-    /** Let edit, drag and rotate mode be on at the same time, globally and per layer, instead of each turning the others off. Default: false */
+    /** Let edit, drag and rotate mode be on at the same time, globally and per layer, instead of each turning the others off. Setting it to false affects only modes turned on afterwards. Default: false */
     combineModes?: boolean;
   }
 

@@ -121,6 +121,7 @@ export interface DragMixinContext {
   _layerDragged: boolean;
   _layerEdited: boolean;
   _dragging: boolean;
+  _disableAfterDrag?: boolean;
   _tempDragCoord: L.LatLng | null | undefined;
   options: {
     draggable?: boolean;
@@ -450,6 +451,11 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       // fire edit
       this._fireEdit();
       this._layerEdited = true;
+      // edit was turned off during the drag, such as by Escape
+      if (this._disableAfterDrag) {
+        this._disableAfterDrag = false;
+        this.disable();
+      }
       this._syncInteractions('drag');
     }, 10);
 
