@@ -161,6 +161,10 @@ export interface IEditCircleMarker {
   _fireDisable(): void;
   _fireUpdate(): void;
   _fireEdit(): void;
+  _syncInteractions(changedBy: 'edit'): void;
+  _hideEditHelpers(): void;
+  _editDrags(): boolean;
+  _refreshEditHelpers(): void;
   _fireChange(latlng: L.LatLng, source: string): void;
   _fireCenterPlaced(source: string): void;
   _fireRemove(layerOrMap: L.Layer | L.Map, layer?: L.Layer): void;
@@ -318,6 +322,19 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
       this.enable(options);
     } else {
       this.disable();
+    }
+  },
+  _editDrags(this: IEditCircleMarker) {
+    return !this.options[this._editableOption] && !!this.options.draggable;
+  },
+  _hideEditHelpers(this: IEditCircleMarker) {
+    if (this.options[this._editableOption]) {
+      this._helperLayers?.removeFrom(this._map);
+    }
+  },
+  _refreshEditHelpers(this: IEditCircleMarker) {
+    if (this.options[this._editableOption]) {
+      this.applyOptions();
     }
   },
   applyOptions(this: IEditCircleMarker) {
@@ -563,6 +580,7 @@ Edit.CircleMarker = Edit.extend<IEditCircleMarker, [L.CircleMarker]>({
     if (this.options[this._editableOption]) {
       this._fireEdit();
       this._layerEdited = true;
+      this._syncInteractions('edit');
     }
     this._fireMarkerDragEnd(e);
   },

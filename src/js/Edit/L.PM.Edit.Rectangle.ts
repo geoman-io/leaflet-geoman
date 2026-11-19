@@ -95,6 +95,7 @@ export interface IEditRectangle {
     intersectionReset?: boolean
   ): void;
   _fireEdit(): void;
+  _syncInteractions(changedBy: 'edit'): void;
   _fireChange(
     latlngs: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
     source: string
@@ -277,6 +278,7 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
 
     // fire edit event
     this._fireEdit();
+    this._syncInteractions('edit');
     this._layerEdited = true;
     this._fireChange(this._layer.getLatLngs(), 'Edit');
   },

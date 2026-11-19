@@ -105,6 +105,7 @@ interface LegacyGlobalOptions {
   resizeableCircle?: boolean;
   exitModeOnEscape?: boolean;
   finishOnEnter?: boolean;
+  combineModes?: boolean;
 }
 
 export interface DrawOptions

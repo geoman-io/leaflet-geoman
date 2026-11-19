@@ -41,6 +41,7 @@ export interface IEditImageOverlay {
   _enabled: boolean;
   _layerEdited?: boolean;
   _dragging?: boolean;
+  _disableAfterDrag?: boolean;
   _otherSnapLayers?: L.LatLng[];
   options: ImageOverlayEditOptions;
 
@@ -48,6 +49,7 @@ export interface IEditImageOverlay {
   toggleEdit(options?: Partial<ImageOverlayEditOptions>): void;
   enabled(): boolean;
   enable(options?: Partial<ImageOverlayEditOptions>): void;
+  _editDrags(): boolean;
   disable(): void;
   _findCorners(): L.LatLng[];
 
@@ -78,6 +80,9 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
   },
   enabled(this: IEditImageOverlay) {
     return this._enabled;
+  },
+  _editDrags() {
+    return true;
   },
   enable(this: IEditImageOverlay, options?: Partial<ImageOverlayEditOptions>) {
     // No argument keeps the layer's current options (#1113).
@@ -116,8 +121,9 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
     this._fireEnable();
   },
   disable(this: IEditImageOverlay) {
-    // prevent disabling if layer is being dragged
+    // prevent disabling if layer is being dragged; disable when the drag ends
     if (this._dragging) {
+      this._disableAfterDrag = true;
       return;
     }
 

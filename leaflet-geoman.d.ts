@@ -263,10 +263,17 @@ export declare namespace PM {
      * Unstable, for `@geoman-io` packages: no semver guarantee.
      * Registers a map mode so it is exclusive with the built-in modes and exits on Escape.
      * Returns the function the mode calls when it turns on; it turns every other active mode off.
+     * With `combineModes`, a mode that declares `targets` stays on next to a mode whose targets don't overlap,
+     * such as `vertex` (edit), `body` (drag) and `rotate-handle` (rotate). `button` names its toolbar button.
      */
     unstable_registerMode(
       name: string,
-      mode: { enabled(): boolean; disable(): void }
+      mode: {
+        enabled(): boolean;
+        disable(): void;
+        targets?: string[];
+        button?: string;
+      }
     ): () => void;
 
     /** Unstable, for `@geoman-io` packages: no semver guarantee. Names of the active modes, such as `edit` or `draw:Polygon`. */
@@ -606,6 +613,9 @@ export declare namespace PM {
 
     /** Enable finishing drawing shapes (Line, Polygon, Cut) by pressing the Enter key when enough vertices are placed. Default: false */
     finishOnEnter?: boolean;
+
+    /** Let edit, drag and rotate mode be on at the same time, globally and per layer, instead of each turning the others off. Setting it to false affects only modes turned on afterwards. Default: false */
+    combineModes?: boolean;
   }
 
   interface PMDrawMap {

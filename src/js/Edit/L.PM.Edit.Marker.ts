@@ -59,6 +59,7 @@ export interface IEditMarker {
   enabled(): boolean;
   toggleEdit(options?: Partial<MarkerEditOptions>): void;
   applyOptions(): void;
+  _editDrags(): boolean;
   _removeMarker(e: L.LeafletPointerEvent & { target: L.Marker }): void;
   _onDragStart(): void;
   _onMarkerDragEnd(): void;
@@ -150,6 +151,9 @@ Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
     } else {
       this.disable();
     }
+  },
+  _editDrags(this: IEditMarker) {
+    return !!this.options.draggable;
   },
   applyOptions(this: IEditMarker) {
     if (this.options.snappable) {

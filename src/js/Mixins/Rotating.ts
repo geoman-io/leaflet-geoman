@@ -36,6 +36,8 @@ interface RotationLayerPM {
   disable: () => void;
   enabled: () => boolean;
   _initMarkers: () => void;
+  _suspendInteractions: (changedBy: 'rotate') => void;
+  _syncInteractions: (changedBy: 'rotate') => void;
   _rotationLayer: RotatableLayer;
   getAngle: () => number;
 }
@@ -112,6 +114,7 @@ export interface RotateMixinContext {
     source: string
   ) => void;
   _fireEdit: (layer: L.Layer, source: string) => void;
+  _syncInteractions: (changedBy: 'rotate') => void;
 }
 
 /**
@@ -123,6 +126,7 @@ export interface IRotateMixin {
   _onRotateEnd(): void;
   _initRotateHandle(): void;
   _removeRotateHandle(): void;
+  _syncRotation(): void;
   _updateRotateHandle(): void;
   _updateRotateStem(): void;
   _rotateLayer(
@@ -183,6 +187,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
 
       this._fireRotationStart(this._rotationLayer, originLatLngs);
       this._fireRotationStart(this._map, originLatLngs);
+      this._rotationLayer.pm._suspendInteractions('rotate');
     },
     _onRotate(e) {
       const position = _toPoint(this._map, e.target.getLatLng());
@@ -252,6 +257,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
       this._fireRotationEnd(this._rotationLayer, startAngle, originLatLngs);
       this._fireRotationEnd(this._map, startAngle, originLatLngs);
       this._rotationLayer.pm._fireEdit(this._rotationLayer, 'Rotation');
+      this._rotationLayer.pm._syncInteractions('rotate');
 
       this._preventRenderingMarkers(false);
 
@@ -321,6 +327,18 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
         )
       );
       this._updateRotateStem();
+    },
+    // Another interaction moved or reshaped the layer. Rotation restarts from
+    // the new coordinates and, unless one was set, the new center.
+    _syncRotation() {
+      const poly = this._rotatePoly;
+      if (!poly) {
+        return;
+      }
+      poly.setLatLngs(this._layer.getLatLngs());
+      this._rotateOrgLatLng = copyLatLngs(this._layer);
+      poly.pm.setRotationCenter(this._getRotationCenter());
+      poly.pm._initMarkers();
     },
     _updateRotateStem() {
       if (this._rotateHandle && this._rotateStem) {
@@ -528,6 +546,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
       );
       delete this._startAngle;
       this._fireChange(this._layer.getLatLngs(), 'Rotation');
+      this._syncInteractions('rotate');
     },
     rotateLayerToAngle(degrees) {
       const newAnlge = degrees - this.getAngle();

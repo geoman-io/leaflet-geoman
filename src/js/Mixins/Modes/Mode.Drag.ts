@@ -8,6 +8,8 @@ interface PMLayer extends L.Layer {
   pm?: {
     enableLayerDrag: () => void;
     disableLayerDrag: () => void;
+    enabled: () => boolean;
+    _editDrags: () => boolean;
     options: {
       draggable?: boolean;
     };
@@ -29,7 +31,10 @@ export interface IGlobalDragMode {
   _globalDragModeEnabled: boolean;
   _addedLayersDrag: Record<number, PMLayer>;
   throttledReInitDrag?: (e: LayerAddEvent) => void;
-  _modes: { _exclusive(name: string): void };
+  _modes: {
+    _exclusive(name: string): void;
+    combines(a: string, b: string): boolean;
+  };
   Toolbar: {
     toggleButton: (name: string, enabled: boolean) => void;
   };
@@ -80,8 +85,13 @@ const GlobalDragMode = {
 
     this._globalDragModeEnabled = false;
 
+    const editKeepsDrag = this._modes.combines('drag', 'edit');
     layers.forEach((layer: PMLayer) => {
       layer.pm!.disableLayerDrag();
+      // Edit mode drags markers itself; it is still on for them.
+      if (editKeepsDrag && layer.pm!.enabled() && layer.pm!._editDrags()) {
+        layer.pm!.enableLayerDrag();
+      }
     });
 
     // remove map handler
