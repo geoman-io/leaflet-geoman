@@ -344,8 +344,23 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       const resultingLayer = (resultLayer as CutResultLayer).addTo(
         this._map.pm._getContainingLayer()
       );
-      // give the new layer the original options
-      resultingLayer.pm.enable(l.pm.options);
+      // Give the new layer the original options. Only the options the original
+      // layer set itself stay its own, so later global options still reach
+      // the rest (#1113).
+      const copyOptions = (target: L.Layer) => {
+        if (target instanceof L.LayerGroup) {
+          target.getLayers().forEach(copyOptions);
+          return;
+        }
+        const pm = (target as CutResultLayer).pm;
+        const own = (l.pm as { _ownOptions?: object })._ownOptions;
+        pm._applyOptions(l.pm.options);
+        if (own) {
+          pm.setOptions(own);
+        }
+      };
+      copyOptions(resultingLayer);
+      resultingLayer.pm.enable();
       resultingLayer.pm.disable();
 
       // add templayer prop so pm:remove isn't fired
@@ -364,7 +379,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       }
 
       if (resultingLayer instanceof L.LayerGroup) {
-        resultingLayer.eachLayer((_layer) => {
+        resultingLayer.eachLayer((_layer: L.Layer) => {
           this._addDrawnLayerProp(_layer);
         });
         this._addDrawnLayerProp(resultingLayer);
@@ -457,6 +472,8 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
 });
 
 type CutResultLayer = L.Layer & {
-  pm: Pick<L.Polyline['pm'], 'enable' | 'disable'>;
+  pm: Pick<L.Polyline['pm'], 'enable' | 'disable' | 'setOptions'> & {
+    _applyOptions(options: object): void;
+  };
   getLayers?: () => L.Layer[];
 };

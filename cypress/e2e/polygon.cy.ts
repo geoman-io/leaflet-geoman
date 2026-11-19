@@ -606,6 +606,43 @@ describe('Draw & Edit Poly', () => {
     cy.get(mapSelector).click(450, 100);
   });
 
+  it('lets global options reach a cut result, but keeps its own options', () => {
+    let result: L.Polygon | undefined;
+    cy.window().then(({ map }) => {
+      map.on('pm:cut', (e) => {
+        result = (e as unknown as { layer: L.Polygon }).layer;
+      });
+      map.on('pm:create', (e) => {
+        (e as unknown as { layer: L.Polygon }).layer.pm.setOptions({
+          allowRotation: false,
+        });
+      });
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.get(mapSelector).click(90, 250);
+    cy.get(mapSelector).click(150, 50);
+    cy.get(mapSelector).click(500, 50);
+    cy.get(mapSelector).click(500, 300);
+    cy.get(mapSelector).click(300, 350);
+    cy.get(mapSelector).click(90, 250);
+
+    cy.toolbarButton('cut').click();
+    cy.get(mapSelector).click(450, 100);
+    cy.get(mapSelector).click(450, 150);
+    cy.get(mapSelector).click(400, 150);
+    cy.get(mapSelector).click(390, 140);
+    cy.get(mapSelector).click(390, 100);
+    cy.get(mapSelector).click(450, 100);
+
+    cy.window().then(({ map }) => {
+      expect(result).to.not.equal(undefined);
+      map.pm.setGlobalOptions({ snappable: false, allowRotation: true });
+      expect(result!.pm.options.snappable).to.equal(false);
+      expect(result!.pm.options.allowRotation).to.equal(false);
+    });
+  });
+
   it('draws a polygon with a hole', () => {
     // activate polygon drawing
     cy.toolbarButton('polygon').click();

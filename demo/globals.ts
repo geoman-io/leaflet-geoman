@@ -53,9 +53,6 @@ declare module '../leaflet-geoman' {
       PolygonCopy: DrawShape;
       RectangleCopy: DrawShape;
     }
-    interface DrawModeOptions {
-      finishOnDoubleClick?: boolean;
-    }
     interface PMMap {
       globalOptions: import('../src/js/L.PM.Map').GlobalOptions;
       _getContainingLayer(): L.LayerGroup | L.Map;

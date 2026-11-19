@@ -29,6 +29,7 @@ import Draw from './Draw/L.PM.Draw';
 import Edit from './Edit/L.PM.Edit';
 import Matrix from './helpers/Matrix';
 import Utils from './L.PM.Utils';
+import { setOptionClasses } from './helpers/options';
 
 /** The Leaflet-Geoman namespace, `L.PM` in the global build. */
 export const PM: LeafletPM = {
@@ -42,6 +43,12 @@ export const PM: LeafletPM = {
   activeLang: 'en',
   optIn: false,
   initialize(this: LeafletPM, options?: object) {
+    setOptionClasses(() => [
+      PM.Draw,
+      PM.Edit,
+      ...Object.values(PM.Draw),
+      ...Object.values(PM.Edit),
+    ]);
     this.addInitHooks(options);
   },
   setOptIn(this: LeafletPM, value: boolean) {

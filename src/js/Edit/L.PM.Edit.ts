@@ -1,6 +1,7 @@
 import * as L from 'leaflet';
 import { PM } from '../PM';
 import PMClass from '../helpers/PMClass';
+import { checkOptions } from '../helpers/options';
 import type { Inherit, MixinMembers } from '../../types/leaflet-class';
 import type {
   LeafletClass,
@@ -129,7 +130,8 @@ const Edit = PMClass.extend<
     snapMiddle: false,
     snapVertex: true,
   },
-  setOptions(this: IEdit, options: EditOptions) {
+  setOptions(this: IEdit, o: EditOptions) {
+    const options = checkOptions(o, 'layer.pm.setOptions()');
     // Only an explicit setOptions/enable(options) is a lock. Global enable and
     // draw finish must not store those values as the layer's own choice.
     if (options && Object.keys(options).length) {
@@ -143,6 +145,9 @@ const Edit = PMClass.extend<
   _applyOptions(this: IEdit, options?: EditOptions) {
     L.Util.setOptions(this, options);
   },
+  // Resolves the layer's options as defaults < `options` (the map's global
+  // options) < the layer's own setOptions. Re-applying the own options also
+  // replaces values that enableGlobalEditMode(options) set earlier.
   _applyInheritedOptions(this: IEdit, options?: EditOptions) {
     if (!options) return;
     const own = this._ownOptions || {};
@@ -152,9 +157,7 @@ const Edit = PMClass.extend<
         inherited[key] = options[key];
       }
     }
-    if (Object.keys(inherited).length) {
-      this._applyOptions(inherited);
-    }
+    this._applyOptions({ ...inherited, ...own });
   },
   getOptions(this: IEdit) {
     return this.options;

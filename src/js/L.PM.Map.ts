@@ -38,7 +38,7 @@ interface PMLayer extends L.Layer {
   pm: {
     enabled: () => boolean;
     setOptions: (options: EditOptions) => void;
-    _applyOptions: (options: EditOptions) => void;
+    _applyInheritedOptions: (options: EditOptions) => void;
     applyOptions: () => void;
   };
   _drawnByGeoman?: boolean;
@@ -122,8 +122,7 @@ export interface IMapPM {
     translation: unknown
   ) => void;
 }
-import merge from 'lodash/merge';
-import mergeWith from 'lodash/mergeWith';
+import { checkOptions, mergeOptions } from './helpers/options';
 import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
@@ -272,7 +271,10 @@ const Map = PMClass.extend<
     if (override) {
       // Merge into a new object; merging into translations[fallback] would
       // overwrite the built-in fallback language with the override.
-      translations[lang] = merge({}, translations[fallback], override);
+      translations[lang] = mergeOptions(
+        mergeOptions({}, translations[fallback]),
+        override
+      );
     }
 
     PM.activeLang = lang;
@@ -359,10 +361,11 @@ const Map = PMClass.extend<
     return this.globalOptions;
   },
   setGlobalOptions(this: IMapPM, o: Partial<GlobalOptions>) {
-    // merge passed and existing options. Arrays such as snappingOrder replace
-    // the old value; lodash merge would combine them index by index.
-    const options = mergeWith(this.globalOptions, o, (_old, value) =>
-      Array.isArray(value) ? [...value] : undefined
+    // Merge into the stored options. Arrays such as snappingOrder replace the
+    // old value, and the caller's nested objects are copied.
+    const options = mergeOptions(
+      this.globalOptions,
+      checkOptions(o, 'setGlobalOptions()')
     );
 
     // TODO: remove with next major release
@@ -408,9 +411,9 @@ const Map = PMClass.extend<
     // enable options for Editing
     const layers = PM.Utils.findLayers(this.map);
     (layers as PMLayer[]).forEach((layer) => {
-      // Apply to layers on the map now. Do not record this as the layer's own
-      // choice, or a later global change is ignored when the layer is re-added.
-      layer.pm._applyOptions(options);
+      // Fill only the keys the layer has not set itself (#1113), and do not
+      // record them as its own choice.
+      layer.pm._applyInheritedOptions(options);
     });
 
     this.map.fire('pm:globaloptionschanged');

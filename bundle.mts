@@ -31,6 +31,8 @@ const buildOptions: esbuild.BuildOptions = {
   },
   outfile: './dist/leaflet-geoman.js',
   sourcemap: true,
+  // Left for the app's bundler, which sets it for development or production
+  define: { 'process.env.NODE_ENV': 'process.env.NODE_ENV' },
 };
 
 // Resolves 'leaflet' to the global `L` of Leaflet's leaflet-global.js
@@ -55,6 +57,8 @@ const globalOptions: esbuild.BuildOptions = {
   format: 'iife',
   external: [],
   outfile: './dist/leaflet-geoman-global.js',
+  // esbuild's default: development for the .js, production for the .min.js
+  define: {},
 };
 
 // Keep demo script URLs and classic-script globals unchanged. Their sources

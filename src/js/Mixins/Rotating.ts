@@ -138,6 +138,10 @@ export interface IRotateMixin {
 import get from 'lodash/get';
 import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
 import { calcAngle, copyLatLngs } from '../helpers';
+import { addKnownOptions } from '../helpers/options';
+
+// Set on the hidden rotation polygon only.
+addKnownOptions(['rotate']);
 
 /**
  * We create a temporary polygon with the same latlngs as the layer that we want to rotate.
