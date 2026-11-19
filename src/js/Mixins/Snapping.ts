@@ -45,7 +45,6 @@ interface SnapEventInfo {
  */
 interface ClosestLayerResult {
   latlng?: L.LatLngLiteral;
-  _leaflet_id?: number;
   segment?: [L.LatLng, L.LatLng];
   distance?: number;
   layer?: PMLayer;
@@ -612,9 +611,10 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
   },
   _getClosestLayerByPriority(layers, amount = 1) {
     // sort the layers by creation, so it is snapping to the oldest layer from the same shape
+    // The layer id lives on the layer, not on the distance result.
     layers = layers.sort(
       (a: ClosestLayerResult, b: ClosestLayerResult) =>
-        a._leaflet_id! - b._leaflet_id!
+        L.Util.stamp(a.layer!) - L.Util.stamp(b.layer!)
     );
 
     const shapes = [

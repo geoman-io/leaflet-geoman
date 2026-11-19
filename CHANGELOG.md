@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `setLang(lang, override, fallback)` no longer overwrites the fallback language with the override, so switching back to the fallback shows its built-in text.
+- `setGlobalOptions` replaces array options such as `snappingOrder` instead of merging them index by index.
+- When several layers are equally close, snapping prefers the oldest layer again; the sort read an id that the distance result never had.
+- A layer added to a group just before a temporary Geoman layer gets its group reference, so `syncLayersOnDrag: true` moves it with the group.
+- `pm:*` events reach the groups a layer belongs to right after it changes groups, instead of the groups cached up to one second earlier.
 - Releasing a layer drag outside the map, or switching windows mid-drag, ends the drag and restores map panning. Ported from 2.20.8 ([#1695](https://github.com/geoman-io/leaflet-geoman/pull/1695)).
 - A layer that belongs to several groups with `syncLayersOnDrag: true` drags the layers of all of its groups, not only the last group's. A layer shared by two of those groups moves once. Ported from 2.20.8.
 - Finishing a polygon or cut with fewer than three distinct positions, a non-finite vertex, or an exactly collinear ring leaves the drawing open. Ported from 2.20.8.
