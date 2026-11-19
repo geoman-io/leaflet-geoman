@@ -177,8 +177,122 @@ describe('Layer drag', () => {
         expect(count(log, `${i}:pm:dragstart`)).to.eq(1);
         expect(count(log, `${i}:pm:dragend`)).to.eq(1);
         expect(count(log, `${i}:pm:edit`)).to.eq(1);
-        expect(count(log, `${i}:pm:drag`)).to.be.at.least(3);
+        expect(count(log, `${i}:pm:drag`)).to.eq(3);
       });
+    });
+  });
+
+  it('fires each synced layer drag event once per move, pressed layer first', () => {
+    let log: string[];
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const made = polygons(win, 3);
+      log = made.log;
+      map.pm.setGlobalOptions({ syncLayersOnDrag: true });
+      map.pm.enableGlobalDragMode();
+      const c = map.getContainer();
+      pathOf(made.layers[1]).dispatchEvent(
+        pointer(win, 'pointerdown', 205, 175)
+      );
+      c.dispatchEvent(pointer(win, 'pointermove', 215, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 225, 175));
+      c.dispatchEvent(pointer(win, 'pointerup', 225, 175));
+      [0, 1, 2].forEach((i) => {
+        expect(count(log, `${i}:pm:drag`)).to.eq(2);
+        expect(count(log, `${i}:pm:change`)).to.eq(2);
+      });
+    });
+    cy.wait(50);
+    cy.wrap(null).then(() => {
+      expect(log.filter((l) => !/pm:(drag|change)$/.test(l))).to.deep.eq([
+        '1:pm:dragstart',
+        '0:pm:dragstart',
+        '2:pm:dragstart',
+        '1:pm:dragend',
+        '1:pm:edit',
+        '0:pm:dragend',
+        '0:pm:edit',
+        '2:pm:dragend',
+        '2:pm:edit',
+      ]);
+    });
+  });
+
+  it('ends a drag released outside the map after drag mode was turned off mid-drag', () => {
+    let log: string[];
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const made = polygons(win, 1);
+      log = made.log;
+      map.pm.enableGlobalDragMode();
+      const c = map.getContainer();
+      pathOf(made.layers[0]).dispatchEvent(
+        pointer(win, 'pointerdown', 125, 175)
+      );
+      c.dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      map.pm.disableGlobalDragMode();
+      win.document.body.dispatchEvent(pointer(win, 'pointerup', -50, -50));
+      const center = made.layers[0].getCenter();
+      c.dispatchEvent(pointer(win, 'pointermove', 300, 300));
+      expect(made.layers[0].getCenter().equals(center)).to.eq(true);
+    });
+    cy.wait(50);
+    cy.wrap(null).then(() => {
+      expect(count(log, '0:pm:dragend')).to.eq(1);
+    });
+  });
+
+  it('ends the drag of a layer that a new press does not restart', () => {
+    let log: string[];
+    let layers: L.Polygon[];
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const made = polygons(win, 2);
+      ({ log, layers } = made);
+      // Only the first layer syncs the group.
+      layers[0].pm.setOptions({ syncLayersOnDrag: true });
+      map.pm.enableGlobalDragMode();
+      const c = map.getContainer();
+      pathOf(layers[0]).dispatchEvent(pointer(win, 'pointerdown', 125, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      // A second press on the other layer before the first is released.
+      pathOf(layers[1]).dispatchEvent(pointer(win, 'pointerdown', 215, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 225, 175));
+      c.dispatchEvent(pointer(win, 'pointerup', 225, 175));
+      expect(map.dragging.enabled()).to.eq(true);
+    });
+    cy.wait(50);
+    cy.wrap(null).then(() => {
+      expect(count(log, '0:pm:dragend')).to.eq(1);
+      expect(count(log, '1:pm:dragend')).to.eq(1);
+      expect(layers[0].pm.dragging()).to.eq(false);
+      expect(layers[1].pm.dragging()).to.eq(false);
+    });
+  });
+
+  it('drags two unrelated layers with two fingers independently', () => {
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const { layers } = polygons(win, 2);
+      map.pm.enableGlobalDragMode();
+      const before = layers.map((l) => l.getCenter());
+      const c = map.getContainer();
+      const second = { pointerId: 2, isPrimary: false };
+      pathOf(layers[0]).dispatchEvent(pointer(win, 'pointerdown', 125, 175));
+      pathOf(layers[1]).dispatchEvent(
+        pointer(win, 'pointerdown', 205, 175, second)
+      );
+      c.dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 205, 195, second));
+      c.dispatchEvent(pointer(win, 'pointerup', 135, 175));
+      c.dispatchEvent(pointer(win, 'pointerup', 205, 195, second));
+      expect(movedPx(map, layers[0], before[0])).to.deep.eq([10, 0]);
+      expect(movedPx(map, layers[1], before[1])).to.deep.eq([0, 20]);
+      expect(map.dragging.enabled()).to.eq(true);
     });
   });
 

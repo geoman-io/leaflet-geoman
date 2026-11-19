@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `setPathOptions(style, { merge: true })` builds a new style object instead of changing the one passed to an earlier `setPathOptions` or `setGlobalOptions({ pathOptions })`. So it no longer changes `getGlobalOptions().pathOptions`, and a later `setGlobalOptions` call puts the global `pathOptions` back on the draw tools.
 - Custom event payload keys replace the built-in ones instead of being deep-merged into them, so a nested custom value can't be written into the layer or map an event refers to.
 - lodash `merge` and `mergeWith` are no longer used.
+- Layer drag runs as one map-level drag session for the pressed layer and the layers synced with it, instead of each layer binding its own listeners and replaying the pointer into the others. With `syncLayersOnDrag`, each layer now fires `pm:drag` and `pm:change` once per pointer move; before, every synced layer fired them once per synced layer on each move (9 events per layer for 3 moves of 3 layers, now 3). `pm:dragstart`, `pm:dragend` and `pm:edit` fire for the pressed layer first, then for the synced layers in group order. Dragging 50 synced layers is about 40× faster.
+- Multi-touch: when a second finger presses a layer that is already moving as part of another layer's synced drag, that earlier drag ends (`pm:dragend` and `pm:edit` fire) and the pressed layer, with its own synced layers, follows the second finger. Before, the earlier drag kept following the first finger and the pressed layer was moved by both fingers. Two fingers on two unrelated layers still drag them independently.
 
 ### Fixed
 
