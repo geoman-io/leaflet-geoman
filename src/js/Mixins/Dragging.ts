@@ -82,8 +82,26 @@ interface LatLngWithAlt {
 /**
  * Parent layer group record
  */
-interface ParentLayerGroupRecord {
-  [key: string]: L.LayerGroup & { pm?: LayerPM };
+type ParentGroup = L.LayerGroup & { pm?: LayerPM };
+
+/**
+ * The groups that directly contain a layer, read from Leaflet each time:
+ * FeatureGroups register themselves as event parents, and plain LayerGroups on
+ * the map are checked with hasLayer.
+ */
+function getParentGroups(layer: L.Layer, map?: L.Map): ParentGroup[] {
+  const parents = new Set<ParentGroup>(
+    Object.values(
+      (layer as { _eventParents?: Record<string, L.Evented> })._eventParents ||
+        {}
+    ).filter((p): p is ParentGroup => p instanceof L.LayerGroup)
+  );
+  map?.eachLayer((candidate) => {
+    if (candidate instanceof L.LayerGroup && candidate.hasLayer(layer)) {
+      parents.add(candidate as ParentGroup);
+    }
+  });
+  return [...parents];
 }
 
 /**
@@ -106,7 +124,7 @@ export interface DragMixinContext {
   _originalMapDragState: boolean;
   _safeToCacheDragState: boolean;
   _outsidePointerRelease?: (event: Event) => void;
-  _parentLayerGroup?: ParentLayerGroupRecord;
+  _dragParentGroups?: ParentGroup[];
   options: {
     draggable?: boolean;
     snappable?: boolean;
@@ -695,16 +713,20 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
           }
         });
       } else if (this.options.syncLayersOnDrag === true) {
-        // LayerGroup
-        if (this._parentLayerGroup) {
-          // A layer can belong to several groups. Drag the layers of all of them.
-          for (const key in this._parentLayerGroup) {
-            const lg = this._parentLayerGroup[key];
-            if (lg.pm) {
-              layersToSync = layersToSync.concat(lg.pm.getLayers!(true));
-            }
-          }
+        // A layer can belong to several groups. Drag the layers of all of them.
+        // Resolve the groups once per drag; move and up reuse them.
+        if (fnc === '_dragMixinOnMouseDown' || !this._dragParentGroups) {
+          this._dragParentGroups = getParentGroups(this._layer, this._map);
         }
+        const parents = this._dragParentGroups;
+        if (fnc === '_dragMixinOnMouseUp') {
+          this._dragParentGroups = undefined;
+        }
+        parents.forEach((lg) => {
+          if (lg.pm) {
+            layersToSync = layersToSync.concat(lg.pm.getLayers!(true));
+          }
+        });
       }
 
       if (Array.isArray(layersToSync) && layersToSync.length > 0) {
