@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Layer drag runs as one map-level drag session for the pressed layer and the layers synced with it, instead of each layer binding its own listeners and replaying the pointer into the others. With `syncLayersOnDrag`, each layer now fires `pm:drag` and `pm:change` once per pointer move; before, every synced layer fired them once per synced layer on each move (9 events per layer for 3 moves of 3 layers, now 3). `pm:dragstart`, `pm:dragend` and `pm:edit` fire for the pressed layer first, then for the synced layers in group order. Dragging 50 synced layers is about 40× faster.
 - Multi-touch: when a second finger presses a layer that is already moving as part of another layer's synced drag, that earlier drag ends (`pm:dragend` and `pm:edit` fire) and the pressed layer, with its own synced layers, follows the second finger. Before, the earlier drag kept following the first finger and the pressed layer was moved by both fingers. Two fingers on two unrelated layers still drag them independently.
 - Multi-touch: map panning stays off until the last running layer drag ends, and goes back to the state it had when the first of them started. Before, releasing or cancelling one finger turned panning back on while another finger was still dragging a layer.
+- Rotate mode shows one rotate handle per layer instead of making every vertex a rotate handle. The handle sits 30 px beyond the shape's top edge, measured in the shape's own rotated frame, with a dashed line to the rotation center. It turns with the shape and keeps its pixel distance when the map zooms. Vertices no longer rotate, which leaves them free for vertex editing. `limitMarkersToCount` no longer applies in rotate mode, so the handle is always shown. The handle has the classes `marker-icon marker-icon-rotate`.
 
 ### Fixed
 
@@ -37,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A circle whose center is `NaN` or `Infinity` no longer throws while building its snap ring. A non-finite min radius returns the start point instead of an invalid `LatLng`.
 - Cut and containment ignore a ring that contains `NaN` or `Infinity`, instead of throwing or deleting the polygon.
 - `changeControlOrder(null)` no longer throws.
+- Rotating by mouse after `rotateLayer()`, `rotateLayerToAngle()` or `setInitAngle()` while rotate is enabled starts from the new angle. Before, the drag started from the angle the layer had when rotate was enabled, so `getAngle()` lost the change made by code.
 
 ## [2.20.6] - 2026-11-04
 

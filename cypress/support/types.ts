@@ -33,6 +33,7 @@ declare global {
       testLayerAdditionPerformance(): Chainable<void>;
       hasMiddleMarkers(count: number): Chainable<void>;
       hasVertexMarkers(count: number): Chainable<void>;
+      hasRotateHandles(count: number): Chainable<void>;
       hasTotalVertexMarkers(count: number): Chainable<void>;
       toolbarButton(name: string): Chainable<JQuery<HTMLElement>>;
       toolbarButtonContainer(
@@ -86,6 +87,7 @@ declare module '../../leaflet-geoman' {
     }
     interface PMLayer {
       _rotatePoly: Leaflet.Polygon;
+      _rotateHandle: Leaflet.Marker;
       _layerEdited: boolean;
       _resizeCircle(): void;
       _shape: string;

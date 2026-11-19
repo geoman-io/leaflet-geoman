@@ -196,6 +196,8 @@ export interface IEditLine {
   _onRotateStart: IRotateMixin['_onRotateStart'];
   _onRotate: IRotateMixin['_onRotate'];
   _onRotateEnd: IRotateMixin['_onRotateEnd'];
+  _initRotateHandle: IRotateMixin['_initRotateHandle'];
+  _removeRotateHandle: IRotateMixin['_removeRotateHandle'];
 }
 import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
@@ -294,6 +296,7 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     this._enabled = false;
     this._markerGroup.clearLayers();
     this._markerGroup.removeFrom(this._map);
+    this._removeRotateHandle();
 
     // remove listener
     this._layer.off('remove', this.disable, this);
@@ -350,6 +353,12 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     this._markerGroup = new L.FeatureGroup();
     this._markerGroup._pmTempLayer = true;
 
+    if (this.options.rotate) {
+      this._initRotateHandle();
+      map.addLayer(this._markerGroup);
+      return;
+    }
+
     // handle coord-rings (outer, inner, etc)
     const handleRing = (coordsArr: LatLngArray): MarkerArray => {
       // if there is another coords ring, go a level deep and do this again
@@ -395,28 +404,22 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
 
     marker._pmTempLayer = true;
 
-    if (this.options.rotate) {
-      marker.on('dragstart', this._onRotateStart, this);
-      marker.on('drag', this._onRotate, this);
-      marker.on('dragend', this._onRotateEnd, this);
-    } else {
-      marker.on('click', this._onVertexClick, this);
-      marker.on('dragstart', this._onMarkerDragStart, this);
-      marker.on('move', this._onMarkerDrag, this);
-      marker.on('dragend', this._onMarkerDragEnd, this);
+    marker.on('click', this._onVertexClick, this);
+    marker.on('dragstart', this._onMarkerDragStart, this);
+    marker.on('move', this._onMarkerDrag, this);
+    marker.on('dragend', this._onMarkerDragEnd, this);
 
-      if (
-        !this.options.preventMarkerRemoval &&
-        typeof this.options.removeVertexOn === 'string'
-      ) {
-        // A number is truthy. Leaflet `on` then calls `.replace` and throws,
-        // and global edit has no catch.
-        marker.on(
-          toPointerEventName(this.options.removeVertexOn),
-          this._removeMarker,
-          this
-        );
-      }
+    if (
+      !this.options.preventMarkerRemoval &&
+      typeof this.options.removeVertexOn === 'string'
+    ) {
+      // A number is truthy. Leaflet `on` then calls `.replace` and throws,
+      // and global edit has no catch.
+      marker.on(
+        toPointerEventName(this.options.removeVertexOn),
+        this._removeMarker,
+        this
+      );
     }
 
     this._markerGroup.addLayer(marker);

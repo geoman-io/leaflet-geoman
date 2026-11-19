@@ -673,7 +673,8 @@ describe('Draw Rectangle', () => {
       .closest('.button-container')
       .should('have.class', 'active');
 
-    cy.hasVertexMarkers(4);
+    cy.hasRotateHandles(1);
+    cy.hasVertexMarkers(0);
     cy.hasMiddleMarkers(0);
   });
 

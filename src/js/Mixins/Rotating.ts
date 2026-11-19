@@ -30,6 +30,7 @@ interface RotationLayerPM {
     source: string
   ) => void;
   setRotationCenter: (center: L.LatLng) => void;
+  setInitAngle: (degrees: number) => void;
   setOptions: (options: object) => void;
   enable: () => void;
   disable: () => void;
@@ -70,6 +71,10 @@ export interface RotateMixinContext {
   _matrix: Matrix;
   _angle?: number;
   _rotatePoly?: RotatableLayer;
+  _rotateHandle?: L.Marker;
+  _rotateStem?: L.Polyline;
+  _markerGroup: L.FeatureGroup;
+  _setPane: (layer: L.Layer, type: 'layerPane' | 'vertexPane') => void;
   _rotateEnabled?: boolean;
   _rotateOrgLatLng?: L.LatLng[] | L.LatLng[][] | L.LatLng[][][];
   _rotationLayer: RotatableLayer;
@@ -116,6 +121,10 @@ export interface IRotateMixin {
   _onRotateStart(e: RotateDragEvent): void;
   _onRotate(e: RotateDragEvent): void;
   _onRotateEnd(): void;
+  _initRotateHandle(): void;
+  _removeRotateHandle(): void;
+  _updateRotateHandle(): void;
+  _updateRotateStem(): void;
   _rotateLayer(
     radiant: number,
     latlngs: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
@@ -135,10 +144,12 @@ export interface IRotateMixin {
   getRotationCenter(): L.LatLng;
   setRotationCenter(center: L.LatLng): void;
 }
-import get from 'lodash/get';
 import { _convertLatLngs, _toPoint } from '../helpers/ModeHelper';
 import { calcAngle, copyLatLngs } from '../helpers';
 import { addKnownOptions } from '../helpers/options';
+
+// Pixels between the shape's top edge, in its rotated frame, and the handle.
+const ROTATE_HANDLE_OFFSET = 30;
 
 // Set on the hidden rotation polygon only.
 addKnownOptions(['rotate']);
@@ -193,30 +204,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
           this._map
         )
       );
-      // move the helper markers
-      const that = this;
-      function forEachLatLng(
-        latlng: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
-        path: number[] = [],
-        _i = -1
-      ) {
-        if (_i > -1) {
-          path.push(_i);
-        }
-        if (Array.isArray(latlng[0])) {
-          latlng.forEach((x, i) =>
-            forEachLatLng(x as L.LatLng[] | L.LatLng[][], path.slice(), i)
-          );
-        } else {
-          const markers =
-            path.length > 0 ? get(that._markers, path) : that._markers[0];
-          latlng.forEach((_latlng, j) => {
-            const marker = markers[j];
-            marker.setLatLng(_latlng);
-          });
-        }
-      }
-      forEachLatLng(this._layer.getLatLngs());
+      this._updateRotateStem();
 
       const oldLatLngs = copyLatLngs(this._rotationLayer);
       // rotate the origin layer
@@ -268,6 +256,79 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
       this._preventRenderingMarkers(false);
 
       this._layerRotated = true;
+      this._updateRotateHandle();
+    },
+    _initRotateHandle() {
+      // The vertices stay free for edit mode. Rotation uses one handle instead.
+      this._markers = [];
+      const handle = new L.Marker(this._getRotationCenter(), {
+        draggable: true,
+        icon: new L.DivIcon({ className: 'marker-icon marker-icon-rotate' }),
+      }) as L.Marker & { _pmTempLayer?: boolean };
+      this._setPane(handle, 'vertexPane');
+      handle._pmTempLayer = true;
+      handle.on('dragstart', this._onRotateStart, this);
+      handle.on('drag', this._onRotate, this);
+      handle.on('dragend', this._onRotateEnd, this);
+
+      const stem = new L.Polyline([], {
+        interactive: false,
+        pmIgnore: true,
+        color: '#3388ff',
+        weight: 2,
+        opacity: 1,
+        dashArray: '6 4',
+      }) as L.Polyline & { _pmTempLayer?: boolean };
+      stem._pmTempLayer = true;
+      this._setPane(stem, 'layerPane');
+
+      this._rotateHandle = handle;
+      this._rotateStem = stem;
+      this._markerGroup.addLayer(stem);
+      this._markerGroup.addLayer(handle);
+      this._updateRotateHandle();
+      // The handle keeps a pixel distance from the shape, so zooming moves it.
+      this._map.on('zoomend', this._updateRotateHandle, this);
+    },
+    _removeRotateHandle() {
+      this._map?.off('zoomend', this._updateRotateHandle, this);
+      this._rotateHandle = undefined;
+      this._rotateStem = undefined;
+    },
+    _updateRotateHandle() {
+      const handle = this._rotateHandle;
+      if (!handle || !this._map) {
+        return;
+      }
+      const map = this._map;
+      const center = map.latLngToLayerPoint(this._getRotationCenter());
+      // Angles are clockwise from north, and layer points grow downwards.
+      const rad = (this.getAngle() * Math.PI) / 180;
+      const dir = new L.Point(Math.sin(rad), -Math.cos(rad));
+      // Place the handle beyond the shape's top edge in its own rotated frame.
+      let reach = 0;
+      const latlngs = (this._layer.getLatLngs() as unknown[]).flat(
+        Infinity
+      ) as L.LatLng[];
+      latlngs.forEach((latlng) => {
+        const p = map.latLngToLayerPoint(latlng).subtract(center);
+        reach = Math.max(reach, p.x * dir.x + p.y * dir.y);
+      });
+      const distance = reach + ROTATE_HANDLE_OFFSET;
+      handle.setLatLng(
+        map.layerPointToLatLng(
+          center.add(new L.Point(dir.x * distance, dir.y * distance))
+        )
+      );
+      this._updateRotateStem();
+    },
+    _updateRotateStem() {
+      if (this._rotateHandle && this._rotateStem) {
+        this._rotateStem.setLatLngs([
+          this._getRotationCenter(),
+          this._rotateHandle.getLatLng(),
+        ]);
+      }
     },
     _rotateLayer(radiant, latlngs, origin, _matrix, map) {
       const originPoint = _toPoint(map, origin);
@@ -448,6 +509,8 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
             this._rotatePoly!._map
           )
         );
+        // The handle points along the angle, and a later drag starts from it.
+        this._rotatePoly!.pm._setAngle(this.getAngle());
         this._rotatePoly!.pm._initMarkers();
       }
 
@@ -477,6 +540,11 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
     // angle is clockwise (0-360)
     setInitAngle(degrees) {
       this._setAngle(degrees);
+
+      if (this._rotatePoly) {
+        this._rotatePoly!.pm.setInitAngle(degrees);
+      }
+      this._updateRotateHandle();
     },
     getRotationCenter() {
       return this._getRotationCenter();
@@ -487,6 +555,7 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
       if (this._rotatePoly) {
         this._rotatePoly!.pm.setRotationCenter(center);
       }
+      this._updateRotateHandle();
     },
   };
 
