@@ -259,6 +259,19 @@ export declare namespace PM {
 
     Keyboard: PMMapKeyboard;
 
+    /**
+     * Unstable, for `@geoman-io` packages: no semver guarantee.
+     * Registers a map mode so it is exclusive with the built-in modes and exits on Escape.
+     * Returns the function the mode calls when it turns on; it turns every other active mode off.
+     */
+    unstable_registerMode(
+      name: string,
+      mode: { enabled(): boolean; disable(): void }
+    ): () => void;
+
+    /** Unstable, for `@geoman-io` packages: no semver guarantee. Names of the active modes, such as `edit` or `draw:Polygon`. */
+    unstable_activeModes(): string[];
+
     /** Adds the Toolbar to the map. */
     addControls(options?: ToolbarOptions): void;
 

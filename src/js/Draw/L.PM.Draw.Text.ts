@@ -136,6 +136,7 @@ Draw.Text = Draw.extend<IDrawText, [L.Map]>({
     this._map.on('click', this._createMarker, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
+    this._map.pm._modes._exclusive(`draw:${this._shape}`);
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // this is the hintmarker on the mouse cursor

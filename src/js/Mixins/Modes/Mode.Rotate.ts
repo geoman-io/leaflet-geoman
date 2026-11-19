@@ -29,6 +29,7 @@ export interface IGlobalRotateMode {
   _globalRotateModeEnabled: boolean;
   _addedLayersRotate: Record<number, PMLayer>;
   throttledReInitRotate?: (e: LayerAddEvent) => void;
+  _modes: { _exclusive(name: string): void };
   Toolbar: {
     toggleButton: (name: string, enabled: boolean) => void;
   };
@@ -69,6 +70,7 @@ const GlobalRotateMode = {
     this.map.on('layeradd', this.throttledReInitRotate, this);
 
     // toogle the button in the toolbar if this is called programatically
+    this._modes._exclusive('rotate');
     this.Toolbar.toggleButton('rotateMode', this.globalRotateModeEnabled());
     this._fireGlobalRotateModeToggled();
   },

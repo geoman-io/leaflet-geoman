@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Map modes (global edit, drag, removal, rotate, and drawing each shape, including Cut and copied draw controls) stay exclusive without depending on the toolbar's button state. Before, a mode whose button was deleted with `Toolbar.deleteControl`, disabled with `setButtonDisabled`, or rebuilt untoggled by `setLang` could stay on next to another mode. Escape exits any registered mode instead of a fixed list.
+- New for `@geoman-io` packages, without a semver guarantee: `map.pm.unstable_registerMode(name, { enabled, disable })` and `map.pm.unstable_activeModes()`.
 - Layer-group membership is read from Leaflet when it is needed instead of from per-layer references kept up to date by 100 ms throttled listeners. With `syncLayersOnDrag: true`, a layer added to a group drags with it immediately, including layers added later to a plain `L.LayerGroup` on the map. A plain `L.LayerGroup` that is not on the map no longer syncs drag; use an `L.FeatureGroup` for that. A layer added to a group in global edit mode is enabled with the group's options at once, without re-enabling the rest of the group. The internal `_parentLayerGroup` and `LayerGroup.pm._layers` are gone.
 - `pmIgnore` and opt-in are checked in one place, `PM.Utils.isGeomanLayer(layer)`, which is now public. Snapping now skips a layer whose `pmIgnore` is any truthy value, not only `true`, matching the rest of the library.
 

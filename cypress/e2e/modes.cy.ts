@@ -166,6 +166,64 @@ describe('Mode exclusivity', () => {
     });
   });
 
+  it('a registered mode is exclusive with the built-in modes and exits on Escape', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ exitModeOnEscape: true });
+      let on = false;
+      const activate = map.pm.unstable_registerMode('scale', {
+        enabled: () => on,
+        disable: () => {
+          on = false;
+        },
+      });
+      const enableScale = () => {
+        activate();
+        on = true;
+      };
+
+      map.pm.enableGlobalEditMode();
+      enableScale();
+      expect(map.pm.globalEditModeEnabled()).to.eq(false);
+      expect(map.pm.unstable_activeModes()).to.deep.equal(['scale']);
+
+      map.pm.enableDraw('Polygon');
+      expect(on).to.eq(false);
+      expect(map.pm.unstable_activeModes()).to.deep.equal(['draw:Polygon']);
+
+      enableScale();
+      expect(map.pm.Draw.getActiveShape()).to.eq(undefined);
+    });
+
+    cy.get('body').type('{esc}');
+
+    cy.window().then(({ map }) => {
+      expect(map.pm.unstable_activeModes()).to.deep.equal([]);
+    });
+  });
+
+  it('a copied draw control gets its own mode name', () => {
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.copyDrawControl('Polygon', { name: 'polyCopy' });
+      map.pm.enableDraw('polyCopy');
+      expect(map.pm.unstable_activeModes()).to.deep.equal(['draw:polyCopy']);
+    });
+  });
+
+  it('keeps a mode exclusive after its toolbar button is deleted', () => {
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.deleteControl('editMode');
+      map.pm.enableGlobalEditMode();
+      map.pm.enableGlobalDragMode();
+      expect(activeModes(map)).to.deep.equal(['drag']);
+      map.pm.disableGlobalDragMode();
+
+      map.pm.Toolbar.deleteControl('drawPolygon');
+      map.pm.enableDraw('Polygon');
+      map.pm.enableGlobalRemovalMode();
+      expect(activeModes(map)).to.deep.equal(['removal']);
+    });
+  });
+
   it('a mode turned on from another mode turning off stays consistent', () => {
     cy.window().then(({ map }) => {
       map.pm.enableDraw('Polygon');
@@ -174,6 +232,33 @@ describe('Mode exclusivity', () => {
       map.once('pm:drawend', () => map.pm.enableGlobalEditMode());
       map.pm.enableGlobalDragMode();
       expect(activeModes(map)).to.deep.equal(['drag']);
+    });
+  });
+
+  it('keeps every mode exclusive with all toolbar buttons deleted', () => {
+    cy.window().then(({ map }) => {
+      Object.keys(map.pm.Toolbar.getButtons()).forEach((name) =>
+        map.pm.Toolbar.deleteControl(name)
+      );
+      const modes: [string, () => void][] = [
+        ['edit', () => map.pm.enableGlobalEditMode()],
+        ['draw:Marker', () => map.pm.enableDraw('Marker')],
+        ['drag', () => map.pm.enableGlobalDragMode()],
+        ['draw:CircleMarker', () => map.pm.enableDraw('CircleMarker')],
+        ['removal', () => map.pm.enableGlobalRemovalMode()],
+        ['draw:Line', () => map.pm.enableDraw('Line')],
+        ['rotate', () => map.pm.enableGlobalRotateMode()],
+        ['draw:Rectangle', () => map.pm.enableDraw('Rectangle')],
+        ['draw:Circle', () => map.pm.enableDraw('Circle')],
+        ['draw:Text', () => map.pm.enableDraw('Text')],
+        ['draw:Cut', () => map.pm.enableGlobalCutMode()],
+        ['draw:Polygon', () => map.pm.enableDraw('Polygon')],
+        ['edit', () => map.pm.enableGlobalEditMode()],
+      ];
+      modes.forEach(([name, enable]) => {
+        enable();
+        expect(map.pm.unstable_activeModes(), name).to.deep.equal([name]);
+      });
     });
   });
 
@@ -210,6 +295,24 @@ describe('Mode exclusivity', () => {
       win.document.dispatchEvent(event);
       expect(event.defaultPrevented).to.eq(false);
       expect(win.map.pm.Toolbar.buttons.customMode.toggled()).to.eq(true);
+    });
+  });
+
+  it('keeps modes exclusive after setLang rebuilds the toolbar', () => {
+    cy.window().then(({ map }) => {
+      map.pm.enableGlobalEditMode();
+      map.pm.setLang('de');
+      map.pm.enableGlobalDragMode();
+      expect(activeModes(map)).to.deep.equal(['drag']);
+    });
+  });
+
+  it('keeps modes exclusive while a mode button is disabled', () => {
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.setButtonDisabled('editMode', true);
+      map.pm.enableGlobalEditMode();
+      map.pm.enableGlobalDragMode();
+      expect(activeModes(map)).to.deep.equal(['drag']);
     });
   });
 });

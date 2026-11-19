@@ -29,6 +29,7 @@ export interface IGlobalDragMode {
   _globalDragModeEnabled: boolean;
   _addedLayersDrag: Record<number, PMLayer>;
   throttledReInitDrag?: (e: LayerAddEvent) => void;
+  _modes: { _exclusive(name: string): void };
   Toolbar: {
     toggleButton: (name: string, enabled: boolean) => void;
   };
@@ -69,6 +70,7 @@ const GlobalDragMode = {
     this.map.on('layeradd', this.throttledReInitDrag, this);
 
     // toogle the button in the toolbar if this is called programatically
+    this._modes._exclusive('drag');
     this.Toolbar.toggleButton('dragMode', this.globalDragModeEnabled());
 
     this._fireGlobalDragModeToggled(true);

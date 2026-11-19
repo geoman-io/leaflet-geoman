@@ -249,6 +249,7 @@ Draw.Line = Draw.extend<IDrawLine, [L.Map]>({
     this._hintMarker.on('move', this._syncHintLine, this);
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
+    this._map.pm._modes._exclusive(`draw:${this._shape}`);
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // an array used in the snapping mixin.

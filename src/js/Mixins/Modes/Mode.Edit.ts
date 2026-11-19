@@ -32,6 +32,7 @@ export interface IGlobalEditMode {
   _addedLayersEdit: Record<number, PMLayer>;
   throttledReInitEdit?: (e: LayerAddEvent) => void;
   globalOptions: GlobalOptions;
+  _modes: { _exclusive(name: string): void };
   Toolbar: {
     toggleButton: (name: string, enabled: boolean) => void;
   };
@@ -55,6 +56,7 @@ const GlobalEditMode = {
     this._globalEditModeEnabled = true;
 
     // Set toolbar button to currect status
+    this._modes._exclusive('edit');
     this.Toolbar.toggleButton('editMode', this.globalEditModeEnabled());
 
     // find all layers handled by leaflet-geoman

@@ -30,6 +30,7 @@ interface LastEventsStore {
  * PM Map interface for keyboard operations
  */
 interface PMMap {
+  _modes: { active(): string[]; disableAll(): boolean };
   getGlobalOptions: () => {
     exitModeOnEscape?: boolean;
     finishOnEnter?: boolean;
@@ -128,52 +129,15 @@ const createKeyboardMixins = (): IKeyboardMixin &
       return false;
     }
 
-    // Check if any mode is active
-    const hasActiveMode =
-      pm.globalDrawModeEnabled() ||
-      pm.globalEditModeEnabled() ||
-      pm.globalDragModeEnabled() ||
-      pm.globalRemovalModeEnabled() ||
-      pm.globalRotateModeEnabled() ||
-      pm.globalCutModeEnabled();
-
-    if (!hasActiveMode) {
+    // Exit whatever mode is on, including modes other packages registered.
+    if (!pm._modes.active().length) {
       return false;
     }
 
     // Prevent default browser behavior (focus ring, etc.)
     e.preventDefault();
 
-    // Disable all active modes
-    // 1. Disable draw mode if active
-    if (pm.globalDrawModeEnabled()) {
-      pm.disableDraw();
-    }
-
-    // 2. Disable global edit mode if active
-    if (pm.globalEditModeEnabled()) {
-      pm.disableGlobalEditMode();
-    }
-
-    // 3. Disable global drag mode if active
-    if (pm.globalDragModeEnabled()) {
-      pm.disableGlobalDragMode();
-    }
-
-    // 4. Disable global removal mode if active
-    if (pm.globalRemovalModeEnabled()) {
-      pm.disableGlobalRemovalMode();
-    }
-
-    // 5. Disable global rotate mode if active
-    if (pm.globalRotateModeEnabled()) {
-      pm.disableGlobalRotateMode();
-    }
-
-    // 6. Disable global cut mode if active
-    if (pm.globalCutModeEnabled()) {
-      pm.disableGlobalCutMode();
-    }
+    pm._modes.disableAll();
 
     return true;
   },
