@@ -263,7 +263,6 @@ export interface IEventMixin {
     customPayload?: EventPayload
   ): void;
 }
-import merge from 'lodash/merge';
 
 const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
   // Draw Events
@@ -970,7 +969,17 @@ const EventMixin: IEventMixin & ThisType<EventMixinContext & IEventMixin> = {
 
   // private (very private) fire function
   __fire(fireLayer, type, payload, source, customPayload = {}) {
-    payload = merge(payload, customPayload, { source });
+    // Shallow: a deep merge would write nested custom values into the live
+    // layers and maps the payload refers to.
+    const merged: Record<string, unknown> = { ...payload };
+    for (const key of Object.keys(customPayload)) {
+      const value = (customPayload as Record<string, unknown>)[key];
+      if (value !== undefined || !(key in merged)) {
+        merged[key] = value;
+      }
+    }
+    merged.source = source;
+    payload = merged as typeof payload;
     PM.Utils._fireEvent(fireLayer, type, payload);
   },
 };

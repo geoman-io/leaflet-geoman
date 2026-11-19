@@ -174,7 +174,6 @@ map3.pm.enableDraw('Polygon', {
   markerStyle,
   cursorMarker: false,
   // finishOn: 'contextmenu',
-  finishOnDoubleClick: true,
 });
 
 const scotland = new L.Polygon([

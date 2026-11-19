@@ -1,6 +1,7 @@
 import * as L from 'leaflet';
 import { PM } from '../../PM';
 import type { GlobalOptions } from '../../../types/options';
+import { checkOptions } from '../../helpers/options';
 /**
  * Extended layer with PM properties
  */
@@ -13,6 +14,7 @@ interface PMLayer extends L.Layer {
       allowEditing?: boolean;
     };
     _applyInheritedOptions: (options?: object) => void;
+    _applyOptions: (options?: object) => void;
   };
 }
 
@@ -51,7 +53,9 @@ export interface IGlobalEditMode {
 const GlobalEditMode = {
   _globalEditModeEnabled: false,
   enableGlobalEditMode(this: IGlobalEditMode, o?: GlobalOptions) {
-    const callerOptions = o && Object.keys(o).length ? o : undefined;
+    const checked = checkOptions(o, 'enableGlobalEditMode()');
+    const callerOptions =
+      checked && Object.keys(checked).length ? checked : undefined;
     // set status
     this._globalEditModeEnabled = true;
 
@@ -62,11 +66,16 @@ const GlobalEditMode = {
     // find all layers handled by leaflet-geoman
     const layers = PM.Utils.findLayers(this.map) as PMLayer[];
 
-    // Global options fill keys the layer has not set. Caller options still win.
+    // Global options fill keys the layer has not set. Caller options win now,
+    // but are not stored as the layer's own options, so later global options
+    // still reach the layer.
     layers.forEach((layer: PMLayer) => {
       if (this._isRelevantForEdit(layer)) {
         layer.pm!._applyInheritedOptions(this.globalOptions);
-        layer.pm!.enable(callerOptions);
+        if (callerOptions) {
+          layer.pm!._applyOptions(callerOptions);
+        }
+        layer.pm!.enable();
       }
     });
 

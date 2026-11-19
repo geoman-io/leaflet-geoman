@@ -116,7 +116,7 @@ export interface IDraw {
   _fireGlobalCutModeToggled: () => void;
   _fireGlobalDrawModeToggled: () => void;
 }
-import merge from 'lodash/merge';
+import { checkOptions, mergeOptions as mergeInto } from '../helpers/options';
 import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
 
@@ -209,7 +209,12 @@ const Draw = PMClass.extend<
     if (!mergeOptions) {
       this.options.pathOptions = options;
     } else {
-      this.options.pathOptions = merge(this.options.pathOptions, options);
+      // A new object: merging into the current one would also change the
+      // object passed to an earlier setPathOptions.
+      this.options.pathOptions = mergeInto(
+        mergeInto({}, this.options.pathOptions),
+        options
+      );
     }
   },
   getShapes(this: IDraw) {
@@ -233,7 +238,9 @@ const Draw = PMClass.extend<
     this.disable();
 
     // enable draw for a shape
-    (this as unknown as ShapeRegistry)[shape].enable(options);
+    (this as unknown as ShapeRegistry)[shape].enable(
+      checkOptions(options, 'enableDraw()')
+    );
   },
   disable(this: IDraw) {
     // there can only be one drawing mode active at a time on a map
