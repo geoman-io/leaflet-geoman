@@ -16,6 +16,10 @@
   height: 10px !important;
 }
 
+.marker-icon-rotate {
+  cursor: grab;
+}
+
 .leaflet-pm-draggable {
   cursor: move !important;
 }

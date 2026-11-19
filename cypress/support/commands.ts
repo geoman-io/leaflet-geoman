@@ -99,7 +99,15 @@ Cypress.Commands.add('hasMiddleMarkers', (count) => {
 });
 
 Cypress.Commands.add('hasVertexMarkers', (count) => {
-  cy.get('.marker-icon:not(.marker-icon-middle)').should(($p) => {
+  cy.get('.marker-icon:not(.marker-icon-middle, .marker-icon-rotate)').should(
+    ($p) => {
+      expect($p).to.have.length(count);
+    }
+  );
+});
+
+Cypress.Commands.add('hasRotateHandles', (count) => {
+  cy.get('.marker-icon-rotate').should(($p) => {
     expect($p).to.have.length(count);
   });
 });
