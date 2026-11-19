@@ -350,6 +350,68 @@ describe('Edit LayerGroup', () => {
     });
   });
 
+  it('fires events on the groups a layer belongs to right after it moves', () => {
+    const fired: string[] = [];
+    cy.window().then(({ map, L }) => {
+      const groupA = new L.FeatureGroup().addTo(map);
+      const groupB = new L.FeatureGroup().addTo(map);
+      const marker = new L.Marker(map.getCenter()).addTo(groupA);
+      groupA.on('pm:disable', () => fired.push('A'));
+      groupB.on('pm:disable', () => fired.push('B'));
+
+      marker.pm.enable();
+      groupA.removeLayer(marker);
+      groupB.addLayer(marker);
+      marker.pm.enable();
+      marker.pm.disable();
+
+      expect(fired).to.deep.equal(['B']);
+    });
+  });
+
+  it('syncs drag for a layer added just before a temporary layer', () => {
+    let first: L.Polygon;
+    let second: L.Polygon;
+    cy.window().then(({ map, L }) => {
+      const fg = new L.FeatureGroup().addTo(map);
+      const ring = (x: number, y: number) =>
+        [
+          [x, y],
+          [x + 60, y],
+          [x + 60, y + 60],
+        ].map((p) => map.containerPointToLatLng(p as L.PointTuple));
+      first = new L.Polygon(ring(150, 150)).addTo(fg);
+      // Added inside the group's 100 ms layeradd throttle window, then
+      // followed by a temporary layer.
+      second = new L.Polygon(ring(350, 150)).addTo(fg);
+      const temp = new L.Marker(map.getCenter());
+      temp._pmTempLayer = true;
+      temp.addTo(fg);
+    });
+
+    cy.wait(150);
+
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ syncLayersOnDrag: true });
+      map.pm.enableGlobalDragMode();
+      const firstBefore = first.getCenter();
+      const secondBefore = second.getCenter();
+      const start = map.latLngToContainerPoint(secondBefore);
+      const end = start.add([60, 30]);
+      const event = (point: L.Point) => ({
+        originalEvent: { button: 0 },
+        target: second,
+        latlng: map.containerPointToLatLng(point),
+      });
+      second.pm._dragMixinOnMouseDown(event(start));
+      second.pm._dragMixinOnMouseMove(event(end));
+      second.pm._dragMixinOnMouseUp(event(end));
+
+      expect(secondBefore.equals(second.getCenter())).to.eq(false);
+      expect(firstBefore.equals(first.getCenter())).to.eq(false);
+    });
+  });
+
   it('stops syncing drag with a group the layer was removed from', () => {
     cy.window().then(({ map, L }) => {
       const fg = L.featureGroup().addTo(map);

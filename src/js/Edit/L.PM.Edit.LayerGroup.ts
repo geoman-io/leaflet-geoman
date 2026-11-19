@@ -113,10 +113,17 @@ Edit.LayerGroup = (L.Class as unknown as LeafletClassFactory).extend<
     // This only works for FeatureGroups, not LayerGroups
     // https://github.com/Leaflet/Leaflet/issues/4861
 
-    const addThrottle = (e: LayerEvent) => {
-      if (e.layer._pmTempLayer) {
-        return;
-      }
+    // Skip temporary layers before the throttle. The throttle replays only the
+    // last queued event, so a temporary layer added last would otherwise drop
+    // a real layer added earlier in the same window.
+    const skipTempLayers =
+      (handler: (e: LayerEvent) => void) => (e: LayerEvent) => {
+        if (!e.layer._pmTempLayer) {
+          handler(e);
+        }
+      };
+
+    const addThrottle = () => {
       this._layers = this.getLayers();
       const _initLayers = this._layers.filter(
         (layer) =>
@@ -141,7 +148,7 @@ Edit.LayerGroup = (L.Class as unknown as LeafletClassFactory).extend<
     };
     this._layerGroup.on(
       'layeradd',
-      L.Util.throttle(addThrottle, 100, this),
+      skipTempLayers(L.Util.throttle(addThrottle, 100, this)),
       this
     );
 
@@ -154,17 +161,14 @@ Edit.LayerGroup = (L.Class as unknown as LeafletClassFactory).extend<
       this
     );
 
-    const removeThrottle = (e: LayerEvent) => {
-      if (e.layer._pmTempLayer) {
-        return;
-      }
+    const removeThrottle = () => {
       this._layers = this.getLayers();
     };
     // if a layer is removed from the group, calc the layers list again.
     // we run this as throttle because the findLayers() is a larger function
     this._layerGroup.on(
       'layerremove',
-      L.Util.throttle(removeThrottle, 100, this),
+      skipTempLayers(L.Util.throttle(removeThrottle, 100, this)),
       this
     );
   },

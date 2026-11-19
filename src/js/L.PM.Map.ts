@@ -119,6 +119,7 @@ export interface IMapPM {
   ) => void;
 }
 import merge from 'lodash/merge';
+import mergeWith from 'lodash/mergeWith';
 import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
 import GlobalDragMode from './Mixins/Modes/Mode.Drag';
@@ -183,7 +184,9 @@ const Map = (L.Class as unknown as LeafletClassFactory).extend<
 
     const oldLang = L.PM.activeLang;
     if (override) {
-      translations[lang] = merge(translations[fallback], override);
+      // Merge into a new object; merging into translations[fallback] would
+      // overwrite the built-in fallback language with the override.
+      translations[lang] = merge({}, translations[fallback], override);
     }
 
     L.PM.activeLang = lang;
@@ -270,8 +273,11 @@ const Map = (L.Class as unknown as LeafletClassFactory).extend<
     return this.globalOptions;
   },
   setGlobalOptions(this: IMapPM, o: Partial<GlobalOptions>) {
-    // merge passed and existing options
-    const options = merge(this.globalOptions, o);
+    // merge passed and existing options. Arrays such as snappingOrder replace
+    // the old value; lodash merge would combine them index by index.
+    const options = mergeWith(this.globalOptions, o, (_old, value) =>
+      Array.isArray(value) ? [...value] : undefined
+    );
 
     // TODO: remove with next major release
     if (options.editable) {

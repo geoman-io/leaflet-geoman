@@ -30,6 +30,22 @@ describe('Shows Tooltips', () => {
     });
   });
 
+  it('Keeps the fallback language when a custom translation is set', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setLang(
+        'customName',
+        { tooltips: { placeMarker: 'Custom Marker Translation' } },
+        'en'
+      );
+      map.pm.setLang('en');
+    });
+
+    cy.toolbarButton('marker').click();
+    cy.get('.leaflet-tooltip-bottom').then((el) => {
+      expect(el).to.have.text('Click to place marker');
+    });
+  });
+
   it('Has Marker Tooltips', () => {
     cy.get('.leaflet-tooltip-bottom').should('not.exist');
     cy.toolbarButton('marker').click();

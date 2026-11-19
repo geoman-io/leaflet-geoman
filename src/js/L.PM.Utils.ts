@@ -3,11 +3,6 @@
  */
 type ParentEvented = (L.Layer | L.Map) & {
   _eventParents?: Record<string, L.LayerGroup>;
-  _pmLastGroupFetch?: {
-    time: number;
-    groups: L.LayerGroup[];
-    groupIds: string[];
-  };
 };
 type LatLngOrArray = L.LatLng | LatLngOrArray[];
 type MarkerOrArray = L.Marker | MarkerOrArray[];
@@ -17,11 +12,6 @@ type PMLayer = L.Layer & {
   _pmTempLayer?: boolean;
   _tempPopupCopy?: L.Popup;
   _eventParents?: Record<string, L.LayerGroup>;
-  _pmLastGroupFetch?: {
-    time: number;
-    groups: L.LayerGroup[];
-    groupIds: string[];
-  };
   _leaflet_id?: number;
   options: L.LayerOptions & {
     pmIgnore?: boolean;
@@ -222,26 +212,12 @@ const Utils: IUtils = {
       }
     };
 
-    // check if the last group fetch is under 1 sec, then we use the groups from before
-    if (
-      !layer._pmLastGroupFetch ||
-      !layer._pmLastGroupFetch.time ||
-      new Date().getTime() - layer._pmLastGroupFetch.time > 1000
-    ) {
-      loopThroughParents(layer);
-      layer._pmLastGroupFetch = {
-        time: new Date().getTime(),
-        groups,
-        groupIds,
-      };
-      return {
-        groupIds,
-        groups,
-      };
-    }
+    // Read the parents every time. A cached list sends events to groups the
+    // layer has left, or misses groups it has joined.
+    loopThroughParents(layer);
     return {
-      groups: layer._pmLastGroupFetch.groups,
-      groupIds: layer._pmLastGroupFetch.groupIds,
+      groupIds,
+      groups,
     };
   },
   createGeodesicPolygon,

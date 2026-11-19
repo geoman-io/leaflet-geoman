@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `setLang(lang, override, fallback)` no longer overwrites the fallback language with the override, so switching back to the fallback shows its built-in text.
+- `setGlobalOptions` replaces array options such as `snappingOrder` instead of merging them index by index.
+- When several layers are equally close, snapping prefers the oldest layer again; the sort read an id that the distance result never had.
+- A layer added to a group just before a temporary Geoman layer gets its group reference, so `syncLayersOnDrag: true` moves it with the group.
+- `pm:*` events reach the groups a layer belongs to right after it changes groups, instead of the groups cached up to one second earlier.
+
 ## [2.20.8] - 2026-11-18
 
 ### Fixed
