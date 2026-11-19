@@ -573,6 +573,16 @@ describe('Events', () => {
       });
   });
 
+  it('replaces snappingOrder instead of merging it by index', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ snappingOrder: ['Polygon', 'Line'] });
+      expect(map.pm.getGlobalOptions().snappingOrder).to.deep.equal([
+        'Polygon',
+        'Line',
+      ]);
+    });
+  });
+
   it('snappingOrder', () => {
     let event: string | { layerInteractedWith: L.Layer } = '';
     cy.window().then(({ map }) => {

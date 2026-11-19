@@ -107,10 +107,17 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     // layeradd/layerremove are FeatureGroup events
     const featureGroup = this._layerGroup as unknown as L.FeatureGroup;
 
-    const addThrottle = (e: L.LayerEvent) => {
-      if ((e.layer as PMLayer)._pmTempLayer) {
-        return;
-      }
+    // Skip temporary layers before the throttle. The throttle replays only the
+    // last queued event, so a temporary layer added last would otherwise drop
+    // a real layer added earlier in the same window.
+    const skipTempLayers =
+      (handler: (e: L.LayerEvent) => void) => (e: L.LayerEvent) => {
+        if (!(e.layer as PMLayer)._pmTempLayer) {
+          handler(e);
+        }
+      };
+
+    const addThrottle = () => {
       this._layers = this.getLayers();
       const _initLayers = this._layers.filter(
         (layer) =>
@@ -133,7 +140,11 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
         }
       }
     };
-    featureGroup.on('layeradd', L.Util.throttle(addThrottle, 100, this), this);
+    featureGroup.on(
+      'layeradd',
+      skipTempLayers(L.Util.throttle(addThrottle, 100, this)),
+      this
+    );
 
     // Remove the layergroup from the layer
     featureGroup.on(
@@ -144,17 +155,14 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
       this
     );
 
-    const removeThrottle = (e: L.LayerEvent) => {
-      if ((e.layer as PMLayer)._pmTempLayer) {
-        return;
-      }
+    const removeThrottle = () => {
       this._layers = this.getLayers();
     };
     // if a layer is removed from the group, calc the layers list again.
     // we run this as throttle because the findLayers() is a larger function
     featureGroup.on(
       'layerremove',
-      L.Util.throttle(removeThrottle, 100, this),
+      skipTempLayers(L.Util.throttle(removeThrottle, 100, this)),
       this
     );
   },
