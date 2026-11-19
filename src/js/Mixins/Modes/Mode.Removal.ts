@@ -48,6 +48,7 @@ export interface IGlobalRemovalMode {
   _globalRemovalModeEnabled: boolean;
   _addedLayersRemoval: Record<number, PMLayer>;
   throttledReInitRemoval?: (e: LayerAddEvent) => void;
+  _modes: { _exclusive(name: string): void };
   Toolbar: {
     toggleButton: (name: string, enabled: boolean) => void;
   };
@@ -93,6 +94,7 @@ const GlobalRemovalMode = {
     this.map.on('layeradd', this.throttledReInitRemoval, this);
 
     // toogle the button in the toolbar if this is called programatically
+    this._modes._exclusive('removal');
     this.Toolbar.toggleButton('removalMode', this.globalRemovalModeEnabled());
 
     this._fireGlobalRemovalModeToggled(true);

@@ -189,6 +189,7 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
     this._enabled = true;
 
     // toggle the draw button of the Toolbar in case drawing mode got enabled without the button
+    this._map.pm._modes._exclusive(`draw:${this._shape}`);
     this._map.pm.Toolbar.toggleButton(this.toolbarButtonName, true);
 
     // change map cursor

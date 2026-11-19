@@ -36,6 +36,8 @@ declare module '../../leaflet-geoman' {
   namespace PM {
     interface PMMap {
       removeLayer(event: { target: L.Layer }): void;
+      _modes: import('../js/helpers/ModeManager').default;
+      _registerDrawMode(shape: string): void;
     }
     interface PMLayer {
       options: PM.EditModeOptions;

@@ -19,6 +19,7 @@ type ExtendedFeatureGroup = L.FeatureGroup & {
  * Draw shape interface
  */
 interface DrawShape {
+  toolbarButtonName?: string;
   enabled: () => boolean;
   enable: (options?: DrawOptions) => void;
   disable: () => void;
@@ -65,8 +66,21 @@ export interface IMapPM {
   Toolbar: IToolbar;
   Keyboard: IKeyboardMixin;
   globalOptions: GlobalOptions;
+  _modes: ModeManager;
 
   initialize(map: L.Map): void;
+  unstable_registerMode(name: string, mode: ModeDefinition): () => void;
+  unstable_activeModes(): string[];
+  _registerDrawMode(shape: string): void;
+  _registerGlobalMode(
+    name: string,
+    buttonName: string,
+    get: () => { enabled: boolean; disable: () => void }
+  ): void;
+  _yieldThroughButton(
+    buttonName: () => string | undefined,
+    disable: () => void
+  ): () => void;
   setLang(lang?: string, override?: object, fallback?: string): void;
   addControls(options?: PMTypes.ToolbarOptions): void;
   removeControls(): void;
@@ -91,6 +105,15 @@ export interface IMapPM {
   getGeomanDrawLayers(asGroup?: boolean): L.Layer[] | L.FeatureGroup;
   _getContainingLayer(): L.LayerGroup | L.Map;
   _isCRSSimple(): boolean;
+  // From the global mode mixins
+  globalEditModeEnabled(): boolean;
+  disableGlobalEditMode(): void;
+  globalDragModeEnabled(): boolean;
+  disableGlobalDragMode(): void;
+  globalRemovalModeEnabled(): boolean;
+  disableGlobalRemovalMode(): void;
+  globalRotateModeEnabled(): boolean;
+  disableGlobalRotateMode(): void;
   // From EventMixin
   _fireLangChange: (
     oldLang: string,
@@ -110,6 +133,8 @@ import EventMixin from './Mixins/Events';
 import createKeyboardMixins from './Mixins/Keyboard';
 import { getRenderer } from './helpers';
 import { resolveLanguageCode } from './helpers/language';
+import ModeManager from './helpers/ModeManager';
+import type { ModeDefinition } from './helpers/ModeManager';
 
 const Map = PMClass.extend<
   IMapPM,
@@ -135,6 +160,27 @@ const Map = PMClass.extend<
     this.Toolbar = new PM.Toolbar(map);
     this.Keyboard = createKeyboardMixins();
 
+    // Draw tools first, then the global modes: the order Escape used to
+    // check them in.
+    this._modes = new ModeManager();
+    this.Draw.shapes.forEach((shape) => this._registerDrawMode(shape));
+    this._registerGlobalMode('edit', 'editMode', () => ({
+      enabled: this.globalEditModeEnabled(),
+      disable: () => this.disableGlobalEditMode(),
+    }));
+    this._registerGlobalMode('drag', 'dragMode', () => ({
+      enabled: this.globalDragModeEnabled(),
+      disable: () => this.disableGlobalDragMode(),
+    }));
+    this._registerGlobalMode('removal', 'removalMode', () => ({
+      enabled: this.globalRemovalModeEnabled(),
+      disable: () => this.disableGlobalRemovalMode(),
+    }));
+    this._registerGlobalMode('rotate', 'rotateMode', () => ({
+      enabled: this.globalRotateModeEnabled(),
+      disable: () => this.disableGlobalRotateMode(),
+    }));
+
     this.globalOptions = {
       snappable: true,
       layerGroup: undefined,
@@ -159,6 +205,65 @@ const Map = PMClass.extend<
     this.Keyboard._initKeyListener(map);
   },
 
+  // Unstable: for @geoman-io packages, without a semver guarantee. Returns
+  // the function the mode calls when it turns on.
+  unstable_registerMode(this: IMapPM, name: string, mode: ModeDefinition) {
+    this._modes.register(name, mode);
+    return () => this._modes._exclusive(name);
+  },
+  unstable_activeModes(this: IMapPM) {
+    return this._modes.active();
+  },
+  _registerDrawMode(this: IMapPM, shape: string) {
+    const tool = () =>
+      (this.Draw as unknown as Record<string, DrawShape>)[shape];
+    this._modes.register(`draw:${shape}`, {
+      enabled: () => tool().enabled(),
+      disable: () => tool().disable(),
+      yieldTo: this._yieldThroughButton(
+        () => tool().toolbarButtonName,
+        () => tool().disable()
+      ),
+    });
+  },
+  _registerGlobalMode(
+    this: IMapPM,
+    name: string,
+    buttonName: string,
+    get: () => { enabled: boolean; disable: () => void }
+  ) {
+    this._modes.register(name, {
+      enabled: () => get().enabled,
+      disable: () => get().disable(),
+      yieldTo: this._yieldThroughButton(
+        () => buttonName,
+        () => get().disable()
+      ),
+    });
+  },
+  // While the mode's button is toggled and clickable, another mode turns it
+  // off the way the toolbar always did: by clicking it. A button that other
+  // buttons may not turn off keeps its mode on. Otherwise, such as when the
+  // button is gone, disabled, or was rebuilt untoggled by setLang, the mode
+  // is disabled directly.
+  _yieldThroughButton(
+    this: IMapPM,
+    buttonName: () => string | undefined,
+    disable: () => void
+  ) {
+    return () => {
+      const name = buttonName();
+      const button = name ? this.Toolbar.buttons[name] : undefined;
+      if (button && !button._button.disableByOtherButtons) {
+        return;
+      }
+      if (button && button.toggled() && !button._button.disabled) {
+        button._triggerClick();
+      } else {
+        disable();
+      }
+    };
+  },
   setLang(this: IMapPM, lang = 'en', override?: object, fallback = 'en') {
     // Resolve the language code to a translation key
     lang = resolveLanguageCode(lang, translations);

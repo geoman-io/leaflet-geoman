@@ -313,6 +313,7 @@ const Draw = PMClass.extend<
     (this as unknown as ShapeRegistry)[name].toolbarButtonName = name;
     (this as unknown as ShapeRegistry)[name]._shape = name;
     this.shapes.push(name);
+    this._map.pm._registerDrawMode(name);
 
     // needed when extended / copied from a custom instance
     if ((this as unknown as ShapeRegistry)[jsClass]) {
