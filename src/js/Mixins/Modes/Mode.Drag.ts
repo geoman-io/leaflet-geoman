@@ -39,7 +39,7 @@ export interface IGlobalDragMode {
   toggleGlobalDragMode(): void;
   reinitGlobalDragMode(): void;
   _layerAddedDrag(e: LayerAddEvent): void;
-  _isRelevantForDrag(layer: PMLayer): boolean | undefined;
+  _isRelevantForDrag(layer: PMLayer): boolean;
   _fireGlobalDragModeToggled(enabled: boolean): void;
 }
 const GlobalDragMode = {
@@ -119,11 +119,8 @@ const GlobalDragMode = {
   },
   _isRelevantForDrag(layer: PMLayer) {
     return (
-      layer.pm &&
       !(layer instanceof L.LayerGroup) &&
-      ((!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
+      PM.Utils.isGeomanLayer(layer) &&
       layer.pm!.options.draggable
     );
   },

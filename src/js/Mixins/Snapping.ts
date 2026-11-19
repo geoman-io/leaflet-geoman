@@ -353,8 +353,7 @@ const SnapMixin: ISnapMixin & ThisType<SnapMixinContext & ISnapMixin> = {
         // if snapIgnore === false the layer will be always snappable
         if (
           layer.options.snapIgnore === undefined &&
-          ((!PM.optIn && layer.options.pmIgnore === true) || // if optIn is not set and pmIgnore is true, the layer will be ignored
-            (PM.optIn && layer.options.pmIgnore !== false)) // if optIn is true and pmIgnore is not false, the layer will be ignored
+          !PM.Utils._isOptedIn(layer)
         ) {
           return;
         }

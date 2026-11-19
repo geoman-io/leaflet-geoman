@@ -58,6 +58,8 @@ interface ExtendedMarker extends L.Marker {
 export interface IUtils {
   calcMiddleLatLng(map: L.Map, latlng1: L.LatLng, latlng2: L.LatLng): L.LatLng;
   findLayers(map: L.Map): PMLayer[];
+  _isOptedIn(layer: L.Layer): boolean;
+  isGeomanLayer(layer: L.Layer): boolean;
   circleToPolygon(
     circle: ExtendedCircle,
     sides?: number,
@@ -128,20 +130,19 @@ const Utils: IUtils = {
       }
     });
 
-    // filter out layers that don't have the leaflet-geoman instance
-    layers = layers.filter((layer) => !!layer.pm);
-
-    // filter out everything that's leaflet-geoman specific temporary stuff
-    layers = layers.filter((layer) => !layer._pmTempLayer);
-
-    // filter out everything that ignore leaflet-geoman
-    layers = layers.filter(
-      (layer) =>
-        (!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (PM.optIn && layer.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
-    );
-
-    return layers;
+    return layers.filter((layer) => this.isGeomanLayer(layer));
+  },
+  // pmIgnore and opt-in: without opt-in a layer takes part unless pmIgnore is
+  // set; with opt-in only when pmIgnore is exactly false.
+  _isOptedIn(layer) {
+    const { pmIgnore } = layer.options as { pmIgnore?: boolean };
+    return PM.optIn ? pmIgnore === false : !pmIgnore;
+  },
+  // A layer Geoman edits: it has `pm`, is not one of Geoman's own temporary
+  // layers, and is opted in.
+  isGeomanLayer(layer) {
+    const l = layer as PMLayer;
+    return !!l.pm && !l._pmTempLayer && this._isOptedIn(l);
   },
   circleToPolygon(circle, sides = 60, withBearing = true) {
     const origin = circle.getLatLng();

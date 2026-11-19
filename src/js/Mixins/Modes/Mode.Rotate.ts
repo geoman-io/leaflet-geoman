@@ -37,7 +37,7 @@ export interface IGlobalRotateMode {
   disableGlobalRotateMode(): void;
   globalRotateModeEnabled(): boolean;
   toggleGlobalRotateMode(): void;
-  _isRelevantForRotate(layer: PMLayer): boolean | undefined;
+  _isRelevantForRotate(layer: PMLayer): boolean;
   handleLayerAdditionInGlobalRotateMode(): void;
   _layerAddedRotate(e: LayerAddEvent): void;
   _fireGlobalRotateModeToggled(): void;
@@ -101,12 +101,8 @@ const GlobalRotateMode = {
   },
   _isRelevantForRotate(layer: PMLayer) {
     return (
-      layer.pm &&
       layer instanceof L.Polyline &&
-      !(layer instanceof L.LayerGroup) &&
-      ((!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
+      PM.Utils.isGeomanLayer(layer) &&
       layer.pm!.options.allowRotation
     );
   },

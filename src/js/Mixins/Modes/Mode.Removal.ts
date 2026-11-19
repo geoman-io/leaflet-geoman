@@ -58,7 +58,7 @@ export interface IGlobalRemovalMode {
   globalRemovalModeEnabled(): boolean;
   toggleGlobalRemovalMode(): void;
   removeLayer(e: ClickEvent): void;
-  _isRelevantForRemoval(layer: PMLayer): boolean | undefined;
+  _isRelevantForRemoval(layer: PMLayer): boolean;
   handleLayerAdditionInGlobalRemovalMode(): void;
   _layerAddedRemoval(e: LayerAddEvent): void;
   _fireGlobalRemovalModeToggled(enabled: boolean): void;
@@ -148,11 +148,8 @@ const GlobalRemovalMode = {
   },
   _isRelevantForRemoval(layer: PMLayer) {
     return (
-      layer.pm &&
       !(layer instanceof L.LayerGroup) &&
-      ((!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
+      PM.Utils.isGeomanLayer(layer) &&
       layer.pm!.options.allowRemoval
     );
   },

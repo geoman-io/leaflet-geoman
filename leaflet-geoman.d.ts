@@ -1614,6 +1614,9 @@ export declare namespace PM {
     /** Returns all layers that are available for Geoman */
     function findLayers(map: L.Map): L.Layer[];
 
+    /** Whether Geoman handles this layer: it has `pm`, is not a temporary Geoman layer, and is not excluded by `pmIgnore` / opt-in. */
+    function isGeomanLayer(layer: L.Layer): boolean;
+
     /** Converts a circle into a polygon with default 60 sides. For CRS.Simple maps `withBearing` needs to be false */
     function circleToPolygon(
       circle: L.Circle,
