@@ -97,6 +97,7 @@ const DOCUMENTED: Record<DocumentedKey, true> = {
   continueDrawing: true,
   cursorMarker: true,
   customShapeGeoJSONOptions: true,
+  combineModes: true,
   cutAsCircle: true,
   draggable: true,
   editable: true,

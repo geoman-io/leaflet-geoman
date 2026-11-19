@@ -383,12 +383,16 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     // we can't have two active modes because of possible event conflicts
     // so, we trigger a click on all currently active (toggled) buttons
 
+    const exceptName = Object.keys(this.buttons).find(
+      (name) => this.buttons[name] === exceptThisButton
+    );
     for (const name in this.buttons) {
       const button = this.buttons[name];
       if (
         button._button.disableByOtherButtons &&
         button !== exceptThisButton &&
-        button.toggled()
+        button.toggled() &&
+        !(exceptName && this.map.pm._modes.buttonsCombine(exceptName, name))
       ) {
         button._triggerClick();
       }

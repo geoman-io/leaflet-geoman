@@ -15,6 +15,8 @@ interface PMLayer extends L.Layer {
     };
     _applyInheritedOptions: (options?: object) => void;
     _applyOptions: (options?: object) => void;
+    enableLayerDrag: () => void;
+    layerDragEnabled: () => boolean;
   };
 }
 
@@ -34,7 +36,12 @@ export interface IGlobalEditMode {
   _addedLayersEdit: Record<number, PMLayer>;
   throttledReInitEdit?: (e: LayerAddEvent) => void;
   globalOptions: GlobalOptions;
-  _modes: { _exclusive(name: string): void };
+  _modes: {
+    _exclusive(name: string): void;
+    combines(a: string, b: string): boolean;
+  };
+  globalDragModeEnabled(): boolean;
+  _isRelevantForDrag(layer: PMLayer): boolean;
   Toolbar: {
     toggleButton: (name: string, enabled: boolean) => void;
   };
@@ -103,9 +110,19 @@ const GlobalEditMode = {
     // find all layers handles by leaflet-geoman
     const layers = PM.Utils.findLayers(this.map) as PMLayer[];
 
+    const dragStaysOn =
+      this._modes.combines('edit', 'drag') && this.globalDragModeEnabled();
     // disable all layers
     layers.forEach((layer: PMLayer) => {
       layer.pm!.disable();
+      // A marker's edit mode turns its drag off; drag mode still wants it.
+      if (
+        dragStaysOn &&
+        this._isRelevantForDrag(layer) &&
+        !layer.pm!.layerDragEnabled()
+      ) {
+        layer.pm!.enableLayerDrag();
+      }
     });
 
     // cleanup layer off event

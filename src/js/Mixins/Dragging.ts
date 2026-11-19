@@ -135,6 +135,9 @@ export interface DragMixinContext {
   _fireDragEnd: () => void;
   _fireDrag: (e: SimulatedEvent) => void;
   _fireEdit: () => void;
+  _editDrags: () => boolean;
+  _suspendInteractions: (changedBy: 'drag') => void;
+  _syncInteractions: (changedBy: 'drag') => void;
   _fireUpdate: () => void;
   _fireChange: (
     coords:
@@ -185,8 +188,10 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       return;
     }
 
-    // before enabling layer drag, disable layer editing
-    this.disable();
+    // before enabling layer drag, disable layer editing, unless the modes combine
+    if (!this._layer._map.pm.getGlobalOptions().combineModes) {
+      this.disable();
+    }
 
     this._layerDragEnabled = true;
 
@@ -399,6 +404,7 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
 
       // fire pm:dragstart event
       this._fireDragStart();
+      this._suspendInteractions('drag');
     }
 
     // if _tempDragCoord is null add the current latlng to prevent throwing a error. This can happen when for example the layer is removed and added to the map while dragging (MarkerCluster)
@@ -444,6 +450,7 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       // fire edit
       this._fireEdit();
       this._layerEdited = true;
+      this._syncInteractions('drag');
     }, 10);
 
     return true;
@@ -571,7 +578,12 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
   // groups, as it decides whether snapping runs, like before.
   _layersToSync() {
     // if layer is in Edit-Mode it should not be possible to drag other layers too. (Marker & CircleMarker & ImageOverlay)
-    if (this.enabled() || !this.options.syncLayersOnDrag) {
+    // With combineModes, a shape in edit mode keeps dragging its group.
+    const editing =
+      this.enabled() &&
+      (!this._layer._map?.pm.getGlobalOptions().combineModes ||
+        this._editDrags());
+    if (editing || !this.options.syncLayersOnDrag) {
       return { found: false, synced: [] };
     }
     let layersToSync: SyncLayer[] = [];

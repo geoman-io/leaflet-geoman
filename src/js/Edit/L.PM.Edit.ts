@@ -92,7 +92,24 @@ export interface IEdit {
   _vertexValidationDragEnd(marker: {
     _cancelDragEventChain?: L.LatLng | null;
   }): boolean;
+  _suspendInteractions(changedBy: Interaction): void;
+  _syncInteractions(changedBy: Interaction): void;
+  _hideEditHelpers(): void;
+  /** Whether edit mode moves this layer by dragging it, as for markers. */
+  _editDrags(): boolean;
+  _refreshEditHelpers(): void;
 }
+
+/** The layer interactions that can be on together. */
+export type Interaction = 'edit' | 'drag' | 'rotate';
+
+// What the sync below needs from the subclasses and the rotate mixin.
+type SyncContext = IEdit & {
+  enabled(): boolean;
+  rotateEnabled(): boolean;
+  _rotatePoly?: { pm: { _markerGroup?: L.FeatureGroup } };
+  _syncRotation(): void;
+};
 import SnapMixin from '../Mixins/Snapping';
 import DragMixin from '../Mixins/Dragging';
 import RotateMixin from '../Mixins/Rotating';
@@ -163,6 +180,35 @@ const Edit = PMClass.extend<
     return this.options;
   },
   applyOptions(this: IEdit) {},
+  // Edit and rotate can stay on while another interaction changes the layer,
+  // such as a body drag while editing. Their helpers hide while it runs and
+  // are rebuilt from the new coordinates when it ends.
+  _suspendInteractions(this: SyncContext, changedBy: Interaction) {
+    if (changedBy !== 'edit' && this.enabled()) {
+      this._hideEditHelpers();
+    }
+    if (changedBy !== 'rotate' && this.rotateEnabled()) {
+      this._rotatePoly?.pm._markerGroup?.remove();
+    }
+  },
+  _syncInteractions(this: SyncContext, changedBy: Interaction) {
+    // removed from the map while the interaction ran
+    if (!this._layer._map) {
+      return;
+    }
+    if (changedBy !== 'edit' && this.enabled()) {
+      this._refreshEditHelpers();
+    }
+    if (changedBy !== 'rotate' && this.rotateEnabled()) {
+      this._syncRotation();
+    }
+  },
+  // Editors with vertex or radius markers override these two.
+  _hideEditHelpers() {},
+  _editDrags() {
+    return false;
+  },
+  _refreshEditHelpers() {},
   isPolygon(this: IEdit) {
     // if it's a polygon, it means the coordinates array is multi dimensional
     return this._layer instanceof L.Polygon;

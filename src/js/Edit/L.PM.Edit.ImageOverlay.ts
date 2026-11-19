@@ -48,6 +48,7 @@ export interface IEditImageOverlay {
   toggleEdit(options?: Partial<ImageOverlayEditOptions>): void;
   enabled(): boolean;
   enable(options?: Partial<ImageOverlayEditOptions>): void;
+  _editDrags(): boolean;
   disable(): void;
   _findCorners(): L.LatLng[];
 
@@ -78,6 +79,9 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
   },
   enabled(this: IEditImageOverlay) {
     return this._enabled;
+  },
+  _editDrags() {
+    return true;
   },
   enable(this: IEditImageOverlay, options?: Partial<ImageOverlayEditOptions>) {
     // No argument keeps the layer's current options (#1113).

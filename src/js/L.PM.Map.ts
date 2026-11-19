@@ -75,7 +75,8 @@ export interface IMapPM {
   _registerGlobalMode(
     name: string,
     buttonName: string,
-    get: () => { enabled: boolean; disable: () => void }
+    get: () => { enabled: boolean; disable: () => void },
+    targets?: string[]
   ): void;
   _yieldThroughButton(
     buttonName: () => string | undefined,
@@ -161,24 +162,39 @@ const Map = PMClass.extend<
 
     // Draw tools first, then the global modes: the order Escape used to
     // check them in.
-    this._modes = new ModeManager();
+    this._modes = new ModeManager(() => !!this.globalOptions.combineModes);
     this.Draw.shapes.forEach((shape) => this._registerDrawMode(shape));
-    this._registerGlobalMode('edit', 'editMode', () => ({
-      enabled: this.globalEditModeEnabled(),
-      disable: () => this.disableGlobalEditMode(),
-    }));
-    this._registerGlobalMode('drag', 'dragMode', () => ({
-      enabled: this.globalDragModeEnabled(),
-      disable: () => this.disableGlobalDragMode(),
-    }));
+    this._registerGlobalMode(
+      'edit',
+      'editMode',
+      () => ({
+        enabled: this.globalEditModeEnabled(),
+        disable: () => this.disableGlobalEditMode(),
+      }),
+      ['vertex']
+    );
+    this._registerGlobalMode(
+      'drag',
+      'dragMode',
+      () => ({
+        enabled: this.globalDragModeEnabled(),
+        disable: () => this.disableGlobalDragMode(),
+      }),
+      ['body']
+    );
     this._registerGlobalMode('removal', 'removalMode', () => ({
       enabled: this.globalRemovalModeEnabled(),
       disable: () => this.disableGlobalRemovalMode(),
     }));
-    this._registerGlobalMode('rotate', 'rotateMode', () => ({
-      enabled: this.globalRotateModeEnabled(),
-      disable: () => this.disableGlobalRotateMode(),
-    }));
+    this._registerGlobalMode(
+      'rotate',
+      'rotateMode',
+      () => ({
+        enabled: this.globalRotateModeEnabled(),
+        disable: () => this.disableGlobalRotateMode(),
+      }),
+      ['rotate-handle']
+    );
 
     this.globalOptions = {
       snappable: true,
@@ -229,9 +245,12 @@ const Map = PMClass.extend<
     this: IMapPM,
     name: string,
     buttonName: string,
-    get: () => { enabled: boolean; disable: () => void }
+    get: () => { enabled: boolean; disable: () => void },
+    targets?: string[]
   ) {
     this._modes.register(name, {
+      targets,
+      button: buttonName,
       enabled: () => get().enabled,
       disable: () => get().disable(),
       yieldTo: this._yieldThroughButton(

@@ -197,6 +197,9 @@ export interface IEditLine {
   _onRotate: IRotateMixin['_onRotate'];
   _onRotateEnd: IRotateMixin['_onRotateEnd'];
   _initRotateHandle: IRotateMixin['_initRotateHandle'];
+  _syncInteractions(changedBy: 'edit'): void;
+  _hideEditHelpers(): void;
+  _refreshEditHelpers(): void;
   _removeRotateHandle: IRotateMixin['_removeRotateHandle'];
 }
 import kinks from '@turf/kinks';
@@ -331,6 +334,13 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
       this.disable();
     }
     return this.enabled();
+  },
+  _hideEditHelpers(this: IEditLine) {
+    this._markerGroup?.removeFrom(this._map);
+  },
+  _refreshEditHelpers(this: IEditLine) {
+    this._initMarkers();
+    this.applyOptions();
   },
   applyOptions(this: IEditLine) {
     if (this.options.snappable) {
@@ -584,6 +594,7 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     // fire edit event
     this._fireEdit();
     this._layerEdited = true;
+    this._syncInteractions('edit');
     this._fireChange(this._layer.getLatLngs(), 'Edit');
 
     this._fireVertexAdded(
@@ -852,6 +863,7 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     // fire edit event
     this._fireEdit();
     this._layerEdited = true;
+    this._syncInteractions('edit');
 
     // fire vertex removal event
     // TODO: maybe fire latlng as well?
@@ -1141,6 +1153,7 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     // fire edit event
     this._fireEdit();
     this._layerEdited = true;
+    this._syncInteractions('edit');
     this._fireChange(this._layer.getLatLngs(), 'Edit');
   },
   _onVertexClick(
