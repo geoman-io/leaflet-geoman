@@ -42,18 +42,6 @@ describe('Edit LayerGroup', () => {
     cy.hasVertexMarkers(0);
   });
 
-  it('supports clearLayers', () => {
-    cy.window().then(({ L, map }) => {
-      const featureGroup = new L.FeatureGroup();
-      featureGroup.addTo(map);
-      featureGroup.addLayer(new L.Marker([19.04469, 72.9258]));
-      map.fitBounds(featureGroup.getBounds());
-      featureGroup.clearLayers();
-
-      expect(featureGroup.pm._layers).to.have.lengthOf(0);
-    });
-  });
-
   it('adds the created layers to a layergroup', () => {
     let fg: L.FeatureGroup;
     let fg2: L.FeatureGroup;
@@ -409,6 +397,43 @@ describe('Edit LayerGroup', () => {
 
       expect(secondBefore.equals(second.getCenter())).to.eq(false);
       expect(firstBefore.equals(first.getCenter())).to.eq(false);
+    });
+  });
+
+  it('syncs drag with a plain LayerGroup, including layers added later', () => {
+    let first: L.Polygon;
+    let second: L.Polygon;
+    cy.window().then(({ map, L }) => {
+      const ring = (x: number, y: number) =>
+        [
+          [x, y],
+          [x + 60, y],
+          [x + 60, y + 60],
+        ].map((p) => map.containerPointToLatLng(p as L.PointTuple));
+      first = new L.Polygon(ring(150, 150));
+      const group = new L.LayerGroup([first]).addTo(map);
+      // LayerGroup (unlike FeatureGroup) fires no layeradd for this.
+      second = new L.Polygon(ring(350, 150));
+      group.addLayer(second);
+      map.pm.setGlobalOptions({ syncLayersOnDrag: true });
+      map.pm.enableGlobalDragMode();
+
+      const firstBefore = first.getCenter();
+      const start = map.latLngToContainerPoint(second.getCenter());
+      const end = start.add([60, 30]);
+      const event = (point: L.Point) => ({
+        originalEvent: { button: 0 },
+        target: second,
+        latlng: map.containerPointToLatLng(point),
+      });
+      const secondBefore = second.getCenter();
+      // Drag the layer added later; the group must still move the first one.
+      second.pm._dragMixinOnMouseDown(event(start));
+      second.pm._dragMixinOnMouseMove(event(end));
+      second.pm._dragMixinOnMouseUp(event(end));
+
+      expect(firstBefore.equals(first.getCenter())).to.eq(false);
+      expect(secondBefore.equals(second.getCenter())).to.eq(false);
     });
   });
 

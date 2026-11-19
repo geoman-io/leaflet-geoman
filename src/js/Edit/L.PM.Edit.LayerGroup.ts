@@ -26,7 +26,6 @@ type PMLayer = L.Layer & {
     toggleEdit: (options?: object, layerIds?: number[]) => void;
     setOptions: (options?: object, layerIds?: number[]) => void;
     dragging: () => boolean;
-    _parentLayerGroup?: Record<number, L.LayerGroup>;
     getLayers?: (
       deep?: boolean,
       filterGeoman?: boolean,
@@ -64,7 +63,6 @@ type ExtendedLayerGroup = L.LayerGroup & {
  */
 export interface IEditLayerGroup {
   _layerGroup: ExtendedLayerGroup;
-  _layers: PMLayer[];
   _map?: ExtendedMap;
   _options?: EditOptions;
   options?: EditOptions;
@@ -73,8 +71,6 @@ export interface IEditLayerGroup {
   disable(_layerIds?: number[]): void;
   enabled(_layerIds?: number[]): boolean;
   toggleEdit(options?: EditOptions, _layerIds?: number[]): void;
-  _initLayer(layer: PMLayer): void;
-  _removeLayerFromGroup(layer: PMLayer): void;
   dragging(): boolean;
   getOptions(): EditOptions | undefined;
   _getMap(): ExtendedMap | null;
@@ -94,75 +90,29 @@ import Edit from './L.PM.Edit';
 Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
   initialize(this: IEditLayerGroup, layerGroup: L.LayerGroup) {
     this._layerGroup = layerGroup as typeof this._layerGroup;
-    this._layers = this.getLayers();
-    this._getMap();
 
-    // init all layers of the group
-    this._layers.forEach((layer) => this._initLayer(layer));
-
-    // if a new layer is added to the group, reinitialize
-    // This only works for FeatureGroups, not LayerGroups
-    // https://github.com/Leaflet/Leaflet/issues/4861
-
-    // layeradd/layerremove are FeatureGroup events
-    const featureGroup = this._layerGroup as unknown as L.FeatureGroup;
-
-    // Skip temporary layers before the throttle. The throttle replays only the
-    // last queued event, so a temporary layer added last would otherwise drop
-    // a real layer added earlier in the same window.
-    const skipTempLayers =
-      (handler: (e: L.LayerEvent) => void) => (e: L.LayerEvent) => {
-        if (!(e.layer as PMLayer)._pmTempLayer) {
-          handler(e);
-        }
-      };
-
-    const addThrottle = () => {
-      this._layers = this.getLayers();
-      const _initLayers = this._layers.filter(
-        (layer) =>
-          !layer.pm!._parentLayerGroup ||
-          !(this._layerGroup._leaflet_id in layer.pm!._parentLayerGroup)
-      );
-      // init the newly added layers (can be multiple because of the throttle)
-      _initLayers.forEach((layer) => {
-        this._initLayer(layer);
-      });
-      // if editing was already enabled for this group, enable it again
-      // so the new layers are enabled
-      if (
-        _initLayers.length > 0 &&
-        this._getMap() &&
-        this._getMap()!.pm.globalEditModeEnabled()
-      ) {
-        if (this.enabled()) {
-          this.enable(this.getOptions());
-        }
-      }
-    };
-    featureGroup.on(
+    // A layer added to a group that is being edited in global edit mode is
+    // enabled with the group's options. Membership itself is not stored: it is
+    // read from the group when needed. layeradd is a FeatureGroup event
+    // (https://github.com/Leaflet/Leaflet/issues/4861).
+    (this._layerGroup as unknown as L.FeatureGroup).on(
       'layeradd',
-      skipTempLayers(L.Util.throttle(addThrottle, 100, this)),
-      this
-    );
-
-    // Remove the layergroup from the layer
-    featureGroup.on(
-      'layerremove',
-      (e) => {
-        this._removeLayerFromGroup(e.layer as PMLayer);
+      (e: L.LayerEvent) => {
+        const layer = e.layer as PMLayer;
+        // Cheap checks first: this runs for every layer added to the group,
+        // so bulk adds outside edit mode must not scan the group.
+        if (
+          layer._pmTempLayer ||
+          layer instanceof L.LayerGroup ||
+          !layer.pm ||
+          !layer._map?.pm?.globalEditModeEnabled() ||
+          !this.getLayers().includes(layer) ||
+          !this.enabled()
+        ) {
+          return;
+        }
+        layer.pm!.enable(this.getOptions());
       },
-      this
-    );
-
-    const removeThrottle = () => {
-      this._layers = this.getLayers();
-    };
-    // if a layer is removed from the group, calc the layers list again.
-    // we run this as throttle because the findLayers() is a larger function
-    featureGroup.on(
-      'layerremove',
-      skipTempLayers(L.Util.throttle(removeThrottle, 100, this)),
       this
     );
   },
@@ -171,11 +121,8 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     options?: EditOptions,
     _layerIds: number[] = []
   ) {
-    if (_layerIds.length === 0) {
-      this._layers = this.getLayers();
-    }
     this._options = options;
-    this._layers.forEach((layer) => {
+    this.getLayers().forEach((layer) => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id!) === -1) {
           _layerIds.push(layer._leaflet_id!);
@@ -187,10 +134,7 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     });
   },
   disable(this: IEditLayerGroup, _layerIds: number[] = []) {
-    if (_layerIds.length === 0) {
-      this._layers = this.getLayers();
-    }
-    this._layers.forEach((layer) => {
+    this.getLayers().forEach((layer) => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id!) === -1) {
           _layerIds.push(layer._leaflet_id!);
@@ -202,10 +146,7 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     });
   },
   enabled(this: IEditLayerGroup, _layerIds: number[] = []) {
-    if (_layerIds.length === 0) {
-      this._layers = this.getLayers();
-    }
-    const enabled = this._layers.find((layer) => {
+    const enabled = this.getLayers().find((layer) => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id!) === -1) {
           _layerIds.push(layer._leaflet_id!);
@@ -222,11 +163,8 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     options?: EditOptions,
     _layerIds: number[] = []
   ) {
-    if (_layerIds.length === 0) {
-      this._layers = this.getLayers();
-    }
     this._options = options;
-    this._layers.forEach((layer) => {
+    this.getLayers().forEach((layer) => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id!) === -1) {
           _layerIds.push(layer._leaflet_id!);
@@ -237,33 +175,14 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
       }
     });
   },
-  _initLayer(this: IEditLayerGroup, layer: PMLayer) {
-    // add reference for the group to each layer inside said group by id, a layer can have multiple groups
-    const id = L.Util.stamp(this._layerGroup);
-    if (!layer.pm!._parentLayerGroup) {
-      layer.pm!._parentLayerGroup = {};
-    }
-    layer.pm!._parentLayerGroup[id] = this._layerGroup;
-  },
-  _removeLayerFromGroup(this: IEditLayerGroup, layer: PMLayer) {
-    if (layer.pm && layer.pm._parentLayerGroup) {
-      const id = L.Util.stamp(this._layerGroup);
-      delete layer.pm._parentLayerGroup[id];
-    }
-  },
   dragging(this: IEditLayerGroup) {
-    this._layers = this.getLayers();
-    if (this._layers) {
-      const dragging = this._layers.find((layer) => layer.pm!.dragging());
-      return !!dragging;
-    }
-    return false;
+    return this.getLayers().some((layer) => layer.pm!.dragging());
   },
   getOptions(this: IEditLayerGroup) {
     return this.options;
   },
   _getMap(this: IEditLayerGroup): ExtendedMap | null {
-    return this._map || this._layers.find((l) => !!l._map)?._map || null;
+    return this._map || this.getLayers().find((l) => !!l._map)?._map || null;
   },
   getLayers(
     this: IEditLayerGroup,
@@ -318,11 +237,8 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
     options?: EditOptions,
     _layerIds: number[] = []
   ) {
-    if (_layerIds.length === 0) {
-      this._layers = this.getLayers();
-    }
     this.options = options;
-    this._layers.forEach((layer) => {
+    this.getLayers().forEach((layer) => {
       if (layer.pm) {
         if (layer instanceof L.LayerGroup) {
           if (_layerIds.indexOf(layer._leaflet_id!) === -1) {
