@@ -255,10 +255,17 @@ describe('Mode exclusivity', () => {
         ['draw:Polygon', () => map.pm.enableDraw('Polygon')],
         ['edit', () => map.pm.enableGlobalEditMode()],
       ];
-      modes.forEach(([name, enable]) => {
+      // Record every step, so a failure shows all modes that broke.
+      const steps = modes.map(([name, enable]) => {
         enable();
-        expect(map.pm.unstable_activeModes(), name).to.deep.equal([name]);
+        return `${name} -> ${activeModes(map).join(',')}`;
       });
+      expect(steps).to.deep.equal(
+        modes.map(
+          ([name]) =>
+            `${name} -> ${name === 'draw:Cut' ? 'draw:Cut,cut' : name}`
+        )
+      );
     });
   });
 
@@ -313,6 +320,46 @@ describe('Mode exclusivity', () => {
       map.pm.enableGlobalEditMode();
       map.pm.enableGlobalDragMode();
       expect(activeModes(map)).to.deep.equal(['drag']);
+    });
+  });
+
+  it('Escape exits every built-in mode, including Text and copied draw controls', () => {
+    cy.window().then(({ map }) => {
+      map.pm.setGlobalOptions({ exitModeOnEscape: true });
+      map.pm.Toolbar.copyDrawControl('Polygon', { name: 'polyCopy' });
+      map.pm.Toolbar.copyDrawControl('Line', {
+        name: 'lineCopy',
+        disableByOtherButtons: false,
+      });
+    });
+    const enablers: [string, (map: L.Map) => void][] = [
+      ['draw:Marker', (map) => map.pm.enableDraw('Marker')],
+      ['draw:CircleMarker', (map) => map.pm.enableDraw('CircleMarker')],
+      ['draw:Line', (map) => map.pm.enableDraw('Line')],
+      ['draw:Polygon', (map) => map.pm.enableDraw('Polygon')],
+      ['draw:Rectangle', (map) => map.pm.enableDraw('Rectangle')],
+      ['draw:Circle', (map) => map.pm.enableDraw('Circle')],
+      ['draw:Text', (map) => map.pm.enableDraw('Text')],
+      ['draw:Cut', (map) => map.pm.enableGlobalCutMode()],
+      ['draw:polyCopy', (map) => map.pm.enableDraw('polyCopy')],
+      ['draw:lineCopy', (map) => map.pm.enableDraw('lineCopy')],
+      ['edit', (map) => map.pm.enableGlobalEditMode()],
+      ['drag', (map) => map.pm.enableGlobalDragMode()],
+      ['removal', (map) => map.pm.enableGlobalRemovalMode()],
+      ['rotate', (map) => map.pm.enableGlobalRotateMode()],
+    ];
+    enablers.forEach(([name, enable]) => {
+      cy.window().then(({ map }) => {
+        enable(map);
+        // activeModes lists Cut both as a draw tool and as cut mode.
+        expect(activeModes(map), name).to.deep.equal(
+          name === 'draw:Cut' ? ['draw:Cut', 'cut'] : [name]
+        );
+      });
+      cy.get('body').type('{esc}');
+      cy.window().then(({ map }) => {
+        expect(activeModes(map), `${name} after Escape`).to.deep.equal([]);
+      });
     });
   });
 });
