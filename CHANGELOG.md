@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - lodash `merge` and `mergeWith` are no longer used.
 - Layer drag runs as one map-level drag session for the pressed layer and the layers synced with it, instead of each layer binding its own listeners and replaying the pointer into the others. With `syncLayersOnDrag`, each layer now fires `pm:drag` and `pm:change` once per pointer move; before, every synced layer fired them once per synced layer on each move (9 events per layer for 3 moves of 3 layers, now 3). `pm:dragstart`, `pm:dragend` and `pm:edit` fire for the pressed layer first, then for the synced layers in group order. Dragging 50 synced layers is about 40× faster.
 - Multi-touch: when a second finger presses a layer that is already moving as part of another layer's synced drag, that earlier drag ends (`pm:dragend` and `pm:edit` fire) and the pressed layer, with its own synced layers, follows the second finger. Before, the earlier drag kept following the first finger and the pressed layer was moved by both fingers. Two fingers on two unrelated layers still drag them independently.
+- Multi-touch: map panning stays off until the last running layer drag ends, and goes back to the state it had when the first of them started. Before, releasing or cancelling one finger turned panning back on while another finger was still dragging a layer.
 
 ### Fixed
 

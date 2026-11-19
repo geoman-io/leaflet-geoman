@@ -26,10 +26,17 @@ export interface DragParticipant<E extends DragSessionEvent> {
  * Each step runs every layer once, in the order given: the pressed layer
  * first, then the synced ones.
  */
+// Map panning shared by the drags running on one map: the state when the first
+// drag started, and how many drags are running. Panning comes back only when
+// the last one ends.
+const mapPanning = new WeakMap<
+  L.Map,
+  { wasDraggable: boolean; sessions: number }
+>();
+
 export default class DragSession<E extends DragSessionEvent> {
   private ended = false;
   private mapPanningOff = false;
-  private readonly mapWasDraggable: boolean;
   private lastEvent?: E;
 
   private readonly map: L.Map;
@@ -59,7 +66,15 @@ export default class DragSession<E extends DragSessionEvent> {
     this.participants = participants;
     this.pointerId = pointerId;
     this.toEvent = toEvent;
-    this.mapWasDraggable = map.dragging.enabled();
+    const shared = mapPanning.get(map);
+    if (shared && shared.sessions > 0) {
+      shared.sessions++;
+    } else {
+      mapPanning.set(map, {
+        wasDraggable: map.dragging.enabled(),
+        sessions: 1,
+      });
+    }
     participants.forEach((p) => {
       p._activeDragSession = this;
     });
@@ -80,7 +95,7 @@ export default class DragSession<E extends DragSessionEvent> {
     }
     if (!this.mapPanningOff) {
       this.mapPanningOff = true;
-      if (this.mapWasDraggable) {
+      if (mapPanning.get(this.map)?.wasDraggable) {
         this.map.dragging.disable();
       }
     }
@@ -95,7 +110,7 @@ export default class DragSession<E extends DragSessionEvent> {
     }
     this.ended = true;
     this.unbind();
-    this.restoreMapPanning();
+    this.leaveMap();
     this.participants.forEach((p) => {
       if (p._activeDragSession === this) {
         p._activeDragSession = undefined;
@@ -116,9 +131,7 @@ export default class DragSession<E extends DragSessionEvent> {
     }
     this.ended = true;
     this.unbind();
-    if (this.mapPanningOff) {
-      this.restoreMapPanning();
-    }
+    this.leaveMap();
     this.participants.forEach((p) => {
       if (p._activeDragSession === this) {
         p._activeDragSession = undefined;
@@ -132,10 +145,28 @@ export default class DragSession<E extends DragSessionEvent> {
     }
   }
 
-  /** Turns the map's panning back on if it was on when the drag started. */
+  /**
+   * Turns the map's panning back on if it was on when the first running drag
+   * started, such as when drag mode is turned off mid-drag.
+   */
   restoreMapPanning() {
-    if (this.mapWasDraggable) {
+    if (mapPanning.get(this.map)?.wasDraggable) {
       this.map.dragging.enable();
+    }
+  }
+
+  // Counts this drag out; the last drag on the map restores panning.
+  private leaveMap() {
+    const shared = mapPanning.get(this.map);
+    if (!shared) {
+      return;
+    }
+    shared.sessions--;
+    if (shared.sessions <= 0) {
+      mapPanning.delete(this.map);
+      if (shared.wasDraggable) {
+        this.map.dragging.enable();
+      }
     }
   }
 

@@ -339,6 +339,66 @@ describe('Layer drag', () => {
     });
   });
 
+  it('keeps map panning off until the last of two drags is released', () => {
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const { layers } = polygons(win, 2);
+      map.pm.enableGlobalDragMode();
+      const c = map.getContainer();
+      const second = { pointerId: 2, isPrimary: false };
+      pathOf(layers[0]).dispatchEvent(pointer(win, 'pointerdown', 125, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      pathOf(layers[1]).dispatchEvent(
+        pointer(win, 'pointerdown', 205, 175, second)
+      );
+      c.dispatchEvent(pointer(win, 'pointermove', 205, 185, second));
+      c.dispatchEvent(pointer(win, 'pointerup', 135, 175));
+      expect(map.dragging.enabled()).to.eq(false);
+      c.dispatchEvent(pointer(win, 'pointerup', 205, 185, second));
+      expect(map.dragging.enabled()).to.eq(true);
+    });
+  });
+
+  it('cancelling one finger ends only its own drag', () => {
+    let log: string[];
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const made = polygons(win, 2);
+      log = made.log;
+      const [a, b] = made.layers;
+      // Leaflet's pinch zoom would zoom the map for two touches; this test
+      // measures the drags only.
+      map.touchZoom.disable();
+      map.pm.enableGlobalDragMode();
+      const c = map.getContainer();
+      const second = { pointerId: 2, isPrimary: false };
+      const aBefore = a.getCenter();
+      const bBefore = b.getCenter();
+      pathOf(a).dispatchEvent(pointer(win, 'pointerdown', 125, 175));
+      pathOf(b).dispatchEvent(pointer(win, 'pointerdown', 205, 175, second));
+      c.dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 205, 185, second));
+      c.dispatchEvent(pointer(win, 'pointercancel', 135, 175));
+      // Finger 2 still drags, so map panning stays off.
+      expect(map.dragging.enabled()).to.eq(false);
+      // After the cancel, finger 1 moves nothing and finger 2 still drags b.
+      c.dispatchEvent(pointer(win, 'pointermove', 175, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 205, 195, second));
+      expect(movedPx(map, a, aBefore)).to.deep.eq([10, 0]);
+      expect(movedPx(map, b, bBefore)).to.deep.eq([0, 20]);
+      expect(b.pm.dragging()).to.eq(true);
+      c.dispatchEvent(pointer(win, 'pointerup', 205, 195, second));
+      expect(map.dragging.enabled()).to.eq(true);
+    });
+    cy.wait(50);
+    cy.wrap(null).then(() => {
+      expect(count(log, '0:pm:dragend')).to.eq(1);
+      expect(count(log, '1:pm:dragend')).to.eq(1);
+    });
+  });
+
   it('ends a drag on pointercancel', () => {
     let log: string[];
     cy.window().then((w) => {
