@@ -296,6 +296,124 @@ describe('Layer drag', () => {
     });
   });
 
+  it('lets a second finger take over a layer that moves with another layer', () => {
+    let log: string[];
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const made = polygons(win, 2);
+      log = made.log;
+      const [a, b] = made.layers;
+      a.pm.setOptions({ syncLayersOnDrag: true });
+      map.pm.enableGlobalDragMode();
+      const c = map.getContainer();
+      const second = { pointerId: 2, isPrimary: false };
+      pathOf(a).dispatchEvent(pointer(win, 'pointerdown', 125, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      const aBefore = a.getCenter();
+      const bBefore = b.getCenter();
+
+      pathOf(b).dispatchEvent(pointer(win, 'pointerdown', 215, 175, second));
+      // The first finger no longer moves either layer.
+      c.dispatchEvent(pointer(win, 'pointermove', 155, 175));
+      expect(movedPx(map, a, aBefore)).to.deep.eq([0, 0]);
+      expect(movedPx(map, b, bBefore)).to.deep.eq([0, 0]);
+      // The second finger moves only the layer it pressed.
+      c.dispatchEvent(pointer(win, 'pointermove', 215, 195, second));
+      expect(movedPx(map, a, aBefore)).to.deep.eq([0, 0]);
+      expect(movedPx(map, b, bBefore)).to.deep.eq([0, 20]);
+
+      c.dispatchEvent(pointer(win, 'pointerup', 155, 175));
+      c.dispatchEvent(pointer(win, 'pointerup', 215, 195, second));
+      expect(map.dragging.enabled()).to.eq(true);
+    });
+    cy.wait(50);
+    cy.wrap(null).then(() => {
+      // The first drag ends when the second finger takes over.
+      expect(log.filter((l) => !/pm:(drag|change|edit)$/.test(l))).to.deep.eq([
+        '0:pm:dragstart',
+        '1:pm:dragstart',
+        '0:pm:dragend',
+        '1:pm:dragend',
+      ]);
+    });
+  });
+
+  it('ends a drag on pointercancel', () => {
+    let log: string[];
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const made = polygons(win, 1);
+      log = made.log;
+      map.pm.enableGlobalDragMode();
+      const c = map.getContainer();
+      pathOf(made.layers[0]).dispatchEvent(
+        pointer(win, 'pointerdown', 125, 175)
+      );
+      c.dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      c.dispatchEvent(pointer(win, 'pointercancel', 135, 175));
+      expect(map.dragging.enabled()).to.eq(true);
+      const center = made.layers[0].getCenter();
+      c.dispatchEvent(pointer(win, 'pointermove', 300, 300));
+      expect(made.layers[0].getCenter().equals(center)).to.eq(true);
+    });
+    cy.wait(50);
+    cy.wrap(null).then(() => {
+      expect(count(log, '0:pm:dragend')).to.eq(1);
+    });
+  });
+
+  it('keeps map panning off after drags when it was off before', () => {
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const { layers } = polygons(win, 2);
+      map.pm.enableGlobalDragMode();
+      map.dragging.disable();
+      const c = map.getContainer();
+      const second = { pointerId: 2, isPrimary: false };
+      pathOf(layers[0]).dispatchEvent(pointer(win, 'pointerdown', 125, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      pathOf(layers[1]).dispatchEvent(
+        pointer(win, 'pointerdown', 205, 175, second)
+      );
+      c.dispatchEvent(pointer(win, 'pointermove', 205, 185, second));
+      c.dispatchEvent(pointer(win, 'pointerup', 135, 175));
+      expect(map.dragging.enabled()).to.eq(false);
+      c.dispatchEvent(pointer(win, 'pointerup', 205, 185, second));
+      expect(map.dragging.enabled()).to.eq(false);
+      // and after a blur
+      pathOf(layers[0]).dispatchEvent(pointer(win, 'pointerdown', 135, 175));
+      c.dispatchEvent(pointer(win, 'pointermove', 145, 175));
+      win.dispatchEvent(new win.FocusEvent('blur'));
+      expect(map.dragging.enabled()).to.eq(false);
+    });
+  });
+
+  it('ends a drag without error when the map is removed mid-drag', () => {
+    let log: string[];
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map } = win;
+      const made = polygons(win, 1);
+      log = made.log;
+      map.pm.enableGlobalDragMode();
+      pathOf(made.layers[0]).dispatchEvent(
+        pointer(win, 'pointerdown', 125, 175)
+      );
+      map.getContainer().dispatchEvent(pointer(win, 'pointermove', 135, 175));
+      map.remove();
+      win.document.body.dispatchEvent(pointer(win, 'pointerup', -50, -50));
+      // A second release finds no drag to end.
+      win.document.body.dispatchEvent(pointer(win, 'pointerup', -50, -50));
+    });
+    cy.wait(50);
+    cy.wrap(null).then(() => {
+      expect(count(log, '0:pm:dragend')).to.eq(1);
+    });
+  });
+
   it('syncs the layers of a group passed in syncLayersOnDrag', () => {
     cy.window().then((w) => {
       const win = w as Win;
