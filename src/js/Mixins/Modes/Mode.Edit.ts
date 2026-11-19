@@ -43,7 +43,7 @@ export interface IGlobalEditMode {
   toggleGlobalEditMode(options?: GlobalOptions): void;
   handleLayerAdditionInGlobalEditMode(): void;
   _layerAddedEdit(e: LayerAddEvent): void;
-  _isRelevantForEdit(layer: PMLayer): boolean | undefined;
+  _isRelevantForEdit(layer: PMLayer): boolean;
   _fireGlobalEditModeToggled(enabled: boolean): void;
 }
 // this mixin adds a global edit mode to the map
@@ -148,11 +148,8 @@ const GlobalEditMode = {
   },
   _isRelevantForEdit(layer: PMLayer) {
     return (
-      layer.pm &&
       !(layer instanceof L.LayerGroup) &&
-      ((!PM.optIn && !layer.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-        (PM.optIn && layer.options.pmIgnore === false)) && // if optIn is true and pmIgnore is false
-      !layer._pmTempLayer &&
+      PM.Utils.isGeomanLayer(layer) &&
       layer.pm!.options.allowEditing
     );
   },

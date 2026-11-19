@@ -41,3 +41,26 @@ describe('Helper hasValues', () => {
     expect(hasValues([[[undefined], [null, '', 1]]])).to.be.true;
   });
 });
+
+describe('PM.Utils.isGeomanLayer', () => {
+  it('follows pmIgnore, opt-in and temporary layers', () => {
+    cy.window().then(({ L, map }) => {
+      const plain = new L.Marker(map.getCenter());
+      const ignored = new L.Marker(map.getCenter(), { pmIgnore: true });
+      const temp = new L.Marker(map.getCenter());
+      temp._pmTempLayer = true;
+      expect(L.PM.Utils.isGeomanLayer(plain)).to.eq(true);
+      expect(L.PM.Utils.isGeomanLayer(ignored)).to.eq(false);
+      expect(L.PM.Utils.isGeomanLayer(temp)).to.eq(false);
+
+      L.PM.setOptIn(true);
+      try {
+        const optedIn = new L.Marker(map.getCenter(), { pmIgnore: false });
+        expect(L.PM.Utils.isGeomanLayer(plain)).to.eq(false);
+        expect(L.PM.Utils.isGeomanLayer(optedIn)).to.eq(true);
+      } finally {
+        L.PM.setOptIn(false);
+      }
+    });
+  });
+});

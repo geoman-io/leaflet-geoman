@@ -247,14 +247,7 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       // convert object to array
       .map((l) => all[l])
       // only layers handled by leaflet-geoman
-      .filter((l) => l.pm)
-      .filter((l) => !l._pmTempLayer)
-      // filter out everything that ignore leaflet-geoman
-      .filter(
-        (l) =>
-          (!PM.optIn && !l.options.pmIgnore) || // if optIn is not set / true and pmIgnore is not set / true (default)
-          (PM.optIn && l.options.pmIgnore === false) // if optIn is true and pmIgnore is false);
-      )
+      .filter((l) => PM.Utils.isGeomanLayer(l))
       // only polyline instances
       .filter((l) => l instanceof L.Polyline)
       // exclude the drawn one
