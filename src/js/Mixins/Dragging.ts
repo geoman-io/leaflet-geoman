@@ -64,7 +64,6 @@ interface SimulatedEvent {
   target: DraggableLayer;
   containerPoint?: L.Point;
   latlng?: L.LatLng;
-  _fromLayerSync?: boolean;
   layer?: L.Layer;
 }
 
@@ -83,6 +82,8 @@ interface LatLngWithAlt {
  * Parent layer group record
  */
 type ParentGroup = L.LayerGroup & { pm?: LayerPM };
+
+type SyncLayer = L.Layer & { pm?: LayerPM; _snapped?: boolean };
 
 /**
  * The groups that directly contain a layer, read from Leaflet each time:
@@ -121,10 +122,6 @@ export interface DragMixinContext {
   _layerEdited: boolean;
   _dragging: boolean;
   _tempDragCoord: L.LatLng | null | undefined;
-  _originalMapDragState: boolean;
-  _safeToCacheDragState: boolean;
-  _outsidePointerRelease?: (event: Event) => void;
-  _dragParentGroups?: ParentGroup[];
   options: {
     draggable?: boolean;
     snappable?: boolean;
@@ -161,31 +158,25 @@ export interface IDragMixin {
   disableLayerDrag(): void;
   dragging(): boolean;
   layerDragEnabled(): boolean;
+  _toDragEvent(e: PointerEvent): SimulatedEvent;
   _simulateMouseDownEvent(e: PointerEvent): boolean;
-  _simulateMouseMoveEvent(e: PointerEvent): boolean;
-  _simulateMouseUpEvent(e: PointerEvent | FocusEvent): boolean;
-  _bindOutsidePointerRelease(): void;
-  _unbindOutsidePointerRelease(): void;
-  _isDragPointer(e: PointerEvent): boolean;
-  _dragPointerId?: number;
   _dragMixinOnMouseDown(e: SimulatedEvent): void;
   _dragMixinOnMouseMove(e: SimulatedEvent): void;
   _dragMixinOnMouseUp(e: SimulatedEvent): boolean;
+  _dragSessionStart(e: SimulatedEvent, snap: boolean): void;
+  _dragSessionMove(e: SimulatedEvent): void;
+  _dragSessionEnd(e: SimulatedEvent): boolean;
+  _activeDragSession?: DragSession<SimulatedEvent>;
   _onLayerDrag(e: SimulatedEvent): void;
   addDraggingClass(): void;
   removeDraggingClass(): void;
   _getDOMElem(): HTMLElement | null;
   _overwriteEventIfItComesFromMarker(e: SimulatedEvent): void;
-  _syncLayers(
-    fnc:
-      | '_dragMixinOnMouseDown'
-      | '_dragMixinOnMouseMove'
-      | '_dragMixinOnMouseUp',
-    e: SimulatedEvent
-  ): boolean;
+  _layersToSync(): { found: boolean; synced: SyncLayer[] };
   _stopDOMImageDrag(e: Event): boolean;
 }
 import { getRenderer } from '../helpers';
+import DragSession from '../helpers/DragSession';
 
 const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
   enableLayerDrag() {
@@ -228,13 +219,6 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       this.addDraggingClass();
     }
 
-    this._originalMapDragState = this._layer._map.dragging._enabled;
-
-    // A pointer release outside the map container does not reach the container
-    // listener. The document listener in _bindOutsidePointerRelease ends the
-    // drag so the map does not stay undraggable.
-    this._safeToCacheDragState = true;
-
     const container = this._getDOMElem();
 
     // check if DOM element exists
@@ -270,14 +254,11 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       this.removeDraggingClass();
     }
 
-    // if the layer is dragged but now disabled
-    if (this._originalMapDragState && this._dragging) {
-      this._map.dragging.enable();
+    // if the layer is dragged but now disabled, give the map its panning
+    // back. The drag itself goes on until the pointer is released.
+    if (this._dragging) {
+      this._activeDragSession?.restoreMapPanning();
     }
-    this._unbindOutsidePointerRelease();
-
-    // no longer save the drag state
-    this._safeToCacheDragState = false;
 
     // Disable Leaflet Dragging of Markers
     if (this._layer.dragging) {
@@ -318,101 +299,62 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
   layerDragEnabled() {
     return !!this._layerDragEnabled;
   },
-  // Wrap DOM pointer events from the layer's element and the map container
-  // in Leaflet-style events with the pointer's latlng.
-  _isDragPointer(e) {
-    return (
-      this._dragPointerId === undefined || e.pointerId === this._dragPointerId
-    );
+  // Wraps a DOM pointer event in a Leaflet-style event with the pointer's
+  // latlng, as the drag steps expect.
+  _toDragEvent(e) {
+    const map = this._map || this._layer._map;
+    const containerPoint = map.pointerEventToContainerPoint(e);
+    return {
+      originalEvent: e,
+      target: this._layer,
+      containerPoint,
+      latlng: map.containerPointToLatLng(containerPoint),
+    };
   },
   _simulateMouseDownEvent(e) {
-    const evt: SimulatedEvent = {
-      originalEvent: e,
-      target: this._layer,
-    };
-    // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.pointerEventToContainerPoint(e);
-    evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-
-    this._dragMixinOnMouseDown(evt);
+    this._dragMixinOnMouseDown(this._toDragEvent(e));
     return false;
   },
-  _simulateMouseMoveEvent(e) {
-    if (!this._isDragPointer(e)) {
-      return false;
-    }
-    const evt: SimulatedEvent = {
-      originalEvent: e,
-      target: this._layer,
-    };
-    // we expect in the function to get the clicked latlng / point
-    evt.containerPoint = this._map.pointerEventToContainerPoint(e);
-    evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-
-    this._dragMixinOnMouseMove(evt);
-    return false;
-  },
-  _bindOutsidePointerRelease() {
-    if (this._outsidePointerRelease || typeof document === 'undefined') {
-      return;
-    }
-    const listener = (event: Event) => {
-      this._simulateMouseUpEvent(event as PointerEvent | FocusEvent);
-    };
-    this._outsidePointerRelease = listener;
-    document.addEventListener('pointerup', listener, true);
-    window.addEventListener('blur', listener);
-  },
-  _unbindOutsidePointerRelease() {
-    const listener = this._outsidePointerRelease;
-    this._outsidePointerRelease = undefined;
-    if (!listener || typeof document === 'undefined') {
-      return;
-    }
-    document.removeEventListener('pointerup', listener, true);
-    window.removeEventListener('blur', listener);
-  },
-  _simulateMouseUpEvent(e) {
-    const isPointer = e.type !== 'blur';
-    if (isPointer && !this._isDragPointer(e as PointerEvent)) {
-      return false;
-    }
-    // The first release unbinds the document listener; _dragMixinOnMouseUp
-    // unbinds the container one. One release ends the drag once.
-    this._unbindOutsidePointerRelease();
-    const evt: SimulatedEvent = {
-      originalEvent: e as PointerEvent,
-      target: this._layer,
-    };
-    if (isPointer) {
-      // we expect in the function to get the clicked latlng / point
-      evt.containerPoint = this._map.pointerEventToContainerPoint(
-        e as PointerEvent
-      );
-      evt.latlng = this._map.containerPointToLatLng(evt.containerPoint);
-    } else if (this._tempDragCoord) {
-      evt.latlng = this._tempDragCoord;
-    }
-    this._dragMixinOnMouseUp(evt);
-    return false;
-  },
+  // Starts one drag session for this layer and the layers synced with it.
   _dragMixinOnMouseDown(e) {
     // cancel if mouse button is NOT the left button
     if (e.originalEvent.button! > 0) {
       return;
     }
-    // End the drag even when the pointer is released outside the map. Bind
-    // before syncing, so this layer's listener runs before synced layers'.
-    this._bindOutsidePointerRelease();
     this._overwriteEventIfItComesFromMarker(e);
 
-    const fromLayerSync = e._fromLayerSync;
+    const { found, synced } = this._layersToSync();
+    const participants = [this, ...synced.map((layer) => layer.pm!)];
+    // A new press while a layer is still dragging restarts its drag from here.
+    participants.forEach((pm) => pm._activeDragSession?.abandon(participants));
 
-    // if other layers found, snapping will be disabled
-    const layersToSyncFound = this._syncLayers('_dragMixinOnMouseDown', e);
+    // Snapping only for a layer dragged on its own.
+    participants.forEach((pm) => pm._dragSessionStart(e, !found));
 
+    DragSession.start(
+      this._map || this._layer._map,
+      participants,
+      e.originalEvent.pointerId,
+      (pointerEvent: PointerEvent) => this._toDragEvent(pointerEvent)
+    );
+  },
+  _dragMixinOnMouseMove(e) {
+    this._overwriteEventIfItComesFromMarker(e);
+    const session = this._activeDragSession;
+    if (session) {
+      session.move(e);
+    } else {
+      // Called without a press first: move this layer only.
+      this._dragSessionMove(e);
+    }
+  },
+  _dragMixinOnMouseUp(e) {
+    const session = this._activeDragSession;
+    return session ? session.end(e) : this._dragSessionEnd(e);
+  },
+  _dragSessionStart(e, snap) {
     if (this._layer instanceof L.Marker) {
-      if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
+      if (this.options.snappable && snap) {
         this._initSnappableMarkers!();
       } else {
         this._disableSnapping!();
@@ -427,7 +369,7 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
         _editableOption = 'resizeableCircle';
       }
 
-      if (this.options.snappable && !fromLayerSync && !layersToSyncFound) {
+      if (this.options.snappable && snap) {
         if (!this._layer.pm.options[_editableOption]) {
           this._initSnappableMarkersDrag!();
         }
@@ -438,47 +380,14 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       }
     }
 
-    // save current map dragging state
-    if (this._safeToCacheDragState) {
-      this._originalMapDragState = this._layer._map.dragging._enabled;
-
-      // don't cache the state again until another mouse up is registered
-      this._safeToCacheDragState = false;
-    }
-
     // save for delta calculation
     this._tempDragCoord = e.latlng;
-
-    // follow only the pointer that started the drag (a second finger on
-    // touch screens must not move the layer)
-    this._dragPointerId = e.originalEvent.pointerId;
-
-    L.DomEvent.on(
-      this._map.getContainer(),
-      'pointerup pointercancel',
-      this._simulateMouseUpEvent,
-      this
-    );
-
-    // listen to mousemove on map (instead of polygon),
-    // otherwise fast mouse movements stop the drag
-    L.DomEvent.on(
-      this._map.getContainer(),
-      'pointermove',
-      this._simulateMouseMoveEvent,
-      this
-    );
   },
-  _dragMixinOnMouseMove(e) {
-    this._overwriteEventIfItComesFromMarker(e);
-    const el = this._getDOMElem();
-
-    this._syncLayers('_dragMixinOnMouseMove', e);
-
+  _dragSessionMove(e) {
     if (!this._dragging) {
       // set state
       this._dragging = true;
-      el!.classList.add('leaflet-pm-dragging');
+      this._getDOMElem()?.classList.add('leaflet-pm-dragging');
 
       if (
         this._layer instanceof L.Path ||
@@ -486,11 +395,6 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       ) {
         // bring it to front to prevent drag interception
         this._layer.bringToFront();
-      }
-
-      // disbale map drag
-      if (this._originalMapDragState) {
-        this._map.dragging.disable();
       }
 
       // fire pm:dragstart event
@@ -509,35 +413,8 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       this._layer.pm._updateHiddenPolyCircle!();
     }
   },
-  _dragMixinOnMouseUp(e) {
+  _dragSessionEnd() {
     const el = this._getDOMElem();
-
-    this._syncLayers('_dragMixinOnMouseUp', e);
-
-    // re-enable map drag
-    if (this._originalMapDragState) {
-      this._map.dragging.enable();
-    }
-
-    // if mouseup event fired, it's safe to cache the map draggable state on the next mouse down
-    this._safeToCacheDragState = true;
-    // clear up mousemove event
-    L.DomEvent.off(
-      this._map.getContainer(),
-      'pointermove',
-      this._simulateMouseMoveEvent,
-      this
-    );
-
-    // clear up mouseup event
-    this._unbindOutsidePointerRelease();
-    L.DomEvent.off(
-      this._map.getContainer(),
-      'pointerup pointercancel',
-      this._simulateMouseUpEvent,
-      this
-    );
-    this._dragPointerId = undefined;
 
     // if no drag happened, don't do anything
     if (!this._dragging) {
@@ -690,61 +567,43 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       e.latlng = this._map.containerPointToLatLng(e.containerPoint);
     }
   },
-  _syncLayers(fnc, e) {
+  // The layers that move with this one. `found` also counts this layer and
+  // groups, as it decides whether snapping runs, like before.
+  _layersToSync() {
     // if layer is in Edit-Mode it should not be possible to drag other layers too. (Marker & CircleMarker & ImageOverlay)
-    if (this.enabled()) {
-      return false;
+    if (this.enabled() || !this.options.syncLayersOnDrag) {
+      return { found: false, synced: [] };
     }
-
-    if (
-      !e._fromLayerSync &&
-      this._layer === e.target &&
-      this.options.syncLayersOnDrag
-    ) {
-      e._fromLayerSync = true;
-      let layersToSync: (L.Layer & { pm?: LayerPM; _snapped?: boolean })[] = [];
-      if (Array.isArray(this.options.syncLayersOnDrag)) {
-        // layers
-        layersToSync = this.options.syncLayersOnDrag;
-
-        this.options.syncLayersOnDrag.forEach((layer) => {
-          if (layer instanceof L.LayerGroup) {
-            layersToSync = layersToSync.concat(layer.pm.getLayers(true));
-          }
-        });
-      } else if (this.options.syncLayersOnDrag === true) {
-        // A layer can belong to several groups. Drag the layers of all of them.
-        // Resolve the groups once per drag; move and up reuse them.
-        if (fnc === '_dragMixinOnMouseDown' || !this._dragParentGroups) {
-          this._dragParentGroups = getParentGroups(this._layer, this._map);
+    let layersToSync: SyncLayer[] = [];
+    if (Array.isArray(this.options.syncLayersOnDrag)) {
+      layersToSync = this.options.syncLayersOnDrag;
+      this.options.syncLayersOnDrag.forEach((layer) => {
+        if (layer instanceof L.LayerGroup) {
+          layersToSync = layersToSync.concat(layer.pm.getLayers(true));
         }
-        const parents = this._dragParentGroups;
-        if (fnc === '_dragMixinOnMouseUp') {
-          this._dragParentGroups = undefined;
+      });
+    } else if (this.options.syncLayersOnDrag === true) {
+      // A layer can belong to several groups. Drag the layers of all of them.
+      getParentGroups(this._layer, this._map).forEach((lg) => {
+        if (lg.pm) {
+          layersToSync = layersToSync.concat(lg.pm.getLayers!(true));
         }
-        parents.forEach((lg) => {
-          if (lg.pm) {
-            layersToSync = layersToSync.concat(lg.pm.getLayers!(true));
-          }
-        });
-      }
-
-      if (Array.isArray(layersToSync) && layersToSync.length > 0) {
-        // filter out layers that don't have leaflet-geoman and not allowed to drag.
-        // A layer shared by two groups must move once, not once per group.
-        layersToSync = Array.from(new Set(layersToSync))
-          .filter((layer) => !!layer.pm)
-          .filter((layer) => !!layer.pm!.options.draggable);
-        layersToSync.forEach((layer) => {
-          if (layer !== this._layer && layer.pm![fnc]) {
-            layer._snapped = false;
-            layer.pm![fnc](e);
-          }
-        });
-      }
-      return layersToSync.length > 0;
+      });
     }
-    return false;
+    // filter out layers that don't have leaflet-geoman and not allowed to drag.
+    // A layer shared by two groups must move once, not once per group.
+    const found = Array.from(new Set(layersToSync)).filter(
+      (layer) => !!layer.pm && !!layer.pm.options?.draggable
+    );
+    const synced = found.filter(
+      (layer) =>
+        layer !== this._layer &&
+        typeof layer.pm!._dragSessionStart === 'function'
+    );
+    synced.forEach((layer) => {
+      layer._snapped = false;
+    });
+    return { found: found.length > 0, synced };
   },
   _stopDOMImageDrag(e) {
     e.preventDefault();

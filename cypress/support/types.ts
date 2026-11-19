@@ -86,7 +86,6 @@ declare module '../../leaflet-geoman' {
     }
     interface PMLayer {
       _rotatePoly: Leaflet.Polygon;
-      _safeToCacheDragState?: boolean;
       _layerEdited: boolean;
       _resizeCircle(): void;
       _shape: string;

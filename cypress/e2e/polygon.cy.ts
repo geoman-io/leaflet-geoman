@@ -1100,7 +1100,7 @@ describe('Draw & Edit Poly', () => {
 
     cy.window().then(({ map }) => {
       const layer = (map.pm.getGeomanDrawLayers() as L.Polygon[])[0];
-      expect(layer.pm._safeToCacheDragState).to.eq(undefined);
+      expect(layer.pm.layerDragEnabled()).to.eq(false);
     });
   });
 
