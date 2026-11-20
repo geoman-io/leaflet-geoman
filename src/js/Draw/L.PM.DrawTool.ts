@@ -198,7 +198,7 @@ defineOptions(DrawTool, {
   snapVertex: true,
 });
 
-// The mixins' members, as the old class factory typed them.
+// The mixins' members, merged into the class's type.
 type DrawToolMixins = MixinMembers<[typeof SnapMixin, typeof EventMixin]>;
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 interface DrawTool extends DrawToolMixins {}
