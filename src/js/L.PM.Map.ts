@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 import { applyMixins } from './helpers/classes';
-import type { MixinMembers } from '../types/leaflet-class';
+import type { MixinMembers } from './helpers/classes';
 import { PM } from './PM';
 import type Draw from './Draw/L.PM.Draw';
 import type Toolbar from './Toolbar/L.PM.Toolbar';

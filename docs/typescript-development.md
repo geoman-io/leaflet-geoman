@@ -23,23 +23,23 @@ pnpm test
 
 ## Type-checking boundaries
 
-| Configuration | Checked code |
-| --- | --- |
-| `tsconfig.json` | Plugin source and unit tests |
-| `tsconfig.tools.json` | esbuild script, Vitest configuration, and compiler regression tests |
-| `cypress/tsconfig.json` | Cypress configuration, support, browser tests, and test-page bootstrap |
-| `demo/tsconfig.json` | Demo and developer-panel sources |
-| `test/types/tsconfig.json` | ESM and CommonJS consumers of the published package declarations |
+| Configuration              | Checked code                                                           |
+| -------------------------- | ---------------------------------------------------------------------- |
+| `tsconfig.json`            | Plugin source and unit tests                                           |
+| `tsconfig.tools.json`      | esbuild script, Vitest configuration, and compiler regression tests    |
+| `cypress/tsconfig.json`    | Cypress configuration, support, browser tests, and test-page bootstrap |
+| `demo/tsconfig.json`       | Demo and developer-panel sources                                       |
+| `test/types/tsconfig.json` | ESM and CommonJS consumers of the published package declarations       |
 
 All configurations use strict checking. Runtime TypeScript uses erasable syntax and explicit type-only imports. esbuild emits JavaScript; `tsc` checks types without emitting files. `tsx` runs the build script during development and packaging.
 
-`src/types/leaflet-class.ts` describes Leaflet's existing class factories and inherited instances. Keep `L.Class.extend`, `include`, and initialization hooks intact: replacing these factories with native classes would change extension behavior and prototype properties. `src/types/leaflet-internals.ts` describes private Leaflet state used by the implementation; it is checked as source and is not published.
+Geoman's classes (`L.PM.Map`, `L.PM.Toolbar`, `L.PM.Draw`, `L.PM.Edit` and their subclasses) are native ES classes; extend them with `class X extends L.PM.Draw.Polygon` and `super(...)`. `src/js/helpers/classes.ts` holds the two helpers they share: `defineOptions` puts a class's default options on its prototype, chained to the parent's, and `applyMixins` copies plain-object mixins onto a prototype. A class types its mixins by interface merging with `MixinMembers`. Class methods keep native ES descriptors (not enumerable); mixin methods stay enumerable. `cypress/e2e/compatibility.cy.ts` pins this. `src/types/leaflet-internals.ts` describes private Leaflet state used by the implementation; it is checked as source and is not published.
 
-New required methods must be implemented by the class definition, inherited with a compatible signature, or supplied by an explicit checked mixin tuple. Subclass methods see the full inherited instance through `ThisType`. Mixin members are composed in Leaflet's runtime order, and the returned map, draw, and edit instances retain their inherited APIs. Instance data fields may still be initialized by Leaflet's initialization lifecycle.
+TypeScript checks subclasses as ordinary classes: an override must keep a compatible signature, and a class's fields are declared with `declare` and set in its constructor. Mixins are applied after the class body, so a mixin cannot override a class method; a class method that overrides a mixin member is typed by omitting that member from the merged `MixinMembers` interface and redeclaring it as a method.
 
 `src/types/options.ts` shares the draw, edit, and global option contracts. Known options retain their value types; custom extension keys and historical nullable defaults remain supported. The published declaration file continues to define consumer types independently.
 
-`test/internal-types.test.ts` runs the TypeScript compiler against positive and negative fixtures. It checks inheritance, mixin composition, missing/incompatible implementations, and option values without suppression comments. It is run with the unit tests and checked in the Node tooling context.
+`test/internal-types.test.ts` runs the TypeScript compiler against positive and negative fixtures. It checks subclassing of the editors and draw tools, rejected incompatible overrides, and option values without suppression comments. It is run with the unit tests and checked in the Node tooling context.
 
 Browser test and demo globals have separate checking contexts so their declarations do not become part of the consumer API. Demo scripts compile to their existing `.js` URLs and preserve classic-script globals. These generated scripts and source maps are ignored by Git; edit their `.ts` sources and run the build.
 
@@ -47,7 +47,7 @@ Browser test and demo globals have separate checking contexts so their declarati
 
 The root `leaflet-geoman.d.ts` remains the published declaration contract and is copied unchanged into `dist`. Internal implementation types are deliberately separate. The ESM and CommonJS consumer fixtures resolve the package's own exports without internal augmentations.
 
-The migration preserves package entry points, export mappings, distributed filenames, runtime dependencies, peer dependencies, the global `L.PM` namespace, and Leaflet's class-extension model. It does not generate public declarations from internal implementation types.
+The migration preserves package entry points, export mappings, distributed filenames, runtime dependencies, peer dependencies, and the global `L.PM` namespace. Geoman's classes moved from Leaflet 1's class factory to native ES classes in v3. It does not generate public declarations from internal implementation types.
 
 Migration verification used develop commit `1d9a3b39e55ee91dd6caae4452be04991c52f05e` as the baseline. Through migration commit `c4e5f22e9f6d3b6ede48cfd7301f54bb115a5965`, the normalized production JavaScript matched that baseline after excluding embedded package-manifest metadata and source-map/comment differences. The distributed stylesheet and public declarations also matched exactly. Both versions passed the 73 unit tests and all 333 existing browser tests.
 

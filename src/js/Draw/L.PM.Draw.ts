@@ -1,7 +1,7 @@
 import * as L from 'leaflet';
 import { PM } from '../PM';
 import { applyMixins, defineOptions } from '../helpers/classes';
-import type { MixinMembers } from '../../types/leaflet-class';
+import type { MixinMembers } from '../helpers/classes';
 import type DrawMarker from './L.PM.Draw.Marker';
 import type DrawCircleMarker from './L.PM.Draw.CircleMarker';
 import type DrawLine from './L.PM.Draw.Line';

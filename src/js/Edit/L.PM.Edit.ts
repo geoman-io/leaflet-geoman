@@ -2,7 +2,7 @@ import * as L from 'leaflet';
 import { PM } from '../PM';
 import { applyMixins, defineOptions } from '../helpers/classes';
 import { checkOptions } from '../helpers/options';
-import type { MixinMembers } from '../../types/leaflet-class';
+import type { MixinMembers } from '../helpers/classes';
 import type EditMarker from './L.PM.Edit.Marker';
 import type EditCircleMarker from './L.PM.Edit.CircleMarker';
 import type EditCircle from './L.PM.Edit.Circle';

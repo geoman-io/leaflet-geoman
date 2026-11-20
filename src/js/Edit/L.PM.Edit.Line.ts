@@ -80,7 +80,7 @@ import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 import { applyMixins, defineOptions } from '../helpers/classes';
-import type { MixinMembers } from '../../types/leaflet-class';
+import type { MixinMembers } from '../helpers/classes';
 import {
   copyLatLngs,
   hasValues,
