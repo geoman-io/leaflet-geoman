@@ -1,5 +1,5 @@
 import type { DrawInstances } from '../../src/js/Draw/L.PM.Draw';
-import type { IToolbar } from '../../src/js/Toolbar/L.PM.Toolbar';
+import type Toolbar from '../../src/js/Toolbar/L.PM.Toolbar';
 import type * as Leaflet from 'leaflet';
 
 declare global {
@@ -80,7 +80,7 @@ declare module '../../leaflet-geoman' {
       setLang(lang: string, override?: object, fallback?: string): void;
     }
     interface PMMapToolbar {
-      buttons: IToolbar['buttons'];
+      buttons: Toolbar['buttons'];
     }
     interface PMLayerGroup {
       _layers: Leaflet.Layer[];

@@ -2,7 +2,7 @@ import * as L from 'leaflet';
 import PMClass from './helpers/PMClass';
 import { PM } from './PM';
 import type { DrawBase } from './Draw/L.PM.Draw';
-import type { IToolbar } from './Toolbar/L.PM.Toolbar';
+import type Toolbar from './Toolbar/L.PM.Toolbar';
 import type { PM as PMTypes } from '../../leaflet-geoman';
 import type { DrawOptions, EditOptions, GlobalOptions } from '../types/options';
 export type { GlobalOptions } from '../types/options';
@@ -63,7 +63,7 @@ type TranslationsRecord = Record<string, Record<string, unknown>>;
 export interface IMapPM {
   map: L.Map & { pm: IMapPM };
   Draw: DrawBase;
-  Toolbar: IToolbar;
+  Toolbar: Toolbar;
   Keyboard: IKeyboardMixin;
   globalOptions: GlobalOptions;
   _modes: ModeManager;
