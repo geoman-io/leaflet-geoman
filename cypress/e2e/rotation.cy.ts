@@ -513,6 +513,36 @@ describe('Rotation', () => {
     });
   });
 
+  it("ignores rotation on layers that aren't lines or polygons", () => {
+    cy.window().then(({ map, L }) => {
+      const center = map.getCenter();
+      const bounds = new L.LatLngBounds(
+        [center.lat, center.lng],
+        [center.lat + 0.01, center.lng + 0.01]
+      );
+      const layers = [
+        new L.Circle(center, { radius: 200 }),
+        new L.CircleMarker(center),
+        new L.Marker(center),
+        new L.ImageOverlay('x.png', bounds),
+      ];
+      const events: string[] = [];
+      map.on('pm:rotateenable pm:rotate', (e) => events.push(e.type));
+      for (const layer of layers) {
+        layer.addTo(map);
+        // used to throw `getLatLngs is not a function`
+        layer.pm.enableRotate();
+        layer.pm.rotateLayer(30);
+        layer.pm.rotateLayerToAngle(60);
+        expect(layer.pm.rotateEnabled()).to.eq(false);
+        expect(layer.pm.getAngle()).to.eq(0);
+      }
+      expect((layers[0] as L.Circle).getLatLng().equals(center)).to.eq(true);
+      expect(events).to.eql([]);
+    });
+    cy.hasRotateHandles(0);
+  });
+
   describe('rotate handle', () => {
     const round = (map: L.Map, latlng: L.LatLng) => {
       const point = map.latLngToContainerPoint(latlng);

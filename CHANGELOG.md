@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cut and containment ignore a ring that contains `NaN` or `Infinity`, instead of throwing or deleting the polygon.
 - `changeControlOrder(null)` no longer throws.
 - When edit, drag or rotate are on together for one layer (with `combineModes`, or by enabling them on the layer), each follows the others' changes. A body drag or a rotation moves the edit markers, and a body drag or a vertex edit moves the rotate handle and, unless it was set with `setRotationCenter()`, the rotation center. Before, they stayed where they were, so the next rotation undid the drag or the vertex edit. While a body drag or a rotation runs, the other interactions' markers are hidden. Turning edit off during a body drag of that layer, such as with Escape, now turns it off when the drag ends; before, edit stayed on.
+- `enableRotate()`, `rotateLayer()` and `rotateLayerToAngle()` do nothing on a circle, circle marker, marker or image overlay, as global rotate mode already skipped them. Before, they threw `getLatLngs is not a function` (`enableRotate()` only on circles and image overlays).
 - Rotating by mouse after `rotateLayer()`, `rotateLayerToAngle()` or `setInitAngle()` while rotate is enabled starts from the new angle. Before, the drag started from the angle the layer had when rotate was enabled, so `getAngle()` lost the change made by code.
 
 ## [2.20.6] - 2026-11-04
