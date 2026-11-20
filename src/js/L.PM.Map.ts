@@ -1,5 +1,6 @@
 import * as L from 'leaflet';
-import PMClass from './helpers/PMClass';
+import { applyMixins } from './helpers/classes';
+import type { MixinMembers } from '../types/leaflet-class';
 import { PM } from './PM';
 import type { DrawBase } from './Draw/L.PM.Draw';
 import type Toolbar from './Toolbar/L.PM.Toolbar';
@@ -57,72 +58,6 @@ interface PathOptionsModifier {
  */
 type TranslationsRecord = Record<string, Record<string, unknown>>;
 
-/**
- * Map PM instance interface
- */
-export interface IMapPM {
-  map: L.Map & { pm: IMapPM };
-  Draw: DrawBase;
-  Toolbar: Toolbar;
-  Keyboard: IKeyboardMixin;
-  globalOptions: GlobalOptions;
-  _modes: ModeManager;
-
-  initialize(map: L.Map): void;
-  unstable_registerMode(name: string, mode: ModeDefinition): () => void;
-  unstable_activeModes(): string[];
-  _registerDrawMode(shape: string): void;
-  _registerGlobalMode(
-    name: string,
-    buttonName: string,
-    get: () => { enabled: boolean; disable: () => void },
-    targets?: string[]
-  ): void;
-  _yieldThroughButton(
-    buttonName: () => string | undefined,
-    disable: () => void
-  ): () => void;
-  setLang(lang?: string, override?: object, fallback?: string): void;
-  addControls(options?: PMTypes.ToolbarOptions): void;
-  removeControls(): void;
-  toggleControls(): void;
-  controlsVisible(): boolean;
-  enableDraw(shape?: string, options?: DrawOptions): void;
-  disableDraw(shape?: string): void;
-  finishDraw(): boolean;
-  setPathOptions(
-    options: L.PathOptions,
-    optionsModifier?: PathOptionsModifier
-  ): void;
-  getGlobalOptions(): GlobalOptions;
-  setGlobalOptions(options: Partial<GlobalOptions>): void;
-  applyGlobalOptions(): void;
-  globalDrawModeEnabled(): boolean;
-  globalCutModeEnabled(): boolean;
-  enableGlobalCutMode(options?: DrawOptions): void;
-  toggleGlobalCutMode(options?: DrawOptions): void;
-  disableGlobalCutMode(): void;
-  getGeomanLayers(asGroup?: boolean): L.Layer[] | L.FeatureGroup;
-  getGeomanDrawLayers(asGroup?: boolean): L.Layer[] | L.FeatureGroup;
-  _getContainingLayer(): L.LayerGroup | L.Map;
-  _isCRSSimple(): boolean;
-  // From the global mode mixins
-  globalEditModeEnabled(): boolean;
-  disableGlobalEditMode(): void;
-  globalDragModeEnabled(): boolean;
-  disableGlobalDragMode(): void;
-  globalRemovalModeEnabled(): boolean;
-  disableGlobalRemovalMode(): void;
-  globalRotateModeEnabled(): boolean;
-  disableGlobalRotateMode(): void;
-  // From EventMixin
-  _fireLangChange: (
-    oldLang: string,
-    newLang: string,
-    fallback: string,
-    translation: unknown
-  ) => void;
-}
 import { checkOptions, mergeOptions } from './helpers/options';
 import translations from '../assets/translations';
 import GlobalEditMode from './Mixins/Modes/Mode.Edit';
@@ -136,25 +71,19 @@ import { resolveLanguageCode } from './helpers/language';
 import ModeManager from './helpers/ModeManager';
 import type { ModeDefinition } from './helpers/ModeManager';
 
-const Map = PMClass.extend<
-  IMapPM,
-  [L.Map],
-  [
-    typeof GlobalEditMode,
-    typeof GlobalDragMode,
-    typeof GlobalRemovalMode,
-    typeof GlobalRotateMode,
-    typeof EventMixin,
-  ]
->({
-  includes: [
-    GlobalEditMode,
-    GlobalDragMode,
-    GlobalRemovalMode,
-    GlobalRotateMode,
-    EventMixin,
-  ],
-  initialize(this: IMapPM, map: L.Map) {
+class Map {
+  declare map: L.Map & { pm: Map };
+  declare Draw: DrawBase;
+  declare Toolbar: Toolbar;
+  declare Keyboard: IKeyboardMixin;
+  declare globalOptions: GlobalOptions;
+  declare _modes: ModeManager;
+
+  declare options: object;
+
+  constructor(map: L.Map) {
+    // an empty own options object, as the Leaflet 1 style class factory made
+    L.Util.setOptions(this, undefined as never);
     this.map = map as typeof this.map;
     this.Draw = new PM.Draw(map);
     this.Toolbar = new PM.Toolbar(map);
@@ -218,18 +147,18 @@ const Map = PMClass.extend<
     };
 
     this.Keyboard._initKeyListener(map);
-  },
+  }
 
   // Unstable: for @geoman-io packages, without a semver guarantee. Returns
   // the function the mode calls when it turns on.
-  unstable_registerMode(this: IMapPM, name: string, mode: ModeDefinition) {
+  unstable_registerMode(name: string, mode: ModeDefinition) {
     this._modes.register(name, mode);
     return () => this._modes._exclusive(name);
-  },
-  unstable_activeModes(this: IMapPM) {
+  }
+  unstable_activeModes() {
     return this._modes.active();
-  },
-  _registerDrawMode(this: IMapPM, shape: string) {
+  }
+  _registerDrawMode(shape: string) {
     const tool = () =>
       (this.Draw as unknown as Record<string, DrawShape>)[shape];
     this._modes.register(`draw:${shape}`, {
@@ -240,9 +169,8 @@ const Map = PMClass.extend<
         () => tool().disable()
       ),
     });
-  },
+  }
   _registerGlobalMode(
-    this: IMapPM,
     name: string,
     buttonName: string,
     get: () => { enabled: boolean; disable: () => void },
@@ -258,14 +186,13 @@ const Map = PMClass.extend<
         () => get().disable()
       ),
     });
-  },
+  }
   // While the mode's button is toggled and clickable, another mode turns it
   // off the way the toolbar always did: by clicking it. A button that other
   // buttons may not turn off keeps its mode on. Otherwise, such as when the
   // button is gone, disabled, or was rebuilt untoggled by setLang, the mode
   // is disabled directly.
   _yieldThroughButton(
-    this: IMapPM,
     buttonName: () => string | undefined,
     disable: () => void
   ) {
@@ -281,8 +208,8 @@ const Map = PMClass.extend<
         disable();
       }
     };
-  },
-  setLang(this: IMapPM, lang = 'en', override?: object, fallback = 'en') {
+  }
+  setLang(lang = 'en', override?: object, fallback = 'en') {
     // Resolve the language code to a translation key
     lang = resolveLanguageCode(lang, translations);
 
@@ -299,37 +226,37 @@ const Map = PMClass.extend<
     PM.activeLang = lang;
     this.map.pm.Toolbar.reinit();
     this._fireLangChange(oldLang, lang, fallback, translations[lang]);
-  },
-  addControls(this: IMapPM, options?: PMTypes.ToolbarOptions) {
+  }
+  addControls(options?: PMTypes.ToolbarOptions) {
     this.Toolbar.addControls(options);
-  },
-  removeControls(this: IMapPM) {
+  }
+  removeControls() {
     this.Toolbar.removeControls();
-  },
-  toggleControls(this: IMapPM) {
+  }
+  toggleControls() {
     this.Toolbar.toggleControls();
-  },
-  controlsVisible(this: IMapPM) {
+  }
+  controlsVisible() {
     return this.Toolbar.isVisible;
-  },
+  }
 
-  enableDraw(this: IMapPM, shape = 'Polygon', options?: DrawOptions) {
+  enableDraw(shape = 'Polygon', options?: DrawOptions) {
     // backwards compatible, remove after 3.0
     if (shape === 'Poly') {
       shape = 'Polygon';
     }
 
     this.Draw.enable(shape, options);
-  },
-  disableDraw(this: IMapPM, shape = 'Polygon') {
+  }
+  disableDraw(shape = 'Polygon') {
     // backwards compatible, remove after 3.0
     if (shape === 'Poly') {
       shape = 'Polygon';
     }
 
     this.Draw.disable(shape);
-  },
-  finishDraw(this: IMapPM) {
+  }
+  finishDraw() {
     const activeShape = this.Draw.getActiveShape();
     if (!activeShape) {
       return false;
@@ -353,10 +280,9 @@ const Map = PMClass.extend<
 
     drawInstance._finishShape();
     return true;
-  },
+  }
   // optionsModifier for special options like ignoreShapes or merge
   setPathOptions(
-    this: IMapPM,
     options: L.PathOptions,
     optionsModifier: PathOptionsModifier = {}
   ) {
@@ -374,12 +300,12 @@ const Map = PMClass.extend<
         );
       }
     });
-  },
+  }
 
-  getGlobalOptions(this: IMapPM) {
+  getGlobalOptions() {
     return this.globalOptions;
-  },
-  setGlobalOptions(this: IMapPM, o: Partial<GlobalOptions>) {
+  }
+  setGlobalOptions(o: Partial<GlobalOptions>) {
     // Merge into the stored options. Arrays such as snappingOrder replace the
     // old value, and the caller's nested objects are copied.
     const options = mergeOptions(
@@ -442,31 +368,31 @@ const Map = PMClass.extend<
 
     // apply the options (actually trigger the functionality)
     this.applyGlobalOptions();
-  },
-  applyGlobalOptions(this: IMapPM) {
+  }
+  applyGlobalOptions() {
     const layers = PM.Utils.findLayers(this.map);
     (layers as PMLayer[]).forEach((layer) => {
       if (layer.pm.enabled()) {
         layer.pm.applyOptions();
       }
     });
-  },
-  globalDrawModeEnabled(this: IMapPM) {
+  }
+  globalDrawModeEnabled() {
     return !!this.Draw.getActiveShape();
-  },
-  globalCutModeEnabled(this: IMapPM) {
+  }
+  globalCutModeEnabled() {
     return !!this.Draw.Cut.enabled();
-  },
-  enableGlobalCutMode(this: IMapPM, options?: DrawOptions) {
+  }
+  enableGlobalCutMode(options?: DrawOptions) {
     return this.Draw.Cut.enable(options);
-  },
-  toggleGlobalCutMode(this: IMapPM, options?: DrawOptions) {
+  }
+  toggleGlobalCutMode(options?: DrawOptions) {
     return this.Draw.Cut.toggle(options);
-  },
-  disableGlobalCutMode(this: IMapPM) {
+  }
+  disableGlobalCutMode() {
     return this.Draw.Cut.disable();
-  },
-  getGeomanLayers(this: IMapPM, asGroup = false) {
+  }
+  getGeomanLayers(asGroup = false) {
     const layers = PM.Utils.findLayers(this.map);
     if (!asGroup) {
       return layers;
@@ -477,8 +403,8 @@ const Map = PMClass.extend<
       group.addLayer(layer);
     });
     return group;
-  },
-  getGeomanDrawLayers(this: IMapPM, asGroup = false) {
+  }
+  getGeomanDrawLayers(asGroup = false) {
     const layers = PM.Utils.findLayers(this.map).filter(
       (l) => l._drawnByGeoman === true
     );
@@ -491,17 +417,38 @@ const Map = PMClass.extend<
       group.addLayer(layer);
     });
     return group;
-  },
+  }
   // returns the map instance by default or a layergroup is set through global options
-  _getContainingLayer(this: IMapPM) {
+  _getContainingLayer() {
     return this.globalOptions.layerGroup &&
       this.globalOptions.layerGroup instanceof L.LayerGroup
       ? this.globalOptions.layerGroup
       : this.map;
-  },
-  _isCRSSimple(this: IMapPM) {
+  }
+  _isCRSSimple() {
     return this.map.options.crs === L.SimpleCRS;
-  },
-});
+  }
+}
+
+// The mixins' members, as the old class factory typed them.
+type MapMixins = MixinMembers<
+  [
+    typeof GlobalEditMode,
+    typeof GlobalDragMode,
+    typeof GlobalRemovalMode,
+    typeof GlobalRotateMode,
+    typeof EventMixin,
+  ]
+>;
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+interface Map extends MapMixins {}
+applyMixins(
+  Map,
+  GlobalEditMode,
+  GlobalDragMode,
+  GlobalRemovalMode,
+  GlobalRotateMode,
+  EventMixin
+);
 
 export default Map;
