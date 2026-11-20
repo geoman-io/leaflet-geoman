@@ -20,6 +20,82 @@ describe('JavaScript compatibility', () => {
     });
   });
 
+  // Before Draw became an ES class (#1735), a subclass of L.PM.Draw built its
+  // own tools like the map's Draw does; #1735 left it without any.
+  it('lets Draw be subclassed with its own tools', () => {
+    cy.window().then(({ L, map }) => {
+      const PM = L.PM as unknown as Record<string, any>;
+      const DrawBase = PM.Draw as new (map: unknown) => any;
+      class MyDraw extends DrawBase {
+        probe() {
+          return 'subclassed';
+        }
+      }
+      class DeeperDraw extends MyDraw {}
+
+      for (const Cls of [MyDraw, DeeperDraw]) {
+        const draw = new Cls(map);
+        expect(draw).to.be.instanceOf(PM.Draw);
+        expect(draw.probe()).to.equal('subclassed');
+        expect(draw.getShapes()).to.include.members(['Marker', 'Polygon']);
+        expect(draw.Polygon).to.be.instanceOf(PM.Draw.Polygon);
+        expect(draw.Polygon).not.to.equal(map.pm.Draw.Polygon);
+
+        draw.enable('Polygon');
+        expect(draw.getActiveShape()).to.equal('Polygon');
+        draw.disable();
+        expect(draw.getActiveShape()).to.equal(undefined);
+      }
+
+      // a subclass as the map's Draw, with a custom tool copied from a
+      // built-in one
+      const original = map.pm.Draw;
+      const draw = new DeeperDraw(map);
+      (map.pm as unknown as Record<string, unknown>).Draw = draw;
+      try {
+        draw.createNewDrawInstance('PolygonCopy', 'Polygon');
+        expect(draw.getShapes()).to.include('PolygonCopy');
+        map.pm.enableDraw('PolygonCopy');
+        expect(draw.PolygonCopy.enabled()).to.equal(true);
+        map.pm.disableDraw();
+        expect(draw.PolygonCopy.enabled()).to.equal(false);
+      } finally {
+        (map.pm as unknown as Record<string, unknown>).Draw = original;
+      }
+    });
+  });
+
+  it('lets custom tools subclass a draw tool and be registered', () => {
+    cy.window().then(({ L, map }) => {
+      const PM = L.PM as unknown as Record<string, any>;
+      class StarTool extends PM.Draw.Polygon {
+        probe() {
+          return 'star';
+        }
+      }
+      PM.Draw.Star = StarTool;
+      try {
+        const pmDraw = map.pm.Draw as unknown as Record<string, any>;
+        pmDraw.createNewDrawInstance('Star', 'Star');
+        const tool = pmDraw.Star;
+        expect(tool).to.be.instanceOf(StarTool);
+        expect(tool).to.be.instanceOf(PM.Draw.Polygon);
+        // tools still count as Draw instances
+        expect(tool).to.be.instanceOf(PM.Draw);
+        expect(tool.probe()).to.equal('star');
+        expect(tool.shapes).to.equal(undefined);
+
+        map.pm.enableDraw('Star');
+        expect(tool.enabled()).to.equal(true);
+        expect(map.pm.Draw.getActiveShape()).to.equal('Star');
+        map.pm.disableDraw();
+        expect(tool.enabled()).to.equal(false);
+      } finally {
+        delete PM.Draw.Star;
+      }
+    });
+  });
+
   // Pins the descriptor decision of refactor 7: Geoman's classes keep native
   // ES class descriptors. Their own methods are not enumerable; mixin methods,
   // copied onto the prototype, still are. Change this test together with
