@@ -430,7 +430,7 @@ class Map {
   }
 }
 
-// The mixins' members, as the old class factory typed them.
+// The mixins' members, merged into the class's type.
 type MapMixins = MixinMembers<
   [
     typeof GlobalEditMode,

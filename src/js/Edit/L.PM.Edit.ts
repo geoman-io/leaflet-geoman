@@ -255,7 +255,7 @@ defineOptions(Edit, {
   snapVertex: true,
 });
 
-// The mixins' members, as the old class factory typed them.
+// The mixins' members, merged into the class's type.
 type EditMixins = MixinMembers<
   [typeof DragMixin, typeof SnapMixin, typeof RotateMixin, typeof EventMixin]
 >;

@@ -23,19 +23,19 @@ pnpm test
 
 ## Type-checking boundaries
 
-| Configuration              | Checked code                                                           |
-| -------------------------- | ---------------------------------------------------------------------- |
-| `tsconfig.json`            | Plugin source and unit tests                                           |
-| `tsconfig.tools.json`      | esbuild script, Vitest configuration, and compiler regression tests    |
-| `cypress/tsconfig.json`    | Cypress configuration, support, browser tests, and test-page bootstrap |
-| `demo/tsconfig.json`       | Demo and developer-panel sources                                       |
-| `test/types/tsconfig.json` | ESM and CommonJS consumers of the published package declarations       |
+| Configuration | Checked code |
+| --- | --- |
+| `tsconfig.json` | Plugin source and unit tests |
+| `tsconfig.tools.json` | esbuild script, Vitest configuration, and compiler regression tests |
+| `cypress/tsconfig.json` | Cypress configuration, support, browser tests, and test-page bootstrap |
+| `demo/tsconfig.json` | Demo and developer-panel sources |
+| `test/types/tsconfig.json` | ESM and CommonJS consumers of the published package declarations |
 
 All configurations use strict checking. Runtime TypeScript uses erasable syntax and explicit type-only imports. esbuild emits JavaScript; `tsc` checks types without emitting files. `tsx` runs the build script during development and packaging.
 
 Geoman's classes (`L.PM.Map`, `L.PM.Toolbar`, `L.PM.Draw`, `L.PM.Edit` and their subclasses) are native ES classes; extend them with `class X extends L.PM.Draw.Polygon` and `super(...)`. `src/js/helpers/classes.ts` holds the two helpers they share: `defineOptions` puts a class's default options on its prototype, chained to the parent's, and `applyMixins` copies plain-object mixins onto a prototype. A class types its mixins by interface merging with `MixinMembers`. Class methods keep native ES descriptors (not enumerable); mixin methods stay enumerable. `cypress/e2e/compatibility.cy.ts` pins this. `src/types/leaflet-internals.ts` describes private Leaflet state used by the implementation; it is checked as source and is not published.
 
-TypeScript checks subclasses as ordinary classes: an override must keep a compatible signature, and a class's fields are declared with `declare` and set in its constructor. Mixins are applied after the class body, so a mixin cannot override a class method; a class method that overrides a mixin member is typed by omitting that member from the merged `MixinMembers` interface and redeclaring it as a method.
+TypeScript checks subclasses as ordinary classes: an override must keep a compatible signature, and a class's fields are declared with `declare` and set in its constructor. `applyMixins` runs after the class body, so a mixin member replaces a same-named member of that class (pinned in `src/js/helpers/classes.test.ts`). A subclass can override a mixin member; the parent then types it by omitting it from `MixinMembers` and redeclaring it as a method, as `L.PM.Edit.ts` does.
 
 `src/types/options.ts` shares the draw, edit, and global option contracts. Known options retain their value types; custom extension keys and historical nullable defaults remain supported. The published declaration file continues to define consumer types independently.
 

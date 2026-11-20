@@ -1030,7 +1030,7 @@ class EditLine extends Edit {
   }
 }
 
-// The mixin's members, as the old class factory typed them.
+// The mixin's members, merged into the class's type.
 type EditLineMixins = MixinMembers<[typeof MarkerLimits]>;
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 interface EditLine extends EditLineMixins {}
