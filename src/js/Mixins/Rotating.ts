@@ -399,6 +399,12 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
      *
      */
     enableRotate() {
+      // Only lines and polygons rotate, as in global rotate mode. Circles,
+      // markers and image overlays have no vertices to rotate.
+      if (!(this._layer instanceof L.Polyline)) {
+        return;
+      }
+
       if (!this.options.allowRotation) {
         this.disableRotate();
         return;
@@ -493,7 +499,11 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
       // Projection needs the map. A removed layer has `_map === null`.
       // NaN and Infinity become a NaN projected point. Leaflet then throws
       // `Invalid LatLng object`.
-      if (!this._layer._map || !Number.isFinite(degrees)) {
+      if (
+        !(this._layer instanceof L.Polyline) ||
+        !this._layer._map ||
+        !Number.isFinite(degrees)
+      ) {
         return;
       }
       const oldAngle = this.getAngle();
