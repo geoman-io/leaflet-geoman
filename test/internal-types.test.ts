@@ -22,6 +22,25 @@ const validCases = {
     }
     new Triangle(new L.Map('map')).enable({ snappable: false });
   `,
+  customDrawTool: `
+    class PointTool extends PM.DrawTool {
+      enable(options?: { snappable?: boolean }) {
+        this.setOptions(options ?? {});
+        this._enabled = true;
+        this._fireDrawStart();
+      }
+      disable() { this._enabled = false; }
+      enabled() { return !!this._enabled; }
+      toggle() { if (this.enabled()) this.disable(); else this.enable(); }
+    }
+    const tool = new PointTool(new L.Map('map'));
+    tool.enable({ snappable: false });
+    const snapDistance: number | undefined = tool.getOptions().snapDistance;
+    const registry = new PM.Draw(new L.Map('registry-map'));
+    const shapes: string[] = registry.getShapes();
+    const active: string | undefined = registry.getActiveShape();
+    registry.Line.setPathOptions({ color: 'red' });
+  `,
   mapAndEditorMixins: `
     const controller = new PM.Map(new L.Map('map'));
     controller.enableGlobalEditMode({ snapDistance: 20 });
@@ -77,6 +96,22 @@ const invalidCases = {
     source: `new PM.Map(new L.Map('map')).enableGlobalEditMode({
       snapDistance: 'far',
     });`,
+  },
+  registryMemberOnDrawTool: {
+    code: 2339,
+    source: `new PM.Map(new L.Map('map')).Draw.Line.getActiveShape();`,
+  },
+  toolMemberOnDrawRegistry: {
+    code: 2339,
+    source: `new PM.Draw(new L.Map('map')).setPathOptions({ color: 'red' });`,
+  },
+  incompleteDrawTool: {
+    code: 2515,
+    source: `class Half extends PM.DrawTool {
+      enable() {}
+      disable() {}
+      enabled() { return false; }
+    }`,
   },
   invalidBaseDrawOption: {
     code: 2322,

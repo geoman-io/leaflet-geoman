@@ -82,10 +82,13 @@ describe('JavaScript compatibility', () => {
         const tool = pmDraw.Star;
         expect(tool).to.be.instanceOf(StarTool);
         expect(tool).to.be.instanceOf(PM.Draw.Polygon);
-        // tools still count as Draw instances
-        expect(tool).to.be.instanceOf(PM.Draw);
+        // tools extend DrawTool; L.PM.Draw is the map's registry of them
+        expect(tool).to.be.instanceOf(PM.DrawTool);
+        expect(tool).not.to.be.instanceOf(PM.Draw);
         expect(tool.probe()).to.equal('star');
         expect(tool.shapes).to.equal(undefined);
+        expect(tool.getActiveShape).to.equal(undefined);
+        expect(tool.createNewDrawInstance).to.equal(undefined);
 
         map.pm.enableDraw('Star');
         expect(tool.enabled()).to.equal(true);
@@ -94,6 +97,67 @@ describe('JavaScript compatibility', () => {
         expect(tool.enabled()).to.equal(false);
       } finally {
         delete PM.Draw.Star;
+      }
+    });
+  });
+
+  // A tool that doesn't build on a built-in one extends L.PM.DrawTool, which
+  // brings the options, snapping and events every tool shares.
+  it('lets a custom tool extend DrawTool directly', () => {
+    cy.window().then(({ L, map }) => {
+      const PM = L.PM as unknown as Record<string, any>;
+      const ToolBase = PM.DrawTool as new (map: unknown) => any;
+      class PointTool extends ToolBase {
+        constructor(m: unknown) {
+          super(m);
+          this._shape = 'Point';
+          this.toolbarButtonName = 'drawPoint';
+        }
+        enable(options?: object) {
+          this.setOptions(options || {});
+          this._enabled = true;
+          this._map.pm._modes._exclusive(`draw:${this._shape}`);
+          this._fireDrawStart();
+        }
+        disable() {
+          if (!this._enabled) {
+            return;
+          }
+          this._enabled = false;
+          this._fireDrawEnd();
+        }
+        enabled() {
+          return !!this._enabled;
+        }
+        toggle(options?: object) {
+          if (this.enabled()) {
+            this.disable();
+          } else {
+            this.enable(options);
+          }
+        }
+      }
+      PM.Draw.Point = PointTool;
+      try {
+        const events: string[] = [];
+        map.on('pm:drawstart', (e) => events.push(`start:${e.shape}`));
+        map.on('pm:drawend', (e) => events.push(`end:${e.shape}`));
+        const tool = map.pm.Draw.createNewDrawInstance('Point', 'Point');
+        expect(tool).to.be.instanceOf(PointTool);
+        expect(tool.getOptions().snapDistance).to.equal(20);
+        expect(tool.getOptions().snappable).to.equal(true);
+
+        map.pm.enableDraw('Polygon');
+        map.pm.enableDraw('Point', { snapDistance: 5 });
+        expect(map.pm.Draw.getActiveShape()).to.equal('Point');
+        expect(map.pm.Draw.Polygon.enabled()).to.equal(false);
+        expect(tool.getOptions().snapDistance).to.equal(5);
+        expect(PM.DrawTool.prototype.options.snapDistance).to.equal(20);
+        map.pm.disableDraw();
+        expect(map.pm.Draw.getActiveShape()).to.equal(undefined);
+        expect(events).to.include.members(['start:Point', 'end:Point']);
+      } finally {
+        delete PM.Draw.Point;
       }
     });
   });

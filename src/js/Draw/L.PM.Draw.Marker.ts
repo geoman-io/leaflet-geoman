@@ -28,7 +28,7 @@ interface PMLayer extends L.Layer {
 /**
  * Extended map with PM - using type intersection to avoid property conflicts
  */
-type ExtendedMap = L.Map & {
+type ExtendedMap = DrawTool['_map'] & {
   pm: {
     Toolbar: {
       toggleButton: (name: string, state: boolean) => void;
@@ -61,7 +61,7 @@ interface MapMouseEvent extends L.LeafletPointerEvent {
 }
 
 import Draw from './L.PM.Draw';
-import { DrawTool } from './L.PM.Draw';
+import DrawTool from './L.PM.DrawTool';
 import { defineOptions } from '../helpers/classes';
 import { getTranslation, hasFinePointer } from '../helpers';
 

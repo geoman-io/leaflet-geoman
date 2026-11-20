@@ -62,7 +62,7 @@ interface RectangleDrawOptions extends DrawOptions {
 }
 
 import Draw from './L.PM.Draw';
-import { DrawTool } from './L.PM.Draw';
+import DrawTool from './L.PM.DrawTool';
 import { defineOptions } from '../helpers/classes';
 import { fixLatOffset, getTranslation } from '../helpers';
 

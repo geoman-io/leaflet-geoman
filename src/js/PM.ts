@@ -12,6 +12,7 @@ interface LeafletPM {
   Map: typeof Map;
   Toolbar: typeof Toolbar;
   Draw: typeof Draw;
+  DrawTool: typeof DrawTool;
   Edit: typeof Edit;
   Utils: typeof Utils;
   Matrix: typeof Matrix;
@@ -26,6 +27,7 @@ import packageInfo from '../../package.json';
 import Map from './L.PM.Map';
 import Toolbar from './Toolbar/L.PM.Toolbar';
 import Draw from './Draw/L.PM.Draw';
+import DrawTool from './Draw/L.PM.DrawTool';
 import Edit from './Edit/L.PM.Edit';
 import Matrix from './helpers/Matrix';
 import Utils from './L.PM.Utils';
@@ -37,6 +39,7 @@ export const PM: LeafletPM = {
   Map,
   Toolbar,
   Draw,
+  DrawTool,
   Edit,
   Utils,
   Matrix,
@@ -44,7 +47,7 @@ export const PM: LeafletPM = {
   optIn: false,
   initialize(this: LeafletPM, options?: object) {
     setOptionClasses(() => [
-      PM.Draw,
+      PM.DrawTool,
       PM.Edit,
       ...Object.values(PM.Draw),
       ...Object.values(PM.Edit),
