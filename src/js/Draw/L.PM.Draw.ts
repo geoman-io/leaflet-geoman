@@ -397,7 +397,7 @@ interface DrawToolBase extends Omit<
   disable(): void;
   setStyle(): void;
 }
-export const DrawTool = class DrawTool extends Draw {} as unknown as new (
+export const DrawTool = class extends Draw {} as unknown as new (
   map: L.Map
 ) => DrawToolBase;
 

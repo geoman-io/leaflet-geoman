@@ -60,6 +60,8 @@ describe('JavaScript compatibility', () => {
         map.pm.disableDraw();
         expect(draw.PolygonCopy.enabled()).to.equal(false);
       } finally {
+        // The map's PolygonCopy mode outlives its tool here, so nothing may
+        // use draw or edit modes on this map after this.
         (map.pm as unknown as Record<string, unknown>).Draw = original;
       }
     });
