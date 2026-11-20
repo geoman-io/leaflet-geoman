@@ -80,7 +80,7 @@ import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
 import { applyMixins, defineOptions } from '../helpers/classes';
-import type { MixinMembers } from '../../types/leaflet-class';
+import type { MixinMembers } from '../helpers/classes';
 import {
   copyLatLngs,
   hasValues,
@@ -1030,7 +1030,7 @@ class EditLine extends Edit {
   }
 }
 
-// The mixin's members, as the old class factory typed them.
+// The mixin's members, merged into the class's type.
 type EditLineMixins = MixinMembers<[typeof MarkerLimits]>;
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 interface EditLine extends EditLineMixins {}

@@ -1,4 +1,22 @@
-// Helpers for Geoman's ES classes, replacing what PMClass.extend did.
+// Helpers for Geoman's ES classes: option defaults on the prototype, and
+// plain-object mixins copied onto it.
+
+type BoundMembers<T> = {
+  [K in keyof T]: OmitThisParameter<T[K]>;
+};
+
+/**
+ * The members of plain-object mixins, without their `this` parameters, for
+ * typing a class through interface merging. Later mixins override earlier
+ * ones, as `applyMixins` copies them.
+ */
+export type MixinMembers<Mixins extends readonly object[]> =
+  Mixins extends readonly [
+    infer First extends object,
+    ...infer Rest extends object[],
+  ]
+    ? MixinMembers<Rest> & Omit<BoundMembers<First>, keyof MixinMembers<Rest>>
+    : {};
 
 type WithOptions = { prototype: { options?: object } };
 
