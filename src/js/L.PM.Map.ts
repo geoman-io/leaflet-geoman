@@ -451,4 +451,5 @@ applyMixins(
   EventMixin
 );
 
+export { Map };
 export default Map;

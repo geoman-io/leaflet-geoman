@@ -187,4 +187,5 @@ defineOptions(EditMarker, {});
 EditMarker.prototype._shape = 'Marker';
 Edit.Marker = EditMarker;
 
+export { EditMarker };
 export default EditMarker;

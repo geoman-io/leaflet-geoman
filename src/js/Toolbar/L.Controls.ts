@@ -481,4 +481,5 @@ export const controlPosition = (
     ? (value as ControlPositionName)
     : fallback;
 
+export { PMButton };
 export default PMButton;

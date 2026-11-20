@@ -41,6 +41,26 @@ const validCases = {
     const active: string | undefined = registry.getActiveShape();
     registry.Line.setPathOptions({ color: 'red' });
   `,
+  augmentedFromAnotherModule: `
+    declare module '../js/Edit/L.PM.Edit' {
+      interface Edit { scaleLayer(factor: number): void; }
+    }
+    declare module '../js/L.PM.Map' {
+      interface Map { enableGlobalScaleMode(): void; }
+    }
+    declare module '../js/Draw/L.PM.DrawTool' {
+      interface DrawTool { showGuides(): void; }
+    }
+    declare module '../js/Draw/L.PM.Draw' {
+      interface Draw { Freehand: InstanceType<typeof PM.Draw.Line>; }
+      namespace Draw { let Freehand: typeof PM.Draw.Line; }
+    }
+    new PM.Edit.Marker(new L.Marker([0, 0])).scaleLayer(2);
+    const controller = new PM.Map(new L.Map('map'));
+    controller.enableGlobalScaleMode();
+    controller.Draw.Freehand.showGuides();
+    new PM.Draw.Freehand(new L.Map('other-map')).enable();
+  `,
   mapAndEditorMixins: `
     const controller = new PM.Map(new L.Map('map'));
     controller.enableGlobalEditMode({ snapDistance: 20 });

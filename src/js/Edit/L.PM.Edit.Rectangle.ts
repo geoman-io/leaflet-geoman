@@ -317,4 +317,5 @@ defineOptions(EditRectangle, {});
 EditRectangle.prototype._shape = 'Rectangle';
 Edit.Rectangle = EditRectangle;
 
+export { EditRectangle };
 export default EditRectangle;

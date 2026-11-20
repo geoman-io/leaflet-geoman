@@ -926,4 +926,5 @@ defineOptions(Toolbar, {
   },
 });
 
+export { Toolbar };
 export default Toolbar;

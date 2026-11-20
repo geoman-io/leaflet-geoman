@@ -605,4 +605,5 @@ EditCircleMarker.prototype._maxRadiusOption = 'maxRadiusCircleMarker';
 EditCircleMarker.prototype._editableOption = 'resizeableCircleMarker';
 Edit.CircleMarker = EditCircleMarker;
 
+export { EditCircleMarker };
 export default EditCircleMarker;

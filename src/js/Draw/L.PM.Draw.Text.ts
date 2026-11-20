@@ -296,4 +296,5 @@ class DrawText extends DrawTool {
 defineOptions(DrawText, {});
 Draw.Text = DrawText;
 
+export { DrawText };
 export default DrawText;

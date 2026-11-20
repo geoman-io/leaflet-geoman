@@ -404,4 +404,5 @@ class DrawRectangle extends DrawTool {
 defineOptions(DrawRectangle, {});
 Draw.Rectangle = DrawRectangle;
 
+export { DrawRectangle };
 export default DrawRectangle;

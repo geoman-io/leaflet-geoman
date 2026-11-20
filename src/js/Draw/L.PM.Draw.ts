@@ -184,4 +184,5 @@ class Draw {
   }
 }
 
+export { Draw };
 export default Draw;

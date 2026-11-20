@@ -75,4 +75,5 @@ defineOptions(EditPolygon, {});
 EditPolygon.prototype._shape = 'Polygon';
 Edit.Polygon = EditPolygon;
 
+export { EditPolygon };
 export default EditPolygon;

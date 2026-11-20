@@ -188,4 +188,5 @@ class DrawPolygon extends DrawLine {
 defineOptions(DrawPolygon, {});
 Draw.Polygon = DrawPolygon;
 
+export { DrawPolygon };
 export default DrawPolygon;

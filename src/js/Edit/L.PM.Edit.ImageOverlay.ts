@@ -143,4 +143,5 @@ defineOptions(EditImageOverlay, {});
 EditImageOverlay.prototype._shape = 'ImageOverlay';
 Edit.ImageOverlay = EditImageOverlay;
 
+export { EditImageOverlay };
 export default EditImageOverlay;
