@@ -20,6 +20,67 @@ describe('JavaScript compatibility', () => {
     });
   });
 
+  // Pins the descriptor decision of refactor 7: Geoman's classes keep native
+  // ES class descriptors. Their own methods are not enumerable; mixin methods,
+  // copied onto the prototype, still are. Change this test together with
+  // that decision.
+  it('pins native ES descriptors on class prototypes', () => {
+    cy.window().then(({ L }) => {
+      const PM = L.PM as unknown as Record<string, any>;
+      const descriptorOf = (cls: { prototype: object }, name: string) => {
+        for (
+          let p: object | null = cls.prototype;
+          p;
+          p = Object.getPrototypeOf(p)
+        ) {
+          const d = Object.getOwnPropertyDescriptor(p, name);
+          if (d) return d;
+        }
+        throw new Error(`no ${name}`);
+      };
+      const classMethods: [any, string][] = [
+        [PM.Map, 'enableDraw'],
+        [PM.Toolbar, 'addControls'],
+        [PM.Draw, 'getShapes'],
+        [PM.Draw.Polygon, '_createMarker'],
+        [PM.Edit, 'setOptions'],
+        [PM.Edit.Marker, 'enable'],
+        [PM.Edit.LayerGroup, 'enable'],
+      ];
+      for (const [cls, name] of classMethods) {
+        const d = descriptorOf(cls, name);
+        expect(typeof d.value, name).to.equal('function');
+        expect(d.get, name).to.equal(undefined);
+        expect(d.enumerable, name).to.equal(false);
+        expect(d.writable, name).to.equal(true);
+        expect(d.configurable, name).to.equal(true);
+      }
+      const mixinMethods: [any, string][] = [
+        [PM.Map, 'enableGlobalEditMode'],
+        [PM.Draw.Polygon, '_fireCreate'],
+        [PM.Edit.Marker, 'enableLayerDrag'],
+      ];
+      for (const [cls, name] of mixinMethods) {
+        expect(descriptorOf(cls, name).enumerable, name).to.equal(true);
+      }
+      expect(Object.keys(PM.Edit.Marker.prototype)).not.to.include('enable');
+
+      // Leaflet 2's include copies by own property names along the chain, so
+      // it still copies the non-enumerable methods.
+      class Host extends L.Class {}
+      (Host as unknown as { include(o: object): void }).include(
+        PM.Edit.Marker.prototype
+      );
+      expect(
+        typeof (Host.prototype as unknown as Record<string, unknown>).enable
+      ).to.equal('function');
+
+      // The tool and editor registries stay enumerable statics.
+      expect(Object.keys(PM.Draw)).to.include.members(['Polygon', 'Text']);
+      expect(Object.keys(PM.Edit)).to.include.members(['Marker', 'LayerGroup']);
+    });
+  });
+
   it('keeps Matrix constructor and enumerable prototype methods', () => {
     cy.window().then(({ L }) => {
       const matrix = new L.PM.Matrix(1, 0, 0, 1, 0, 0);
