@@ -103,8 +103,9 @@ class Draw {
     L.Util.setOptions(this, undefined as never);
     this._map = map as typeof this._map;
 
-    // The tools extend Draw; only the map's Draw creates them.
-    if (new.target !== Draw) {
+    // The tools extend Draw through DrawTool; every other Draw, including a
+    // subclass, creates its own tools.
+    if (this instanceof DrawTool) {
       return;
     }
 
@@ -396,7 +397,9 @@ interface DrawToolBase extends Omit<
   disable(): void;
   setStyle(): void;
 }
-export const DrawTool = Draw as unknown as new (map: L.Map) => DrawToolBase;
+export const DrawTool = class extends Draw {} as unknown as new (
+  map: L.Map
+) => DrawToolBase;
 
 export default Draw;
 
