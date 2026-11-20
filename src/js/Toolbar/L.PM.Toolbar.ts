@@ -1,5 +1,5 @@
 import * as L from 'leaflet';
-import PMClass from '../helpers/PMClass';
+import { defineOptions } from '../helpers/classes';
 import { PM } from '../PM';
 import type { PM as PMTypes } from '../../../leaflet-geoman';
 import type { IPMButton } from './L.Controls';
@@ -112,7 +112,7 @@ type ExtendedMap = L.Map & {
           }
         | ((name: string, copyInstance: string) => unknown);
     };
-    Toolbar: IToolbar;
+    Toolbar: Toolbar;
     toggleGlobalEditMode: () => void;
     toggleGlobalDragMode: () => void;
     toggleGlobalRemovalMode: () => void;
@@ -137,63 +137,8 @@ interface CustomControlOptions {
   disableByOtherButtons?: boolean;
 }
 
-/**
- * Toolbar interface
- */
-export interface IToolbar {
-  options: ToolbarOptions;
-  customButtons: IPMButton[];
-  map: ExtendedMap;
-  buttons: Record<string, IPMButton>;
-  isVisible: boolean;
-  drawContainer: HTMLElement;
-  editContainer: HTMLElement;
-  optionsContainer: HTMLElement;
-  customContainer: HTMLElement;
-
-  initialize(map: L.Map): void;
-  reinit(): void;
-  init(map: L.Map): void;
-  _createContainer(name: string): HTMLElement;
-  getButtons(): Record<string, IPMButton>;
-  addControls(options?: ToolbarOptionsInput): void;
-  applyIconStyle(): void;
-  removeControls(): void;
-  deleteControl(name: string): void;
-  toggleControls(options?: ToolbarOptionsInput): void;
-  _addButton(name: string, button: IPMButton): IPMButton;
-  triggerClickOnToggledButtons(exceptThisButton?: IPMButton): void;
-  toggleButton(
-    name: string,
-    status: boolean,
-    disableOthers?: boolean
-  ): boolean | undefined;
-  _defineButtons(): void;
-  _showHideButtons(): void;
-  _getBtnPosition(block: string): L.ControlPosition;
-  setBlockPosition(block: string, position: L.ControlPosition | ''): void;
-  getBlockPositions(): ToolbarOptions['positions'];
-  copyDrawControl(
-    copyInstance: string,
-    options: string | CustomControlOptions
-  ): { drawInstance: unknown; control: IPMButton };
-  createCustomControl(options: CustomControlOptions): IPMButton;
-  controlExists(name: string): boolean;
-  getButton(name: string): IPMButton | undefined;
-  getButtonsInBlock(name: string): Record<string, IPMButton>;
-  changeControlOrder(order?: string[]): void;
-  getControlOrder(): string[];
-  changeActionsOfControl(
-    name: string,
-    actions: (string | ButtonAction)[]
-  ): void;
-  setButtonDisabled(name: string, state: boolean): void;
-  _shapeMapping(): Record<string, string>;
-  _btnNameMapping(name: string): string;
-}
-
 // Container type for dynamic access
-type ToolbarWithContainers = IToolbar & {
+type ToolbarWithContainers = Toolbar & {
   [key: string]: HTMLElement | unknown;
 };
 import PMButton, { controlPosition } from './L.Controls';
@@ -210,36 +155,19 @@ const optionText = (value: unknown): string => {
   return '';
 };
 
-const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
-  options: {
-    drawMarker: true,
-    drawRectangle: true,
-    drawPolyline: true,
-    drawPolygon: true,
-    drawCircle: true,
-    drawCircleMarker: true,
-    drawText: true,
-    editMode: true,
-    dragMode: true,
-    cutPolygon: true,
-    removalMode: true,
-    rotateMode: true,
-    snappingOption: true,
-    drawControls: true,
-    editControls: true,
-    optionsControls: true,
-    customControls: true,
-    oneBlock: false,
-    position: 'topleft',
-    positions: {
-      draw: '',
-      edit: '',
-      options: '',
-      custom: '',
-    },
-  },
-  customButtons: [],
-  initialize(this: IToolbar, map: L.Map) {
+class Toolbar {
+  declare options: ToolbarOptions;
+  declare customButtons: IPMButton[];
+  declare map: ExtendedMap;
+  declare buttons: Record<string, IPMButton>;
+  declare isVisible: boolean;
+  declare drawContainer: HTMLElement;
+  declare editContainer: HTMLElement;
+  declare optionsContainer: HTMLElement;
+  declare customContainer: HTMLElement;
+
+  constructor(map: L.Map) {
+    L.Util.setOptions(this, undefined as never);
     // For some reason there is an reference between multiple maps instances
     this.customButtons = [];
     this.options.positions = {
@@ -250,8 +178,9 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     };
 
     this.init(map);
-  },
-  reinit(this: IToolbar) {
+  }
+
+  reinit() {
     const addControls = this.isVisible;
 
     this.removeControls();
@@ -260,8 +189,8 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     if (addControls) {
       this.addControls();
     }
-  },
-  init(this: IToolbar, map: L.Map) {
+  }
+  init(map: L.Map) {
     this.map = map as typeof this.map;
 
     this.buttons = {};
@@ -284,7 +213,7 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     );
 
     this._defineButtons();
-  },
+  }
   _createContainer(this: ToolbarWithContainers, name: string) {
     const container = `${name}Container`;
     if (!this[container]) {
@@ -294,12 +223,12 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
       );
     }
     return this[container] as HTMLElement;
-  },
-  getButtons(this: IToolbar) {
+  }
+  getButtons() {
     return this.buttons;
-  },
+  }
 
-  addControls(this: IToolbar, options: ToolbarOptionsInput = this.options) {
+  addControls(options: ToolbarOptionsInput = this.options) {
     // adds all buttons to the map specified inside options
 
     // make button renaming backwards compatible
@@ -318,8 +247,8 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     this.isVisible = true;
     // now show the specified buttons
     this._showHideButtons();
-  },
-  applyIconStyle(this: IToolbar) {
+  }
+  applyIconStyle() {
     const buttons = this.getButtons();
 
     const iconClasses: Record<string, Record<string, string>> = {
@@ -345,8 +274,8 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
         className: iconClasses.geomanIcons[name],
       });
     }
-  },
-  removeControls(this: IToolbar) {
+  }
+  removeControls() {
     // grab all buttons to loop through
     const buttons = this.getButtons();
 
@@ -356,28 +285,28 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     }
 
     this.isVisible = false;
-  },
-  deleteControl(this: IToolbar, name: string) {
+  }
+  deleteControl(name: string) {
     const btnName = this._btnNameMapping(name);
     if (this.buttons[btnName]) {
       this.buttons[btnName].remove();
       delete this.buttons[btnName];
     }
-  },
-  toggleControls(this: IToolbar, options: ToolbarOptionsInput = this.options) {
+  }
+  toggleControls(options: ToolbarOptionsInput = this.options) {
     if (this.isVisible) {
       this.removeControls();
     } else {
       this.addControls(options);
     }
-  },
-  _addButton(this: IToolbar, name: string, button: IPMButton) {
+  }
+  _addButton(name: string, button: IPMButton) {
     this.buttons[name] = button;
     this.options[name] = !!this.options[name] || false;
 
     return this.buttons[name];
-  },
-  triggerClickOnToggledButtons(this: IToolbar, exceptThisButton?: IPMButton) {
+  }
+  triggerClickOnToggledButtons(exceptThisButton?: IPMButton) {
     // this function is used when - e.g. drawing mode is enabled and a possible
     // other active mode (like removal tool) is already active.
     // we can't have two active modes because of possible event conflicts
@@ -397,13 +326,8 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
         button._triggerClick();
       }
     }
-  },
-  toggleButton(
-    this: IToolbar,
-    name: string,
-    status: boolean,
-    disableOthers = true
-  ) {
+  }
+  toggleButton(name: string, status: boolean, disableOthers = true) {
     // does not fire the events/functionality of the button
     // this just changes the state and is used if a functionality (like Draw)
     // is enabled manually via script
@@ -429,8 +353,8 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     }
     // now toggle the state of the button
     return this.buttons[toggleBtnName].toggle(status);
-  },
-  _defineButtons(this: IToolbar) {
+  }
+  _defineButtons() {
     // some buttons are still in their respective classes, like PM.Draw.Polygon
     const drawMarkerButton: ToolbarButtonOptions = {
       className: 'control-icon leaflet-pm-icon-marker',
@@ -669,9 +593,9 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     this._addButton('cutPolygon', new PMButton(cutButton));
     this._addButton('removalMode', new PMButton(deleteButton));
     this._addButton('rotateMode', new PMButton(rotateButton));
-  },
+  }
 
-  _showHideButtons(this: IToolbar) {
+  _showHideButtons() {
     // if Toolbar is not visible, we don't need to update button positions
     if (!this.isVisible) {
       return;
@@ -725,29 +649,24 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
         buttons[btn].addTo(this.map);
       }
     }
-  },
-  _getBtnPosition(this: IToolbar, block: string) {
+  }
+  _getBtnPosition(block: string) {
     const configured =
       this.options.positions && this.options.positions[block]
         ? this.options.positions[block]
         : this.options.position;
     // A number or unknown corner is truthy. Leaflet then throws in `indexOf` / `appendChild`.
     return controlPosition(configured);
-  },
-  setBlockPosition(
-    this: IToolbar,
-    block: string,
-    position: L.ControlPosition | ''
-  ) {
+  }
+  setBlockPosition(block: string, position: L.ControlPosition | '') {
     this.options.positions[block] = position;
     this._showHideButtons();
     this.changeControlOrder();
-  },
-  getBlockPositions(this: IToolbar) {
+  }
+  getBlockPositions() {
     return this.options.positions;
-  },
+  }
   copyDrawControl(
-    this: IToolbar,
     copyInstance: string,
     options: string | CustomControlOptions
   ) {
@@ -776,8 +695,8 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     options = { ...btn, ...options };
     const control = this.createCustomControl(options);
     return { drawInstance, control };
-  },
-  createCustomControl(this: IToolbar, options: CustomControlOptions) {
+  }
+  createCustomControl(options: CustomControlOptions) {
     if (!options.name) {
       throw new TypeError('Button has no name');
     }
@@ -833,14 +752,14 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     const control = this._addButton(options.name, new PMButton(_options));
     this.changeControlOrder();
     return control;
-  },
-  controlExists(this: IToolbar, name: string) {
+  }
+  controlExists(name: string) {
     return Boolean(this.getButton(name));
-  },
-  getButton(this: IToolbar, name: string) {
+  }
+  getButton(name: string) {
     return this.getButtons()[name];
-  },
-  getButtonsInBlock(this: IToolbar, name: string) {
+  }
+  getButtonsInBlock(name: string) {
     const buttonsInBlock: Record<string, IPMButton> = {};
     if (name) {
       for (const buttonName in this.getButtons()) {
@@ -855,8 +774,8 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
       }
     }
     return buttonsInBlock;
-  },
-  changeControlOrder(this: IToolbar, order: string[] = []) {
+  }
+  changeControlOrder(order: string[] = []) {
     if (!Array.isArray(order)) {
       order = [];
     }
@@ -923,20 +842,16 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
 
     this.map.pm.Toolbar.buttons = newbtnorder;
     this._showHideButtons();
-  },
-  getControlOrder(this: IToolbar) {
+  }
+  getControlOrder() {
     const buttons = this.getButtons();
     const order: string[] = [];
     for (const btn in buttons) {
       order.push(btn);
     }
     return order;
-  },
-  changeActionsOfControl(
-    this: IToolbar,
-    name: string,
-    actions: (string | ButtonAction)[]
-  ) {
+  }
+  changeActionsOfControl(name: string, actions: (string | ButtonAction)[]) {
     const btnName = this._btnNameMapping(name);
 
     if (!btnName) {
@@ -951,15 +866,15 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
     }
     this.buttons[btnName]._button.actions = actions;
     this.changeControlOrder();
-  },
-  setButtonDisabled(this: IToolbar, name: string, state: boolean) {
+  }
+  setButtonDisabled(name: string, state: boolean) {
     const btnName = this._btnNameMapping(name);
     if (state) {
       this.buttons[btnName].disable();
     } else {
       this.buttons[btnName].enable();
     }
-  },
+  }
   _shapeMapping(): Record<string, string> {
     return {
       Marker: 'drawMarker',
@@ -976,10 +891,38 @@ const Toolbar = PMClass.extend<IToolbar, [L.Map]>({
       Rotate: 'rotateMode',
       Text: 'drawText',
     };
-  },
-  _btnNameMapping(this: IToolbar, name: string) {
+  }
+  _btnNameMapping(name: string) {
     const shapeMapping = this._shapeMapping();
     return shapeMapping[name] ? shapeMapping[name] : name;
+  }
+}
+
+defineOptions(Toolbar, {
+  drawMarker: true,
+  drawRectangle: true,
+  drawPolyline: true,
+  drawPolygon: true,
+  drawCircle: true,
+  drawCircleMarker: true,
+  drawText: true,
+  editMode: true,
+  dragMode: true,
+  cutPolygon: true,
+  removalMode: true,
+  rotateMode: true,
+  snappingOption: true,
+  drawControls: true,
+  editControls: true,
+  optionsControls: true,
+  customControls: true,
+  oneBlock: false,
+  position: 'topleft',
+  positions: {
+    draw: '',
+    edit: '',
+    options: '',
+    custom: '',
   },
 });
 
