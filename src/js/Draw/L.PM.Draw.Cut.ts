@@ -1,27 +1,11 @@
 import * as L from 'leaflet';
 import { PM } from '../PM';
-import type { IDrawLine } from './L.PM.Draw.Line';
-import type { ISnapMixin } from '../Mixins/Snapping';
 /**
- * Extended map with PM
+ * The map, with the members cutting uses
  */
-type ExtendedMap = L.Map & {
+type ExtendedMap = DrawPolygon['_map'] & {
   _layers: Record<string, L.Layer & { pm?: L.Polyline['pm'] }>;
-  pm: {
-    Toolbar: {
-      toggleButton: (name: string, state: boolean) => void;
-    };
-    _getContainingLayer: () => L.LayerGroup | L.Map;
-    removeLayer: (e: { target: L.Layer }) => void;
-    globalOptions: {
-      panes?: {
-        layerPane?: string;
-        vertexPane?: string;
-        markerPane?: string;
-      };
-    };
-    getGeomanLayers: () => L.Layer[];
-  };
+  pm: { removeLayer: (e: { target: L.Layer }) => void };
 };
 
 /**
@@ -106,57 +90,12 @@ interface CutDrawOptions {
   [key: string]: unknown;
 }
 
-/**
- * Draw Cut interface
- */
-export interface IDrawCut {
-  options: CutDrawOptions;
-  _map: ExtendedMap;
-  _shape: string;
-  _enabled: boolean;
-  toolbarButtonName: string;
-  _layerGroup: ExtendedFeatureGroup;
-  _layer: ExtendedPolyline;
-  _hintMarker: ExtendedMarker;
-  _otherSnapLayers: L.Layer[];
-  _doesSelfIntersect: boolean;
-  _tempSnapLayerIndex?: number;
-  _editedLayers: EditedLayerInfo[];
-
-  _finishShape(): void;
-  cut(layer: ExtendedPolygon): void;
-  _cutLayer(
-    layer: L.Polygon,
-    l: L.Polyline | L.Polygon
-  ): GeoJSON.GeoJsonObject | null;
-  _cutLayerUnsafe(
-    layer: L.Polygon,
-    l: L.Polyline | L.Polygon
-  ): GeoJSON.GeoJsonObject | null;
-  _change(): void;
-
-  // From parent class / mixins
-  _setPane(
-    layer: L.Layer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ): void;
-  _fireCut(
-    target: L.Map | PMLayer,
-    layer: L.Layer,
-    originalLayer: PMLayer
-  ): void;
-  _handleSelfIntersection(addVertex: boolean, latlng?: L.LatLng): void;
-  _cleanupSnapping(): void;
-  _calcClosestLayer: ISnapMixin['_calcClosestLayer'];
-  _addDrawnLayerProp(layer: L.Layer): void;
-  _isFirstLayer(): boolean;
-  disable(): void;
-  enable: IDrawLine['enable'];
-}
 import lineIntersect from '@turf/line-intersect';
 import lineSplit from '@turf/line-split';
 import get from 'lodash/get';
 import Draw from './L.PM.Draw';
+import DrawPolygon from './L.PM.Draw.Polygon';
+import { defineOptions } from '../helpers/classes';
 import { isDegenerateLatLngRing } from '../helpers';
 import {
   contains,
@@ -166,13 +105,26 @@ import {
   intersect,
 } from '../helpers/turfHelper';
 
-Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
-  initialize(this: IDrawCut, map: L.Map) {
-    this._map = map as typeof this._map;
+class DrawCut extends DrawPolygon {
+  declare _map: ExtendedMap;
+  declare options: CutDrawOptions;
+  declare _shape: string;
+  declare _enabled: boolean;
+  declare toolbarButtonName: string;
+  declare _layerGroup: ExtendedFeatureGroup;
+  declare _layer: ExtendedPolyline;
+  declare _hintMarker: ExtendedMarker;
+  declare _otherSnapLayers: L.Layer[];
+  declare _doesSelfIntersect: boolean;
+  declare _tempSnapLayerIndex?: number;
+  declare _editedLayers: EditedLayerInfo[];
+
+  constructor(map: L.Map) {
+    super(map);
     this._shape = 'Cut';
     this.toolbarButtonName = 'cutPolygon';
-  },
-  _finishShape(this: IDrawCut) {
+  }
+  _finishShape() {
     this._editedLayers = [];
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
@@ -236,8 +188,8 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
-  cut(this: IDrawCut, layer: ExtendedPolygon) {
+  }
+  cut(layer: ExtendedPolygon) {
     const all = this._map._layers;
     // contains information about snapping points
     const _latlngInfos = layer._latlngInfos || [];
@@ -403,9 +355,8 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
         originalLayer: l,
       });
     });
-  },
+  }
   _cutLayer(
-    this: IDrawCut,
     layer: L.Polygon,
     l: L.Polyline | L.Polygon
   ): GeoJSON.GeoJsonObject | null {
@@ -414,9 +365,8 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
     } catch {
       return null;
     }
-  },
+  }
   _cutLayerUnsafe(
-    this: IDrawCut,
     layer: L.Polygon,
     l: L.Polyline | L.Polygon
   ): GeoJSON.GeoJsonObject | null {
@@ -467,9 +417,15 @@ Draw.Cut = Draw.Polygon.extend<IDrawCut, [L.Map]>({
       }
     }
     return diff;
-  },
-  _change: L.Util.falseFn,
-});
+  }
+  // cutting fires no change events
+  _change() {}
+}
+
+defineOptions(DrawCut, {});
+Draw.Cut = DrawCut;
+
+export default DrawCut;
 
 type CutResultLayer = L.Layer & {
   pm: Pick<L.Polyline['pm'], 'enable' | 'disable' | 'setOptions'> & {

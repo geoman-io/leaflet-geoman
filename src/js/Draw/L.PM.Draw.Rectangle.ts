@@ -1,5 +1,5 @@
 import * as L from 'leaflet';
-import type { ISnapMixin, SnappableMarker } from '../Mixins/Snapping';
+import type { SnappableMarker } from '../Mixins/Snapping';
 import { PM } from '../PM';
 import type { DrawOptions } from './L.PM.Draw';
 
@@ -21,13 +21,6 @@ type ExtendedMap = L.Map & {
     };
     getGeomanLayers: () => L.Layer[];
   };
-};
-
-/**
- * Extended layer with PM temp flag
- */
-type PMTempLayer = L.Layer & {
-  _pmTempLayer?: boolean;
 };
 
 /**
@@ -68,59 +61,30 @@ interface RectangleDrawOptions extends DrawOptions {
   continueDrawing?: boolean;
 }
 
-/**
- * Draw Rectangle interface
- */
-export interface IDrawRectangle {
-  options: RectangleDrawOptions;
-  _map: ExtendedMap;
-  _shape: string;
-  _enabled: boolean;
-  toolbarButtonName: string;
-  _layerGroup: ExtendedFeatureGroup;
-  _layer: ExtendedRectangle;
-  _startMarker: ExtendedMarker;
-  _hintMarker: ExtendedMarker;
-  _styleMarkers?: ExtendedMarker[];
-  _otherSnapLayers: L.Layer[];
-
-  enable(options?: Partial<RectangleDrawOptions>): void;
-  disable(): void;
-  enabled(): boolean;
-  toggle(options?: Partial<RectangleDrawOptions>): void;
-  _placeStartingMarkers(e: L.LeafletPointerEvent): void;
-  _setRectangleOrigin(): void;
-  _syncHintMarker(e: L.LeafletPointerEvent): void;
-  _syncRectangleSize(): void;
-  _findCorners(): L.LatLng[];
-  _finishShape(e?: L.LeafletPointerEvent): void;
-  setStyle(): void;
-
-  // From mixins
-  _setPane(
-    layer: PMTempLayer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ): void;
-  _fireDrawStart(): void;
-  _fireDrawEnd(): void;
-  _fireCreate(layer: L.Layer): void;
-  _fireChange(latlngs: L.LatLng[] | L.LatLng[][], source: string): void;
-  _setGlobalDrawMode(): void;
-  _cleanupSnapping(): void;
-  _handleSnapping: ISnapMixin['_handleSnapping'];
-  _finishLayer(layer: L.Layer): void;
-  _isFirstLayer(): boolean;
-}
 import Draw from './L.PM.Draw';
+import { DrawTool } from './L.PM.Draw';
+import { defineOptions } from '../helpers/classes';
 import { fixLatOffset, getTranslation } from '../helpers';
 
-Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
-  initialize(this: IDrawRectangle, map: L.Map) {
-    this._map = map as typeof this._map;
+class DrawRectangle extends DrawTool {
+  declare _map: ExtendedMap;
+  declare options: RectangleDrawOptions;
+  declare _shape: string;
+  declare _enabled: boolean;
+  declare toolbarButtonName: string;
+  declare _layerGroup: ExtendedFeatureGroup;
+  declare _layer: ExtendedRectangle;
+  declare _startMarker: ExtendedMarker;
+  declare _hintMarker: ExtendedMarker;
+  declare _styleMarkers?: ExtendedMarker[];
+  declare _otherSnapLayers: L.Layer[];
+
+  constructor(map: L.Map) {
+    super(map);
     this._shape = 'Rectangle';
     this.toolbarButtonName = 'drawRectangle';
-  },
-  enable(this: IDrawRectangle, options?: Partial<RectangleDrawOptions>) {
+  }
+  enable(options?: Partial<RectangleDrawOptions>) {
     // TODO: Think about if these options could be passed globally for all
     // instances of PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
@@ -224,8 +188,8 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
-  disable(this: IDrawRectangle) {
+  }
+  disable() {
     // disable drawing mode
 
     // cancel, if drawing mode isn't event enabled
@@ -256,18 +220,18 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
-  enabled(this: IDrawRectangle) {
+  }
+  enabled() {
     return this._enabled;
-  },
-  toggle(this: IDrawRectangle, options?: Partial<RectangleDrawOptions>) {
+  }
+  toggle(options?: Partial<RectangleDrawOptions>) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
-  _placeStartingMarkers(this: IDrawRectangle, e: L.LeafletPointerEvent) {
+  }
+  _placeStartingMarkers(e: L.LeafletPointerEvent) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
@@ -296,8 +260,8 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
     this._hintMarker.setTooltipContent(getTranslation('tooltips.finishRect'));
 
     this._setRectangleOrigin();
-  },
-  _setRectangleOrigin(this: IDrawRectangle) {
+  }
+  _setRectangleOrigin() {
     const latlng = this._startMarker.getLatLng();
 
     if (latlng) {
@@ -308,8 +272,8 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
 
       this._hintMarker.on('move', this._syncRectangleSize, this);
     }
-  },
-  _syncHintMarker(this: IDrawRectangle, e: L.LeafletPointerEvent) {
+  }
+  _syncHintMarker(e: L.LeafletPointerEvent) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
 
@@ -325,8 +289,8 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
         ? this._layer.getLatLngs()
         : [this._hintMarker.getLatLng()];
     this._fireChange(latlngs as L.LatLng[][], 'Draw');
-  },
-  _syncRectangleSize(this: IDrawRectangle) {
+  }
+  _syncRectangleSize() {
     const A = fixLatOffset(this._startMarker.getLatLng(), this._map);
     const B = fixLatOffset(this._hintMarker.getLatLng(), this._map);
 
@@ -360,8 +324,8 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
         }
       });
     }
-  },
-  _findCorners(this: IDrawRectangle) {
+  }
+  _findCorners() {
     const latlngs = this._layer.getLatLngs()[0] as L.LatLng[];
     return PM.Utils._getRotatedRectangle(
       latlngs[0],
@@ -369,8 +333,8 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
       this.options.rectangleAngle || 0,
       this._map
     );
-  },
-  _finishShape(this: IDrawRectangle, e?: L.LeafletPointerEvent) {
+  }
+  _finishShape(e?: L.LeafletPointerEvent) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (e?.latlng && !this._hintMarker._snapped) {
@@ -431,8 +395,13 @@ Draw.Rectangle = Draw.extend<IDrawRectangle, [L.Map]>({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
-  setStyle(this: IDrawRectangle) {
+  }
+  setStyle() {
     this._layer?.setStyle(this.options.pathOptions!);
-  },
-});
+  }
+}
+
+defineOptions(DrawRectangle, {});
+Draw.Rectangle = DrawRectangle;
+
+export default DrawRectangle;

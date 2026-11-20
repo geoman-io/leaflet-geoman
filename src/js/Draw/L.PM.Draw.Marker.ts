@@ -1,8 +1,7 @@
 import * as L from 'leaflet';
-import type { ISnapMixin, SnappableMarker } from '../Mixins/Snapping';
+import type { SnappableMarker } from '../Mixins/Snapping';
 import { PM } from '../PM';
 import type { DrawOptions } from '../../types/options';
-import type { IDraw } from './L.PM.Draw';
 /**
  * Extended hint marker with snapping properties
  */
@@ -61,45 +60,9 @@ interface MapMouseEvent extends L.LeafletPointerEvent {
   target: HintMarker;
 }
 
-/**
- * Draw Marker interface
- */
-export interface IDrawMarker {
-  _map: ExtendedMap;
-  _shape: string;
-  _enabled: boolean;
-  _layer: L.Layer;
-  _hintMarker: HintMarker | null;
-  _touchHint?: HTMLElement | null;
-  _layerIsDragging: boolean;
-  _isTouchDevice: boolean;
-  toolbarButtonName: string;
-  options: DrawMarkerOptions;
-
-  initialize(map: L.Map): void;
-  enable(options?: DrawOptions): void;
-  disable(): void;
-  enabled(): boolean;
-  toggle(options?: DrawOptions): void;
-  isRelevantMarker(layer: object): layer is L.Marker;
-  _syncHintMarker(e: L.LeafletPointerEvent): void;
-  _createMarker(e: L.LeafletPointerEvent): void;
-  setStyle(): void;
-  _createTouchHint(): void;
-  _removeTouchHint(): void;
-  // From base Draw class
-  _setPane: IDraw['_setPane'];
-  _finishLayer: (layer: L.Layer) => void;
-  _fireDrawStart: () => void;
-  _fireDrawEnd: () => void;
-  _fireCreate: (layer: L.Layer) => void;
-  _fireChange: (latlng: L.LatLng, source: string) => void;
-  _setGlobalDrawMode: () => void;
-  _cleanupSnapping: () => void;
-  _handleSnapping: ISnapMixin['_handleSnapping'];
-  _isFirstLayer: () => boolean;
-}
 import Draw from './L.PM.Draw';
+import { DrawTool } from './L.PM.Draw';
+import { defineOptions } from '../helpers/classes';
 import { getTranslation, hasFinePointer } from '../helpers';
 
 /** Leaflet calls `icon.createIcon` when the marker is added. A number has no such method. */
@@ -115,15 +78,26 @@ const markerDrawOptions = (style?: L.MarkerOptions | null): L.MarkerOptions => {
   return options;
 };
 
-Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
-  initialize(this: IDrawMarker, map: L.Map) {
-    this._map = map as typeof this._map;
+class DrawMarker extends DrawTool {
+  declare _map: ExtendedMap;
+  declare _shape: string;
+  declare _enabled: boolean;
+  declare _layer: L.Layer;
+  declare _hintMarker: HintMarker | null;
+  declare _touchHint?: HTMLElement | null;
+  declare _layerIsDragging: boolean;
+  declare _isTouchDevice: boolean;
+  declare toolbarButtonName: string;
+  declare options: DrawMarkerOptions;
+
+  constructor(map: L.Map) {
+    super(map);
     this._shape = 'Marker';
     this.toolbarButtonName = 'drawMarker';
     // with _layerIsDragging we check if a marker is currently dragged and disable marker creation
     this._layerIsDragging = false;
-  },
-  enable(this: IDrawMarker, options?: DrawOptions) {
+  }
+  enable(options?: DrawOptions) {
     // TODO: Think about if these options could be passed globally for all
     // instances of PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
@@ -201,8 +175,8 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
-  disable(this: IDrawMarker) {
+  }
+  disable() {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
       return;
@@ -244,26 +218,26 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
-  enabled(this: IDrawMarker) {
+  }
+  enabled() {
     return this._enabled;
-  },
-  toggle(this: IDrawMarker, options?: DrawOptions) {
+  }
+  toggle(options?: DrawOptions) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
-  isRelevantMarker(this: IDrawMarker, layer: object): layer is L.Marker {
+  }
+  isRelevantMarker(layer: object): layer is L.Marker {
     return (
       layer instanceof L.Marker &&
       !!layer.pm &&
       !layer._pmTempLayer &&
       !layer.pm._initTextMarker
     );
-  },
-  _syncHintMarker(this: IDrawMarker, e: L.LeafletPointerEvent) {
+  }
+  _syncHintMarker(e: L.LeafletPointerEvent) {
     // move the cursor marker
     this._hintMarker!.setLatLng(e.latlng);
 
@@ -275,8 +249,8 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     }
 
     this._fireChange(this._hintMarker!.getLatLng(), 'Draw');
-  },
-  _createMarker(this: IDrawMarker, e: L.LeafletPointerEvent) {
+  }
+  _createMarker(e: L.LeafletPointerEvent) {
     if (!e.latlng || this._layerIsDragging) {
       return;
     }
@@ -329,25 +303,30 @@ Draw.Marker = Draw.extend<IDrawMarker, [L.Map]>({
     if (!this.options.continueDrawing) {
       this.disable();
     }
-  },
-  setStyle(this: IDrawMarker) {
+  }
+  setStyle() {
     const icon = markerDrawOptions(this.options.markerStyle).icon;
     if (icon) {
       this._hintMarker?.setIcon(icon);
     }
-  },
-  _createTouchHint(this: IDrawMarker) {
+  }
+  _createTouchHint() {
     if (!this.options.tooltips) {
       return;
     }
     this._touchHint = L.DomUtil.create('div', 'leaflet-pm-touch-hint');
     this._touchHint.textContent = getTranslation('tooltips.placeMarkerTouch');
     this._map.getContainer().appendChild(this._touchHint);
-  },
-  _removeTouchHint(this: IDrawMarker) {
+  }
+  _removeTouchHint() {
     if (this._touchHint && this._touchHint.parentNode) {
       this._touchHint.parentNode.removeChild(this._touchHint);
       this._touchHint = null;
     }
-  },
-});
+  }
+}
+
+defineOptions(DrawMarker, {});
+Draw.Marker = DrawMarker;
+
+export default DrawMarker;

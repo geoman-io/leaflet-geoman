@@ -1,4 +1,4 @@
-import type { DrawInstances } from '../../src/js/Draw/L.PM.Draw';
+import type DrawClass from '../../src/js/Draw/L.PM.Draw';
 import type Toolbar from '../../src/js/Toolbar/L.PM.Toolbar';
 import type * as Leaflet from 'leaflet';
 
@@ -61,20 +61,18 @@ declare module 'leaflet' {
 declare module '../../leaflet-geoman' {
   namespace PM {
     interface Draw {
-      PolygonCopy: DrawShape & DrawInstances['Polygon'];
-      Circle: DrawShape &
-        DrawInstances['Circle'] & { _snapList?: Leaflet.Layer[] };
+      PolygonCopy: DrawShape & DrawClass['Polygon'];
+      Circle: DrawShape & DrawClass['Circle'] & { _snapList?: Leaflet.Layer[] };
       CircleMarker: DrawShape &
-        DrawInstances['CircleMarker'] & { _snapList?: Leaflet.Layer[] };
+        DrawClass['CircleMarker'] & { _snapList?: Leaflet.Layer[] };
       Rectangle: DrawShape &
-        DrawInstances['Rectangle'] & { _snapList?: Leaflet.Layer[] };
-      Marker: DrawShape &
-        DrawInstances['Marker'] & { _snapList?: Leaflet.Layer[] };
-      Line: DrawShape & DrawInstances['Line'] & { _snapList?: Leaflet.Layer[] };
+        DrawClass['Rectangle'] & { _snapList?: Leaflet.Layer[] };
+      Marker: DrawShape & DrawClass['Marker'] & { _snapList?: Leaflet.Layer[] };
+      Line: DrawShape & DrawClass['Line'] & { _snapList?: Leaflet.Layer[] };
       Polygon: DrawShape &
-        DrawInstances['Polygon'] & { _snapList?: Leaflet.Layer[] };
-      Cut: DrawShape & DrawInstances['Cut'] & { _snapList?: Leaflet.Layer[] };
-      Text: DrawShape & DrawInstances['Text'] & { _snapList?: Leaflet.Layer[] };
+        DrawClass['Polygon'] & { _snapList?: Leaflet.Layer[] };
+      Cut: DrawShape & DrawClass['Cut'] & { _snapList?: Leaflet.Layer[] };
+      Text: DrawShape & DrawClass['Text'] & { _snapList?: Leaflet.Layer[] };
     }
     interface PMMap {
       setLang(lang: string, override?: object, fallback?: string): void;

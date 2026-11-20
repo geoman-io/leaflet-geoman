@@ -1,7 +1,6 @@
 import * as L from 'leaflet';
-import type { ISnapMixin, SnappableMarker } from '../Mixins/Snapping';
+import type { SnappableMarker } from '../Mixins/Snapping';
 import { PM } from '../PM';
-import type { IDraw } from './L.PM.Draw';
 /**
  * Extended map with PM
  */
@@ -102,69 +101,32 @@ interface CircleMarkerDrawOptions {
   [key: string]: unknown;
 }
 
-/**
- * Draw CircleMarker interface
- */
-export interface IDrawCircleMarker {
-  options: CircleMarkerDrawOptions;
-  _map: ExtendedMap;
-  _shape: string;
-  _enabled: boolean;
-  toolbarButtonName: string;
-  _layerGroup: ExtendedFeatureGroup;
-  _layer: ExtendedCircleMarker;
-  _hintMarker: HintMarkerType;
-  _centerMarker: ExtendedMarker;
-  _hintline: ExtendedPolyline;
-  _otherSnapLayers: L.Layer[];
-  _layerIsDragging: boolean;
-  _BaseCircleClass: typeof L.CircleMarker;
-  _minRadiusOption: 'minRadiusCircle' | 'minRadiusCircleMarker';
-  _maxRadiusOption: 'maxRadiusCircle' | 'maxRadiusCircleMarker';
-  _editableOption: 'resizeableCircle' | 'resizeableCircleMarker';
-  _defaultRadius: number;
-
-  enable(options?: Partial<CircleMarkerDrawOptions>): void;
-  _extendingEnable(): void;
-  disable(): void;
-  _extendingDisable(): void;
-  enabled(): boolean;
-  toggle(options?: Partial<CircleMarkerDrawOptions>): void;
-  _placeCenterMarker(e: L.LeafletPointerEvent): void;
-  _placeCircleCenter(): void;
-  _syncHintLine(): void;
-  _syncCircleRadius(): void;
-  _syncHintMarker(e: L.LeafletPointerEvent): void;
-  isRelevantMarker(layer: object): layer is L.CircleMarker;
-  _createMarker(e: L.LeafletPointerEvent): void;
-  _extendingCreateMarker(marker: ExtendedCircleMarker): void;
-  _finishShape(e?: L.LeafletPointerEvent): void;
-  _getNewDestinationOfHintMarker(): L.LatLng;
-  _getMinDistanceInMeter(): number;
-  _getMaxDistanceInMeter(): number;
-  _handleHintMarkerSnapping(): void;
-  setStyle(): void;
-  _distanceCalculation(A: L.LatLng, B: L.LatLng): number;
-
-  // From mixins
-  _setPane: IDraw['_setPane'];
-  _fireDrawStart(): void;
-  _fireDrawEnd(): void;
-  _fireCreate(layer: L.Layer): void;
-  _fireChange(latlng: L.LatLng, source: string): void;
-  _fireCenterPlaced(): void;
-  _setGlobalDrawMode(): void;
-  _cleanupSnapping(): void;
-  _handleSnapping: ISnapMixin['_handleSnapping'];
-  _finishLayer(layer: L.Layer): void;
-  _isFirstLayer(): boolean;
-}
 import Draw from './L.PM.Draw';
+import { DrawTool } from './L.PM.Draw';
+import { defineOptions } from '../helpers/classes';
 import { destinationOnLine, getTranslation } from '../helpers';
 
-Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
-  initialize(this: IDrawCircleMarker, map: L.Map) {
-    this._map = map as typeof this._map;
+class DrawCircleMarker extends DrawTool {
+  declare _map: ExtendedMap;
+  declare options: CircleMarkerDrawOptions;
+  declare _shape: string;
+  declare _enabled: boolean;
+  declare toolbarButtonName: string;
+  declare _layerGroup: ExtendedFeatureGroup;
+  declare _layer: ExtendedCircleMarker;
+  declare _hintMarker: HintMarkerType;
+  declare _centerMarker: ExtendedMarker;
+  declare _hintline: ExtendedPolyline;
+  declare _otherSnapLayers: L.Layer[];
+  declare _layerIsDragging: boolean;
+  declare _BaseCircleClass: typeof L.CircleMarker;
+  declare _minRadiusOption: 'minRadiusCircle' | 'minRadiusCircleMarker';
+  declare _maxRadiusOption: 'maxRadiusCircle' | 'maxRadiusCircleMarker';
+  declare _editableOption: 'resizeableCircle' | 'resizeableCircleMarker';
+  declare _defaultRadius: number;
+
+  constructor(map: L.Map) {
+    super(map);
     this._shape = 'CircleMarker';
     this.toolbarButtonName = 'drawCircleMarker';
     // with _layerIsDragging we check if a circlemarker is currently dragged and disable marker creation
@@ -174,8 +136,8 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
     this._maxRadiusOption = 'maxRadiusCircleMarker';
     this._editableOption = 'resizeableCircleMarker';
     this._defaultRadius = 10;
-  },
-  enable(this: IDrawCircleMarker, options?: Partial<CircleMarkerDrawOptions>) {
+  }
+  enable(options?: Partial<CircleMarkerDrawOptions>) {
     // TODO: Think about if these options could be passed globally for all
     // instances of PM.Draw. So a dev could set drawing style one time as some kind of config
     L.Util.setOptions(this, options);
@@ -300,8 +262,8 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
     // fire drawstart event
     this._fireDrawStart();
     this._setGlobalDrawMode();
-  },
-  _extendingEnable(this: IDrawCircleMarker) {
+  }
+  _extendingEnable() {
     if (!this.options[this._editableOption] && this.options.markerEditable) {
       // enable edit mode for existing markers
       this._map.eachLayer((layer) => {
@@ -313,8 +275,8 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
 
     // Must be named bringToBack to work with Leaflet functions.
     this._layer.bringToBack();
-  },
-  disable(this: IDrawCircleMarker) {
+  }
+  disable() {
     // cancel, if drawing mode isn't even enabled
     if (!this._enabled) {
       return;
@@ -357,26 +319,26 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
     // fire drawend event
     this._fireDrawEnd();
     this._setGlobalDrawMode();
-  },
-  _extendingDisable(this: IDrawCircleMarker) {
+  }
+  _extendingDisable() {
     // disable dragging and removing for all markers
     this._map.eachLayer((layer) => {
       if (this.isRelevantMarker(layer)) {
         layer.pm.disable();
       }
     });
-  },
-  enabled(this: IDrawCircleMarker) {
+  }
+  enabled() {
     return this._enabled;
-  },
-  toggle(this: IDrawCircleMarker, options?: Partial<CircleMarkerDrawOptions>) {
+  }
+  toggle(options?: Partial<CircleMarkerDrawOptions>) {
     if (this.enabled()) {
       this.disable();
     } else {
       this.enable(options);
     }
-  },
-  _placeCenterMarker(this: IDrawCircleMarker, e: L.LeafletPointerEvent) {
+  }
+  _placeCenterMarker(e: L.LeafletPointerEvent) {
     // assign the coordinate of the click to the hintMarker, that's necessary for
     // mobile where the marker can't follow a cursor
     if (!this._hintMarker._snapped) {
@@ -395,8 +357,8 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
     this._map.on('click', this._finishShape, this);
 
     this._placeCircleCenter();
-  },
-  _placeCircleCenter(this: IDrawCircleMarker) {
+  }
+  _placeCircleCenter() {
     const latlng = this._centerMarker.getLatLng();
 
     if (latlng) {
@@ -414,14 +376,14 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
       this._fireCenterPlaced();
       this._fireChange(this._layer.getLatLng(), 'Draw');
     }
-  },
-  _syncHintLine(this: IDrawCircleMarker) {
+  }
+  _syncHintLine() {
     const latlng = this._centerMarker.getLatLng();
     const secondLatLng = this._getNewDestinationOfHintMarker();
     // set coords for hintline from marker to last vertex of drawin polyline
     this._hintline.setLatLngs([latlng, secondLatLng]);
-  },
-  _syncCircleRadius(this: IDrawCircleMarker) {
+  }
+  _syncCircleRadius() {
     const A = this._centerMarker.getLatLng();
     const B = this._hintMarker.getLatLng();
 
@@ -440,8 +402,8 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
     } else {
       this._layer.setRadius(distance);
     }
-  },
-  _syncHintMarker(this: IDrawCircleMarker, e: L.LeafletPointerEvent) {
+  }
+  _syncHintMarker(e: L.LeafletPointerEvent) {
     // move the cursor marker
     this._hintMarker.setLatLng(e.latlng);
     // calculate the new latlng of marker if radius is out of min/max
@@ -461,19 +423,16 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
         ? this._centerMarker.getLatLng()
         : this._hintMarker.getLatLng();
     this._fireChange(latlng, 'Draw');
-  },
-  isRelevantMarker(
-    this: IDrawCircleMarker,
-    layer: object
-  ): layer is L.CircleMarker {
+  }
+  isRelevantMarker(layer: object): layer is L.CircleMarker {
     return (
       layer instanceof L.CircleMarker &&
       !(layer instanceof L.Circle) &&
       !!layer.pm &&
       !layer._pmTempLayer
     );
-  },
-  _createMarker(this: IDrawCircleMarker, e: L.LeafletPointerEvent) {
+  }
+  _createMarker(e: L.LeafletPointerEvent) {
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
     if (
       this.options.requireSnapToFinish &&
@@ -517,17 +476,14 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
     if (!this.options.continueDrawing) {
       this.disable();
     }
-  },
-  _extendingCreateMarker(
-    this: IDrawCircleMarker,
-    marker: ExtendedCircleMarker
-  ) {
+  }
+  _extendingCreateMarker(marker: ExtendedCircleMarker) {
     if (marker.pm && this.options.markerEditable) {
       // enable editing for the marker
       marker.pm.enable();
     }
-  },
-  _finishShape(this: IDrawCircleMarker, e?: L.LeafletPointerEvent) {
+  }
+  _finishShape(e?: L.LeafletPointerEvent) {
     // If snap finish is required but the last marker wasn't snapped, do not finish the shape!
     if (
       this.options.requireSnapToFinish &&
@@ -586,8 +542,8 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
-  _getNewDestinationOfHintMarker(this: IDrawCircleMarker): L.LatLng {
+  }
+  _getNewDestinationOfHintMarker(): L.LatLng {
     let secondLatLng = this._hintMarker.getLatLng();
     if (this.options[this._editableOption]) {
       if (!this._layerGroup.hasLayer(this._centerMarker)) {
@@ -621,22 +577,22 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
       }
     }
     return secondLatLng;
-  },
-  _getMinDistanceInMeter(this: IDrawCircleMarker): number {
+  }
+  _getMinDistanceInMeter(): number {
     return PM.Utils.pxRadiusToMeterRadius(
       this.options[this._minRadiusOption]!,
       this._map,
       this._centerMarker.getLatLng()
     );
-  },
-  _getMaxDistanceInMeter(this: IDrawCircleMarker): number {
+  }
+  _getMaxDistanceInMeter(): number {
     return PM.Utils.pxRadiusToMeterRadius(
       this.options[this._maxRadiusOption]!,
       this._map,
       this._centerMarker.getLatLng()
     );
-  },
-  _handleHintMarkerSnapping(this: IDrawCircleMarker) {
+  }
+  _handleHintMarkerSnapping() {
     if (this.options[this._editableOption]) {
       if (this._hintMarker._snapped) {
         const latlng = this._centerMarker.getLatLng();
@@ -660,8 +616,8 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
       // calculate the new latlng of marker if the snapped latlng radius is out of min/max
       this._hintMarker.setLatLng(this._getNewDestinationOfHintMarker());
     }
-  },
-  setStyle(this: IDrawCircleMarker) {
+  }
+  setStyle() {
     const templineStyle: L.CircleMarkerOptions & { radius?: number } = {};
     Object.assign(templineStyle, this.options.templineStyle);
     if (this.options[this._editableOption]) {
@@ -669,12 +625,13 @@ Draw.CircleMarker = Draw.extend<IDrawCircleMarker, [L.Map]>({
     }
     this._layer?.setStyle(templineStyle);
     this._hintline?.setStyle(this.options.hintlineStyle);
-  },
-  _distanceCalculation(
-    this: IDrawCircleMarker,
-    A: L.LatLng,
-    B: L.LatLng
-  ): number {
+  }
+  _distanceCalculation(A: L.LatLng, B: L.LatLng): number {
     return this._map.project(A).distanceTo(this._map.project(B));
-  },
-});
+  }
+}
+
+defineOptions(DrawCircleMarker, {});
+Draw.CircleMarker = DrawCircleMarker;
+
+export default DrawCircleMarker;
