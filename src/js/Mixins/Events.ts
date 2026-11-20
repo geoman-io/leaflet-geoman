@@ -108,7 +108,7 @@ export interface IEventMixin {
   ): void;
   _fireVertexClick(
     e: L.LeafletEvent,
-    indexPath: number[],
+    indexPath: number[] | undefined,
     source?: string,
     customPayload?: EventPayload
   ): void;

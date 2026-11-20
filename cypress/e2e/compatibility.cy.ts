@@ -1,30 +1,83 @@
 describe('JavaScript compatibility', () => {
-  it('keeps Leaflet class extension, mixins, init hooks and option inheritance', () => {
+  it('lets editors be subclassed with their option defaults', () => {
     cy.window().then(({ L }) => {
       const Parent = L.PM.Edit.Marker;
-      const Child = Parent.extend<
-        { probe(): string },
-        [L.Marker],
-        [{ probe(): string }]
-      >({
-        includes: [{ probe: () => 'mixed in' }],
-      });
-      Child.mergeOptions({ snappable: false });
-      const hooks: string[] = [];
-      Child.addInitHook(function () {
-        hooks.push(this.probe());
-      });
+      class Child extends Parent {
+        probe() {
+          return 'subclassed';
+        }
+      }
       const marker = new L.Marker([0, 0]);
       const editor = new Child(marker);
 
       expect(editor).to.be.instanceOf(Parent);
-      expect(editor.probe()).to.equal('mixed in');
+      expect(editor.probe()).to.equal('subclassed');
+      expect(editor.getShape()).to.equal('Marker');
+      editor.setOptions({ snappable: false });
       expect(editor.getOptions().snappable).to.equal(false);
       expect(Parent.prototype.options.snappable).to.equal(true);
-      expect(hooks).to.deep.equal(['mixed in']);
+      expect(new Parent(marker).getOptions().snappable).to.equal(true);
+    });
+  });
+
+  // Pins the descriptor decision of refactor 7: Geoman's classes keep native
+  // ES class descriptors. Their own methods are not enumerable; mixin methods,
+  // copied onto the prototype, still are. Change this test together with
+  // that decision.
+  it('pins native ES descriptors on class prototypes', () => {
+    cy.window().then(({ L }) => {
+      const PM = L.PM as unknown as Record<string, any>;
+      const descriptorOf = (cls: { prototype: object }, name: string) => {
+        for (
+          let p: object | null = cls.prototype;
+          p;
+          p = Object.getPrototypeOf(p)
+        ) {
+          const d = Object.getOwnPropertyDescriptor(p, name);
+          if (d) return d;
+        }
+        throw new Error(`no ${name}`);
+      };
+      const classMethods: [any, string][] = [
+        [PM.Map, 'enableDraw'],
+        [PM.Toolbar, 'addControls'],
+        [PM.Draw, 'getShapes'],
+        [PM.Draw.Polygon, '_createMarker'],
+        [PM.Edit, 'setOptions'],
+        [PM.Edit.Marker, 'enable'],
+        [PM.Edit.LayerGroup, 'enable'],
+      ];
+      for (const [cls, name] of classMethods) {
+        const d = descriptorOf(cls, name);
+        expect(typeof d.value, name).to.equal('function');
+        expect(d.get, name).to.equal(undefined);
+        expect(d.enumerable, name).to.equal(false);
+        expect(d.writable, name).to.equal(true);
+        expect(d.configurable, name).to.equal(true);
+      }
+      const mixinMethods: [any, string][] = [
+        [PM.Map, 'enableGlobalEditMode'],
+        [PM.Draw.Polygon, '_fireCreate'],
+        [PM.Edit.Marker, 'enableLayerDrag'],
+      ];
+      for (const [cls, name] of mixinMethods) {
+        expect(descriptorOf(cls, name).enumerable, name).to.equal(true);
+      }
+      expect(Object.keys(PM.Edit.Marker.prototype)).not.to.include('enable');
+
+      // Leaflet 2's include copies by own property names along the chain, so
+      // it still copies the non-enumerable methods.
+      class Host extends L.Class {}
+      (Host as unknown as { include(o: object): void }).include(
+        PM.Edit.Marker.prototype
+      );
       expect(
-        Object.prototype.propertyIsEnumerable.call(Parent.prototype, 'enable')
-      ).to.equal(true);
+        typeof (Host.prototype as unknown as Record<string, unknown>).enable
+      ).to.equal('function');
+
+      // The tool and editor registries stay enumerable statics.
+      expect(Object.keys(PM.Draw)).to.include.members(['Polygon', 'Text']);
+      expect(Object.keys(PM.Edit)).to.include.members(['Marker', 'LayerGroup']);
     });
   });
 

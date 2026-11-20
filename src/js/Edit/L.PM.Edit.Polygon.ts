@@ -12,32 +12,13 @@ type ExtendedMarker = L.Marker & {
   _dragging?: boolean;
 };
 
-/**
- * Extended polyline layer with PM properties
- */
-type ExtendedPolyline = L.Polyline & {
-  _map: L.Map;
-};
-
-/**
- * Edit Polygon interface
- */
-export interface IEditPolygon {
-  _shape: string;
-  _layer: ExtendedPolyline;
-
-  _checkMarkerAllowedToDrag(marker: ExtendedMarker): boolean;
-  _getNeighborMarkers(marker: ExtendedMarker): {
-    prevMarker: ExtendedMarker;
-    nextMarker: ExtendedMarker;
-  };
-}
 import lineIntersect from '@turf/line-intersect';
 import Edit from './L.PM.Edit';
+import EditLine from './L.PM.Edit.Line';
+import { defineOptions } from '../helpers/classes';
 
-Edit.Polygon = Edit.Line.extend<IEditPolygon, [L.Polygon]>({
-  _shape: 'Polygon',
-  _checkMarkerAllowedToDrag(this: IEditPolygon, marker: ExtendedMarker) {
+class EditPolygon extends EditLine {
+  _checkMarkerAllowedToDrag(marker: ExtendedMarker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
     const prevLine = new L.Polyline([
@@ -87,5 +68,11 @@ Edit.Polygon = Edit.Line.extend<IEditPolygon, [L.Polygon]>({
       return false;
     }
     return true;
-  },
-});
+  }
+}
+
+defineOptions(EditPolygon, {});
+EditPolygon.prototype._shape = 'Polygon';
+Edit.Polygon = EditPolygon;
+
+export default EditPolygon;

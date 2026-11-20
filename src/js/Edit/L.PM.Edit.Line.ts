@@ -1,5 +1,4 @@
 import * as L from 'leaflet';
-import type { IRotateMixin } from '../Mixins/Rotating';
 import { PM } from '../PM';
 import type { EditOptions } from './L.PM.Edit';
 
@@ -63,13 +62,6 @@ type ExtendedFeatureGroup = L.FeatureGroup & {
 };
 
 /**
- * PM layer with temp flag
- */
-type PMTempLayer = L.Layer & {
-  _pmTempLayer?: boolean;
-};
-
-/**
  * Marker array type (can be nested for multipolygons)
  */
 type MarkerArray = (ExtendedMarker | MarkerArray)[];
@@ -83,130 +75,12 @@ interface LineEditOptions extends EditOptions {
   hideMiddleMarkers?: boolean;
 }
 
-/**
- * Kinks intersection result
- */
-interface KinksResult {
-  features: GeoJSON.Feature[];
-}
-
-/**
- * Edit Line interface
- */
-export interface IEditLine {
-  _shape: string;
-  _layer: ExtendedPolyline;
-  _map: ExtendedMap;
-  _enabled: boolean;
-  _markerGroup: ExtendedFeatureGroup;
-  _markers: MarkerArray;
-  _layerEdited?: boolean;
-  _dragging?: boolean;
-  _disableAfterDrag?: boolean;
-  _coordsBeforeEdit?: L.LatLng[] | L.LatLng[][] | L.LatLng[][][] | null;
-  _markerAllowedToDrag?: boolean | null;
-  cachedColor?: string;
-  isRed?: boolean;
-  options: LineEditOptions;
-
-  setOptions(options: Partial<LineEditOptions>): void;
-  enable(options?: Partial<LineEditOptions>): void;
-  disable(): void;
-  enabled(): boolean;
-  toggleEdit(options?: Partial<LineEditOptions>): boolean;
-  applyOptions(): void;
-  _initMarkers(): void;
-  _createMarker(latlng: L.LatLng): ExtendedMarker;
-  _createMiddleMarker(
-    leftM: ExtendedMarker | undefined,
-    rightM: ExtendedMarker | undefined
-  ): ExtendedMarker | false;
-  _onMiddleMarkerClick(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMiddleMarkerMoveStart(
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ): void;
-  _onMiddleMarkerMovePrevent(
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ): void;
-  _onMiddleMarkerMoveEnd(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _addMarker(
-    newM: ExtendedMarker,
-    leftM: ExtendedMarker,
-    rightM: ExtendedMarker
-  ): void;
-  hasSelfIntersection(): boolean;
-  _handleSelfIntersectionOnVertexRemoval(): void;
-  _handleLayerStyle(flash?: boolean): boolean;
-  _flashLayer(): void;
-  _updateDisabledMarkerStyle(markers: MarkerArray, disabled: boolean): void;
-  _removeMarker(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  updatePolygonCoordsFromMarkerDrag(marker: ExtendedMarker): void;
-  _getNeighborMarkers(marker: ExtendedMarker): {
-    prevMarker: ExtendedMarker;
-    nextMarker: ExtendedMarker;
-  };
-  _checkMarkerAllowedToDrag(marker: ExtendedMarker): boolean;
-  _onMarkerDragStart(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMarkerDrag(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMarkerDragEnd(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onVertexClick(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-
-  // From parent / mixins
-  isPolygon(): boolean;
-  _setPane(
-    layer: PMTempLayer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ): void;
-  _initSnappableMarkers(): void;
-  _disableSnapping(): void;
-  _fireEnable(): void;
-  _fireDisable(): void;
-  _fireUpdate(): void;
-  _fireEdit(): void;
-  _fireChange(
-    latlngs: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
-    source: string
-  ): void;
-  _fireVertexAdded(
-    marker: ExtendedMarker,
-    indexPath: number[],
-    latlng: L.LatLng
-  ): void;
-  _fireVertexRemoved(marker: ExtendedMarker, indexPath: number[]): void;
-  _fireVertexClick(e: L.LeafletEvent, indexPath: number[]): void;
-  _fireMarkerDragStart(e: L.LeafletEvent, indexPath: number[]): void;
-  _fireMarkerDrag(e: L.LeafletEvent, indexPath: number[]): void;
-  _fireMarkerDragEnd(
-    e: L.LeafletEvent,
-    indexPath: number[],
-    intersectionReset: boolean
-  ): void;
-  _fireLayerReset(e: L.LeafletEvent, indexPath: number[]): void;
-  _fireIntersect(intersection: KinksResult): void;
-  _vertexValidation(
-    type: 'move' | 'add' | 'remove',
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ): boolean;
-  _vertexValidationDrag(marker: ExtendedMarker): boolean;
-  _vertexValidationDragEnd(marker: {
-    _cancelDragEventChain?: L.LatLng | null;
-  }): boolean;
-  filterMarkerGroup(): void;
-  _preventRenderingMarkers(prevent: boolean): void;
-  _removeFromCache(marker: ExtendedMarker): void;
-  _onRotateStart: IRotateMixin['_onRotateStart'];
-  _onRotate: IRotateMixin['_onRotate'];
-  _onRotateEnd: IRotateMixin['_onRotateEnd'];
-  _initRotateHandle: IRotateMixin['_initRotateHandle'];
-  _syncInteractions(changedBy: 'edit'): void;
-  _hideEditHelpers(): void;
-  _refreshEditHelpers(): void;
-  _removeRotateHandle: IRotateMixin['_removeRotateHandle'];
-}
 import kinks from '@turf/kinks';
 import lineIntersect from '@turf/line-intersect';
 import get from 'lodash/get';
 import Edit from './L.PM.Edit';
+import { applyMixins, defineOptions } from '../helpers/classes';
+import type { MixinMembers } from '../../types/leaflet-class';
 import {
   copyLatLngs,
   hasValues,
@@ -224,14 +98,27 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 // So I can get 'b' with: arr[0][0][1].
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
-Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
-  includes: [MarkerLimits],
-  _shape: 'Line',
-  initialize(this: IEditLine, layer: L.Polyline) {
+class EditLine extends Edit {
+  declare _layer: ExtendedPolyline;
+  declare _map: ExtendedMap;
+  declare _enabled: boolean;
+  declare _markerGroup: ExtendedFeatureGroup;
+  declare _markers: MarkerArray;
+  declare _layerEdited?: boolean;
+  declare _dragging?: boolean;
+  declare _disableAfterDrag?: boolean;
+  declare _coordsBeforeEdit?: L.LatLng[] | L.LatLng[][] | L.LatLng[][][] | null;
+  declare _markerAllowedToDrag?: boolean | null;
+  declare cachedColor?: string;
+  declare isRed?: boolean;
+  declare options: LineEditOptions;
+
+  constructor(layer: L.Polyline | L.Polygon) {
+    super(layer);
     this._layer = layer as typeof this._layer;
     this._enabled = false;
-  },
-  enable(this: IEditLine, options?: Partial<LineEditOptions>) {
+  }
+  enable(options?: Partial<LineEditOptions>) {
     if (options) {
       this.setOptions(options);
     }
@@ -286,8 +173,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
       this.cachedColor = undefined;
     }
     this._fireEnable();
-  },
-  disable(this: IEditLine) {
+  }
+  disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
       return;
@@ -325,33 +212,33 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     }
     this._layerEdited = false;
     this._fireDisable();
-  },
-  enabled(this: IEditLine) {
+  }
+  enabled() {
     return this._enabled;
-  },
-  toggleEdit(this: IEditLine, options?: Partial<LineEditOptions>) {
+  }
+  toggleEdit(options?: Partial<LineEditOptions>) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
     return this.enabled();
-  },
-  _hideEditHelpers(this: IEditLine) {
+  }
+  _hideEditHelpers() {
     this._markerGroup?.removeFrom(this._map);
-  },
-  _refreshEditHelpers(this: IEditLine) {
+  }
+  _refreshEditHelpers() {
     this._initMarkers();
     this.applyOptions();
-  },
-  applyOptions(this: IEditLine) {
+  }
+  applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();
     }
-  },
-  _initMarkers(this: IEditLine) {
+  }
+  _initMarkers() {
     const map = this._map;
     const coords = this._layer.getLatLngs();
 
@@ -404,10 +291,10 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
 
     // add markerGroup to map
     map.addLayer(this._markerGroup);
-  },
+  }
 
   // creates initial markers for coordinates
-  _createMarker(this: IEditLine, latlng: L.LatLng): ExtendedMarker {
+  _createMarker(latlng: L.LatLng): ExtendedMarker {
     const marker = new L.Marker(latlng, {
       draggable: true,
       icon: new L.DivIcon({ className: 'marker-icon' }),
@@ -437,11 +324,10 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     this._markerGroup.addLayer(marker);
 
     return marker;
-  },
+  }
 
   // creates the middle markes between coordinates
   _createMiddleMarker(
-    this: IEditLine,
     leftM: ExtendedMarker | undefined,
     rightM: ExtendedMarker | undefined
   ): ExtendedMarker | false {
@@ -478,11 +364,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     middleMarker.on('movestart', this._onMiddleMarkerMoveStart, this);
 
     return middleMarker;
-  },
-  _onMiddleMarkerClick(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _onMiddleMarkerClick(e: L.LeafletEvent & { target: ExtendedMarker }) {
     const middleMarker = e.target;
 
     if (!this._vertexValidation('add', e)) {
@@ -494,11 +377,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     const icon = new L.DivIcon({ className: 'marker-icon' });
     middleMarker.setIcon(icon);
     this._addMarker(middleMarker, middleMarker.leftM!, middleMarker.rightM!);
-  },
-  _onMiddleMarkerMoveStart(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _onMiddleMarkerMoveStart(e: L.LeafletEvent & { target: ExtendedMarker }) {
     const middleMarker = e.target;
     middleMarker.on('moveend', this._onMiddleMarkerMoveEnd, this);
     if (!this._vertexValidation('add', e)) {
@@ -511,18 +391,12 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     // callback as soon as this is fixed:
     // https://github.com/Leaflet/Leaflet/issues/4484
     this._addMarker(middleMarker, middleMarker.leftM!, middleMarker.rightM!);
-  },
-  _onMiddleMarkerMovePrevent(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _onMiddleMarkerMovePrevent(e: L.LeafletEvent & { target: ExtendedMarker }) {
     const middleMarker = e.target;
     this._vertexValidationDrag(middleMarker);
-  },
-  _onMiddleMarkerMoveEnd(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _onMiddleMarkerMoveEnd(e: L.LeafletEvent & { target: ExtendedMarker }) {
     const middleMarker = e.target;
     middleMarker.off('move', this._onMiddleMarkerMovePrevent, this);
     middleMarker.off('moveend', this._onMiddleMarkerMoveEnd, this);
@@ -535,10 +409,9 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     setTimeout(() => {
       delete middleMarker._dragging;
     }, 100);
-  },
+  }
   // adds a new marker from a middlemarker
   _addMarker(
-    this: IEditLine,
     newM: ExtendedMarker,
     leftM: ExtendedMarker,
     rightM: ExtendedMarker
@@ -612,15 +485,15 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     if (this.options.snappable) {
       this._initSnappableMarkers();
     }
-  },
+  }
 
-  hasSelfIntersection(this: IEditLine) {
+  hasSelfIntersection() {
     // check for self intersection of the layer and return true/false
     const selfIntersection = kinks(this._layer.toGeoJSON(15));
     return selfIntersection.features.length > 0;
-  },
+  }
 
-  _handleSelfIntersectionOnVertexRemoval(this: IEditLine) {
+  _handleSelfIntersectionOnVertexRemoval() {
     // check for selfintersection again (mainly to reset the style)
     const selfIntersection = this._handleLayerStyle(true);
 
@@ -632,13 +505,13 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
       // re-enable markers for the new coords
       this._initMarkers();
     }
-  },
+  }
 
-  _handleLayerStyle(this: IEditLine, flash?: boolean) {
+  _handleLayerStyle(flash?: boolean) {
     const layer = this._layer;
 
     let selfIntersection: boolean;
-    let intersection: KinksResult | undefined;
+    let intersection: ReturnType<typeof kinks> | undefined;
     if (this.options.allowSelfIntersection) {
       selfIntersection = false;
     } else {
@@ -680,8 +553,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
       }
     }
     return selfIntersection;
-  },
-  _flashLayer(this: IEditLine) {
+  }
+  _flashLayer() {
     if (!this.cachedColor) {
       this.cachedColor = this._layer.options.color;
     }
@@ -693,12 +566,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
       this._layer.setStyle({ color: this.cachedColor });
       this.isRed = false;
     }, 200);
-  },
-  _updateDisabledMarkerStyle(
-    this: IEditLine,
-    markers: MarkerArray,
-    disabled: boolean
-  ) {
+  }
+  _updateDisabledMarkerStyle(markers: MarkerArray, disabled: boolean) {
     markers.forEach((marker: ExtendedMarker | MarkerArray) => {
       if (Array.isArray(marker)) {
         this._updateDisabledMarkerStyle(marker, disabled);
@@ -710,11 +579,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
         }
       }
     });
-  },
-  _removeMarker(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _removeMarker(e: L.LeafletEvent & { target: ExtendedMarker }) {
     // the marker that should be removed
     const marker = e.target;
 
@@ -871,8 +737,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     // TODO: maybe fire latlng as well?
     this._fireVertexRemoved(marker, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
-  updatePolygonCoordsFromMarkerDrag(this: IEditLine, marker: ExtendedMarker) {
+  }
+  updatePolygonCoordsFromMarkerDrag(marker: ExtendedMarker) {
     // update polygon coords
     const coords = this._layer.getLatLngs();
 
@@ -900,9 +766,9 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
 
     // set new coords on layer
     this._layer.setLatLngs(coords);
-  },
+  }
 
-  _getNeighborMarkers(this: IEditLine, marker: ExtendedMarker) {
+  _getNeighborMarkers(marker: ExtendedMarker) {
     const { indexPath, index, parentPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       marker
@@ -922,8 +788,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     const nextMarker = markerArr[nextMarkerIndex];
 
     return { prevMarker, nextMarker };
-  },
-  _checkMarkerAllowedToDrag(this: IEditLine, marker: ExtendedMarker) {
+  }
+  _checkMarkerAllowedToDrag(marker: ExtendedMarker) {
     const { prevMarker, nextMarker } = this._getNeighborMarkers(marker);
 
     const prevLine = new L.Polyline([
@@ -973,11 +839,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
       return false;
     }
     return true;
-  },
-  _onMarkerDragStart(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _onMarkerDragStart(e: L.LeafletEvent & { target: ExtendedMarker }) {
     const marker = e.target;
     this._preventRenderingMarkers(true);
 
@@ -1015,11 +878,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     } else {
       this._markerAllowedToDrag = null;
     }
-  },
-  _onMarkerDrag(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _onMarkerDrag(e: L.LeafletEvent & { target: ExtendedMarker }) {
     // dragged marker
     const marker = e.target;
 
@@ -1094,11 +954,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     }
     this._fireMarkerDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
-  _onMarkerDragEnd(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _onMarkerDragEnd(e: L.LeafletEvent & { target: ExtendedMarker }) {
     const marker = e.target;
     this._preventRenderingMarkers(false);
 
@@ -1157,11 +1014,8 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     this._layerEdited = true;
     this._syncInteractions('edit');
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
-  _onVertexClick(
-    this: IEditLine,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  }
+  _onVertexClick(e: L.LeafletEvent & { target: ExtendedMarker }) {
     const vertex = e.target;
     if (vertex._dragging) {
       return;
@@ -1173,5 +1027,16 @@ Edit.Line = Edit.extend<IEditLine, [L.Polyline], [typeof MarkerLimits]>({
     ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     this._fireVertexClick(e, indexPath);
-  },
-});
+  }
+}
+
+// The mixin's members, as the old class factory typed them.
+type EditLineMixins = MixinMembers<[typeof MarkerLimits]>;
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+interface EditLine extends EditLineMixins {}
+applyMixins(EditLine, MarkerLimits);
+defineOptions(EditLine, {});
+EditLine.prototype._shape = 'Line';
+Edit.Line = EditLine;
+
+export default EditLine;
