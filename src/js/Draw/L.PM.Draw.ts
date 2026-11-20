@@ -133,11 +133,19 @@ class Draw {
     if (tools(this)[name]) {
       throw new TypeError('Draw Type already exists');
     }
-    if (!toolClasses()[instance]) {
+    const ToolClass = toolClasses()[instance];
+    if (!ToolClass) {
       throw new TypeError(`There is no class PM.Draw.${instance}`);
     }
+    // Checked before the registry changes. A class that extends L.PM.Draw
+    // was a tool before the tools got their own base; it is a registry now.
+    if (!(ToolClass.prototype instanceof DrawTool)) {
+      throw new TypeError(
+        `PM.Draw.${instance} (${ToolClass.name || 'anonymous class'}) is not a draw tool. Extend L.PM.DrawTool or a tool such as L.PM.Draw.Polygon, not L.PM.Draw.`
+      );
+    }
 
-    const tool = new (toolClasses()[instance])(this._map);
+    const tool = new ToolClass(this._map);
     tools(this)[name] = tool;
     tool.toolbarButtonName = name;
     tool._shape = name;

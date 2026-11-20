@@ -162,6 +162,52 @@ describe('JavaScript compatibility', () => {
     });
   });
 
+  // Before the registry and the tools were split, a tool could be written as
+  // `class T extends L.PM.Draw`. Such a class is a registry now, so
+  // registering it as a tool is refused before the registry changes.
+  it('refuses to register a Draw subclass as a tool', () => {
+    cy.window().then(({ L, map }) => {
+      const PM = L.PM as unknown as Record<string, any>;
+      const DrawBase = PM.Draw as new (map: unknown) => any;
+      class OldStyleTool extends DrawBase {
+        enable() {}
+        disable() {}
+      }
+      const shapesBefore = [...map.pm.Draw.getShapes()];
+      PM.Draw.Old = OldStyleTool;
+      try {
+        // The error comes from the app's window, so its class is not the
+        // spec's TypeError; check the name instead.
+        let error: Error | undefined;
+        try {
+          map.pm.Draw.createNewDrawInstance('Old', 'Old');
+        } catch (e) {
+          error = e as Error;
+        }
+        expect(error?.name).to.equal('TypeError');
+        expect(error?.message).to.match(
+          /PM\.Draw\.Old \(OldStyleTool\).*L\.PM\.DrawTool/
+        );
+        expect(map.pm.Draw.getShapes()).to.deep.equal(shapesBefore);
+        expect(
+          (map.pm.Draw as unknown as Record<string, unknown>).Old
+        ).to.equal(undefined);
+
+        // nothing was left behind: the same name registers once the class
+        // is a tool
+        PM.Draw.Old = class extends PM.Draw.Polygon {};
+        const pmDraw = map.pm.Draw as unknown as Record<string, any>;
+        const tool = pmDraw.createNewDrawInstance('Old', 'Old');
+        map.pm.enableDraw('Old');
+        expect(tool.enabled()).to.equal(true);
+        map.pm.disableDraw();
+        expect(tool.enabled()).to.equal(false);
+      } finally {
+        delete PM.Draw.Old;
+      }
+    });
+  });
+
   // Pins the descriptor decision of refactor 7: Geoman's classes keep native
   // ES class descriptors. Their own methods are not enumerable; mixin methods,
   // copied onto the prototype, still are. Change this test together with
