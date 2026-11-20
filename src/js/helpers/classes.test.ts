@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { applyMixins } from './classes';
 
 // Pins how applyMixins resolves a member that more than one source defines.
-// PMClass.extend let the class body win over its includes; applyMixins runs
-// after the class body, so a mixin now wins. Neither free nor Pro has such a
-// collision today. Change this test together with that decision.
+// The Leaflet 1 style class factory let the class body win over its
+// includes; applyMixins runs after the class body, so a mixin now wins.
+// Neither free nor Pro has such a collision today. Change this test together
+// with that decision.
 describe('applyMixins', () => {
   it('lets a later mixin win over an earlier one', () => {
     class Host {}
