@@ -95,7 +95,7 @@ export interface IEventMixin {
   ): void;
   _fireVertexAdded(
     marker: L.Marker,
-    indexPath: number[],
+    indexPath: number[] | undefined,
     latlng: L.LatLng,
     source?: string,
     customPayload?: EventPayload

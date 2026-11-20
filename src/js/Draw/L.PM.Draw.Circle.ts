@@ -1,26 +1,6 @@
 import * as L from 'leaflet';
 import { PM } from '../PM';
 /**
- * Extended map with PM
- */
-type ExtendedMap = L.Map & {
-  pm: {
-    Toolbar: {
-      toggleButton: (name: string, state: boolean) => void;
-    };
-    _getContainingLayer: () => L.LayerGroup | L.Map;
-    globalOptions: {
-      panes?: {
-        layerPane?: string;
-        vertexPane?: string;
-        markerPane?: string;
-      };
-    };
-    getGeomanLayers: () => L.Layer[];
-  };
-};
-
-/**
  * Circle draw options
  */
 interface CircleDrawOptions {
@@ -40,33 +20,22 @@ interface CircleDrawOptions {
   [key: string]: unknown;
 }
 
-/**
- * Draw Circle interface
- */
-export interface IDrawCircle {
-  options: CircleDrawOptions;
-  _map: ExtendedMap;
-  _shape: string;
-  toolbarButtonName: string;
-  _BaseCircleClass: typeof L.Circle;
-  _minRadiusOption: 'minRadiusCircle' | 'minRadiusCircleMarker';
-  _maxRadiusOption: 'maxRadiusCircle' | 'maxRadiusCircleMarker';
-  _editableOption: 'resizeableCircle' | 'resizeableCircleMarker';
-  _defaultRadius: number;
-
-  _extendingEnable(): void;
-  _extendingDisable(): void;
-  _extendingCreateMarker(): void;
-  isRelevantMarker(): void;
-  _getMinDistanceInMeter(): number;
-  _getMaxDistanceInMeter(): number;
-  _distanceCalculation(A: L.LatLng, B: L.LatLng): number;
-}
 import Draw from './L.PM.Draw';
+import DrawCircleMarker from './L.PM.Draw.CircleMarker';
+import { defineOptions } from '../helpers/classes';
 
-Draw.Circle = Draw.CircleMarker.extend<IDrawCircle, [L.Map]>({
-  initialize(this: IDrawCircle, map: L.Map) {
-    this._map = map as typeof this._map;
+class DrawCircle extends DrawCircleMarker {
+  declare options: CircleDrawOptions;
+  declare _shape: string;
+  declare toolbarButtonName: string;
+  declare _BaseCircleClass: typeof L.Circle;
+  declare _minRadiusOption: 'minRadiusCircle' | 'minRadiusCircleMarker';
+  declare _maxRadiusOption: 'maxRadiusCircle' | 'maxRadiusCircleMarker';
+  declare _editableOption: 'resizeableCircle' | 'resizeableCircleMarker';
+  declare _defaultRadius: number;
+
+  constructor(map: L.Map) {
+    super(map);
     this._shape = 'Circle';
     this.toolbarButtonName = 'drawCircle';
     this._BaseCircleClass = L.Circle;
@@ -74,18 +43,25 @@ Draw.Circle = Draw.CircleMarker.extend<IDrawCircle, [L.Map]>({
     this._maxRadiusOption = 'maxRadiusCircle';
     this._editableOption = 'resizeableCircle';
     this._defaultRadius = 100;
-  },
-  _extendingEnable(this: IDrawCircle) {},
-  _extendingDisable(this: IDrawCircle) {},
-  _extendingCreateMarker(this: IDrawCircle) {},
-  isRelevantMarker(this: IDrawCircle) {},
-  _getMinDistanceInMeter(this: IDrawCircle): number {
+  }
+  _extendingEnable() {}
+  _extendingDisable() {}
+  _extendingCreateMarker() {}
+  isRelevantMarker(_layer: object): _layer is L.CircleMarker {
+    return false;
+  }
+  _getMinDistanceInMeter(): number {
     return this.options[this._minRadiusOption]!;
-  },
-  _getMaxDistanceInMeter(this: IDrawCircle): number {
+  }
+  _getMaxDistanceInMeter(): number {
     return this.options[this._maxRadiusOption]!;
-  },
-  _distanceCalculation(this: IDrawCircle, A: L.LatLng, B: L.LatLng): number {
+  }
+  _distanceCalculation(A: L.LatLng, B: L.LatLng): number {
     return this._map.distance(A, B);
-  },
-});
+  }
+}
+
+defineOptions(DrawCircle, {});
+Draw.Circle = DrawCircle;
+
+export default DrawCircle;

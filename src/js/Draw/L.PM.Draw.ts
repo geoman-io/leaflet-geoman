@@ -1,19 +1,15 @@
 import * as L from 'leaflet';
 import { PM } from '../PM';
-import PMClass from '../helpers/PMClass';
-import type { Inherit, MixinMembers } from '../../types/leaflet-class';
-import type {
-  LeafletClass,
-  LeafletClassFactory,
-} from '../../types/leaflet-class';
-import type { IDrawMarker } from './L.PM.Draw.Marker';
-import type { IDrawCircleMarker } from './L.PM.Draw.CircleMarker';
-import type { IDrawLine } from './L.PM.Draw.Line';
-import type { IDrawPolygon } from './L.PM.Draw.Polygon';
-import type { IDrawRectangle } from './L.PM.Draw.Rectangle';
-import type { IDrawCircle } from './L.PM.Draw.Circle';
-import type { IDrawCut } from './L.PM.Draw.Cut';
-import type { IDrawText } from './L.PM.Draw.Text';
+import { applyMixins, defineOptions } from '../helpers/classes';
+import type { MixinMembers } from '../../types/leaflet-class';
+import type DrawMarker from './L.PM.Draw.Marker';
+import type DrawCircleMarker from './L.PM.Draw.CircleMarker';
+import type DrawLine from './L.PM.Draw.Line';
+import type DrawPolygon from './L.PM.Draw.Polygon';
+import type DrawRectangle from './L.PM.Draw.Rectangle';
+import type DrawCircle from './L.PM.Draw.Circle';
+import type DrawCut from './L.PM.Draw.Cut';
+import type DrawText from './L.PM.Draw.Text';
 
 import type { DrawOptions } from '../../types/options';
 export type { DrawOptions } from '../../types/options';
@@ -70,117 +66,53 @@ type ExtendedMap = L.Map & {
  */
 type ShapeMapping = Record<string, string>;
 
-/**
- * Draw class interface
- */
-export interface IDraw {
-  options: DrawOptions & {
-    markerStyle: NonNullable<DrawOptions['markerStyle']>;
-  };
-  _map: ExtendedMap;
-  _shape?: string;
-  _enabled?: boolean;
-  _layer?: L.Layer & { _map?: L.Map };
-  shapes: string[];
-  Marker: DrawInstances['Marker'];
-  CircleMarker: DrawInstances['CircleMarker'];
-  Line: DrawInstances['Line'];
-  Polygon: DrawInstances['Polygon'];
-  Rectangle: DrawInstances['Rectangle'];
-  Circle: DrawInstances['Circle'];
-  Cut: DrawInstances['Cut'];
-  Text: DrawInstances['Text'];
-
-  setOptions(options: DrawOptions): void;
-  setStyle(options?: DrawOptions): void;
-  getOptions(): DrawOptions;
-  initialize(map: L.Map): void;
-  setPathOptions(options: L.PathOptions, mergeOptions?: boolean): void;
-  getShapes(): string[];
-  getShape(): string | undefined;
-  enable(shape: string, options?: DrawOptions): void;
-  disable(shape?: string): void;
-  addControls(): void;
-  getActiveShape(): string | undefined;
-  _setGlobalDrawMode(): void;
-  createNewDrawInstance(name: string, jsClass: string): DrawInstance;
-  _getShapeFromBtnName(name: string): string;
-  _finishLayer(layer: PMLayer): void;
-  _addDrawnLayerProp(layer: PMLayer): void;
-  _setPane(
-    layer: PMLayer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ): void;
-  _isFirstLayer(): boolean;
-  // From EventMixin
-  _fireGlobalCutModeToggled: () => void;
-  _fireGlobalDrawModeToggled: () => void;
-}
 import { checkOptions, mergeOptions as mergeInto } from '../helpers/options';
 import SnapMixin from '../Mixins/Snapping';
 import EventMixin from '../Mixins/Events';
 
-const Draw = PMClass.extend<
-  IDraw,
-  [L.Map],
-  [typeof SnapMixin, typeof EventMixin]
->({
-  includes: [SnapMixin, EventMixin],
-  options: {
-    snappable: true, // TODO: next major Release, rename it to allowSnapping
-    snapDistance: 20,
-    snapMiddle: false,
-    allowSelfIntersection: true,
-    tooltips: true,
-    templineStyle: {},
-    hintlineStyle: {
-      color: '#3388ff',
-      dashArray: '5,5',
-    },
-    pathOptions: null,
-    cursorMarker: true,
-    finishOn: null,
-    markerStyle: {
-      draggable: true,
-      icon: new L.Icon({} as L.IconOptions),
-    },
-    hideMiddleMarkers: false,
-    minRadiusCircle: null,
-    maxRadiusCircle: null,
-    minRadiusCircleMarker: null,
-    maxRadiusCircleMarker: null,
-    resizeableCircleMarker: false,
-    resizeableCircle: true,
-    markerEditable: true,
-    continueDrawing: false,
-    snapSegment: true,
-    requireSnapToFinish: false,
-    rectangleAngle: 0,
-    textOptions: {
-      text: null,
-      focusAfterDraw: null,
-      removeIfEmpty: null,
-      className: null,
-    },
-    snapVertex: true,
-  },
-  setOptions(this: IDraw, options: DrawOptions) {
-    L.Util.setOptions(this, options);
-    this.setStyle(this.options);
-  },
-  setStyle(this: IDraw) {},
-  getOptions(this: IDraw) {
-    return this.options;
-  },
-  initialize(this: IDraw, map: L.Map) {
+class Draw {
+  declare options: DrawOptions & {
+    markerStyle: NonNullable<DrawOptions['markerStyle']>;
+  };
+  declare _map: ExtendedMap;
+  declare _shape?: string;
+  declare _enabled?: boolean;
+  declare _layer?: L.Layer & { _map?: L.Map };
+  declare shapes: string[];
+  declare Marker: DrawMarker;
+  declare CircleMarker: DrawCircleMarker;
+  declare Line: DrawLine;
+  declare Polygon: DrawPolygon;
+  declare Rectangle: DrawRectangle;
+  declare Circle: DrawCircle;
+  declare Cut: DrawCut;
+  declare Text: DrawText;
+
+  // The tool classes, registered by their modules.
+  declare static Marker: typeof DrawMarker;
+  declare static CircleMarker: typeof DrawCircleMarker;
+  declare static Line: typeof DrawLine;
+  declare static Polygon: typeof DrawPolygon;
+  declare static Rectangle: typeof DrawRectangle;
+  declare static Circle: typeof DrawCircle;
+  declare static Cut: typeof DrawCut;
+  declare static Text: typeof DrawText;
+
+  constructor(map: L.Map) {
+    // an own options object, as the Leaflet 1 style class factory made
+    L.Util.setOptions(this, undefined as never);
+    this._map = map as typeof this._map;
+
+    // The tools extend Draw; only the map's Draw creates them.
+    if (new.target !== Draw) {
+      return;
+    }
+
     // Leaflet's DefaultIcon puts tooltips at [16, -28], above the icon and off
     // the cursor; Geoman's draw hints sit under the marker instead.
     this.options.markerStyle.icon = new L.DefaultIcon({
       tooltipAnchor: [0, 0],
     });
-
-    // save the map
-    this._map = map as typeof this._map;
 
     // define all possible shapes that can be drawn
     this.shapes = [
@@ -196,16 +128,24 @@ const Draw = PMClass.extend<
 
     // initiate drawing class for our shapes
     this.shapes.forEach((shape) => {
-      (this as unknown as ShapeRegistry)[shape] = new (PM.Draw[
-        shape
-      ] as LeafletClass<DrawInstance, [L.Map]>)(this._map);
+      (this as unknown as ShapeRegistry)[shape] = new (
+        PM.Draw as unknown as ToolClasses
+      )[shape](this._map);
     });
 
     // TODO: Remove this with the next major release
     this.Marker.setOptions({ continueDrawing: true });
     this.CircleMarker.setOptions({ continueDrawing: true });
-  },
-  setPathOptions(this: IDraw, options: L.PathOptions, mergeOptions = false) {
+  }
+  setOptions(options: DrawOptions) {
+    L.Util.setOptions(this, options);
+    this.setStyle(this.options);
+  }
+  setStyle(_options?: DrawOptions) {}
+  getOptions() {
+    return this.options;
+  }
+  setPathOptions(options: L.PathOptions, mergeOptions = false) {
     if (!mergeOptions) {
       this.options.pathOptions = options;
     } else {
@@ -216,16 +156,16 @@ const Draw = PMClass.extend<
         options
       );
     }
-  },
-  getShapes(this: IDraw) {
+  }
+  getShapes() {
     // if somebody wants to know what shapes are available
     return this.shapes;
-  },
-  getShape(this: IDraw) {
+  }
+  getShape() {
     // return the shape of the current drawing layer
     return this._shape;
-  },
-  enable(this: IDraw, shape: string, options?: DrawOptions) {
+  }
+  enable(shape: string, options?: DrawOptions) {
     if (!shape) {
       throw new Error(
         `Error: Please pass a shape as a parameter. Possible shapes are: ${this.getShapes().join(
@@ -241,16 +181,16 @@ const Draw = PMClass.extend<
     (this as unknown as ShapeRegistry)[shape].enable(
       checkOptions(options, 'enableDraw()')
     );
-  },
-  disable(this: IDraw) {
+  }
+  disable(_shape?: string) {
     // there can only be one drawing mode active at a time on a map
     // so it doesn't matter which one should be disabled.
     // just disable all of them
     this.shapes.forEach((shape) => {
       (this as unknown as ShapeRegistry)[shape].disable();
     });
-  },
-  addControls(this: IDraw) {
+  }
+  addControls() {
     // add control buttons for our shapes
     this.shapes.forEach((shape) => {
       (
@@ -259,8 +199,8 @@ const Draw = PMClass.extend<
         }
       ).addButton();
     });
-  },
-  getActiveShape(this: IDraw) {
+  }
+  getActiveShape() {
     // returns the active shape
     let enabledShape: string | undefined;
     this.shapes.forEach((shape) => {
@@ -269,8 +209,8 @@ const Draw = PMClass.extend<
       }
     });
     return enabledShape;
-  },
-  _setGlobalDrawMode(this: IDraw) {
+  }
+  _setGlobalDrawMode() {
     // extended to all PM.Draw shapes
     if (this._shape === 'Cut') {
       this._fireGlobalCutModeToggled();
@@ -303,20 +243,20 @@ const Draw = PMClass.extend<
         PM.Utils.enablePopup(layer);
       });
     }
-  },
+  }
 
-  createNewDrawInstance(this: IDraw, name: string, jsClass: string) {
+  createNewDrawInstance(name: string, jsClass: string) {
     const instance = this._getShapeFromBtnName(jsClass);
     if ((this as unknown as ShapeRegistry)[name]) {
       throw new TypeError('Draw Type already exists');
     }
-    if (!PM.Draw[instance]) {
+    if (!(PM.Draw as unknown as ToolClasses)[instance]) {
       throw new TypeError(`There is no class PM.Draw.${instance}`);
     }
 
-    (this as unknown as ShapeRegistry)[name] = new (PM.Draw[
-      instance
-    ] as LeafletClass<DrawInstance, [L.Map]>)(this._map);
+    (this as unknown as ShapeRegistry)[name] = new (
+      PM.Draw as unknown as ToolClasses
+    )[instance](this._map);
     (this as unknown as ShapeRegistry)[name].toolbarButtonName = name;
     (this as unknown as ShapeRegistry)[name]._shape = name;
     this.shapes.push(name);
@@ -334,8 +274,8 @@ const Draw = PMClass.extend<
     );
 
     return (this as unknown as ShapeRegistry)[name] as DrawInstance;
-  },
-  _getShapeFromBtnName(this: IDraw, name: string) {
+  }
+  _getShapeFromBtnName(name: string) {
     const shapeMapping: ShapeMapping = {
       drawMarker: 'Marker',
       drawCircle: 'Circle',
@@ -357,8 +297,8 @@ const Draw = PMClass.extend<
     return (this as unknown as ShapeRegistry)[name]
       ? (this as unknown as ShapeRegistry)[name]._shape!
       : name;
-  },
-  _finishLayer(this: IDraw, layer: PMLayer) {
+  }
+  _finishLayer(layer: PMLayer) {
     if (layer.pm) {
       // Copy draw options onto the new layer without treating them as a lock.
       if (layer.pm._applyOptions) {
@@ -372,15 +312,11 @@ const Draw = PMClass.extend<
       layer.pm._map = this._map;
     }
     this._addDrawnLayerProp(layer);
-  },
-  _addDrawnLayerProp(this: IDraw, layer: PMLayer) {
+  }
+  _addDrawnLayerProp(layer: PMLayer) {
     layer._drawnByGeoman = true;
-  },
-  _setPane(
-    this: IDraw,
-    layer: PMLayer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ) {
+  }
+  _setPane(layer: PMLayer, type: 'layerPane' | 'vertexPane' | 'markerPane') {
     if (type === 'layerPane') {
       layer.options.pane =
         (this._map.pm.globalOptions.panes &&
@@ -397,41 +333,72 @@ const Draw = PMClass.extend<
           this._map.pm.globalOptions.panes.markerPane) ||
         'markerPane';
     }
-  },
-  _isFirstLayer(this: IDraw) {
+  }
+  _isFirstLayer() {
     const map = this._map || this._layer!._map!;
     return map.pm.getGeomanLayers().length === 0;
+  }
+}
+
+defineOptions(Draw, {
+  snappable: true, // TODO: next major Release, rename it to allowSnapping
+  snapDistance: 20,
+  snapMiddle: false,
+  allowSelfIntersection: true,
+  tooltips: true,
+  templineStyle: {},
+  hintlineStyle: {
+    color: '#3388ff',
+    dashArray: '5,5',
   },
-}) as DrawClass;
+  pathOptions: null,
+  cursorMarker: true,
+  finishOn: null,
+  markerStyle: {
+    draggable: true,
+    icon: new L.Icon({} as L.IconOptions),
+  },
+  hideMiddleMarkers: false,
+  minRadiusCircle: null,
+  maxRadiusCircle: null,
+  minRadiusCircleMarker: null,
+  maxRadiusCircleMarker: null,
+  resizeableCircleMarker: false,
+  resizeableCircle: true,
+  markerEditable: true,
+  continueDrawing: false,
+  snapSegment: true,
+  requireSnapToFinish: false,
+  rectangleAngle: 0,
+  textOptions: {
+    text: null,
+    focusAfterDraw: null,
+    removeIfEmpty: null,
+    className: null,
+  },
+  snapVertex: true,
+});
+
+// The mixins' members, as the old class factory typed them.
+type DrawMixins = MixinMembers<[typeof SnapMixin, typeof EventMixin]>;
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+interface Draw extends DrawMixins {}
+applyMixins(Draw, SnapMixin, EventMixin);
+
+/**
+ * The base of the draw tools. A tool's enable() takes options, not a shape,
+ * and each tool has its own options type.
+ */
+interface DrawToolBase extends Omit<
+  Draw,
+  'enable' | 'disable' | 'setStyle' | 'options' | '_map'
+> {
+  disable(): void;
+  setStyle(): void;
+}
+export const DrawTool = Draw as unknown as new (map: L.Map) => DrawToolBase;
 
 export default Draw;
 
-export type DrawBase = Inherit<
-  MixinMembers<[typeof SnapMixin, typeof EventMixin]>,
-  IDraw
->;
-
-export interface DrawClass extends LeafletClass<DrawBase, [L.Map]> {
-  Marker: LeafletClass<DrawInstances['Marker'], [L.Map]>;
-  CircleMarker: LeafletClass<DrawInstances['CircleMarker'], [L.Map]>;
-  Line: LeafletClass<DrawInstances['Line'], [L.Map]>;
-  Polygon: LeafletClass<DrawInstances['Polygon'], [L.Map]>;
-  Rectangle: LeafletClass<DrawInstances['Rectangle'], [L.Map]>;
-  Circle: LeafletClass<DrawInstances['Circle'], [L.Map]>;
-  Cut: LeafletClass<DrawInstances['Cut'], [L.Map]>;
-  Text: LeafletClass<DrawInstances['Text'], [L.Map]>;
-  [name: string]: unknown;
-}
-
-export interface DrawInstances {
-  Marker: Inherit<Inherit<DrawBase, DrawInstance>, IDrawMarker>;
-  CircleMarker: Inherit<Inherit<DrawBase, DrawInstance>, IDrawCircleMarker>;
-  Circle: Inherit<DrawInstances['CircleMarker'], IDrawCircle>;
-  Line: Inherit<Inherit<DrawBase, DrawInstance>, IDrawLine>;
-  Polygon: Inherit<DrawInstances['Line'], IDrawPolygon>;
-  Rectangle: Inherit<Inherit<DrawBase, DrawInstance>, IDrawRectangle>;
-  Cut: Inherit<DrawInstances['Polygon'], IDrawCut>;
-  Text: Inherit<Inherit<DrawBase, DrawInstance>, IDrawText>;
-}
-
 type ShapeRegistry = Record<string, DrawInstance>;
+type ToolClasses = Record<string, new (map: L.Map) => DrawInstance>;

@@ -2,7 +2,7 @@ import * as L from 'leaflet';
 import { applyMixins } from './helpers/classes';
 import type { MixinMembers } from '../types/leaflet-class';
 import { PM } from './PM';
-import type { DrawBase } from './Draw/L.PM.Draw';
+import type Draw from './Draw/L.PM.Draw';
 import type Toolbar from './Toolbar/L.PM.Toolbar';
 import type { PM as PMTypes } from '../../leaflet-geoman';
 import type { DrawOptions, EditOptions, GlobalOptions } from '../types/options';
@@ -73,7 +73,7 @@ import type { ModeDefinition } from './helpers/ModeManager';
 
 class Map {
   declare map: L.Map & { pm: Map };
-  declare Draw: DrawBase;
+  declare Draw: Draw;
   declare Toolbar: Toolbar;
   declare Keyboard: IKeyboardMixin;
   declare globalOptions: GlobalOptions;

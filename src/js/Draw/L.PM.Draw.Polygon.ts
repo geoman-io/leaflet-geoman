@@ -1,25 +1,5 @@
 import * as L from 'leaflet';
-import { PM } from '../PM';
-/**
- * Extended map with PM
- */
-type ExtendedMap = L.Map & {
-  pm: {
-    Toolbar: {
-      toggleButton: (name: string, state: boolean) => void;
-    };
-    _getContainingLayer: () => L.LayerGroup | L.Map;
-    globalOptions: {
-      panes?: {
-        layerPane?: string;
-        vertexPane?: string;
-        markerPane?: string;
-      };
-    };
-    getGeomanLayers: () => L.Layer[];
-  };
-};
-
+import type { DrawOptions } from '../../types/options';
 /**
  * Extended layer with PM properties
  */
@@ -73,57 +53,36 @@ interface PolygonDrawOptions {
   [key: string]: unknown;
 }
 
-/**
- * Draw Polygon interface
- */
-export interface IDrawPolygon {
-  options: PolygonDrawOptions;
-  _map: ExtendedMap;
-  _shape: string;
-  _enabled: boolean;
-  toolbarButtonName: string;
-  _layerGroup: ExtendedFeatureGroup;
-  _layer: ExtendedPolyline;
-  _hintline: L.Polyline & { _pmTempLayer?: boolean };
-  _hintMarker: ExtendedMarker;
-  _markers: (L.Marker & { _pmTempLayer?: boolean })[];
-  _otherSnapLayers: L.Layer[];
-  _doesSelfIntersect: boolean;
-  _tempSnapLayerIndex?: number;
-
-  enable(options?: Partial<PolygonDrawOptions>): void;
-  _createMarker(latlng: L.LatLng): L.Marker;
-  _setTooltipText(): void;
-  _finishShape(): void;
-
-  // From parent class / mixins
-  _setPane(
-    layer: L.Layer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ): void;
-  _fireCreate(layer: L.Layer): void;
-  _handleSelfIntersection(addVertex: boolean, latlng?: L.LatLng): void;
-  _cleanupSnapping(): void;
-  _finishLayer(layer: L.Layer): void;
-  _isFirstLayer(): boolean;
-  disable(): void;
-  enable(): void;
-}
 import Draw from './L.PM.Draw';
+import DrawLine from './L.PM.Draw.Line';
+import { defineOptions } from '../helpers/classes';
 import { getTranslation, isDegenerateLatLngRing } from '../helpers';
 
-Draw.Polygon = Draw.Line.extend<IDrawPolygon, [L.Map]>({
-  initialize(this: IDrawPolygon, map: L.Map) {
-    this._map = map as typeof this._map;
+class DrawPolygon extends DrawLine {
+  declare options: PolygonDrawOptions;
+  declare _shape: string;
+  declare _enabled: boolean;
+  declare toolbarButtonName: string;
+  declare _layerGroup: ExtendedFeatureGroup;
+  declare _layer: ExtendedPolyline;
+  declare _hintline: L.Polyline & { _pmTempLayer?: boolean };
+  declare _hintMarker: ExtendedMarker;
+  declare _markers: (L.Marker & { _pmTempLayer?: boolean })[];
+  declare _otherSnapLayers: L.Layer[];
+  declare _doesSelfIntersect: boolean;
+  declare _tempSnapLayerIndex?: number;
+
+  constructor(map: L.Map) {
+    super(map);
     this._shape = 'Polygon';
     this.toolbarButtonName = 'drawPolygon';
-  },
-  enable(this: IDrawPolygon, options?: Partial<PolygonDrawOptions>) {
-    PM.Draw.Line.prototype.enable.call(this, options);
+  }
+  enable(options?: DrawOptions) {
+    super.enable(options);
     // Overwrite the shape "Line" of this._layer
     this._layer.pm._shape = 'Polygon';
-  },
-  _createMarker(this: IDrawPolygon, latlng: L.LatLng) {
+  }
+  _createMarker(latlng: L.LatLng) {
     // create the new marker
     const marker = new L.Marker(latlng, {
       draggable: false,
@@ -156,8 +115,8 @@ Draw.Polygon = Draw.Line.extend<IDrawPolygon, [L.Map]>({
     }
 
     return marker;
-  },
-  _setTooltipText(this: IDrawPolygon) {
+  }
+  _setTooltipText() {
     const { length } = (this._layer.getLatLngs() as L.LatLng[]).flat();
     let text = '';
 
@@ -168,8 +127,8 @@ Draw.Polygon = Draw.Line.extend<IDrawPolygon, [L.Map]>({
       text = getTranslation('tooltips.finishPoly');
     }
     this._hintMarker.setTooltipContent(text);
-  },
-  _finishShape(this: IDrawPolygon) {
+  }
+  _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
       // Check if polygon intersects when is completed and the line between the last and the first point is drawn
@@ -223,5 +182,10 @@ Draw.Polygon = Draw.Line.extend<IDrawPolygon, [L.Map]>({
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
-  },
-});
+  }
+}
+
+defineOptions(DrawPolygon, {});
+Draw.Polygon = DrawPolygon;
+
+export default DrawPolygon;
