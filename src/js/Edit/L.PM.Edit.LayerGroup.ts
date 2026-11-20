@@ -1,6 +1,5 @@
 import * as L from 'leaflet';
 import { PM } from '../PM';
-import PMClass from '../helpers/PMClass';
 import type { EditOptions } from './L.PM.Edit';
 
 /**
@@ -58,37 +57,20 @@ type ExtendedLayerGroup = L.LayerGroup & {
 /**
  * Layer event with layer
  */
-/**
- * Edit LayerGroup interface
- */
-export interface IEditLayerGroup {
-  _layerGroup: ExtendedLayerGroup;
-  _map?: ExtendedMap;
-  _options?: EditOptions;
-  options?: EditOptions;
-
-  enable(options?: EditOptions, _layerIds?: number[]): void;
-  disable(_layerIds?: number[]): void;
-  enabled(_layerIds?: number[]): boolean;
-  toggleEdit(options?: EditOptions, _layerIds?: number[]): void;
-  dragging(): boolean;
-  getOptions(): EditOptions | undefined;
-  _getMap(): ExtendedMap | null;
-  getLayers(
-    deep?: boolean,
-    filterGeoman?: boolean,
-    filterGroupsOut?: boolean,
-    _layerIds?: number[]
-  ): PMLayer[];
-  setOptions(options?: EditOptions, _layerIds?: number[]): void;
-}
 import Edit from './L.PM.Edit';
 
 // LayerGroup doesn't inherit from PM.Edit because it's just calling PM.Edit.Polygon
 // (which inherits from PM.Edit) for each layer,
 // so it's not really a parent class
-Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
-  initialize(this: IEditLayerGroup, layerGroup: L.LayerGroup) {
+class EditLayerGroup {
+  declare _layerGroup: ExtendedLayerGroup;
+  declare _map?: ExtendedMap;
+  declare _options?: EditOptions;
+  declare options?: EditOptions;
+
+  constructor(layerGroup: L.LayerGroup) {
+    // an empty own options object, as the Leaflet 1 style class factory made
+    L.Util.setOptions(this, undefined as never);
     this._layerGroup = layerGroup as typeof this._layerGroup;
 
     // A layer added to a group that is being edited in global edit mode is
@@ -115,12 +97,8 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
       },
       this
     );
-  },
-  enable(
-    this: IEditLayerGroup,
-    options?: EditOptions,
-    _layerIds: number[] = []
-  ) {
+  }
+  enable(options?: EditOptions, _layerIds: number[] = []) {
     this._options = options;
     this.getLayers().forEach((layer) => {
       if (layer instanceof L.LayerGroup) {
@@ -132,8 +110,8 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
         layer.pm!.enable(options);
       }
     });
-  },
-  disable(this: IEditLayerGroup, _layerIds: number[] = []) {
+  }
+  disable(_layerIds: number[] = []) {
     this.getLayers().forEach((layer) => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id!) === -1) {
@@ -144,8 +122,8 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
         layer.pm!.disable();
       }
     });
-  },
-  enabled(this: IEditLayerGroup, _layerIds: number[] = []) {
+  }
+  enabled(_layerIds: number[] = []) {
     const enabled = this.getLayers().find((layer) => {
       if (layer instanceof L.LayerGroup) {
         if (_layerIds.indexOf(layer._leaflet_id!) === -1) {
@@ -157,12 +135,8 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
       return layer.pm!.enabled();
     });
     return !!enabled;
-  },
-  toggleEdit(
-    this: IEditLayerGroup,
-    options?: EditOptions,
-    _layerIds: number[] = []
-  ) {
+  }
+  toggleEdit(options?: EditOptions, _layerIds: number[] = []) {
     this._options = options;
     this.getLayers().forEach((layer) => {
       if (layer instanceof L.LayerGroup) {
@@ -174,18 +148,17 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
         layer.pm!.toggleEdit(options);
       }
     });
-  },
-  dragging(this: IEditLayerGroup) {
+  }
+  dragging() {
     return this.getLayers().some((layer) => layer.pm!.dragging());
-  },
-  getOptions(this: IEditLayerGroup) {
+  }
+  getOptions() {
     return this.options;
-  },
-  _getMap(this: IEditLayerGroup): ExtendedMap | null {
+  }
+  _getMap(): ExtendedMap | null {
     return this._map || this.getLayers().find((l) => !!l._map)?._map || null;
-  },
+  }
   getLayers(
-    this: IEditLayerGroup,
     deep = false,
     filterGeoman = true,
     filterGroupsOut = true,
@@ -222,12 +195,8 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
       layers = layers.filter((layer) => PM.Utils.isGeomanLayer(layer));
     }
     return layers;
-  },
-  setOptions(
-    this: IEditLayerGroup,
-    options?: EditOptions,
-    _layerIds: number[] = []
-  ) {
+  }
+  setOptions(options?: EditOptions, _layerIds: number[] = []) {
     this.options = options;
     this.getLayers().forEach((layer) => {
       if (layer.pm) {
@@ -241,5 +210,9 @@ Edit.LayerGroup = PMClass.extend<IEditLayerGroup, [L.LayerGroup]>({
         }
       }
     });
-  },
-});
+  }
+}
+
+Edit.LayerGroup = EditLayerGroup;
+
+export default EditLayerGroup;

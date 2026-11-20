@@ -1,5 +1,4 @@
 import * as L from 'leaflet';
-import type { ISnapMixin } from '../Mixins/Snapping';
 import { PM } from '../PM';
 /**
  * Extended map with PM
@@ -42,56 +41,26 @@ interface MarkerEditOptions {
   [key: string]: unknown;
 }
 
-/**
- * Edit Marker interface
- */
-export interface IEditMarker {
-  _shape: string;
-  _layer: ExtendedMarker;
-  _map: ExtendedMap;
-  _enabled: boolean;
-  _layerEdited?: boolean;
-  options: MarkerEditOptions;
-
-  setOptions(options: Partial<MarkerEditOptions>): void;
-  enable(options?: Partial<MarkerEditOptions>): void;
-  disable(): void;
-  enabled(): boolean;
-  toggleEdit(options?: Partial<MarkerEditOptions>): void;
-  applyOptions(): void;
-  _editDrags(): boolean;
-  _removeMarker(e: L.LeafletPointerEvent & { target: L.Marker }): void;
-  _onDragStart(): void;
-  _onMarkerDragEnd(): void;
-  _onDragEnd(): void;
-  _initSnappableMarkers(): void;
-  _disableSnapping(): void;
-
-  // From mixins
-  _fireEnable(): void;
-  _fireDisable(): void;
-  _fireUpdate(): void;
-  _fireEdit(): void;
-  _fireRemove(target: L.Layer | ExtendedMap, layer?: L.Layer): void;
-  enableLayerDrag(): void;
-  disableLayerDrag(): void;
-  _handleSnapping: ISnapMixin['_handleSnapping'];
-  _cleanupSnapping(): void;
-  _unsnap(e: L.LeafletEvent): void;
-}
 import Edit from './L.PM.Edit';
+import { defineOptions } from '../helpers/classes';
 
-Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
-  _shape: 'Marker',
-  initialize(this: IEditMarker, layer: L.Marker) {
+class EditMarker extends Edit {
+  declare _layer: ExtendedMarker;
+  declare _map: ExtendedMap;
+  declare _enabled: boolean;
+  declare _layerEdited?: boolean;
+  declare options: MarkerEditOptions;
+
+  constructor(layer: L.Marker) {
+    super(layer);
     // layer is a marker in this case :-)
     this._layer = layer as typeof this._layer;
     this._enabled = false;
 
     // register dragend event e.g. to fire pm:edit
     this._layer.on('dragend', this._onDragEnd, this);
-  },
-  enable(this: IEditMarker, options?: Partial<MarkerEditOptions>) {
+  }
+  enable(options?: Partial<MarkerEditOptions>) {
     // No argument keeps the layer's current options. The old `{ draggable: true }`
     // default put a locked marker back into drag mode (#1113).
     if (options) {
@@ -120,8 +89,8 @@ Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
     this._layer.on('pm:dragend', this._onMarkerDragEnd, this);
 
     this._fireEnable();
-  },
-  disable(this: IEditMarker) {
+  }
+  disable() {
     // if it's not enabled, it doesn't need to be disabled
     if (!this.enabled()) {
       return;
@@ -141,21 +110,21 @@ Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
     this._fireDisable();
 
     this._enabled = false;
-  },
-  enabled(this: IEditMarker) {
+  }
+  enabled() {
     return this._enabled;
-  },
-  toggleEdit(this: IEditMarker, options?: Partial<MarkerEditOptions>) {
+  }
+  toggleEdit(options?: Partial<MarkerEditOptions>) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
-  },
-  _editDrags(this: IEditMarker) {
+  }
+  _editDrags() {
     return !!this.options.draggable;
-  },
-  applyOptions(this: IEditMarker) {
+  }
+  applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
     } else {
@@ -171,29 +140,26 @@ Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
     if (!this.options.preventMarkerRemoval) {
       this._layer.on('contextmenu', this._removeMarker, this);
     }
-  },
-  _removeMarker(
-    this: IEditMarker,
-    e: L.LeafletPointerEvent & { target: L.Marker }
-  ) {
+  }
+  _removeMarker(e: L.LeafletPointerEvent & { target: L.Marker }) {
     const marker = e.target;
     marker.remove();
     // TODO: find out why this is fired manually, shouldn't it be catched by PM.Map 'layerremove'?
     this._fireRemove(marker);
     this._fireRemove(this._map, marker);
-  },
-  _onDragStart(this: IEditMarker) {
+  }
+  _onDragStart() {
     this._map.pm.Draw.Marker._layerIsDragging = true;
-  },
-  _onMarkerDragEnd(this: IEditMarker) {
+  }
+  _onMarkerDragEnd() {
     this._map.pm.Draw.Marker._layerIsDragging = false;
-  },
-  _onDragEnd(this: IEditMarker) {
+  }
+  _onDragEnd() {
     this._fireEdit();
     this._layerEdited = true;
-  },
+  }
   // overwrite initSnappableMarkers from Snapping.js Mixin
-  _initSnappableMarkers(this: IEditMarker) {
+  _initSnappableMarkers() {
     const marker = this._layer;
 
     this.options.snapDistance = this.options.snapDistance || 30;
@@ -208,11 +174,17 @@ Edit.Marker = Edit.extend<IEditMarker, [L.Marker]>({
 
     marker.off('pm:dragstart', this._unsnap, this);
     marker.on('pm:dragstart', this._unsnap, this);
-  },
-  _disableSnapping(this: IEditMarker) {
+  }
+  _disableSnapping() {
     const marker = this._layer;
     marker.off('pm:drag', this._handleSnapping, this);
     marker.off('pm:dragend', this._cleanupSnapping, this);
     marker.off('pm:dragstart', this._unsnap, this);
-  },
-});
+  }
+}
+
+defineOptions(EditMarker, {});
+EditMarker.prototype._shape = 'Marker';
+Edit.Marker = EditMarker;
+
+export default EditMarker;

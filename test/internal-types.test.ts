@@ -6,33 +6,21 @@ const normalizePath = (filename: string) => filename.replace(/\\/g, '/');
 
 const validCases = {
   inheritedMethods: `
-    const Child = PM.Edit.Marker.extend<{ probe(): boolean }>({
-      probe() { return this.enabled(); },
-    });
+    class Child extends PM.Edit.Marker {
+      probe() { return this.enabled(); }
+    }
     const editor = new Child(new L.Marker([0, 0]));
     const enabled: boolean = editor.probe();
     editor.enableLayerDrag();
   `,
-  implementedMethod: `
-    const Child = PM.Edit.Marker.extend<{ probe(): string }>({
-      probe() { return 'implemented'; },
-    });
-    const result: string = new Child(new L.Marker([0, 0])).probe();
-  `,
-  checkedMixin: `
-    const mixin = { probe() { return 'mixed in'; } };
-    const Child = PM.Edit.Marker.extend<
-      { probe(): string }, [L.Marker], [typeof mixin]
-    >({ includes: [mixin] });
-    const result: string = new Child(new L.Marker([0, 0])).probe();
-  `,
-  mixinOrder: `
-    const first = { probe() { return 1; } };
-    const second = { probe() { return 'last wins'; } };
-    const Child = PM.Edit.Marker.extend<
-      {}, [L.Marker], [typeof first, typeof second]
-    >({ includes: [first, second] });
-    const result: string = new Child(new L.Marker([0, 0])).probe();
+  subclassedDrawTool: `
+    class Triangle extends PM.Draw.Polygon {
+      constructor(map: L.Map) {
+        super(map);
+        this.toolbarButtonName = 'Triangle';
+      }
+    }
+    new Triangle(new L.Map('map')).enable({ snappable: false });
   `,
   mapAndEditorMixins: `
     const controller = new PM.Map(new L.Map('map'));
@@ -66,32 +54,11 @@ const validCases = {
 };
 
 const invalidCases = {
-  missingMethod: {
-    code: 2345,
-    source: `PM.Edit.Marker.extend<{ missing(): string }>({});`,
-  },
-  incorrectImplementation: {
-    code: 2322,
-    source: `PM.Edit.Marker.extend<{ probe(): string }>({
-      probe() { return 42; },
-    });`,
-  },
   incompatibleInheritedMethod: {
-    code: 2345,
-    source: `PM.Edit.Marker.extend<{ enabled(): string }>({});`,
-  },
-  incompatibleMixin: {
-    code: 2345,
-    source: `const mixin = { probe() { return 42; } };
-      PM.Edit.Marker.extend<
-        { probe(): string }, [L.Marker], [typeof mixin]
-      >({ includes: [mixin] });`,
-  },
-  missingMixin: {
-    code: 2345,
-    source: `PM.Edit.Marker.extend<
-      { probe(): string }, [L.Marker], [{ probe(): string }]
-    >({});`,
+    code: 2416,
+    source: `class Child extends PM.Edit.Marker {
+      enabled(): string { return 'no'; }
+    }`,
   },
   invalidDrawOption: {
     code: 2322,

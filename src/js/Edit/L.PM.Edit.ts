@@ -1,22 +1,17 @@
 import * as L from 'leaflet';
 import { PM } from '../PM';
-import PMClass from '../helpers/PMClass';
+import { applyMixins, defineOptions } from '../helpers/classes';
 import { checkOptions } from '../helpers/options';
-import type { Inherit, MixinMembers } from '../../types/leaflet-class';
-import type {
-  LeafletClass,
-  LeafletClassFactory,
-} from '../../types/leaflet-class';
-import type MarkerLimits from '../Mixins/MarkerLimits';
-import type { IEditMarker } from './L.PM.Edit.Marker';
-import type { IEditCircleMarker } from './L.PM.Edit.CircleMarker';
-import type { IEditCircle } from './L.PM.Edit.Circle';
-import type { IEditImageOverlay } from './L.PM.Edit.ImageOverlay';
-import type { IEditLayerGroup } from './L.PM.Edit.LayerGroup';
-import type { IEditLine } from './L.PM.Edit.Line';
-import type { IEditPolygon } from './L.PM.Edit.Polygon';
-import type { IEditRectangle } from './L.PM.Edit.Rectangle';
-import type { IEditText } from './L.PM.Edit.Text';
+import type { MixinMembers } from '../../types/leaflet-class';
+import type EditMarker from './L.PM.Edit.Marker';
+import type EditCircleMarker from './L.PM.Edit.CircleMarker';
+import type EditCircle from './L.PM.Edit.Circle';
+import type EditImageOverlay from './L.PM.Edit.ImageOverlay';
+import type EditLayerGroup from './L.PM.Edit.LayerGroup';
+import type EditLine from './L.PM.Edit.Line';
+import type EditPolygon from './L.PM.Edit.Polygon';
+import type EditRectangle from './L.PM.Edit.Rectangle';
+import type EditText from './L.PM.Edit.Text';
 
 import type {
   EditOptions,
@@ -37,9 +32,6 @@ interface ExtendedMarker extends L.Marker {
 /**
  * Extended layer with PM and map - using type intersection to avoid protected property issues
  */
-type PMLayer = L.Layer & {
-  _map?: ExtendedMap;
-};
 
 /**
  * Extended map with PM
@@ -57,54 +49,11 @@ type ExtendedMap = L.Map & {
   };
 };
 
-/**
- * Edit class interface
- */
-export interface IEdit {
-  options: EditOptions;
-  _map?: ExtendedMap;
-  _layer: L.Layer & { _map?: L.Map };
-  _shape?: string;
-
-  setOptions(options: EditOptions): void;
-  getOptions(): EditOptions;
-  /** Apply options without recording them as an explicit layer choice. */
-  _applyOptions(options?: EditOptions): void;
-  /**
-   * Fill keys this layer has not set itself. Inherited values are not recorded,
-   * so a later global change can still reach a layer that left the map.
-   */
-  _applyInheritedOptions(options?: EditOptions): void;
-  _ownOptions?: EditOptions;
-  applyOptions(): void;
-  isPolygon(): boolean;
-  getShape(): string | undefined;
-  _setPane(
-    layer: PMLayer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ): void;
-  remove(): void;
-  _vertexValidation(
-    type: 'move' | 'add' | 'remove',
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ): boolean;
-  _vertexValidationDrag(marker: ExtendedMarker): boolean;
-  _vertexValidationDragEnd(marker: {
-    _cancelDragEventChain?: L.LatLng | null;
-  }): boolean;
-  _suspendInteractions(changedBy: Interaction): void;
-  _syncInteractions(changedBy: Interaction): void;
-  _hideEditHelpers(): void;
-  /** Whether edit mode moves this layer by dragging it, as for markers. */
-  _editDrags(): boolean;
-  _refreshEditHelpers(): void;
-}
-
 /** The layer interactions that can be on together. */
 export type Interaction = 'edit' | 'drag' | 'rotate';
 
 // What the sync below needs from the subclasses and the rotate mixin.
-type SyncContext = IEdit & {
+type SyncContext = Edit & {
   enabled(): boolean;
   rotateEnabled(): boolean;
   _rotatePoly?: { pm: { _markerGroup?: L.FeatureGroup } };
@@ -115,39 +64,29 @@ import DragMixin from '../Mixins/Dragging';
 import RotateMixin from '../Mixins/Rotating';
 import EventMixin from '../Mixins/Events';
 
-const Edit = PMClass.extend<
-  IEdit,
-  [L.Layer],
-  [typeof DragMixin, typeof SnapMixin, typeof RotateMixin, typeof EventMixin]
->({
-  includes: [DragMixin, SnapMixin, RotateMixin, EventMixin],
-  options: {
-    snappable: true, // TODO: next major Release, rename it to allowSnapping
-    snapDistance: 20,
-    allowSelfIntersection: true,
-    allowSelfIntersectionEdit: false,
-    preventMarkerRemoval: false,
-    removeLayerBelowMinVertexCount: true,
-    limitMarkersToCount: -1,
-    hideMiddleMarkers: false,
-    snapSegment: true,
-    syncLayersOnDrag: false,
-    draggable: true, // TODO: next major Release, rename it to allowDragging
-    allowEditing: true, // disable all interactions on a layer which are activated with `enable()`. For example a Circle can't be dragged in Edit-Mode
-    allowRemoval: true,
-    allowCutting: true,
-    allowRotation: true,
-    addVertexOn: 'click',
-    removeVertexOn: 'contextmenu',
-    removeVertexValidation: undefined,
-    addVertexValidation: undefined,
-    moveVertexValidation: undefined,
-    resizeableCircleMarker: false,
-    resizeableCircle: true,
-    snapMiddle: false,
-    snapVertex: true,
-  },
-  setOptions(this: IEdit, o: EditOptions) {
+class Edit {
+  declare options: EditOptions;
+  declare _map?: ExtendedMap;
+  declare _layer: L.Layer & { _map?: L.Map };
+  declare _shape?: string;
+  declare _ownOptions?: EditOptions;
+
+  // The editor classes, registered by their modules.
+  declare static Marker: typeof EditMarker;
+  declare static CircleMarker: typeof EditCircleMarker;
+  declare static Circle: typeof EditCircle;
+  declare static ImageOverlay: typeof EditImageOverlay;
+  declare static LayerGroup: typeof EditLayerGroup;
+  declare static Line: typeof EditLine;
+  declare static Polygon: typeof EditPolygon;
+  declare static Rectangle: typeof EditRectangle;
+  declare static Text: typeof EditText;
+
+  constructor(_layer: L.Layer) {
+    // an empty own options object, as the Leaflet 1 style class factory made
+    L.Util.setOptions(this, undefined as never);
+  }
+  setOptions(o: EditOptions) {
     const options = checkOptions(o, 'layer.pm.setOptions()');
     // Only an explicit setOptions/enable(options) is a lock. Global enable and
     // draw finish must not store those values as the layer's own choice.
@@ -158,14 +97,14 @@ const Edit = PMClass.extend<
       };
     }
     this._applyOptions(options);
-  },
-  _applyOptions(this: IEdit, options?: EditOptions) {
+  }
+  _applyOptions(options?: EditOptions) {
     L.Util.setOptions(this, options);
-  },
+  }
   // Resolves the layer's options as defaults < `options` (the map's global
   // options) < the layer's own setOptions. Re-applying the own options also
   // replaces values that enableGlobalEditMode(options) set earlier.
-  _applyInheritedOptions(this: IEdit, options?: EditOptions) {
+  _applyInheritedOptions(options?: EditOptions) {
     if (!options) return;
     const own = this._ownOptions || {};
     const inherited: EditOptions = {};
@@ -175,11 +114,11 @@ const Edit = PMClass.extend<
       }
     }
     this._applyOptions({ ...inherited, ...own });
-  },
-  getOptions(this: IEdit) {
+  }
+  getOptions() {
     return this.options;
-  },
-  applyOptions(this: IEdit) {},
+  }
+  applyOptions() {}
   // Edit and rotate can stay on while another interaction changes the layer,
   // such as a body drag while editing. Their helpers hide while it runs and
   // are rebuilt from the new coordinates when it ends.
@@ -190,7 +129,7 @@ const Edit = PMClass.extend<
     if (changedBy !== 'rotate' && this.rotateEnabled()) {
       this._rotatePoly?.pm._markerGroup?.remove();
     }
-  },
+  }
   _syncInteractions(this: SyncContext, changedBy: Interaction) {
     // removed from the map while the interaction ran
     if (!this._layer._map) {
@@ -202,25 +141,21 @@ const Edit = PMClass.extend<
     if (changedBy !== 'rotate' && this.rotateEnabled()) {
       this._syncRotation();
     }
-  },
+  }
   // Editors with vertex or radius markers override these two.
-  _hideEditHelpers() {},
+  _hideEditHelpers() {}
   _editDrags() {
     return false;
-  },
-  _refreshEditHelpers() {},
-  isPolygon(this: IEdit) {
+  }
+  _refreshEditHelpers() {}
+  isPolygon() {
     // if it's a polygon, it means the coordinates array is multi dimensional
     return this._layer instanceof L.Polygon;
-  },
-  getShape(this: IEdit) {
+  }
+  getShape() {
     return this._shape;
-  },
-  _setPane(
-    this: IEdit,
-    layer: PMLayer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ) {
+  }
+  _setPane(layer: L.Layer, type: 'layerPane' | 'vertexPane' | 'markerPane') {
     if (type === 'layerPane') {
       layer.options.pane =
         (this._map!.pm.globalOptions.panes &&
@@ -237,13 +172,12 @@ const Edit = PMClass.extend<
           this._map!.pm.globalOptions.panes.markerPane) ||
         'markerPane';
     }
-  },
-  remove(this: IEdit) {
+  }
+  remove() {
     const map = this._map || this._layer._map;
     map!.pm.removeLayer({ target: this._layer });
-  },
+  }
   _vertexValidation(
-    this: IEdit,
     type: 'move' | 'add' | 'remove',
     e: L.LeafletEvent & { target: ExtendedMarker }
   ) {
@@ -273,8 +207,8 @@ const Edit = PMClass.extend<
 
     marker._cancelDragEventChain = null;
     return true;
-  },
-  _vertexValidationDrag(this: IEdit, marker: ExtendedMarker) {
+  }
+  _vertexValidationDrag(marker: ExtendedMarker) {
     // we reset the marker to the place before it was dragged. We need this, because we can't stop the drag process in a `dragstart` | `movestart` listener
     if (marker._cancelDragEventChain) {
       marker._latlng = marker._cancelDragEventChain;
@@ -282,51 +216,56 @@ const Edit = PMClass.extend<
       return false;
     }
     return true;
-  },
-  _vertexValidationDragEnd(
-    this: IEdit,
-    marker: { _cancelDragEventChain?: L.LatLng | null }
-  ) {
+  }
+  _vertexValidationDragEnd(marker: {
+    _cancelDragEventChain?: L.LatLng | null;
+  }) {
     if (marker._cancelDragEventChain) {
       marker._cancelDragEventChain = null;
       return false;
     }
     return true;
-  },
-}) as EditClass;
-
-export type EditBase = Inherit<
-  MixinMembers<
-    [typeof DragMixin, typeof SnapMixin, typeof RotateMixin, typeof EventMixin]
-  >,
-  IEdit
->;
-
-export interface EditClass extends LeafletClass<EditBase, [L.Layer]> {
-  Marker: LeafletClass<EditInstances['Marker'], [L.Marker]>;
-  CircleMarker: LeafletClass<EditInstances['CircleMarker'], [L.CircleMarker]>;
-  Circle: LeafletClass<EditInstances['Circle'], [L.Circle]>;
-  ImageOverlay: LeafletClass<EditInstances['ImageOverlay'], [L.ImageOverlay]>;
-  LayerGroup: LeafletClass<EditInstances['LayerGroup'], [L.LayerGroup]>;
-  Line: LeafletClass<EditInstances['Line'], [L.Polyline]>;
-  Polygon: LeafletClass<EditInstances['Polygon'], [L.Polygon]>;
-  Rectangle: LeafletClass<EditInstances['Rectangle'], [L.Rectangle]>;
-  Text: LeafletClass<EditInstances['Text'], [L.Marker]>;
+  }
 }
+
+defineOptions(Edit, {
+  snappable: true, // TODO: next major Release, rename it to allowSnapping
+  snapDistance: 20,
+  allowSelfIntersection: true,
+  allowSelfIntersectionEdit: false,
+  preventMarkerRemoval: false,
+  removeLayerBelowMinVertexCount: true,
+  limitMarkersToCount: -1,
+  hideMiddleMarkers: false,
+  snapSegment: true,
+  syncLayersOnDrag: false,
+  draggable: true, // TODO: next major Release, rename it to allowDragging
+  allowEditing: true, // disable all interactions on a layer which are activated with `enable()`. For example a Circle can't be dragged in Edit-Mode
+  allowRemoval: true,
+  allowCutting: true,
+  allowRotation: true,
+  addVertexOn: 'click',
+  removeVertexOn: 'contextmenu',
+  removeVertexValidation: undefined,
+  addVertexValidation: undefined,
+  moveVertexValidation: undefined,
+  resizeableCircleMarker: false,
+  resizeableCircle: true,
+  snapMiddle: false,
+  snapVertex: true,
+});
+
+// The mixins' members, as the old class factory typed them.
+type EditMixins = MixinMembers<
+  [typeof DragMixin, typeof SnapMixin, typeof RotateMixin, typeof EventMixin]
+>;
+// Marker and Text override these two, so they are typed as methods.
+type OverriddenMixinMembers = '_initSnappableMarkers' | '_disableSnapping';
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+interface Edit extends Omit<EditMixins, OverriddenMixinMembers> {
+  _initSnappableMarkers(): void;
+  _disableSnapping(): void;
+}
+applyMixins(Edit, DragMixin, SnapMixin, RotateMixin, EventMixin);
 
 export default Edit;
-
-export interface EditInstances {
-  Marker: Inherit<EditBase, IEditMarker>;
-  CircleMarker: Inherit<EditBase, IEditCircleMarker>;
-  Circle: Inherit<EditInstances['CircleMarker'], IEditCircle>;
-  ImageOverlay: Inherit<EditBase, IEditImageOverlay>;
-  LayerGroup: Inherit<{}, IEditLayerGroup>;
-  Line: Inherit<
-    Inherit<EditBase, MixinMembers<[typeof MarkerLimits]>>,
-    IEditLine
-  >;
-  Polygon: Inherit<EditInstances['Line'], IEditPolygon>;
-  Rectangle: Inherit<EditInstances['Polygon'], IEditRectangle>;
-  Text: Inherit<EditBase, IEditText>;
-}

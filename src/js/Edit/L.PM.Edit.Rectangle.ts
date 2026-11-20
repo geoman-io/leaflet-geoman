@@ -34,10 +34,11 @@ type ExtendedMarker = L.Marker & {
 /**
  * Extended rectangle layer
  */
-type ExtendedRectangle = L.Rectangle & {
-  _map: ExtendedMap;
-  redraw: () => void;
-};
+type ExtendedRectangle = EditPolygon['_layer'] &
+  L.Rectangle & {
+    _map: ExtendedMap;
+    redraw: () => void;
+  };
 
 /**
  * Extended feature group
@@ -46,78 +47,25 @@ type ExtendedFeatureGroup = L.FeatureGroup & {
   _pmTempLayer?: boolean;
 };
 
-/**
- * PM layer with temp flag
- */
-type PMTempLayer = L.Layer & {
-  _pmTempLayer?: boolean;
-};
-
-/**
- * Edit Rectangle interface
- */
-export interface IEditRectangle {
-  _shape: string;
-  _layer: ExtendedRectangle;
-  _map: ExtendedMap;
-  _markerGroup: ExtendedFeatureGroup;
-  _markers: ExtendedMarker[][];
-  _cornerMarkers: ExtendedMarker[];
-  _layerEdited?: boolean;
-  _angle?: number;
-  options: EditOptions;
-
-  _initMarkers(): void;
-  applyOptions(): void;
-  _createMarker(latlng: L.LatLng, index: number): ExtendedMarker;
-  _addMarkerEvents(): void;
-  _removeMarker(): null;
-  _onMarkerDragStart(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMarkerDrag(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _onMarkerDragEnd(e: L.LeafletEvent & { target: ExtendedMarker }): void;
-  _adjustRectangleForMarkerMove(movedMarker: ExtendedMarker): void;
-  _adjustAllMarkers(movedMarker: ExtendedMarker): void;
-  _findCorners(): L.LatLng[];
-
-  // From parent / mixins
-  _setPane(
-    layer: PMTempLayer,
-    type: 'layerPane' | 'vertexPane' | 'markerPane'
-  ): void;
-  _initSnappableMarkers(): void;
-  _disableSnapping(): void;
-  _onVertexClick(e: L.LeafletEvent): void;
-  _fireMarkerDragStart(e: L.LeafletEvent, indexPath: number[]): void;
-  _fireMarkerDrag(e: L.LeafletEvent, indexPath: number[]): void;
-  _fireMarkerDragEnd(
-    e: L.LeafletEvent,
-    indexPath: number[],
-    intersectionReset?: boolean
-  ): void;
-  _fireEdit(): void;
-  _syncInteractions(changedBy: 'edit'): void;
-  _fireChange(
-    latlngs: L.LatLng[] | L.LatLng[][] | L.LatLng[][][],
-    source: string
-  ): void;
-  _vertexValidation(
-    type: 'move' | 'add' | 'remove',
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ): boolean;
-  _vertexValidationDrag(marker: ExtendedMarker): boolean;
-  _vertexValidationDragEnd(marker: ExtendedMarker): boolean;
-  getAngle(): number;
-  setInitAngle(angle: number): void;
-}
 // Corner detection based on Leaflet Draw's Edit.Rectangle.js Class:
 // https://github.com/Leaflet/Leaflet.draw/blob/master/src/edit/handler/Edit.Rectangle.js
 import Edit from './L.PM.Edit';
+import EditPolygon from './L.PM.Edit.Polygon';
+import { defineOptions } from '../helpers/classes';
 import { calcAngle } from '../helpers';
 
-Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
-  _shape: 'Rectangle',
+class EditRectangle extends EditPolygon {
+  declare _layer: ExtendedRectangle;
+  declare _map: ExtendedMap;
+  declare _markerGroup: ExtendedFeatureGroup;
+  declare _markers: ExtendedMarker[][];
+  declare _cornerMarkers: ExtendedMarker[];
+  declare _layerEdited?: boolean;
+  declare _angle?: number;
+  declare options: EditOptions;
+
   // initializes Rectangle Markers
-  _initMarkers(this: IEditRectangle) {
+  _initMarkers() {
     const map = this._map;
     const corners = this._findCorners();
 
@@ -149,22 +97,18 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
         marker.setLatLng(latlng);
       }
     });
-  },
-  applyOptions(this: IEditRectangle) {
+  }
+  applyOptions() {
     if (this.options.snappable) {
       this._initSnappableMarkers();
     } else {
       this._disableSnapping();
     }
     this._addMarkerEvents();
-  },
+  }
 
   // creates initial markers for coordinates
-  _createMarker(
-    this: IEditRectangle,
-    latlng: L.LatLng,
-    index: number
-  ): ExtendedMarker {
+  _createMarker(latlng: L.LatLng, index?: number): ExtendedMarker {
     const marker = new L.Marker(latlng, {
       draggable: true,
       icon: new L.DivIcon({ className: 'marker-icon' }),
@@ -180,9 +124,9 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
     this._markerGroup.addLayer(marker);
 
     return marker;
-  },
+  }
   // Add marker events after adding the snapping events to the markers, beacause of the execution order
-  _addMarkerEvents(this: IEditRectangle) {
+  _addMarkerEvents() {
     this._markers[0].forEach((marker) => {
       marker.on('dragstart', this._onMarkerDragStart, this);
       marker.on('drag', this._onMarkerDrag, this);
@@ -193,18 +137,15 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
         marker.on('contextmenu', this._removeMarker, this);
       }
     });
-  },
+  }
   // Empty callback for 'contextmenu' binding set in PM.Edit.Line.js's _createMarker method (AKA, right-click on marker event)
   // (A Rectangle is designed to always remain a "true" rectangle -- if you want it editable, use Polygon Tool instead!!!)
   _removeMarker(): null {
     // The method, it does nothing!!!
     return null;
-  },
+  }
 
-  _onMarkerDragStart(
-    this: IEditRectangle,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  _onMarkerDragStart(e: L.LeafletEvent & { target: ExtendedMarker }) {
     if (!this._vertexValidation('move', e)) {
       return;
     }
@@ -227,12 +168,9 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
     ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
 
     this._fireMarkerDragStart(e, indexPath);
-  },
+  }
 
-  _onMarkerDrag(
-    this: IEditRectangle,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  _onMarkerDrag(e: L.LeafletEvent & { target: ExtendedMarker }) {
     // dragged marker
     const draggedMarker = e.target;
 
@@ -253,12 +191,9 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
     ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
     this._fireMarkerDrag(e, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
 
-  _onMarkerDragEnd(
-    this: IEditRectangle,
-    e: L.LeafletEvent & { target: ExtendedMarker }
-  ) {
+  _onMarkerDragEnd(e: L.LeafletEvent & { target: ExtendedMarker }) {
     // dragged marker
     const draggedMarker = e.target;
     if (!this._vertexValidationDragEnd(draggedMarker)) {
@@ -281,14 +216,11 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
     this._syncInteractions('edit');
     this._layerEdited = true;
     this._fireChange(this._layer.getLatLngs(), 'Edit');
-  },
+  }
 
   // adjusts the rectangle's size and bounds whenever a marker is moved
   // params: movedMarker -- the Marker object
-  _adjustRectangleForMarkerMove(
-    this: IEditRectangle,
-    movedMarker: ExtendedMarker
-  ) {
+  _adjustRectangleForMarkerMove(movedMarker: ExtendedMarker) {
     // update moved marker coordinates
     Object.assign(movedMarker._origLatLng!, movedMarker._latlng);
 
@@ -306,11 +238,11 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
 
     // Redraw the shape (to update altered rectangle)
     this._layer.redraw();
-  },
+  }
 
   // adjusts the position of all Markers
   // params: markerLatLngs -- an array of exactly LatLng objects
-  _adjustAllMarkers(this: IEditRectangle, movedMarker: ExtendedMarker) {
+  _adjustAllMarkers(movedMarker: ExtendedMarker) {
     const markerLatLngs = this._layer.getLatLngs()[0] as L.LatLng[];
 
     if (
@@ -356,10 +288,10 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
         });
       }
     }
-  },
+  }
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
-  _findCorners(this: IEditRectangle) {
+  _findCorners() {
     const latlngs = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
     // A rectangle can be left with an empty or short ring. `calcAngle` and
     // `_getRotatedRectangle` then read `lat` on a missing corner, and global
@@ -378,5 +310,11 @@ Edit.Rectangle = Edit.Polygon.extend<IEditRectangle, [L.Rectangle]>({
       this.getAngle(),
       this._map || (this as unknown as L.Map)
     );
-  },
-});
+  }
+}
+
+defineOptions(EditRectangle, {});
+EditRectangle.prototype._shape = 'Rectangle';
+Edit.Rectangle = EditRectangle;
+
+export default EditRectangle;

@@ -31,60 +31,37 @@ interface ImageOverlayEditOptions extends EditOptions {
   draggable?: boolean;
 }
 
-/**
- * Edit ImageOverlay interface
- */
-export interface IEditImageOverlay {
-  _shape: string;
-  _layer: ExtendedImageOverlay;
-  _map: ExtendedMap;
-  _enabled: boolean;
-  _layerEdited?: boolean;
-  _dragging?: boolean;
-  _disableAfterDrag?: boolean;
-  _otherSnapLayers?: L.LatLng[];
-  options: ImageOverlayEditOptions;
-
-  setOptions(options: Partial<ImageOverlayEditOptions>): void;
-  toggleEdit(options?: Partial<ImageOverlayEditOptions>): void;
-  enabled(): boolean;
-  enable(options?: Partial<ImageOverlayEditOptions>): void;
-  _editDrags(): boolean;
-  disable(): void;
-  _findCorners(): L.LatLng[];
-
-  // From parent / mixins
-  enableLayerDrag(): void;
-  disableLayerDrag(): void;
-  _fireEnable(): void;
-  _fireDisable(): void;
-  _fireUpdate(): void;
-}
 import Edit from './L.PM.Edit';
+import { defineOptions } from '../helpers/classes';
 
-Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
-  _shape: 'ImageOverlay',
-  initialize(this: IEditImageOverlay, layer: L.ImageOverlay) {
+class EditImageOverlay extends Edit {
+  declare _layer: ExtendedImageOverlay;
+  declare _map: ExtendedMap;
+  declare _enabled: boolean;
+  declare _layerEdited?: boolean;
+  declare _dragging?: boolean;
+  declare _disableAfterDrag?: boolean;
+  declare options: ImageOverlayEditOptions;
+
+  constructor(layer: L.ImageOverlay) {
+    super(layer);
     this._layer = layer as typeof this._layer;
     this._enabled = false;
-  },
-  toggleEdit(
-    this: IEditImageOverlay,
-    options?: Partial<ImageOverlayEditOptions>
-  ) {
+  }
+  toggleEdit(options?: Partial<ImageOverlayEditOptions>) {
     if (!this.enabled()) {
       this.enable(options);
     } else {
       this.disable();
     }
-  },
-  enabled(this: IEditImageOverlay) {
+  }
+  enabled() {
     return this._enabled;
-  },
+  }
   _editDrags() {
     return true;
-  },
-  enable(this: IEditImageOverlay, options?: Partial<ImageOverlayEditOptions>) {
+  }
+  enable(options?: Partial<ImageOverlayEditOptions>) {
     // No argument keeps the layer's current options (#1113).
     if (options) {
       this.setOptions(options);
@@ -116,11 +93,13 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
     this._enabled = true;
 
     // create markers for four corners of ImageOverlay
-    this._otherSnapLayers = this._findCorners();
+    // the corners, not layers, as before the class conversion
+    this._otherSnapLayers =
+      this._findCorners() as unknown as typeof this._otherSnapLayers;
 
     this._fireEnable();
-  },
-  disable(this: IEditImageOverlay) {
+  }
+  disable() {
     // prevent disabling if layer is being dragged; disable when the drag ends
     if (this._dragging) {
       this._disableAfterDrag = true;
@@ -147,8 +126,8 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
     }
 
     this._enabled = false;
-  },
-  _findCorners(this: IEditImageOverlay) {
+  }
+  _findCorners() {
     const corners = this._layer.getBounds();
 
     const northwest = corners.getNorthWest();
@@ -157,5 +136,11 @@ Edit.ImageOverlay = Edit.extend<IEditImageOverlay, [L.ImageOverlay]>({
     const southwest = corners.getSouthWest();
 
     return [northwest, northeast, southeast, southwest];
-  },
-});
+  }
+}
+
+defineOptions(EditImageOverlay, {});
+EditImageOverlay.prototype._shape = 'ImageOverlay';
+Edit.ImageOverlay = EditImageOverlay;
+
+export default EditImageOverlay;

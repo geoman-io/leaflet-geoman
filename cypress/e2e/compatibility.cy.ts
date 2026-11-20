@@ -1,30 +1,22 @@
 describe('JavaScript compatibility', () => {
-  it('keeps Leaflet class extension, mixins, init hooks and option inheritance', () => {
+  it('lets editors be subclassed with their option defaults', () => {
     cy.window().then(({ L }) => {
       const Parent = L.PM.Edit.Marker;
-      const Child = Parent.extend<
-        { probe(): string },
-        [L.Marker],
-        [{ probe(): string }]
-      >({
-        includes: [{ probe: () => 'mixed in' }],
-      });
-      Child.mergeOptions({ snappable: false });
-      const hooks: string[] = [];
-      Child.addInitHook(function () {
-        hooks.push(this.probe());
-      });
+      class Child extends Parent {
+        probe() {
+          return 'subclassed';
+        }
+      }
       const marker = new L.Marker([0, 0]);
       const editor = new Child(marker);
 
       expect(editor).to.be.instanceOf(Parent);
-      expect(editor.probe()).to.equal('mixed in');
+      expect(editor.probe()).to.equal('subclassed');
+      expect(editor.getShape()).to.equal('Marker');
+      editor.setOptions({ snappable: false });
       expect(editor.getOptions().snappable).to.equal(false);
       expect(Parent.prototype.options.snappable).to.equal(true);
-      expect(hooks).to.deep.equal(['mixed in']);
-      expect(
-        Object.prototype.propertyIsEnumerable.call(Parent.prototype, 'enable')
-      ).to.equal(true);
+      expect(new Parent(marker).getOptions().snappable).to.equal(true);
     });
   });
 
