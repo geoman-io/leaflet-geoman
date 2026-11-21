@@ -64,7 +64,7 @@ interface TextMarkerOptions extends L.MarkerOptions {
 type TextMarkerPMOptions = { removeIfEmpty?: boolean };
 
 import Draw from './L.PM.Draw';
-import { DrawTool } from './L.PM.Draw';
+import DrawTool from './L.PM.DrawTool';
 import { defineOptions } from '../helpers/classes';
 import { getTranslation } from '../helpers';
 

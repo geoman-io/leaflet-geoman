@@ -82,10 +82,13 @@ describe('JavaScript compatibility', () => {
         const tool = pmDraw.Star;
         expect(tool).to.be.instanceOf(StarTool);
         expect(tool).to.be.instanceOf(PM.Draw.Polygon);
-        // tools still count as Draw instances
-        expect(tool).to.be.instanceOf(PM.Draw);
+        // tools extend DrawTool; L.PM.Draw is the map's registry of them
+        expect(tool).to.be.instanceOf(PM.DrawTool);
+        expect(tool).not.to.be.instanceOf(PM.Draw);
         expect(tool.probe()).to.equal('star');
         expect(tool.shapes).to.equal(undefined);
+        expect(tool.getActiveShape).to.equal(undefined);
+        expect(tool.createNewDrawInstance).to.equal(undefined);
 
         map.pm.enableDraw('Star');
         expect(tool.enabled()).to.equal(true);
@@ -94,6 +97,113 @@ describe('JavaScript compatibility', () => {
         expect(tool.enabled()).to.equal(false);
       } finally {
         delete PM.Draw.Star;
+      }
+    });
+  });
+
+  // A tool that doesn't build on a built-in one extends L.PM.DrawTool, which
+  // brings the options, snapping and events every tool shares.
+  it('lets a custom tool extend DrawTool directly', () => {
+    cy.window().then(({ L, map }) => {
+      const PM = L.PM as unknown as Record<string, any>;
+      const ToolBase = PM.DrawTool as new (map: unknown) => any;
+      class PointTool extends ToolBase {
+        constructor(m: unknown) {
+          super(m);
+          this._shape = 'Point';
+          this.toolbarButtonName = 'drawPoint';
+        }
+        enable(options?: object) {
+          this.setOptions(options || {});
+          this._enabled = true;
+          this._map.pm._modes._exclusive(`draw:${this._shape}`);
+          this._fireDrawStart();
+        }
+        disable() {
+          if (!this._enabled) {
+            return;
+          }
+          this._enabled = false;
+          this._fireDrawEnd();
+        }
+        enabled() {
+          return !!this._enabled;
+        }
+        toggle(options?: object) {
+          if (this.enabled()) {
+            this.disable();
+          } else {
+            this.enable(options);
+          }
+        }
+      }
+      PM.Draw.Point = PointTool;
+      try {
+        const events: string[] = [];
+        map.on('pm:drawstart', (e) => events.push(`start:${e.shape}`));
+        map.on('pm:drawend', (e) => events.push(`end:${e.shape}`));
+        const tool = map.pm.Draw.createNewDrawInstance('Point', 'Point');
+        expect(tool).to.be.instanceOf(PointTool);
+        expect(tool.getOptions().snapDistance).to.equal(20);
+        expect(tool.getOptions().snappable).to.equal(true);
+
+        map.pm.enableDraw('Polygon');
+        map.pm.enableDraw('Point', { snapDistance: 5 });
+        expect(map.pm.Draw.getActiveShape()).to.equal('Point');
+        expect(map.pm.Draw.Polygon.enabled()).to.equal(false);
+        expect(tool.getOptions().snapDistance).to.equal(5);
+        expect(PM.DrawTool.prototype.options.snapDistance).to.equal(20);
+        map.pm.disableDraw();
+        expect(map.pm.Draw.getActiveShape()).to.equal(undefined);
+        expect(events).to.include.members(['start:Point', 'end:Point']);
+      } finally {
+        delete PM.Draw.Point;
+      }
+    });
+  });
+
+  // Before the registry and the tools were split, a tool could be written as
+  // `class T extends L.PM.Draw`. Such a class is a registry now, so
+  // registering it as a tool is refused before the registry changes.
+  it('refuses to register a Draw subclass as a tool', () => {
+    cy.window().then(({ L, map }) => {
+      const PM = L.PM as unknown as Record<string, any>;
+      const DrawBase = PM.Draw as new (map: unknown) => any;
+      class OldStyleTool extends DrawBase {
+        enable() {}
+        disable() {}
+      }
+      const shapesBefore = [...map.pm.Draw.getShapes()];
+      PM.Draw.Old = OldStyleTool;
+      try {
+        // The error comes from the app's window, so its class is not the
+        // spec's TypeError; check the name instead.
+        let error: Error | undefined;
+        try {
+          map.pm.Draw.createNewDrawInstance('Old', 'Old');
+        } catch (e) {
+          error = e as Error;
+        }
+        expect(error?.name).to.equal('TypeError');
+        expect(error?.message).to.match(
+          /PM\.Draw\.Old \(OldStyleTool\).*L\.PM\.DrawTool/
+        );
+        expect(map.pm.Draw.getShapes()).to.deep.equal(shapesBefore);
+        expect(
+          (map.pm.Draw as unknown as Record<string, unknown>).Old
+        ).to.equal(undefined);
+
+        // nothing was left behind: the same name registers once the class
+        // is a tool
+        PM.Draw.Old = class extends PM.Draw.Polygon {};
+        const pmDraw = map.pm.Draw as unknown as Record<string, any>;
+        const tool = pmDraw.createNewDrawInstance('Old', 'Old');
+        map.pm.enableDraw('Old');
+        expect(tool.enabled()).to.equal(true);
+        map.pm.disableDraw();
+        expect(tool.enabled()).to.equal(false);
+      } finally {
+        delete PM.Draw.Old;
       }
     });
   });

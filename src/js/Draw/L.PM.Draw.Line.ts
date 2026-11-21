@@ -72,7 +72,7 @@ interface LineDrawOptions {
 
 import kinks from '@turf/kinks';
 import Draw from './L.PM.Draw';
-import { DrawTool } from './L.PM.Draw';
+import DrawTool from './L.PM.DrawTool';
 import { defineOptions } from '../helpers/classes';
 
 import { getTranslation, toPointerEventName } from '../helpers';
