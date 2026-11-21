@@ -533,4 +533,5 @@ class DrawLine extends DrawTool {
 defineOptions(DrawLine, {});
 Draw.Line = DrawLine;
 
+export { DrawLine };
 export default DrawLine;

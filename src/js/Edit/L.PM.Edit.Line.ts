@@ -1039,4 +1039,5 @@ defineOptions(EditLine, {});
 EditLine.prototype._shape = 'Line';
 Edit.Line = EditLine;
 
+export { EditLine };
 export default EditLine;

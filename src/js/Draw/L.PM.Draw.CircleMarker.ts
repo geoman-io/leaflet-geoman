@@ -634,4 +634,5 @@ class DrawCircleMarker extends DrawTool {
 defineOptions(DrawCircleMarker, {});
 Draw.CircleMarker = DrawCircleMarker;
 
+export { DrawCircleMarker };
 export default DrawCircleMarker;

@@ -357,4 +357,5 @@ defineOptions(EditText, {});
 EditText.prototype._shape = 'Text';
 Edit.Text = EditText;
 
+export { EditText };
 export default EditText;

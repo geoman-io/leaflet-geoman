@@ -34,7 +34,26 @@ export function defineOptions(cls: WithOptions, options: object) {
   );
 }
 
-/** Copies mixin objects onto a class's prototype; later ones win. */
-export function applyMixins(cls: { prototype: object }, ...mixins: object[]) {
+/**
+ * Copies mixin objects onto a class's prototype. A later mixin wins over an
+ * earlier one of the same call. A mixin may not replace a member the
+ * prototype already has, from the class body or from an earlier call: that
+ * throws, because nothing else would show that a method was replaced. To
+ * replace one on purpose, override it in a subclass or assign it to the
+ * prototype.
+ */
+export function applyMixins(
+  cls: { name?: string; prototype: object },
+  ...mixins: object[]
+) {
+  const own = new Set(Object.getOwnPropertyNames(cls.prototype));
+  const taken = [
+    ...new Set(mixins.flatMap((mixin) => Object.keys(mixin))),
+  ].filter((key) => own.has(key));
+  if (taken.length) {
+    throw new TypeError(
+      `applyMixins: ${cls.name || 'the class'} already defines ${taken.join(', ')}`
+    );
+  }
   Object.assign(cls.prototype, ...mixins);
 }

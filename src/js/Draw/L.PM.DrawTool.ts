@@ -204,4 +204,5 @@ type DrawToolMixins = MixinMembers<[typeof SnapMixin, typeof EventMixin]>;
 interface DrawTool extends DrawToolMixins {}
 applyMixins(DrawTool, SnapMixin, EventMixin);
 
+export { DrawTool };
 export default DrawTool;

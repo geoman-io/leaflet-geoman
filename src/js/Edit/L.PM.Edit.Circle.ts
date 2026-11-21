@@ -115,4 +115,5 @@ EditCircle.prototype._maxRadiusOption = 'maxRadiusCircle';
 EditCircle.prototype._editableOption = 'resizeableCircle';
 Edit.Circle = EditCircle;
 
+export { EditCircle };
 export default EditCircle;

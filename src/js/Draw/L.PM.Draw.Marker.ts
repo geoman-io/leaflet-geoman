@@ -329,4 +329,5 @@ class DrawMarker extends DrawTool {
 defineOptions(DrawMarker, {});
 Draw.Marker = DrawMarker;
 
+export { DrawMarker };
 export default DrawMarker;

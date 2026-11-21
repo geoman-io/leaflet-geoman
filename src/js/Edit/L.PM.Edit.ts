@@ -268,4 +268,5 @@ interface Edit extends Omit<EditMixins, OverriddenMixinMembers> {
 }
 applyMixins(Edit, DragMixin, SnapMixin, RotateMixin, EventMixin);
 
+export { Edit };
 export default Edit;

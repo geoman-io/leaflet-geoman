@@ -425,6 +425,7 @@ class DrawCut extends DrawPolygon {
 defineOptions(DrawCut, {});
 Draw.Cut = DrawCut;
 
+export { DrawCut };
 export default DrawCut;
 
 type CutResultLayer = L.Layer & {

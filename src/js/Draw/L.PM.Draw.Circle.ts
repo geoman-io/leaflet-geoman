@@ -64,4 +64,5 @@ class DrawCircle extends DrawCircleMarker {
 defineOptions(DrawCircle, {});
 Draw.Circle = DrawCircle;
 
+export { DrawCircle };
 export default DrawCircle;

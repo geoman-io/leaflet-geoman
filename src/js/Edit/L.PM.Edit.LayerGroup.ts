@@ -215,4 +215,5 @@ class EditLayerGroup {
 
 Edit.LayerGroup = EditLayerGroup;
 
+export { EditLayerGroup };
 export default EditLayerGroup;
