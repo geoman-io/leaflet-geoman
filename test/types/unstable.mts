@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
-import { PM } from '@geoman-io/leaflet-geoman-free';
 import {
+  PM,
   DrawTool,
   DrawPolygon,
   EditLine,

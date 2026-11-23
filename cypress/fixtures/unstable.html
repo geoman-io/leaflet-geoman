@@ -6,11 +6,10 @@
       { "imports": { "leaflet": "/node_modules/leaflet/dist/leaflet.js" } }
     </script>
     <script type="module">
-      // ./unstable first: it alone must set Geoman up
+      // ./unstable alone, the way @geoman-io packages use it
       const unstable = await import('/dist/leaflet-geoman-unstable.js');
-      const main = await import('/dist/leaflet-geoman.js');
       const L = await import('leaflet');
-      window.geoman = { unstable, main, map: new L.Map('map') };
+      window.geoman = { unstable, map: new L.Map('map') };
     </script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 import * as esbuild from 'esbuild';
-import { execFileSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
+import path from 'node:path';
 
 const plugins: esbuild.Plugin[] = [
   {
@@ -22,14 +23,7 @@ const plugins: esbuild.Plugin[] = [
 // The ES module: imports Leaflet from 'leaflet', for bundlers and import maps
 const buildOptions: esbuild.BuildOptions = {
   bundle: true,
-  // Both entries share their modules through a chunk, so an app or Pro that
-  // imports the main entry and ./unstable gets one copy of Geoman.
-  entryPoints: {
-    'leaflet-geoman': './src/js/index.ts',
-    'leaflet-geoman-unstable': './src/js/unstable.ts',
-  },
-  splitting: true,
-  chunkNames: 'chunks/[name]-[hash]',
+  entryPoints: ['./src/js/index.ts'],
   format: 'esm',
   external: ['leaflet'],
   loader: {
@@ -37,7 +31,7 @@ const buildOptions: esbuild.BuildOptions = {
     '.css': 'css',
     '.svg': 'dataurl',
   },
-  outdir: './dist',
+  outfile: './dist/leaflet-geoman.js',
   sourcemap: true,
   // Left for the app's bundler, which sets it for development or production
   define: { 'process.env.NODE_ENV': 'process.env.NODE_ENV' },
@@ -62,11 +56,8 @@ const leafletGlobal: esbuild.Plugin = {
 const globalOptions: esbuild.BuildOptions = {
   ...buildOptions,
   entryPoints: ['./src/js/global.ts'],
-  splitting: false,
-  chunkNames: undefined,
   format: 'iife',
   external: [],
-  outdir: undefined,
   outfile: './dist/leaflet-geoman-global.js',
   // esbuild's default: development for the .js, production for the .min.js
   define: {},
@@ -130,8 +121,16 @@ if (process.env.DEV) {
   await esbuild.build({
     ...buildOptions,
     minify: true,
-    entryNames: '[name].min',
-    chunkNames: 'chunks/[name]-[hash].min',
+    outfile: './dist/leaflet-geoman.min.js',
+    plugins,
+  });
+
+  // ./unstable for @geoman-io packages, which bundle and minify it themselves.
+  // It contains all of the main entry, so they import it instead of `.`.
+  await esbuild.build({
+    ...buildOptions,
+    entryPoints: ['./src/js/unstable.ts'],
+    outfile: './dist/leaflet-geoman-unstable.js',
     plugins,
   });
 
@@ -148,7 +147,6 @@ if (process.env.DEV) {
   for (const name of [
     'leaflet-geoman.min',
     'leaflet-geoman-unstable',
-    'leaflet-geoman-unstable.min',
     'leaflet-geoman-global',
     'leaflet-geoman-global.min',
   ]) {
@@ -167,27 +165,36 @@ if (process.env.DEV) {
   fs.copyFileSync('leaflet-geoman.d.ts', './dist/leaflet-geoman.d.ts');
 
   // Generate the types of ./unstable from the source
-  execFileSync('tsc', ['-p', 'tsconfig.unstable.json'], { stdio: 'inherit' });
+  // (execSync, so Windows finds tsc.cmd)
+  execSync('tsc -p tsconfig.unstable.json', { stdio: 'inherit' });
   // Node's ESM resolution, which TypeScript applies to consumers using
   // NodeNext, needs the file extension in relative imports
-  for (const file of fs.readdirSync('./dist/types', { recursive: true })) {
-    const path = `./dist/types/${file}`;
-    if (!path.endsWith('.d.ts')) continue;
+  for (const entry of fs.readdirSync('./dist/types', {
+    recursive: true,
+    encoding: 'utf8',
+  })) {
+    const file = path.join('./dist/types', entry);
+    if (!file.endsWith('.d.ts')) continue;
     // Stylesheet imports are for the bundler; in types they fail under
     // noUncheckedSideEffectImports
     const source = fs
-      .readFileSync(path, 'utf8')
-      .replace(/^import '[^']*\.css';\n/gm, '');
-    const dir = path.slice(0, path.lastIndexOf('/'));
+      .readFileSync(file, 'utf8')
+      .replace(/^import ['"][^'"]+\.css['"];\r?\n/gm, '');
+    const dir = path.dirname(file);
     const resolved = source.replace(
       /((?:from|import|declare module)\s*\(?\s*['"])(\.{1,2}\/[^'"]*)(['"])/g,
-      (match, start: string, specifier: string, end: string) =>
-        fs.existsSync(`${dir}/${specifier}.d.ts`)
-          ? `${start}${specifier}.js${end}`
-          : fs.existsSync(`${dir}/${specifier}/index.d.ts`)
-            ? `${start}${specifier}/index.js${end}`
-            : match
+      (match, start: string, specifier: string, end: string) => {
+        if (fs.existsSync(path.join(dir, `${specifier}.d.ts`))) {
+          return `${start}${specifier}.js${end}`;
+        }
+        if (fs.existsSync(path.join(dir, specifier, 'index.d.ts'))) {
+          return `${start}${specifier}/index.js${end}`;
+        }
+        if (path.extname(specifier)) return match;
+        // Left as it is, it would type its imports as any
+        throw new Error(`${file}: cannot resolve '${specifier}'`);
+      }
     );
-    fs.writeFileSync(path, resolved);
+    fs.writeFileSync(file, resolved);
   }
 }

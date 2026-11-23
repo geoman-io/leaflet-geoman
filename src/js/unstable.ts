@@ -1,13 +1,12 @@
 /* Leaflet-Geoman's unstable entry, `@geoman-io/leaflet-geoman-free/unstable`.
  *
- * It gives extensions such as Leaflet-Geoman Pro the classes and helpers they
- * build on. Its exports can change in any release, including a patch; pin an
- * exact version to use it. It shares one module instance with the main entry,
- * so importing both does not load Geoman twice.
+ * For @geoman-io packages such as Leaflet-Geoman Pro, which bundle an exact
+ * version of this package. It has no semver guarantee: its exports can change
+ * in any release. It contains all of the main entry, including `PM` and its
+ * setup, so import it instead of the main entry, never both: each would load
+ * its own copy of Geoman.
  */
-// PM and PMButton stay on the main entry, whose hand-written types describe
-// them; loading it here sets up Geoman when only this entry is imported.
-import './index';
+export { PM, PMButton } from './index';
 // The Leaflet and Geoman internals that the classes' types use
 import '../types/leaflet-internals';
 

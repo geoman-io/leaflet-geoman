@@ -1,22 +1,23 @@
-// The ./unstable entry that Pro builds on shares one module instance with the
-// main entry.
+// The ./unstable entry that @geoman-io packages bundle instead of the main
+// entry: on its own it sets Geoman up and exports PM's classes.
 describe('unstable entry', () => {
-  it('shares its classes with the main entry and sets Geoman up', () => {
+  it('sets Geoman up on its own and exports the classes PM uses', () => {
     cy.visit('/cypress/fixtures/unstable.html');
     cy.window()
       .its('geoman')
-      .then(({ unstable, main, map }: any) => {
-        const { PM } = main;
+      .then(({ unstable, map }: any) => {
+        const { PM } = unstable;
+        expect(map.pm).to.be.instanceOf(unstable.Map);
+        expect(map.pm.Draw).to.be.instanceOf(unstable.Draw);
+        expect(map.pm.Draw.Polygon).to.be.instanceOf(unstable.DrawPolygon);
         expect(unstable.DrawTool).to.equal(PM.DrawTool);
         expect(unstable.Draw).to.equal(PM.Draw);
-        expect(unstable.DrawPolygon).to.equal(PM.Draw.Polygon);
         expect(unstable.Edit).to.equal(PM.Edit);
         expect(unstable.EditLine).to.equal(PM.Edit.Line);
         expect(unstable.Map).to.equal(PM.Map);
         expect(unstable.Toolbar).to.equal(PM.Toolbar);
-        expect(unstable).not.to.have.property('PM');
-        expect(map.pm).to.be.instanceOf(PM.Map);
-        expect(map.pm.Draw).to.be.instanceOf(unstable.Draw);
+        expect(unstable.Utils).to.equal(PM.Utils);
+        expect(unstable.PMButton).to.be.a('function');
       });
   });
 });
