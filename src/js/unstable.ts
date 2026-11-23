@@ -8,6 +8,8 @@
 // PM and PMButton stay on the main entry, whose hand-written types describe
 // them; loading it here sets up Geoman when only this entry is imported.
 import './index';
+// The Leaflet and Geoman internals that the classes' types use
+import '../types/leaflet-internals';
 
 export { Map } from './L.PM.Map';
 export { Toolbar } from './Toolbar/L.PM.Toolbar';

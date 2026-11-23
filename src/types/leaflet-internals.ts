@@ -1,6 +1,7 @@
 import type * as L from 'leaflet';
 
-// Internal Leaflet fields used by the plugin. These are not shipped to consumers.
+// Internal Leaflet fields used by the plugin. Only consumers of ./unstable,
+// which loads this file, see them.
 declare module 'leaflet' {
   interface Polyline {
     _defaultShape(): L.LatLng[];

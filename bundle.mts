@@ -173,10 +173,14 @@ if (process.env.DEV) {
   for (const file of fs.readdirSync('./dist/types', { recursive: true })) {
     const path = `./dist/types/${file}`;
     if (!path.endsWith('.d.ts')) continue;
-    const source = fs.readFileSync(path, 'utf8');
+    // Stylesheet imports are for the bundler; in types they fail under
+    // noUncheckedSideEffectImports
+    const source = fs
+      .readFileSync(path, 'utf8')
+      .replace(/^import '[^']*\.css';\n/gm, '');
     const dir = path.slice(0, path.lastIndexOf('/'));
     const resolved = source.replace(
-      /((?:from|import)\s*\(?\s*['"])(\.{1,2}\/[^'"]*)(['"])/g,
+      /((?:from|import|declare module)\s*\(?\s*['"])(\.{1,2}\/[^'"]*)(['"])/g,
       (match, start: string, specifier: string, end: string) =>
         fs.existsSync(`${dir}/${specifier}.d.ts`)
           ? `${start}${specifier}.js${end}`
