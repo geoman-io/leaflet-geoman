@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 
 const plugins: esbuild.Plugin[] = [
@@ -21,7 +22,14 @@ const plugins: esbuild.Plugin[] = [
 // The ES module: imports Leaflet from 'leaflet', for bundlers and import maps
 const buildOptions: esbuild.BuildOptions = {
   bundle: true,
-  entryPoints: ['./src/js/index.ts'],
+  // Both entries share their modules through a chunk, so an app or Pro that
+  // imports the main entry and ./unstable gets one copy of Geoman.
+  entryPoints: {
+    'leaflet-geoman': './src/js/index.ts',
+    'leaflet-geoman-unstable': './src/js/unstable.ts',
+  },
+  splitting: true,
+  chunkNames: 'chunks/[name]-[hash]',
   format: 'esm',
   external: ['leaflet'],
   loader: {
@@ -29,7 +37,7 @@ const buildOptions: esbuild.BuildOptions = {
     '.css': 'css',
     '.svg': 'dataurl',
   },
-  outfile: './dist/leaflet-geoman.js',
+  outdir: './dist',
   sourcemap: true,
   // Left for the app's bundler, which sets it for development or production
   define: { 'process.env.NODE_ENV': 'process.env.NODE_ENV' },
@@ -54,8 +62,11 @@ const leafletGlobal: esbuild.Plugin = {
 const globalOptions: esbuild.BuildOptions = {
   ...buildOptions,
   entryPoints: ['./src/js/global.ts'],
+  splitting: false,
+  chunkNames: undefined,
   format: 'iife',
   external: [],
+  outdir: undefined,
   outfile: './dist/leaflet-geoman-global.js',
   // esbuild's default: development for the .js, production for the .min.js
   define: {},
@@ -119,7 +130,8 @@ if (process.env.DEV) {
   await esbuild.build({
     ...buildOptions,
     minify: true,
-    outfile: './dist/leaflet-geoman.min.js',
+    entryNames: '[name].min',
+    chunkNames: 'chunks/[name]-[hash].min',
     plugins,
   });
 
@@ -135,6 +147,8 @@ if (process.env.DEV) {
   // The other builds also emit the CSS; ship only leaflet-geoman.css
   for (const name of [
     'leaflet-geoman.min',
+    'leaflet-geoman-unstable',
+    'leaflet-geoman-unstable.min',
     'leaflet-geoman-global',
     'leaflet-geoman-global.min',
   ]) {
@@ -151,4 +165,25 @@ if (process.env.DEV) {
 
   // Copy types
   fs.copyFileSync('leaflet-geoman.d.ts', './dist/leaflet-geoman.d.ts');
+
+  // Generate the types of ./unstable from the source
+  execFileSync('tsc', ['-p', 'tsconfig.unstable.json'], { stdio: 'inherit' });
+  // Node's ESM resolution, which TypeScript applies to consumers using
+  // NodeNext, needs the file extension in relative imports
+  for (const file of fs.readdirSync('./dist/types', { recursive: true })) {
+    const path = `./dist/types/${file}`;
+    if (!path.endsWith('.d.ts')) continue;
+    const source = fs.readFileSync(path, 'utf8');
+    const dir = path.slice(0, path.lastIndexOf('/'));
+    const resolved = source.replace(
+      /((?:from|import)\s*\(?\s*['"])(\.{1,2}\/[^'"]*)(['"])/g,
+      (match, start: string, specifier: string, end: string) =>
+        fs.existsSync(`${dir}/${specifier}.d.ts`)
+          ? `${start}${specifier}.js${end}`
+          : fs.existsSync(`${dir}/${specifier}/index.d.ts`)
+            ? `${start}${specifier}/index.js${end}`
+            : match
+    );
+    fs.writeFileSync(path, resolved);
+  }
 }
