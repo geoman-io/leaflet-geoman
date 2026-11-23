@@ -22,6 +22,8 @@ interface PreparedAction extends ButtonAction {
  * Button options
  */
 export interface ButtonOptions {
+  /** The button's name, as in `createCustomControl({ name })` */
+  name?: string;
   position: string;
   disableByOtherButtons: boolean;
   tool?: string;

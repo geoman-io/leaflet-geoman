@@ -190,7 +190,9 @@ if (process.env.DEV) {
         if (fs.existsSync(path.join(dir, specifier, 'index.d.ts'))) {
           return `${start}${specifier}/index.js${end}`;
         }
-        if (path.extname(specifier)) return match;
+        // Files such as L.PM.Edit have dots in their names, so test for the
+        // extensions an import can carry
+        if (/\.(js|json|css)$/.test(specifier)) return match;
         // Left as it is, it would type its imports as any
         throw new Error(`${file}: cannot resolve '${specifier}'`);
       }

@@ -1,6 +1,7 @@
 import * as L from 'leaflet';
 import {
   PM,
+  PMButton,
   DrawTool,
   DrawPolygon,
   EditLine,
@@ -39,5 +40,7 @@ class Incomplete extends DrawTool {
 
 // @ts-expect-error the type is resolved, not any
 const wrong: number = new EditLine(new L.Polyline([])).getShape();
+
+new PMButton({ name: 'custom', position: 'topleft' });
 
 export { PM, enabled, shape, wrong, Incomplete };
