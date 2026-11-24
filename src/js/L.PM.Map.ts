@@ -154,12 +154,17 @@ class Map {
   // no `yieldTo` yields through its button, like the built-in modes.
   unstable_registerMode(name: string, mode: ModeDefinition) {
     const { button } = mode;
+    // Delegate rather than spread, so a class-instance mode keeps its
+    // prototype methods and `this`
     this._modes.register(
       name,
       mode.yieldTo || !button
         ? mode
         : {
-            ...mode,
+            targets: mode.targets,
+            button,
+            enabled: () => mode.enabled(),
+            disable: () => mode.disable(),
             yieldTo: this._yieldThroughButton(
               () => button,
               () => mode.disable()

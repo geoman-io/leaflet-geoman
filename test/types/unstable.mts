@@ -67,7 +67,8 @@ Toolbar.unstable_addButtonDefiner((toolbar: Toolbar, add) =>
   add('probe', new PMButton({ name: 'probe', position: 'topleft' }))
 );
 Toolbar.unstable_addButtonFilter(
-  (name: string, _button, options) => name !== 'probe' || !!options.drawMarker
+  (name: string, _button, options, toolbar: Toolbar) =>
+    name !== 'probe' || (!!options.drawMarker && toolbar.isVisible)
 );
 const handlers = new EditRectangle(
   new L.Rectangle([

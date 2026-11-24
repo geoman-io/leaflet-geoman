@@ -164,7 +164,8 @@ type ButtonDefiner = (
 type ButtonFilter = (
   name: string,
   button: IPMButton,
-  options: ToolbarOptions
+  options: ToolbarOptions,
+  toolbar: Toolbar
 ) => boolean;
 const buttonDefiners: ButtonDefiner[] = [];
 const buttonFilters: ButtonFilter[] = [];
@@ -174,7 +175,9 @@ class Toolbar {
    * Adds buttons after the built-in ones each time a toolbar defines its
    * buttons: on creation and on every `reinit`, such as from `setLang`. Like
    * built-in buttons they are opt-in and keep their `changeControlOrder`
-   * position. `add` throws for a name that is already taken. Toolbars created
+   * position; a name the definer stops adding is removed. `add` throws for a
+   * name that is already taken, which leaves the toolbar removed and, from
+   * `setLang`, the new language set without `pm:langchange`. Toolbars created
    * before the call get the buttons on their next `reinit`. For @geoman-io
    * packages, through ./unstable.
    */
@@ -642,6 +645,11 @@ class Toolbar {
     };
     this._definedButtons = current;
     buttonDefiners.forEach((definer) => definer(this, add));
+    previous.forEach((name) => {
+      if (!current.has(name)) {
+        delete this.buttons[name];
+      }
+    });
   }
 
   _showHideButtons() {
@@ -690,7 +698,9 @@ class Toolbar {
       if (
         this.options[btn] &&
         ignoreBtns.indexOf(btn) === -1 &&
-        buttonFilters.every((filter) => filter(btn, buttons[btn], this.options))
+        buttonFilters.every((filter) =>
+          filter(btn, buttons[btn], this.options, this)
+        )
       ) {
         // if options say the button should be visible, add it to the map
         let block = buttons[btn]._button.tool;

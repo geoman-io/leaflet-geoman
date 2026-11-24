@@ -197,6 +197,38 @@ describe('unstable entry', () => {
       map.pm.enableDraw('Marker');
       expect(stays()).to.equal(true);
       expect(map.pm.Toolbar.buttons.stays.toggled()).to.equal(true);
+      map.pm.disableDraw();
+      map.pm.Toolbar.buttons.stays._triggerClick();
+
+      // a class-instance mode keeps its prototype methods and `this`
+      class Probe {
+        on = false;
+        button = 'classMode';
+        enabled() {
+          return this.on;
+        }
+        disable() {
+          this.on = false;
+        }
+      }
+      const probe = new Probe();
+      let activate: () => void = () => {};
+      map.pm.Toolbar.createCustomControl({
+        name: 'classMode',
+        toggle: true,
+        onClick: () => {
+          probe.on = !probe.on;
+          if (probe.on) {
+            activate();
+          }
+        },
+      });
+      activate = map.pm.unstable_registerMode('classMode', probe);
+      map.pm.Toolbar.buttons.classMode._triggerClick();
+      expect(probe.on).to.equal(true);
+      map.pm.enableDraw('Marker');
+      expect(probe.on).to.equal(false);
+      expect(map.pm.Toolbar.buttons.classMode.toggled()).to.equal(false);
     });
   });
 
@@ -269,6 +301,39 @@ describe('unstable entry', () => {
         expect(Object.keys(toolbar.buttons)[0]).to.equal('probe');
         expect(toolbar.buttons.probe._button.title).to.equal('Probe de');
         expect(div.querySelectorAll('.probe-icon')).to.have.length(1);
+
+        // a name the definer skips is removed, and adding it back works
+        let skip = false;
+        Toolbar.unstable_addButtonDefiner(
+          (_toolbar: unknown, add: (name: string, btn: unknown) => void) => {
+            if (!skip) {
+              add(
+                'maybe',
+                new PMButton({
+                  className: 'maybe-icon',
+                  title: 'Maybe',
+                  onClick: () => {},
+                  afterClick: () => {},
+                  doToggle: false,
+                  toggleStatus: false,
+                  disableOtherButtons: false,
+                  position: 'topleft',
+                  actions: [],
+                })
+              );
+            }
+          }
+        );
+        map.pm.setLang('de');
+        map.pm.addControls({ maybe: true });
+        expect(div.querySelectorAll('.maybe-icon')).to.have.length(1);
+        skip = true;
+        map.pm.setLang('de');
+        expect(toolbar.buttons.maybe).to.equal(undefined);
+        expect(div.querySelectorAll('.maybe-icon')).to.have.length(0);
+        skip = false;
+        map.pm.setLang('de');
+        expect(div.querySelectorAll('.maybe-icon')).to.have.length(1);
 
         // a taken name throws instead of replacing a button
         Toolbar.unstable_addButtonDefiner(
