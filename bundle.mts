@@ -1,5 +1,7 @@
 import * as esbuild from 'esbuild';
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
+import path from 'node:path';
 
 const plugins: esbuild.Plugin[] = [
   {
@@ -123,6 +125,15 @@ if (process.env.DEV) {
     plugins,
   });
 
+  // ./unstable for @geoman-io packages, which bundle and minify it themselves.
+  // It contains all of the main entry, so they import it instead of `.`.
+  await esbuild.build({
+    ...buildOptions,
+    entryPoints: ['./src/js/unstable.ts'],
+    outfile: './dist/leaflet-geoman-unstable.js',
+    plugins,
+  });
+
   // Build the script build and its minified version
   await esbuild.build({ ...globalOptions, plugins: [leafletGlobal] });
   await esbuild.build({
@@ -135,6 +146,7 @@ if (process.env.DEV) {
   // The other builds also emit the CSS; ship only leaflet-geoman.css
   for (const name of [
     'leaflet-geoman.min',
+    'leaflet-geoman-unstable',
     'leaflet-geoman-global',
     'leaflet-geoman-global.min',
   ]) {
@@ -151,4 +163,40 @@ if (process.env.DEV) {
 
   // Copy types
   fs.copyFileSync('leaflet-geoman.d.ts', './dist/leaflet-geoman.d.ts');
+
+  // Generate the types of ./unstable from the source
+  // (execSync, so Windows finds tsc.cmd)
+  execSync('tsc -p tsconfig.unstable.json', { stdio: 'inherit' });
+  // Node's ESM resolution, which TypeScript applies to consumers using
+  // NodeNext, needs the file extension in relative imports
+  for (const entry of fs.readdirSync('./dist/types', {
+    recursive: true,
+    encoding: 'utf8',
+  })) {
+    const file = path.join('./dist/types', entry);
+    if (!file.endsWith('.d.ts')) continue;
+    // Stylesheet imports are for the bundler; in types they fail under
+    // noUncheckedSideEffectImports
+    const source = fs
+      .readFileSync(file, 'utf8')
+      .replace(/^import ['"][^'"]+\.css['"];\r?\n/gm, '');
+    const dir = path.dirname(file);
+    const resolved = source.replace(
+      /((?:from|import|declare module)\s*\(?\s*['"])(\.{1,2}\/[^'"]*)(['"])/g,
+      (match, start: string, specifier: string, end: string) => {
+        if (fs.existsSync(path.join(dir, `${specifier}.d.ts`))) {
+          return `${start}${specifier}.js${end}`;
+        }
+        if (fs.existsSync(path.join(dir, specifier, 'index.d.ts'))) {
+          return `${start}${specifier}/index.js${end}`;
+        }
+        // Files such as L.PM.Edit have dots in their names, so test for the
+        // extensions an import can carry
+        if (/\.(js|json|css)$/.test(specifier)) return match;
+        // Left as it is, it would type its imports as any
+        throw new Error(`${file}: cannot resolve '${specifier}'`);
+      }
+    );
+    fs.writeFileSync(file, resolved);
+  }
 }

@@ -26,7 +26,10 @@
     "dist/leaflet-geoman.min.js.map",
     "dist/leaflet-geoman-global.js.map",
     "dist/leaflet-geoman-global.min.js.map",
-    "dist/leaflet-geoman.css.map"
+    "dist/leaflet-geoman.css.map",
+    "dist/leaflet-geoman-unstable.js",
+    "dist/leaflet-geoman-unstable.js.map",
+    "dist/types"
   ],
   "type": "module",
   "main": "dist/leaflet-geoman.js",
@@ -36,6 +39,10 @@
     ".": {
       "types": "./dist/leaflet-geoman.d.ts",
       "default": "./dist/leaflet-geoman.js"
+    },
+    "./unstable": {
+      "types": "./dist/types/js/unstable.d.ts",
+      "default": "./dist/leaflet-geoman-unstable.js"
     },
     "./dist/leaflet-geoman.css": "./dist/leaflet-geoman.css",
     "./dist/leaflet-geoman-global.js": "./dist/leaflet-geoman-global.js",
