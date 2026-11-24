@@ -167,9 +167,9 @@ type ButtonFilter = (
   options: ToolbarOptions,
   toolbar: Toolbar
 ) => boolean;
-type ButtonResolver = (name: string) => string | undefined;
+type ToggleResolver = (name: string, toolbar: Toolbar) => string | undefined;
 const buttonDefiners: ButtonDefiner[] = [];
-const buttonResolvers: ButtonResolver[] = [];
+const toggleResolvers: ToggleResolver[] = [];
 const buttonFilters: ButtonFilter[] = [];
 
 class Toolbar {
@@ -195,26 +195,20 @@ class Toolbar {
     buttonFilters.push(filter);
   }
   /**
-   * Maps a name that isn't a button to the button that stands for it, such
-   * as a mode shown by another mode's button. Asked by `toggleButton`,
-   * `getButton` and the methods that take a shape or button name, only when
-   * no button has the name; the first defined answer wins. For @geoman-io
-   * packages, through ./unstable.
+   * Lets `toggleButton` toggle the button that stands for a name no button
+   * has, such as a sub-mode shown by a group's button; the resolver may also
+   * update that button, such as switching the sub-mode it shows. Asked only
+   * by `toggleButton` and only when no button has the name; the first
+   * defined answer wins. Other toolbar methods don't resolve.
+   * Sub-modes sharing a button: when switching, turn the old one off before
+   * `toggleButton(new, true)`, and only call `toggleButton(self, false)` while
+   * on, since either untoggles the shared button. Don't register them with
+   * `unstable_registerMode({ button })` without a `yieldTo`: yielding would
+   * click the shared button and can turn off the sub-mode turning on.
+   * For @geoman-io packages, through ./unstable.
    */
-  static unstable_addButtonResolver(resolver: ButtonResolver) {
-    buttonResolvers.push(resolver);
-  }
-  _resolveButtonName(name: string) {
-    if (this.buttons[name]) {
-      return name;
-    }
-    for (const resolver of buttonResolvers) {
-      const resolved = resolver(name);
-      if (resolved !== undefined) {
-        return resolved;
-      }
-    }
-    return name;
+  static unstable_addToggleResolver(resolver: ToggleResolver) {
+    toggleResolvers.push(resolver);
   }
   declare _definedButtons: Set<string>;
   declare options: ToolbarOptions;
@@ -402,7 +396,16 @@ class Toolbar {
       name = 'removalMode';
     }
 
-    const toggleBtnName = this._resolveButtonName(name);
+    let toggleBtnName = name;
+    if (!this.buttons[name]) {
+      for (const resolver of toggleResolvers) {
+        const resolved = resolver(name, this);
+        if (resolved !== undefined) {
+          toggleBtnName = resolved;
+          break;
+        }
+      }
+    }
 
     // as some mode got enabled, we still have to trigger the click on the other buttons
     // to disable their mode
@@ -846,7 +849,7 @@ class Toolbar {
     return Boolean(this.getButton(name));
   }
   getButton(name: string) {
-    return this.getButtons()[this._resolveButtonName(name)];
+    return this.getButtons()[name];
   }
   getButtonsInBlock(name: string) {
     const buttonsInBlock: Record<string, IPMButton> = {};
@@ -969,9 +972,7 @@ class Toolbar {
   }
   _btnNameMapping(name: string) {
     const shapeMapping = this._shapeMapping();
-    return this._resolveButtonName(
-      shapeMapping[name] ? shapeMapping[name] : name
-    );
+    return shapeMapping[name] ? shapeMapping[name] : name;
   }
 }
 

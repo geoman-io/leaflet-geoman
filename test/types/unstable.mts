@@ -70,8 +70,8 @@ Toolbar.unstable_addButtonFilter(
   (name: string, _button, options, toolbar: Toolbar) =>
     name !== 'probe' || (!!options.drawMarker && toolbar.isVisible)
 );
-Toolbar.unstable_addButtonResolver((name: string) =>
-  name === 'subMode' ? 'probe' : undefined
+Toolbar.unstable_addToggleResolver((name: string, toolbar: Toolbar) =>
+  name === 'subMode' && toolbar.isVisible ? 'probe' : undefined
 );
 const handlers = new EditRectangle(
   new L.Rectangle([

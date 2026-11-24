@@ -345,12 +345,20 @@ describe('unstable entry', () => {
     });
   });
 
-  it('resolves a sub-mode name to the button that stands for it', () => {
+  it('lets toggleButton resolve a sub-mode to its group button', () => {
     load().then(({ unstable, map }: any) => {
       map.setView([51.5, -0.09], 13);
       const toolbar = map.pm.Toolbar;
-      unstable.Toolbar.unstable_addButtonResolver((name: string) =>
-        name === 'subMode' || name === 'drawMarker' ? 'groupMode' : undefined
+      const asked: string[] = [];
+      unstable.Toolbar.unstable_addToggleResolver(
+        (name: string, tb: unknown) => {
+          if (name !== 'subMode' && name !== 'drawMarker') {
+            return undefined;
+          }
+          // the resolver gets the toolbar, to switch what the group shows
+          asked.push(`${name}:${tb === toolbar}`);
+          return 'groupMode';
+        }
       );
       map.pm.addControls();
       let clicks = 0;
@@ -362,16 +370,16 @@ describe('unstable entry', () => {
         },
       });
       const group = toolbar.buttons.groupMode;
-      expect(toolbar.getButton('subMode')).to.equal(group);
-      expect(toolbar.controlExists('subMode')).to.equal(true);
-      // a real button keeps its name
-      expect(toolbar.getButton('drawMarker')).to.equal(
-        toolbar.buttons.drawMarker
-      );
-      // unresolved names behave as before
-      expect(toolbar.getButton('nope')).to.equal(undefined);
-      expect(toolbar.getButton('Line')).to.equal(undefined);
-      expect(toolbar._btnNameMapping('Line')).to.equal('drawPolyline');
+      // only toggleButton resolves
+      expect(toolbar.getButton('subMode')).to.equal(undefined);
+      expect(toolbar.controlExists('subMode')).to.equal(false);
+      expect(toolbar._btnNameMapping('subMode')).to.equal('subMode');
+      // a real button keeps its name and the resolver isn't asked
+      toolbar.toggleButton('drawMarker', true);
+      expect(toolbar.buttons.drawMarker.toggled()).to.equal(true);
+      expect(group.toggled()).to.equal(false);
+      toolbar.toggleButton('drawMarker', false);
+      expect(asked).to.deep.equal([]);
 
       // the sub-mode's enable, from a click on the group's button, toggles
       // that button on: it must not be clicked off as another toggled button
@@ -389,8 +397,10 @@ describe('unstable entry', () => {
       expect(group.toggled()).to.equal(true);
       expect(clicks).to.equal(0);
 
-      toolbar.setButtonDisabled('subMode', true);
-      expect(group._button.disabled).to.equal(true);
+      expect(asked).to.include('subMode:true');
+      // deleting a sub-mode doesn't delete its group's button
+      toolbar.deleteControl('subMode');
+      expect(toolbar.buttons.groupMode).to.equal(group);
     });
   });
 
