@@ -38,13 +38,13 @@ const buttonNames: Record<string, string> = {
  * through ./unstable.
  */
 export function registerButtonName(shape: string, button: string) {
-  if (buttonNames[shape] === button) {
+  // The table the toolbar reads, so the `Polyline` alias counts as taken
+  const taken = shapeButtonNames()[shape];
+  if (taken === button) {
     return;
   }
-  if (buttonNames[shape]) {
-    throw new TypeError(
-      `Shape ${shape} already has the button ${buttonNames[shape]}`
-    );
+  if (taken) {
+    throw new TypeError(`Shape ${shape} already has the button ${taken}`);
   }
   const owner = shapeOfButtonName(button);
   if (owner) {

@@ -92,6 +92,9 @@ describe('unstable entry', () => {
       expect(() => unstable.registerButtonName('Line', 'x')).to.throw(
         'already has'
       );
+      expect(() => unstable.registerButtonName('Polyline', 'drawFoo')).to.throw(
+        'already has'
+      );
       expect(() => unstable.registerButtonName('Other', 'drawStar')).to.throw(
         'already belongs'
       );
