@@ -374,6 +374,17 @@ class DrawLine extends DrawTool {
       return;
     }
 
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:vertex',
+        shape: this._shape,
+        layer: this._layer,
+        latlng,
+      })
+    ) {
+      return;
+    }
+
     this._layer._latlngInfo = this._layer._latlngInfo || [];
     this._layer._latlngInfo.push({
       latlng,
@@ -471,6 +482,15 @@ class DrawLine extends DrawTool {
       coords,
       this.options.pathOptions ?? undefined
     );
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:finish',
+        shape: this._shape,
+        layer: polylineLayer,
+      })
+    ) {
+      return;
+    }
     this._setPane(polylineLayer, 'layerPane');
     this._finishLayer(polylineLayer);
     polylineLayer.addTo(this._map.pm._getContainingLayer());

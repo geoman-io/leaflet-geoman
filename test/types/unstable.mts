@@ -10,6 +10,8 @@ import {
   addTranslations,
   applyMixins,
   registerButtonName,
+  type UnstableChange,
+  type UnstableValidator,
 } from '@geoman-io/leaflet-geoman-free/unstable';
 
 const enabled: boolean = new L.Map('other').pm.globalDrawModeEnabled();
@@ -73,6 +75,9 @@ Toolbar.unstable_addButtonFilter(
 Toolbar.unstable_addToggleResolver((name: string, toolbar: Toolbar) =>
   name === 'subMode' && toolbar.isVisible ? 'probe' : undefined
 );
+const validator: UnstableValidator = (change: UnstableChange) =>
+  change.action !== 'drag' || change.delta.lat < 1;
+map.pm.unstable_validators.push(validator);
 const handlers = new EditRectangle(
   new L.Rectangle([
     [0, 0],

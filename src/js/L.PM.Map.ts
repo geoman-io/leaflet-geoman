@@ -71,6 +71,21 @@ import { resolveLanguageCode } from './helpers/language';
 import ModeManager from './helpers/ModeManager';
 import type { ModeDefinition } from './helpers/ModeManager';
 
+/**
+ * A change validators check. `draw:vertex` places a point of the working
+ * `layer`; `draw:finish` is the final layer before it's added; the edit
+ * actions come after the change, which a veto resets; `drag` and `rotate`
+ * come before each frame is applied, which a veto skips.
+ */
+export type UnstableChange = { shape: string; layer: L.Layer } & (
+  | { action: 'draw:vertex'; latlng: L.LatLng }
+  | { action: 'draw:finish' }
+  | { action: 'edit:vertexmove' | 'edit:vertexremove' }
+  | { action: 'drag'; delta: L.LatLngLiteral }
+  | { action: 'rotate'; latlngs: L.LatLng[] | L.LatLng[][] | L.LatLng[][][] }
+);
+export type UnstableValidator = (change: UnstableChange) => boolean | void;
+
 class Map {
   declare map: L.Map & { pm: Map };
   declare Draw: Draw;
@@ -78,6 +93,13 @@ class Map {
   declare Keyboard: IKeyboardMixin;
   declare globalOptions: GlobalOptions;
   declare _modes: ModeManager;
+  /**
+   * Checks a change before it is applied, or right after for vertex edits,
+   * which are then reset. A validator returning `false` vetoes it. Drag and
+   * rotate run it on every frame. For @geoman-io packages, without a semver
+   * guarantee.
+   */
+  declare unstable_validators: UnstableValidator[];
 
   declare options: object;
 
@@ -92,6 +114,7 @@ class Map {
     // Draw tools first, then the global modes: the order Escape used to
     // check them in.
     this._modes = new ModeManager(() => !!this.globalOptions.combineModes);
+    this.unstable_validators = [];
     this.Draw.shapes.forEach((shape) => this._registerDrawMode(shape));
     this._registerGlobalMode(
       'edit',
@@ -172,6 +195,16 @@ class Map {
           }
     );
     return () => this._modes._exclusive(name);
+  }
+  /** False when a validator vetoes the change. */
+  _isValidChange(change: UnstableChange) {
+    const validators = this.unstable_validators;
+    for (let i = 0; i < validators.length; i += 1) {
+      if (validators[i](change) === false) {
+        return false;
+      }
+    }
+    return true;
   }
   unstable_activeModes() {
     return this._modes.active();

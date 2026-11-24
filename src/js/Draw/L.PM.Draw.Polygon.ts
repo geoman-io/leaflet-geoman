@@ -160,6 +160,15 @@ class DrawPolygon extends DrawLine {
     }
 
     const polygonLayer = new L.Polygon(coords, this.options.pathOptions);
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:finish',
+        shape: this._shape,
+        layer: polygonLayer,
+      })
+    ) {
+      return;
+    }
     this._setPane(polygonLayer, 'layerPane');
     this._finishLayer(polygonLayer);
     polygonLayer.addTo(this._map.pm._getContainingLayer());

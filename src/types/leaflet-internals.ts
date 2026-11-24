@@ -39,6 +39,8 @@ declare module '../../leaflet-geoman' {
       removeLayer(event: { target: L.Layer }): void;
       _modes: import('../js/helpers/ModeManager').default;
       _registerDrawMode(shape: string): void;
+      unstable_validators: import('../js/L.PM.Map').UnstableValidator[];
+      _isValidChange(change: import('../js/L.PM.Map').UnstableChange): boolean;
     }
     interface PMLayer {
       options: PM.EditModeOptions;

@@ -123,6 +123,7 @@ export interface DragMixinContext {
   _dragging: boolean;
   _disableAfterDrag?: boolean;
   _tempDragCoord: L.LatLng | null | undefined;
+  _shape: string;
   options: {
     draggable?: boolean;
     snappable?: boolean;
@@ -470,6 +471,19 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       lat: latlng!.lat - this._tempDragCoord!.lat,
       lng: latlng!.lng - this._tempDragCoord!.lng,
     };
+
+    // A vetoed frame keeps _tempDragCoord, so the next one catches up
+    if (
+      this._map.pm.unstable_validators.length &&
+      !this._map.pm._isValidChange({
+        action: 'drag',
+        shape: this._shape,
+        layer: this._layer,
+        delta: deltaLatLng,
+      })
+    ) {
+      return;
+    }
 
     // move the coordinates by the delta
     const moveCoords = (coords: CoordinateTree[]): CoordinateTree[] =>

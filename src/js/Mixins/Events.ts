@@ -120,7 +120,7 @@ export interface IEventMixin {
   ): void;
   _fireLayerReset(
     e: L.LeafletEvent,
-    indexPath: number[],
+    indexPath?: number[],
     source?: string,
     customPayload?: EventPayload
   ): void;

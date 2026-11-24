@@ -153,13 +153,12 @@ class EditLine extends Edit {
     // if shape gets removed from map, disable edit mode
     this._layer.on('remove', this.disable, this);
 
-    if (!this.options.allowSelfIntersection) {
-      this._layer.on(
-        'pm:vertexremoved',
-        this._handleSelfIntersectionOnVertexRemoval,
-        this
-      );
-    }
+    // resets a removal that self-intersects or a validator vetoes
+    this._layer.on(
+      'pm:vertexremoved',
+      this._handleSelfIntersectionOnVertexRemoval,
+      this
+    );
 
     if (!this.options.allowSelfIntersection) {
       if (this._layer.options.color !== '#f00000ff') {
@@ -193,13 +192,11 @@ class EditLine extends Edit {
     // remove listener
     this._layer.off('remove', this.disable, this);
 
-    if (!this.options.allowSelfIntersection) {
-      this._layer.off(
-        'pm:vertexremoved',
-        this._handleSelfIntersectionOnVertexRemoval,
-        this
-      );
-    }
+    this._layer.off(
+      'pm:vertexremoved',
+      this._handleSelfIntersectionOnVertexRemoval,
+      this
+    );
 
     // remove draggable class
     const el = this._layer._path
@@ -493,11 +490,30 @@ class EditLine extends Edit {
     return selfIntersection.features.length > 0;
   }
 
+  // Edits are snapshotted to reset them on a self-intersection or a veto
+  _resetsEdits() {
+    return (
+      !this.options.allowSelfIntersection ||
+      this._map.pm.unstable_validators.length > 0
+    );
+  }
+  // A validator vetoed the edit just made; only checked with a snapshot
+  _vetoed(action: 'edit:vertexmove' | 'edit:vertexremove') {
+    return (
+      !!this._coordsBeforeEdit &&
+      !this._map.pm._isValidChange({
+        action,
+        shape: this._shape!,
+        layer: this._layer,
+      })
+    );
+  }
   _handleSelfIntersectionOnVertexRemoval() {
     // check for selfintersection again (mainly to reset the style)
-    const selfIntersection = this._handleLayerStyle(true);
+    const selfIntersection =
+      !this.options.allowSelfIntersection && this._handleLayerStyle(true);
 
-    if (selfIntersection) {
+    if (selfIntersection || this._vetoed('edit:vertexremove')) {
       // reset coordinates
       this._layer.setLatLngs(this._coordsBeforeEdit!);
       this._coordsBeforeEdit = null;
@@ -588,9 +604,9 @@ class EditLine extends Edit {
       return;
     }
 
-    // if self intersection isn't allowed, save the coords upon dragstart
-    // in case we need to reset the layer
-    if (!this.options.allowSelfIntersection) {
+    // if self intersection isn't allowed or a validator may veto, save the
+    // coords upon dragstart in case we need to reset the layer
+    if (this._resetsEdits()) {
       this._coordsBeforeEdit = copyLatLngs(
         this._layer,
         this._layer.getLatLngs()
@@ -860,9 +876,9 @@ class EditLine extends Edit {
 
     this._fireMarkerDragStart(e, indexPath);
 
-    // if self intersection isn't allowed, save the coords upon dragstart
-    // in case we need to reset the layer
-    if (!this.options.allowSelfIntersection) {
+    // if self intersection isn't allowed or a validator may veto, save the
+    // coords upon dragstart in case we need to reset the layer
+    if (this._resetsEdits()) {
       this._coordsBeforeEdit = copyLatLngs(
         this._layer,
         this._layer.getLatLngs()
@@ -981,7 +997,8 @@ class EditLine extends Edit {
     }
 
     const intersectionReset =
-      !this.options.allowSelfIntersection && intersection;
+      (!this.options.allowSelfIntersection && intersection) ||
+      this._vetoed('edit:vertexmove');
 
     this._fireMarkerDragEnd(e, indexPath, intersectionReset);
 
@@ -998,7 +1015,9 @@ class EditLine extends Edit {
       }
 
       // check for selfintersection again (mainly to reset the style)
-      this._handleLayerStyle();
+      if (!this.options.allowSelfIntersection) {
+        this._handleLayerStyle();
+      }
 
       this._fireLayerReset(e, indexPath);
       return;

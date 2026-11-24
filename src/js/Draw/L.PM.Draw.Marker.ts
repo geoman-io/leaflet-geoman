@@ -278,6 +278,15 @@ class DrawMarker extends DrawTool {
       latlng,
       markerDrawOptions(this.options.markerStyle)
     );
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:finish',
+        shape: this._shape,
+        layer: marker,
+      })
+    ) {
+      return;
+    }
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 

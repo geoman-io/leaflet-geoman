@@ -238,6 +238,15 @@ class DrawText extends DrawTool {
       _textMarkerOverPM: true, // we need to put this into the options, else we can't catch this in the init method
       icon: textAreaIcon,
     });
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:finish',
+        shape: this._shape,
+        layer: marker,
+      })
+    ) {
+      return;
+    }
     this._setPane(marker, 'markerPane');
     this._finishLayer(marker);
 
