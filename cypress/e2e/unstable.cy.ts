@@ -155,4 +155,149 @@ describe('unstable entry', () => {
       expect(rect.pm).to.be.instanceOf(unstable.EditRectangle);
     });
   });
+
+  it('lets a registered mode yield through its button', () => {
+    load().then(({ map }: any) => {
+      map.setView([51.5, -0.09], 13);
+      map.pm.addControls();
+      const add = (name: string, disableByOtherButtons: boolean) => {
+        let on = false;
+        let activate: () => void = () => {};
+        map.pm.Toolbar.createCustomControl({
+          name,
+          toggle: true,
+          disableByOtherButtons,
+          onClick: () => {
+            on = !on;
+            if (on) {
+              activate();
+            }
+          },
+        });
+        activate = map.pm.unstable_registerMode(name, {
+          enabled: () => on,
+          disable: () => {
+            on = false;
+          },
+          button: name,
+        });
+        return () => on;
+      };
+      const yields = add('yields', true);
+      map.pm.Toolbar.buttons.yields._triggerClick();
+      expect(yields()).to.equal(true);
+      map.pm.enableDraw('Marker');
+      // clicked off, not disabled behind a still toggled button
+      expect(yields()).to.equal(false);
+      expect(map.pm.Toolbar.buttons.yields.toggled()).to.equal(false);
+      map.pm.disableDraw();
+
+      const stays = add('stays', false);
+      map.pm.Toolbar.buttons.stays._triggerClick();
+      map.pm.enableDraw('Marker');
+      expect(stays()).to.equal(true);
+      expect(map.pm.Toolbar.buttons.stays.toggled()).to.equal(true);
+    });
+  });
+
+  it('binds the corner drag handlers a rectangle editor returns', () => {
+    load().then(({ L, map }: any) => {
+      map.setView([51.5, -0.09], 13);
+      const plain = new L.Rectangle([
+        [51.5, -0.1],
+        [51.51, -0.08],
+      ]).addTo(map);
+      expect(plain.pm.unstable_cornerDragHandlers().drag).to.equal(
+        plain.pm._onMarkerDrag
+      );
+      const rect = new L.Rectangle([
+        [51.49, -0.1],
+        [51.495, -0.08],
+      ]).addTo(map);
+      const calls: string[] = [];
+      const handler = (name: string) =>
+        function (this: unknown) {
+          calls.push(`${name}:${this === rect.pm}`);
+        };
+      rect.pm.unstable_cornerDragHandlers = () => ({
+        dragstart: handler('start'),
+        drag: handler('drag'),
+        dragend: handler('end'),
+      });
+      rect.pm.enable();
+      const before = JSON.stringify(rect.getLatLngs());
+      rect.pm._markers[0][0].fire('dragstart').fire('drag').fire('dragend');
+      expect(calls).to.deep.equal(['start:true', 'drag:true', 'end:true']);
+      expect(JSON.stringify(rect.getLatLngs())).to.equal(before);
+    });
+  });
+
+  it('adds defined buttons that are opt-in and rebuilt on setLang', () => {
+    load().then(({ unstable, L }: any) => {
+      cy.document().then((doc) => {
+        const { PM, PMButton, Toolbar } = unstable;
+        Toolbar.unstable_addButtonDefiner(
+          (_toolbar: unknown, add: (name: string, btn: unknown) => void) =>
+            add(
+              'probe',
+              new PMButton({
+                className: 'probe-icon',
+                title: `Probe ${PM.activeLang}`,
+                onClick: () => {},
+                afterClick: () => {},
+                doToggle: false,
+                toggleStatus: false,
+                disableOtherButtons: false,
+                position: 'topleft',
+                actions: [],
+              })
+            )
+        );
+        const div = doc.createElement('div');
+        div.style.height = '300px';
+        doc.body.appendChild(div);
+        const map = new L.Map(div).setView([51.5, -0.09], 13);
+        const toolbar = map.pm.Toolbar;
+        map.pm.addControls();
+        expect(toolbar.options.probe).to.equal(false);
+        expect(div.querySelectorAll('.probe-icon')).to.have.length(0);
+        map.pm.addControls({ probe: true });
+        expect(div.querySelectorAll('.probe-icon')).to.have.length(1);
+
+        map.pm.Toolbar.changeControlOrder(['probe', 'drawMarker']);
+        map.pm.setLang('de');
+        expect(Object.keys(toolbar.buttons)[0]).to.equal('probe');
+        expect(toolbar.buttons.probe._button.title).to.equal('Probe de');
+        expect(div.querySelectorAll('.probe-icon')).to.have.length(1);
+
+        // a taken name throws instead of replacing a button
+        Toolbar.unstable_addButtonDefiner(
+          (_toolbar: unknown, add: (name: string, btn: unknown) => void) =>
+            add('drawMarker', toolbar.buttons.probe)
+        );
+        expect(() => map.pm.setLang('en')).to.throw('already exists');
+      });
+    });
+  });
+
+  it('leaves out buttons a filter refuses, keeping their options', () => {
+    load().then(({ unstable, map }: any) => {
+      const seen: string[] = [];
+      let showMarker = false;
+      unstable.Toolbar.unstable_addButtonFilter((name: string) => {
+        seen.push(name);
+        return name !== 'drawMarker' || showMarker;
+      });
+      const markers = () =>
+        map.getContainer().querySelectorAll('.leaflet-pm-icon-marker').length;
+      map.pm.addControls({ drawText: false });
+      expect(markers()).to.equal(0);
+      expect(map.pm.Toolbar.options.drawMarker).to.equal(true);
+      expect(seen).to.include('drawPolygon');
+      expect(seen).not.to.include('drawText');
+      showMarker = true;
+      map.pm.addControls();
+      expect(markers()).to.equal(1);
+    });
+  });
 });

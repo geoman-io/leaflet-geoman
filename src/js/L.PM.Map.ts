@@ -150,9 +150,22 @@ class Map {
   }
 
   // Unstable: for @geoman-io packages, without a semver guarantee. Returns
-  // the function the mode calls when it turns on.
+  // the function the mode calls when it turns on. A mode with a `button` and
+  // no `yieldTo` yields through its button, like the built-in modes.
   unstable_registerMode(name: string, mode: ModeDefinition) {
-    this._modes.register(name, mode);
+    const { button } = mode;
+    this._modes.register(
+      name,
+      mode.yieldTo || !button
+        ? mode
+        : {
+            ...mode,
+            yieldTo: this._yieldThroughButton(
+              () => button,
+              () => mode.disable()
+            ),
+          }
+    );
     return () => this._modes._exclusive(name);
   }
   unstable_activeModes() {

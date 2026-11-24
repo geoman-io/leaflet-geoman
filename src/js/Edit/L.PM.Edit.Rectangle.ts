@@ -126,11 +126,28 @@ class EditRectangle extends EditPolygon {
     return marker;
   }
   // Add marker events after adding the snapping events to the markers, beacause of the execution order
+  /**
+   * The drag handlers bound to each corner marker, called with the editor
+   * as `this`. A subclass returns its own to replace corner resizing. For
+   * @geoman-io packages.
+   */
+  unstable_cornerDragHandlers(): {
+    dragstart: L.LeafletEventHandlerFn;
+    drag: L.LeafletEventHandlerFn;
+    dragend: L.LeafletEventHandlerFn;
+  } {
+    return {
+      dragstart: this._onMarkerDragStart as L.LeafletEventHandlerFn,
+      drag: this._onMarkerDrag as L.LeafletEventHandlerFn,
+      dragend: this._onMarkerDragEnd as L.LeafletEventHandlerFn,
+    };
+  }
   _addMarkerEvents() {
+    const { dragstart, drag, dragend } = this.unstable_cornerDragHandlers();
     this._markers[0].forEach((marker) => {
-      marker.on('dragstart', this._onMarkerDragStart, this);
-      marker.on('drag', this._onMarkerDrag, this);
-      marker.on('dragend', this._onMarkerDragEnd, this);
+      marker.on('dragstart', dragstart, this);
+      marker.on('drag', drag, this);
+      marker.on('dragend', dragend, this);
 
       // TODO: Can we remove this? The _removeMarker Event is a empty function
       if (!this.options.preventMarkerRemoval) {

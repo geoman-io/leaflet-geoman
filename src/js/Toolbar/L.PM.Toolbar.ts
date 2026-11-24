@@ -157,7 +157,39 @@ const optionText = (value: unknown): string => {
   return '';
 };
 
+type ButtonDefiner = (
+  toolbar: Toolbar,
+  add: (name: string, button: IPMButton) => void
+) => void;
+type ButtonFilter = (
+  name: string,
+  button: IPMButton,
+  options: ToolbarOptions
+) => boolean;
+const buttonDefiners: ButtonDefiner[] = [];
+const buttonFilters: ButtonFilter[] = [];
+
 class Toolbar {
+  /**
+   * Adds buttons after the built-in ones each time a toolbar defines its
+   * buttons: on creation and on every `reinit`, such as from `setLang`. Like
+   * built-in buttons they are opt-in and keep their `changeControlOrder`
+   * position. `add` throws for a name that is already taken. Toolbars created
+   * before the call get the buttons on their next `reinit`. For @geoman-io
+   * packages, through ./unstable.
+   */
+  static unstable_addButtonDefiner(definer: ButtonDefiner) {
+    buttonDefiners.push(definer);
+  }
+  /**
+   * Asked for each opted-in button each time the toolbar renders; returning
+   * false leaves the button out without changing its option. For @geoman-io
+   * packages, through ./unstable.
+   */
+  static unstable_addButtonFilter(filter: ButtonFilter) {
+    buttonFilters.push(filter);
+  }
+  declare _definedButtons: Set<string>;
   declare options: ToolbarOptions;
   declare customButtons: IPMButton[];
   declare map: ExtendedMap;
@@ -196,6 +228,7 @@ class Toolbar {
     this.map = map as typeof this.map;
 
     this.buttons = {};
+    this._definedButtons = new Set();
     this.isVisible = false;
     this.drawContainer = L.DomUtil.create(
       'div',
@@ -595,6 +628,20 @@ class Toolbar {
     this._addButton('cutPolygon', new PMButton(cutButton));
     this._addButton('removalMode', new PMButton(deleteButton));
     this._addButton('rotateMode', new PMButton(rotateButton));
+
+    // Names a definer added last time may be replaced; any other taken name
+    // would silently drop a built-in or custom button
+    const previous = this._definedButtons;
+    const current = new Set<string>();
+    const add = (name: string, button: IPMButton) => {
+      if (current.has(name) || (this.buttons[name] && !previous.has(name))) {
+        throw new TypeError(`Button ${name} already exists`);
+      }
+      current.add(name);
+      this._addButton(name, button);
+    };
+    this._definedButtons = current;
+    buttonDefiners.forEach((definer) => definer(this, add));
   }
 
   _showHideButtons() {
@@ -640,7 +687,11 @@ class Toolbar {
     }
 
     for (const btn in buttons) {
-      if (this.options[btn] && ignoreBtns.indexOf(btn) === -1) {
+      if (
+        this.options[btn] &&
+        ignoreBtns.indexOf(btn) === -1 &&
+        buttonFilters.every((filter) => filter(btn, buttons[btn], this.options))
+      ) {
         // if options say the button should be visible, add it to the map
         let block = buttons[btn]._button.tool;
         if (!block) {
