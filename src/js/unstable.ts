@@ -40,5 +40,10 @@ export { applyMixins, defineOptions } from './helpers/classes';
 export type { MixinMembers } from './helpers/classes';
 
 // Geometry helpers that extensions would otherwise copy
-export { copyLatLngs, destinationOnLine } from './helpers';
+export {
+  addTranslations,
+  copyLatLngs,
+  destinationOnLine,
+  registerButtonName,
+} from './helpers';
 export { default as Utils } from './L.PM.Utils';

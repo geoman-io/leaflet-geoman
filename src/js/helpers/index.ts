@@ -2,6 +2,68 @@ import * as L from 'leaflet';
 import get from 'lodash/get';
 import { PM } from '../PM';
 import translations from '../../assets/translations';
+import { mergeOptions } from './options';
+
+/**
+ * Deep-merges `tree` into the translations of `lang`, which need not exist
+ * yet. `lang` is trimmed and lowercased; pass the key `setLang` resolves to,
+ * such as `de` or `pt_br`. Rendered buttons update on the next `setLang` or
+ * toolbar reinit, and a later `setLang(lang, override)` rebuilds the language
+ * from its fallback. For @geoman-io packages, through ./unstable.
+ */
+export function addTranslations(lang: string, tree: object) {
+  lang = lang.trim().toLowerCase();
+  translations[lang] = mergeOptions(mergeOptions({}, translations[lang]), tree);
+}
+
+// The toolbar button of each shape or mode
+const buttonNames: Record<string, string> = {
+  Marker: 'drawMarker',
+  Circle: 'drawCircle',
+  Polygon: 'drawPolygon',
+  Rectangle: 'drawRectangle',
+  Line: 'drawPolyline',
+  CircleMarker: 'drawCircleMarker',
+  Edit: 'editMode',
+  Drag: 'dragMode',
+  Cut: 'cutPolygon',
+  Removal: 'removalMode',
+  Rotate: 'rotateMode',
+  Text: 'drawText',
+};
+
+/**
+ * Names the toolbar button of a shape or mode that isn't built in, so the
+ * toolbar and the draw registry accept either name. For @geoman-io packages,
+ * through ./unstable.
+ */
+export function registerButtonName(shape: string, button: string) {
+  // The table the toolbar reads, so the `Polyline` alias counts as taken
+  const taken = shapeButtonNames()[shape];
+  if (taken === button) {
+    return;
+  }
+  if (taken) {
+    throw new TypeError(`Shape ${shape} already has the button ${taken}`);
+  }
+  const owner = shapeOfButtonName(button);
+  if (owner) {
+    throw new TypeError(`Button ${button} already belongs to ${owner}`);
+  }
+  buttonNames[shape] = button;
+}
+
+/** The button of each shape, plus the `Polyline` alias of `Line`. */
+export function shapeButtonNames(): Record<string, string> {
+  return { ...buttonNames, Polyline: 'drawPolyline' };
+}
+
+/** The shape of a button name, or undefined when it isn't one. */
+export function shapeOfButtonName(button: string) {
+  return Object.keys(buttonNames).find(
+    (shape) => buttonNames[shape] === button
+  );
+}
 
 export function getTranslation(path: string): string {
   const lang = PM.activeLang;

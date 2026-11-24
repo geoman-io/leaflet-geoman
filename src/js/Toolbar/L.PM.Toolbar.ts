@@ -125,6 +125,8 @@ type ExtendedMap = L.Map & {
  */
 interface CustomControlOptions {
   name: string;
+  /** For @geoman-io packages: the draw tool the button's actions call. */
+  unstable_jsClass?: string;
   className?: string;
   title?: string;
   onClick?: (e: Event | undefined, ctx: ButtonClickContext) => void;
@@ -143,7 +145,7 @@ type ToolbarWithContainers = Toolbar & {
 };
 import PMButton, { controlPosition } from './L.Controls';
 
-import { getTranslation } from '../helpers';
+import { getTranslation, shapeButtonNames } from '../helpers';
 
 const optionText = (value: unknown): string => {
   if (typeof value === 'string') return value;
@@ -732,7 +734,9 @@ class Toolbar {
       tool: options.block,
       className: options.className,
       title: options.title || '',
-      jsClass: options.name,
+      // The draw tool the button's finish and removeLastVertex actions call.
+      // Not `jsClass`: copyDrawControl spreads the original button's jsClass.
+      jsClass: options.unstable_jsClass || options.name,
       onClick: options.onClick,
       afterClick: options.afterClick,
       doToggle: options.toggle,
@@ -876,21 +880,7 @@ class Toolbar {
     }
   }
   _shapeMapping(): Record<string, string> {
-    return {
-      Marker: 'drawMarker',
-      Circle: 'drawCircle',
-      Polygon: 'drawPolygon',
-      Rectangle: 'drawRectangle',
-      Polyline: 'drawPolyline',
-      Line: 'drawPolyline',
-      CircleMarker: 'drawCircleMarker',
-      Edit: 'editMode',
-      Drag: 'dragMode',
-      Cut: 'cutPolygon',
-      Removal: 'removalMode',
-      Rotate: 'rotateMode',
-      Text: 'drawText',
-    };
+    return shapeButtonNames();
   }
   _btnNameMapping(name: string) {
     const shapeMapping = this._shapeMapping();
