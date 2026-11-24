@@ -125,6 +125,8 @@ type ExtendedMap = L.Map & {
  */
 interface CustomControlOptions {
   name: string;
+  /** For @geoman-io packages: the draw tool the button's actions call. */
+  unstable_jsClass?: string;
   className?: string;
   title?: string;
   onClick?: (e: Event | undefined, ctx: ButtonClickContext) => void;
@@ -732,11 +734,9 @@ class Toolbar {
       tool: options.block,
       className: options.className,
       title: options.title || '',
-      // The draw tool the button's finish and cancel actions call; an
-      // @geoman-io package passes its own as `unstable_jsClass`
-      jsClass:
-        (options as { unstable_jsClass?: string }).unstable_jsClass ||
-        options.name,
+      // The draw tool the button's finish and removeLastVertex actions call.
+      // Not `jsClass`: copyDrawControl spreads the original button's jsClass.
+      jsClass: options.unstable_jsClass || options.name,
       onClick: options.onClick,
       afterClick: options.afterClick,
       doToggle: options.toggle,

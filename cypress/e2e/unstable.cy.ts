@@ -39,14 +39,20 @@ describe('unstable entry', () => {
       unstable.addTranslations('xx', {
         buttonTitles: { drawPolyButton: 'Area' },
       });
-      unstable.addTranslations('en', {
-        buttonTitles: { probeButton: 'Probe' },
+      unstable.addTranslations('EN ', {
+        buttonTitles: { drawRectButton: 'Box' },
       });
       map.pm.setLang('xx');
       expect(title('drawMarker')).to.equal('Pin');
       expect(title('drawPolygon')).to.equal('Area');
       // untranslated texts fall back to English
       expect(title('drawCircle')).to.equal('Draw Circle');
+      // English added under a differently cased name reaches the fallback
+      expect(title('drawRectangle')).to.equal('Box');
+      // merging into a built-in language keeps its texts
+      unstable.addTranslations('de', { buttonTitles: { probe: 'x' } });
+      map.pm.setLang('de');
+      expect(title('drawMarker')).to.equal('Marker zeichnen');
       map.pm.setLang('en');
       expect(title('drawMarker')).to.equal('Draw Marker');
     });
@@ -75,6 +81,20 @@ describe('unstable entry', () => {
       expect(map.pm.Toolbar._btnNameMapping('Star')).to.equal('drawStar');
       expect(map.pm.Draw._getShapeFromBtnName('drawStar')).to.equal('Star');
       expect(map.pm.Draw._getShapeFromBtnName('drawPolyline')).to.equal('Line');
+      expect(map.pm.Toolbar._btnNameMapping('Polyline')).to.equal(
+        'drawPolyline'
+      );
+      expect(map.pm.Toolbar._btnNameMapping('nope')).to.equal('nope');
+      expect(map.pm.Draw._getShapeFromBtnName('nope')).to.equal('nope');
+      // registering again is a no-op, a clash throws (from the app's realm,
+      // so match the message rather than TypeError)
+      unstable.registerButtonName('Star', 'drawStar');
+      expect(() => unstable.registerButtonName('Line', 'x')).to.throw(
+        'already has'
+      );
+      expect(() => unstable.registerButtonName('Other', 'drawStar')).to.throw(
+        'already belongs'
+      );
 
       const toggled: string[] = [];
       map.on('pm:globaldrawmodetoggled', () => toggled.push('draw'));

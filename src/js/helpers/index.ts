@@ -6,9 +6,13 @@ import { mergeOptions } from './options';
 
 /**
  * Deep-merges `tree` into the translations of `lang`, which need not exist
- * yet. For @geoman-io packages that add their own texts, through ./unstable.
+ * yet. `lang` is trimmed and lowercased; pass the key `setLang` resolves to,
+ * such as `de` or `pt_br`. Rendered buttons update on the next `setLang` or
+ * toolbar reinit, and a later `setLang(lang, override)` rebuilds the language
+ * from its fallback. For @geoman-io packages, through ./unstable.
  */
 export function addTranslations(lang: string, tree: object) {
+  lang = lang.trim().toLowerCase();
   translations[lang] = mergeOptions(mergeOptions({}, translations[lang]), tree);
 }
 
@@ -34,6 +38,18 @@ const buttonNames: Record<string, string> = {
  * through ./unstable.
  */
 export function registerButtonName(shape: string, button: string) {
+  if (buttonNames[shape] === button) {
+    return;
+  }
+  if (buttonNames[shape]) {
+    throw new TypeError(
+      `Shape ${shape} already has the button ${buttonNames[shape]}`
+    );
+  }
+  const owner = shapeOfButtonName(button);
+  if (owner) {
+    throw new TypeError(`Button ${button} already belongs to ${owner}`);
+  }
   buttonNames[shape] = button;
 }
 

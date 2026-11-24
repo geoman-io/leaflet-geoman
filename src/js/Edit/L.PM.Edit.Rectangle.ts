@@ -291,22 +291,6 @@ class EditRectangle extends EditPolygon {
   }
   // finds the 4 corners of the current bounding box
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
-  /**
-   * The rectangle's four corners in its own rotated frame, also when the
-   * editor is off. Projects with `map` when given, else the editor's or the
-   * layer's map; empty without one or when the ring is short.
-   * For @geoman-io packages.
-   */
-  unstable_corners(
-    map: L.Map | undefined = this._map || this._layer._map
-  ): L.LatLng[] {
-    const latlngs = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
-    if (!map || !latlngs?.[0] || !latlngs[1] || !latlngs[2]) {
-      return [];
-    }
-    const angle = this._angle ?? (calcAngle(map, latlngs[0], latlngs[1]) || 0);
-    return PM.Utils._getRotatedRectangle(latlngs[0], latlngs[2], angle, map);
-  }
   _findCorners() {
     const latlngs = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
     // A rectangle can be left with an empty or short ring. `calcAngle` and
@@ -326,6 +310,23 @@ class EditRectangle extends EditPolygon {
       this.getAngle(),
       this._map || (this as unknown as L.Map)
     );
+  }
+  /**
+   * The rectangle's four corners in its own rotated frame, also when the
+   * editor is off: northwest, northeast, southeast, southwest, as
+   * `_findCorners` returns them. Projects with `map` when given, else the
+   * editor's or the layer's map; empty without one or when the ring is short.
+   * For @geoman-io packages.
+   */
+  unstable_corners(
+    map: L.Map | undefined = this._map || this._layer._map
+  ): L.LatLng[] {
+    const latlngs = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
+    if (!map || !latlngs?.[0] || !latlngs[1] || !latlngs[2]) {
+      return [];
+    }
+    const angle = this._angle ?? (calcAngle(map, latlngs[0], latlngs[1]) || 0);
+    return PM.Utils._getRotatedRectangle(latlngs[0], latlngs[2], angle, map);
   }
 }
 
