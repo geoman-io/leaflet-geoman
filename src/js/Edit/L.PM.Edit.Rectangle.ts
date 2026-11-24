@@ -293,11 +293,13 @@ class EditRectangle extends EditPolygon {
   // returns array of 4 LatLng objects in this order: Northwest corner, Northeast corner, Southeast corner, Southwest corner
   /**
    * The rectangle's four corners in its own rotated frame, also when the
-   * editor is off. Empty when the layer isn't on a map or its ring is short.
+   * editor is off. Projects with `map` when given, else the editor's or the
+   * layer's map; empty without one or when the ring is short.
    * For @geoman-io packages.
    */
-  unstable_corners(): L.LatLng[] {
-    const map = this._map || this._layer._map;
+  unstable_corners(
+    map: L.Map | undefined = this._map || this._layer._map
+  ): L.LatLng[] {
     const latlngs = this._layer.getLatLngs()[0] as L.LatLng[] | undefined;
     if (!map || !latlngs?.[0] || !latlngs[1] || !latlngs[2]) {
       return [];

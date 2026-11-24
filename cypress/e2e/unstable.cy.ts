@@ -112,6 +112,8 @@ describe('unstable entry', () => {
         [51.51, -0.08],
       ]);
       expect(rect.pm.unstable_corners()).to.deep.equal([]);
+      // a map passed in works for a rectangle on no map
+      expect(rect.pm.unstable_corners(map)).to.have.length(4);
       rect.addTo(map);
       const unrotated = rect.pm.unstable_corners();
       expect(unrotated).to.have.length(4);
