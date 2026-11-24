@@ -345,6 +345,55 @@ describe('unstable entry', () => {
     });
   });
 
+  it('resolves a sub-mode name to the button that stands for it', () => {
+    load().then(({ unstable, map }: any) => {
+      map.setView([51.5, -0.09], 13);
+      const toolbar = map.pm.Toolbar;
+      unstable.Toolbar.unstable_addButtonResolver((name: string) =>
+        name === 'subMode' || name === 'drawMarker' ? 'groupMode' : undefined
+      );
+      map.pm.addControls();
+      let clicks = 0;
+      toolbar.createCustomControl({
+        name: 'groupMode',
+        toggle: true,
+        onClick: () => {
+          clicks += 1;
+        },
+      });
+      const group = toolbar.buttons.groupMode;
+      expect(toolbar.getButton('subMode')).to.equal(group);
+      expect(toolbar.controlExists('subMode')).to.equal(true);
+      // a real button keeps its name
+      expect(toolbar.getButton('drawMarker')).to.equal(
+        toolbar.buttons.drawMarker
+      );
+      // unresolved names behave as before
+      expect(toolbar.getButton('nope')).to.equal(undefined);
+      expect(toolbar.getButton('Line')).to.equal(undefined);
+      expect(toolbar._btnNameMapping('Line')).to.equal('drawPolyline');
+
+      // the sub-mode's enable, from a click on the group's button, toggles
+      // that button on: it must not be clicked off as another toggled button
+      group.toggle(true);
+      expect(toolbar.toggleButton('subMode', true)).to.equal(true);
+      expect(group.toggled()).to.equal(true);
+      expect(clicks).to.equal(0);
+      toolbar.toggleButton('subMode', false);
+      expect(group.toggled()).to.equal(false);
+
+      // enabled from code, it still turns another mode off
+      map.pm.enableGlobalRemovalMode();
+      toolbar.toggleButton('subMode', true);
+      expect(map.pm.globalRemovalModeEnabled()).to.equal(false);
+      expect(group.toggled()).to.equal(true);
+      expect(clicks).to.equal(0);
+
+      toolbar.setButtonDisabled('subMode', true);
+      expect(group._button.disabled).to.equal(true);
+    });
+  });
+
   it('leaves out buttons a filter refuses, keeping their options', () => {
     load().then(({ unstable, map }: any) => {
       const seen: string[] = [];

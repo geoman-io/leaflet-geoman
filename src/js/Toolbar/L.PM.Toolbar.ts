@@ -167,7 +167,9 @@ type ButtonFilter = (
   options: ToolbarOptions,
   toolbar: Toolbar
 ) => boolean;
+type ButtonResolver = (name: string) => string | undefined;
 const buttonDefiners: ButtonDefiner[] = [];
+const buttonResolvers: ButtonResolver[] = [];
 const buttonFilters: ButtonFilter[] = [];
 
 class Toolbar {
@@ -191,6 +193,28 @@ class Toolbar {
    */
   static unstable_addButtonFilter(filter: ButtonFilter) {
     buttonFilters.push(filter);
+  }
+  /**
+   * Maps a name that isn't a button to the button that stands for it, such
+   * as a mode shown by another mode's button. Asked by `toggleButton`,
+   * `getButton` and the methods that take a shape or button name, only when
+   * no button has the name; the first defined answer wins. For @geoman-io
+   * packages, through ./unstable.
+   */
+  static unstable_addButtonResolver(resolver: ButtonResolver) {
+    buttonResolvers.push(resolver);
+  }
+  _resolveButtonName(name: string) {
+    if (this.buttons[name]) {
+      return name;
+    }
+    for (const resolver of buttonResolvers) {
+      const resolved = resolver(name);
+      if (resolved !== undefined) {
+        return resolved;
+      }
+    }
+    return name;
   }
   declare _definedButtons: Set<string>;
   declare options: ToolbarOptions;
@@ -378,7 +402,7 @@ class Toolbar {
       name = 'removalMode';
     }
 
-    const toggleBtnName = name;
+    const toggleBtnName = this._resolveButtonName(name);
 
     // as some mode got enabled, we still have to trigger the click on the other buttons
     // to disable their mode
@@ -822,7 +846,7 @@ class Toolbar {
     return Boolean(this.getButton(name));
   }
   getButton(name: string) {
-    return this.getButtons()[name];
+    return this.getButtons()[this._resolveButtonName(name)];
   }
   getButtonsInBlock(name: string) {
     const buttonsInBlock: Record<string, IPMButton> = {};
@@ -945,7 +969,9 @@ class Toolbar {
   }
   _btnNameMapping(name: string) {
     const shapeMapping = this._shapeMapping();
-    return shapeMapping[name] ? shapeMapping[name] : name;
+    return this._resolveButtonName(
+      shapeMapping[name] ? shapeMapping[name] : name
+    );
   }
 }
 
