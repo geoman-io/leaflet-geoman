@@ -9,7 +9,7 @@
       // ./unstable alone, the way @geoman-io packages use it
       const unstable = await import('/dist/leaflet-geoman-unstable.js');
       const L = await import('leaflet');
-      window.geoman = { unstable, map: new L.Map('map') };
+      window.geoman = { unstable, L, map: new L.Map('map') };
     </script>
   </body>
 </html>

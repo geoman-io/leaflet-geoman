@@ -83,13 +83,28 @@ abstract class DrawTool {
     // return the shape of the current drawing layer
     return this._shape;
   }
-  _setGlobalDrawMode() {
-    // extended to all PM.Draw shapes
+  /**
+   * The marker that follows the pointer while the tool draws, or null when
+   * the tool is off or has none. For @geoman-io packages.
+   */
+  unstable_hintMarker(): L.Marker | L.CircleMarker | null {
+    const { _hintMarker } = this as { _hintMarker?: L.Marker | L.CircleMarker };
+    return (this._enabled && _hintMarker) || null;
+  }
+  /**
+   * Fires the event of the tool's mode turning on or off. A tool of an
+   * @geoman-io package overrides it to fire its own event.
+   */
+  unstable_fireModeToggled() {
     if (this._shape === 'Cut') {
       this._fireGlobalCutModeToggled();
     } else {
       this._fireGlobalDrawModeToggled();
     }
+  }
+  _setGlobalDrawMode() {
+    // extended to all PM.Draw shapes
+    this.unstable_fireModeToggled();
 
     const layers: PMLayer[] = [];
     this._map.eachLayer((layer) => {

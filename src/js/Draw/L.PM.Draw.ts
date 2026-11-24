@@ -10,14 +10,10 @@ import type DrawCircle from './L.PM.Draw.Circle';
 import type DrawCut from './L.PM.Draw.Cut';
 import type DrawText from './L.PM.Draw.Text';
 import { checkOptions } from '../helpers/options';
+import { shapeOfButtonName } from '../helpers';
 
 import type { DrawOptions } from '../../types/options';
 export type { DrawOptions } from '../../types/options';
-
-/**
- * Shape mapping type
- */
-type ShapeMapping = Record<string, string>;
 
 // The registry's tools by shape name. Custom tools are added under their own
 // names, so they can't be declared as fields.
@@ -162,23 +158,9 @@ class Draw {
     return tool;
   }
   _getShapeFromBtnName(name: string) {
-    const shapeMapping: ShapeMapping = {
-      drawMarker: 'Marker',
-      drawCircle: 'Circle',
-      drawPolygon: 'Polygon',
-      drawPolyline: 'Line',
-      drawRectangle: 'Rectangle',
-      drawCircleMarker: 'CircleMarker',
-      editMode: 'Edit',
-      dragMode: 'Drag',
-      cutPolygon: 'Cut',
-      removalMode: 'Removal',
-      rotateMode: 'Rotate',
-      drawText: 'Text',
-    };
-
-    if (shapeMapping[name]) {
-      return shapeMapping[name];
+    const shape = shapeOfButtonName(name);
+    if (shape) {
+      return shape;
     }
     return tools(this)[name] ? tools(this)[name]._shape! : name;
   }

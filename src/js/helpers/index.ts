@@ -2,6 +2,52 @@ import * as L from 'leaflet';
 import get from 'lodash/get';
 import { PM } from '../PM';
 import translations from '../../assets/translations';
+import { mergeOptions } from './options';
+
+/**
+ * Deep-merges `tree` into the translations of `lang`, which need not exist
+ * yet. For @geoman-io packages that add their own texts, through ./unstable.
+ */
+export function addTranslations(lang: string, tree: object) {
+  translations[lang] = mergeOptions(mergeOptions({}, translations[lang]), tree);
+}
+
+// The toolbar button of each shape or mode
+const buttonNames: Record<string, string> = {
+  Marker: 'drawMarker',
+  Circle: 'drawCircle',
+  Polygon: 'drawPolygon',
+  Rectangle: 'drawRectangle',
+  Line: 'drawPolyline',
+  CircleMarker: 'drawCircleMarker',
+  Edit: 'editMode',
+  Drag: 'dragMode',
+  Cut: 'cutPolygon',
+  Removal: 'removalMode',
+  Rotate: 'rotateMode',
+  Text: 'drawText',
+};
+
+/**
+ * Names the toolbar button of a shape or mode that isn't built in, so the
+ * toolbar and the draw registry accept either name. For @geoman-io packages,
+ * through ./unstable.
+ */
+export function registerButtonName(shape: string, button: string) {
+  buttonNames[shape] = button;
+}
+
+/** The button of each shape, plus the `Polyline` alias of `Line`. */
+export function shapeButtonNames(): Record<string, string> {
+  return { ...buttonNames, Polyline: 'drawPolyline' };
+}
+
+/** The shape of a button name, or undefined when it isn't one. */
+export function shapeOfButtonName(button: string) {
+  return Object.keys(buttonNames).find(
+    (shape) => buttonNames[shape] === button
+  );
+}
 
 export function getTranslation(path: string): string {
   const lang = PM.activeLang;

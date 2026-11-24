@@ -143,7 +143,7 @@ type ToolbarWithContainers = Toolbar & {
 };
 import PMButton, { controlPosition } from './L.Controls';
 
-import { getTranslation } from '../helpers';
+import { getTranslation, shapeButtonNames } from '../helpers';
 
 const optionText = (value: unknown): string => {
   if (typeof value === 'string') return value;
@@ -732,7 +732,11 @@ class Toolbar {
       tool: options.block,
       className: options.className,
       title: options.title || '',
-      jsClass: options.name,
+      // The draw tool the button's finish and cancel actions call; an
+      // @geoman-io package passes its own as `unstable_jsClass`
+      jsClass:
+        (options as { unstable_jsClass?: string }).unstable_jsClass ||
+        options.name,
       onClick: options.onClick,
       afterClick: options.afterClick,
       doToggle: options.toggle,
@@ -876,21 +880,7 @@ class Toolbar {
     }
   }
   _shapeMapping(): Record<string, string> {
-    return {
-      Marker: 'drawMarker',
-      Circle: 'drawCircle',
-      Polygon: 'drawPolygon',
-      Rectangle: 'drawRectangle',
-      Polyline: 'drawPolyline',
-      Line: 'drawPolyline',
-      CircleMarker: 'drawCircleMarker',
-      Edit: 'editMode',
-      Drag: 'dragMode',
-      Cut: 'cutPolygon',
-      Removal: 'removalMode',
-      Rotate: 'rotateMode',
-      Text: 'drawText',
-    };
+    return shapeButtonNames();
   }
   _btnNameMapping(name: string) {
     const shapeMapping = this._shapeMapping();
