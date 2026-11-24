@@ -64,12 +64,149 @@ declare module 'leaflet' {
     pm: PM.PMLayer;
   }
 
-  // Leaflet-Geoman events on the map and on every layer
-  interface MapEventMap extends PM.EventMap {}
-  interface LayerEventMap extends PM.EventMap {}
+  // pm:* payloads follow the object that fires them. `on`/`once`/`off` stay on
+  // Evented: redeclaring them on Map or Layer hides Leaflet's signatures.
+  interface MapEventMap extends PM.MapEventMap, PM.SharedEventMap {}
+  interface LayerEventMap extends PM.LayerEventMap, PM.SharedEventMap {}
+
+  interface Evented<O extends object = object, E extends object = {}> {
+    on<K extends keyof E & string>(
+      type: K,
+      fn: PM.ScopedHandler<K, E, this>,
+      context?: unknown
+    ): this;
+    on<K extends string>(
+      type: K,
+      fn: PM.ScopedHandler<K, E, this>,
+      context?: unknown
+    ): this;
+    on<M>(eventMap: L.ListenerMap<M, E, this>, context?: unknown): this;
+    once<K extends keyof E & string>(
+      type: K,
+      fn: PM.ScopedHandler<K, E, this>,
+      context?: unknown
+    ): this;
+    once<K extends string>(
+      type: K,
+      fn: PM.ScopedHandler<K, E, this>,
+      context?: unknown
+    ): this;
+    once<M>(eventMap: L.ListenerMap<M, E, this>, context?: unknown): this;
+    off<K extends keyof E & string>(
+      type: K,
+      fn?: PM.ScopedHandler<K, E, this>,
+      context?: unknown
+    ): this;
+    off<K extends string>(
+      type: K,
+      fn?: PM.ScopedHandler<K, E, this>,
+      context?: unknown
+    ): this;
+    off<M>(eventMap: L.ListenerMap<M, E, this>, context?: unknown): this;
+    off(): this;
+  }
 }
 
 export declare namespace PM {
+  /**
+   * One event listener. A known name keeps that payload. A space-separated
+   * list stays open (`pm:create layeradd`). Any other name is a plain Leaflet
+   * event, so pm-only fields are rejected.
+   */
+  export type ScopedHandler<K extends string, E, T> = (
+    event: (K extends keyof E
+      ? E[K] & L.LeafletEvent & Record<string, any>
+      : K extends `${string} ${string}`
+        ? L.LeafletEvent & Record<string, any>
+        : L.LeafletEvent) & { target: T }
+  ) => void;
+
+  export type MapEventName =
+    | 'pm:create'
+    | 'pm:drawstart'
+    | 'pm:drawend'
+    | 'pm:union'
+    | 'pm:difference'
+    | 'pm:copylayer'
+    | 'pm:selectionadd'
+    | 'pm:selectionremove'
+    | 'pm:lasso-select'
+    | 'pm:langchange'
+    | 'pm:buttonclick'
+    | 'pm:actionclick'
+    | 'pm:keyevent'
+    | 'pm:globaloptionschanged'
+    | 'pm:autotracestart'
+    | 'pm:autotracelinechange'
+    | 'pm:autotraceend'
+    | 'pm:globalsplitmodetoggled'
+    | 'pm:globaleditmodetoggled'
+    | 'pm:globaldrawmodetoggled'
+    | 'pm:globalremovalmodetoggled'
+    | 'pm:globalcutmodetoggled'
+    | 'pm:globaldragmodetoggled'
+    | 'pm:globalrotatemodetoggled'
+    | 'pm:globalscalemodetoggled'
+    | 'pm:globalunionmodetoggled'
+    | 'pm:globaldifferencemodetoggled'
+    | 'pm:globalcopylayermodetoggled'
+    | 'pm:globallassomodetoggled'
+    | 'pm:globallinesimplificationmodetoggled'
+    | 'pm:globalbringtofrontmodetoggled'
+    | 'pm:globalbringtobackmodetoggled'
+    | 'pm:globalcancel'
+    | 'pm:error';
+
+  export type LayerEventName =
+    | 'pm:snapdrag'
+    | 'pm:snap'
+    | 'pm:unsnap'
+    | 'pm:centerplaced'
+    | 'pm:edit'
+    | 'pm:vertexadded'
+    | 'pm:vertexremoved'
+    | 'pm:vertexclick'
+    | 'pm:markerdragstart'
+    | 'pm:markerdrag'
+    | 'pm:markerdragend'
+    | 'pm:layerreset'
+    | 'pm:change'
+    | 'pm:textchange'
+    | 'pm:textfocus'
+    | 'pm:textblur'
+    | 'pm:containmentviolation'
+    | 'pm:intersectionviolation'
+    | 'pm:cancel'
+    | 'pm:undoremove'
+    | 'pm:update'
+    | 'pm:enable'
+    | 'pm:disable'
+    | 'pm:dragstart'
+    | 'pm:drag'
+    | 'pm:dragend'
+    | 'pm:dragenable'
+    | 'pm:dragdisable';
+
+  export type SharedEventName =
+    | 'pm:remove'
+    | 'pm:cut'
+    | 'pm:split'
+    | 'pm:rotateenable'
+    | 'pm:rotatedisable'
+    | 'pm:rotatestart'
+    | 'pm:rotate'
+    | 'pm:rotateend'
+    | 'pm:scaleenable'
+    | 'pm:scaledisable'
+    | 'pm:scalestart'
+    | 'pm:scale'
+    | 'pm:scaleend'
+    | 'pm:intersect';
+
+  export interface MapEventMap extends Pick<EventMap, MapEventName> {}
+  export interface LayerEventMap extends Pick<EventMap, LayerEventName> {}
+  export interface SharedEventMap extends Pick<EventMap, SharedEventName> {}
+
   /** The payload of each Leaflet-Geoman event, by event type. */
   interface EventMap {
     'pm:remove': Parameters<RemoveEventHandler>[0] & L.LeafletEvent;
