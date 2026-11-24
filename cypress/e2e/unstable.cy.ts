@@ -345,6 +345,65 @@ describe('unstable entry', () => {
     });
   });
 
+  it('lets toggleButton resolve a sub-mode to its group button', () => {
+    load().then(({ unstable, map }: any) => {
+      map.setView([51.5, -0.09], 13);
+      const toolbar = map.pm.Toolbar;
+      const asked: string[] = [];
+      unstable.Toolbar.unstable_addToggleResolver(
+        (name: string, tb: unknown) => {
+          if (name !== 'subMode' && name !== 'drawMarker') {
+            return undefined;
+          }
+          // the resolver gets the toolbar, to switch what the group shows
+          asked.push(`${name}:${tb === toolbar}`);
+          return 'groupMode';
+        }
+      );
+      map.pm.addControls();
+      let clicks = 0;
+      toolbar.createCustomControl({
+        name: 'groupMode',
+        toggle: true,
+        onClick: () => {
+          clicks += 1;
+        },
+      });
+      const group = toolbar.buttons.groupMode;
+      // only toggleButton resolves
+      expect(toolbar.getButton('subMode')).to.equal(undefined);
+      expect(toolbar.controlExists('subMode')).to.equal(false);
+      expect(toolbar._btnNameMapping('subMode')).to.equal('subMode');
+      // a real button keeps its name and the resolver isn't asked
+      toolbar.toggleButton('drawMarker', true);
+      expect(toolbar.buttons.drawMarker.toggled()).to.equal(true);
+      expect(group.toggled()).to.equal(false);
+      toolbar.toggleButton('drawMarker', false);
+      expect(asked).to.deep.equal([]);
+
+      // the sub-mode's enable, from a click on the group's button, toggles
+      // that button on: it must not be clicked off as another toggled button
+      group.toggle(true);
+      expect(toolbar.toggleButton('subMode', true)).to.equal(true);
+      expect(group.toggled()).to.equal(true);
+      expect(clicks).to.equal(0);
+      toolbar.toggleButton('subMode', false);
+      expect(group.toggled()).to.equal(false);
+
+      // enabled from code, it still turns another mode off
+      map.pm.enableGlobalRemovalMode();
+      toolbar.toggleButton('subMode', true);
+      expect(map.pm.globalRemovalModeEnabled()).to.equal(false);
+      expect(group.toggled()).to.equal(true);
+      expect(clicks).to.equal(0);
+
+      expect(asked).to.include('subMode:true');
+      // deleting a sub-mode doesn't delete its group's button
+      toolbar.deleteControl('subMode');
+      expect(toolbar.buttons.groupMode).to.equal(group);
+    });
+  });
+
   it('leaves out buttons a filter refuses, keeping their options', () => {
     load().then(({ unstable, map }: any) => {
       const seen: string[] = [];
