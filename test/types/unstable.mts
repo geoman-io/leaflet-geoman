@@ -63,4 +63,34 @@ const corners: L.LatLng[] = new EditRectangle(
   unstable_jsClass: 'Star',
 });
 
-export { PM, enabled, shape, wrong, Incomplete, hint, corners };
+Toolbar.unstable_addButtonDefiner((toolbar: Toolbar, add) =>
+  add('probe', new PMButton({ name: 'probe', position: 'topleft' }))
+);
+Toolbar.unstable_addButtonFilter(
+  (name: string, _button, options, toolbar: Toolbar) =>
+    name !== 'probe' || (!!options.drawMarker && toolbar.isVisible)
+);
+const handlers = new EditRectangle(
+  new L.Rectangle([
+    [0, 0],
+    [1, 1],
+  ])
+).unstable_cornerDragHandlers();
+const drag: L.LeafletEventHandlerFn = handlers.drag;
+const disableMode: () => void = map.pm.unstable_registerMode('probe', {
+  enabled: () => false,
+  disable() {},
+  button: 'probe',
+});
+
+export {
+  drag,
+  disableMode,
+  PM,
+  enabled,
+  shape,
+  wrong,
+  Incomplete,
+  hint,
+  corners,
+};
