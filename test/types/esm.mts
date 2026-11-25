@@ -98,6 +98,23 @@ plainLayer.once('pm:create', (event) => event.shape);
 // @ts-expect-error off follows the same map/layer split
 map.off('pm:update', (event) => event.shape);
 
+// Every PM.EventMap key is in exactly one of the map, layer or shared lists,
+// so a new event that is not assigned to a list fails the typecheck.
+type AssertNever<T extends never> = T;
+export type UnassignedEvents = AssertNever<
+  Exclude<
+    keyof PM.EventMap,
+    PM.MapEventName | PM.LayerEventName | PM.SharedEventName
+  >
+>;
+export type MapLayerOverlap = AssertNever<PM.MapEventName & PM.LayerEventName>;
+export type MapSharedOverlap = AssertNever<
+  PM.MapEventName & PM.SharedEventName
+>;
+export type LayerSharedOverlap = AssertNever<
+  PM.LayerEventName & PM.SharedEventName
+>;
+
 void drawModeMap;
 void createdMap;
 void startedMap;
