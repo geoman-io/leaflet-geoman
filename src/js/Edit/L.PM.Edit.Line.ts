@@ -611,13 +611,6 @@ class EditLine extends Edit {
       return;
     }
 
-    // if self intersection isn't allowed or a validator may veto, save the
-    // coords upon dragstart in case we need to reset the layer
-    // (and drop an older one, which a later veto must not restore)
-    this._coordsBeforeEdit = this._resetsEdits()
-      ? copyLatLngs(this._layer, this._layer.getLatLngs())
-      : null;
-
     // coords of the layer
     let coords = this._layer.getLatLngs();
 
@@ -657,6 +650,12 @@ class EditLine extends Edit {
         return;
       }
     }
+
+    // if self intersection isn't allowed or a validator may veto, save the
+    // coords before the removal in case we need to reset the layer
+    this._coordsBeforeEdit = this._resetsEdits()
+      ? copyLatLngs(this._layer, this._layer.getLatLngs())
+      : null;
 
     // remove coordinate
     coordsRing.splice(index, 1);
@@ -758,6 +757,8 @@ class EditLine extends Edit {
     // TODO: maybe fire latlng as well?
     this._fireVertexRemoved(marker, indexPath);
     this._fireChange(this._layer.getLatLngs(), 'Edit');
+    // the pm:vertexremoved listener has reset or kept the removal by now
+    this._coordsBeforeEdit = null;
   }
   updatePolygonCoordsFromMarkerDrag(marker: ExtendedMarker) {
     // update polygon coords
@@ -1025,6 +1026,8 @@ class EditLine extends Edit {
       this._fireLayerReset(e, indexPath);
       return;
     }
+    // the move is kept, so its snapshot isn't needed any more
+    this._coordsBeforeEdit = null;
     if (
       !this.options.allowSelfIntersection &&
       this.options.allowSelfIntersectionEdit

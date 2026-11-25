@@ -197,6 +197,57 @@ describe('unstable_validators', () => {
     });
   });
 
+  // _coordsBeforeEdit is the copy a reset restores; with a validator on the
+  // map it is taken on every edit, so a kept edit must let it go
+  it('releases the reset snapshot once a vertex edit is kept', () => {
+    cy.window().then((w) => {
+      const win = w as Win;
+      const { map, L: Lf } = win;
+      const layer = square(win, 200, 200, 100);
+      const { vetoed } = validator(win);
+      const pm = layer.pm as any;
+      layer.pm.enable({ allowSelfIntersection: false });
+
+      const before = json(layer);
+      dragMarker(pm._markers[0][0], map.containerPointToLatLng([180, 180]));
+      expect(pm._coordsBeforeEdit).to.eq(null);
+      const moved = json(layer);
+      expect(moved).not.to.eq(before);
+
+      // a veto and a self-intersection still restore the kept move
+      vetoed.add('edit:vertexmove');
+      dragMarker(pm._markers[0][0], map.containerPointToLatLng([150, 150]));
+      expect(json(layer)).to.eq(moved);
+      vetoed.clear();
+      // the edge from the last vertex now crosses the right edge at x = 300
+      dragMarker(pm._markers[0][0], map.containerPointToLatLng([350, 250]));
+      expect(json(layer)).to.eq(moved);
+      expect(pm._coordsBeforeEdit).to.eq(null);
+
+      vetoed.add('edit:vertexremove');
+      const vetoedVertex = pm._markers[0][1];
+      vetoedVertex.fire('contextmenu', { target: vetoedVertex });
+      expect(json(layer)).to.eq(moved);
+      expect(pm._coordsBeforeEdit).to.eq(null);
+      vetoed.clear();
+      const removed = pm._markers[0][1];
+      removed.fire('contextmenu', { target: removed });
+      expect(pm._markers[0]).to.have.length(3);
+      expect(pm._coordsBeforeEdit).to.eq(null);
+
+      const rect = new Lf.Rectangle([
+        map.containerPointToLatLng([400, 200]),
+        map.containerPointToLatLng([500, 300]),
+      ]).addTo(map);
+      rect.pm.enable();
+      dragMarker(
+        (rect.pm as any)._cornerMarkers[0],
+        map.containerPointToLatLng([380, 180])
+      );
+      expect((rect.pm as any)._coordsBeforeEdit).to.eq(null);
+    });
+  });
+
   it('resets vetoed rectangle corner drags and circle resizes', () => {
     cy.window().then((w) => {
       const win = w as Win;

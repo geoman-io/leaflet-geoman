@@ -242,6 +242,8 @@ class EditRectangle extends EditPolygon {
       this._fireLayerReset(e, indexPath);
       return;
     }
+    // the drag is kept, so its snapshot isn't needed any more
+    this._coordsBeforeEdit = null;
 
     // fire edit event
     this._fireEdit();
