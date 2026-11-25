@@ -522,11 +522,10 @@ class EditLine extends Edit {
       // re-enable markers for the new coords
       this._initMarkers();
     }
-    // A vetoed removal resets like a vetoed move; the self-intersection
-    // reset has never fired it
-    if (vetoed) {
-      // markerEvent is pm:vertexremoved (its `marker` is the removed one),
-      // not a marker's dragend as on the vetoed move path
+    // A reset removal fires pm:layerreset, like a reset move. markerEvent is
+    // pm:vertexremoved (its `marker` is the removed one), not a marker's
+    // dragend as on the move path.
+    if (selfIntersection || vetoed) {
       this._fireLayerReset(e, (e as { indexPath?: number[] }).indexPath);
     }
   }
