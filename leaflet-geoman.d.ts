@@ -1820,7 +1820,8 @@ export declare namespace PM {
   export type LayerResetEventHandler = (
     e: BaseEventPayload & {
       layer: L.Layer;
-      indexPath: number;
+      /** Path of the vertex in the layer's latlngs; absent for Circle and CircleMarker. */
+      indexPath?: number[];
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }

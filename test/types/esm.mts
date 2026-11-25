@@ -47,6 +47,10 @@ map.on('pm:drawstart', (event) => {
   void shape;
 });
 polygon.on('pm:edit', (event) => event.layer);
+polygon.on('pm:layerreset', (event) => {
+  const indexPath: number[] | undefined = event.indexPath;
+  void indexPath;
+});
 
 // the toolbar button control keeps its own API, not just L.Control's
 const button = new PMButton({ name: 'probe', position: 'topleft' });
