@@ -1617,4 +1617,38 @@ describe('Draw & Edit Poly', () => {
       ).to.equal('111,222,333,444');
     });
   });
+
+  it('resets a self-intersecting vertex removal and fires pm:layerreset', () => {
+    cy.window().then(({ map, L }) => {
+      map.setView([51.505, -0.09], 13);
+      // removing the top vertex makes the new edge cut through the spike
+      const layer = new L.Polygon(
+        [
+          [100, 100],
+          [200, 50],
+          [300, 100],
+          [300, 300],
+          [200, 80],
+          [100, 300],
+        ].map((p) => map.containerPointToLatLng(p as L.PointTuple))
+      ).addTo(map);
+      const resets: any[] = [];
+      layer.on('pm:layerreset', (e: unknown) => resets.push(e));
+      layer.pm.enable({ allowSelfIntersection: false });
+      const before = JSON.stringify(layer.getLatLngs());
+
+      const top = (layer.pm as any)._markers[0][1];
+      top.fire('contextmenu', { target: top });
+      expect(JSON.stringify(layer.getLatLngs())).to.eq(before);
+      expect(resets).to.have.length(1);
+      expect(resets[0].indexPath).to.deep.equal([0, 1]);
+      expect(resets[0].markerEvent.marker).to.equal(top);
+
+      // a removal that doesn't self-intersect isn't reset
+      const corner = (layer.pm as any)._markers[0][5];
+      corner.fire('contextmenu', { target: corner });
+      expect((layer.getLatLngs() as L.LatLng[][])[0]).to.have.length(5);
+      expect(resets).to.have.length(1);
+    });
+  });
 });
