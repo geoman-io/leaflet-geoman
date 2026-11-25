@@ -54,6 +54,33 @@ polygon.on('pm:layerreset', (event) => {
   void indexPath;
   void n;
 });
+// edit always passes a vertex's indexPath; draw fires pm:vertexadded without one
+const onVertexAdded: PM.VertexAddedEventHandler2 = (event) => {
+  const added: number[] = event.indexPath;
+  void added;
+};
+void onVertexAdded;
+polygon.on('pm:vertexremoved', (event) => {
+  const removed: number[] = event.indexPath;
+  void removed;
+});
+// circles and circle markers pass no indexPath
+polygon.on('pm:vertexclick', (event) => {
+  const clicked: number[] | undefined = event.indexPath;
+  void clicked;
+});
+polygon.on('pm:markerdragstart', (event) => {
+  const started: number[] | undefined = event.indexPath;
+  void started;
+});
+polygon.on('pm:markerdrag', (event) => {
+  const dragged: number[] | undefined = event.indexPath;
+  void dragged;
+});
+polygon.on('pm:markerdragend', (event) => {
+  const ended: number[] | undefined = event.indexPath;
+  void ended;
+});
 
 // the toolbar button control keeps its own API, not just L.Control's
 const button = new PMButton({ name: 'probe', position: 'topleft' });
