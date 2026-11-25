@@ -236,10 +236,9 @@ class EditRectangle extends EditPolygon {
     if (this._vetoed('edit:vertexmove')) {
       this._layer.setLatLngs(this._coordsBeforeEdit!);
       this._coordsBeforeEdit = null;
+      // applyOptions binds the new corners' drag handlers and snapping
       this._initMarkers();
-      if (this.options.snappable) {
-        this._initSnappableMarkers();
-      }
+      this.applyOptions();
       this._fireLayerReset(e, indexPath);
       return;
     }

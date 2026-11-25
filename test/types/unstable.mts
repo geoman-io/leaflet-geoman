@@ -52,6 +52,7 @@ new PMButton({ name: 'custom', position: 'topleft' });
 addTranslations('xx', { buttonTitles: { drawMarkerButton: 'Pin' } });
 registerButtonName('Star', 'drawStar');
 const hint: L.Marker | L.CircleMarker | null = star.unstable_hintMarker();
+const hintLine: L.Polyline | null = star.unstable_hintLine();
 star.unstable_fireModeToggled();
 const corners: L.LatLng[] = new EditRectangle(
   new L.Rectangle([

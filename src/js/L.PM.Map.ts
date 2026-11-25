@@ -96,7 +96,9 @@ class Map {
   /**
    * Checks a change before it is applied, or right after for vertex edits,
    * which are then reset. A validator returning `false` vetoes it. Drag and
-   * rotate run it on every frame. For @geoman-io packages, without a semver
+   * rotate run it on every frame. Drag is checked per layer, so layers synced
+   * with `syncLayersOnDrag` may separate when one is vetoed, and its delta is
+   * the one before snapping. For @geoman-io packages, without a semver
    * guarantee.
    */
   declare unstable_validators: UnstableValidator[];

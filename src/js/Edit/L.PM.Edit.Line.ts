@@ -606,12 +606,10 @@ class EditLine extends Edit {
 
     // if self intersection isn't allowed or a validator may veto, save the
     // coords upon dragstart in case we need to reset the layer
-    if (this._resetsEdits()) {
-      this._coordsBeforeEdit = copyLatLngs(
-        this._layer,
-        this._layer.getLatLngs()
-      );
-    }
+    // (and drop an older one, which a later veto must not restore)
+    this._coordsBeforeEdit = this._resetsEdits()
+      ? copyLatLngs(this._layer, this._layer.getLatLngs())
+      : null;
 
     // coords of the layer
     let coords = this._layer.getLatLngs();
@@ -878,12 +876,10 @@ class EditLine extends Edit {
 
     // if self intersection isn't allowed or a validator may veto, save the
     // coords upon dragstart in case we need to reset the layer
-    if (this._resetsEdits()) {
-      this._coordsBeforeEdit = copyLatLngs(
-        this._layer,
-        this._layer.getLatLngs()
-      );
-    }
+    // (and drop an older one, which a later veto must not restore)
+    this._coordsBeforeEdit = this._resetsEdits()
+      ? copyLatLngs(this._layer, this._layer.getLatLngs())
+      : null;
 
     if (
       !this.options.allowSelfIntersection &&

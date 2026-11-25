@@ -92,6 +92,15 @@ abstract class DrawTool {
     return (this._enabled && _hintMarker) || null;
   }
   /**
+   * The line from the last vertex to the pointer while the tool draws, or
+   * null when the tool is off or has none. Free resets its style on each
+   * pointer move, so restyle it after `pm:change`. For @geoman-io packages.
+   */
+  unstable_hintLine(): L.Polyline | null {
+    const { _hintline } = this as { _hintline?: L.Polyline };
+    return (this._enabled && _hintline) || null;
+  }
+  /**
    * Fires the event of the tool's mode turning on or off. A tool of an
    * @geoman-io package overrides it to fire its own event.
    */

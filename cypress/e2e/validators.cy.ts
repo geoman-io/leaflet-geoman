@@ -215,6 +215,14 @@ describe('unstable_validators', () => {
         map.containerPointToLatLng([150, 150])
       );
       expect(json(rect)).to.eq(before);
+      // the reset corners still resize once the veto is lifted
+      vetoed.clear();
+      dragMarker(
+        (rect.pm as any)._cornerMarkers[0],
+        map.containerPointToLatLng([150, 150])
+      );
+      expect(json(rect)).not.to.eq(before);
+      vetoed.add('edit:vertexmove');
 
       circle.pm.enable();
       const radius = circle.getRadius();
