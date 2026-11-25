@@ -23,7 +23,7 @@ interface LeafletPM {
   addInitHooks: (options?: object) => void;
   reInitLayer: (layer: PMLayer) => void;
 }
-import packageInfo from '../../package.json';
+import { version } from '../../package.json';
 import Map from './L.PM.Map';
 import Toolbar from './Toolbar/L.PM.Toolbar';
 import Draw from './Draw/L.PM.Draw';
@@ -35,7 +35,7 @@ import { setOptionClasses } from './helpers/options';
 
 /** The Leaflet-Geoman namespace, `L.PM` in the global build. */
 export const PM: LeafletPM = {
-  version: packageInfo.version,
+  version,
   Map,
   Toolbar,
   Draw,
