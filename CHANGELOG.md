@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The bundles embed only the package version instead of the whole `package.json` (about 3 KB smaller minified, 1 KB gzipped).
 - New for `@geoman-io` packages, without a semver guarantee: `map.pm.unstable_validators`, a list of functions that can veto a drawn vertex, a finished shape, a vertex move or removal, a rectangle corner drag, a circle resize, and each layer drag and rotate frame. Vetoed edits are reset and fire `pm:layerreset`. With no validators, behaviour is unchanged.
 - New for `@geoman-io` packages, without a semver guarantee: `Toolbar.unstable_addToggleResolver(fn)` from `./unstable`, which lets `toggleButton` toggle the button that stands for a name no button has, such as a sub-mode shown by a group's button.
 - New for `@geoman-io` packages, without a semver guarantee: `Toolbar.unstable_addButtonDefiner(fn)` and `Toolbar.unstable_addButtonFilter(fn)` from `./unstable`, and `EditRectangle#unstable_cornerDragHandlers()`. A mode registered with `unstable_registerMode` that names a `button` and no `yieldTo` now yields through its button, like the built-in modes.
