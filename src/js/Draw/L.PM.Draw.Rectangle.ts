@@ -240,6 +240,16 @@ class DrawRectangle extends DrawTool {
 
     // get coordinate for new vertex by hintMarker (cursor marker)
     const latlng = this._hintMarker.getLatLng();
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:vertex',
+        shape: this._shape,
+        layer: this._layer,
+        latlng,
+      })
+    ) {
+      return;
+    }
 
     // show and place start marker
     this._startMarker._icon!.classList.add('visible');
@@ -380,6 +390,15 @@ class DrawRectangle extends DrawTool {
       }
     }
 
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:finish',
+        shape: this._shape,
+        layer: rectangleLayer,
+      })
+    ) {
+      return;
+    }
     this._setPane(rectangleLayer, 'layerPane');
     this._finishLayer(rectangleLayer);
     rectangleLayer.addTo(this._map.pm._getContainingLayer());

@@ -23,6 +23,7 @@ type RotatableLayer = L.Polyline & {
 interface RotationLayerPM {
   _rotateOrgLatLng?: L.LatLng[] | L.LatLng[][] | L.LatLng[][][];
   _layerRotated?: boolean;
+  _shape: string;
   _setAngle: (angle: number) => void;
   _fireEdit: (layer: L.Layer, source: string) => void;
   _fireChange: (
@@ -199,29 +200,40 @@ const RotateMixin: IRotateMixin & ThisType<RotateMixinContext & IRotateMixin> =
         Math.atan2(position.y - origin.y, position.x - origin.x) -
         Math.atan2(previous.y - origin.y, previous.x - origin.x);
 
-      // rotate the temp polygon
-      this._layer.setLatLngs(
-        this._rotateLayer(
-          angleDiffRadiant,
-          this._initialRotateLatLng!,
-          this._rotationOriginLatLng!,
-          PM.Matrix.init(),
-          this._map
-        )
+      const helperLatLngs = this._rotateLayer(
+        angleDiffRadiant,
+        this._initialRotateLatLng!,
+        this._rotationOriginLatLng!,
+        PM.Matrix.init(),
+        this._map
       );
+      const rotatedLatLngs = this._rotateLayer(
+        angleDiffRadiant,
+        this._rotationLayer.pm._rotateOrgLatLng!,
+        this._rotationOriginLatLng!,
+        PM.Matrix.init(),
+        this._map
+      );
+      // A vetoed frame leaves both layers as they were
+      if (
+        this._map.pm.unstable_validators.length &&
+        !this._map.pm._isValidChange({
+          action: 'rotate',
+          shape: this._rotationLayer.pm._shape,
+          layer: this._rotationLayer,
+          latlngs: rotatedLatLngs,
+        })
+      ) {
+        return;
+      }
+
+      // rotate the temp polygon
+      this._layer.setLatLngs(helperLatLngs);
       this._updateRotateStem();
 
       const oldLatLngs = copyLatLngs(this._rotationLayer);
       // rotate the origin layer
-      this._rotationLayer.setLatLngs(
-        this._rotateLayer(
-          angleDiffRadiant,
-          this._rotationLayer.pm._rotateOrgLatLng!,
-          this._rotationOriginLatLng!,
-          PM.Matrix.init(),
-          this._map
-        )
-      );
+      this._rotationLayer.setLatLngs(rotatedLatLngs);
 
       // convert the difference radiant to degrees and add it to the angle before rotation starts
       let angleDiff = (angleDiffRadiant * 180) / Math.PI;

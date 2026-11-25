@@ -52,7 +52,7 @@ type ExtendedFeatureGroup = L.FeatureGroup & {
 import Edit from './L.PM.Edit';
 import EditPolygon from './L.PM.Edit.Polygon';
 import { defineOptions } from '../helpers/classes';
-import { calcAngle } from '../helpers';
+import { calcAngle, copyLatLngs } from '../helpers';
 
 class EditRectangle extends EditPolygon {
   declare _layer: ExtendedRectangle;
@@ -179,6 +179,11 @@ class EditRectangle extends EditPolygon {
     // (Without this, it's occasionally possible for a marker to get stuck as 'snapped,' which prevents Rectangle resizing)
     draggedMarker._snapped = false;
 
+    // a validator may veto the drag, which resets to these coords
+    this._coordsBeforeEdit = this._map.pm.unstable_validators.length
+      ? copyLatLngs(this._layer, this._layer.getLatLngs())
+      : null;
+
     const { indexPath } = PM.Utils.findDeepMarkerIndex(
       this._markers,
       draggedMarker
@@ -227,6 +232,16 @@ class EditRectangle extends EditPolygon {
       draggedMarker
     ) as Required<ReturnType<typeof PM.Utils.findDeepMarkerIndex>>;
     this._fireMarkerDragEnd(e, indexPath);
+
+    if (this._vetoed('edit:vertexmove')) {
+      this._layer.setLatLngs(this._coordsBeforeEdit!);
+      this._coordsBeforeEdit = null;
+      // applyOptions binds the new corners' drag handlers and snapping
+      this._initMarkers();
+      this.applyOptions();
+      this._fireLayerReset(e, indexPath);
+      return;
+    }
 
     // fire edit event
     this._fireEdit();

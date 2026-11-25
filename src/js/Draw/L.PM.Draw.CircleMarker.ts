@@ -344,6 +344,16 @@ class DrawCircleMarker extends DrawTool {
     if (!this._hintMarker._snapped) {
       this._hintMarker.setLatLng(e.latlng);
     }
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:vertex',
+        shape: this._shape,
+        layer: this._layer,
+        latlng: this._hintMarker.getLatLng(),
+      })
+    ) {
+      return;
+    }
 
     this._layerGroup.addLayer(this._layer);
     this._layerGroup.addLayer(this._centerMarker);
@@ -461,6 +471,15 @@ class DrawCircleMarker extends DrawTool {
       radius: this._defaultRadius,
       ...this.options.pathOptions,
     });
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:finish',
+        shape: this._shape,
+        layer: marker,
+      })
+    ) {
+      return;
+    }
     this._setPane(marker, 'layerPane');
     this._finishLayer(marker);
     // add marker to the map
@@ -522,6 +541,15 @@ class DrawCircleMarker extends DrawTool {
 
     // create the final circle layer
     const circleLayer = new this._BaseCircleClass(center, options);
+    if (
+      !this._map.pm._isValidChange({
+        action: 'draw:finish',
+        shape: this._shape,
+        layer: circleLayer,
+      })
+    ) {
+      return;
+    }
     this._setPane(circleLayer, 'layerPane');
     this._finishLayer(circleLayer);
     circleLayer.addTo(this._map.pm._getContainingLayer());

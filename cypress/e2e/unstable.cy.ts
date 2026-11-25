@@ -109,6 +109,10 @@ describe('unstable entry', () => {
         map.pm.Draw.Star._hintMarker
       );
       expect(map.pm.Draw.Star.unstable_hintMarker()).to.be.instanceOf(L.Marker);
+      expect(map.pm.Draw.Star.unstable_hintLine()).to.equal(
+        map.pm.Draw.Star._hintline
+      );
+      expect(map.pm.Draw.Star.unstable_hintLine()).to.be.instanceOf(L.Polyline);
 
       // the action calls the tool named by unstable_jsClass
       let removed = 0;
@@ -120,6 +124,7 @@ describe('unstable entry', () => {
 
       map.pm.disableDraw();
       expect(map.pm.Draw.Star.unstable_hintMarker()).to.equal(null);
+      expect(map.pm.Draw.Star.unstable_hintLine()).to.equal(null);
       expect(toggled).to.deep.equal(['star:true', 'star:false']);
 
       map.pm.Toolbar.deleteControl('Star');

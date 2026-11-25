@@ -95,6 +95,7 @@ class EditCircleMarker extends Edit {
   declare _helperLayers: ExtendedFeatureGroup;
   declare _markers: ExtendedMarker[];
   declare _centerMarker: ExtendedMarker;
+  declare _editSnapshot?: { latlng: L.LatLng; radius: number };
   declare _outerMarker: ExtendedMarker;
   declare _hintline: ExtendedPolyline;
   declare _hiddenPolyCircle?: ExtendedPolygon;
@@ -432,6 +433,10 @@ class EditCircleMarker extends Edit {
       return;
     }
 
+    // a validator may veto the resize or move, which resets to this
+    this._editSnapshot = this._map.pm.unstable_validators.length
+      ? { latlng: this._layer.getLatLng(), radius: this._layer.getRadius() }
+      : undefined;
     this._fireMarkerDragStart(e);
   }
   _onMarkerDrag(
@@ -456,6 +461,25 @@ class EditCircleMarker extends Edit {
     // dragged marker
     const draggedMarker = e.target;
     if (!this._vertexValidationDragEnd(draggedMarker)) {
+      return;
+    }
+    const before = this._editSnapshot;
+    this._editSnapshot = undefined;
+    if (
+      before &&
+      !this._map.pm._isValidChange({
+        action: 'edit:vertexmove',
+        shape: this._shape!,
+        layer: this._layer,
+      })
+    ) {
+      this._layer.setLatLng(before.latlng);
+      this._layer.setRadius(before.radius);
+      // rebuild the markers from the restored layer; Circle has no _syncMarkers
+      this.applyOptions();
+      this._updateHiddenPolyCircle();
+      this._fireMarkerDragEnd(e);
+      this._fireLayerReset(e);
       return;
     }
     if (this.options[this._editableOption]) {

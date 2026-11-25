@@ -10,6 +10,8 @@ import {
   addTranslations,
   applyMixins,
   registerButtonName,
+  type UnstableChange,
+  type UnstableValidator,
 } from '@geoman-io/leaflet-geoman-free/unstable';
 
 const enabled: boolean = new L.Map('other').pm.globalDrawModeEnabled();
@@ -50,6 +52,7 @@ new PMButton({ name: 'custom', position: 'topleft' });
 addTranslations('xx', { buttonTitles: { drawMarkerButton: 'Pin' } });
 registerButtonName('Star', 'drawStar');
 const hint: L.Marker | L.CircleMarker | null = star.unstable_hintMarker();
+const hintLine: L.Polyline | null = star.unstable_hintLine();
 star.unstable_fireModeToggled();
 const corners: L.LatLng[] = new EditRectangle(
   new L.Rectangle([
@@ -73,6 +76,9 @@ Toolbar.unstable_addButtonFilter(
 Toolbar.unstable_addToggleResolver((name: string, toolbar: Toolbar) =>
   name === 'subMode' && toolbar.isVisible ? 'probe' : undefined
 );
+const validator: UnstableValidator = (change: UnstableChange) =>
+  change.action !== 'drag' || change.delta.lat < 1;
+map.pm.unstable_validators.push(validator);
 const handlers = new EditRectangle(
   new L.Rectangle([
     [0, 0],
