@@ -62,7 +62,10 @@ const onVertexAdded: PM.VertexAddedEventHandler2 = (event) => {
 void onVertexAdded;
 polygon.on('pm:vertexremoved', (event) => {
   const removed: number[] = event.indexPath;
+  // @ts-expect-error indexPath isn't a number
+  const removedIndex: number = event.indexPath;
   void removed;
+  void removedIndex;
 });
 // circles and circle markers pass no indexPath
 polygon.on('pm:vertexclick', (event) => {
