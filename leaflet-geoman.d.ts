@@ -1770,7 +1770,7 @@ export declare namespace PM {
   export type VertexAddedEventHandler2 = (
     e: BaseEventPayload & {
       layer: L.Layer;
-      indexPath: number;
+      indexPath: number[];
       latlng: L.LatLng;
       marker: L.Marker;
       shape: PM.SUPPORTED_SHAPES;
@@ -1779,7 +1779,7 @@ export declare namespace PM {
   export type VertexRemovedEventHandler = (
     e: BaseEventPayload & {
       layer: L.Layer;
-      indexPath: number;
+      indexPath: number[];
       marker: L.Marker;
       shape: PM.SUPPORTED_SHAPES;
     }
@@ -1787,7 +1787,8 @@ export declare namespace PM {
   export type VertexClickEventHandler = (
     e: BaseEventPayload & {
       layer: L.Layer;
-      indexPath: number;
+      /** Path of the vertex in the layer's latlngs; absent for Circle and CircleMarker. */
+      indexPath?: number[];
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }
@@ -1795,7 +1796,8 @@ export declare namespace PM {
   export type MarkerDragStartEventHandler = (
     e: BaseEventPayload & {
       layer: L.Layer;
-      indexPath: number;
+      /** Path of the vertex in the layer's latlngs; absent for Circle and CircleMarker. */
+      indexPath?: number[];
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }
@@ -1803,7 +1805,8 @@ export declare namespace PM {
   export type MarkerDragEventHandler = (
     e: BaseEventPayload & {
       layer: L.Layer;
-      indexPath: number;
+      /** Path of the vertex in the layer's latlngs; absent for Circle and CircleMarker. */
+      indexPath?: number[];
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
     }
@@ -1811,7 +1814,8 @@ export declare namespace PM {
   export type MarkerDragEndEventHandler = (
     e: BaseEventPayload & {
       layer: L.Layer;
-      indexPath: number;
+      /** Path of the vertex in the layer's latlngs; absent for Circle and CircleMarker. */
+      indexPath?: number[];
       markerEvent: any;
       shape: PM.SUPPORTED_SHAPES;
       intersectionReset: boolean;
