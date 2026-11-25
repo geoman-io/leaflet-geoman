@@ -49,7 +49,10 @@ map.on('pm:drawstart', (event) => {
 polygon.on('pm:edit', (event) => event.layer);
 polygon.on('pm:layerreset', (event) => {
   const indexPath: number[] | undefined = event.indexPath;
+  // @ts-expect-error indexPath isn't a number
+  const n: number = event.indexPath;
   void indexPath;
+  void n;
 });
 
 // the toolbar button control keeps its own API, not just L.Control's
