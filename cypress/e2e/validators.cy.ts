@@ -183,6 +183,8 @@ describe('unstable_validators', () => {
       });
       expect(json(layer)).to.eq(before);
       expect((layer.pm as any)._markers[0]).to.have.length(4);
+      // a vetoed removal resets and fires pm:layerreset, like a move
+      expect(resets).to.have.length(2);
 
       vetoed.clear();
       dragMarker(
@@ -190,7 +192,7 @@ describe('unstable_validators', () => {
         map.containerPointToLatLng([150, 150])
       );
       expect(json(layer)).not.to.eq(before);
-      expect(resets).to.have.length(1);
+      expect(resets).to.have.length(2);
     });
   });
 
