@@ -508,18 +508,26 @@ class EditLine extends Edit {
       })
     );
   }
-  _handleSelfIntersectionOnVertexRemoval() {
+  _handleSelfIntersectionOnVertexRemoval(e: L.LeafletEvent) {
     // check for selfintersection again (mainly to reset the style)
     const selfIntersection =
       !this.options.allowSelfIntersection && this._handleLayerStyle(true);
+    const vetoed = !selfIntersection && this._vetoed('edit:vertexremove');
 
-    if (selfIntersection || this._vetoed('edit:vertexremove')) {
+    if (selfIntersection || vetoed) {
       // reset coordinates
       this._layer.setLatLngs(this._coordsBeforeEdit!);
       this._coordsBeforeEdit = null;
 
       // re-enable markers for the new coords
       this._initMarkers();
+    }
+    // A vetoed removal resets like a vetoed move; the self-intersection
+    // reset has never fired it
+    if (vetoed) {
+      // markerEvent is pm:vertexremoved (its `marker` is the removed one),
+      // not a marker's dragend as on the vetoed move path
+      this._fireLayerReset(e, (e as { indexPath?: number[] }).indexPath);
     }
   }
 

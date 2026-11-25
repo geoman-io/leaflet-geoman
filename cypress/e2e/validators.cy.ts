@@ -160,8 +160,8 @@ describe('unstable_validators', () => {
       const { map } = win;
       const layer = square(win, 200, 200, 100);
       const { seen, vetoed } = validator(win);
-      const resets: number[] = [];
-      layer.on('pm:layerreset', () => resets.push(1));
+      const resets: any[] = [];
+      layer.on('pm:layerreset', (e: unknown) => resets.push(e));
       layer.pm.enable();
       const before = json(layer);
 
@@ -178,11 +178,14 @@ describe('unstable_validators', () => {
       );
 
       vetoed.add('edit:vertexremove');
-      (layer.pm as any)._markers[0][1].fire('contextmenu', {
-        target: (layer.pm as any)._markers[0][1],
-      });
+      const removed = (layer.pm as any)._markers[0][1];
+      removed.fire('contextmenu', { target: removed });
       expect(json(layer)).to.eq(before);
       expect((layer.pm as any)._markers[0]).to.have.length(4);
+      // a vetoed removal resets and fires pm:layerreset, like a move
+      expect(resets).to.have.length(2);
+      expect(resets[1].indexPath).to.deep.equal([0, 1]);
+      expect(resets[1].markerEvent.marker).to.equal(removed);
 
       vetoed.clear();
       dragMarker(
@@ -190,7 +193,7 @@ describe('unstable_validators', () => {
         map.containerPointToLatLng([150, 150])
       );
       expect(json(layer)).not.to.eq(before);
-      expect(resets).to.have.length(1);
+      expect(resets).to.have.length(2);
     });
   });
 
