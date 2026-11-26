@@ -118,6 +118,31 @@ class Edit {
   getOptions() {
     return this.options;
   }
+  /**
+   * Forgets this session's edit, drag and rotate changes, so turning edit,
+   * drag or rotate off fires no `pm:update`. It restores nothing: call it
+   * after restoring the layer and before disabling. For @geoman-io packages,
+   * without a semver guarantee.
+   */
+  unstable_discardChanges() {
+    const self = this as unknown as {
+      _layerEdited?: boolean;
+      _layerDragged?: boolean;
+      _dragging?: boolean;
+      _discardAfterDrag?: boolean;
+      _rotatePoly?: { pm: { _layerRotated?: boolean } };
+    };
+    // a body drag still ending marks the layer edited when it does; discard
+    // that too
+    if (self._dragging) {
+      self._discardAfterDrag = true;
+    }
+    self._layerEdited = false;
+    self._layerDragged = false;
+    if (self._rotatePoly) {
+      self._rotatePoly.pm._layerRotated = false;
+    }
+  }
   applyOptions() {}
   // Edit and rotate can stay on while another interaction changes the layer,
   // such as a body drag while editing. Their helpers hide while it runs and

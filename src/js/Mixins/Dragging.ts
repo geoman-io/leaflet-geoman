@@ -120,6 +120,8 @@ export interface DragMixinContext {
   _layerDragEnabled: boolean;
   _layerDragged: boolean;
   _layerEdited: boolean;
+  _discardAfterDrag?: boolean;
+  unstable_discardChanges(): void;
   _dragging: boolean;
   _disableAfterDrag?: boolean;
   _tempDragCoord: L.LatLng | null | undefined;
@@ -452,6 +454,11 @@ const DragMixin: IDragMixin & ThisType<DragMixinContext & IDragMixin> = {
       // fire edit
       this._fireEdit();
       this._layerEdited = true;
+      // the changes were discarded before this drag finished ending
+      if (this._discardAfterDrag) {
+        this._discardAfterDrag = false;
+        this.unstable_discardChanges();
+      }
       // edit was turned off during the drag, such as by Escape
       if (this._disableAfterDrag) {
         this._disableAfterDrag = false;
