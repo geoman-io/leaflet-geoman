@@ -72,6 +72,48 @@ describe('unstable_vertexResolvers', () => {
     });
   });
 
+  it('removes the right coordinates when a later vertex reuses a traced LatLng', () => {
+    let win: Win;
+    let click = 0;
+    cy.window().then((w) => {
+      win = w as Win;
+      // tracing reuses the traced layer's own LatLng objects
+      const x = ll(win, 200, 120);
+      win.map.pm.unstable_vertexResolvers.push({
+        vertex: ({ latlng }: { latlng: L.LatLng }) => {
+          click += 1;
+          if (click === 2) return { latlng, before: [x] };
+          if (click === 3) return { latlng: x };
+          return { latlng };
+        },
+      } as never);
+      win.map.pm.enableDraw('Line');
+    });
+    cy.get('#map')
+      .click(150, 150)
+      .click(250, 150)
+      .click(300, 200)
+      .click(350, 150);
+    cy.window().then(() => {
+      const tool = win.map.pm.Draw.Line as any;
+      expect(px(win, tool._layer.getLatLngs())).to.deep.eq([
+        [150, 150],
+        [200, 120],
+        [250, 150],
+        [200, 120],
+        [350, 150],
+      ]);
+      tool._removeLastVertex();
+      expect(tool._markers).to.have.length(3);
+      expect(px(win, tool._layer.getLatLngs())).to.deep.eq([
+        [150, 150],
+        [200, 120],
+        [250, 150],
+        [200, 120],
+      ]);
+    });
+  });
+
   it('compares a traced vertex with the last vertex before the trace', () => {
     let win: Win;
     cy.window().then((w) => {

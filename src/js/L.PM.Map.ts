@@ -129,7 +129,9 @@ class Map {
   /**
    * Change where a drawn vertex goes and what a finished polygon closes
    * with, such as to trace another layer. Each resolver sees the result of
-   * the ones before it. For @geoman-io packages, without a semver guarantee.
+   * the ones before it. Resolved coordinates aren't checked for
+   * self-intersection; a resolver or a `draw:finish` validator must do that.
+   * For @geoman-io packages, without a semver guarantee.
    */
   declare unstable_vertexResolvers: UnstableVertexResolver[];
 
