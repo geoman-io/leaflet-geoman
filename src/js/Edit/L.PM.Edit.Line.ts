@@ -483,6 +483,68 @@ class EditLine extends Edit {
       this._initSnappableMarkers();
     }
   }
+  /**
+   * Inserts a vertex at `indexPath`, the path it will have (`[0, 3]` puts it
+   * before ring 0's vertex 3), and fires what a middle-marker insert fires:
+   * `pm:edit`, `pm:change` and `pm:vertexadded`. Rebuilds the vertex and
+   * middle markers. Runs no validator or `addVertexValidation`, and does not
+   * check `allowSelfIntersection`, so it can leave a self-intersecting ring
+   * with no `pm:intersect` and no revert. Call it outside a vertex drag. Throws a RangeError when the path is no vertex
+   * position, or when the vertex would close a polygon ring (it equals the
+   * ring vertex it would sit next to across the ring's start), since Leaflet
+   * drops a closing duplicate. Returns the new vertex marker, or undefined
+   * when edit is off, rotate mode is on, or the layer is a Rectangle, and
+   * then changes nothing. For @geoman-io packages, without a semver
+   * guarantee.
+   */
+  unstable_insertVertex(indexPath: number[], latlng: L.LatLng) {
+    // rotate mode shows no vertex markers, and a Rectangle keeps 4 corners
+    if (!this.enabled() || this.options.rotate || this._shape === 'Rectangle') {
+      return undefined;
+    }
+    const coords = this._layer.getLatLngs();
+    const parentPath = indexPath.slice(0, -1);
+    const index = indexPath[indexPath.length - 1];
+    const ring = (
+      parentPath.length ? get(coords, parentPath) : coords
+    ) as unknown;
+    if (
+      !Array.isArray(ring) ||
+      Array.isArray(ring[0]) ||
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index > ring.length
+    ) {
+      throw new RangeError(`No vertex position at [${indexPath}]`);
+    }
+    // a copy, so the layer never shares the caller's LatLng
+    const vertex = new L.LatLng(latlng.lat, latlng.lng, latlng.alt);
+    const flat = ring as L.LatLng[];
+    if (
+      this.isPolygon() &&
+      ((index === flat.length && vertex.equals(flat[0])) ||
+        (index === 0 &&
+          flat.length > 0 &&
+          vertex.equals(flat[flat.length - 1])))
+    ) {
+      // Leaflet would drop it as the ring's closing duplicate
+      throw new RangeError(`Vertex at [${indexPath}] would close the ring`);
+    }
+    flat.splice(index, 0, vertex);
+    this._layer.setLatLngs(coords);
+    this._initMarkers();
+    if (this.options.snappable) {
+      this._initSnappableMarkers();
+    }
+    const marker = get(this._markers, indexPath) as ExtendedMarker;
+
+    this._fireEdit();
+    this._layerEdited = true;
+    this._syncInteractions('edit');
+    this._fireChange(this._layer.getLatLngs(), 'Edit');
+    this._fireVertexAdded(marker, indexPath, vertex);
+    return marker;
+  }
 
   hasSelfIntersection() {
     // check for self intersection of the layer and return true/false

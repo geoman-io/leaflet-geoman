@@ -88,6 +88,10 @@ const handlers = new EditRectangle(
 ).unstable_cornerDragHandlers();
 const drag: L.LeafletEventHandlerFn = handlers.drag;
 new EditLine(new L.Polygon([])).unstable_discardChanges();
+const inserted: L.Marker | undefined = new EditLine(
+  new L.Polygon([])
+).unstable_insertVertex([0, 0], new L.LatLng(0, 0));
+void inserted;
 const cutTarget: L.Polyline | null = new DrawCut(map).unstable_cutTarget(
   new L.Polygon([])
 );
