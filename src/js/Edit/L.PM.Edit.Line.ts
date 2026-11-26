@@ -492,8 +492,8 @@ class EditLine extends Edit {
    * position, or when the vertex would close a polygon ring (it equals the
    * ring vertex it would sit next to across the ring's start), since Leaflet
    * drops a closing duplicate. Returns the new vertex marker, or undefined
-   * when edit or rotate mode is on. For @geoman-io packages, without a semver
-   * guarantee.
+   * when edit is off or rotate mode is on. For @geoman-io packages, without a
+   * semver guarantee.
    */
   unstable_insertVertex(indexPath: number[], latlng: L.LatLng) {
     // rotate mode shows no vertex markers
