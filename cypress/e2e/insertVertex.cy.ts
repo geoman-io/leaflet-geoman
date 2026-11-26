@@ -130,12 +130,33 @@ describe('EditLine#unstable_insertVertex', () => {
           pm.unstable_insertVertex(path, ll(win, 250, 180))
         ).to.throw('No vertex position');
       });
+      // Leaflet would drop a vertex that closes the ring
+      const ring = layer.getLatLngs()[0] as L.LatLng[];
+      expect(() => pm.unstable_insertVertex([0, 4], ring[0])).to.throw(
+        'would close the ring'
+      );
+      expect(() => pm.unstable_insertVertex([0, 0], ring[3])).to.throw(
+        'would close the ring'
+      );
+      expect(JSON.stringify(layer.getLatLngs())).to.eq(before);
+      expect(events).to.have.length(0);
       // the end of the ring is a position
       pm.unstable_insertVertex([0, 4], ll(win, 180, 250));
       expect(JSON.stringify(layer.getLatLngs())).not.to.eq(before);
       expect(events.filter((x) => x.type === 'pm:vertexadded')).to.have.length(
         1
       );
+
+      // the rotate helper's editor shows no vertex markers
+      layer.pm.disable();
+      layer.pm.enableRotate();
+      const helper = pm._rotatePoly.pm;
+      expect(helper.enabled()).to.eq(true);
+      const helperBefore = JSON.stringify(pm._rotatePoly.getLatLngs());
+      expect(helper.unstable_insertVertex([0, 1], ll(win, 250, 180))).to.eq(
+        undefined
+      );
+      expect(JSON.stringify(pm._rotatePoly.getLatLngs())).to.eq(helperBefore);
     });
   });
 });

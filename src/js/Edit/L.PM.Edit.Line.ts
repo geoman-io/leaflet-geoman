@@ -487,12 +487,17 @@ class EditLine extends Edit {
    * Inserts a vertex at `indexPath`, the path it will have (`[0, 3]` puts it
    * before ring 0's vertex 3), and fires what a middle-marker insert fires:
    * `pm:edit`, `pm:change` and `pm:vertexadded`. Rebuilds the vertex and
-   * middle markers. Runs no validator or `addVertexValidation`. Returns the
-   * new vertex marker, or undefined when edit is off. For @geoman-io
-   * packages, without a semver guarantee.
+   * middle markers. Runs no validator or `addVertexValidation`. Call it
+   * outside a vertex drag. Throws a RangeError when the path is no vertex
+   * position, or when the vertex would close a polygon ring (it equals the
+   * ring vertex it would sit next to across the ring's start), since Leaflet
+   * drops a closing duplicate. Returns the new vertex marker, or undefined
+   * when edit or rotate mode is on. For @geoman-io packages, without a semver
+   * guarantee.
    */
   unstable_insertVertex(indexPath: number[], latlng: L.LatLng) {
-    if (!this.enabled()) {
+    // rotate mode shows no vertex markers
+    if (!this.enabled() || this.options.rotate) {
       return undefined;
     }
     const coords = this._layer.getLatLngs();
@@ -512,7 +517,18 @@ class EditLine extends Edit {
     }
     // a copy, so the layer never shares the caller's LatLng
     const vertex = new L.LatLng(latlng.lat, latlng.lng, latlng.alt);
-    (ring as L.LatLng[]).splice(index, 0, vertex);
+    const flat = ring as L.LatLng[];
+    if (
+      this.isPolygon() &&
+      ((index === flat.length && vertex.equals(flat[0])) ||
+        (index === 0 &&
+          flat.length > 0 &&
+          vertex.equals(flat[flat.length - 1])))
+    ) {
+      // Leaflet would drop it as the ring's closing duplicate
+      throw new RangeError(`Vertex at [${indexPath}] would close the ring`);
+    }
+    flat.splice(index, 0, vertex);
     this._layer.setLatLngs(coords);
     this._initMarkers();
     if (this.options.snappable) {
