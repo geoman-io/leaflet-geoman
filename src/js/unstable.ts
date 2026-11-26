@@ -11,7 +11,11 @@ export { PM, PMButton } from './index';
 import '../types/leaflet-internals';
 
 export { Map } from './L.PM.Map';
-export type { UnstableChange, UnstableValidator } from './L.PM.Map';
+export type {
+  UnstableChange,
+  UnstableValidator,
+  UnstableVertexResolver,
+} from './L.PM.Map';
 export { Toolbar } from './Toolbar/L.PM.Toolbar';
 
 export { Draw } from './Draw/L.PM.Draw';

@@ -128,6 +128,13 @@ class DrawPolygon extends DrawLine {
     }
     this._hintMarker.setTooltipContent(text);
   }
+  // Also appends the coordinates finish resolvers close the shape with
+  _finishLatLngs() {
+    const latlngs = super._finishLatLngs();
+    return this._map.pm.unstable_vertexResolvers.length
+      ? this._map.pm._resolveFinish(this._shape, this._layer, latlngs)
+      : latlngs;
+  }
   _finishShape() {
     // if self intersection is not allowed, do not finish the shape!
     if (!this.options.allowSelfIntersection) {
@@ -151,8 +158,8 @@ class DrawPolygon extends DrawLine {
       return;
     }
 
-    // get coordinates
-    const coords = this._layer.getLatLngs() as L.LatLng[];
+    // get coordinates, with any a resolver appends to close the shape
+    const coords = this._finishLatLngs();
 
     // only finish the shape if there are 3 or more non-collinear vertices
     if (coords.length <= 2 || isDegenerateLatLngRing(coords)) {
