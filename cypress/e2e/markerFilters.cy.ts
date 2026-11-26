@@ -36,6 +36,7 @@ function pointer(win: Win, x: number, y: number) {
 
 describe('EditLine.unstable_addMarkerFilter', () => {
   it('filters on enable and on refreshes the caller binds, with no count limit', () => {
+    const seen: (L.LatLng | undefined)[] = [];
     cy.window().then((w) => {
       const win = w as Win;
       const layer = octagon(win);
@@ -43,15 +44,18 @@ describe('EditLine.unstable_addMarkerFilter', () => {
       let keepEven = true;
       // a filter that keeps the even vertices, or none
       win.L.PM.Edit.Line.unstable_addMarkerFilter(
-        (editor: any, markers: L.Marker[]) =>
-          keepEven
+        (editor: any, markers: L.Marker[], latlng?: L.LatLng) => {
+          seen.push(latlng);
+          return keepEven
             ? markers.filter((m) => editor._markers[0].indexOf(m) % 2 === 0)
-            : []
+            : [];
+        }
       );
       layer.pm.enable();
       expect(layer.pm.options.limitMarkersToCount).to.eq(-1);
-      // applied on enable
+      // applied on enable, where the rebuild has no latlng
       expect(shown(pm)).to.deep.eq([0, 2, 4, 6]);
+      expect(seen).to.deep.eq([undefined]);
 
       // Free binds nothing new for the filter: a pointer move changes nothing
       keepEven = false;
@@ -63,19 +67,34 @@ describe('EditLine.unstable_addMarkerFilter', () => {
       const layer = win.map.pm.getGeomanLayers()[0] as L.Polygon;
       const pm = layer.pm as any;
       expect(shown(pm)).to.deep.eq([0, 2, 4, 6]);
-      // the caller's own trigger refreshes it
-      pm.applyLimitFilters({ latlng: ll(win, 300, 300) });
+      // the caller's own trigger refreshes it, with its latlng
+      const at = ll(win, 300, 300);
+      pm.applyLimitFilters({ latlng: at });
       expect(shown(pm)).to.deep.eq([]);
+      expect(seen).to.have.length(2);
+      expect(seen[1]).to.eq(at);
+
+      // a Rectangle keeps its corners: the call does nothing
+      const rect = new win.L.Rectangle([
+        ll(win, 50, 50),
+        ll(win, 150, 150),
+      ]).addTo(win.map);
+      rect.pm.enable();
+      expect(() =>
+        (rect.pm as any).applyLimitFilters({ latlng: at })
+      ).not.to.throw();
+      expect(seen).to.have.length(2);
+      expect((rect.pm as any)._markerGroup.getLayers()).to.have.length(4);
     });
   });
 
   it('gets the markers limitMarkersToCount kept, and runs in the throttled pass', () => {
-    const calls: { count: number; latlng: L.LatLngExpression }[] = [];
+    const calls: { count: number; latlng?: L.LatLng }[] = [];
     cy.window().then((w) => {
       const win = w as Win;
       const layer = octagon(win);
       win.L.PM.Edit.Line.unstable_addMarkerFilter(
-        (editor: any, markers: L.Marker[], latlng: L.LatLngExpression) => {
+        (editor: any, markers: L.Marker[], latlng?: L.LatLng) => {
           calls.push({ count: markers.length, latlng });
           // drops the closest marker
           return markers.slice(1);

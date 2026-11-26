@@ -104,8 +104,9 @@ class EditLine extends Edit {
    * Adds a filter that narrows the vertex markers every line and polygon
    * editor shows, run inside each limit pass after `limitMarkersToCount`.
    * Free binds no triggers for it: call `pm.applyLimitFilters({ latlng })`
-   * to refresh, such as on a click or `moveend`. For @geoman-io packages,
-   * without a semver guarantee.
+   * to refresh, such as on a click or `moveend`. A Rectangle keeps its four
+   * corners and isn't filtered; there the call does nothing. For @geoman-io
+   * packages, without a semver guarantee.
    */
   static unstable_addMarkerFilter(filter: UnstableMarkerFilter) {
     addMarkerFilter(filter);
