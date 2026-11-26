@@ -6,6 +6,7 @@ import {
   DrawPolygon,
   DrawCut,
   EditLine,
+  type UnstableMarkerFilter,
   EditRectangle,
   Toolbar,
   addTranslations,
@@ -96,6 +97,9 @@ const cutTarget: L.Polyline | null = new DrawCut(map).unstable_cutTarget(
   new L.Polygon([])
 );
 void cutTarget;
+const markerFilter: UnstableMarkerFilter = (pm, markers: L.Marker[]) =>
+  markers.slice(1);
+EditLine.unstable_addMarkerFilter(markerFilter);
 const disableMode: () => void = map.pm.unstable_registerMode('probe', {
   enabled: () => false,
   disable() {},

@@ -88,7 +88,8 @@ import {
   toPointerEventName,
 } from '../helpers';
 
-import MarkerLimits from '../Mixins/MarkerLimits';
+import MarkerLimits, { addMarkerFilter } from '../Mixins/MarkerLimits';
+import type { UnstableMarkerFilter } from '../Mixins/MarkerLimits';
 
 // Shit's getting complicated in here with Multipolygon Support. So here's a quick note about it:
 // Multipolygons with holes means lots of nested, multidimensional arrays.
@@ -99,6 +100,17 @@ import MarkerLimits from '../Mixins/MarkerLimits';
 // Got it? Now you know what is meant when you read "indexPath" around here. Have fun 👍
 
 class EditLine extends Edit {
+  /**
+   * Adds a filter that narrows the vertex markers every line and polygon
+   * editor shows, run inside each limit pass after `limitMarkersToCount`.
+   * Free binds no triggers for it: call `pm.applyLimitFilters({ latlng })`
+   * to refresh, such as on a click or `moveend`. A Rectangle keeps its four
+   * corners and isn't filtered; there the call does nothing. For @geoman-io
+   * packages, without a semver guarantee.
+   */
+  static unstable_addMarkerFilter(filter: UnstableMarkerFilter) {
+    addMarkerFilter(filter);
+  }
   declare _layer: ExtendedPolyline;
   declare _map: ExtendedMap;
   declare _enabled: boolean;

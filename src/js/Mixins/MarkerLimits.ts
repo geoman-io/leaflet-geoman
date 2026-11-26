@@ -8,6 +8,25 @@ interface MarkerWithLatLng extends L.Marker {
 }
 
 /**
+ * Narrows the markers, vertex and middle markers alike, that a line or polygon
+ * editor shows. Gets the editor, the markers left by `limitMarkersToCount` and
+ * the filters before it, and the call's latlng, which is undefined when the
+ * editor rebuilt its markers (on enable, after a reset or a vertex insert).
+ */
+export type UnstableMarkerFilter = (
+  pm: unknown,
+  markers: L.Marker[],
+  latlng: L.LatLng | undefined
+) => L.Marker[];
+
+const markerFilters: UnstableMarkerFilter[] = [];
+
+/** Adds a filter run on every limit pass, after `limitMarkersToCount`. */
+export function addMarkerFilter(filter: UnstableMarkerFilter) {
+  markerFilters.push(filter);
+}
+
+/**
  * Marker Limits mixin context
  */
 export interface MarkerLimitsMixinContext {
@@ -99,15 +118,21 @@ const MarkerLimits: IMarkerLimitsMixin &
       }
     });
   },
-  applyLimitFilters({ latlng = { lat: 0, lng: 0 } }) {
-    if (this._preventRenderMarkers) {
+  applyLimitFilters({ latlng }) {
+    // no cache: a Rectangle or the rotate helper, or never enabled
+    if (this._preventRenderMarkers || !this.markerCache) {
       return;
     }
     // find markers near the cursor
-    const makersNearCursor = this._filterClosestMarkers(latlng);
+    const makersNearCursor = this._filterClosestMarkers(
+      latlng ?? { lat: 0, lng: 0 }
+    );
 
     // all markers that we want to show
-    const markersToAdd = [...makersNearCursor];
+    let markersToAdd: L.Marker[] = [...makersNearCursor];
+    for (let i = 0; i < markerFilters.length; i += 1) {
+      markersToAdd = markerFilters[i](this, markersToAdd, latlng);
+    }
 
     this.renderLimits(markersToAdd);
   },

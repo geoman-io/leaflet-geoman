@@ -33,6 +33,7 @@ export { Edit } from './Edit/L.PM.Edit';
 export { EditLayerGroup } from './Edit/L.PM.Edit.LayerGroup';
 export { EditMarker } from './Edit/L.PM.Edit.Marker';
 export { EditLine } from './Edit/L.PM.Edit.Line';
+export type { UnstableMarkerFilter } from './Mixins/MarkerLimits';
 export { EditPolygon } from './Edit/L.PM.Edit.Polygon';
 export { EditRectangle } from './Edit/L.PM.Edit.Rectangle';
 export { EditCircleMarker } from './Edit/L.PM.Edit.CircleMarker';
