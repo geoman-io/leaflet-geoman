@@ -417,10 +417,7 @@ class DrawLine extends DrawTool {
 
     // inserted coordinates get no marker or _latlngInfo entry, so
     // _removeLastVertex removes them with this vertex
-    // copies, so _removeLastVertex's indexOf never finds one for a marker
-    before.forEach((l) =>
-      this._layer.addLatLng(new L.LatLng(l.lat, l.lng, l.alt))
-    );
+    before.forEach((l) => this._layer.addLatLng(l));
     this._layer.addLatLng(latlng);
     const newMarker = this._createMarker(latlng);
     this._setTooltipText();
