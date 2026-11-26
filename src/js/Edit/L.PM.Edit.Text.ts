@@ -229,6 +229,12 @@ class EditText extends Edit {
     }
   }
 
+  // A focused text compares with its text at focus when it blurs; the
+  // discarded text must not count as an edit then
+  unstable_discardChanges() {
+    super.unstable_discardChanges();
+    this._focusText = this.getText();
+  }
   _focusChange(e: FocusEvent | Record<string, unknown> = {}) {
     const focusAlreadySet = this._hasFocus;
     this._hasFocus = e.type === 'focus';

@@ -130,4 +130,64 @@ describe('unstable_discardChanges', () => {
       });
     });
   });
+
+  it('also drops the edit a body drag marks when it finishes ending', () => {
+    let win: Win;
+    let layer: L.Polygon;
+    let updates = 0;
+    cy.window().then((w) => {
+      win = w as Win;
+      win.map.pm.setGlobalOptions({ combineModes: true });
+      layer = square(win);
+      layer.on('pm:update', () => (updates += 1));
+      layer.pm.enable();
+      layer.pm.enableLayerDrag();
+      const path = (layer as unknown as { _path: Element })._path;
+      const c = win.map.getContainer();
+      path.dispatchEvent(pointer(win, 'pointerdown', 250, 250));
+      c.dispatchEvent(pointer(win, 'pointermove', 260, 255));
+      c.dispatchEvent(pointer(win, 'pointerup', 260, 255));
+      // at once, before the drag's end marks the layer edited
+      (layer as any).pm.unstable_discardChanges();
+      layer.pm.disableLayerDrag();
+      layer.pm.disable();
+    });
+    cy.wait(50);
+    cy.window().then(() => {
+      expect(layer.pm.enabled()).to.eq(false);
+      expect(updates).to.eq(0);
+      // a session without changes fires nothing either
+      layer.pm.enable();
+      layer.pm.disable();
+      expect(updates).to.eq(0);
+    });
+  });
+
+  it("forgets a focused text's change, which disable would count", () => {
+    let layer: L.Marker;
+    let textArea: HTMLTextAreaElement;
+    let updates = 0;
+    let edits = 0;
+    cy.window().then(({ map, L: Lf }) => {
+      layer = new Lf.Marker(map.getCenter(), {
+        textMarker: true,
+        text: 'A',
+      }).addTo(map);
+      layer.on('pm:update', () => (updates += 1));
+      layer.pm.enable();
+      textArea = (layer.pm as any).getElement();
+    });
+    // a kept change, then a second focus with more typing
+    cy.window().then(() => cy.get(textArea).focus().type('B').blur());
+    cy.window().then(() => cy.get(textArea).focus().type('C'));
+    cy.window().then(() => {
+      layer.on('pm:edit', () => (edits += 1));
+      // the cancel restores the text while it is still focused
+      (layer.pm as any).setText('A');
+      (layer as any).pm.unstable_discardChanges();
+      layer.pm.disable();
+      expect(updates).to.eq(0);
+      expect(edits).to.eq(0);
+    });
+  });
 });
