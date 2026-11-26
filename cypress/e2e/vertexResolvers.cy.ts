@@ -300,6 +300,54 @@ describe('unstable_vertexResolvers', () => {
     });
   });
 
+  it("copies a resolver's LatLng objects into the drawn shape", () => {
+    let win: Win;
+    // every LatLng the resolver hands back
+    const given: L.LatLng[] = [];
+    cy.window().then((w) => {
+      win = w as Win;
+      const own = (x: number, y: number) => {
+        const l = ll(win, x, y);
+        given.push(l);
+        return l;
+      };
+      let click = 0;
+      win.map.pm.unstable_vertexResolvers.push({
+        vertex: () => {
+          click += 1;
+          if (click === 1) return { latlng: own(150, 150) };
+          if (click === 2) return { latlng: own(250, 150) };
+          if (click === 3) return { latlng: own(250, 250) };
+          // traces back to the first vertex, which finishes
+          return { latlng: own(150, 150), before: [own(120, 220)] };
+        },
+        finish: () => [own(130, 180)],
+      } as never);
+      win.map.pm.enableDraw('Polygon');
+    });
+    cy.get('#map')
+      .click(140, 140)
+      .click(240, 140)
+      .click(240, 240)
+      .click(200, 260);
+    cy.hasDrawnLayers(1);
+    cy.window().then(() => {
+      const [layer] = win.map.pm.getGeomanDrawLayers() as L.Polygon[];
+      const ring = (layer.getLatLngs() as L.LatLng[][])[0];
+      expect(px(win, ring)).to.deep.eq([
+        [150, 150],
+        [250, 150],
+        [250, 250],
+        [120, 220],
+        [130, 180],
+      ]);
+      // resolved vertices, a finishing click's trace and the appended
+      // coordinate are all copies
+      expect(given).to.have.length(6);
+      given.forEach((l) => expect(ring).not.to.include(l));
+    });
+  });
+
   it('changes nothing with no resolver registered', () => {
     let win: Win;
     cy.window().then((w) => {

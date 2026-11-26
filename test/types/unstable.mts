@@ -4,6 +4,7 @@ import {
   PMButton,
   DrawTool,
   DrawPolygon,
+  DrawCut,
   EditLine,
   EditRectangle,
   Toolbar,
@@ -87,6 +88,10 @@ const handlers = new EditRectangle(
 ).unstable_cornerDragHandlers();
 const drag: L.LeafletEventHandlerFn = handlers.drag;
 new EditLine(new L.Polygon([])).unstable_discardChanges();
+const cutTarget: L.Polyline | null = new DrawCut(map).unstable_cutTarget(
+  new L.Polygon([])
+);
+void cutTarget;
 const disableMode: () => void = map.pm.unstable_registerMode('probe', {
   enabled: () => false,
   disable() {},

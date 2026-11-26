@@ -189,6 +189,16 @@ class DrawCut extends DrawPolygon {
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
   }
+  /**
+   * The line or polygon a cut works on for `layer`, or null to leave it out.
+   * Defaults to the layer itself when it is a line or polygon. An override
+   * can return another polygon, such as one made from a circle; the cut's
+   * result then replaces `layer`. For @geoman-io packages, without a semver
+   * guarantee.
+   */
+  unstable_cutTarget(layer: L.Layer): L.Polyline | null {
+    return layer instanceof L.Polyline ? layer : null;
+  }
   cut(layer: ExtendedPolygon) {
     const all = this._map._layers;
     // contains information about snapping points
@@ -200,12 +210,10 @@ class DrawCut extends DrawPolygon {
       .map((l) => all[l])
       // only layers handled by leaflet-geoman
       .filter((l) => PM.Utils.isGeomanLayer(l))
-      // only polyline instances
-      .filter((l) => l instanceof L.Polyline)
       // exclude the drawn one
       .filter((l) => l !== layer)
       // layer is allowed to cut
-      .filter((l) => l.pm.options.allowCutting)
+      .filter((l) => l.pm?.options.allowCutting)
       // filter out everything that ignore leaflet-geoman
       .filter((l) => {
         // TODO: after cutting nothing else can be cutted anymore until a new list is passed, because the layers don't exists anymore. Should we remove the cutted layers from the list?
@@ -220,8 +228,14 @@ class DrawCut extends DrawPolygon {
       })
       // filter out everything that ignore leaflet-geoman
       .filter((l) => !this._layerGroup.hasLayer(l))
+      // the line or polygon the cut works on: the layer itself by default
+      .map((original) => ({ original, l: this.unstable_cutTarget(original) }))
+      .filter(
+        (c): c is { original: L.Layer & { pm: any }; l: L.Polyline } =>
+          c.l instanceof L.Polyline
+      )
       // only layers with intersections
-      .filter((l) => {
+      .filter(({ l }) => {
         try {
           const lineInter =
             (!!lineIntersect(layer.toGeoJSON(15), l.toGeoJSON(15)).features
@@ -243,12 +257,14 @@ class DrawCut extends DrawPolygon {
       });
 
     // loop through all layers that intersect with the drawn (cutting) layer
-    layers.forEach((l) => {
+    layers.forEach(({ original, l: target }) => {
+      // the target supplies the geometry; the original layer is replaced
+      const l = original as typeof target & { pm: any };
       let newLayer: L.Polygon | L.Polyline;
-      if (l instanceof L.Polygon) {
+      if (target instanceof L.Polygon) {
         // Also for L.Rectangle
         // easiest way to clone the complete latlngs without reference
-        newLayer = new L.Polygon(l.getLatLngs());
+        newLayer = new L.Polygon(target.getLatLngs());
         const coords = newLayer.getLatLngs();
 
         // snapping points added to the layer, so borders are cutted correct
@@ -277,7 +293,7 @@ class DrawCut extends DrawPolygon {
         });
       } else {
         // L.Polyline
-        newLayer = l;
+        newLayer = target;
       }
 
       // find layer difference

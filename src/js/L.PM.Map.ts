@@ -110,6 +110,8 @@ export type UnstableVertexResolver = {
   }): L.LatLng[] | void;
 };
 
+const copyLatLng = (l: L.LatLng) => new L.LatLng(l.lat, l.lng, l.alt);
+
 class Map {
   declare map: L.Map & { pm: Map };
   declare Draw: Draw;
@@ -241,24 +243,33 @@ class Map {
     }
     return true;
   }
-  /** The latlng a drawn vertex goes to, and the coordinates before it. */
+  /**
+   * The latlng a drawn vertex goes to, and the coordinates before it. A
+   * resolver's own LatLng objects, such as a traced layer's, are copied, so
+   * the drawn layer never shares one with it or with another vertex.
+   */
   _resolveVertex(shape: string, layer: L.Layer, latlng: L.LatLng) {
     let before: L.LatLng[] = [];
+    let resolved = false;
     this.unstable_vertexResolvers.forEach((resolver) => {
       const result = resolver.vertex?.({ shape, layer, latlng });
       if (result) {
+        resolved = true;
         ({ latlng } = result);
         before = before.concat(result.before ?? []);
       }
     });
-    return { latlng, before };
+    return {
+      latlng: resolved ? copyLatLng(latlng) : latlng,
+      before: before.map(copyLatLng),
+    };
   }
   /** A finishing shape's coordinates with the resolvers' appended. */
   _resolveFinish(shape: string, layer: L.Layer, latlngs: L.LatLng[]) {
     this.unstable_vertexResolvers.forEach((resolver) => {
       const after = resolver.finish?.({ shape, layer, latlngs });
       if (after?.length) {
-        latlngs = latlngs.concat(after);
+        latlngs = latlngs.concat(after.map(copyLatLng));
       }
     });
     return latlngs;
