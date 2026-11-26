@@ -8,6 +8,25 @@ interface MarkerWithLatLng extends L.Marker {
 }
 
 /**
+ * Narrows the markers, vertex and middle markers alike, that a line or polygon
+ * editor shows. Gets the editor, the markers left by `limitMarkersToCount` and
+ * the filters before it, and the pointer's latlng (0, 0 when the call had
+ * none).
+ */
+export type UnstableMarkerFilter = (
+  pm: unknown,
+  markers: L.Marker[],
+  latlng: L.LatLngExpression
+) => L.Marker[];
+
+const markerFilters: UnstableMarkerFilter[] = [];
+
+/** Adds a filter run on every limit pass, after `limitMarkersToCount`. */
+export function addMarkerFilter(filter: UnstableMarkerFilter) {
+  markerFilters.push(filter);
+}
+
+/**
  * Marker Limits mixin context
  */
 export interface MarkerLimitsMixinContext {
@@ -107,7 +126,10 @@ const MarkerLimits: IMarkerLimitsMixin &
     const makersNearCursor = this._filterClosestMarkers(latlng);
 
     // all markers that we want to show
-    const markersToAdd = [...makersNearCursor];
+    let markersToAdd: L.Marker[] = [...makersNearCursor];
+    for (let i = 0; i < markerFilters.length; i += 1) {
+      markersToAdd = markerFilters[i](this, markersToAdd, latlng);
+    }
 
     this.renderLimits(markersToAdd);
   },
