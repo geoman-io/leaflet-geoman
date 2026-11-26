@@ -86,6 +86,7 @@ const handlers = new EditRectangle(
   ])
 ).unstable_cornerDragHandlers();
 const drag: L.LeafletEventHandlerFn = handlers.drag;
+new EditLine(new L.Polygon([])).unstable_discardChanges();
 const disableMode: () => void = map.pm.unstable_registerMode('probe', {
   enabled: () => false,
   disable() {},
