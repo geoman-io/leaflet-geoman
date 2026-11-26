@@ -75,16 +75,40 @@ import type { ModeDefinition } from './helpers/ModeManager';
  * A change validators check. `draw:vertex` places a point of the working
  * `layer`; `draw:finish` is the final layer before it's added; the edit
  * actions come after the change, which a veto resets; `drag` and `rotate`
- * come before each frame is applied, which a veto skips.
+ * come before each frame is applied, which a veto skips. Cut asks
+ * `draw:vertex` but not `draw:finish`.
  */
 export type UnstableChange = { shape: string; layer: L.Layer } & (
-  | { action: 'draw:vertex'; latlng: L.LatLng }
+  | { action: 'draw:vertex'; latlng: L.LatLng; before?: L.LatLng[] }
   | { action: 'draw:finish' }
   | { action: 'edit:vertexmove' | 'edit:vertexremove' }
   | { action: 'drag'; delta: L.LatLngLiteral }
   | { action: 'rotate'; latlngs: L.LatLng[] | L.LatLng[][] | L.LatLng[][][] }
 );
 export type UnstableValidator = (change: UnstableChange) => boolean | void;
+/**
+ * Changes where a Line, Polygon or Cut draw places a vertex or finishes.
+ * `vertex` gets the latlng a click would place and returns the latlng to
+ * place instead, with coordinates to insert before it; those get no vertex
+ * markers and are removed with the vertex. For the first vertex only the
+ * latlng is used and `before` is ignored. When the click finishes the shape
+ * (it lands on the first or last vertex), `before` is part of the finished
+ * shape instead. `finish` gets a Polygon or Cut's coordinates, including
+ * those, and returns coordinates to append to the finished shape. Both run
+ * on click only.
+ */
+export type UnstableVertexResolver = {
+  vertex?(change: {
+    shape: string;
+    layer: L.Layer;
+    latlng: L.LatLng;
+  }): { latlng: L.LatLng; before?: L.LatLng[] } | void;
+  finish?(change: {
+    shape: string;
+    layer: L.Layer;
+    latlngs: L.LatLng[];
+  }): L.LatLng[] | void;
+};
 
 class Map {
   declare map: L.Map & { pm: Map };
@@ -102,6 +126,12 @@ class Map {
    * guarantee.
    */
   declare unstable_validators: UnstableValidator[];
+  /**
+   * Change where a drawn vertex goes and what a finished polygon closes
+   * with, such as to trace another layer. Each resolver sees the result of
+   * the ones before it. For @geoman-io packages, without a semver guarantee.
+   */
+  declare unstable_vertexResolvers: UnstableVertexResolver[];
 
   declare options: object;
 
@@ -117,6 +147,7 @@ class Map {
     // check them in.
     this._modes = new ModeManager(() => !!this.globalOptions.combineModes);
     this.unstable_validators = [];
+    this.unstable_vertexResolvers = [];
     this.Draw.shapes.forEach((shape) => this._registerDrawMode(shape));
     this._registerGlobalMode(
       'edit',
@@ -207,6 +238,28 @@ class Map {
       }
     }
     return true;
+  }
+  /** The latlng a drawn vertex goes to, and the coordinates before it. */
+  _resolveVertex(shape: string, layer: L.Layer, latlng: L.LatLng) {
+    let before: L.LatLng[] = [];
+    this.unstable_vertexResolvers.forEach((resolver) => {
+      const result = resolver.vertex?.({ shape, layer, latlng });
+      if (result) {
+        ({ latlng } = result);
+        before = before.concat(result.before ?? []);
+      }
+    });
+    return { latlng, before };
+  }
+  /** A finishing shape's coordinates with the resolvers' appended. */
+  _resolveFinish(shape: string, layer: L.Layer, latlngs: L.LatLng[]) {
+    this.unstable_vertexResolvers.forEach((resolver) => {
+      const after = resolver.finish?.({ shape, layer, latlngs });
+      if (after?.length) {
+        latlngs = latlngs.concat(after);
+      }
+    });
+    return latlngs;
   }
   unstable_activeModes() {
     return this._modes.active();

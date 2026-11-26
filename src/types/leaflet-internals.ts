@@ -41,6 +41,17 @@ declare module '../../leaflet-geoman' {
       _registerDrawMode(shape: string): void;
       unstable_validators: import('../js/L.PM.Map').UnstableValidator[];
       _isValidChange(change: import('../js/L.PM.Map').UnstableChange): boolean;
+      unstable_vertexResolvers: import('../js/L.PM.Map').UnstableVertexResolver[];
+      _resolveVertex(
+        shape: string,
+        layer: L.Layer,
+        latlng: L.LatLng
+      ): { latlng: L.LatLng; before: L.LatLng[] };
+      _resolveFinish(
+        shape: string,
+        layer: L.Layer,
+        latlngs: L.LatLng[]
+      ): L.LatLng[];
     }
     interface PMLayer {
       options: PM.EditModeOptions;

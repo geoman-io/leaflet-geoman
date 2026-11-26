@@ -81,6 +81,8 @@ class DrawLine extends DrawTool {
   declare _map: ExtendedMap;
   declare options: LineDrawOptions;
   declare _shape: string;
+  // coordinates a resolved vertex inserted before the click that finishes
+  _finishBefore: L.LatLng[] = [];
   declare _enabled: boolean;
   declare toolbarButtonName: string;
   declare _layerGroup: ExtendedFeatureGroup;
@@ -354,19 +356,40 @@ class DrawLine extends DrawTool {
     }
 
     // get coordinate for new vertex by hintMarker (cursor marker)
-    const latlng = this._hintMarker.getLatLng();
+    let latlng = this._hintMarker.getLatLng();
 
     // check if the first and this vertex have the same latlng
     // or the last vertex and the hintMarker have the same latlng (dbl-click)
     const latlngs = this._layer.getLatLngs() as L.LatLng[];
+
+    // a resolver may move the vertex and insert coordinates before it; the
+    // checks below still compare with the vertices from before the insert.
+    // The first vertex can be moved, but has nothing to insert before it.
+    let before: L.LatLng[] = [];
+    if (this._map.pm.unstable_vertexResolvers.length) {
+      ({ latlng, before } = this._map.pm._resolveVertex(
+        this._shape,
+        this._layer,
+        latlng
+      ));
+      if (latlngs.length === 0) {
+        before = [];
+      }
+    }
 
     const lastLatLng = latlngs[latlngs.length - 1];
     if (
       latlng.equals(latlngs[0]) ||
       (latlngs.length > 0 && latlng.equals(lastLatLng))
     ) {
-      // yes? finish the polygon
-      this._finishShape();
+      // yes? finish the polygon, with the coordinates a resolver inserted
+      // before this vertex
+      this._finishBefore = before;
+      try {
+        this._finishShape();
+      } finally {
+        this._finishBefore = [];
+      }
 
       // "why?", you ask? Because this happens when we snap the last vertex to the first one
       // and then click without hitting the last marker. Click happens on the map
@@ -380,6 +403,7 @@ class DrawLine extends DrawTool {
         shape: this._shape,
         layer: this._layer,
         latlng,
+        ...(before.length ? { before } : {}),
       })
     ) {
       return;
@@ -391,6 +415,9 @@ class DrawLine extends DrawTool {
       snapInfo: this._hintMarker._snapInfo,
     });
 
+    // inserted coordinates get no marker or _latlngInfo entry, so
+    // _removeLastVertex removes them with this vertex
+    before.forEach((l) => this._layer.addLatLng(l));
     this._layer.addLatLng(latlng);
     const newMarker = this._createMarker(latlng);
     this._setTooltipText();
@@ -470,7 +497,7 @@ class DrawLine extends DrawTool {
     }
 
     // get coordinates
-    const coords = this._layer.getLatLngs() as L.LatLng[];
+    const coords = this._finishLatLngs();
 
     // if there is only one coords, don't finish the shape!
     if (coords.length <= 1) {
@@ -510,6 +537,14 @@ class DrawLine extends DrawTool {
       this.enable();
       this._hintMarker.setLatLng(hintMarkerLatLng);
     }
+  }
+  // The finished shape's coordinates; the drawn layer keeps its own, so a
+  // refused finish leaves the drawing as it was
+  _finishLatLngs() {
+    const latlngs = this._layer.getLatLngs() as L.LatLng[];
+    return this._finishBefore.length
+      ? latlngs.concat(this._finishBefore)
+      : latlngs;
   }
   _createMarker(latlng: L.LatLng) {
     // create the new marker

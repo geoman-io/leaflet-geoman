@@ -148,8 +148,8 @@ class DrawCut extends DrawPolygon {
       return;
     }
 
-    // get coordinates
-    const coords = this._layer.getLatLngs() as L.LatLng[];
+    // get coordinates, with any a resolver appends to close the shape
+    const coords = this._finishLatLngs();
 
     // only finish the shape if there are 3 or more non-collinear vertices
     if (coords.length <= 2 || isDegenerateLatLngRing(coords)) {
