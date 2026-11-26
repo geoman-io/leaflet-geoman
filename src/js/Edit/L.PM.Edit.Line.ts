@@ -487,17 +487,19 @@ class EditLine extends Edit {
    * Inserts a vertex at `indexPath`, the path it will have (`[0, 3]` puts it
    * before ring 0's vertex 3), and fires what a middle-marker insert fires:
    * `pm:edit`, `pm:change` and `pm:vertexadded`. Rebuilds the vertex and
-   * middle markers. Runs no validator or `addVertexValidation`. Call it
-   * outside a vertex drag. Throws a RangeError when the path is no vertex
+   * middle markers. Runs no validator or `addVertexValidation`, and does not
+   * check `allowSelfIntersection`, so it can leave a self-intersecting ring
+   * with no `pm:intersect` and no revert. Call it outside a vertex drag. Throws a RangeError when the path is no vertex
    * position, or when the vertex would close a polygon ring (it equals the
    * ring vertex it would sit next to across the ring's start), since Leaflet
    * drops a closing duplicate. Returns the new vertex marker, or undefined
-   * when edit is off or rotate mode is on. For @geoman-io packages, without a
-   * semver guarantee.
+   * when edit is off, rotate mode is on, or the layer is a Rectangle, and
+   * then changes nothing. For @geoman-io packages, without a semver
+   * guarantee.
    */
   unstable_insertVertex(indexPath: number[], latlng: L.LatLng) {
-    // rotate mode shows no vertex markers
-    if (!this.enabled() || this.options.rotate) {
+    // rotate mode shows no vertex markers, and a Rectangle keeps 4 corners
+    if (!this.enabled() || this.options.rotate || this._shape === 'Rectangle') {
       return undefined;
     }
     const coords = this._layer.getLatLngs();

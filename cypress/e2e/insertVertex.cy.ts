@@ -157,6 +157,20 @@ describe('EditLine#unstable_insertVertex', () => {
         undefined
       );
       expect(JSON.stringify(pm._rotatePoly.getLatLngs())).to.eq(helperBefore);
+
+      // a Rectangle keeps its 4 corners
+      const rect = new win.L.Rectangle([
+        ll(win, 400, 300),
+        ll(win, 500, 200),
+      ]).addTo(win.map);
+      const rectEvents = record(rect);
+      const rectBefore = JSON.stringify(rect.getLatLngs());
+      rect.pm.enable();
+      expect(
+        (rect.pm as any).unstable_insertVertex([0, 1], ll(win, 450, 180))
+      ).to.eq(undefined);
+      expect(JSON.stringify(rect.getLatLngs())).to.eq(rectBefore);
+      expect(rectEvents).to.have.length(0);
     });
   });
 });
