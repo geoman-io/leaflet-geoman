@@ -311,28 +311,37 @@ const PMButton = (
 
       action._node = actionNode;
 
-      if (!button.disabled) {
-        if (action.onClick) {
-          const actionClick = (e: Event) => {
-            // is needed to prevent scrolling when clicking on a-element with href="a"
-            e.preventDefault();
-            let btnName = '';
-            const { buttons } = this._map.pm.Toolbar;
-            for (const btn in buttons) {
-              if (buttons[btn]._button === button) {
-                btnName = btn;
-                break;
-              }
-            }
-            this._fireActionClick(action, btnName, button);
-          };
+      if (action.onClick) {
+        const onClick = action.onClick;
+        const actionClick = (e: Event) => {
+          if (button.disabled) {
+            return;
+          }
 
-          L.DomEvent.addListener(actionNode, 'click', actionClick, this);
-          L.DomEvent.addListener(actionNode, 'click', action.onClick, this);
-          L.DomEvent.addListener(actionNode, 'click', () =>
-            this._updateActiveAction(button)
-          );
-        }
+          // is needed to prevent scrolling when clicking on a-element with href="a"
+          e.preventDefault();
+          let btnName = '';
+          const { buttons } = this._map.pm.Toolbar;
+          for (const btn in buttons) {
+            if (buttons[btn]._button === button) {
+              btnName = btn;
+              break;
+            }
+          }
+          this._fireActionClick(action, btnName, button);
+        };
+
+        L.DomEvent.addListener(actionNode, 'click', actionClick, this);
+        L.DomEvent.addListener(actionNode, 'click', (e: Event) => {
+          if (!button.disabled) {
+            onClick.call(this, e);
+          }
+        });
+        L.DomEvent.addListener(actionNode, 'click', () => {
+          if (!button.disabled) {
+            this._updateActiveAction(button);
+          }
+        });
       }
       return action;
     });
@@ -354,12 +363,10 @@ const PMButton = (
     L.DomEvent.disableClickPropagation(newButton);
     L.DomEvent.on(newButton, 'click', L.DomEvent.stop);
 
-    if (!button.disabled) {
-      // before the actual click, trigger a click on currently toggled buttons to
-      // untoggle them and their functionality
-      L.DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
-      L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
-    }
+    // before the actual click, trigger a click on currently toggled buttons to
+    // untoggle them and their functionality
+    L.DomEvent.addListener(newButton, 'click', this._onBtnClick, this);
+    L.DomEvent.addListener(newButton, 'click', this._triggerClick, this);
 
     if (button.disabled) {
       L.DomUtil.addClass(newButton, 'pm-disabled');

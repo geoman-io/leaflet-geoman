@@ -484,6 +484,101 @@ describe('Testing the Toolbar', () => {
     });
   });
 
+  it('enables a button disabled before its first render', () => {
+    cy.window().then((win) => {
+      win.map.remove();
+
+      const map = win.L.map('map', {
+        preferCanvas: false,
+        doubleClickZoom: false,
+      }).setView([51.505, -0.09], 13);
+
+      win.map = map;
+      map.pm.Toolbar.setButtonDisabled('drawPolygon', true);
+      map.pm.addControls();
+    });
+
+    cy.toolbarButton('polygon').click({ force: true });
+    cy.toolbarButton('polygon')
+      .closest('.button-container')
+      .should('not.have.class', 'active');
+
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.setButtonDisabled('drawPolygon', false);
+    });
+
+    cy.toolbarButton('polygon').click();
+    cy.toolbarButton('polygon')
+      .closest('.button-container')
+      .should('have.class', 'active');
+    cy.get('.button-container.active .action-cancel').click();
+    cy.toolbarButton('polygon')
+      .closest('.button-container')
+      .should('not.have.class', 'active');
+  });
+
+  it('enables actions on a custom control created disabled', () => {
+    const actionClick = cy.spy().as('actionClick');
+    const actionEvent = cy.spy().as('actionEvent');
+
+    cy.window().then(({ map }) => {
+      map.on('pm:actionclick', actionEvent);
+      map.pm.Toolbar.createCustomControl({
+        name: 'initiallyDisabled',
+        block: 'custom',
+        className: 'initially-disabled-icon',
+        disabled: true,
+        actions: [{ name: 'custom', text: 'Custom', onClick: actionClick }],
+      });
+    });
+
+    cy.get('.initially-disabled-icon').click({ force: true });
+    cy.get('.action-custom').click({ force: true });
+    cy.get('@actionClick').should('not.have.been.called');
+    cy.get('@actionEvent').should('not.have.been.called');
+
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.setButtonDisabled('initiallyDisabled', false);
+    });
+    cy.get('.initially-disabled-icon').click();
+    cy.get('.action-custom').click();
+    cy.get('@actionClick').should('have.been.calledOnce');
+    cy.get('@actionEvent').should('have.been.calledOnce');
+
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.setButtonDisabled('initiallyDisabled', true);
+    });
+    cy.get('.action-custom').click({ force: true });
+    cy.get('@actionClick').should('have.been.calledOnce');
+    cy.get('@actionEvent').should('have.been.calledOnce');
+  });
+
+  it('respects stopImmediatePropagation in a custom action', () => {
+    let active = false;
+    cy.window().then(({ map }) => {
+      map.pm.Toolbar.createCustomControl({
+        name: 'stopAction',
+        block: 'custom',
+        className: 'stop-action-icon',
+        actions: [
+          {
+            name: 'stop',
+            text: 'Stop',
+            onClick: (event: Event) => {
+              active = true;
+              event.stopImmediatePropagation();
+            },
+            isActive: () => active,
+          },
+        ],
+      });
+    });
+
+    cy.get('.stop-action-icon').click();
+    cy.get('.action-stop').click().should('not.have.class', 'active-action');
+    cy.then(() => expect(active).to.equal(true));
+  });
+
   it('Enable disabled button', () => {
     let eventFired = '';
     cy.window().then(({ map }) => {
